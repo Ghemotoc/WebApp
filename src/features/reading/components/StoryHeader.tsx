@@ -66,7 +66,7 @@ function StoryTagLinks({ tags }: { tags: string[] }) {
           {/* The 24 px minimum target (rule 9) comes from the line box and the padding. */}
           <Link
             to={listAddress(plainList('tag', tag))}
-            className="inline-flex min-h-6 items-center text-[15px] text-ink underline-offset-2 hover:underline"
+            className="inline-flex min-h-6 items-center type-body text-ink underline-offset-2 hover:underline"
           >
             {showTag(tag)}
           </Link>
@@ -127,7 +127,7 @@ function StoryActions({ story }: { story: StoryPageData }) {
         isOwner={story.isOwner}
       />
       {story.isPublic && (
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-3">
           {!story.isOwner && (
             <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
           )}
@@ -137,7 +137,7 @@ function StoryActions({ story }: { story: StoryPageData }) {
       )}
       {/* Board New-Story: what following does, under the buttons. */}
       {story.isPublic && !story.isOwner && (
-        <p className="m-0 text-[13px] leading-[18px] text-body">{t('storyPage.followNote')}</p>
+        <p className="m-0 type-meta leading-[18px] text-ink-muted">{t('storyPage.followNote')}</p>
       )}
     </>
   );
@@ -151,7 +151,7 @@ function StoryActions({ story }: { story: StoryPageData }) {
  */
 function WriterName({ writer }: { writer: StoryPageData['writer'] }) {
   if (writer.classicAuthor !== null) {
-    return <span className="font-semibold text-heading">{writer.displayName}</span>;
+    return <span className="font-semibold text-ink-heading">{writer.displayName}</span>;
   }
   return (
     <Link to={`/u/${encodeURIComponent(writer.handle)}`} className="font-semibold text-link">
@@ -174,14 +174,14 @@ function StoryTitleBlock({ story }: { story: StoryPageData }) {
         <h1
           id="story-title"
           lang={story.languageCode}
-          className="m-0 min-w-0 flex-[1_1_240px] type-display break-words text-heading"
+          className="m-0 min-w-0 flex-[1_1_240px] type-display break-words text-ink-heading"
         >
           {story.title}
         </h1>
         <ReadInSwitch editions={story.editions} chapterNumber={null} />
       </div>
       <div className="flex flex-col gap-1">
-        <p className="m-0 text-base text-body">
+        <p className="m-0 type-body text-ink-muted">
           {t('storyPage.by')} <WriterName writer={story.writer} />
         </p>
         <TranslationCredit story={story} />
@@ -225,7 +225,7 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
           <StoryTitleBlock story={story} />
           <StoryStats story={story} />
           {story.blurb !== '' && (
-            <p lang={story.languageCode} className="m-0 max-w-[62ch] text-base text-body">
+            <p lang={story.languageCode} className="m-0 max-w-[62ch] type-body text-ink-muted">
               {story.blurb}
             </p>
           )}

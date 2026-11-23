@@ -71,7 +71,7 @@ function SettingsGroups({ account }: { account: ReturnType<typeof useMyNames> })
 function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
   const { t } = useTranslation('account');
   if (!account.isKnown) return null;
-  if (!account.isSignedIn) return <p className="m-0 text-body">{t('settings.signedOut')}</p>;
+  if (!account.isSignedIn) return <p className="m-0 text-ink-muted">{t('settings.signedOut')}</p>;
   if (account.loadFailed || account.names === null) {
     return <Notice tone="error">{t('errors.loadFailed')}</Notice>;
   }
@@ -79,7 +79,7 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
   return (
     <>
       {names.handle !== null && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('settings.signedInAs', {
             name: displayName(names.handle, names.penName),
             handle: names.handle,
@@ -104,11 +104,11 @@ export function SettingsPage() {
   const { t } = useTranslation('account');
   const account = useMyNames();
   return (
-    <PageContainer className="tmc-rise relative flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="tmc-rise relative flex flex-col gap-6 pt-12 pb-6">
       <title>{t('settings.documentTitle')}</title>
       <header className="relative flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('settings.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('settings.heading')}
         </h1>
       </header>

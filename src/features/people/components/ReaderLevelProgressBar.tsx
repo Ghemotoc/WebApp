@@ -29,7 +29,7 @@ export function ReaderLevelProgressBar({ reading, name }: ReaderLevelProgressBar
     reading.storiesFinished,
   );
   if (progress === null) {
-    return <p className="m-0 text-[13px] text-meta">{t('readerLevel.top', { name })}</p>;
+    return <p className="m-0 type-meta text-ink-muted">{t('readerLevel.top', { name })}</p>;
   }
   // Step 1: the share done, capped at 100 so a bar never overflows.
   const percent = Math.min(100, Math.floor((progress.have / progress.need) * 100));
@@ -38,7 +38,7 @@ export function ReaderLevelProgressBar({ reading, name }: ReaderLevelProgressBar
   const wordsKey =
     progress.unit === 'stories' ? 'readerLevel.progressStories' : 'readerLevel.progressChapters';
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div
         role="progressbar"
         aria-label={t('readerLevel.progressLabel', { level: nextName, percent })}
@@ -49,7 +49,7 @@ export function ReaderLevelProgressBar({ reading, name }: ReaderLevelProgressBar
       >
         <div className="h-full rounded-full bg-heading" style={{ width: `${percent}%` }} />
       </div>
-      <p className="m-0 text-[13px] text-meta">
+      <p className="m-0 type-meta text-ink-muted">
         {t(wordsKey, {
           count: progress.need,
           have: numbers.format(progress.have),

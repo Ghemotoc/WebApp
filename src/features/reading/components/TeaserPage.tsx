@@ -47,11 +47,11 @@ function TeaserChapter({ chapter }: { chapter: ReaderChapter }) {
       <h2
         id="teaser-chapter-title"
         lang={chapter.story.languageCode}
-        className="m-0 font-heading text-[28px] leading-tight font-bold text-heading"
+        className="m-0 font-heading type-heading leading-tight font-bold text-ink-heading"
       >
         {chapter.title === '' ? t('reader.untitled') : chapter.title}
       </h2>
-      <p className="m-0 pb-4 text-sm text-meta">{metaParts.join(' · ')}</p>
+      <p className="m-0 pb-4 type-body text-ink-muted">{metaParts.join(' · ')}</p>
       <div className={chapter.textContinues ? fadeClass : undefined}>
         <ProtectedChapterText
           markdown={chapter.body ?? ''}
@@ -77,7 +77,7 @@ export function TeaserPage({ chapter }: { chapter: ReaderChapter }) {
   const { t } = useTranslation('reading');
   const { story } = useStoryPage(chapter.story.slug);
   return (
-    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-10">
+    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
       <title>
         {t('reader.documentTitle', { chapter: chapter.title, story: chapter.story.title })}
       </title>

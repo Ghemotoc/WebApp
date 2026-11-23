@@ -27,8 +27,8 @@ export function CanvaStartPage() {
   const start = useCanvaStart(params.get('story') ?? '');
   return (
     <CanvaTripPage backSlug={null}>
-      {start.kind === 'opening' && <p className="m-0 text-body">{t('canva.opening')}</p>}
-      {start.kind === 'signed_out' && <p className="m-0 text-body">{t('canva.signedOut')}</p>}
+      {start.kind === 'opening' && <p className="m-0 text-ink-muted">{t('canva.opening')}</p>}
+      {start.kind === 'signed_out' && <p className="m-0 text-ink-muted">{t('canva.signedOut')}</p>}
       {start.kind === 'not_found' && (
         <Notice tone="error">{t('canva.failed.storyNotFound')}</Notice>
       )}

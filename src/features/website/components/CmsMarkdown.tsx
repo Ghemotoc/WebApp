@@ -50,17 +50,17 @@ function CmsLink({ href, children }: ComponentPropsWithoutRef<'a'>) {
 /** How each Markdown element looks; h1 becomes h2 so the page keeps one h1. */
 const cmsComponents: Components = {
   h1: ({ children }) => (
-    <h2 className="m-0 font-heading text-[22px] font-bold text-heading">{children}</h2>
+    <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">{children}</h2>
   ),
   h2: ({ children }) => (
-    <h2 className="m-0 font-heading text-[22px] font-bold text-heading">{children}</h2>
+    <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">{children}</h2>
   ),
   h3: ({ children }) => (
-    <h3 className="m-0 font-heading text-lg font-bold text-heading">{children}</h3>
+    <h3 className="m-0 font-heading type-long font-bold text-ink-heading">{children}</h3>
   ),
   p: ({ children }) => <p className="m-0 leading-[1.6]">{children}</p>,
-  ul: ({ children }) => <ul className="m-0 flex list-disc flex-col gap-2 pl-5">{children}</ul>,
-  ol: ({ children }) => <ol className="m-0 flex list-decimal flex-col gap-2 pl-5">{children}</ol>,
+  ul: ({ children }) => <ul className="m-0 flex list-disc flex-col gap-2 pl-4">{children}</ul>,
+  ol: ({ children }) => <ol className="m-0 flex list-decimal flex-col gap-2 pl-4">{children}</ol>,
   li: ({ children }) => <li className="leading-[1.6]">{children}</li>,
   a: ({ href, children }) => <CmsLink href={href}>{children}</CmsLink>,
   img: () => null,
@@ -73,7 +73,7 @@ const cmsComponents: Components = {
  */
 export function CmsMarkdown({ markdown, language }: CmsMarkdownProps) {
   return (
-    <div lang={language} className="flex flex-col gap-3 text-body">
+    <div lang={language} className="flex flex-col gap-3 text-ink-muted">
       <Markdown components={cmsComponents} skipHtml>
         {fillBrandTokens(markdown, brand)}
       </Markdown>

@@ -111,15 +111,15 @@ function CertificateSignatures({
   return (
     <div className="grid gap-6 sm:grid-cols-2">
       <div className={`flex flex-col gap-1 border-t ${ink.line} pt-2`}>
-        <p className={`m-0 text-xs ${ink.muted}`}>{signedOn}</p>
+        <p className={`m-0 type-meta ${ink.muted}`}>{signedOn}</p>
         <p className="m-0 font-semibold">{certificate.signatoryName}</p>
-        <p className={`m-0 text-sm ${ink.muted}`}>{t('sheet.companyRole')}</p>
+        <p className={`m-0 type-body ${ink.muted}`}>{t('sheet.companyRole')}</p>
       </div>
       {!certificate.isContest && (
         <div className={`flex flex-col gap-1 border-t ${ink.line} pt-2`}>
-          <p className={`m-0 text-xs ${ink.muted}`}>{signedOn}</p>
+          <p className={`m-0 type-meta ${ink.muted}`}>{signedOn}</p>
           <p className="m-0 font-semibold">{certificate.teacherName}</p>
-          <p className={`m-0 text-sm ${ink.muted}`}>{teacherRole}</p>
+          <p className={`m-0 type-body ${ink.muted}`}>{teacherRole}</p>
         </div>
       )}
     </div>
@@ -150,7 +150,7 @@ function CertificateFooter({
   if (certificate.isContest) footerText = t('sheet.contestFooter');
   else if (school !== null) footerText = t('sheet.footerSchool', { school });
   return (
-    <footer className={`flex flex-col gap-3 border-t ${ink.softLine} pt-4 text-sm ${ink.muted}`}>
+    <footer className={`flex flex-col gap-3 border-t ${ink.softLine} pt-4 type-body ${ink.muted}`}>
       <div className="flex flex-wrap justify-between gap-4">
         <p className="m-0">
           {t(certificate.isContest ? 'sheet.contestLabel' : 'sheet.programmeLabel')} ·{' '}
@@ -169,7 +169,7 @@ function CertificateFooter({
           {t('sheet.issued', { date: certificateDate(certificate.signedAt, language) })}
         </p>
       </div>
-      <p className="m-0 text-xs">{footerText}</p>
+      <p className="m-0 type-meta">{footerText}</p>
     </footer>
   );
 }
@@ -210,21 +210,21 @@ export function CertificateSheet({
       >
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col">
-            <p className={`m-0 font-heading text-2xl font-extrabold ${ink.heading}`}>
+            <p className={`m-0 font-heading type-heading font-bold ${ink.heading}`}>
               {brand.productName}
             </p>
-            <p className={`m-0 text-sm ${ink.muted}`}>
+            <p className={`m-0 type-body ${ink.muted}`}>
               {t('common:shell.madeBy', { lng: language })}
             </p>
           </div>
           {school !== null && (
-            <p className={`m-0 text-sm ${ink.muted}`}>{t('sheet.partnership', { school })}</p>
+            <p className={`m-0 type-body ${ink.muted}`}>{t('sheet.partnership', { school })}</p>
           )}
         </header>
         <div className="flex flex-col items-center gap-3 text-center">
           <CertificateSeal look={certificate.look} size="large" crestUrl={crestUrl} />
           <h2
-            className={`m-0 font-heading text-[clamp(28px,5vw,44px)] leading-tight font-extrabold ${ink.heading}`}
+            className={`m-0 font-heading text-[clamp(28px,5vw,44px)] leading-tight font-bold ${ink.heading}`}
           >
             {t(isAchievement ? 'sheet.titleAchievement' : 'sheet.titleParticipation')}
           </h2>

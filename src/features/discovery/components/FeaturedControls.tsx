@@ -84,12 +84,12 @@ export function FeaturedControls(props: FeaturedControlsProps) {
   const { isPaused } = props;
   const { t } = useDiscoveryTranslation();
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+    <div className="mt-2 flex flex-wrap items-center gap-2">
       {/* The pill names the next action: Play while paused, Pause while turning. */}
       <button
         type="button"
         onClick={props.togglePause}
-        className="inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-full button-glass px-4 text-sm font-semibold"
+        className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full button-glass px-4 type-body font-semibold"
       >
         {isPaused ? <PlayIcon /> : <PauseIcon />}
         {isPaused ? t('featured.play') : t('featured.pause')}

@@ -39,7 +39,10 @@ function LinkForm(props: LinkFormProps) {
   const { t } = useEditorTranslation();
   return (
     <form onSubmit={props.onSubmit} className="flex flex-col gap-4">
-      <h2 id="chapter-link-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
+      <h2
+        id="chapter-link-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('link.heading')}
       </h2>
       <TextInput

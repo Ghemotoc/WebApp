@@ -24,7 +24,7 @@ import { NewPasswordForm } from './NewPasswordForm';
 
 /** The link styled as the main button. */
 const primaryLinkClasses =
-  'inline-flex h-11 items-center self-start rounded-full button-main px-5 text-sm font-semibold no-underline';
+  'inline-flex h-11 items-center self-start rounded-full button-main px-4 type-body font-semibold no-underline';
 
 /** Which state the page is in. */
 type ResetView = 'saved' | 'checking' | 'expired' | 'form';
@@ -88,7 +88,7 @@ export function ResetPasswordPage() {
         </Link>
       )}
       {view === 'checking' && (
-        <p role="status" className="m-0 text-body">
+        <p role="status" className="m-0 text-ink-muted">
           {t('reset.checking')}
         </p>
       )}

@@ -63,11 +63,11 @@ export function TeaserStoryCard({ story, chapterNumber, lastChapterNumber }: Tea
   return (
     <section
       aria-labelledby="teaser-story-title"
-      className="relative flex flex-col gap-6 rounded-[24px] border border-border bg-surface p-6 shadow-[0_8px_24px_rgba(72,28,95,0.08)] sm:flex-row sm:p-7"
+      className="relative flex flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-[0_8px_24px_rgba(72,28,95,0.08)] sm:flex-row sm:p-6"
     >
       {/* The pen name is beside the cover, so the cover shows the title only, as on the board. */}
       <TeaserCover story={story} />
-      <div className="flex min-w-0 flex-col gap-2.5 lg:pr-16">
+      <div className="flex min-w-0 flex-col gap-3 lg:pr-16">
         <Eyebrow>
           {lastChapterNumber === null
             ? t('teaser.sharedNumberOnly', { number: chapterNumber })
@@ -76,20 +76,20 @@ export function TeaserStoryCard({ story, chapterNumber, lastChapterNumber }: Tea
         <h1
           id="teaser-story-title"
           lang={story.languageCode}
-          className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-extrabold tracking-[-0.025em] break-words"
+          className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-bold tracking-[-0.025em] break-words"
         >
           {story.title}
         </h1>
-        <p className="m-0 text-sm text-body">
+        <p className="m-0 type-body text-ink-muted">
           {t('storyPage.by')}{' '}
-          <strong className="font-bold text-heading">{story.writer.displayName}</strong>
+          <strong className="font-semibold text-ink-heading">{story.writer.displayName}</strong>
         </p>
         {story.blurb !== '' && (
-          <p lang={story.languageCode} className="m-0 text-[15px] leading-[1.6] text-body">
+          <p lang={story.languageCode} className="m-0 type-body leading-[1.6] text-ink-muted">
             {story.blurb}
           </p>
         )}
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           <InfoPill tone="plum">
             {t(`categories.${story.categorySlug}`, {
               ns: 'writing',

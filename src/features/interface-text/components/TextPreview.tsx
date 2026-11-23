@@ -24,17 +24,17 @@ interface TextPreviewProps {
 export function TextPreview({ text, language, label }: TextPreviewProps) {
   return (
     <figure className="m-0 flex min-w-0 flex-col gap-1">
-      <figcaption className="text-sm font-semibold text-ink">{label}</figcaption>
+      <figcaption className="type-body font-semibold text-ink">{label}</figcaption>
       <p
         lang={language}
-        className="m-0 rounded-2xl border border-border bg-paper p-3 break-words text-body"
+        className="m-0 rounded-card border border-border bg-paper p-3 break-words text-ink-muted"
       >
         {previewParts(text).map((part, index) => (
           <Fragment key={index}>
             {part.kind === 'text' ? (
               part.value
             ) : (
-              <span className="mx-0.5 inline-flex h-6 items-center rounded-full border border-(--pill-plum-border) bg-(--pill-plum-bg) px-2 align-baseline font-mono text-xs leading-none text-(--pill-plum-text)">
+              <span className="mx-1 inline-flex h-6 items-center rounded-full border border-(--pill-plum-border) bg-(--pill-plum-bg) px-2 align-baseline font-mono type-meta leading-none text-(--pill-plum-text)">
                 {part.value}
               </span>
             )}

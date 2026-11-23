@@ -69,7 +69,7 @@ function SignedOutJoin({ code }: { code: string }) {
           </Link>
         )}
       </div>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {isInviteOnly ? t('joinClass.signUpWithCodeNote') : t('joinClass.signUpOpen')}
       </p>
     </>
@@ -136,14 +136,15 @@ function PreviewBody({
 }) {
   const { t } = useSpacesTranslation();
   if (preview.isError) return <Notice tone="error">{t('joinClass.loadFailed')}</Notice>;
-  if (preview.data === undefined) return <p className="m-0 text-body">{t('joinClass.checking')}</p>;
+  if (preview.data === undefined)
+    return <p className="m-0 text-ink-muted">{t('joinClass.checking')}</p>;
   if (preview.data.status === 'ended') return <Notice tone="info">{t('joinClass.ended')}</Notice>;
   if (preview.data.status === 'unknown') {
     return <Notice tone="info">{t('joinClass.unknown')}</Notice>;
   }
   return (
     <>
-      <p className="m-0 text-base leading-relaxed text-body">{t('joinClass.invitedBody')}</p>
+      <p className="m-0 type-body leading-relaxed text-ink-muted">{t('joinClass.invitedBody')}</p>
       <JoinAction code={code} joining={joining} />
     </>
   );
@@ -187,7 +188,7 @@ export function JoinClassPage() {
   const { t } = useSpacesTranslation();
   const { code = '' } = useParams();
   return (
-    <PageContainer className="flex flex-col py-10 md:py-14">
+    <PageContainer className="flex flex-col py-8 md:py-12">
       {code === '' ? (
         <ClassJoinCard title={t('joinClass.title')}>
           <ClassCodeForm />

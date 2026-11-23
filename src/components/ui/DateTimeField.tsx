@@ -59,7 +59,7 @@ export function DateTimeField({
   // Step 1: work out whether the typed time is in the hour the clocks skip, and when it runs.
   const runTime = skippedHourRunTime(value.date, value.time);
   return (
-    <div className="flex flex-wrap gap-2.5">
+    <div className="flex flex-wrap gap-3">
       {/* Step 2: the date box; it wraps under the time only on a very narrow screen. */}
       <div className="min-w-[140px] flex-1">
         <TextInput
@@ -81,9 +81,9 @@ export function DateTimeField({
         />
       </div>
       {/* Step 4: the quiet notes under both boxes. */}
-      {note !== undefined && <p className="m-0 w-full text-[13px] text-meta">{note}</p>}
+      {note !== undefined && <p className="m-0 w-full type-meta text-ink-muted">{note}</p>}
       {runTime !== null && skippedHourNote !== undefined && (
-        <p className="m-0 w-full text-[13px] text-meta" role="status">
+        <p className="m-0 w-full type-meta text-ink-muted" role="status">
           {skippedHourNote(runTime)}
         </p>
       )}

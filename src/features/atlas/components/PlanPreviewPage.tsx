@@ -45,7 +45,7 @@ function PreviewBody({
         {isPublished ? t('readers.preview.note') : t('readers.preview.notPublished')}
       </Notice>
       {area === null || !plan.areas.includes(area) ? (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('readers.preview.nothing')}{' '}
           <Link to={`/plan/s/${slug}/readers`} className="font-semibold text-link">
             {t('readers.item.settingsLink')}
@@ -86,7 +86,7 @@ export function PlanPreviewPage() {
       showsChrome={userId !== null}
     >
       <title>{t('readers.preview.documentTitle', { title: story?.title ?? '' })}</title>
-      {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {preview === null && <Notice tone="error">{t('notFound')}</Notice>}
       {preview && (

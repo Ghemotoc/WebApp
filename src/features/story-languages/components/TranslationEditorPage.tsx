@@ -50,7 +50,7 @@ function OutcomeNotice({ outcome, language }: { outcome: TranslationOutcome; lan
 function EditorFootnotes({ draft }: { draft: TranslationDraft }) {
   const { t } = useStoryLanguagesTranslation();
   return (
-    <div className="flex flex-col gap-1 text-[13px] text-meta max-md:hidden">
+    <div className="flex flex-col gap-1 type-meta text-ink-muted max-md:hidden">
       <p className="m-0">{t('editor.tip')}</p>
       <p className="m-0">
         <Link
@@ -75,7 +75,7 @@ function EditorCard(props: {
   const { source } = props.draft;
   const language = languageOwnName(source.languageCode);
   return (
-    <section className="flex flex-col gap-6 rounded-card border border-border bg-surface p-7 shadow-card max-md:hidden">
+    <section className="flex flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card max-md:hidden">
       <TextInput
         id="translation-chapter-title"
         label={t('editor.chapterTitle', { language })}
@@ -86,7 +86,7 @@ function EditorCard(props: {
         onChange={(event) => editor.setTitle(event.target.value)}
       />
       {editor.originalParagraphs.length === 0 ? (
-        <p className="m-0 text-body">{t('editor.noParagraphs')}</p>
+        <p className="m-0 text-ink-muted">{t('editor.noParagraphs')}</p>
       ) : (
         <SideBySidePapers
           original={{
@@ -142,7 +142,7 @@ function LoadedEditor({ draft }: { draft: TranslationDraft }) {
       <EditorCard draft={draft} editor={editor} />
       {editor.outcome !== null && <OutcomeNotice outcome={editor.outcome} language={language} />}
       {editor.outcome === null && editor.state.isDirty && (
-        <p role="status" className="m-0 text-[13px] font-semibold text-meta">
+        <p role="status" className="m-0 type-meta font-semibold text-ink-muted">
           {t('editor.unsaved')}
         </p>
       )}
@@ -160,7 +160,7 @@ export function TranslationEditorPage() {
   const { chapterCode = '' } = useParams();
   const state = useTranslationDraft(chapterCode);
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-5 pt-10 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-4 pt-8 pb-6">
       <LoadProblem {...state} isMissing={state.draft === null} kind="chapter" />
       {/* The key starts the editor again with that chapter's words when another one opens. */}
       {state.draft !== null && <LoadedEditor key={chapterCode} draft={state.draft} />}

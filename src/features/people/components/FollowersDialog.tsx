@@ -33,7 +33,7 @@ function FollowersList() {
   const { followers, isLoaded, loadFailed } = useMyFollowers(true);
   if (loadFailed) return <Notice tone="error">{t('followers.loadFailed')}</Notice>;
   if (!isLoaded) return null;
-  if (followers.length === 0) return <p className="m-0 text-body">{t('followers.empty')}</p>;
+  if (followers.length === 0) return <p className="m-0 text-ink-muted">{t('followers.empty')}</p>;
   return (
     <ul className="m-0 flex max-h-[50vh] list-none flex-col overflow-y-auto p-0">
       {followers.map((follower) => (
@@ -47,7 +47,7 @@ function FollowersList() {
           >
             {follower.displayName}
           </Link>
-          <span className="text-[13px] text-meta">
+          <span className="type-meta text-ink-muted">
             @{follower.handle} ·{' '}
             {t('followers.followedOn', {
               date: formatLocalDate(new Date(follower.followedAt), i18n.language),

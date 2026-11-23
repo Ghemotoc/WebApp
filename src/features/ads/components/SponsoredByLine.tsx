@@ -38,7 +38,7 @@ export function SponsoredByLine({ kind, slug }: SponsoredByLineProps) {
   // The sponsor's name is a link only when the campaign gave one.
   const name =
     credit.link_url === null ? (
-      <span className="font-semibold text-heading">{credit.sponsor_name}</span>
+      <span className="font-semibold text-ink-heading">{credit.sponsor_name}</span>
     ) : (
       <a
         href={credit.link_url}
@@ -54,7 +54,7 @@ export function SponsoredByLine({ kind, slug }: SponsoredByLineProps) {
       </a>
     );
   return (
-    <p className="m-0 text-sm text-body" data-sponsored-by="">
+    <p className="m-0 type-body text-ink-muted" data-sponsored-by="">
       {t('sponsor.by')} {name}
     </p>
   );

@@ -36,7 +36,7 @@ export interface ChapterRowActionsProps {
 
 /** The classes shared by the text buttons. */
 const textButton =
-  'inline-flex h-11 items-center rounded-full px-3 text-sm font-semibold text-link hover:underline';
+  'inline-flex h-11 items-center rounded-full px-3 type-body font-semibold text-link hover:underline';
 
 /** One round arrow button; pale and inactive at the end of the list. */
 function ArrowButton(props: {
@@ -56,8 +56,8 @@ function ArrowButton(props: {
       className={cn(
         'inline-flex size-11 items-center justify-center rounded-full border',
         props.isOff
-          ? 'cursor-not-allowed border-border bg-panel text-meta opacity-60'
-          : 'border-control-border bg-surface text-heading hover:bg-tint',
+          ? 'cursor-not-allowed border-border bg-panel text-ink-muted opacity-60'
+          : 'border-control-border bg-surface text-ink-heading hover:bg-tint',
       )}
     >
       {props.children}

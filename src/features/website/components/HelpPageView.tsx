@@ -40,13 +40,13 @@ function HelpBreadcrumb({ title, section }: { title: string; section: string }) 
   const { t } = useTranslation();
   return (
     <nav aria-label={t('website.help.breadcrumb')}>
-      <ol className="m-0 flex list-none flex-wrap items-center gap-x-2 gap-y-1 p-0 text-sm">
+      <ol className="m-0 flex list-none flex-wrap items-center gap-x-2 gap-y-1 p-0 type-body">
         <li>
           <WebsiteLink to="/help" className={crumbLinkClass}>
             {t('website.help.eyebrow')}
           </WebsiteLink>
         </li>
-        <li aria-hidden="true" className="text-meta">
+        <li aria-hidden="true" className="text-ink-muted">
           /
         </li>
         <li>
@@ -54,10 +54,10 @@ function HelpBreadcrumb({ title, section }: { title: string; section: string }) 
             {section}
           </WebsiteLink>
         </li>
-        <li aria-hidden="true" className="text-meta">
+        <li aria-hidden="true" className="text-ink-muted">
           /
         </li>
-        <li aria-current="page" className="text-meta">
+        <li aria-current="page" className="text-ink-muted">
           {title}
         </li>
       </ol>
@@ -84,15 +84,15 @@ function HelpArticle({ page }: { page: ParsedEntry<HelpPageContent> }) {
       <HelpBreadcrumb title={title} section={withBrand(page.content.section)} />
       <article
         lang={page.languageCode}
-        className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:p-10 lg:px-14 lg:py-12"
+        className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:p-8 lg:px-12 lg:py-12"
       >
-        <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] font-extrabold text-heading">
+        <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] font-bold text-ink-heading">
           {title}
         </h1>
-        <p className="m-0 text-sm text-meta" lang={i18n.language}>
+        <p className="m-0 type-body text-ink-muted" lang={i18n.language}>
           {t('website.help.updatedLine', { date: updated, count: minutes })}
         </p>
-        <div className="mt-3 max-w-[720px] text-[17px] leading-[1.7]">
+        <div className="mt-3 max-w-[720px] type-long leading-[1.7]">
           <CmsMarkdown markdown={page.content.body} language={page.languageCode} />
         </div>
       </article>
@@ -111,15 +111,15 @@ export function HelpPageView() {
   const { entries, isLoaded, readFailed } = useWebsiteContent('help_page', helpPageContentSchema);
   const page = entries.find((entry) => entry.entryKey === slug);
   return (
-    <PageContainer className="flex max-w-[960px] flex-col gap-5 pt-10 pb-16">
+    <PageContainer className="flex max-w-[960px] flex-col gap-4 pt-8 pb-16">
       {page !== undefined && <HelpArticle page={page} />}
       {page === undefined && readFailed && <Notice tone="error">{t('website.readFailed')}</Notice>}
       {page === undefined && isLoaded && !readFailed && (
         <>
-          <h1 className="m-0 font-heading text-[32px] font-extrabold text-heading">
+          <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
             {t('website.help.notFoundHeading')}
           </h1>
-          <p className="m-0 text-body">{t('website.help.notFound')}</p>
+          <p className="m-0 text-ink-muted">{t('website.help.notFound')}</p>
           <WebsiteLink
             to="/help"
             className="inline-flex min-h-6 w-fit items-center text-link underline"

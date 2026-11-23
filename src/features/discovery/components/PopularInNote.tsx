@@ -30,7 +30,7 @@ export function PopularInNote({ request, rankedCountry }: PopularInNoteProps) {
   // Nothing to say while loading, for "Everywhere", or when the country's ranking was used.
   if (askedCountry === null || rankedCountry === undefined || rankedCountry !== null) return null;
   return (
-    <p role="status" className="m-0 text-sm text-meta">
+    <p role="status" className="m-0 type-body text-ink-muted">
       {t('popularIn.fallbackNote', { country: countryName(askedCountry, i18n.language) })}
     </p>
   );

@@ -43,7 +43,7 @@ function StoryOwnFields({ page, saveStory }: Omit<StoryDetailsSectionProps, 'sav
   const { genreOptions, audienceOptions } = useStoryChoiceOptions();
   return (
     <>
-      <p className="m-0 text-sm text-meta">{t('details.sharedHint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('details.sharedHint')}</p>
       <PlanTextField
         id="atlas-title"
         label={t('details.title')}

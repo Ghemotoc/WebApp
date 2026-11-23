@@ -39,23 +39,23 @@ function SearchResults({
 }) {
   const { t } = useAtlasTranslation();
   if (results.length === 0) {
-    return <p className="m-0 break-words text-body">{t('search.nothing', { query })}</p>;
+    return <p className="m-0 break-words text-ink-muted">{t('search.nothing', { query })}</p>;
   }
   return (
-    <div className="flex min-w-0 flex-col gap-5">
-      <p className="m-0 break-words text-body" role="status">
+    <div className="flex min-w-0 flex-col gap-4">
+      <p className="m-0 break-words text-ink-muted" role="status">
         {t('search.count', { count: results.length, query })}
       </p>
-      <div className="grid min-w-0 items-start gap-x-6 gap-y-5 md:grid-cols-2">
+      <div className="grid min-w-0 items-start gap-x-6 gap-y-4 md:grid-cols-2">
         {groupSearchResults(results).map((group) => (
           <section
             key={group.kind}
             aria-labelledby={`atlas-search-${group.kind}`}
-            className="flex min-w-0 flex-col gap-1.5"
+            className="flex min-w-0 flex-col gap-2"
           >
             <h2
               id={`atlas-search-${group.kind}`}
-              className="m-0 px-[18px] text-[13px] font-semibold tracking-[0.08em] break-words text-meta uppercase"
+              className="m-0 px-4 type-meta font-bold tracking-[0.08em] break-words text-ink-muted uppercase"
             >
               {t(`search.kinds.${group.kind}`, { count: group.results.length })}
             </h2>
@@ -81,7 +81,7 @@ function SearchBody({ slug, query }: { slug: string; query: string }) {
   const { t } = useAtlasTranslation();
   const { results, loadFailed, isTooShort } = useStorySearch(slug, query);
   if (isTooShort)
-    return <p className="m-0 text-body">{t('search.tooShort', { count: shortestSearch })}</p>;
+    return <p className="m-0 text-ink-muted">{t('search.tooShort', { count: shortestSearch })}</p>;
   if (loadFailed) return <Notice tone="error">{t('search.failed')}</Notice>;
   if (results === null) return <Notice tone="error">{t('notFound')}</Notice>;
   if (results === undefined) return null;
@@ -111,7 +111,7 @@ export function AtlasSearchPage() {
       showsChrome={userId !== null}
     >
       <title>{t('search.documentTitle', { query })}</title>
-      {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {userId !== null && (
         <>
           <AtlasPageHeading title={t('search.heading')} />

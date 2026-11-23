@@ -36,7 +36,7 @@ function MySettingRows() {
     <>
       <div className="flex flex-col gap-1 border-b border-border py-3">
         <Eyebrow>{t('about.whoTitle')}</Eyebrow>
-        <p className="m-0 font-semibold text-heading">
+        <p className="m-0 font-semibold text-ink-heading">
           {t(`about.audience.${settings.data.audience}`)}
         </p>
         <MessageSettingsLink text={t('settings.change')} label={t('settings.changeWho')} />
@@ -44,10 +44,10 @@ function MySettingRows() {
       {settings.data.ageGroup === 'teen' && (
         <div className="flex flex-col gap-1 border-b border-border py-3">
           <Eyebrow>{t('about.adultsTitle')}</Eyebrow>
-          <p className="m-0 font-semibold text-heading">
+          <p className="m-0 font-semibold text-ink-heading">
             {t(settings.data.adultsMayMessage ? 'about.on' : 'about.off')}
           </p>
-          <p className="m-0 text-sm text-body">{t('about.adultsHint')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('about.adultsHint')}</p>
           <MessageSettingsLink text={t('settings.change')} label={t('settings.changeAdults')} />
         </div>
       )}
@@ -63,7 +63,7 @@ function MySettingRows() {
 export function AboutChatPanel({ chat }: { chat: Conversation }) {
   const { t } = useMessagesTranslation();
   return (
-    <aside aria-labelledby="about-chat-heading" className="flex min-w-0 flex-col p-4 text-sm">
+    <aside aria-labelledby="about-chat-heading" className="flex min-w-0 flex-col p-4 type-body">
       <div className="flex flex-col gap-1 border-b border-border pb-3">
         <h2 id="about-chat-heading" className="m-0 eyebrow">
           {t('about.title')}
@@ -71,15 +71,15 @@ export function AboutChatPanel({ chat }: { chat: Conversation }) {
         <Link to={`/u/${chat.handle}`} className="w-fit font-semibold text-link underline">
           {t('about.viewProfile', { name: chat.displayName })}
         </Link>
-        <p className="m-0 text-body">{t(followLineKey(chat))}</p>
+        <p className="m-0 text-ink-muted">{t(followLineKey(chat))}</p>
       </div>
       <MySettingRows />
       {chat.status !== null && !chat.isRequestToMe && (
         <DeleteChatControl handle={chat.handle} name={chat.displayName} />
       )}
       <div className="mt-4 flex flex-col gap-1 rounded-card bg-panel p-4">
-        <h3 className="m-0 text-sm font-semibold text-heading">{t('about.privacyTitle')}</h3>
-        <p className="m-0 text-body">{t('about.privacy')}</p>
+        <h3 className="m-0 type-body font-bold text-ink-heading">{t('about.privacyTitle')}</h3>
+        <p className="m-0 text-ink-muted">{t('about.privacy')}</p>
       </div>
     </aside>
   );

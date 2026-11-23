@@ -45,7 +45,7 @@ export function TermsCheckbox({ isChecked, problem, onChange }: TermsCheckboxPro
   const { t } = useTranslation('auth');
   const errorId = problem === undefined ? undefined : 'sign-up-terms-error';
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div className="flex items-start gap-3">
         <input
           id="sign-up-terms"
@@ -54,9 +54,9 @@ export function TermsCheckbox({ isChecked, problem, onChange }: TermsCheckboxPro
           aria-describedby={errorId}
           aria-invalid={problem === undefined ? undefined : true}
           onChange={(event) => onChange(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+          className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
         />
-        <label htmlFor="sign-up-terms" className="text-[15px] text-body">
+        <label htmlFor="sign-up-terms" className="type-body text-ink-muted">
           {t('signUp.terms.before')} <LegalLink slug="terms" text={t('signUp.terms.termsLink')} />{' '}
           {t('signUp.terms.middle')}{' '}
           <LegalLink slug="privacy" text={t('signUp.terms.privacyLink')} />
@@ -64,7 +64,7 @@ export function TermsCheckbox({ isChecked, problem, onChange }: TermsCheckboxPro
         </label>
       </div>
       {problem !== undefined && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {t(problem)}
         </p>
       )}

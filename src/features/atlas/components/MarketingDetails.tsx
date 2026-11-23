@@ -31,7 +31,7 @@ const boxId = 'atlas-marketing-add-detail-name';
 function AddDetailButton({ onOpen }: { onOpen: () => void }) {
   const { t } = useAtlasTranslation();
   return (
-    <Button variant="secondary" className="h-9 self-start px-4 text-[13px]" onClick={onOpen}>
+    <Button variant="secondary" className="h-9 self-start px-4 type-meta" onClick={onOpen}>
       <ActionIcon name="plus" size={14} />
       {t('marketing.details.add')}
     </Button>

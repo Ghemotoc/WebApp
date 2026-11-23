@@ -110,7 +110,7 @@ export function StoryCoverArt({ story, drawn, className }: StoryCoverArtProps) {
   if (view.url === null) {
     return (
       <CoverBox className={className}>
-        <span className="flex size-full items-center justify-center p-3 text-center text-[13px] font-semibold text-meta">
+        <span className="flex size-full items-center justify-center p-3 text-center type-meta font-semibold text-ink-muted">
           {t('pictures.beingChecked')}
         </span>
       </CoverBox>
@@ -122,7 +122,7 @@ export function StoryCoverArt({ story, drawn, className }: StoryCoverArtProps) {
       <img src={view.url} alt="" className="size-full object-cover" />
       <PictureLabel story={story} />
       {view.state !== 'visible' && (
-        <span className="absolute inset-x-2 bottom-2 inline-flex h-6 items-center justify-center rounded-full border border-border bg-surface-solid px-2 text-xs leading-none font-semibold text-heading">
+        <span className="absolute inset-x-2 bottom-2 inline-flex h-6 items-center justify-center rounded-full border border-border bg-surface-solid px-2 type-meta leading-none font-semibold text-ink-heading">
           {t(waitingKey(view.state))}
         </span>
       )}

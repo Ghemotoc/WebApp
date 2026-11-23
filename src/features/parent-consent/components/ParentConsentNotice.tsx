@@ -90,14 +90,14 @@ export function ParentConsentNotice() {
       >
         <h2
           id="parent-consent-notice-title"
-          className="m-0 font-heading text-[24px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t(isWithdrawn ? 'parentConsent.withdrawnHeading' : 'parentConsent.notice.heading')}
         </h2>
-        <p className="m-0 text-body">{body}</p>
+        <p className="m-0 text-ink-muted">{body}</p>
         <Link
           to={isWithdrawn ? '/settings#parent-consent' : '/parent-consent'}
-          className="inline-flex h-11 items-center self-start rounded-full button-main px-5 text-sm font-semibold no-underline"
+          className="inline-flex h-11 items-center self-start rounded-full button-main px-4 type-body font-semibold no-underline"
         >
           {t(isWithdrawn ? 'parentConsent.notice.withdrawnAction' : 'parentConsent.notice.action')}
         </Link>

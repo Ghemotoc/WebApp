@@ -98,7 +98,7 @@ export function SegmentedControl<Value extends string>({
   const columns = { gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` };
   return (
     <fieldset className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0">
-      <legend className={isLegendVisible ? 'mb-2 p-0 text-[15px] font-bold text-ink' : 'sr-only'}>
+      <legend className={isLegendVisible ? 'mb-2 p-0 type-body font-semibold text-ink' : 'sr-only'}>
         {legend}
       </legend>
       <div
@@ -121,9 +121,9 @@ export function SegmentedControl<Value extends string>({
               lang={option.lang}
               data-segment
               className={cn(
-                'relative z-[1] inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-2 text-center text-sm leading-tight text-ink sm:px-5',
+                'relative z-[1] inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-2 text-center type-body leading-tight text-ink sm:px-4',
                 'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus-ring)',
-                isPicked ? 'font-bold' : 'font-medium',
+                isPicked ? 'font-semibold' : 'font-normal',
               )}
             >
               <input

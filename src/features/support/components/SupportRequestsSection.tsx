@@ -25,11 +25,11 @@ export function SupportRequestsSection() {
     >
       <h2
         id="settings-support-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('settings.heading')}
       </h2>
-      <p className="m-0 text-body">{t('settings.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('settings.intro')}</p>
       <Link to="/support" className="w-fit font-semibold text-link underline">
         {t('settings.open')}
       </Link>

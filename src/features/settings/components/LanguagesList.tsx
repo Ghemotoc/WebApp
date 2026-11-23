@@ -29,8 +29,8 @@ function LanguageItem({ language, state }: { language: LanguageRow; state: Marke
     state.failedChange?.kind === 'language' && state.failedChange.code === language.code;
   return (
     <li className="flex min-w-0 flex-col gap-2 rounded-card border border-border p-4">
-      <h4 className="m-0 text-base font-bold text-heading">{name}</h4>
-      <p className="m-0 text-sm text-body">
+      <h4 className="m-0 type-body font-bold text-ink-heading">{name}</h4>
+      <p className="m-0 type-body text-ink-muted">
         {language.isInterface ? t('markets.interface') : t('markets.storiesOnly')} ·{' '}
         {language.moderators === 0
           ? t('markets.noModerators')
@@ -66,10 +66,10 @@ export function LanguagesList({ state }: { state: MarketsAdminState }) {
   const { t } = useTranslation('settings');
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
         {t('markets.languagesHeading')}
       </h3>
-      <p className="m-0 text-sm text-body">{t('markets.languagesNote')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('markets.languagesNote')}</p>
       <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2">
         {state.languages.map((language) => (
           <LanguageItem key={language.code} language={language} state={state} />

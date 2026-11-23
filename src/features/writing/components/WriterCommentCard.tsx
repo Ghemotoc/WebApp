@@ -31,8 +31,8 @@ export interface WriterCommentCardProps {
 
 /** The list item's classes for each look. */
 const lookClasses = {
-  card: 'flex min-w-0 flex-col gap-3 rounded-3xl border border-border bg-surface p-5 shadow-card',
-  row: 'flex min-w-0 flex-col gap-1.5 border-t border-hairline py-3.5 first:border-t-0',
+  card: 'flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card',
+  row: 'flex min-w-0 flex-col gap-2 border-t border-hairline py-4 first:border-t-0',
 } as const;
 
 /**
@@ -67,10 +67,10 @@ export function WriterCommentCard({
           >
             {comment.displayName}
           </Link>
-          <span className="text-[13px] break-words text-meta">{where}</span>
+          <span className="type-meta break-words text-ink-muted">{where}</span>
         </span>
       </span>
-      <p className="m-0 text-[15px] leading-[1.6] break-words whitespace-pre-line text-ink">
+      <p className="m-0 type-body leading-[1.6] break-words whitespace-pre-line text-ink">
         {comment.body}
         {isShortened && '…'}
       </p>
@@ -80,7 +80,7 @@ export function WriterCommentCard({
           name: comment.displayName,
           number: comment.chapterPosition,
         })}
-        className="inline-flex min-h-6 items-center self-start text-sm font-semibold"
+        className="inline-flex min-h-6 items-center self-start type-body font-semibold"
       >
         {t('dashboard.comments.reply')}
       </Link>

@@ -83,7 +83,7 @@ function ContestItem({ contest, now }: { contest: HubContest; now: Date }) {
           {name}
         </h3>
         <MetaLine facts={contestFacts(contest, t, isRomanian)} />
-        <p className="m-0 text-body">{t('hub.contests.howToEnter')}</p>
+        <p className="m-0 text-ink-muted">{t('hub.contests.howToEnter')}</p>
         <Link
           to={`/c/${contest.pageSlug}`}
           aria-label={t('hub.contests.openLabel', { name })}
@@ -112,9 +112,9 @@ export function HubContests({ now }: { now: Date }) {
       <h2 id="hub-contests" className="m-0 type-heading">
         {t('hub.contests.heading')}
       </h2>
-      {contests.length === 0 && <p className="m-0 text-body">{t('hub.contests.none')}</p>}
+      {contests.length === 0 && <p className="m-0 text-ink-muted">{t('hub.contests.none')}</p>}
       {contests.length > 0 && (
-        <ul className="m-0 grid list-none gap-10 p-0 min-[900px]:grid-cols-3">
+        <ul className="m-0 grid list-none gap-8 p-0 min-[900px]:grid-cols-3">
           {contests.map((contest) => (
             <ContestItem key={contest.contestId} contest={contest} now={now} />
           ))}

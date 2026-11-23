@@ -49,17 +49,17 @@ export function SpaceRadioGroup<Value extends string>({
               id={inputId}
               type="radio"
               name={groupName}
-              className="mt-0.5 h-5 w-5 flex-none"
+              className="mt-1 h-5 w-5 flex-none"
               checked={value === option.value}
               aria-describedby={noteId}
               onChange={() => onChange(option.value)}
             />
-            <div className="flex flex-col gap-0.5">
-              <label htmlFor={inputId} className="text-[15px] font-semibold text-heading">
+            <div className="flex flex-col gap-1">
+              <label htmlFor={inputId} className="type-body font-semibold text-ink-heading">
                 {option.label}
               </label>
               {option.note !== undefined && (
-                <span id={noteId} className="text-sm text-body">
+                <span id={noteId} className="type-body text-ink-muted">
                   {option.note}
                 </span>
               )}

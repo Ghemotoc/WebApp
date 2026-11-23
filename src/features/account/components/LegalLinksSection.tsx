@@ -22,11 +22,11 @@ export function LegalLinksSection() {
     >
       <h2
         id="settings-legal-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('settings.legalHeading')}
       </h2>
-      <p className="m-0 text-body">{t('settings.legalText')}</p>
+      <p className="m-0 text-ink-muted">{t('settings.legalText')}</p>
       <Link
         to="/legal/terms"
         className="inline-flex min-h-11 items-center self-start text-link underline"

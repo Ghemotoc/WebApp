@@ -37,11 +37,11 @@ export function MyReportRow({ report }: { report: MyReport }) {
       <div>
         <StateWord>{t(`reports.status.${state}`)}</StateWord>
       </div>
-      <p className="m-0 font-semibold text-heading">
+      <p className="m-0 font-semibold text-ink-heading">
         {report.itemSummary ?? t('reports.unknownItem')}
       </p>
-      <p className="m-0 text-sm text-meta">{meta}</p>
-      <p className="m-0 text-body">{t(`reports.explain.${state}`)}</p>
+      <p className="m-0 type-body text-ink-muted">{meta}</p>
+      <p className="m-0 text-ink-muted">{t(`reports.explain.${state}`)}</p>
     </li>
   );
 }

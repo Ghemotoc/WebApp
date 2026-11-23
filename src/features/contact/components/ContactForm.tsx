@@ -59,16 +59,16 @@ function TopicChips({
   const { t } = useTranslation('contact');
   return (
     <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
-      <legend className="mb-3 p-0 text-sm font-semibold text-ink">{t('form.topic')}</legend>
+      <legend className="mb-3 p-0 type-body font-semibold text-ink">{t('form.topic')}</legend>
       <div className="flex flex-wrap gap-2">
         {contactTopics.map((topic) => (
           <label
             key={topic}
             className={cn(
-              "relative inline-flex min-h-9 cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm leading-tight after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus-ring)",
+              "relative inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 type-body leading-tight after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-(--focus-ring)",
               topic === chosen
-                ? 'border-chip-on bg-chip-on font-bold text-chip-on-text'
-                : 'border-control-border bg-surface font-semibold text-heading hover:bg-tint',
+                ? 'border-chip-on bg-chip-on font-semibold text-chip-on-text'
+                : 'border-control-border bg-surface font-semibold text-ink-heading hover:bg-tint',
             )}
           >
             <input
@@ -118,7 +118,7 @@ function SenderField({
   const { t } = useTranslation('contact');
   if (sender !== null) {
     return (
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('form.signedInAs', { email: sender.email, handle: sender.handle ?? '' })}
       </p>
     );
@@ -188,7 +188,7 @@ function MessageField({
         onChange={(event) => onChange(event.target.value)}
       />
       {hasProblem && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t(problem === 'message_missing' ? 'form.messageMissing' : 'form.messageTooLong')}
         </p>
       )}
@@ -236,9 +236,12 @@ export function ContactForm({ sender, language, isSending, failure, onSend }: Co
       noValidate
       onSubmit={handleSubmit}
       aria-labelledby="contact-form-heading"
-      className="relative flex flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
     >
-      <h2 id="contact-form-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+      <h2
+        id="contact-form-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('form.heading')}
       </h2>
       <TopicChips chosen={topic} onChoose={setTopic} />
@@ -254,7 +257,7 @@ export function ContactForm({ sender, language, isSending, failure, onSend }: Co
         <Button type="submit" size="lg" disabled={isSending}>
           {t(isSending ? 'form.sending' : 'form.send')}
         </Button>
-        <span className="text-sm text-meta">{t('form.aPersonReads')}</span>
+        <span className="type-body text-ink-muted">{t('form.aPersonReads')}</span>
       </div>
     </form>
   );

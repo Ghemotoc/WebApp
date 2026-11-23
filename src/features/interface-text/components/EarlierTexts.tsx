@@ -50,19 +50,19 @@ function liveLine(
 export function EarlierTexts({ versions, locale, state }: EarlierTextsProps) {
   const { t, i18n } = useTranslation('websiteAdmin');
   return (
-    <details className="text-sm">
+    <details className="type-body">
       <summary className="min-h-6 cursor-pointer font-semibold text-ink">
         {t('history.heading')}
       </summary>
       <dl className="m-0 flex flex-col">
         <div className="flex flex-wrap gap-x-3 border-b border-hairline py-2">
           <dt className="font-semibold text-ink">{t('history.live')}</dt>
-          <dd className="m-0 text-body">{liveLine(versions, i18n.language, t)}</dd>
+          <dd className="m-0 text-ink-muted">{liveLine(versions, i18n.language, t)}</dd>
         </div>
         {versions.scheduled !== null && (
           <div className="flex flex-wrap gap-x-3 border-b border-hairline py-2">
             <dt className="font-semibold text-ink">{t('history.scheduled')}</dt>
-            <dd className="m-0 text-body">
+            <dd className="m-0 text-ink-muted">
               {t('history.goesLive', { date: dayOf(versions.scheduled.showFrom, i18n.language) })}
             </dd>
           </div>
@@ -74,7 +74,7 @@ export function EarlierTexts({ versions, locale, state }: EarlierTextsProps) {
             key={version.id}
             className="flex flex-wrap items-center justify-between gap-2 border-b border-hairline py-2"
           >
-            <span lang={locale} className="min-w-0 flex-1 break-words text-body">
+            <span lang={locale} className="min-w-0 flex-1 break-words text-ink-muted">
               {dayOf(version.showFrom, i18n.language)} · {version.text}
             </span>
             <Button

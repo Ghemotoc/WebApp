@@ -55,16 +55,16 @@ function MemberMessageItem({ message }: { message: MailMessage }) {
   // The member's own words sit on the right, the team's on the left, as in a chat.
   const sideStyle = message.fromTeam ? 'items-start' : 'items-end';
   const bubbleStyle = message.fromTeam
-    ? 'rounded-bl-md border border-border bg-surface text-ink'
-    : 'rounded-br-md bg-primary text-on-primary';
+    ? 'rounded-bl-field border border-border bg-surface text-ink'
+    : 'rounded-br-field bg-primary text-on-primary';
   return (
     <li className={`flex flex-col gap-1 ${sideStyle}`}>
       <p
-        className={`m-0 max-w-[min(560px,85%)] rounded-field px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
+        className={`m-0 max-w-[min(560px,85%)] rounded-field px-4 py-3 type-body leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
       >
         {message.body}
       </p>
-      <p className="m-0 text-xs text-meta">
+      <p className="m-0 type-meta text-ink-muted">
         {author} · {when}
       </p>
     </li>
@@ -86,10 +86,10 @@ function StaffMessageItem({ message }: { message: MailMessage }) {
   const tone = toneOf(message);
   return (
     <li className={`flex flex-col gap-2 rounded-card border border-border p-4 ${tone}`}>
-      <p className="m-0 text-sm text-meta">
-        <span className="font-semibold text-heading">{author}</span> · {when}
+      <p className="m-0 type-body text-ink-muted">
+        <span className="font-semibold text-ink-heading">{author}</span> · {when}
       </p>
-      <p className="m-0 whitespace-pre-line break-words text-body">{message.body}</p>
+      <p className="m-0 whitespace-pre-line break-words text-ink-muted">{message.body}</p>
     </li>
   );
 }

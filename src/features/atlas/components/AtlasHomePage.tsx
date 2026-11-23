@@ -66,7 +66,7 @@ function NewPlanCard() {
   return (
     <Link
       to={newStoryAddress}
-      className="flex min-h-40 flex-col items-center justify-center gap-2.5 rounded-card border-2 border-dashed border-control-border p-[18px] font-semibold text-heading no-underline hover:bg-tint"
+      className="flex min-h-40 flex-col items-center justify-center gap-3 rounded-card border-2 border-dashed border-control-border p-4 font-semibold text-ink-heading no-underline hover:bg-tint"
     >
       <span
         aria-hidden="true"
@@ -87,10 +87,10 @@ function HomeHeader() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex max-w-[60ch] flex-col gap-2">
           <Eyebrow>{t('eyebrow')}</Eyebrow>
-          <h1 className="m-0 font-heading text-[clamp(36px,5vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] text-heading">
+          <h1 className="m-0 font-heading text-[clamp(36px,5vw,64px)] leading-[0.98] font-bold tracking-[-0.025em] text-ink-heading">
             {t('home.heading')}
           </h1>
-          <p className="m-0 text-[17px] leading-normal text-body">{t('home.lead')}</p>
+          <p className="m-0 type-long leading-normal text-ink-muted">{t('home.lead')}</p>
         </div>
         <Link
           to={newStoryAddress}
@@ -100,7 +100,7 @@ function HomeHeader() {
           {t('switcher.newStory')}
         </Link>
       </div>
-      <p className="m-0 inline-flex items-center gap-1.5 text-sm text-meta">
+      <p className="m-0 inline-flex items-center gap-2 type-body text-ink-muted">
         <ActionIcon name="lock" size={14} />
         {t('home.privateNote')}
       </p>
@@ -119,7 +119,7 @@ function PlanCards({ cards }: { cards: PlanCardData[] }) {
         action={
           <Link
             to={newStoryAddress}
-            className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+            className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
           >
             {t('empty.action')}
           </Link>
@@ -130,7 +130,7 @@ function PlanCards({ cards }: { cards: PlanCardData[] }) {
   // Automatic covers come from each story's ID; two neighbours never share a design (S1-E3-13).
   const covers = designsForRow(cards.map((card) => card.story));
   return (
-    <div className="grid gap-5 md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
       {cards.map((card, index) => (
         <StoryPlanCard
           key={card.story.id}
@@ -155,12 +155,12 @@ export function AtlasHomePage() {
   const { plans, loadFailed } = useMyStoryPlans();
   if (!isKnown) return null;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-7 pt-10 pb-12">
+    <PageContainer className="tmc-rise flex flex-col gap-6 pt-8 pb-12">
       <title>{t('homeDocumentTitle')}</title>
       {!isSignedIn && (
         <>
           <Eyebrow>{t('eyebrow')}</Eyebrow>
-          <p className="m-0 text-body">{t('signedOut')}</p>
+          <p className="m-0 text-ink-muted">{t('signedOut')}</p>
         </>
       )}
       {isSignedIn && <HomeHeader />}

@@ -39,11 +39,14 @@ function DecisionsSection({ statements }: { statements: StatementOfReasons[] }) 
   const { t } = useStatementsTranslation();
   return (
     <section aria-labelledby="my-decisions-heading" className="flex flex-col gap-4">
-      <h2 id="my-decisions-heading" className="m-0 font-heading text-[26px] font-bold text-heading">
-        {t('decisions.heading')} <span className="text-meta">({statements.length})</span>
+      <h2
+        id="my-decisions-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
+        {t('decisions.heading')} <span className="text-ink-muted">({statements.length})</span>
       </h2>
       {statements.length === 0 ? (
-        <p className="m-0 text-body">{t('decisions.empty')}</p>
+        <p className="m-0 text-ink-muted">{t('decisions.empty')}</p>
       ) : (
         statements.map((statement) => (
           <StatementCard key={statement.reference} statement={statement} />
@@ -62,11 +65,14 @@ function ReportsSection({ reports }: { reports: MyReport[] }) {
   const { t } = useStatementsTranslation();
   return (
     <section aria-labelledby="my-reports-heading" className="flex flex-col gap-2">
-      <h2 id="my-reports-heading" className="m-0 font-heading text-[26px] font-bold text-heading">
-        {t('reports.heading')} <span className="text-meta">({reports.length})</span>
+      <h2
+        id="my-reports-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
+        {t('reports.heading')} <span className="text-ink-muted">({reports.length})</span>
       </h2>
       {reports.length === 0 ? (
-        <p className="m-0 text-body">{t('reports.empty')}</p>
+        <p className="m-0 text-ink-muted">{t('reports.empty')}</p>
       ) : (
         <ul className="m-0 list-none rounded-card border border-border bg-surface px-6 py-1 shadow-card">
           {reports.map((report) => (
@@ -90,10 +96,10 @@ function ContactCard() {
       aria-labelledby="my-reports-contact-heading"
       className="flex flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="my-reports-contact-heading" className="m-0 text-xl font-bold text-ink">
+      <h2 id="my-reports-contact-heading" className="m-0 type-subheading font-bold text-ink">
         {t('page.contactHeading')}
       </h2>
-      <p className="m-0 text-body">{t('page.contactBody')}</p>
+      <p className="m-0 text-ink-muted">{t('page.contactBody')}</p>
       <Link to="/moderator-mail" className="w-fit font-semibold text-link underline">
         {t('page.contactLink')}
       </Link>
@@ -183,20 +189,20 @@ export function MyReportsPage() {
       <title>{t('page.documentTitle')}</title>
       <Link
         to="/settings"
-        className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-heading no-underline hover:underline"
+        className="inline-flex min-h-11 items-center gap-2 self-start type-body font-semibold text-ink-heading no-underline hover:underline"
       >
         <ChevronLeftIcon />
         {t('page.backToSettings')}
       </Link>
       <header className="flex max-w-[720px] flex-col gap-4">
         <Eyebrow>{t('page.eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
+        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
           {t('page.title')}
         </h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('page.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('page.intro')}</p>
       </header>
       {isKnown && userId === null && (
-        <p className="m-0 pb-16 text-body">
+        <p className="m-0 pb-16 text-ink-muted">
           {t('page.signedOut')}{' '}
           <Link to="/sign-in" className="text-link underline">
             {t('page.logIn')}

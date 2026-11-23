@@ -33,11 +33,11 @@ export function MyDataRequestsSection() {
     >
       <h2
         id="settings-data-requests-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('mine.heading')}
       </h2>
-      <p className="m-0 text-body">{t('mine.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('mine.intro')}</p>
       {mine.loadFailed && <Notice tone="error">{t('mine.loadFailed')}</Notice>}
       {mine.answerFailure !== null && (
         <Notice tone="error">

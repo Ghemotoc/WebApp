@@ -21,7 +21,7 @@ import { HeartIcon } from './ReaderIcons';
 
 /** The quiet button's shape (the simplified design, CALM-5: 44 px high, the quiet glass). */
 const pillShape =
-  'inline-flex h-11 items-center gap-2 rounded-full px-4 text-[15px] font-semibold no-underline';
+  'inline-flex h-11 items-center gap-2 rounded-full px-4 type-body font-semibold no-underline';
 
 /**
  * Renders the button, the log-in link or nothing.
@@ -35,16 +35,16 @@ export function LikeButton({ address }: { address: ChapterAddress }) {
   const count = like.state.likeCount;
   if (!like.isSignedIn) {
     return (
-      <Link to="/sign-in" className={cn(pillShape, 'button-glass text-heading')}>
+      <Link to="/sign-in" className={cn(pillShape, 'button-glass text-ink-heading')}>
         <HeartIcon isFilled={false} />
         {t('likes.logIn')}
-        <span className="font-medium">{t('likes.count', { count })}</span>
+        <span className="font-normal">{t('likes.count', { count })}</span>
       </Link>
     );
   }
   const isLiked = like.state.liked;
   return (
-    <span className="inline-flex flex-col items-start gap-1.5">
+    <span className="inline-flex flex-col items-start gap-2">
       <button
         type="button"
         aria-pressed={isLiked}
@@ -54,15 +54,15 @@ export function LikeButton({ address }: { address: ChapterAddress }) {
           pillShape,
           'cursor-pointer disabled:cursor-wait',
           // Liked: the tint with the heart filled in, so the state never rests on colour alone.
-          isLiked ? 'bg-tint text-heading' : 'button-glass text-heading',
+          isLiked ? 'bg-tint text-ink-heading' : 'button-glass text-ink-heading',
         )}
       >
         <HeartIcon isFilled={isLiked} />
         {t(isLiked ? 'likes.liked' : 'likes.like')}
-        <span className="font-medium">{t('likes.count', { count })}</span>
+        <span className="font-normal">{t('likes.count', { count })}</span>
       </button>
       {like.failure !== null && (
-        <span role="alert" className="text-sm text-destructive">
+        <span role="alert" className="type-body text-destructive">
           {t(like.failure === 'read_only' ? 'likes.readOnly' : 'likes.failed')}
         </span>
       )}

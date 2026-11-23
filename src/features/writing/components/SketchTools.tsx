@@ -39,7 +39,9 @@ function ColourSwatch(props: { colour: SketchColour; isChosen: boolean; onChoose
       onClick={props.onChoose}
       style={{ background: SKETCH_COLOURS[props.colour] }}
       className={`size-11 cursor-pointer rounded-full border-[3px] border-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring) ${
-        props.isChosen ? 'shadow-[0_0_0_2px_#481C5F]' : 'shadow-[0_0_0_1px_#8E7B99]'
+        props.isChosen
+          ? 'shadow-[0_0_0_2px_var(--plum-via)]'
+          : 'shadow-[0_0_0_1px_var(--control-border)]'
       }`}
     />
   );
@@ -52,7 +54,7 @@ function ToolButton(props: { label: string; isDisabled: boolean; onPress: () => 
       type="button"
       disabled={props.isDisabled}
       onClick={props.onPress}
-      className="inline-flex h-11 cursor-pointer items-center rounded-full button-glass px-[18px] text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring) disabled:cursor-not-allowed disabled:opacity-60"
+      className="inline-flex h-11 cursor-pointer items-center rounded-full button-glass px-4 type-body font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring) disabled:cursor-not-allowed disabled:opacity-60"
     >
       {props.label}
     </button>
@@ -70,7 +72,7 @@ export function SketchTools(props: SketchToolsProps) {
     <div
       role="group"
       aria-label={t('drawingDialog.toolsLabel')}
-      className="flex flex-wrap items-center gap-1.5"
+      className="flex flex-wrap items-center gap-2"
     >
       <Chip isPressed={props.tool === 'pen'} onPressedChange={() => props.onToolChange('pen')}>
         {t('drawingDialog.pen')}

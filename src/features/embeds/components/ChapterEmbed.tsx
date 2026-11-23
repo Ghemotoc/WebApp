@@ -67,8 +67,8 @@ function usePlayback() {
 /** The box shown instead of a card that was removed or couldn't be read. */
 function EmbedPlaceholder({ text }: { text: string }) {
   return (
-    <div className="my-7 flex min-h-24 items-center justify-center rounded-field border border-dashed border-control-border bg-paper px-6 py-6 text-center">
-      <p className="m-0 text-[15px] font-semibold text-heading">{text}</p>
+    <div className="my-6 flex min-h-24 items-center justify-center rounded-field border border-dashed border-control-border bg-paper px-6 py-6 text-center">
+      <p className="m-0 type-body font-semibold text-ink-heading">{text}</p>
     </div>
   );
 }
@@ -104,13 +104,13 @@ function EmbedActions({
           ref={stopRef}
           type="button"
           onClick={onStop}
-          className="inline-flex h-11 items-center rounded-full border border-control-border px-[18px] text-sm font-semibold text-heading hover:bg-tint"
+          className="inline-flex h-11 items-center rounded-full border border-control-border px-4 type-body font-semibold text-ink-heading hover:bg-tint"
         >
           {t('embed.stop')}
         </button>
       )}
       {writerName !== null && (
-        <span className="text-[13px] text-meta">{t('embed.addedBy', { name: writerName })}</span>
+        <span className="type-meta text-ink-muted">{t('embed.addedBy', { name: writerName })}</span>
       )}
       {canReport && (
         <span className="ml-auto">
@@ -146,7 +146,7 @@ export function ChapterEmbed(props: ChapterEmbedProps) {
       role="group"
       aria-label={t(`embed.groupLabel.${kind}`, { service })}
       data-chapter-embed={embedId}
-      className="my-7 flex flex-wrap overflow-hidden rounded-field border border-border bg-surface"
+      className="my-6 flex flex-wrap overflow-hidden rounded-field border border-border bg-surface"
     >
       <EmbedPlayer
         kind={kind}
@@ -157,11 +157,11 @@ export function ChapterEmbed(props: ChapterEmbedProps) {
         playButtonRef={playRef}
         onPlay={play}
       />
-      <div className="flex min-w-0 flex-[1_1_260px] flex-col gap-1.5 px-5 py-4">
+      <div className="flex min-w-0 flex-[1_1_260px] flex-col gap-2 px-4 py-4">
         <p className="m-0 eyebrow">{t(`embed.eyebrow.${kind}`, { service })}</p>
-        <p className="m-0 font-heading text-xl leading-tight font-bold text-ink">{title}</p>
-        <p className="m-0 text-sm text-body">{t('embed.cookies', { service })}</p>
-        <p className="m-0 text-[13px] text-meta">{t('embed.terms', { service })}</p>
+        <p className="m-0 font-heading type-subheading leading-tight font-bold text-ink">{title}</p>
+        <p className="m-0 type-body text-ink-muted">{t('embed.cookies', { service })}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('embed.terms', { service })}</p>
         <EmbedActions
           embedId={embedId}
           kind={kind}

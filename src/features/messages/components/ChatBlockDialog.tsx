@@ -66,7 +66,7 @@ export function ChatBlockDialog({ isOpen, onClose, handle, name }: ChatBlockDial
       title={t('block.title', { name })}
       closeLabel={t('block.close')}
     >
-      <p className="m-0 text-body">{t('block.body', { name })}</p>
+      <p className="m-0 text-ink-muted">{t('block.body', { name })}</p>
       {block.hasFailed && <Notice tone="error">{t('block.failed')}</Notice>}
       <div className="flex flex-wrap justify-end gap-3">
         <Button variant="secondary" onClick={handleClose}>

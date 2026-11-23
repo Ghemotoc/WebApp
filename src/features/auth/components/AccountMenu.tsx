@@ -31,7 +31,7 @@ import { signOutHere } from '../api/signIn';
 
 /** The panel's rows: links and buttons look the same. */
 const rowClasses =
-  'flex min-h-11 w-full items-center rounded-xl px-3 text-left text-sm font-semibold text-heading no-underline hover:bg-tint';
+  'flex min-h-11 w-full items-center rounded-field px-3 text-left type-body font-semibold text-ink-heading no-underline hover:bg-tint';
 
 /**
  * Closes the open panel on a click outside it, or on Escape (which puts focus back on the button).
@@ -89,12 +89,12 @@ function ProfileRow({
   return (
     <Link
       to={`/u/${encodeURIComponent(handle)}`}
-      className="mb-1 flex min-h-11 flex-col justify-center rounded-xl border-b border-border px-3 py-2 text-left no-underline hover:bg-tint"
+      className="mb-1 flex min-h-11 flex-col justify-center rounded-field border-b border-border px-3 py-2 text-left no-underline hover:bg-tint"
       onClick={onOpen}
     >
-      <span className="truncate text-sm font-bold text-heading">{name}</span>
-      <span className="truncate text-xs text-body">@{handle}</span>
-      <span className="text-xs font-semibold text-link underline">{t('nav.viewProfile')}</span>
+      <span className="truncate type-body font-semibold text-ink-heading">{name}</span>
+      <span className="truncate type-meta text-ink-muted">@{handle}</span>
+      <span className="type-meta font-semibold text-link underline">{t('nav.viewProfile')}</span>
     </Link>
   );
 }
@@ -172,7 +172,7 @@ export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
       <div
         id="account-menu-panel"
         hidden={!isOpen}
-        className="absolute top-full right-0 z-20 mt-2 w-56 rounded-2xl border border-border bg-surface p-2 shadow-popover"
+        className="absolute top-full right-0 z-20 mt-2 w-56 rounded-card border border-border bg-surface p-2 shadow-popover"
       >
         {/* Step 1: the public profile, then where to edit it (NAV-1); drawn only while open, so
             a closed menu adds no second @username to a page such as Settings. */}

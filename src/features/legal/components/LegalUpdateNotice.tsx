@@ -55,13 +55,16 @@ export function LegalUpdateNotice() {
         className="flex flex-col gap-3 rounded-card border border-border bg-tint p-6"
       >
         <Eyebrow>{t('update.eyebrow')}</Eyebrow>
-        <h2 id="legal-update-title" className="m-0 font-heading text-[24px] font-bold text-heading">
+        <h2
+          id="legal-update-title"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
+        >
           {title}
         </h2>
         {/* What changed, per document, when the version says so. */}
         {documentsToAccept.map((document) =>
           document.change_summary ? (
-            <p key={document.document_slug} className="m-0 text-body">
+            <p key={document.document_slug} className="m-0 text-ink-muted">
               {t('update.change', {
                 version: document.version_label,
                 document: t(`documents.${document.document_slug}.name`),
@@ -70,12 +73,12 @@ export function LegalUpdateNotice() {
             </p>
           ) : null,
         )}
-        <p className="m-0 text-body">{t('update.body')}</p>
+        <p className="m-0 text-ink-muted">{t('update.body')}</p>
         {acceptFailed && <Notice tone="error">{t('update.failed')}</Notice>}
         <div className="flex flex-wrap gap-3">
           <Link
             to={`/legal/${firstDocument.document_slug}`}
-            className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+            className="inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline"
           >
             {t('update.read')}
           </Link>

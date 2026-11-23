@@ -31,13 +31,13 @@ export interface WinnerCardProps {
  */
 function WinnerLines({ card }: { card: WinnerCardData }) {
   const { t } = useClassCompetitionsTranslation();
-  if (card.winner === null) return <p className="m-0 text-body">{t('winner.noWinner')}</p>;
+  if (card.winner === null) return <p className="m-0 text-ink-muted">{t('winner.noWinner')}</p>;
   const chapter = card.winningChapter;
   return (
     <>
-      <p className="m-0 font-heading text-2xl font-bold text-heading">{card.winner}</p>
+      <p className="m-0 font-heading type-heading font-bold text-ink-heading">{card.winner}</p>
       {chapter !== null && (
-        <p className="m-0 text-sm text-body">
+        <p className="m-0 type-body text-ink-muted">
           {t('winner.chapter')}{' '}
           <Link
             to={`/s/${chapter.storySlug}/${chapter.chapterCode}`}
@@ -65,7 +65,7 @@ function MyResult({ card }: { card: WinnerCardData }) {
         {t('winner.myResult', { result: t(`results.${card.myResult}`) })}
       </p>
       {card.isMyReadersChoice && (
-        <p className="m-0 text-sm text-body">{t('winner.myReadersChoice')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('winner.myReadersChoice')}</p>
       )}
     </div>
   );
@@ -82,7 +82,7 @@ export function WinnerCard({ card, slug, isTeacher }: WinnerCardProps) {
   return (
     <section
       aria-labelledby={headingId}
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-5 shadow-card"
+      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4 shadow-card"
     >
       {/* "Winner" or "Results" as a bold state word above the name (CALM-9f; was an eyebrow). */}
       <MetaLine
@@ -93,19 +93,19 @@ export function WinnerCard({ card, slug, isTeacher }: WinnerCardProps) {
           },
         ]}
       />
-      <h2 id={headingId} className="m-0 text-base font-semibold text-ink">
+      <h2 id={headingId} className="m-0 type-body font-bold text-ink">
         {card.name}
       </h2>
       <WinnerLines card={card} />
       {card.readersChoice.length > 0 && (
-        <p className="m-0 text-sm text-body">
+        <p className="m-0 type-body text-ink-muted">
           <span className="font-semibold text-ink">{t('winner.readersChoice')}</span>{' '}
           {card.readersChoice.join(', ')}
         </p>
       )}
       <MyResult card={card} />
       {isTeacher && (
-        <div className="flex flex-wrap gap-x-5 gap-y-2 pt-1">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1">
           <Link
             to={`/spaces/${slug}/competition/${card.id}/results`}
             className="font-semibold text-link underline"

@@ -234,13 +234,16 @@ export function AddToTreeForm({ cast, rootId, words, onAdd, onClose }: AddToTree
     <form
       id="atlas-tree-add"
       aria-labelledby="atlas-tree-add-heading"
-      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-5 py-5 shadow-card"
+      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-4 shadow-card"
       onSubmit={(event) => {
         event.preventDefault();
         void add();
       }}
     >
-      <h3 id="atlas-tree-add-heading" className="m-0 font-heading text-lg font-bold text-heading">
+      <h3
+        id="atlas-tree-add-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
+      >
         {anchorName === ''
           ? t('connections.tree.add.headingAny')
           : t('connections.tree.add.heading', { name: anchorName })}

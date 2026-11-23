@@ -45,7 +45,7 @@ function AddComment({ address, focusOnMount }: { address: ChapterAddress; focusO
     return (
       <Link
         to="/sign-in"
-        className="inline-flex h-11 items-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center self-start rounded-full button-glass px-4 type-body font-semibold no-underline"
       >
         {t('section.logIn')}
       </Link>
@@ -74,7 +74,8 @@ function CommentEntry({ address, page, pauseEnd }: CommentEntryProps) {
   // CALM-8: true once the writer's "Resume now" has worked; the box that comes back in place of
   // the line then takes the focus, so the writer isn't left on a button that has gone.
   const [hasResumed, setHasResumed] = useState(false);
-  if (!page.commentsEnabled) return <p className="m-0 text-base text-body">{t('section.off')}</p>;
+  if (!page.commentsEnabled)
+    return <p className="m-0 type-body text-ink-muted">{t('section.off')}</p>;
   // CALM-8: nobody can post during a pause, the writer included, so this line comes before the
   // followers-only one and shows to visitors too.
   if (pauseEnd !== null) {
@@ -88,7 +89,7 @@ function CommentEntry({ address, page, pauseEnd }: CommentEntryProps) {
     );
   }
   if (!page.audienceAllowsMe) {
-    return <p className="m-0 text-base text-body">{t('section.followersOnly')}</p>;
+    return <p className="m-0 type-body text-ink-muted">{t('section.followersOnly')}</p>;
   }
   return <AddComment address={address} focusOnMount={hasResumed} />;
 }
@@ -109,27 +110,27 @@ export function CommentsSection({ address }: { address: ChapterAddress }) {
   const pauseEnd = runningPauseEnd(firstPage.pause.pausedUntil, new Date());
   const isPaused = pauseEnd !== null;
   return (
-    <section aria-labelledby="comments-heading" className="mt-14 flex flex-col">
-      <div className="mb-[18px] flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-col gap-1.5">
+    <section aria-labelledby="comments-heading" className="mt-12 flex flex-col">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col gap-2">
           <Eyebrow>{t('section.eyebrow')}</Eyebrow>
           <h2
             id="comments-heading"
-            className="m-0 font-heading text-[28px] font-bold tracking-[-0.01em] text-heading"
+            className="m-0 font-heading type-heading font-bold tracking-[-0.01em] text-ink-heading"
           >
             {t('section.heading', { count: firstPage.total })}
           </h2>
         </div>
         {firstPage.total > 0 && (
-          <span className="text-sm text-meta">{t('section.newestFirst')}</span>
+          <span className="type-body text-ink-muted">{t('section.newestFirst')}</span>
         )}
       </div>
       <CommentEntry address={address} page={firstPage} pauseEnd={pauseEnd} />
       {firstPage.commentsEnabled && !isPaused && comments.comments.length === 0 && (
-        <p className="m-0 mt-4 text-base text-body">{t('section.empty')}</p>
+        <p className="m-0 mt-4 type-body text-ink-muted">{t('section.empty')}</p>
       )}
       {comments.comments.length > 0 && (
-        <div className="mt-4 divide-y divide-hairline rounded-[24px] border border-border bg-surface px-6 py-1 shadow-[0_1px_2px_rgba(38,20,46,0.04),0_18px_40px_-28px_rgba(38,20,46,0.3)]">
+        <div className="mt-4 divide-y divide-hairline rounded-card border border-border bg-surface px-6 py-1 shadow-[0_1px_2px_rgba(38,20,46,0.04),0_18px_40px_-28px_rgba(38,20,46,0.3)]">
           {comments.comments.map((comment) => (
             <CommentItem key={comment.id} address={address} comment={comment} isPaused={isPaused} />
           ))}

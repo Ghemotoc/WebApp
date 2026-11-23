@@ -87,7 +87,7 @@ function SheetSideColumn({
 }: Pick<CharacterSheetProps, 'slug' | 'cast' | 'character' | 'onDelete'>) {
   const { t } = useAtlasTranslation();
   return (
-    <aside aria-label={t('characters.sideColumn')} className="flex min-w-0 flex-col gap-5">
+    <aside aria-label={t('characters.sideColumn')} className="flex min-w-0 flex-col gap-4">
       <CharacterRelationshipsSection slug={slug} cast={cast} characterId={character.id} />
       <CharacterAppearancesSection slug={slug} characterId={character.id} />
       <CharacterMentionsList slug={slug} characterId={character.id} />
@@ -169,7 +169,7 @@ export function CharacterSheet(props: CharacterSheetProps) {
       aria-labelledby="atlas-character-heading"
       className="grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]"
     >
-      <div className="flex min-w-0 flex-col gap-5">
+      <div className="flex min-w-0 flex-col gap-4">
         <CharacterSheetHeader
           cast={cast}
           character={character}

@@ -58,7 +58,7 @@ function WordsLine({ chapter }: { chapter: StorylineChapter }) {
 function CardFacts({ chapter, povName }: { chapter: StorylineChapter; povName: string | null }) {
   const { t } = useAtlasTranslation();
   return (
-    <p className="m-0 text-[13px] break-words text-meta">
+    <p className="m-0 type-meta break-words text-ink-muted">
       {povName === null ? t('storyline.board.noPov') : t('storyline.board.pov', { name: povName })}
       {' · '}
       <WordsLine chapter={chapter} />
@@ -84,7 +84,7 @@ export function BoardCard(props: BoardCardProps) {
       id={`atlas-board-card-${chapter.code}`}
       tabIndex={-1}
       data-testid="atlas-board-card"
-      className="rounded-[20px] border border-border bg-surface shadow-card"
+      className="rounded-card border border-border bg-surface shadow-card"
     >
       {/* The card is a drag source and a drop zone; the move buttons do the same by keyboard. */}
       <div
@@ -96,15 +96,15 @@ export function BoardCard(props: BoardCardProps) {
         }}
         onDragOver={(event) => event.preventDefault()}
         onDrop={props.onDropOnCard}
-        className="flex cursor-grab flex-col gap-2 p-3.5"
+        className="flex cursor-grab flex-col gap-2 p-4"
       >
-        <div className="flex flex-wrap items-center justify-between gap-1.5">
-          <span className="text-[13px] font-bold text-meta">{label}</span>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="type-meta font-semibold text-ink-muted">{label}</span>
           <PlanningStatusPill status={chapter.planningStatus} />
         </div>
         <Link
           to={`/write/s/${slug}/c/${chapter.code}`}
-          className="self-start text-base leading-snug font-bold break-words text-heading no-underline hover:underline"
+          className="self-start type-body leading-snug font-semibold break-words text-ink-heading no-underline hover:underline"
         >
           {title}
         </Link>

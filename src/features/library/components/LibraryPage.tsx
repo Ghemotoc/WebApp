@@ -38,8 +38,8 @@ function LibraryHeader() {
   const { t } = useLibraryTranslation();
   return (
     <header className="flex flex-col gap-2">
-      <h1 className="m-0 type-display text-heading">{t('title')}</h1>
-      <p className="m-0 max-w-[62ch] type-body text-body">{t('intro')}</p>
+      <h1 className="m-0 type-display text-ink-heading">{t('title')}</h1>
+      <p className="m-0 max-w-[62ch] type-body text-ink-muted">{t('intro')}</p>
       <LibraryVisibilityLine />
     </header>
   );
@@ -49,12 +49,12 @@ function LibraryHeader() {
 function SignedOutLibrary() {
   const { t } = useLibraryTranslation();
   return (
-    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-10">
-      <h2 className="m-0 type-heading text-heading">{t('signedOut.title')}</h2>
-      <p className="m-0 text-base text-body">{t('signedOut.body')}</p>
+    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-8">
+      <h2 className="m-0 type-heading text-ink-heading">{t('signedOut.title')}</h2>
+      <p className="m-0 type-body text-ink-muted">{t('signedOut.body')}</p>
       <Link
         to="/sign-in"
-        className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
       >
         {t('signedOut.logIn')}
       </Link>
@@ -103,7 +103,7 @@ export function LibraryPage() {
   const { t } = useLibraryTranslation();
   const { userId, isKnown } = useSession();
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-14 pt-10 pb-16">
+    <PageContainer className="tmc-rise flex flex-col gap-12 pt-8 pb-16">
       <title>{t('documentTitle')}</title>
       <LibraryHeader />
       {isKnown && (userId === null ? <SignedOutLibrary /> : <SignedInLibrary />)}

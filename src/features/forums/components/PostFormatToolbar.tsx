@@ -21,12 +21,12 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 const buttons: { format: PostFormat; picture: ReactNode; shortcut?: string }[] = [
   {
     format: 'bold',
-    picture: <span className="text-base font-extrabold">B</span>,
+    picture: <span className="type-body font-semibold">B</span>,
     shortcut: 'Control+B Meta+B',
   },
   {
     format: 'italic',
-    picture: <span className="font-serif text-[17px] italic">I</span>,
+    picture: <span className="font-serif type-long italic">I</span>,
     shortcut: 'Control+I Meta+I',
   },
   { format: 'link', picture: <ActionIcon name="link" size={18} /> },
@@ -83,7 +83,7 @@ export function PostFormatToolbar({ controls, onFormat }: PostFormatToolbarProps
       aria-label={t('editor.format.label')}
       aria-controls={controls}
       onKeyDown={onKeyDown}
-      className="flex flex-wrap gap-0.5 rounded-t-[20px] border-b border-control-border bg-surface px-2 py-1"
+      className="flex flex-wrap gap-1 rounded-t-card border-b border-control-border bg-surface px-2 py-1"
     >
       {buttons.map((button, place) => (
         <button
@@ -98,7 +98,7 @@ export function PostFormatToolbar({ controls, onFormat }: PostFormatToolbarProps
           aria-keyshortcuts={button.shortcut}
           onFocus={() => setFocusPlace(place)}
           onClick={() => onFormat(button.format)}
-          className="inline-flex size-11 items-center justify-center rounded-full text-heading hover:bg-panel"
+          className="inline-flex size-11 items-center justify-center rounded-full text-ink-heading hover:bg-panel"
         >
           {button.picture}
         </button>

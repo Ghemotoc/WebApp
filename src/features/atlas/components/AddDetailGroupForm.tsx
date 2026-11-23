@@ -97,7 +97,7 @@ export function AddDetailGroupForm({ slug }: { slug: string }) {
   return (
     <form
       aria-label={t('characters.details.addGroup')}
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
       onSubmit={(event) => {
         event.preventDefault();
         void add();

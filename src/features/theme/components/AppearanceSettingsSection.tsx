@@ -49,9 +49,9 @@ function SeasonalRow({ isOn, onToggle }: { isOn: boolean; onToggle: () => void }
   const { t } = useAppearanceTranslation();
   return (
     <div className="flex min-h-[52px] items-center justify-between gap-4">
-      <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-[15px] font-bold text-ink">{t('seasonalLabel')}</span>
-        <span id="appearance-seasonal-hint" className="text-[13px] text-meta">
+      <span className="flex min-w-0 flex-col gap-1">
+        <span className="type-body font-semibold text-ink">{t('seasonalLabel')}</span>
+        <span id="appearance-seasonal-hint" className="type-meta text-ink-muted">
           {t('seasonalHint')}
         </span>
       </span>
@@ -80,17 +80,17 @@ export function AppearanceSettingsSection() {
     <section
       id="appearance"
       aria-labelledby="settings-appearance-heading"
-      className="flex scroll-mt-24 flex-col gap-5 rounded-card border border-border bg-surface p-6 shadow-card"
+      className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
         <h2
           id="settings-appearance-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('heading')}
         </h2>
-        <p className="m-0 text-body">{t('intro')}</p>
+        <p className="m-0 text-ink-muted">{t('intro')}</p>
       </div>
       <LookTiles picked={appearance.look} onPick={(look) => void change({ look })} />
       <ModeChoice picked={appearance.mode} onPick={(mode) => void change({ mode })} />
@@ -106,9 +106,9 @@ export function AppearanceSettingsSection() {
         isOn={appearance.isHighContrastOn}
         onToggle={() => void change({ isHighContrastOn: !appearance.isHighContrastOn })}
       />
-      <p className="m-0 text-[13px] text-meta">{t('nightNote')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('nightNote')}</p>
       {/* Where the last change stands, read out politely by screen readers. */}
-      <p role="status" className="m-0 min-h-5 text-[13px] text-body">
+      <p role="status" className="m-0 min-h-5 type-meta text-ink-muted">
         {stateKey === undefined ? '' : t(stateKey)}
       </p>
     </section>

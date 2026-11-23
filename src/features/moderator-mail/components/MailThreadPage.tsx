@@ -26,7 +26,7 @@ import { MailReplyForm } from './MailReplyForm';
 import { MailStatusPill } from './MailStatusPill';
 
 /** The glass card the board draws around the messages and around the answer box. */
-const glassCard = 'rounded-card border border-border bg-surface p-5 shadow-card md:p-7';
+const glassCard = 'rounded-card border border-border bg-surface p-4 shadow-card md:p-6';
 
 /**
  * The eyebrow, the subject and the status.
@@ -46,7 +46,7 @@ function ThreadHeader({ thread }: { thread: MailThread }) {
     <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       <div className="flex min-w-0 flex-col gap-2">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-bold break-words text-heading">
+        <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-bold break-words text-ink-heading">
           {thread.subject}
         </h1>
       </div>
@@ -67,7 +67,7 @@ function ThreadBody({ state }: { state: ReturnType<typeof useMyMailThread> }) {
   if (state.thread.isError) return <Notice tone="error">{t('thread.loadFailed')}</Notice>;
   if (state.thread.isPending) return null;
   const thread = state.thread.data;
-  if (thread === null) return <p className="m-0 text-body">{t('thread.notFound')}</p>;
+  if (thread === null) return <p className="m-0 text-ink-muted">{t('thread.notFound')}</p>;
   return (
     <div className="flex max-w-[820px] flex-col gap-6">
       <ThreadHeader thread={thread} />
@@ -85,7 +85,7 @@ function ThreadBody({ state }: { state: ReturnType<typeof useMyMailThread> }) {
           onSend={(body) => state.reply(body)}
         />
       </div>
-      <p className="m-0 text-sm text-meta">{t('thread.reopens')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('thread.reopens')}</p>
     </div>
   );
 }
@@ -100,7 +100,7 @@ export function MailThreadPage() {
   const { reference = '' } = useParams();
   const state = useMyMailThread(reference);
   return (
-    <PageContainer className="flex flex-col gap-6 pt-10 pb-16">
+    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
       <title>{t('thread.documentTitle', { reference })}</title>
       <MailBackLink to="/moderator-mail" label={t('back')} />
       <ThreadBody state={state} />

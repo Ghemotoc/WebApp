@@ -56,7 +56,7 @@ export function CharacterRelationshipsSection({
       />
       {cast.characters.length > 1 && (
         <>
-          <h3 className="m-0 font-heading text-lg font-bold text-heading">
+          <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
             {t('connections.add.heading')}
           </h3>
           <AddRelationshipForm

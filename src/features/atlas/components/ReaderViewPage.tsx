@@ -30,16 +30,16 @@ function SpoilerAside({ slug }: { slug: string }) {
   return (
     <aside
       aria-labelledby="atlas-reader-spoilers"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-5 py-5 shadow-card md:px-7 lg:sticky lg:top-24"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-4 py-4 shadow-card md:px-6 lg:sticky lg:top-24"
     >
       <h2
         id="atlas-reader-spoilers"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('readers.spoilers.heading')}
       </h2>
-      <p className="m-0 text-sm text-body">{t('readers.spoilers.body')}</p>
-      <p className="m-0 text-sm text-body">{t('readers.introItems')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('readers.spoilers.body')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('readers.introItems')}</p>
       <Link
         to={`/plan/s/${slug}/preview`}
         className="inline-flex h-11 items-center self-start rounded-full button-main px-6 font-semibold no-underline"
@@ -59,11 +59,11 @@ function ReaderViewBody({ slug, title }: { slug: string; title: string }) {
   return (
     <>
       <header className="flex flex-col gap-2">
-        <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
+        <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-bold tracking-[-0.025em] break-words">
           {t('readers.heading')}
         </h1>
-        <p className="m-0 text-sm break-words text-meta">{title}</p>
-        <p className="m-0 max-w-[70ch] text-body">{t('readers.intro')}</p>
+        <p className="m-0 type-body break-words text-ink-muted">{title}</p>
+        <p className="m-0 max-w-[70ch] text-ink-muted">{t('readers.intro')}</p>
       </header>
       {preview && !preview.isPublished && <Notice tone="info">{t('readers.notPublished')}</Notice>}
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -100,7 +100,7 @@ export function ReaderViewPage() {
       showsChrome={userId !== null}
     >
       <title>{t('readers.documentTitle', { title: storyTitle })}</title>
-      {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {visibility === null && <Notice tone="error">{t('notFound')}</Notice>}
       {visibility && <ReaderViewBody slug={storySlug} title={storyTitle} />}

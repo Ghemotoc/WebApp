@@ -67,11 +67,11 @@ function UploadPart({
   const { t } = useTranslation('writing');
   const { isOn } = useFeatureFlags();
   if (!isOn('picture_uploads', false)) return null;
-  if (!canUpload) return <p className="m-0 text-[13px] text-meta">{t('cover.uploadLater')}</p>;
+  if (!canUpload) return <p className="m-0 type-meta text-ink-muted">{t('cover.uploadLater')}</p>;
   return (
     <div className="flex flex-col gap-2">
       {cover.kind === 'upload' && (
-        <p className="m-0 text-sm text-body">{t('cover.uploadChosen')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('cover.uploadChosen')}</p>
       )}
       <CoverUploadField
         storyId={storyId}
@@ -145,9 +145,9 @@ function AutomaticCoverBox({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <div className="flex flex-col gap-2 rounded-field bg-panel p-4 text-sm text-body">
+    <div className="flex flex-col gap-2 rounded-field bg-panel p-4 type-body text-ink-muted">
       <p className="m-0">{t('cover.automatic.intro')}</p>
-      <p className="m-0 text-[13px] text-meta">
+      <p className="m-0 type-meta text-ink-muted">
         {isAutomatic
           ? t('cover.automatic.current', { design: t(`cover.designNames.${automaticDesign}`) })
           : t('cover.automatic.chosen')}
@@ -203,7 +203,7 @@ export function CoverSection({
           <CoverPreview choice={previewChoice} title={shownTitle} penName={penName} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-4">
-          <p className="m-0 text-sm font-semibold text-ink">{t('cover.pickBackground')}</p>
+          <p className="m-0 type-body font-semibold text-ink">{t('cover.pickBackground')}</p>
           <AutomaticCoverBox
             automaticDesign={automaticChoice.design}
             isAutomatic={cover.kind === 'automatic'}
@@ -218,7 +218,7 @@ export function CoverSection({
           onChange={(choice) => onChange({ kind: 'drawn', ...choice })}
         />
       )}
-      <p className="m-0 text-[13px] text-meta">{t('cover.drawnNote')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('cover.drawnNote')}</p>
     </FormSection>
   );
 }

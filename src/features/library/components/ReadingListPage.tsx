@@ -48,7 +48,7 @@ function ListBreadcrumb({ name }: { name: string }) {
   const { t } = useLibraryTranslation();
   return (
     <nav aria-label={t('lists.page.breadcrumb')}>
-      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-sm text-body">
+      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 type-body text-ink-muted">
         <li>
           <Link
             to="/library"
@@ -60,7 +60,7 @@ function ListBreadcrumb({ name }: { name: string }) {
         {/* max-w-full and min-w-0 let one long word wrap inside a phone screen (GAPS-6 break test). */}
         <li className="flex max-w-full min-w-0 items-center gap-2">
           <span aria-hidden="true">/</span>
-          <span aria-current="page" className="min-w-0 break-words text-heading">
+          <span aria-current="page" className="min-w-0 break-words text-ink-heading">
             {name}
           </span>
         </li>
@@ -73,7 +73,7 @@ function ListBreadcrumb({ name }: { name: string }) {
 function OwnerLine({ list }: { list: ReadingListDetails }) {
   const { t } = useLibraryTranslation();
   return (
-    <div className="flex flex-wrap items-center gap-4 text-[15px] text-body">
+    <div className="flex flex-wrap items-center gap-4 type-body text-ink-muted">
       <span>
         {t('lists.page.madeBy')}{' '}
         <Link
@@ -98,11 +98,11 @@ function ListHeader({ list }: { list: ReadingListDetails }) {
   return (
     <header className="flex flex-col gap-4">
       <ListBreadcrumb name={list.name} />
-      <h1 className="m-0 font-heading text-[clamp(36px,5vw,64px)] leading-[1.02] font-bold tracking-[-0.03em] break-words text-heading">
+      <h1 className="m-0 font-heading text-[clamp(36px,5vw,64px)] leading-[1.02] font-bold tracking-[-0.03em] break-words text-ink-heading">
         {list.name}
       </h1>
       <div className="flex flex-wrap items-center gap-3">
-        <p aria-live="polite" className="m-0 text-[17px] text-body">
+        <p aria-live="polite" className="m-0 type-long text-ink-muted">
           {t('lists.count', { count: list.storyCount })}
         </p>
         <InfoPill tone={list.isPublic ? 'sky' : 'neutral'}>
@@ -166,7 +166,7 @@ function KnownAddressPage({ listId }: { listId: string }) {
 export function ReadingListPage() {
   const { listId } = useParams();
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-12">
       {isReadingListId(listId) ? (
         <KnownAddressPage key={listId} listId={listId} />
       ) : (

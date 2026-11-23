@@ -26,8 +26,8 @@ function LadderRow({ rung, current }: { rung: ReaderLevel; current: ReaderLevel 
     <li
       aria-current={isCurrent ? 'step' : undefined}
       className={cn(
-        'flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm',
-        isCurrent ? 'bg-tint font-bold text-heading' : 'text-ink',
+        'flex items-center gap-3 rounded-field px-3 py-2 type-body',
+        isCurrent ? 'bg-tint font-semibold text-ink-heading' : 'text-ink',
       )}
     >
       <span
@@ -38,12 +38,12 @@ function LadderRow({ rung, current }: { rung: ReaderLevel; current: ReaderLevel 
         )}
       />
       <span className="flex-1">
-        <span className="button-glass inline-flex h-7 items-center rounded-full px-3 text-[13px] leading-none whitespace-nowrap">
+        <span className="button-glass inline-flex h-7 items-center rounded-full px-3 type-meta leading-none whitespace-nowrap">
           {t(`readerLevel.names.${rung}`)}
         </span>
         <span className="sr-only">, {stateWords}</span>
       </span>
-      <span className="ml-auto max-w-[55%] text-right text-[13px] font-normal text-meta">
+      <span className="ml-auto max-w-[55%] text-right type-meta font-normal text-ink-muted">
         {t(`readerLevel.rules.${rung}`)}
       </span>
     </li>

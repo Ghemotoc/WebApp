@@ -38,10 +38,13 @@ function MessageSent({ reference, onAgain }: { reference: string; onAgain: () =>
       aria-labelledby="contact-sent-heading"
       className="flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
     >
-      <h2 id="contact-sent-heading" className="m-0 font-heading text-[26px] font-bold text-heading">
+      <h2
+        id="contact-sent-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('sent.heading')}
       </h2>
-      <p className="m-0 text-body">{t('sent.body', { reference })}</p>
+      <p className="m-0 text-ink-muted">{t('sent.body', { reference })}</p>
       <div>
         <Button variant="secondary" onClick={onAgain}>
           {t('sent.again')}
@@ -63,16 +66,16 @@ export function ContactPage() {
   const form = useContactForm();
   const language = writtenLanguageFor(i18n.language);
   return (
-    <PageContainer className="flex flex-col gap-8 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-8 pt-12 pb-6">
       <title>{t('documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-3">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.02] font-extrabold tracking-[-0.02em] text-heading">
+        <h1 className="m-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.02em] text-ink-heading">
           {t('heading')}
         </h1>
-        <p className="m-0 text-lg leading-[1.6] text-body">{t('intro')}</p>
+        <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('intro')}</p>
         {/* Reports of content go to the Report button, not here (Q10h). */}
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('reportInstead')}{' '}
           <Link to="/legal/contact" className="text-link underline">
             {t('reportInsteadLink')}

@@ -49,7 +49,7 @@ function ChapterLine({
         to={`/write/s/${slug}/c/${chapter.code}`}
         aria-current={isOpen ? 'page' : undefined}
         className={cn(
-          'flex min-h-11 flex-col gap-1 rounded-xl px-2 py-2 text-heading no-underline hover:bg-tint',
+          'flex min-h-11 flex-col gap-1 rounded-field px-2 py-2 text-ink-heading no-underline hover:bg-tint',
           isOpen && 'bg-tint',
         )}
       >
@@ -59,7 +59,7 @@ function ChapterLine({
         </span>
         {chapter.wordTarget !== null && (
           <>
-            <span className="text-xs text-meta">
+            <span className="type-meta text-ink-muted">
               {t('chapterPlan.wordsOfTarget', {
                 words: numbers.format(chapter.wordCount),
                 target: numbers.format(chapter.wordTarget),
@@ -91,9 +91,9 @@ export function WritingChapterList({ slug, openChapterCode, footer }: WritingCha
   return (
     <nav
       aria-label={t('chapterPlan.listLabel')}
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-4 py-5 shadow-card"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-4 py-4 shadow-card"
     >
-      <h2 className="m-0 px-2 font-heading text-lg font-bold text-heading">
+      <h2 className="m-0 px-2 font-heading type-long font-bold text-ink-heading">
         {t('chapterPlan.listHeading')}
       </h2>
       <ol className="m-0 flex list-none flex-col gap-1 p-0">

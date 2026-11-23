@@ -33,10 +33,10 @@ function EmailChoices() {
       {emailSettings.saveFailed && <Notice tone="error">{t('emailSettings.saveFailed')}</Notice>}
       {/* The table scrolls inside its own box on a narrow phone, never the page. */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-[15px]">
+        <table className="w-full border-collapse type-body">
           <caption className="sr-only">{t('emailSettings.tableLabel')}</caption>
           <thead>
-            <tr className="border-b border-hairline text-left text-[13px] font-semibold text-meta">
+            <tr className="border-b border-hairline text-left type-meta font-semibold text-ink-muted">
               <th scope="col" className="py-2 pr-4">
                 {t('emailSettings.typeColumn')}
               </th>
@@ -57,7 +57,7 @@ function EmailChoices() {
               <th scope="row" className="py-3 pr-4 text-left font-semibold text-ink">
                 {t('emailSettings.requiredLabel')}
               </th>
-              <td className="py-3 text-body">{t('emailSettings.requiredValue')}</td>
+              <td className="py-3 text-ink-muted">{t('emailSettings.requiredValue')}</td>
             </tr>
           </tbody>
         </table>
@@ -70,10 +70,10 @@ function EmailChoices() {
 function EmailNotes() {
   const { t } = useNotificationsTranslation();
   return (
-    <ul className="m-0 flex list-none flex-col gap-2.5 p-0 text-sm text-body">
+    <ul className="m-0 flex list-none flex-col gap-3 p-0 type-body text-ink-muted">
       <li>{t('emailSettings.digestNote')}</li>
-      <li className="flex items-start gap-2.5">
-        <ActionIcon name="mail" size={22} className="flex-none text-heading" />
+      <li className="flex items-start gap-3">
+        <ActionIcon name="mail" size={22} className="flex-none text-ink-heading" />
         <span>
           <b>{t('emailSettings.noMarketingTitle')}</b> {t('emailSettings.noMarketing')}
         </span>
@@ -96,14 +96,14 @@ export function NotificationEmailsSection() {
       aria-labelledby="settings-notifications-heading"
       className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <h2
           id="settings-notifications-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('emailSettings.heading')}
         </h2>
-        <p className="m-0 text-body">{t('emailSettings.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('emailSettings.intro')}</p>
       </div>
       <EmailChoices />
       {/* Occasional news, only with the person's own yes and only 18 and over (WAITLIST-1). */}

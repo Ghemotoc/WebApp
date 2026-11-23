@@ -26,7 +26,7 @@ export function ForumRulesCard() {
       <h2 id="forum-rules-heading" className="m-0 type-subheading">
         {t('rules.title')}
       </h2>
-      <ul className="m-0 mt-2 flex list-disc flex-col gap-1.5 pl-[18px] text-body">
+      <ul className="m-0 mt-2 flex list-disc flex-col gap-2 pl-4 text-ink-muted">
         {rules.map((rule) => (
           <li key={rule}>{rule}</li>
         ))}

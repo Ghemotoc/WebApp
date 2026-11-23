@@ -1381,6 +1381,14 @@
   --color-panel: var(--panel);
   --color-panel-border: var(--panel-border);
   --color-ink: var(--ink);
+  /*
+   * The text colours of the design books (Robert, approved 23 Nov 2026, 13:25 UTC): ink,
+   * ink-muted, ink-heading, link and the state colours, nothing else. ink-muted is the muted text
+   * (--body and --meta are the same value in every theme) and ink-heading the heading colour;
+   * member screens use these names, and heading, body and meta stay for the staff screens.
+   */
+  --color-ink-muted: var(--meta);
+  --color-ink-heading: var(--heading);
   --color-heading: var(--heading);
   --color-body: var(--body);
   --color-meta: var(--meta);
@@ -1431,15 +1439,16 @@
   --text-h4: 19px;
 
   /*
-   * Radii (the simplified design, Robert, 20 Nov 2026; the design system's radius tokens):
-   * covers 4 px at every size, because a cover is a book and not an app tile (rounded-cover);
-   * cards, sheets, dialogs, side panels and the hero 24 px (rounded-card); text fields, menu rows
-   * and small tiles 12 px (rounded-field); pills fully round. The floating bars (--radius-nav) and
-   * the adverts (--radius-ad) keep the liquid glass values until their own bundles redraw them.
+   * Radii (the design books, Robert, approved 23 Nov 2026, 13:25 UTC; replaces the 24 px cards of
+   * 20 Nov 2026): three only. Fully round for buttons, chips, pills and the floating bars
+   * (rounded-full, and rounded-nav, which is the same); 16 px for cards, sheets, dialogs, side
+   * panels, adverts and the hero (rounded-card, rounded-ad); 12 px for text fields, menu rows and
+   * small tiles (rounded-field). Covers keep their 4 px (rounded-cover): a cover is drawn as a book,
+   * not as an interface box (CALM-4).
    */
-  --radius-nav: 2.1rem;
-  --radius-card: 24px;
-  --radius-ad: 24px;
+  --radius-nav: 9999px;
+  --radius-card: 16px;
+  --radius-ad: 16px;
   --radius-cover: 4px;
   --radius-field: 12px;
 }

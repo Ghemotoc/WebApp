@@ -42,9 +42,9 @@ function TagChip({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <span className="inline-flex h-10 items-center gap-0.5 rounded-full border border-(--pill-plum-border) bg-(--pill-plum-bg) pl-3.5 text-sm leading-none font-semibold text-(--pill-plum-text)">
+    <span className="inline-flex h-10 items-center gap-1 rounded-full border border-(--pill-plum-border) bg-(--pill-plum-bg) pl-4 type-body leading-none font-semibold text-(--pill-plum-text)">
       {tag}
-      {isWaiting && <span className="ml-1.5 font-normal">{t('newStory.tagWaiting')}</span>}
+      {isWaiting && <span className="ml-2 font-normal">{t('newStory.tagWaiting')}</span>}
       <button
         type="button"
         aria-label={t('newStory.removeTag', { tag })}
@@ -135,11 +135,11 @@ function TagBoxMessages({
 }) {
   return (
     <>
-      <p id={`${id}-hint`} className="m-0 text-[13px] text-meta">
+      <p id={`${id}-hint`} className="m-0 type-meta text-ink-muted">
         {hint}
       </p>
       {errorMessage !== undefined && (
-        <p id={`${id}-error`} className="m-0 text-sm text-destructive">
+        <p id={`${id}-error`} className="m-0 type-body text-destructive">
           {errorMessage}
         </p>
       )}
@@ -165,8 +165,8 @@ export function TagInput({ tags, onChange, errorMessage }: TagInputProps) {
   const describedBy = `${id}-hint${errorMessage === undefined ? '' : ` ${id}-error`}`;
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
+    <div className="flex flex-col gap-2">
+      <label htmlFor={id} className="type-body font-semibold text-ink">
         {t('newStory.tags')}
       </label>
       <div className="flex flex-wrap items-center gap-2 rounded-card border border-control-border bg-surface p-2">
@@ -193,7 +193,7 @@ export function TagInput({ tags, onChange, errorMessage }: TagInputProps) {
           }}
           onKeyDown={typing.handleKeyDown}
           onBlur={typing.addTyped}
-          className="h-10 min-w-[160px] flex-1 border-0 bg-transparent px-3 font-body text-[15px] text-ink outline-none placeholder:text-meta"
+          className="h-10 min-w-[160px] flex-1 border-0 bg-transparent px-3 font-body type-body text-ink outline-none placeholder:text-ink-muted"
         />
       </div>
       <TagBoxMessages id={id} hint={hint} errorMessage={errorMessage} />

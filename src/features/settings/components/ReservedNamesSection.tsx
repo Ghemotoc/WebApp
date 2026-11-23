@@ -30,9 +30,9 @@ function ReservedNameItem({ name, state }: { name: ReservedName; state: NameRule
   const { t } = useTranslation('settings');
   return (
     <li className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2 first:border-t-0 first:pt-0">
-      <span className="text-sm text-ink">
+      <span className="type-body text-ink">
         <span className="font-semibold">{name.name}</span>{' '}
-        <span className="text-meta">
+        <span className="text-ink-muted">
           · {t(`names.rules.${name.matchRule}`)}
           {name.isSystem && ` · ${t('names.system')}`}
         </span>

@@ -31,8 +31,8 @@ const guidelineKeys = ['guidelineKind', 'guidelineOwnWork', 'guidelinePrivate', 
  */
 function SafetyBlock({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-1.5">
-      <h3 className="m-0 font-heading text-base font-semibold text-heading">{title}</h3>
+    <section className="flex flex-col gap-2">
+      <h3 className="m-0 font-heading type-body font-bold text-ink-heading">{title}</h3>
       {children}
     </section>
   );
@@ -49,7 +49,7 @@ function MessagesBody(props: {
 }) {
   const { t } = useTranslation('account');
   if (props.onboarding.ageBand !== '16_to_17') {
-    return <p className="m-0 text-body">{t('onboarding.safety.messagesUnder16')}</p>;
+    return <p className="m-0 text-ink-muted">{t('onboarding.safety.messagesUnder16')}</p>;
   }
   return (
     <AdultMessagesSwitch
@@ -75,18 +75,18 @@ export function SafetyStep(props: {
 }) {
   const { t } = useTranslation('account');
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <SafetyBlock title={t('onboarding.safety.blockHeading')}>
-        <p className="m-0 text-body">{t('onboarding.safety.blockBody')}</p>
+        <p className="m-0 text-ink-muted">{t('onboarding.safety.blockBody')}</p>
       </SafetyBlock>
       <SafetyBlock title={t('onboarding.safety.reportHeading')}>
-        <p className="m-0 text-body">{t('onboarding.safety.reportBody')}</p>
+        <p className="m-0 text-ink-muted">{t('onboarding.safety.reportBody')}</p>
       </SafetyBlock>
       <SafetyBlock title={t('onboarding.safety.messagesHeading')}>
         <MessagesBody onboarding={props.onboarding} state={props.state} />
       </SafetyBlock>
       <SafetyBlock title={t('onboarding.safety.guidelinesHeading')}>
-        <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-body">
+        <ul className="m-0 flex list-disc flex-col gap-1 pl-4 text-ink-muted">
           {guidelineKeys.map((key) => (
             <li key={key}>{t(`onboarding.safety.${key}`)}</li>
           ))}

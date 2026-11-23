@@ -35,9 +35,9 @@ function PreparingLine() {
   return (
     <div
       role="status"
-      className="flex items-center gap-3 rounded-2xl bg-tint px-4.5 py-4 text-[15px] text-body"
+      className="flex items-center gap-3 rounded-card bg-tint px-4 py-4 type-body text-ink-muted"
     >
-      <ActionIcon name="clock" size={22} className="shrink-0 text-heading" />
+      <ActionIcon name="clock" size={22} className="shrink-0 text-ink-heading" />
       {t('settings.preparing')}
     </div>
   );
@@ -52,14 +52,14 @@ function ReadyLine({ copy, onStart }: { copy: DataExport; onStart: () => void })
     <div className="flex flex-col gap-3">
       <div
         role="status"
-        className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-(--success-bg) px-4.5 py-4 text-[15px] text-(--success-text)"
+        className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-(--success-bg) px-4 py-4 type-body text-(--success-text)"
       >
         <span className="flex flex-col gap-1">
           <span>
             <strong>{t('settings.readyTitle')}</strong>{' '}
             {t('settings.readyBody', { date: expiresOn })}
           </span>
-          <span className="text-sm">
+          <span className="type-body">
             {t('settings.readySize', { count: copy.story_count ?? 0, size })}
           </span>
         </span>
@@ -84,11 +84,11 @@ function RequestLine({ hasFailed, onStart }: { hasFailed: boolean; onStart: () =
   return (
     <div className="flex flex-col gap-3">
       {hasFailed && <Notice tone="error">{t('settings.failed')}</Notice>}
-      <div className="flex flex-wrap items-center gap-3.5">
+      <div className="flex flex-wrap items-center gap-4">
         <Button size="lg" onClick={onStart}>
           {hasFailed ? t('settings.tryAgain') : t('settings.request')}
         </Button>
-        <span className="text-sm text-meta">{t('settings.requestHint')}</span>
+        <span className="type-body text-ink-muted">{t('settings.requestHint')}</span>
       </div>
     </div>
   );

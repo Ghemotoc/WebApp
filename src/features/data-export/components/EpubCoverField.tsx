@@ -56,7 +56,7 @@ function CoverRadios({
   return (
     <div className="flex flex-col gap-1">
       {choices.map((choice) => (
-        <div key={choice.id} className="flex min-h-11 items-center gap-2.5">
+        <div key={choice.id} className="flex min-h-11 items-center gap-3">
           <input
             id={choice.id}
             type="radio"
@@ -65,7 +65,7 @@ function CoverRadios({
             checked={usesFile === choice.value}
             onChange={() => onUsesFileChange(choice.value)}
           />
-          <label htmlFor={choice.id} className="text-[15px] text-heading">
+          <label htmlFor={choice.id} className="type-body text-ink-heading">
             {choice.label}
           </label>
         </div>
@@ -84,8 +84,8 @@ function CoverFileInput({
   const errorId = useId();
   const describedBy = errorMessage === undefined ? hintId : `${hintId} ${errorId}`;
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor="epub-cover-picture" className="text-sm font-semibold text-ink">
+    <div className="flex flex-col gap-2">
+      <label htmlFor="epub-cover-picture" className="type-body font-semibold text-ink">
         {t('epub.coverFileLabel')}
       </label>
       <input
@@ -94,14 +94,14 @@ function CoverFileInput({
         accept="image/jpeg,image/png"
         aria-describedby={describedBy}
         aria-invalid={errorMessage === undefined ? undefined : true}
-        className="min-h-11 text-sm text-body file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"
+        className="min-h-11 type-body text-ink-muted file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-ink-heading"
         onChange={(event) => onFileChange(event.target.files?.[0] ?? null)}
       />
-      <p id={hintId} className="m-0 text-[13px] text-meta">
+      <p id={hintId} className="m-0 type-meta text-ink-muted">
         {t('epub.coverFileHint')}
       </p>
       {errorMessage !== undefined && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {errorMessage}
         </p>
       )}
@@ -121,7 +121,7 @@ function CoverPreview({ story, title, name, usesFile, file }: EpubCoverFieldProp
     <DrawnCover title={title} penName={name} choice={resolveCoverChoice(story)} size="preview" />
   );
   return (
-    <figure className="m-0 flex w-[140px] shrink-0 flex-col gap-1.5">
+    <figure className="m-0 flex w-[140px] shrink-0 flex-col gap-2">
       {address !== null && (
         <span className="cover-edge relative block w-full overflow-hidden rounded-cover">
           <img src={address} alt="" className="block aspect-[5/8] w-full object-cover" />
@@ -131,7 +131,7 @@ function CoverPreview({ story, title, name, usesFile, file }: EpubCoverFieldProp
       {address === null && usesFile && (
         <span className="block aspect-[5/8] w-full rounded-cover border border-dashed border-control-border bg-panel" />
       )}
-      <figcaption className="text-[13px] text-meta">{t('epub.coverPreview')}</figcaption>
+      <figcaption className="type-meta text-ink-muted">{t('epub.coverPreview')}</figcaption>
     </figure>
   );
 }

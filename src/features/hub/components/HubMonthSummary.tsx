@@ -70,7 +70,7 @@ export function HubMonthSummary({ now }: { now: Date }) {
       </h2>
       <p className="m-0 flex flex-wrap items-baseline gap-x-2">
         <span className="type-heading">{numbers.format(month.words)}</span>
-        <span className="text-body">{t('hub.month.ofGoal', { goal })}</span>
+        <span className="text-ink-muted">{t('hub.month.ofGoal', { goal })}</span>
       </p>
       {/* The thread on its track (board New-Home), with its value for screen readers. */}
       <div

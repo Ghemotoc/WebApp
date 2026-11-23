@@ -47,7 +47,7 @@ import { HubWeek } from './HubWeek';
  * part that has nothing to show leaves the other the whole width.
  */
 const twoColumnClasses =
-  'grid items-start gap-14 min-[900px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] [&>*:only-child]:col-span-full';
+  'grid items-start gap-12 min-[900px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] [&>*:only-child]:col-span-full';
 
 /**
  * The hub for someone signed in.
@@ -58,7 +58,7 @@ function HubBody() {
   // One "now" for the whole page, so the hero's day and the days left always agree.
   const now = new Date();
   return (
-    <div className="flex flex-col gap-14 pt-10 pb-16">
+    <div className="flex flex-col gap-12 pt-8 pb-16">
       <HubHero now={now} />
       <HubSpotlightInvitations />
       <HubHomeCommentInvitations />
@@ -85,13 +85,13 @@ function HubBody() {
  */
 function HubMoreForWriters({ now }: { now: Date }) {
   return (
-    <div className="flex flex-wrap items-start gap-7">
-      <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-7">
+    <div className="flex flex-wrap items-start gap-6">
+      <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
         <HubSpotlight />
         <HubPath />
         <HubSessions />
       </div>
-      <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-7">
+      <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-6">
         <HubMonth />
         <HubWeek />
         <HubTools />
@@ -113,9 +113,9 @@ export function WritersHubPage() {
     <PageContainer>
       <title>{t('hub.documentTitle', { productName: brand.productName })}</title>
       {isKnown && userId === null && (
-        <div className="flex flex-col gap-3 pt-14 pb-16">
+        <div className="flex flex-col gap-3 pt-12 pb-16">
           <h1 className="m-0 type-display">{t('hub.heading')}</h1>
-          <p className="m-0 text-body">
+          <p className="m-0 text-ink-muted">
             {t('hub.signedOut')}{' '}
             <Link to="/sign-in" className="text-link underline">
               {t('hub.logIn')}

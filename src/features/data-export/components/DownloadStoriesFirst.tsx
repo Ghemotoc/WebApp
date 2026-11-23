@@ -43,7 +43,7 @@ function FirstDownloadStatus({ hasAsked, wasReused }: { hasAsked: boolean; wasRe
   const latest = useLatestStoriesExport();
   if (run.phase === 'running') {
     return (
-      <p role="status" className="m-0 text-[15px] text-body">
+      <p role="status" className="m-0 type-body text-ink-muted">
         {t('stories.preparing')}
       </p>
     );
@@ -83,15 +83,12 @@ export function DownloadStoriesFirst() {
   return (
     <section
       aria-labelledby="download-stories-first-heading"
-      className="flex flex-col gap-2 rounded-2xl bg-tint px-4.5 py-4"
+      className="flex flex-col gap-2 rounded-card bg-tint px-4 py-4"
     >
-      <h4
-        id="download-stories-first-heading"
-        className="m-0 text-[15px] font-semibold text-heading"
-      >
+      <h4 id="download-stories-first-heading" className="m-0 type-body font-bold text-ink-heading">
         {t('first.heading')}
       </h4>
-      <p className="m-0 text-[15px] text-body">{t('first.body')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('first.body')}</p>
       <Button
         variant="secondary"
         className="w-fit"

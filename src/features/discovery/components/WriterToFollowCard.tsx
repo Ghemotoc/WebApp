@@ -29,31 +29,31 @@ export function WriterToFollowCard({ writer }: { writer: RisingWriter }) {
   return (
     <article
       aria-label={writer.displayName}
-      className="flex h-full w-full flex-col gap-3.5 rounded-[24px] border border-border bg-surface p-5 shadow-card"
+      className="flex h-full w-full flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card"
     >
       <div className="flex items-center gap-3">
         <PersonAvatar name={writer.displayName} handle={writer.handle} size="xlarge" />
         <span className="flex min-w-0 flex-col">
           <Link
             to={profileAddress}
-            className="font-bold break-words text-[15px] text-ink no-underline hover:underline"
+            className="font-semibold break-words type-body text-ink no-underline hover:underline"
           >
             {writer.displayName}
           </Link>
           {writer.categorySlug !== null && (
-            <span className="text-[13px] text-meta">
+            <span className="type-meta text-ink-muted">
               {t(`categories.${writer.categorySlug}`, { ns: 'writing' })}
             </span>
           )}
         </span>
       </div>
       {writer.followersThisWeek !== null && (
-        <span className="text-[13px] text-body">
+        <span className="type-meta text-ink-muted">
           {t('writersToFollow.growth', { count: writer.followersThisWeek })}
         </span>
       )}
       {writer.latestStory !== null && (
-        <span className="text-[13px] text-body">
+        <span className="type-meta text-ink-muted">
           {t('writersToFollow.latest')}{' '}
           <Link
             to={`/s/${writer.latestStory.slug}`}

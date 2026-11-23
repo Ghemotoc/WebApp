@@ -92,7 +92,7 @@ export function ForumRow({ forum, subforums, isInCard = false }: ForumRowProps) 
       className={cn(
         'grid grid-cols-[12px_minmax(0,1fr)] items-start gap-x-4 gap-y-2 border-t border-hairline py-4 [&>*:nth-child(n+3)]:col-start-2',
         'min-[1100px]:grid-cols-[12px_minmax(0,1fr)_140px_250px] min-[1100px]:[&>*:nth-child(n+3)]:col-start-auto',
-        isInCard && 'px-5 first:border-t-0 md:px-7',
+        isInCard && 'px-4 first:border-t-0 md:px-6',
       )}
     >
       {/* The dot keeps its 12 px column even for a visitor, so the names line up. */}
@@ -100,15 +100,15 @@ export function ForumRow({ forum, subforums, isInCard = false }: ForumRowProps) 
         <UnreadDot isNew={forum.hasUnread} />
       </span>
       <div className="flex min-w-0 flex-col gap-1">
-        <h3 className="m-0 text-[15px] leading-5 font-semibold">
+        <h3 className="m-0 type-body leading-5 font-bold">
           <Link
             to={`/forums/${forum.slug}`}
-            className="inline-flex min-h-6 items-center text-heading no-underline hover:underline"
+            className="inline-flex min-h-6 items-center text-ink-heading no-underline hover:underline"
           >
             {forum.name}
           </Link>
         </h3>
-        {forum.description !== '' && <p className="m-0 text-body">{forum.description}</p>}
+        {forum.description !== '' && <p className="m-0 text-ink-muted">{forum.description}</p>}
         <SubforumLinks subforums={subforums} />
       </div>
       <ForumNumbers forum={forum} />

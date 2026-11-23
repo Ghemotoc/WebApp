@@ -28,7 +28,7 @@ interface SpaceFormCardProps {
 
 /** The glass card's own classes. */
 const cardClasses =
-  'flex max-w-[760px] flex-col gap-6 rounded-card border border-border bg-surface p-5 shadow-card md:p-8';
+  'flex max-w-[760px] flex-col gap-6 rounded-card border border-border bg-surface p-4 shadow-card md:p-8';
 
 /**
  * Renders the card.
@@ -52,7 +52,9 @@ export function SpaceFormCard({
           <h1 id={headingId} className="page-title">
             {title}
           </h1>
-          {intro !== undefined && <p className="m-0 text-lg leading-relaxed text-body">{intro}</p>}
+          {intro !== undefined && (
+            <p className="m-0 type-long leading-relaxed text-ink-muted">{intro}</p>
+          )}
         </header>
         <div className={cardClasses}>{children}</div>
       </section>
@@ -64,11 +66,11 @@ export function SpaceFormCard({
         {eyebrow !== undefined && <Eyebrow>{eyebrow}</Eyebrow>}
         <h2
           id={headingId}
-          className="m-0 font-heading text-[28px] leading-tight font-bold text-heading"
+          className="m-0 font-heading type-heading leading-tight font-bold text-ink-heading"
         >
           {title}
         </h2>
-        {intro !== undefined && <p className="m-0 text-base text-body">{intro}</p>}
+        {intro !== undefined && <p className="m-0 type-body text-ink-muted">{intro}</p>}
       </div>
       {children}
     </section>

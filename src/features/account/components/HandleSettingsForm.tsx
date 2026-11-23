@@ -58,7 +58,7 @@ export function HandleSettingsForm({ account, names }: HandleSettingsFormProps) 
         hint={t('settings.usernameHint', { days: account.changeDays.handle })}
       />
       {waitUntil !== null && (
-        <p className="m-0 text-[13px] text-meta">
+        <p className="m-0 type-meta text-ink-muted">
           {t('settings.nextChange', {
             date: formatLegalDate(waitUntil.toISOString(), i18n.language),
           })}

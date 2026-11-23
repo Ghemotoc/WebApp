@@ -72,14 +72,14 @@ function InvitationCard({ invitation, isBusy, onAnswer }: InvitationCardProps) {
   const reason = i18n.language === 'ro' ? invitation.reasonRo : invitation.reasonEn;
   return (
     <li className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card md:p-8">
-      <h3 className="m-0 font-heading text-[22px] leading-tight font-bold text-heading">
+      <h3 className="m-0 font-heading type-heading leading-tight font-bold text-ink-heading">
         {t('hub.invitation.heading')}
       </h3>
-      <p className="m-0 text-body">{t('hub.invitation.body', days)}</p>
-      <blockquote className="m-0 rounded-field bg-tint px-4 py-3 text-body wrap-anywhere">
+      <p className="m-0 text-ink-muted">{t('hub.invitation.body', days)}</p>
+      <blockquote className="m-0 rounded-field bg-tint px-4 py-3 text-ink-muted wrap-anywhere">
         {reason}
       </blockquote>
-      <p className="m-0 text-sm text-meta" aria-live="polite">
+      <p className="m-0 type-body text-ink-muted" aria-live="polite">
         {t(`hub.invitation.status.${invitation.answer}`)}
       </p>
       <div className="flex flex-wrap gap-3">

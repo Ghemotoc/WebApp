@@ -59,7 +59,7 @@ export function ParentCheckPanel({
   });
   return (
     <>
-      <p className="m-0 text-body">{intro}</p>
+      <p className="m-0 text-ink-muted">{intro}</p>
       {link.identity === 'asked' ? (
         <div className="flex flex-wrap gap-3">
           <Button disabled={isAnswering} onClick={() => onAnswer(true)}>

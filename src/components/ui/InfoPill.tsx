@@ -47,7 +47,7 @@ export function InfoPill({ tone, children, canWrap = false }: InfoPillProps) {
     : 'h-6 leading-none whitespace-nowrap';
   return (
     <span
-      className={`inline-flex items-center justify-center gap-1.5 rounded-full border-[0.5px] px-2.5 text-xs font-bold ${shapeClasses} ${toneClasses[tone]}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full border-[0.5px] px-3 type-meta font-semibold ${shapeClasses} ${toneClasses[tone]}`}
     >
       {children}
     </span>

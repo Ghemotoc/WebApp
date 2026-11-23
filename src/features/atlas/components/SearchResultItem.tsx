@@ -51,15 +51,15 @@ export function SearchResultItem({
     <li data-testid="atlas-search-result" className="border-b border-border last:border-b-0">
       <Link
         to={itemAddress(slug, result)}
-        className="flex min-h-[60px] items-center gap-3.5 px-[18px] py-2.5 text-heading no-underline hover:bg-tint"
+        className="flex min-h-[60px] items-center gap-4 px-4 py-3 text-ink-heading no-underline hover:bg-tint"
       >
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="text-[15px] font-bold break-words">{title}</span>
-          <span className="text-[13px] break-words text-body">
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="type-body font-semibold break-words">{title}</span>
+          <span className="type-meta break-words text-ink-muted">
             <HighlightedSnippet snippet={result.snippet} query={query} />
           </span>
         </span>
-        <ChevronRightIcon aria-hidden="true" className="shrink-0 text-meta" />
+        <ChevronRightIcon aria-hidden="true" className="shrink-0 text-ink-muted" />
       </Link>
     </li>
   );

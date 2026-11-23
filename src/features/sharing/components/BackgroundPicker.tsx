@@ -84,7 +84,7 @@ export function BackgroundPicker({ chosen, onChoose, pictures }: BackgroundPicke
       <p id={headingId} className="m-0 eyebrow">
         {t('quote.background')}
       </p>
-      <div className="flex flex-wrap items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-3">
         <Chip
           isPressed={chosen.key === purpleBackground.key}
           onPressedChange={() => onChoose(purpleBackground)}
@@ -100,8 +100,8 @@ export function BackgroundPicker({ chosen, onChoose, pictures }: BackgroundPicke
           </Chip>
         )}
       </div>
-      <div role="group" aria-labelledby={coloursId} className="flex flex-wrap items-center gap-2.5">
-        <span id={coloursId} className="text-sm font-semibold text-ink">
+      <div role="group" aria-labelledby={coloursId} className="flex flex-wrap items-center gap-3">
+        <span id={coloursId} className="type-body font-semibold text-ink">
           {t('quote.ourColours')}
         </span>
         {paletteBackgrounds.map((background) => (
@@ -121,7 +121,7 @@ export function BackgroundPicker({ chosen, onChoose, pictures }: BackgroundPicke
             isChosen={chosen.key === pictures.ownKey}
             onChoose={pictures.onChooseOwn}
           />
-          <p className="m-0 text-sm text-body">{t('quote.picturesBlurred')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('quote.picturesBlurred')}</p>
         </>
       )}
     </div>

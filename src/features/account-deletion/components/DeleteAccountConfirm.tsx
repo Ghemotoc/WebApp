@@ -71,16 +71,16 @@ export function DeleteAccountConfirm({
   const failureKey = requestFailureKey(request);
   const showsFailure = failureKey !== null && (failureKey !== 'signInAgain' || mustLogInAgain);
   return (
-    <div className="flex flex-col gap-4 rounded-card border border-border bg-paper p-5">
-      <h3 className="m-0 font-heading text-[20px] font-bold text-heading">
+    <div className="flex flex-col gap-4 rounded-card border border-border bg-paper p-4">
+      <h3 className="m-0 font-heading type-subheading font-bold text-ink-heading">
         {t('confirm.heading')}
       </h3>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {t('confirm.body', { date: formatLocalDate(deletedOn, i18n.language) })}
       </p>
       <div className="flex flex-col gap-2">
         <Eyebrow>{t('confirm.consequencesLabel')}</Eyebrow>
-        <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-[15px] text-body">
+        <ul className="m-0 flex list-disc flex-col gap-1 pl-4 type-body text-ink-muted">
           {consequences.map((part) => (
             <li key={part}>{t(`confirm.consequences.${part}`)}</li>
           ))}

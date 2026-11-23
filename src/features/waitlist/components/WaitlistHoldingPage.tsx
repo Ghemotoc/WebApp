@@ -122,10 +122,10 @@ function HoldingIntro({ joinedAt, nextLine }: { joinedAt: string; nextLine: stri
           { text: t('waitlist.foundingMember') },
         ]}
       />
-      <p className="m-0 text-meta">{nextLine}</p>
+      <p className="m-0 text-ink-muted">{nextLine}</p>
       {/* A heads-up, not a step: we may ask people to confirm who they are later (Robert,
           21 Nov 2026, 06:59 UTC; WAITLIST-2). The wording is on the lawyer's list. */}
-      <p className="m-0 text-[13px] text-meta">{t('waitlist.holding.identityNote')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('waitlist.holding.identityNote')}</p>
     </div>
   );
 }
@@ -142,7 +142,7 @@ export function WaitlistHoldingPage(props: WaitlistHoldingPageProps) {
   const { names } = useMyNames();
   const handle = names?.handle ?? null;
   return (
-    <PageContainer className="flex flex-col gap-8 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-8 pt-12 pb-6">
       <title>{t('waitlist.holding.documentTitle')}</title>
       <HoldingIntro joinedAt={joinedAt} nextLine={nextLine} />
       <section

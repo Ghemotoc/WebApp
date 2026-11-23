@@ -43,17 +43,17 @@ export function EmailSettingsSection() {
     >
       <h2
         id="settings-email-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('email.heading')}
       </h2>
       {email.loadFailed && <Notice tone="error">{t('errors.loadFailed')}</Notice>}
       {email.email !== null && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('email.current')} <strong className="break-all text-ink">{email.email}</strong>
         </p>
       )}
-      <p className="m-0 text-[13px] text-meta">{t('email.private')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('email.private')}</p>
       {changedTo !== null && (
         <Notice tone="success">{t('email.changed', { email: changedTo })}</Notice>
       )}

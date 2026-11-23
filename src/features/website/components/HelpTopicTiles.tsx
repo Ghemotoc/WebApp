@@ -47,7 +47,7 @@ export function HelpTopicTiles({ pages }: { pages: ParsedEntry<HelpPageContent>[
           lang={sectionPages[0]?.languageCode}
           className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
         >
-          <h2 className="m-0 font-heading text-[21px] font-bold text-heading">
+          <h2 className="m-0 font-heading type-subheading font-bold text-ink-heading">
             {withBrand(section)}
           </h2>
           <ul className="m-0 flex list-none flex-col gap-1 p-0">
@@ -55,7 +55,7 @@ export function HelpTopicTiles({ pages }: { pages: ParsedEntry<HelpPageContent>[
               <li key={page.entryKey}>
                 <WebsiteLink
                   to={`/help/${page.entryKey}`}
-                  className="inline-flex min-h-6 items-center py-0.5 text-link underline"
+                  className="inline-flex min-h-6 items-center py-1 text-link underline"
                 >
                   {withBrand(page.content.title)}
                 </WebsiteLink>

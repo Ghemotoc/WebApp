@@ -26,7 +26,7 @@ export function CardSection() {
   return (
     <DesignSection id="cards" title={t('sections.cards')}>
       <Card className="max-w-[420px]">
-        <h3 className="m-0 mb-4 text-xl font-bold">{t('cards.cardTitle')}</h3>
+        <h3 className="m-0 mb-4 type-subheading font-bold">{t('cards.cardTitle')}</h3>
         <LabelRows rows={rows} />
       </Card>
     </DesignSection>

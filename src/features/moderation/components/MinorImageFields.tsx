@@ -41,7 +41,7 @@ export function MinorImageFields({ id, value, isMissing, onChange }: MinorImageF
         onChange={(event) => onChange(event.target.value)}
       />
       {isMissing && (
-        <p role="alert" className="m-0 text-sm text-(--error-text)">
+        <p role="alert" className="m-0 type-body text-(--error-text)">
           {t('pictures.describeMissing')}
         </p>
       )}

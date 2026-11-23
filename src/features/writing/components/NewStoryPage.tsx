@@ -41,16 +41,16 @@ function NewStoryHeader() {
     <header className="relative flex max-w-[640px] flex-col gap-2">
       <Link
         to="/write"
-        className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold no-underline hover:underline"
+        className="inline-flex min-h-11 items-center gap-2 self-start type-body font-semibold no-underline hover:underline"
       >
         <ChevronLeftIcon />
         {t('newStory.back')}
       </Link>
       <Eyebrow>{t('newStory.eyebrow')}</Eyebrow>
-      <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
+      <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
         {t('newStory.heading')}
       </h1>
-      <p className="m-0 text-lg leading-[1.6] text-body">{t('newStory.intro')}</p>
+      <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('newStory.intro')}</p>
       {/* The writing prompt, when the writer came from the hub's "Write from this prompt". */}
       <PromptNote />
     </header>
@@ -69,8 +69,8 @@ function NewStoryActionBar({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <div className="flex flex-col gap-4 border-t border-hairline pt-5">
-      <p className="m-0 text-sm leading-normal text-(--info-text)">{t('newStory.rights')}</p>
+    <div className="flex flex-col gap-4 border-t border-hairline pt-4">
+      <p className="m-0 type-body leading-normal text-(--info-text)">{t('newStory.rights')}</p>
       {formError !== null && (
         <Notice tone={formError === 'notActive' ? 'warning' : 'error'}>
           {t(formError === 'notActive' ? 'newStory.notActive' : 'newStory.createFailed')}
@@ -79,7 +79,7 @@ function NewStoryActionBar({
       <div className="flex flex-wrap gap-3">
         <Link
           to="/write"
-          className="inline-flex h-12 items-center rounded-full button-glass px-6 text-[15px] font-semibold no-underline"
+          className="inline-flex h-12 items-center rounded-full button-glass px-6 type-body font-semibold no-underline"
         >
           {t('newStory.cancel')}
         </Link>
@@ -133,21 +133,21 @@ export function NewStoryPage() {
 
   if (isKnown && !isSignedIn) {
     return (
-      <PageContainer className="tmc-rise pt-12 pb-7">
+      <PageContainer className="tmc-rise pt-12 pb-6">
         <title>{t('newStory.documentTitle')}</title>
-        <p className="m-0 text-body">{t('newStory.signedOut')}</p>
+        <p className="m-0 text-ink-muted">{t('newStory.signedOut')}</p>
       </PageContainer>
     );
   }
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-12 pb-6">
       <title>{t('newStory.documentTitle')}</title>
       <NewStoryHeader />
       {options.loadFailed && <Notice tone="error">{t('errors.loadFailed')}</Notice>}
-      <div className="flex flex-col gap-10 md:flex-row md:items-start">
+      <div className="flex flex-col gap-8 md:flex-row md:items-start">
         <form
-          className="flex min-w-0 flex-[999_1_560px] flex-col gap-5"
+          className="flex min-w-0 flex-[999_1_560px] flex-col gap-4"
           onSubmit={(event) => {
             // Enter in a field moves on a step; only the last step creates the story.
             event.preventDefault();

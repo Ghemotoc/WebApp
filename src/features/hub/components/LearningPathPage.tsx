@@ -49,13 +49,13 @@ function DayActions({ step, path }: { step: LearningStep; path: LearningPathStat
         </Button>
       )}
       {isLastDay ? (
-        <Link to="/write" className="text-sm font-semibold text-link underline">
+        <Link to="/write" className="type-body font-semibold text-link underline">
           {t('path.goWrite')}
         </Link>
       ) : (
         <Link
           to={`/hub/path?day=${step.day + 1}`}
-          className="text-sm font-semibold text-link underline"
+          className="type-body font-semibold text-link underline"
         >
           {t('path.nextDay', { day: step.day + 1 })}
         </Link>
@@ -79,30 +79,30 @@ function DayLesson({ step, path }: { step: LearningStep; path: LearningPathState
   return (
     <article
       aria-labelledby="path-day"
-      className="flex min-w-0 flex-[999_1_480px] flex-col gap-5 rounded-card border border-border bg-surface p-6 shadow-card md:p-8"
+      className="flex min-w-0 flex-[999_1_480px] flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card md:p-8"
     >
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <p className="eyebrow m-0">
           {t('path.dayOf', { day: step.day, total: path.steps.length })}
           {step.isDone && ` · ${t('hub.path.done')}`}
         </p>
         <h2
           id="path-day"
-          className="m-0 font-heading text-[28px] leading-tight font-bold wrap-anywhere text-heading"
+          className="m-0 font-heading type-heading leading-tight font-bold wrap-anywhere text-ink-heading"
         >
           {isRomanian ? step.titleRo : step.titleEn}
         </h2>
       </div>
       <div className="flex flex-col gap-3">
         {lessonParagraphs(lesson).map((paragraph) => (
-          <p key={paragraph} className="m-0 text-[17px] leading-relaxed wrap-anywhere text-body">
+          <p key={paragraph} className="m-0 type-long leading-relaxed wrap-anywhere text-ink-muted">
             {paragraph}
           </p>
         ))}
       </div>
-      <div className="flex flex-col gap-1.5 rounded-card border border-border bg-tint p-4">
+      <div className="flex flex-col gap-2 rounded-card border border-border bg-tint p-4">
         <h3 className="eyebrow m-0">{t('path.task')}</h3>
-        <p className="m-0 font-semibold wrap-anywhere text-heading">
+        <p className="m-0 font-semibold wrap-anywhere text-ink-heading">
           {isRomanian ? step.taskRo : step.taskEn}
         </p>
       </div>
@@ -124,18 +124,18 @@ function PathBody() {
   const path = useLearningPath();
   const [searchParams] = useSearchParams();
   if (path.loadFailed) return <Notice tone="error">{t('hub.path.loadFailed')}</Notice>;
-  if (!path.isLoaded) return <p className="m-0 text-meta">{t('path.loading')}</p>;
+  if (!path.isLoaded) return <p className="m-0 text-ink-muted">{t('path.loading')}</p>;
   // The day the address asks for; without one, the first day still open (day 1 when all done).
   const wantedDay =
     dayFromAddress(searchParams.get('day'), path.steps.length) ?? nextOpenDay(path.steps) ?? 1;
   const step = path.steps.find((candidate) => candidate.day === wantedDay);
   if (step === undefined) return <Notice tone="error">{t('hub.path.loadFailed')}</Notice>;
   return (
-    <div className="flex flex-wrap items-start gap-7">
+    <div className="flex flex-wrap items-start gap-6">
       <DayLesson step={step} path={path} />
       <nav
         aria-label={t('path.daysLabel')}
-        className="flex min-w-0 flex-[1_1_280px] flex-col rounded-card border border-border bg-surface p-5 shadow-card"
+        className="flex min-w-0 flex-[1_1_280px] flex-col rounded-card border border-border bg-surface p-4 shadow-card"
       >
         <PathStepList steps={path.steps} currentDay={step.day} />
       </nav>
@@ -152,17 +152,17 @@ export function LearningPathPage() {
   const { t } = useHubTranslation();
   const { userId, isKnown } = useSession();
   return (
-    <PageContainer className="flex flex-col gap-7 pt-10 pb-16">
+    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
       <title>{t('path.documentTitle', { productName: brand.productName })}</title>
       <header className="flex flex-col gap-2">
-        <Link to="/hub" className="self-start text-sm font-semibold text-link underline">
+        <Link to="/hub" className="self-start type-body font-semibold text-link underline">
           {t('path.backToHub')}
         </Link>
         <h1 className="page-title">{t('hub.path.heading')}</h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('hub.path.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('hub.path.intro')}</p>
       </header>
       {isKnown && userId === null && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('path.signedOut')}{' '}
           <Link to="/sign-in" className="text-link underline">
             {t('hub.logIn')}

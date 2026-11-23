@@ -16,7 +16,7 @@ import { useForumsTranslation } from '../registerForumsTranslations';
 import { ThreadFollowButton } from './ThreadFollowButton';
 
 /** The card style both boxes share. */
-const card = 'flex flex-col gap-3 rounded-card border border-border bg-surface p-5';
+const card = 'flex flex-col gap-3 rounded-card border border-border bg-surface p-4';
 
 /**
  * Renders the column.
@@ -30,7 +30,7 @@ export function ThreadSidePanel({ thread }: { thread: ForumThreadHeader }) {
   return (
     <aside aria-label={t('thread.facts.title')} className="flex flex-col gap-4">
       <section className={card}>
-        <h2 className="m-0 font-heading text-xl font-bold text-heading">
+        <h2 className="m-0 font-heading type-subheading font-bold text-ink-heading">
           {t('thread.facts.title')}
         </h2>
         <LabelRows
@@ -46,17 +46,17 @@ export function ThreadSidePanel({ thread }: { thread: ForumThreadHeader }) {
         />
         <ThreadFollowButton threadNumber={thread.number} isFollowing={thread.isFollowing} />
       </section>
-      <section className="flex flex-col gap-2 rounded-card border border-border bg-surface p-5">
-        <h2 className="m-0 font-heading text-base font-bold text-heading">
+      <section className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4">
+        <h2 className="m-0 font-heading type-body font-bold text-ink-heading">
           {t('votes.help.title')}
         </h2>
-        <p className="m-0 text-sm text-body">{t('votes.help.text')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('votes.help.text')}</p>
       </section>
-      <section className="flex flex-col gap-2 rounded-card border border-panel-border bg-panel p-5">
-        <h2 className="m-0 font-heading text-base font-bold text-heading">
+      <section className="flex flex-col gap-2 rounded-card border border-panel-border bg-panel p-4">
+        <h2 className="m-0 font-heading type-body font-bold text-ink-heading">
           {t('thread.help.title')}
         </h2>
-        <p className="m-0 text-sm text-body">{t('thread.help.text')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('thread.help.text')}</p>
       </section>
     </aside>
   );

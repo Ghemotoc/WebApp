@@ -44,7 +44,7 @@ function ListBreadcrumb({ title }: { title: string }) {
   const { t } = useDiscoveryTranslation();
   return (
     <nav aria-label={t('seeAll.breadcrumb')}>
-      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-sm text-body">
+      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 type-body text-ink-muted">
         <li>
           <Link
             to="/discover"
@@ -56,7 +56,7 @@ function ListBreadcrumb({ title }: { title: string }) {
         {/* max-w-full and min-w-0 let one long word wrap inside a phone screen (GAPS-6 break test). */}
         <li className="flex max-w-full min-w-0 items-center gap-2">
           <span aria-hidden="true">/</span>
-          <span aria-current="page" className="min-w-0 break-words text-heading">
+          <span aria-current="page" className="min-w-0 break-words text-ink-heading">
             {title}
           </span>
         </li>
@@ -77,10 +77,10 @@ function ListHeading({ heading, total }: Pick<StoryListHeaderProps, 'heading' | 
   return (
     <div className="flex flex-col gap-3">
       <Eyebrow>{heading.eyebrow}</Eyebrow>
-      <h1 className="m-0 font-heading text-[clamp(40px,5.6vw,72px)] leading-[0.98] font-bold tracking-[-0.03em] break-words text-heading">
+      <h1 className="m-0 font-heading text-[clamp(40px,5.6vw,72px)] leading-[0.98] font-bold tracking-[-0.03em] break-words text-ink-heading">
         {heading.title}
       </h1>
-      <p aria-live="polite" className="m-0 min-h-6 text-[17px] text-body">
+      <p aria-live="polite" className="m-0 min-h-6 type-long text-ink-muted">
         {total === null ? '' : t('seeAll.count', { count: total })}
       </p>
     </div>
@@ -111,7 +111,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
   return (
     <header
       className={cn(
-        'genre-band relative flex flex-col gap-5 overflow-hidden rounded-card px-[clamp(24px,4vw,48px)] py-[clamp(28px,4vw,48px)] shadow-card',
+        'genre-band relative flex flex-col gap-4 overflow-hidden rounded-card px-[clamp(24px,4vw,48px)] py-[clamp(28px,4vw,48px)] shadow-card',
         accentDeepBandClasses[bandTone],
       )}
       data-band-tone={bandTone}

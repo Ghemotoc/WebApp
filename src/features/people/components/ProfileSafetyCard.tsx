@@ -31,10 +31,10 @@ function BlockedCard({ profile }: { profile: WriterProfile }) {
   const block = useBlock();
   return (
     <Card className="flex flex-col gap-3 bg-tint">
-      <h2 className="m-0 font-heading text-xl font-bold text-ink">
+      <h2 className="m-0 font-heading type-subheading font-bold text-ink">
         {t('profile.youBlockTitle', { handle: profile.handle })}
       </h2>
-      <p className="m-0 text-[15px] text-body">{t('profile.youBlockBody')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('profile.youBlockBody')}</p>
       {block.hasFailed && <Notice tone="error">{t('safety.unblockFailed')}</Notice>}
       <div>
         <Button
@@ -60,9 +60,9 @@ export function ProfileSafetyCard({ profile }: { profile: WriterProfile }) {
   if (profile.iBlocked) return <BlockedCard profile={profile} />;
   return (
     <Card className="relative flex flex-col gap-3 bg-tint">
-      <h2 className="m-0 font-heading text-xl font-bold text-ink">{t('safety.heading')}</h2>
-      <p className="m-0 text-[15px] text-body">{t('safety.body')}</p>
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+      <h2 className="m-0 font-heading type-subheading font-bold text-ink">{t('safety.heading')}</h2>
+      <p className="m-0 type-body text-ink-muted">{t('safety.body')}</p>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <ReportButton
           itemType="profile"
           itemReference={profile.handle}

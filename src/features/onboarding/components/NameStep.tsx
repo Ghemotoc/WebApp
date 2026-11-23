@@ -39,7 +39,7 @@ function LanguageField() {
   // The open interface languages, each named in its own language (WCAG 3.1.2; MARKETS-2a).
   const languageOptions = useLanguageOptions();
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <Select
         id="onboarding-language"
         label={t('onboarding.name.languageLabel')}
@@ -51,7 +51,7 @@ function LanguageField() {
         }}
         descriptionId="onboarding-language-hint"
       />
-      <p id="onboarding-language-hint" className="m-0 text-[13px] text-meta">
+      <p id="onboarding-language-hint" className="m-0 type-meta text-ink-muted">
         {t('onboarding.name.languageHint')}
       </p>
     </div>
@@ -82,13 +82,13 @@ function LanguageAndRegion(props: {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <LanguageField />
       <div className="flex flex-col gap-1">
-        <p className="m-0 text-[13px] font-semibold text-body">
+        <p className="m-0 type-meta font-semibold text-ink-muted">
           {t('onboarding.name.countryHeading')}
         </p>
-        <p className="m-0 text-[13px] text-meta">{t('onboarding.name.countryBody')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('onboarding.name.countryBody')}</p>
       </div>
       <RegionSelect
         id="onboarding-region"

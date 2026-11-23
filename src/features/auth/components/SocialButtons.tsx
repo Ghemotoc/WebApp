@@ -57,14 +57,14 @@ export function SocialButtons({
 }: SocialButtonsProps) {
   const { t } = useTranslation('auth');
   return (
-    <div role="group" aria-label={groupLabel} className="flex flex-col gap-[10px]">
+    <div role="group" aria-label={groupLabel} className="flex flex-col gap-3">
       {providers.map((provider) => (
         <button
           key={provider}
           type="button"
           disabled={isBusy}
           onClick={() => onChoose(provider)}
-          className="inline-flex h-12 items-center justify-center gap-3 rounded-full border border-[#8E7B99] bg-white px-5 font-body text-[15px] font-semibold text-[#1F1F1F] hover:bg-[#F4F0EC] disabled:opacity-60"
+          className="inline-flex h-12 items-center justify-center gap-3 rounded-full border border-[#8E7B99] bg-white px-4 font-body type-body font-semibold text-[#1F1F1F] hover:bg-[#F4F0EC] disabled:opacity-60"
         >
           <img src={logoOf[provider]} alt="" aria-hidden="true" width={20} height={20} />
           {t(labelKeyOf[provider])}

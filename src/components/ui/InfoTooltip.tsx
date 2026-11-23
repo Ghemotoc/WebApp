@@ -61,7 +61,7 @@ export function InfoTooltip({ tooltipId, buttonLabel, text }: InfoTooltipProps) 
         onBlur={() => setIsOpen(false)}
         onKeyDown={handleKeyDown}
         onClick={() => setIsOpen((current) => !current)}
-        className="inline-flex size-8 items-center justify-center rounded-full border border-control-border bg-surface font-heading text-sm font-bold text-heading"
+        className="inline-flex size-8 items-center justify-center rounded-full border border-control-border bg-surface font-heading type-body font-bold text-ink-heading"
       >
         i
       </button>
@@ -74,7 +74,7 @@ export function InfoTooltip({ tooltipId, buttonLabel, text }: InfoTooltipProps) 
         hidden={!isOpen}
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        className="absolute top-full left-0 z-20 w-[260px] max-w-[calc(100vw-48px)] rounded-2xl bg-ink px-4 py-3 text-[13px] leading-normal font-normal text-on-primary shadow-popover"
+        className="absolute top-full left-0 z-20 w-[260px] max-w-[calc(100vw-48px)] rounded-card bg-ink px-4 py-3 type-meta leading-normal font-normal text-on-primary shadow-popover"
       >
         {text}
       </span>

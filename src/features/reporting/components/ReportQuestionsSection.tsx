@@ -37,13 +37,13 @@ function QuestionItem({
   const fieldId = `report-answer-${question.reportReference}`;
   return (
     <li className="flex flex-col gap-2 border-b border-border py-3 last:border-b-0">
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 type-body text-ink-muted">
         {t('questions.about', {
           reference: question.reportReference,
           reason: t(`reasons.${question.reason}.label`),
         })}
       </p>
-      <p className="m-0 text-body">{question.question}</p>
+      <p className="m-0 text-ink-muted">{question.question}</p>
       <Textarea
         id={fieldId}
         label={t('questions.answer')}
@@ -83,14 +83,14 @@ export function ReportQuestionsSection() {
     >
       <h2
         id="settings-report-questions-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('questions.heading')}
       </h2>
       {questions.loadFailed && <Notice tone="error">{t('questions.loadFailed')}</Notice>}
       {questions.answerFailed && <Notice tone="error">{t('questions.answerFailed')}</Notice>}
       {questions.hasAnswered && <Notice tone="success">{t('questions.thanks')}</Notice>}
-      {hasQuestions && <p className="m-0 text-body">{t('questions.intro')}</p>}
+      {hasQuestions && <p className="m-0 text-ink-muted">{t('questions.intro')}</p>}
       <ul className="m-0 flex list-none flex-col p-0">
         {questions.questions.map((question) => (
           <QuestionItem key={question.id} question={question} questions={questions} />

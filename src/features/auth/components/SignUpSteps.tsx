@@ -33,13 +33,13 @@ export function SignUpSteps({ includesAgeCheck }: SignUpStepsProps) {
             aria-current={isCurrent ? 'step' : undefined}
             className={
               isCurrent
-                ? 'inline-flex h-8 items-center gap-2 rounded-full bg-heading px-3 text-[13px] font-semibold text-on-primary'
-                : 'inline-flex h-8 items-center gap-2 rounded-full border border-panel-border bg-panel px-3 text-[13px] font-semibold text-body'
+                ? 'inline-flex h-8 items-center gap-2 rounded-full bg-heading px-3 type-meta font-semibold text-on-primary'
+                : 'inline-flex h-8 items-center gap-2 rounded-full border border-panel-border bg-panel px-3 type-meta font-semibold text-ink-muted'
             }
           >
             <span
               aria-hidden="true"
-              className={`inline-flex size-5 items-center justify-center rounded-full text-[12px] ${isCurrent ? 'bg-gold text-on-gold' : 'bg-surface'}`}
+              className={`inline-flex size-5 items-center justify-center rounded-full type-meta ${isCurrent ? 'bg-gold text-on-gold' : 'bg-surface'}`}
             >
               {index + 1}
             </span>

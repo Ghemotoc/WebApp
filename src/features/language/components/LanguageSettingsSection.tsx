@@ -45,16 +45,16 @@ export function LanguageSettingsSection() {
     <section
       id="language"
       aria-labelledby="settings-language-heading"
-      className="flex scroll-mt-24 flex-col gap-5 rounded-card border border-border bg-surface p-6 shadow-card"
+      className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <h2
           id="settings-language-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('language.settingsHeading')}
         </h2>
-        <p className="m-0 text-body">{t('language.settingsIntro')}</p>
+        <p className="m-0 text-ink-muted">{t('language.settingsIntro')}</p>
       </div>
       <SegmentedControl
         legend={t('language.settingsLegend')}
@@ -70,10 +70,10 @@ export function LanguageSettingsSection() {
       {/* Step 3: where the choice was saved, read out politely by screen readers. The line stays
           in the page while empty, so the announcement is heard; empty, it has no height. */}
       <div className="flex flex-col gap-1">
-        <p role="status" className="m-0 text-[13px] text-body">
+        <p role="status" className="m-0 type-meta text-ink-muted">
           {messageKey === null ? '' : t(messageKey)}
         </p>
-        <p className="m-0 text-[13px] text-meta">{t('language.settingsNote')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('language.settingsNote')}</p>
       </div>
     </section>
   );

@@ -133,7 +133,7 @@ function PictureFields({ form, missing, isUploading, onChange }: PictureFieldsPr
         errorMessage={missing?.alt === true ? t('pictureDialog.missingAlt') : undefined}
       />
       <PictureRulesNote id="chapter-picture-rules" />
-      <p className="m-0 text-sm text-body">{t('pictureDialog.checkNote')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('pictureDialog.checkNote')}</p>
     </>
   );
 }
@@ -160,7 +160,7 @@ export function PictureInsertDialog(props: PictureInsertDialogProps) {
       <form onSubmit={(event) => void submit(event)} noValidate className="flex flex-col gap-4">
         <h2
           id="chapter-picture-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('pictureDialog.heading')}
         </h2>
@@ -172,7 +172,7 @@ export function PictureInsertDialog(props: PictureInsertDialogProps) {
         />
         <div aria-live="polite">
           {uploading.isUploading && (
-            <p className="m-0 text-sm text-body">{t('pictureDialog.uploading')}</p>
+            <p className="m-0 type-body text-ink-muted">{t('pictureDialog.uploading')}</p>
           )}
           {failure !== null && <Notice tone="error">{tCommon(failure.key, failure.values)}</Notice>}
         </div>

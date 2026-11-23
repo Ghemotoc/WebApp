@@ -24,9 +24,9 @@ export function LovedLines({ lines }: { lines: LovedLine[] }) {
   const shown = (count: number | null) => formatShownCount(count, i18n.language, fewer);
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 type-subheading text-heading">{t('insights.lovedHeading')}</h3>
+      <h3 className="m-0 type-subheading text-ink-heading">{t('insights.lovedHeading')}</h3>
       {lines.length === 0 ? (
-        <p className="m-0 text-sm text-body">{t('insights.lovedEmpty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('insights.lovedEmpty')}</p>
       ) : (
         <ol className="m-0 flex list-none flex-col p-0">
           {lines.map((line) => (
@@ -34,11 +34,11 @@ export function LovedLines({ lines }: { lines: LovedLine[] }) {
               key={line.number}
               className="flex flex-col gap-1 border-b border-border py-3 last:border-b-0"
             >
-              <span className="text-[13px] font-semibold text-meta">
+              <span className="type-meta font-semibold text-ink-muted">
                 {t('insights.paragraph', { number: line.number })}
               </span>
-              <span className="text-[15px] leading-normal text-ink">{line.excerpt}</span>
-              <span className="text-sm text-body">
+              <span className="type-body leading-normal text-ink">{line.excerpt}</span>
+              <span className="type-body text-ink-muted">
                 {t('insights.lineCounts', {
                   shares: shown(line.shares),
                   comments: shown(line.comments),

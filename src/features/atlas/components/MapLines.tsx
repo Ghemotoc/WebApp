@@ -91,7 +91,7 @@ export function MapLines({ layout, words, focusId }: MapLinesProps) {
           <span
             key={edge.relationship.id}
             data-map-label
-            className={`absolute max-w-[140px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-surface px-2 py-0.5 text-center text-xs leading-tight font-semibold break-words text-ink shadow-card ${isFaded(edge, focusId) ? 'opacity-20' : ''}`}
+            className={`absolute max-w-[140px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-surface px-2 py-1 text-center type-meta leading-tight font-semibold break-words text-ink shadow-card ${isFaded(edge, focusId) ? 'opacity-20' : ''}`}
             style={{ left: edge.labelX, top: edge.labelY }}
           >
             {words.label(edge.relationship)}

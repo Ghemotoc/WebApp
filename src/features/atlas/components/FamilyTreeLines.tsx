@@ -87,7 +87,7 @@ function LegendLine({
 }) {
   const colour = lineStyles.family.colour;
   return (
-    <li className="flex items-center gap-2 text-sm text-ink">
+    <li className="flex items-center gap-2 type-body text-ink">
       <svg aria-hidden="true" width="32" height="12" viewBox="0 0 32 12" className="shrink-0">
         <line
           x1="2"
@@ -114,7 +114,7 @@ export function TreeLegend() {
   return (
     <ul
       aria-label={t('connections.tree.legend')}
-      className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0"
+      className="m-0 flex list-none flex-wrap gap-x-4 gap-y-2 p-0"
     >
       <LegendLine label={t('connections.tree.lineParent')} />
       <LegendLine label={t('connections.tree.lineSibling')} dashes={treeLines.sibling} />

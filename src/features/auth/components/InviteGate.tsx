@@ -52,8 +52,10 @@ export function InviteGate({ reason, codeFromAddress }: InviteGateProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="m-0 font-heading text-[22px] font-bold text-heading">{t('invite.heading')}</h3>
-      <p className="m-0 text-body">{t('invite.body')}</p>
+      <h3 className="m-0 font-heading type-heading font-bold text-ink-heading">
+        {t('invite.heading')}
+      </h3>
+      <p className="m-0 text-ink-muted">{t('invite.body')}</p>
       {/* Not reaching the database isn't the code's fault, so it stays a notice. */}
       {reason === 'unreachable' && <Notice tone="error">{t('invite.unreachable')}</Notice>}
       <form onSubmit={form.submitCode} noValidate className="flex flex-col gap-3">

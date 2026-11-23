@@ -31,10 +31,10 @@ import { OnCallShiftList } from './OnCallShiftList';
 function RotaBody({ rota }: { rota: ReturnType<typeof useOnCallRota> }) {
   const { t } = useTranslation('moderation');
   if (rota.loadFailure === 'not_allowed')
-    return <p className="m-0 text-body">{t('onCall.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('onCall.notAllowed')}</p>;
   if (rota.loadFailure !== null)
     return <Notice tone="error">{t(`failures.${rota.loadFailure}`)}</Notice>;
-  if (rota.rota === null) return <p className="m-0 text-meta">{t('onCall.loading')}</p>;
+  if (rota.rota === null) return <p className="m-0 text-ink-muted">{t('onCall.loading')}</p>;
   const rotaData = rota.rota;
   return (
     <>
@@ -60,14 +60,14 @@ export function OnCallRotaPage() {
   const { t } = useTranslation('moderation');
   const rota = useOnCallRota();
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('onCall.documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('onCall.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('onCall.heading')}
         </h1>
-        <p className="m-0 text-body">{t('onCall.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('onCall.intro')}</p>
       </div>
       <RotaBody rota={rota} />
     </PageContainer>

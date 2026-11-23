@@ -46,7 +46,7 @@ export function QuoteCardCanvas({ content, altText, canvasRef }: QuoteCardCanvas
         width={cardSize}
         height={cardSize}
         aria-hidden="true"
-        className="block aspect-square w-full rounded-[20px] shadow-card"
+        className="block aspect-square w-full rounded-card shadow-card"
       />
     </div>
   );

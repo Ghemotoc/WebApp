@@ -90,9 +90,9 @@ export function AppealCard({
   const { t } = useTranslation('moderation');
   const rows = useAppealRows(appeal);
   return (
-    <li className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5">
+    <li className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="m-0 font-heading text-lg font-bold text-heading">
+        <h2 className="m-0 font-heading type-long font-bold text-ink-heading">
           {t('appeals.cardHeading', { reference: appeal.reference })}
         </h2>
         <InfoPill tone={appeal.status === 'open' ? 'gold' : 'neutral'}>
@@ -108,7 +108,7 @@ export function AppealCard({
         />
       )}
       {appeal.status === 'open' && !appeal.mayDecide && (
-        <p className="m-0 text-sm text-body">{t('appeals.notYours')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('appeals.notYours')}</p>
       )}
       {appeal.status === 'open' && appeal.mayDecide && (
         <AppealDecisionForm

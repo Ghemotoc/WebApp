@@ -21,7 +21,7 @@ import { settingsGroupKeys, type SettingsGroupKey } from '../lib/settingsGroups'
 
 /** The look of the two links to pages outside Settings. */
 const pageLinkClassName =
-  'flex min-h-12 items-center rounded-2xl px-4 text-[15px] font-medium text-heading no-underline hover:bg-panel';
+  'flex min-h-12 items-center rounded-card px-4 type-body font-normal text-ink-heading no-underline hover:bg-panel';
 
 /** What the menu needs. */
 export interface SettingsNavProps {
@@ -47,16 +47,16 @@ function SettingsNavItem({
 }) {
   const { t } = useTranslation('account');
   // Step 1: the text colour: red for "Delete account", plum for the open group, ink otherwise.
-  let textColour = isOpen ? 'text-primary' : 'text-heading';
+  let textColour = isOpen ? 'text-primary' : 'text-ink-heading';
   if (groupKey === 'delete-account') textColour = 'text-destructive';
   // Step 2: the open group also gets the tint and bold text.
-  const look = isOpen ? 'bg-tint font-bold' : 'font-medium hover:bg-panel';
+  const look = isOpen ? 'bg-tint font-semibold' : 'font-normal hover:bg-panel';
   return (
     <Link
       to={{ hash: groupKey }}
       aria-current={isOpen ? 'true' : undefined}
       onClick={onPick}
-      className={`flex min-h-12 items-center rounded-2xl px-4 text-[15px] no-underline ${look} ${textColour}`}
+      className={`flex min-h-12 items-center rounded-card px-4 type-body no-underline ${look} ${textColour}`}
     >
       {t(`settings.groups.${groupKey}`)}
     </Link>
@@ -77,7 +77,7 @@ export function SettingsNav({ open, onPick }: SettingsNavProps) {
       // window it scrolls inside its own box, so its last links are not stuck under the floating
       // tab bar (under 1024 px: 96 px kept free at the foot) or below the window's edge
       // (WCAG 2.2, 2.4.11; GLASS-4 follow-up, 12 Nov 2026).
-      className="flex min-w-0 flex-[1_1_220px] flex-col gap-0.5 self-start rounded-card border border-border bg-surface p-2.5 shadow-card md:sticky md:top-28 md:max-h-[calc(100dvh-7rem-96px)] md:max-w-[320px] md:overflow-y-auto lg:max-h-[calc(100dvh-8rem)]"
+      className="flex min-w-0 flex-[1_1_220px] flex-col gap-1 self-start rounded-card border border-border bg-surface p-3 shadow-card md:sticky md:top-28 md:max-h-[calc(100dvh-7rem-96px)] md:max-w-[320px] md:overflow-y-auto lg:max-h-[calc(100dvh-8rem)]"
     >
       {settingsGroupKeys.map((key) => (
         <SettingsNavItem key={key} groupKey={key} isOpen={key === open} onPick={onPick} />

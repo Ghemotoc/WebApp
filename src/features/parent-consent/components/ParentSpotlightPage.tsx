@@ -62,8 +62,8 @@ function SpotlightQuestion({
   const decision = request.isAgreed ? 'withdraw' : 'agree';
   return (
     <>
-      <p className="m-0 text-body">{t('spotlight.intro', { handle: request.handle })}</p>
-      <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-body">
+      <p className="m-0 text-ink-muted">{t('spotlight.intro', { handle: request.handle })}</p>
+      <ul className="m-0 flex list-disc flex-col gap-2 pl-4 text-ink-muted">
         <li>{t('spotlight.whereShown')}</li>
         <li>{t('spotlight.whatShown')}</li>
         <li>{t('spotlight.whatNot')}</li>
@@ -84,7 +84,7 @@ function SpotlightQuestion({
       >
         {t(request.isAgreed ? 'spotlight.withdraw' : 'spotlight.agree')}
       </Button>
-      <p className="m-0 text-sm text-meta">{t('spotlight.noAnswer')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('spotlight.noAnswer')}</p>
     </>
   );
 }
@@ -97,8 +97,9 @@ function SpotlightQuestion({
 function SpotlightBody({ state }: { state: SpotlightState }) {
   const { t } = useParentConsentTranslation();
   if (state.loadFailed) return <Notice tone="error">{t('loadFailed')}</Notice>;
-  if (state.request === undefined) return <p className="m-0 text-body">{t('parent.loading')}</p>;
-  if (state.request === null) return <p className="m-0 text-body">{t('parent.goneBody')}</p>;
+  if (state.request === undefined)
+    return <p className="m-0 text-ink-muted">{t('parent.loading')}</p>;
+  if (state.request === null) return <p className="m-0 text-ink-muted">{t('parent.goneBody')}</p>;
   return <SpotlightQuestion state={state} request={state.request} />;
 }
 
@@ -114,17 +115,17 @@ export function ParentSpotlightPage() {
   useParentLanguage(state.request);
   const heading = state.request === null ? t('parent.goneHeading') : t('spotlight.heading');
   return (
-    <PageContainer className="tmc-rise flex justify-center pt-12 pb-7">
+    <PageContainer className="tmc-rise flex justify-center pt-12 pb-6">
       <title>{t('spotlight.documentTitle')}</title>
       <section
         aria-labelledby="parent-spotlight-heading"
-        className="flex w-full max-w-[720px] flex-col gap-5 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[720px] flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
       >
         <div className="flex flex-col gap-2">
           <Eyebrow>{t('parent.eyebrow')}</Eyebrow>
           <h1
             id="parent-spotlight-heading"
-            className="m-0 font-heading text-[30px] font-bold text-heading"
+            className="m-0 font-heading type-title font-bold text-ink-heading"
           >
             {heading}
           </h1>

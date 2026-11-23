@@ -65,7 +65,7 @@ function LockDateForm({
 
   return (
     <form className="flex flex-col gap-4" onSubmit={save}>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {space.locksAt === null
           ? t('classLock.noDate')
           : t('classLock.locksOn', { date: lockMomentText(space.locksAt, i18n.language) })}
@@ -117,12 +117,12 @@ export function ClassLockCard({ space }: { space: Space }) {
       headingId="class-lock-heading"
     >
       <div className="flex flex-col gap-4">
-        <p className="m-0 text-body">{t('classLock.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('classLock.intro')}</p>
         {space.isLocked ? (
           <>
             <Notice tone="info">{t('classLock.locked')}</Notice>
             {space.isArchived ? (
-              <p className="m-0 text-body">{t('classLock.archivedNote')}</p>
+              <p className="m-0 text-ink-muted">{t('classLock.archivedNote')}</p>
             ) : (
               <Button
                 variant="secondary"

@@ -31,7 +31,7 @@ import { CommentIcon, ForwardArrowIcon } from './ReaderIcons';
 
 /** The quiet 44 px button's classes ("Comment on the chapter", "Back to the story"). */
 const quietButton =
-  'inline-flex h-11 items-center gap-2 rounded-full button-glass px-4 text-[15px] font-semibold text-heading no-underline';
+  'inline-flex h-11 items-center gap-2 rounded-full button-glass px-4 type-body font-semibold text-ink-heading no-underline';
 
 /**
  * Takes the reader to the chapter's comment field and gives it focus (handover Step 3, point 4),
@@ -52,14 +52,14 @@ function WayOn({ chapter }: { chapter: ReaderChapter }) {
   const { t } = useTranslation('reading');
   const storyAddress = `/s/${chapter.story.slug}`;
   return (
-    <div className="mt-10 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-hairline pt-6">
-      <p className="m-0 text-[15px] text-meta">
+    <div className="mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-hairline pt-6">
+      <p className="m-0 type-body text-ink-muted">
         {t('reader.endOfChapter', { number: chapter.number })}
       </p>
       {chapter.nextCode !== null ? (
         <Link
           to={`${storyAddress}/${chapter.nextCode}`}
-          className="inline-flex h-11 items-center gap-2 rounded-full button-main px-5 text-[15px] font-semibold no-underline"
+          className="inline-flex h-11 items-center gap-2 rounded-full button-main px-4 type-body font-semibold no-underline"
         >
           {t('reader.readNext', { number: chapter.number + 1 })}
           <ForwardArrowIcon />
@@ -83,10 +83,10 @@ function NoNextYet({ chapter }: { chapter: ReaderChapter }) {
     : nextChapterText(t, chapter.nextChapter, i18n.language, new Date());
   return (
     <div className="flex flex-col gap-1">
-      <p className="m-0 text-[15px] text-body">
+      <p className="m-0 type-body text-ink-muted">
         {isEnd ? t('reader.endOfStory') : t('reader.latestChapter')}
       </p>
-      {nextLine !== null && <p className="m-0 text-[15px] text-meta">{nextLine}</p>}
+      {nextLine !== null && <p className="m-0 type-body text-ink-muted">{nextLine}</p>}
     </div>
   );
 }

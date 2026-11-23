@@ -54,10 +54,10 @@ function MissingActions({ chapter, missing }: MissingTranslationNoticeProps) {
   const { t } = useEditionsTranslation();
   const original = languageOwnName(missing.original.languageCode);
   return (
-    <div className="flex flex-wrap gap-2.5">
+    <div className="flex flex-wrap gap-3">
       <Link
         to={`/s/${missing.original.slug}/${missing.original.code}`}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full button-main px-5 py-2 text-[15px] font-semibold no-underline"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full button-main px-4 py-2 type-body font-semibold no-underline"
       >
         <ActionIcon name="book" size={18} className="flex-none" />
         {t('missing.readOriginal', { number: chapter.number, original })}
@@ -65,7 +65,7 @@ function MissingActions({ chapter, missing }: MissingTranslationNoticeProps) {
       {chapter.previousCode !== null && missing.previousNumber !== null && (
         <Link
           to={`/s/${chapter.story.slug}/${chapter.previousCode}`}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-full button-glass py-2 pr-[18px] pl-3 text-[15px] font-semibold no-underline"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full button-glass py-2 pr-4 pl-3 type-body font-semibold no-underline"
         >
           <BackIcon />
           {t('missing.back', { number: missing.previousNumber })}
@@ -93,7 +93,7 @@ export function MissingTranslationNotice({ chapter, missing }: MissingTranslatio
       <ChapterBar chapter={chapter} minutesLeft={null} settings={null} />
       <section
         aria-labelledby="missing-translation-title"
-        className="mx-auto mt-6 flex w-full max-w-[880px] flex-col items-start gap-3.5 rounded-card border border-border bg-surface px-6 py-8 shadow-card sm:px-9"
+        className="mx-auto mt-6 flex w-full max-w-[880px] flex-col items-start gap-4 rounded-card border border-border bg-surface px-6 py-8 shadow-card sm:px-8"
       >
         <Eyebrow>
           <span lang={missing.original.languageCode}>
@@ -105,16 +105,16 @@ export function MissingTranslationNotice({ chapter, missing }: MissingTranslatio
         </Eyebrow>
         <h1
           id="missing-translation-title"
-          className="m-0 font-heading text-[clamp(26px,3.2vw,36px)] leading-tight font-bold break-words text-heading"
+          className="m-0 font-heading text-[clamp(26px,3.2vw,36px)] leading-tight font-bold break-words text-ink-heading"
         >
           {title}
         </h1>
-        <p className="m-0 text-base leading-[1.6] text-body">
+        <p className="m-0 type-body leading-[1.6] text-ink-muted">
           {progressSentence !== '' && `${progressSentence} `}
           {t('missing.body', { number: chapter.number, original, language })}
         </p>
         <MissingActions chapter={chapter} missing={missing} />
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('missing.follow', { number: chapter.number, language })}
         </p>
       </section>

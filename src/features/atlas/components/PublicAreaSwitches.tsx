@@ -46,8 +46,8 @@ export function PublicAreaSwitches({ savedAreas, save }: PublicAreaSwitchesProps
   }
 
   return (
-    <fieldset className="m-0 flex min-w-0 flex-col gap-1 rounded-card border border-border bg-surface px-5 py-5 shadow-card md:px-7">
-      <legend className="float-left mb-2 font-heading text-[22px] font-bold text-heading">
+    <fieldset className="m-0 flex min-w-0 flex-col gap-1 rounded-card border border-border bg-surface px-4 py-4 shadow-card md:px-6">
+      <legend className="float-left mb-2 font-heading type-heading font-bold text-ink-heading">
         {t('readers.areas.legend')}
       </legend>
       {planAreas.map((area) => (
@@ -55,9 +55,9 @@ export function PublicAreaSwitches({ savedAreas, save }: PublicAreaSwitchesProps
           key={area}
           className="flex min-h-11 w-full items-center justify-between gap-4 border-t border-hairline py-3 first-of-type:border-t-0"
         >
-          <div className="flex min-w-0 flex-col gap-0.5">
-            <span className="font-semibold text-heading">{t(`publicPlan.areas.${area}`)}</span>
-            <span className="text-sm text-body">{t(`readers.areas.hints.${area}`)}</span>
+          <div className="flex min-w-0 flex-col gap-1">
+            <span className="font-semibold text-ink-heading">{t(`publicPlan.areas.${area}`)}</span>
+            <span className="type-body text-ink-muted">{t(`readers.areas.hints.${area}`)}</span>
           </div>
           <SwitchButton
             label={t(`publicPlan.areas.${area}`)}

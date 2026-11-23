@@ -47,7 +47,7 @@ interface PendingMove {
 
 /** The glass look of the header's two links (the same as on Story settings). */
 const headerLinkClass =
-  'inline-flex h-12 items-center rounded-full button-glass px-[22px] text-[15px] font-semibold no-underline';
+  'inline-flex h-12 items-center rounded-full button-glass px-6 type-body font-semibold no-underline';
 
 /** The header: back link, the story's title, the heading, the intro and the two actions. */
 function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: string }) {
@@ -55,10 +55,10 @@ function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: 
   return (
     // mb-2 makes the board's 28 px gap above the card.
     <header className="relative mb-2 flex flex-wrap items-end justify-between gap-6">
-      <div className="flex max-w-[760px] flex-col gap-3.5">
+      <div className="flex max-w-[760px] flex-col gap-4">
         <Link
           to="/write"
-          className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold no-underline hover:underline"
+          className="inline-flex min-h-11 items-center gap-2 self-start type-body font-semibold no-underline hover:underline"
         >
           <ChevronLeftIcon />
           {t('newStory.back')}
@@ -66,10 +66,10 @@ function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: 
         <div className="w-fit">
           <Eyebrow>{storyTitle}</Eyebrow>
         </div>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em]">
+        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
           {t('manageChapters.heading')}
         </h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('manageChapters.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('manageChapters.intro')}</p>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <Link to={`/write/s/${slug}/settings`} className={headerLinkClass}>
@@ -169,10 +169,10 @@ export function ManageChaptersPage() {
   const story = writing.stories.find((candidate) => candidate.slug === storySlug);
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-5 pt-10 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-4 pt-8 pb-6">
       <title>{t('manageChapters.documentTitle')}</title>
       {writing.isKnown && !writing.isSignedIn && (
-        <p className="m-0 text-body">{t('newStory.signedOut')}</p>
+        <p className="m-0 text-ink-muted">{t('newStory.signedOut')}</p>
       )}
       {writing.isKnown && writing.isSignedIn && story === undefined && (
         <Notice tone="error">{t('settings.notFound')}</Notice>

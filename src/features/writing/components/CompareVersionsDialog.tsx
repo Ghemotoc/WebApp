@@ -61,13 +61,13 @@ function VersionColumn(props: {
         });
   return (
     <section aria-labelledby={props.headingId} className="flex min-w-0 flex-1 flex-col gap-3">
-      <h3 id={props.headingId} className="m-0 font-heading text-lg font-bold text-heading">
+      <h3 id={props.headingId} className="m-0 font-heading type-long font-bold text-ink-heading">
         {props.heading}
       </h3>
-      <p className="m-0 text-[13px] text-meta">{savedLine}</p>
+      <p className="m-0 type-meta text-ink-muted">{savedLine}</p>
       <div className="max-h-[50vh] overflow-y-auto rounded-card border border-border bg-panel p-4">
-        <p className="m-0 font-heading text-base font-bold text-heading">{props.side.title}</p>
-        <p className="m-0 mt-2 text-[15px] leading-relaxed whitespace-pre-wrap text-ink">
+        <p className="m-0 font-heading type-body font-bold text-ink-heading">{props.side.title}</p>
+        <p className="m-0 mt-2 type-body leading-relaxed whitespace-pre-wrap text-ink">
           {props.side.text}
         </p>
       </div>
@@ -121,14 +121,17 @@ export function CompareVersionsDialog(props: CompareVersionsDialogProps) {
       onClose={props.onClose}
       className="m-auto w-[min(94vw,960px)] rounded-card border border-border bg-surface p-6 text-ink shadow-card backdrop:bg-ink/40"
     >
-      <div className="flex flex-col gap-5">
-        <h2 id="compare-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+      <div className="flex flex-col gap-4">
+        <h2
+          id="compare-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
+        >
           {t('compare.heading')}
         </h2>
-        <p className="m-0 text-sm text-body">{t('compare.intro')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('compare.intro')}</p>
         {failed && <Notice tone="error">{t('compare.loadFailed')}</Notice>}
         {!failed && other === null && (
-          <p className="m-0 text-sm text-meta">{t('compare.loading')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('compare.loading')}</p>
         )}
         {other !== null && (
           <div className="flex flex-col gap-6 md:flex-row">

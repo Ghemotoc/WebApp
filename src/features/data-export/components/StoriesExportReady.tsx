@@ -96,16 +96,16 @@ export function StoriesExportReady({ copy, story, wasReused }: StoriesExportRead
   return (
     <div
       role="status"
-      className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-(--success-bg) px-4.5 py-4 text-[15px] text-(--success-text)"
+      className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-(--success-bg) px-4 py-4 type-body text-(--success-text)"
     >
       <span className="flex min-w-0 flex-col gap-1">
         <span>
           <strong>{t('stories.readyTitle')}</strong> {t('settings.readyBody', { date: expiresOn })}
         </span>
-        <span className="text-sm break-words">
+        <span className="type-body break-words">
           {holdsLine(copy, story)} · {size}
         </span>
-        {wasReused && <span className="text-sm">{t('stories.reused')}</span>}
+        {wasReused && <span className="type-body">{t('stories.reused')}</span>}
       </span>
       <ExportDownloadButton
         fileName={copy.file_name}

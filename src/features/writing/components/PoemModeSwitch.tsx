@@ -28,7 +28,7 @@ export function PoemModeSwitch({ isPoem, isSaving, hasFailed, change }: PoemMode
   const { t } = useEditorTranslation();
   const fieldId = useId();
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div className="flex items-start gap-3">
         <input
           id={fieldId}
@@ -37,13 +37,13 @@ export function PoemModeSwitch({ isPoem, isSaving, hasFailed, change }: PoemMode
           disabled={isSaving}
           aria-describedby={`${fieldId}-hint`}
           onChange={(event) => change(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link) disabled:cursor-default"
+          className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link) disabled:cursor-default"
         />
-        <label htmlFor={fieldId} className="text-[15px] font-medium text-heading">
+        <label htmlFor={fieldId} className="type-body font-normal text-ink-heading">
           {t('poemMode.label')}
         </label>
       </div>
-      <p id={`${fieldId}-hint`} className="m-0 text-[13px] text-meta">
+      <p id={`${fieldId}-hint`} className="m-0 type-meta text-ink-muted">
         {t('poemMode.hint')}
       </p>
       {hasFailed && <Notice tone="error">{t('poemMode.failed')}</Notice>}

@@ -25,7 +25,7 @@ export function RankProgressBar({ rank, name }: RankProgressBarProps) {
   const { t, i18n } = useForumsTranslation();
   const progress = progressToNextRank(rank.rank, rank.chapters, rank.words);
   if (progress === null) {
-    return <p className="m-0 text-[13px] text-meta">{t('rank.top', { name })}</p>;
+    return <p className="m-0 type-meta text-ink-muted">{t('rank.top', { name })}</p>;
   }
   // Step 1: the share done, capped at 100 so a bar never overflows.
   const percent = Math.min(100, Math.floor((progress.have / progress.need) * 100));
@@ -33,7 +33,7 @@ export function RankProgressBar({ rank, name }: RankProgressBarProps) {
   const numbers = new Intl.NumberFormat(i18n.language);
   const wordsKey = progress.unit === 'words' ? 'rank.progressWords' : 'rank.progressChapters';
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div
         role="progressbar"
         aria-label={t('rank.progressLabel', { rank: nextName, percent })}
@@ -44,7 +44,7 @@ export function RankProgressBar({ rank, name }: RankProgressBarProps) {
       >
         <div className="h-full rounded-full bg-thread" style={{ width: `${percent}%` }} />
       </div>
-      <p className="m-0 text-[13px] text-meta">
+      <p className="m-0 type-meta text-ink-muted">
         {t(wordsKey, {
           have: numbers.format(progress.have),
           need: numbers.format(progress.need),

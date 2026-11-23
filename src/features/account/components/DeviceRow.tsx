@@ -45,10 +45,10 @@ export function DeviceRow({ session, isBusy, onEnd }: DeviceRowProps) {
     <li className="flex flex-wrap items-center justify-between gap-3 border-t border-border py-3 first:border-t-0 first:pt-0">
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-ink">{label}</span>
+          <span className="type-body font-semibold text-ink">{label}</span>
           {session.isCurrent && <StateWord>{t('devices.thisDevice')}</StateWord>}
         </div>
-        <span className="text-[13px] text-meta">
+        <span className="type-meta text-ink-muted">
           {t('devices.lastActive', { date: formatLegalDate(session.lastActiveAt, i18n.language) })}
         </span>
       </div>

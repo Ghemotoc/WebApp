@@ -114,18 +114,18 @@ export function TimelineEventItem(props: TimelineEventItemProps) {
   return (
     <TimelineRow kind="event" date={event.displayDate} sortValue={event.sortValue}>
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="m-0 min-w-0 font-bold break-words text-heading">{event.title}</p>
+        <p className="m-0 min-w-0 font-semibold break-words text-ink-heading">{event.title}</p>
         <InfoPill tone="gold">{t('storyline.timeline.event')}</InfoPill>
       </div>
       {event.description !== '' && !isEditing && (
-        <p className="m-0 text-sm break-words whitespace-pre-line text-body">
+        <p className="m-0 type-body break-words whitespace-pre-line text-ink-muted">
           <CrossLinkText text={event.description} />
         </p>
       )}
       {isEditing && <EventFields {...props} />}
       <Button
         variant="secondary"
-        className="h-9 self-start px-4 text-[13px]"
+        className="h-9 self-start px-4 type-meta"
         aria-expanded={isEditing}
         aria-label={
           isEditing ? undefined : t('storyline.timeline.editNamed', { title: event.title })

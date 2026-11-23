@@ -63,7 +63,7 @@ function useRuleRows(rules: AgeRule[], onEdit: (rule: AgeRule) => void): LogTabl
         <SourceCell key="source" source={rule.source} />,
         rule.dateChecked,
         t(`ageRules.confidences.${rule.confidence}`),
-        <span key="status" className="inline-flex flex-wrap gap-1.5">
+        <span key="status" className="inline-flex flex-wrap gap-2">
           {t(`ageRules.statuses.${rule.status}`)}
           {ruleNeedsReview(rule) && <StateWord>{t('ageRules.checkAgain')}</StateWord>}
         </span>,

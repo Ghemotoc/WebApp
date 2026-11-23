@@ -32,8 +32,8 @@ export function AvatarPartTiles({ part, draft, onChoose }: AvatarPartTilesProps)
   const { t } = useAvatarsTranslation();
   const partName = t(`parts.${part}`);
   return (
-    <div className="flex flex-col gap-1.5">
-      <span id={`avatar-part-${part}`} className="text-[13px] font-semibold text-body">
+    <div className="flex flex-col gap-2">
+      <span id={`avatar-part-${part}`} className="type-meta font-semibold text-ink-muted">
         {partName}
       </span>
       <div
@@ -53,7 +53,7 @@ export function AvatarPartTiles({ part, draft, onChoose }: AvatarPartTilesProps)
               aria-label={t('builder.choice', { part: partName, choice: choiceName })}
               title={choiceName}
               onClick={() => onChoose(part, value)}
-              className={`relative inline-flex size-16 items-center justify-center rounded-2xl border bg-panel p-1 ${
+              className={`relative inline-flex size-16 items-center justify-center rounded-card border bg-panel p-1 ${
                 isChosen
                   ? 'border-link ring-2 ring-link ring-offset-2 ring-offset-surface'
                   : 'border-border hover:border-control-border'

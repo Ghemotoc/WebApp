@@ -77,12 +77,12 @@ export function TopBar({
     >
       <div
         data-solid={isScrolled}
-        className="top-bar-pill glass-float pointer-events-auto mx-auto flex max-w-[1376px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[36px] pr-2 pl-5"
+        className="top-bar-pill glass-float pointer-events-auto mx-auto flex max-w-[1376px] flex-wrap items-center gap-x-4 gap-y-3 rounded-full pr-2 pl-4"
       >
         <Link
           to={homeAddress}
           aria-label={t('shell.home', { productName: brand.productName })}
-          className="inline-flex min-h-11 items-center font-heading text-[22px] font-extrabold tracking-[-0.01em] text-heading no-underline"
+          className="inline-flex min-h-11 items-center font-heading type-heading font-bold tracking-[-0.01em] text-ink-heading no-underline"
         >
           <BrandMark />
         </Link>
@@ -94,7 +94,7 @@ export function TopBar({
         {hasSearch && <HeaderSearch />}
         {/* Wraps when the window is only just wide enough, so the end slot never
             pushes the page sideways (S1-E2-05; CLAUDE.md rule 21). */}
-        <div className="ml-auto flex flex-wrap items-center justify-end gap-1.5">{endSlot}</div>
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">{endSlot}</div>
       </div>
     </header>
   );

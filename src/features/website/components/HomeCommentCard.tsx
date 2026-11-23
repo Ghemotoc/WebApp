@@ -46,19 +46,19 @@ export function HomeCommentCard({ placement }: HomeCommentCardProps) {
   return (
     <figcaption
       aria-label={t('website.homeComment.label')}
-      className={`${placementClasses[placement]} flex w-[290px] max-w-[70%] rotate-2 flex-col gap-2 rounded-[20px] border border-border bg-surface-solid px-[18px] py-4 shadow-[0_24px_44px_-20px_rgba(38,20,46,0.45)]`}
+      className={`${placementClasses[placement]} flex w-[290px] max-w-[70%] rotate-2 flex-col gap-2 rounded-card border border-border bg-surface-solid px-4 py-4 shadow-[0_24px_44px_-20px_rgba(38,20,46,0.45)]`}
     >
-      <div className="flex min-w-0 items-center gap-2.5">
+      <div className="flex min-w-0 items-center gap-3">
         <PersonAvatar name={comment.displayName} handle={comment.handle} size="small" />
-        <p className="m-0 min-w-0 text-[13px] wrap-anywhere text-meta">
-          <b className="text-heading">{comment.displayName}</b> {where}
+        <p className="m-0 min-w-0 type-meta wrap-anywhere text-ink-muted">
+          <b className="text-ink-heading">{comment.displayName}</b> {where}
         </p>
       </div>
       <HomeCommentWords
         text={comment.body}
-        className="m-0 text-[15px] leading-[1.45] wrap-anywhere text-heading"
+        className="m-0 type-body leading-[1.45] wrap-anywhere text-ink-heading"
       />
-      <p className="m-0 text-xs wrap-anywhere text-meta">
+      <p className="m-0 type-meta wrap-anywhere text-ink-muted">
         {t('website.homeComment.place', {
           story: comment.storyTitle,
           position: comment.chapterPosition,

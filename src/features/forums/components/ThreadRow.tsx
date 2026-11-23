@@ -75,7 +75,7 @@ export function ThreadRow({
     },
   ];
   return (
-    <li className="flex flex-col gap-2 border-t border-border px-5 py-4 first:border-t-0 md:px-7">
+    <li className="flex flex-col gap-2 border-t border-border px-4 py-4 first:border-t-0 md:px-6">
       <div className="flex min-w-0 flex-1 items-start gap-3">
         <span className="mt-2 flex">
           <UnreadDot isNew={thread.isUnread} />
@@ -83,7 +83,7 @@ export function ThreadRow({
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <Link
             to={address}
-            className="font-heading text-lg leading-snug font-bold break-words text-heading underline-offset-2 hover:underline"
+            className="font-heading type-long leading-snug font-bold break-words text-ink-heading underline-offset-2 hover:underline"
           >
             {thread.title}
           </Link>

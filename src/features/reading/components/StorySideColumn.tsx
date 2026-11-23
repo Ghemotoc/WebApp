@@ -40,12 +40,12 @@ function ClassicSource({ author }: { author: ClassicAuthor }) {
   return (
     <>
       {author.translatorName !== null && (
-        <p className="m-0 text-[15px] leading-normal text-body">
+        <p className="m-0 type-body leading-normal text-ink-muted">
           {t('storyPage.classicTranslator', { name: author.translatorName })}
         </p>
       )}
       {author.sourceTitle !== null && author.sourceUrl !== null && (
-        <p className="m-0 text-[15px] leading-normal text-body">
+        <p className="m-0 type-body leading-normal text-ink-muted">
           {t('storyPage.classicSource')}{' '}
           <a
             href={author.sourceUrl}
@@ -72,11 +72,11 @@ function ClassicAuthorCard({ author }: { author: ClassicAuthor }) {
   const { t } = useTranslation('reading');
   return (
     <section aria-labelledby="story-author-heading" className="flex flex-col gap-2">
-      <p className="m-0 text-[13px] leading-[18px] text-body">{t('storyPage.authorEyebrow')}</p>
-      <h2 id="story-author-heading" className="m-0 type-subheading text-heading">
+      <p className="m-0 type-meta leading-[18px] text-ink-muted">{t('storyPage.authorEyebrow')}</p>
+      <h2 id="story-author-heading" className="m-0 type-subheading text-ink-heading">
         {author.name}
       </h2>
-      <p className="m-0 text-[15px] leading-normal text-body">
+      <p className="m-0 type-body leading-normal text-ink-muted">
         {t('storyPage.classicAuthorNote', { year: author.diedYear })}
       </p>
       <ClassicSource author={author} />
@@ -95,13 +95,13 @@ function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOw
   const profileHref = `/u/${encodeURIComponent(writer.handle)}`;
   return (
     <section aria-labelledby="story-writer-heading" className="flex flex-col gap-2">
-      <p className="m-0 text-[13px] leading-[18px] text-body">{t('storyPage.writerEyebrow')}</p>
+      <p className="m-0 type-meta leading-[18px] text-ink-muted">{t('storyPage.writerEyebrow')}</p>
       {/* The name links to the profile; the handle sits under it as a meta line. */}
       <div className="flex flex-col">
         <Link
           id="story-writer-heading"
           to={profileHref}
-          className="type-subheading text-heading no-underline hover:underline"
+          className="type-subheading text-ink-heading no-underline hover:underline"
         >
           {writer.displayName}
         </Link>
@@ -112,7 +112,7 @@ function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOw
         <ProfileRankChip handle={writer.handle} />
       </div>
       {writer.bio !== '' && (
-        <p className="m-0 text-[15px] leading-normal break-words text-body">{writer.bio}</p>
+        <p className="m-0 type-body leading-normal break-words text-ink-muted">{writer.bio}</p>
       )}
       <div className="flex flex-wrap items-center gap-2 pt-2">
         {!isOwner && (
@@ -123,13 +123,13 @@ function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOw
         )}
         <Link
           to={profileHref}
-          className="inline-flex h-11 items-center px-3 text-sm font-semibold text-link underline hover:text-link-hover"
+          className="inline-flex h-11 items-center px-3 type-body font-semibold text-link underline hover:text-link-hover"
         >
           {t('storyPage.seeProfile')}
         </Link>
       </div>
       {/* Board New-Story: followers are counted in public, but only the writer sees who. */}
-      <p className="m-0 text-[13px] leading-[18px] text-body">
+      <p className="m-0 type-meta leading-[18px] text-ink-muted">
         {t('storyPage.followersPublicNote', { name: writer.displayName })}
       </p>
     </section>
@@ -144,7 +144,7 @@ function WriterCard({ writer, isOwner }: { writer: StoryPageData['writer']; isOw
 export function StorySideColumn({ story }: { story: StoryPageData }) {
   const { t } = useTranslation('reading');
   return (
-    <aside aria-label={t('storyPage.sideColumnLabel')} className="flex flex-col gap-10">
+    <aside aria-label={t('storyPage.sideColumnLabel')} className="flex flex-col gap-8">
       {story.writer.classicAuthor === null ? (
         <WriterCard writer={story.writer} isOwner={story.isOwner} />
       ) : (

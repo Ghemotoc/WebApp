@@ -54,7 +54,7 @@ export function CrossLink({ slug, name, target }: CrossLinkProps) {
     return (
       <span data-testid="atlas-cross-link-missing">
         <span className="border-b border-dashed border-meta">{name}</span>{' '}
-        <span className="text-sm text-meta">({t('links.notFound')})</span>
+        <span className="type-body text-ink-muted">({t('links.notFound')})</span>
       </span>
     );
   }

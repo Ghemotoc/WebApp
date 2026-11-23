@@ -41,16 +41,16 @@ export function StepHeader({ step, total, title, headingId, stepThree = null }: 
     <div className="flex items-center gap-3">
       <span
         aria-hidden="true"
-        className="inline-flex size-9 flex-none items-center justify-center rounded-full bg-primary font-heading text-base font-bold text-on-primary"
+        className="inline-flex size-9 flex-none items-center justify-center rounded-full bg-primary font-heading type-body font-bold text-on-primary"
       >
         {step}
       </span>
       <div className="flex flex-col">
-        <p className="m-0 text-[13px] text-meta">{t(stepLineKey, { step, total })}</p>
+        <p className="m-0 type-meta text-ink-muted">{t(stepLineKey, { step, total })}</p>
         <h2
           id={headingId}
           tabIndex={-1}
-          className="m-0 font-heading text-[22px] font-bold text-heading focus:outline-none"
+          className="m-0 font-heading type-heading font-bold text-ink-heading focus:outline-none"
         >
           {title}
         </h2>

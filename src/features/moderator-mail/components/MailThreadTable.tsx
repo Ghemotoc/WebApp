@@ -41,7 +41,7 @@ function ThreadRow({ thread }: { thread: MailThreadSummary }) {
     new Date(thread.lastMessageAt),
   );
   return (
-    <tr className="flex flex-col gap-2 border-b border-hairline px-5 py-4 last:border-b-0 md:table-row md:px-0 md:py-0">
+    <tr className="flex flex-col gap-2 border-b border-hairline px-4 py-4 last:border-b-0 md:table-row md:px-0 md:py-0">
       <td className="md:py-4 md:pr-4 md:pl-6">
         <Link
           to={`/moderator-mail/${thread.reference}`}
@@ -49,12 +49,12 @@ function ThreadRow({ thread }: { thread: MailThreadSummary }) {
         >
           {thread.subject}
         </Link>
-        <p className="m-0 mt-1 text-[13px] text-meta">{referenceLine}</p>
+        <p className="m-0 mt-1 type-meta text-ink-muted">{referenceLine}</p>
       </td>
       <td className="md:px-4 md:py-4">
         <MailStatusPill status={thread.status} />
       </td>
-      <td className="text-sm text-body md:py-4 md:pr-6 md:pl-4">{when}</td>
+      <td className="type-body text-ink-muted md:py-4 md:pr-6 md:pl-4">{when}</td>
     </tr>
   );
 }
@@ -68,11 +68,11 @@ function ThreadRow({ thread }: { thread: MailThreadSummary }) {
 export function MailThreadTable({ threads }: { threads: MailThreadSummary[] }) {
   const { t } = useMailTranslation();
   return (
-    <div className="overflow-hidden rounded-[24px] border border-border bg-surface shadow-card">
-      <table className="w-full border-collapse text-left text-[15px]">
+    <div className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
+      <table className="w-full border-collapse text-left type-body">
         <caption className="sr-only">{t('list.title')}</caption>
         <thead className="max-md:sr-only">
-          <tr className="border-b border-hairline text-[13px] font-semibold text-meta">
+          <tr className="border-b border-hairline type-meta font-semibold text-ink-muted">
             <th scope="col" className="py-3 pr-4 pl-6 font-semibold">
               {t('list.subject')}
             </th>

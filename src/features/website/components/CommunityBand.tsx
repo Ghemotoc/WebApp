@@ -26,14 +26,14 @@ function SpaceChips({ spaces }: { spaces: ForumHighlights['spaces'] }) {
   const { t } = useTranslation();
   if (spaces.length === 0) return null;
   return (
-    <nav aria-label={t('website.spacesLabel')} className="flex flex-col gap-2.5">
+    <nav aria-label={t('website.spacesLabel')} className="flex flex-col gap-3">
       <p className="m-0 eyebrow">{t('website.spacesLabel')}</p>
       <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
         {spaces.map((space) => (
           <li key={space.slug}>
             <Link
               to={`/spaces/${encodeURIComponent(space.slug)}`}
-              className="inline-flex h-9 items-center rounded-full border border-control-border bg-surface px-3.5 text-sm leading-none font-semibold text-heading no-underline hover:bg-tint"
+              className="inline-flex h-9 items-center rounded-full border border-control-border bg-surface px-4 type-body leading-none font-semibold text-ink-heading no-underline hover:bg-tint"
             >
               {space.name}
             </Link>
@@ -52,21 +52,21 @@ function ThreadList({ threads }: { threads: ForumHighlights['threads'] }) {
     <div className="self-start">
       <ul
         aria-label={t('website.busyThreads')}
-        className="m-0 flex list-none flex-col rounded-[24px] border border-border bg-surface p-2 shadow-card"
+        className="m-0 flex list-none flex-col rounded-card border border-border bg-surface p-2 shadow-card"
       >
         {threads.map((thread) => (
           <li
             key={`${thread.forumSlug}-${String(thread.number)}`}
             className="flex flex-col gap-1 border-b border-border p-4 last:border-b-0"
           >
-            <span className="text-[13px] font-semibold text-meta">{thread.forumName}</span>
+            <span className="type-meta font-semibold text-ink-muted">{thread.forumName}</span>
             <Link
               to={`/forums/${encodeURIComponent(thread.forumSlug)}/${String(thread.number)}`}
-              className="font-heading text-lg font-bold break-words text-heading no-underline hover:underline"
+              className="font-heading type-long font-bold break-words text-ink-heading no-underline hover:underline"
             >
               {thread.title}
             </Link>
-            <span className="text-[13px] text-body">
+            <span className="type-meta text-ink-muted">
               {t('website.threadLine', { name: thread.starterName, count: thread.replyCount })}
             </span>
           </li>
@@ -89,7 +89,7 @@ export function CommunityBand({ band, language }: { band: HomeBand; language: st
     <section
       id="community"
       aria-labelledby="community-band-heading"
-      className="grid scroll-mt-6 gap-10 lg:grid-cols-2"
+      className="grid scroll-mt-6 gap-8 lg:grid-cols-2"
     >
       <div className="flex flex-col gap-6" lang={language}>
         <BandText band={band} headingId="community-band-heading" tone="page" />

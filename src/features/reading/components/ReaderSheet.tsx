@@ -38,7 +38,7 @@ export interface ReaderSheetProps {
  */
 const sheetClasses = [
   'tmc-reader-sheet box-surface m-0 mt-auto max-h-[70dvh] w-full max-w-none overflow-y-auto',
-  'rounded-t-[24px] rounded-b-none p-0 text-body shadow-popover',
+  'rounded-t-card rounded-b-none p-0 text-ink-muted shadow-popover',
 ].join(' ');
 
 /**
@@ -110,7 +110,7 @@ export function ReaderSheet({ label, onClose, children }: ReaderSheetProps) {
       }}
     >
       {/* The padding sits inside, so a tap on it never counts as a tap on the scrim. */}
-      <div className="flex flex-col gap-3 px-4 pt-3.5 pb-[max(16px,env(safe-area-inset-bottom))]">
+      <div className="flex flex-col gap-3 px-4 pt-4 pb-[max(16px,env(safe-area-inset-bottom))]">
         {children}
       </div>
     </dialog>,

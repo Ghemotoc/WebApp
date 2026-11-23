@@ -49,11 +49,11 @@ function QuoteCardButtons({ actions }: { actions: ReturnType<typeof useQuoteCard
   const { t } = useTranslation('sharing');
   return (
     <>
-      <p role="status" className="m-0 min-h-5 text-sm text-body">
+      <p role="status" className="m-0 min-h-5 type-body text-ink-muted">
         {actions.status}
       </p>
       <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border pt-4">
-        <p className="m-0 mr-auto text-sm text-body">{t('quote.limitShort')}</p>
+        <p className="m-0 mr-auto type-body text-ink-muted">{t('quote.limitShort')}</p>
         <Button
           variant="secondary"
           disabled={actions.isWorking}

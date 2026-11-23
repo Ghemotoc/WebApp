@@ -57,7 +57,7 @@ function SendRow({ isSending, isIncomplete }: { isSending: boolean; isIncomplete
     <div className="flex flex-wrap justify-end gap-2">
       <Link
         to="/support"
-        className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+        className="inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline"
       >
         {t('new.cancel')}
       </Link>
@@ -142,13 +142,13 @@ function SafetyCard() {
   return (
     <aside
       aria-labelledby="support-safety-heading"
-      className="flex flex-col gap-1.5 rounded-card border border-border bg-surface px-6 py-5 shadow-card lg:w-[320px] lg:flex-none"
+      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4 shadow-card lg:w-[320px] lg:flex-none"
     >
-      <h2 id="support-safety-heading" className="m-0 text-base font-bold text-heading">
+      <h2 id="support-safety-heading" className="m-0 type-body font-bold text-ink-heading">
         {t('new.safetyHeading')}
       </h2>
-      <p className="m-0 text-sm text-meta">{t('new.safety')}</p>
-      <Link to="/report" className="w-fit text-sm font-semibold text-link underline">
+      <p className="m-0 type-body text-ink-muted">{t('new.safety')}</p>
+      <Link to="/report" className="w-fit type-body font-semibold text-link underline">
         {t('list.reportLink')}
       </Link>
     </aside>
@@ -169,10 +169,10 @@ export function NewSupportRequestPage() {
       <SupportBackLink to="/support" label={t('list.title')} />
       <header className="flex max-w-[720px] flex-col gap-4">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(32px,4vw,52px)] leading-[1.02] font-extrabold tracking-[-0.025em]">
+        <h1 className="m-0 text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.025em]">
           {t('new.title')}
         </h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('new.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('new.intro')}</p>
       </header>
       {isKnown && userId === null && <SignedOutLine />}
       <div className="flex flex-col items-start gap-6 lg:flex-row">

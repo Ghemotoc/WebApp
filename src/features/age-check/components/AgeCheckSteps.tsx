@@ -28,26 +28,26 @@ export function AgeCheckSteps() {
         <Eyebrow>{t('ageCheck.howEyebrow')}</Eyebrow>
         <h2
           id="age-check-steps-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('ageCheck.howHeading')}
         </h2>
       </div>
       <ol className="m-0 flex list-none flex-col gap-3 p-0">
         {stepKeys.map((key, index) => (
-          <li key={key} className="flex items-start gap-3 text-body">
+          <li key={key} className="flex items-start gap-3 text-ink-muted">
             {/* The number is part of the list already, so screen readers skip the drawn one. */}
             <span
               aria-hidden="true"
-              className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-tint font-semibold text-heading"
+              className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-tint font-semibold text-ink-heading"
             >
               {index + 1}
             </span>
-            <span className="pt-0.5">{t(key)}</span>
+            <span className="pt-1">{t(key)}</span>
           </li>
         ))}
       </ol>
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 type-body text-ink-muted">
         {t('ageCheck.readOnly')} {t('ageCheck.fourteenDays')}
       </p>
     </section>

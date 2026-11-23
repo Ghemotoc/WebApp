@@ -29,23 +29,23 @@ export function AppOnlyNotice({ chapter }: { chapter: ReaderChapter }) {
       <title>{chapter.story.title}</title>
       <h1
         lang={chapter.story.languageCode}
-        className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-extrabold tracking-[-0.025em] break-words"
+        className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-bold tracking-[-0.025em] break-words"
       >
         {chapter.story.title}
       </h1>
       <section
         aria-labelledby="app-only-title"
-        className="flex max-w-[640px] flex-col items-start gap-2 rounded-card border border-border bg-tint px-6 py-5"
+        className="flex max-w-[640px] flex-col items-start gap-2 rounded-card border border-border bg-tint px-6 py-4"
       >
-        <h2 id="app-only-title" className="m-0 text-base font-semibold text-heading">
+        <h2 id="app-only-title" className="m-0 type-body font-bold text-ink-heading">
           {t('appOnly.title')}
         </h2>
-        <p className="m-0 text-[15px] leading-normal text-body">
+        <p className="m-0 type-body leading-normal text-ink-muted">
           {t('appOnly.body', { writer: chapter.story.writer.displayName })}
         </p>
         <Link
           to={`/s/${chapter.story.slug}`}
-          className="mt-1 inline-flex min-h-6 items-center text-sm font-semibold text-link underline"
+          className="mt-1 inline-flex min-h-6 items-center type-body font-semibold text-link underline"
         >
           {t('appOnly.backToStory')}
         </Link>

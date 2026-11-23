@@ -66,7 +66,7 @@ export function BirthFields({ form, includesAgeCheck }: BirthFieldsProps) {
       {(ageOutcome === 'under_13' || ageOutcome === 'adults_only') && (
         <p
           role="alert"
-          className="m-0 rounded-2xl bg-panel px-4 py-3 text-sm font-semibold text-destructive"
+          className="m-0 rounded-card bg-panel px-4 py-3 type-body font-semibold text-destructive"
         >
           {t('signUp.refusal.heading')}
         </p>

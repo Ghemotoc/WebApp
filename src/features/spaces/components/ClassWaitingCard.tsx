@@ -29,7 +29,8 @@ function WaitingList({ slug }: { slug: string }) {
   const waiting = useClassWaitingMembers(slug);
   if (waiting.isError) return <Notice tone="error">{t('classWaiting.loadFailed')}</Notice>;
   if (waiting.data === undefined) return null;
-  if (waiting.data.length === 0) return <p className="m-0 text-body">{t('classWaiting.empty')}</p>;
+  if (waiting.data.length === 0)
+    return <p className="m-0 text-ink-muted">{t('classWaiting.empty')}</p>;
   return (
     <ul className="m-0 list-none divide-y divide-border p-0">
       {waiting.data.map((member) => (
@@ -37,10 +38,13 @@ function WaitingList({ slug }: { slug: string }) {
           key={member.handle}
           className="flex flex-wrap items-baseline justify-between gap-2 py-3"
         >
-          <span className="font-semibold text-heading">
-            {member.displayName} <span className="font-normal text-body">@{member.handle}</span>
+          <span className="font-semibold text-ink-heading">
+            {member.displayName}{' '}
+            <span className="font-normal text-ink-muted">@{member.handle}</span>
           </span>
-          <span className="text-sm text-body">{t(`classWaiting.reasons.${member.reason}`)}</span>
+          <span className="type-body text-ink-muted">
+            {t(`classWaiting.reasons.${member.reason}`)}
+          </span>
         </li>
       ))}
     </ul>
@@ -63,7 +67,7 @@ export function ClassWaitingCard({ space }: { space: Space }) {
       headingId="class-waiting-heading"
     >
       <div className="flex flex-col gap-3">
-        <p className="m-0 text-body">{t('classWaiting.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('classWaiting.intro')}</p>
         <WaitingList slug={space.slug} />
       </div>
     </SpaceFormCard>

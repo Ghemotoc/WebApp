@@ -57,20 +57,20 @@ export function StorySummary({ page, story }: { page: StoryPlanPage; story: MySt
   return (
     <section
       aria-labelledby="atlas-summary-heading"
-      className="flex min-w-0 flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card sm:flex-row sm:p-7"
+      className="flex min-w-0 flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card sm:flex-row sm:p-6"
     >
       <SummaryCover story={story} />
-      <div className="flex min-w-0 flex-1 flex-col gap-2.5">
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
         <p id="atlas-summary-heading" className="eyebrow m-0">
           {t('summary.heading')}
         </p>
         <h2
           id="atlas-summary-title"
-          className="m-0 font-heading text-[clamp(26px,2.6vw,34px)] leading-[1.08] font-extrabold break-words text-heading"
+          className="m-0 font-heading text-[clamp(26px,2.6vw,34px)] leading-[1.08] font-bold break-words text-ink-heading"
         >
           {page.story.title}
         </h2>
-        <p className="m-0 text-[17px] leading-normal break-words text-meta">
+        <p className="m-0 type-long leading-normal break-words text-ink-muted">
           {plan.logline === '' ? t('summary.noLogline') : plan.logline}
         </p>
         <ul className="m-0 flex list-none flex-wrap gap-2 p-0">

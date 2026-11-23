@@ -109,11 +109,11 @@ export function CountryFields({
           descriptionId={problem === undefined ? hintId : `${hintId} ${problemId}`}
           onChange={(value) => onChange(value, '')}
         />
-        <p id={hintId} className="m-0 text-[13px] text-meta">
+        <p id={hintId} className="m-0 type-meta text-ink-muted">
           {t('signUp.country.hint')}
         </p>
         {problem !== undefined && (
-          <p id={problemId} className="m-0 text-sm text-destructive">
+          <p id={problemId} className="m-0 type-body text-destructive">
             {t(problem)}
           </p>
         )}

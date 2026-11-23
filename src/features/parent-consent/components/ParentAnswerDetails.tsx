@@ -25,8 +25,8 @@ const textLinkClass = 'text-link underline hover:text-link-hover';
  */
 function DetailBlock({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-1.5">
-      <h2 className="m-0 font-heading text-lg font-semibold text-heading">{title}</h2>
+    <section className="flex flex-col gap-2">
+      <h2 className="m-0 font-heading type-long font-bold text-ink-heading">{title}</h2>
       {children}
     </section>
   );
@@ -44,7 +44,7 @@ function LegalLinks({ request }: { request: ConsentRequestDetails }) {
     { slug: 'terms', key: 'termsLink', version: request.termsVersion },
   ];
   return (
-    <ul className="m-0 flex list-disc flex-col gap-1 pl-5 text-body">
+    <ul className="m-0 flex list-disc flex-col gap-1 pl-4 text-ink-muted">
       {links.map((link) => (
         <li key={link.slug}>
           <a href={`/legal/${link.slug}`} target="_blank" rel="noopener" className={textLinkClass}>
@@ -65,15 +65,15 @@ function LegalLinks({ request }: { request: ConsentRequestDetails }) {
 export function ParentAnswerDetails({ request }: { request: ConsentRequestDetails }) {
   const { t } = useParentConsentTranslation();
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <DetailBlock title={t('parent.whatHeading')}>
-        <p className="m-0 text-body">{t('parent.whatBody')}</p>
+        <p className="m-0 text-ink-muted">{t('parent.whatBody')}</p>
       </DetailBlock>
       <DetailBlock title={t('parent.keepHeading')}>
-        <p className="m-0 text-body">{t('parent.keepBody')}</p>
+        <p className="m-0 text-ink-muted">{t('parent.keepBody')}</p>
       </DetailBlock>
       <DetailBlock title={t('parent.protectHeading')}>
-        <ul className="m-0 flex list-disc flex-col gap-1.5 pl-5 text-body">
+        <ul className="m-0 flex list-disc flex-col gap-2 pl-4 text-ink-muted">
           {protectionKeys.map((key) => (
             <li key={key}>{t(`parent.${key}`)}</li>
           ))}

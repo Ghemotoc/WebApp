@@ -23,7 +23,7 @@ import { useLandingPageTranslation } from '../registerLandingPageTranslations';
 
 /** The class of the sign-in link, drawn as a secondary button. */
 const linkButtonClass =
-  'inline-flex h-11 items-center self-start rounded-full button-glass px-5 text-sm font-semibold no-underline';
+  'inline-flex h-11 items-center self-start rounded-full button-glass px-4 type-body font-semibold no-underline';
 
 /** What the block needs. */
 interface RemindMeBlockProps {
@@ -105,13 +105,13 @@ export function RemindMeBlock({ block, language, reminder }: RemindMeBlockProps)
   const { t } = useLandingPageTranslation();
   const intro = wordsOf(block, language, 'intro');
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border border-hairline bg-surface p-5">
-      <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
+    <section className="flex flex-col gap-3 rounded-card border border-hairline bg-surface p-4">
+      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
       {intro === '' ? null : <p className="m-0 text-ink">{intro}</p>}
       {reminder === null || reminder.state === null ? (
-        <p className="m-0 text-meta">{t('remindMe.previewNote')}</p>
+        <p className="m-0 text-ink-muted">{t('remindMe.previewNote')}</p>
       ) : (
         <ReminderAction pageSlug={reminder.pageSlug} state={reminder.state} language={language} />
       )}

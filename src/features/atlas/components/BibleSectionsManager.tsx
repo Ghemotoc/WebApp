@@ -48,7 +48,7 @@ function AddSectionForm({ addSection }: Pick<BibleSectionsManagerProps, 'addSect
         void add();
       }}
     >
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
         {t('bible.sections.addHeading')}
       </h3>
       <div className="flex flex-wrap items-end gap-3">
@@ -89,15 +89,15 @@ export function BibleSectionsManager(props: BibleSectionsManagerProps) {
   return (
     <section
       aria-labelledby="atlas-bible-sections-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
       <h2
         id="atlas-bible-sections-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('bible.sections.heading')}
       </h2>
-      <p className="m-0 text-sm text-meta">{t('bible.sections.hint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('bible.sections.hint')}</p>
       <div aria-live="polite">
         {moveFailed && <Notice tone="error">{t('bible.sections.moveFailed')}</Notice>}
       </div>

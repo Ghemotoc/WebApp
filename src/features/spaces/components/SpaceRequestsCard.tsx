@@ -48,7 +48,7 @@ function RequestNote({ note, name }: { note: SpaceJoinNote; name: string }) {
     <div className="flex flex-col items-start gap-1">
       <blockquote
         aria-label={t('requests.noteLabel', { name })}
-        className="m-0 rounded-field bg-tint px-3 py-2 text-sm break-words whitespace-pre-line text-body"
+        className="m-0 rounded-field bg-tint px-3 py-2 type-body break-words whitespace-pre-line text-ink-muted"
       >
         {note.text}
       </blockquote>
@@ -79,8 +79,8 @@ function RequestRow({
   const name = nameOf(request.person, t('row.ownerDeleted'));
   return (
     <li className="flex flex-col gap-2 border-b border-border py-3 last:border-b-0">
-      <span className="text-sm font-semibold break-words text-heading">{name}</span>
-      <span className="text-[13px] text-meta">
+      <span className="type-body font-semibold break-words text-ink-heading">{name}</span>
+      <span className="type-meta text-ink-muted">
         {t('requests.asked', { date: threadDay(request.requestedAt, i18n.language) })}
       </span>
       {request.note !== null && <RequestNote note={request.note} name={name} />}
@@ -131,12 +131,15 @@ export function SpaceRequestsCard({ space }: { space: Space }) {
     <section
       id="join-requests"
       aria-labelledby="space-requests-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-5"
+      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4"
     >
-      <h2 id="space-requests-heading" className="m-0 font-heading text-xl font-bold text-heading">
+      <h2
+        id="space-requests-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
         {t('requests.title')}
       </h2>
-      <p aria-live="polite" className="m-0 text-sm text-body">
+      <p aria-live="polite" className="m-0 type-body text-ink-muted">
         {deciding.outcome !== null && t(outcomeKeys[deciding.outcome], { name: lastName })}
       </p>
       {requests.isError && <Notice tone="error">{t('requests.loadFailed')}</Notice>}
@@ -144,7 +147,7 @@ export function SpaceRequestsCard({ space }: { space: Space }) {
         <Notice tone="error">{t(...spaceFailureText(deciding.failure))}</Notice>
       )}
       {requests.isSuccess && list.length === 0 && (
-        <p className="m-0 text-sm text-body">{t('requests.none')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('requests.none')}</p>
       )}
       {list.length > 0 && (
         <ul className="m-0 list-none p-0">

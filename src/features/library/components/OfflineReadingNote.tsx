@@ -27,7 +27,7 @@ export function OfflineReadingNote() {
         {t('offline.heading')}
       </h2>
       <MetaLine className="mt-1" facts={[{ text: t('offline.state'), kind: 'state' }]} />
-      <p className="m-0 mt-3 type-body text-body">
+      <p className="m-0 mt-3 type-body text-ink-muted">
         {t('offline.body', { productName: brand.productName })}
       </p>
       <p className="m-0 mt-2 type-meta">{t('offline.website')}</p>

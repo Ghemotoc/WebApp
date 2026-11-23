@@ -49,18 +49,18 @@ function NoticeCard({ notice }: { notice: CaseNotice }) {
       : `${notice.notifierName ?? ''} <${notice.notifierEmail}>`.trim();
   return (
     <li className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4">
-      <p className="m-0 font-semibold text-heading">{titleOf(notice)}</p>
-      <p className="m-0 text-sm text-meta">
+      <p className="m-0 font-semibold text-ink-heading">{titleOf(notice)}</p>
+      <p className="m-0 type-body text-ink-muted">
         {t('notices.received', { reference: notice.reference, when, language: notice.language })}
       </p>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         <span className="font-semibold">{t('notices.address')}: </span>
         <code className="break-all">{notice.contentUrl}</code>
       </p>
-      <blockquote className="m-0 border-l-4 border-(--pill-gold-border) pl-3 text-body whitespace-pre-line">
+      <blockquote className="m-0 border-l-4 border-(--pill-gold-border) pl-3 text-ink-muted whitespace-pre-line">
         {notice.explanation}
       </blockquote>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         <span className="font-semibold">{t('notices.sentBy')}: </span>
         {sender}
       </p>
@@ -80,7 +80,10 @@ export function CaseNotices({ caseId }: { caseId: string }) {
   if (notices.length === 0) return null;
   return (
     <section aria-labelledby="case-notices-heading" className="flex flex-col gap-4">
-      <h2 id="case-notices-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+      <h2
+        id="case-notices-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('notices.caseHeading')}
       </h2>
       <ul className="m-0 flex list-none flex-col gap-3 p-0">

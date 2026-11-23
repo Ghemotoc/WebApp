@@ -63,7 +63,7 @@ export function ForumBreadcrumb({ path, current, space = null }: ForumBreadcrumb
   const currentName = current ?? path.at(-1)?.name;
   return (
     <nav aria-label={t('forum.breadcrumb')}>
-      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-sm text-body">
+      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 type-body text-ink-muted">
         <li>
           <Link to="/forums" className={stepLink}>
             {t('title')}

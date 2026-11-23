@@ -51,12 +51,12 @@ function useLastUpdate() {
 function WriterRow({ writer }: { writer: FollowedWriter }) {
   const lastUpdate = useLastUpdate();
   return (
-    <li className="flex items-center gap-3.5 border-t border-(--hairline) py-3">
+    <li className="flex items-center gap-4 border-t border-(--hairline) py-3">
       <PersonAvatar name={writer.displayName} handle={writer.handle} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Link
           to={`/u/${encodeURIComponent(writer.handle)}`}
-          className="font-semibold break-words text-heading no-underline hover:underline"
+          className="font-semibold break-words text-ink-heading no-underline hover:underline"
         >
           {writer.displayName}
         </Link>
@@ -82,7 +82,7 @@ function StoryRow({ story }: { story: ListedStory }) {
     { text: lastUpdate(updated) },
   ];
   return (
-    <li className="flex items-center gap-3.5 border-t border-(--hairline) py-3">
+    <li className="flex items-center gap-4 border-t border-(--hairline) py-3">
       <DrawnCover
         title={story.title}
         choice={resolveCoverChoice(story)}
@@ -90,10 +90,10 @@ function StoryRow({ story }: { story: ListedStory }) {
         isDecorative
         className="w-12 shrink-0"
       />
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
         <Link
           to={`/s/${story.slug}`}
-          className="font-semibold break-words text-heading no-underline hover:underline"
+          className="font-semibold break-words text-ink-heading no-underline hover:underline"
         >
           {story.title}
         </Link>
@@ -110,7 +110,7 @@ function FollowGroup(props: { heading: string; emptyText: string; children: Reac
     <div className="flex min-w-0 flex-col">
       <h3 className="m-0 mb-1 type-subheading">{props.heading}</h3>
       {props.children.length === 0 ? (
-        <p className="m-0 type-body text-body">{props.emptyText}</p>
+        <p className="m-0 type-body text-ink-muted">{props.emptyText}</p>
       ) : (
         <ul className="m-0 list-none p-0">{props.children}</ul>
       )}
@@ -129,12 +129,12 @@ function FollowingHeading() {
         </h2>
         <Link
           to="/settings#notifications"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline"
+          className="inline-flex min-h-11 items-center type-body font-semibold text-link underline"
         >
           {t('following.notificationSettings')}
         </Link>
       </div>
-      <p className="m-0 type-body text-body">{t('following.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('following.intro')}</p>
     </div>
   );
 }
@@ -149,7 +149,7 @@ export function FollowingSection() {
   const { follows } = useMyFollows();
   if (follows === null) return null;
   return (
-    <section aria-labelledby="library-following-heading" className="flex min-w-0 flex-col gap-7">
+    <section aria-labelledby="library-following-heading" className="flex min-w-0 flex-col gap-6">
       <FollowingHeading />
       <FollowGroup
         heading={t('following.writers', { count: follows.writers.length })}

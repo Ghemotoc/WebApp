@@ -42,14 +42,14 @@ export function EmailChoicesCard() {
     >
       <h2
         id="notification-choices-heading"
-        className="m-0 font-heading text-lg font-bold text-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
       >
         {t('choicesCard.heading')}
       </h2>
       {rows.length > 0 && <LabelRows rows={rows} />}
       <Link
         to="/settings#notifications"
-        className="w-fit text-sm font-semibold text-link underline"
+        className="w-fit type-body font-semibold text-link underline"
       >
         {t('choicesCard.link')}
       </Link>

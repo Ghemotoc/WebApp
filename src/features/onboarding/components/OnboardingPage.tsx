@@ -34,7 +34,7 @@ import { OnboardingSteps } from './OnboardingSteps';
 function SetupCard({ children }: { children: ReactNode }) {
   const { t } = useTranslation('account');
   return (
-    <PageContainer className="tmc-rise flex justify-center pt-12 pb-7">
+    <PageContainer className="tmc-rise flex justify-center pt-12 pb-6">
       <title>{t('onboarding.documentTitle')}</title>
       <section
         aria-labelledby="setup-heading"
@@ -42,10 +42,10 @@ function SetupCard({ children }: { children: ReactNode }) {
       >
         <div className="flex flex-col gap-2">
           <Eyebrow>{t('onboarding.eyebrow')}</Eyebrow>
-          <h1 id="setup-heading" className="m-0 font-heading text-[30px] font-bold text-heading">
+          <h1 id="setup-heading" className="m-0 font-heading type-title font-bold text-ink-heading">
             {t('onboarding.heading')}
           </h1>
-          <p className="m-0 text-body">{t('onboarding.intro')}</p>
+          <p className="m-0 text-ink-muted">{t('onboarding.intro')}</p>
         </div>
         {children}
       </section>
@@ -75,7 +75,7 @@ function SetupBody() {
   const { userId, isKnown } = useSession();
   const state = useMyOnboarding();
   if (!isKnown) return null;
-  if (userId === null) return <p className="m-0 text-body">{t('settings.signedOut')}</p>;
+  if (userId === null) return <p className="m-0 text-ink-muted">{t('settings.signedOut')}</p>;
   if (state.loadFailed) return <Notice tone="error">{t('onboarding.loadFailed')}</Notice>;
   if (state.onboarding === undefined || state.onboarding === null) return null;
   if (state.onboarding.isDue)

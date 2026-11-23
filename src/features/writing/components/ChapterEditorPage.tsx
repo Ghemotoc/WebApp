@@ -70,7 +70,10 @@ const stateTone = { draft: 'neutral', scheduled: 'gold', published: 'sage' } as 
 function EditorBreadcrumb({ chapter, status }: { chapter: MyChapter; status: ChapterStatus }) {
   const { t } = useEditorTranslation();
   return (
-    <nav aria-label={t('back')} className="flex flex-wrap items-center gap-2 text-sm text-body">
+    <nav
+      aria-label={t('back')}
+      className="flex flex-wrap items-center gap-2 type-body text-ink-muted"
+    >
       <Link
         to="/write"
         className="inline-flex min-h-11 items-center font-semibold no-underline hover:underline"
@@ -114,7 +117,7 @@ function ChapterTitleField(props: {
       autoComplete="off"
       onChange={(event) => props.onChange(event.target.value)}
       onBlur={props.onBlur}
-      className="h-[72px] rounded-none border-0 border-b-2 border-border bg-transparent px-0.5 font-heading text-[clamp(32px,3.6vw,48px)] font-extrabold tracking-[-0.02em] text-heading"
+      className="h-[72px] rounded-none border-0 border-b-2 border-border bg-transparent px-1 font-heading text-[clamp(32px,3.6vw,48px)] font-bold tracking-[-0.02em] text-ink-heading"
     />
   );
 }
@@ -124,8 +127,8 @@ function EditorFootnotes() {
   const { t } = useEditorTranslation();
   return (
     <>
-      <p className="m-0 text-[13px] leading-normal text-meta">{t('pasteNote')}</p>
-      <p className="m-0 text-[13px] leading-normal text-meta">
+      <p className="m-0 type-meta leading-normal text-ink-muted">{t('pasteNote')}</p>
+      <p className="m-0 type-meta leading-normal text-ink-muted">
         {t('rights')}{' '}
         <Link to="/legal/terms" className="font-semibold">
           {t('rightsLink')}
@@ -284,7 +287,7 @@ function EditorSideColumn(props: {
   const { chapter, publishing } = props;
   const story = props.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
   return (
-    <div className="flex w-full flex-[1_1_300px] flex-col gap-7 lg:max-w-[340px]">
+    <div className="flex w-full flex-[1_1_300px] flex-col gap-6 lg:max-w-[340px]">
       <EditorAside
         saveState={props.loaded.autosave.state}
         publishControls={
@@ -318,7 +321,7 @@ function EditorMainColumn(props: {
   const { chapter, loaded } = props;
   const { title, changeTitle, wordCount, autosave, editing } = loaded;
   return (
-    <main className="flex min-w-0 flex-[999_1_560px] flex-col gap-3.5">
+    <main className="flex min-w-0 flex-[999_1_560px] flex-col gap-4">
       <ChapterTitleField
         value={title}
         onChange={changeTitle}
@@ -386,7 +389,7 @@ function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorSta
         <EditorBreadcrumb chapter={chapter} status={publishing.state.status} />
         <FocusModeToggle isOn={isFocusMode} onChange={setFocusMode} />
       </div>
-      <div className="flex flex-col gap-7 lg:flex-row lg:flex-wrap lg:items-start">
+      <div className="flex flex-col gap-6 lg:flex-row lg:flex-wrap lg:items-start">
         <title>
           {t('documentTitle', {
             chapter: documentTitle,
@@ -448,25 +451,25 @@ function pageMessage(
 /** The page while the editor can't show: signed out, a failed load, loading or not found. */
 function EditorPageMessage({ kind }: { kind: PageMessageKind }) {
   const { t } = useEditorTranslation();
-  if (kind === 'loading') return <PageContainer className="pt-12 pb-7" />;
+  if (kind === 'loading') return <PageContainer className="pt-12 pb-6" />;
   if (kind === 'signedOut') {
     return (
-      <PageContainer className="tmc-rise pt-12 pb-7">
-        <p className="m-0 text-body">{t('signedOut')}</p>
+      <PageContainer className="tmc-rise pt-12 pb-6">
+        <p className="m-0 text-ink-muted">{t('signedOut')}</p>
       </PageContainer>
     );
   }
   if (kind === 'loadFailed') {
     return (
-      <PageContainer className="tmc-rise pt-12 pb-7">
+      <PageContainer className="tmc-rise pt-12 pb-6">
         <Notice tone="error">{t('errors.loadFailed')}</Notice>
       </PageContainer>
     );
   }
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-3 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-3 pt-12 pb-6">
       <Eyebrow>{t('back')}</Eyebrow>
-      <p className="m-0 text-body">{t('notFound')}</p>
+      <p className="m-0 text-ink-muted">{t('notFound')}</p>
       <Link to="/write" className="font-semibold">
         {t('back')}
       </Link>
@@ -491,7 +494,7 @@ export function ChapterEditorPage() {
   if (message !== null || chapter === null)
     return <EditorPageMessage kind={message ?? 'loading'} />;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-3 pt-8 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-3 pt-8 pb-6">
       <LoadedEditor
         key={chapter.code}
         chapter={chapter}

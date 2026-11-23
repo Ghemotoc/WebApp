@@ -71,7 +71,7 @@ function MoreHelpLinks() {
   const { t } = useTranslation();
   return (
     <nav aria-labelledby="more-help-lead" className="flex flex-col gap-1">
-      <p id="more-help-lead" className="m-0 text-body">
+      <p id="more-help-lead" className="m-0 text-ink-muted">
         {t('website.moreHelp.lead')}
       </p>
       <ul className="m-0 flex list-none flex-col p-0">
@@ -79,7 +79,7 @@ function MoreHelpLinks() {
           <li key={link.href}>
             <Link
               to={link.href}
-              className="inline-flex min-h-11 items-center font-semibold text-heading underline-offset-4 hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-ink-heading underline-offset-4 hover:underline"
             >
               {t(link.labelKey)}
             </Link>
@@ -115,7 +115,7 @@ function HomeQuestions({
         <Eyebrow>{t('website.questionsEyebrow')}</Eyebrow>
         <h2
           id="questions-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-extrabold text-heading"
+          className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-bold text-ink-heading"
         >
           {withBrand(page.questionsHeading)}
         </h2>
@@ -193,13 +193,13 @@ export function WebsiteHomePage() {
   const { entries, readFailed } = useWebsiteContent('home_page', homePageContentSchema);
   const homePage = entries.find((entry) => entry.entryKey === 'home');
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-14 pt-12 pb-16">
+    <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-16">
       <title>{homeDocumentTitle(homePage?.content.search?.title ?? '', t)}</title>
       {homePage !== undefined && <HomeSections entry={homePage} />}
       {homePage === undefined && readFailed && (
         <>
           {/* No copy at all: say so plainly, and still show the stories. */}
-          <h1 className="m-0 font-heading text-[40px] font-extrabold text-heading">
+          <h1 className="m-0 font-heading type-display font-bold text-ink-heading">
             {t('home.welcome')}
           </h1>
           <Notice tone="error">{t('website.readFailed')}</Notice>

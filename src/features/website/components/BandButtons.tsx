@@ -15,7 +15,7 @@ const buttonClasses = {
   // into the main button at night, when the band itself is white (band-first-on-dark, index.css).
   page: {
     first: 'button-main',
-    second: 'border border-control-border bg-surface text-heading hover:opacity-90',
+    second: 'border border-control-border bg-surface text-ink-heading hover:opacity-90',
   },
   dark: {
     first: 'bg-gold text-on-gold band-first-on-dark hover:opacity-90',
@@ -41,7 +41,7 @@ interface BandButtonsProps {
  */
 export function BandButtons({ tone, first, second }: BandButtonsProps) {
   const pill =
-    'inline-flex min-h-12 items-center rounded-full px-6 text-[15px] font-semibold no-underline';
+    'inline-flex min-h-12 items-center rounded-full px-6 type-body font-semibold no-underline';
   return (
     <div className="flex flex-wrap items-center gap-3">
       <WebsiteLink to={first.to} className={`${pill} ${buttonClasses[tone].first}`}>

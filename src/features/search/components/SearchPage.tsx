@@ -35,8 +35,9 @@ import { SearchResults } from './SearchResults';
  */
 function SearchBody({ term }: { term: string }) {
   const { t } = useSearchTranslation();
-  if (term === '') return <p className="m-0 text-base text-body">{t('page.start')}</p>;
-  if (!isSearchable(term)) return <p className="m-0 text-base text-body">{t('page.tooShort')}</p>;
+  if (term === '') return <p className="m-0 type-body text-ink-muted">{t('page.start')}</p>;
+  if (!isSearchable(term))
+    return <p className="m-0 type-body text-ink-muted">{t('page.tooShort')}</p>;
   return <SearchResults term={term} />;
 }
 
@@ -51,10 +52,10 @@ export function SearchPage() {
   const term = (search.get('q') ?? '').trim();
   const heading = term === '' ? t('page.heading') : t('page.resultsFor', { term });
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-10 pb-14 max-md:gap-5 max-md:pt-4">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-12 max-md:gap-4 max-md:pt-4">
       <title>{t('page.documentTitle', { productName: brand.productName })}</title>
       {/* The title and the glass search bar, centred (board Search, bundle G7c). */}
-      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-7 max-md:gap-3">
+      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 max-md:gap-3">
         <header className="flex flex-col items-center gap-3 text-center max-md:sr-only">
           <h1 className="m-0 min-w-0 break-words type-display">{heading}</h1>
         </header>

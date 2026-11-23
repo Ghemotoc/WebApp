@@ -49,19 +49,19 @@ export function DeleteChapterDialog({ title, onConfirm, onClose }: DeleteChapter
       aria-labelledby="delete-chapter-heading"
       aria-describedby="delete-chapter-body"
       onClose={onClose}
-      className="m-auto w-[min(480px,calc(100vw-32px))] rounded-card border border-border bg-surface p-7 text-ink shadow-card backdrop:bg-ink/45"
+      className="m-auto w-[min(480px,calc(100vw-32px))] rounded-card border border-border bg-surface p-6 text-ink shadow-card backdrop:bg-ink/45"
     >
-      <div className="flex flex-col gap-3.5">
+      <div className="flex flex-col gap-4">
         <h2
           id="delete-chapter-heading"
-          className="m-0 font-heading text-[26px] leading-[1.15] font-bold break-words text-heading"
+          className="m-0 font-heading type-heading leading-[1.15] font-bold break-words text-ink-heading"
         >
           {t('manageChapters.deleteDialog.title', { title: title ?? '' })}
         </h2>
-        <p id="delete-chapter-body" className="m-0 text-base leading-relaxed text-body">
+        <p id="delete-chapter-body" className="m-0 type-body leading-relaxed text-ink-muted">
           {t('manageChapters.deleteDialog.body')}
         </p>
-        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
+        <div className="mt-2 flex flex-wrap justify-end gap-2">
           <Button size="lg" variant="secondary" onClick={onClose}>
             {t('manageChapters.deleteDialog.keep')}
           </Button>

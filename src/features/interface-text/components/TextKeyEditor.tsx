@@ -27,10 +27,10 @@ export function TextKeyEditor({ entry }: { entry: CatalogueEntry }) {
   const { t } = useTranslation('websiteAdmin');
   const state = useInterfaceTextEditor(entry.textKey);
   const today = romaniaDateOf(new Date());
-  if (state.isLoading) return <p className="m-0 text-meta">{t('loading')}</p>;
+  if (state.isLoading) return <p className="m-0 text-ink-muted">{t('loading')}</p>;
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="m-0 font-mono text-base break-all text-heading">{entry.textKey}</h2>
+      <h2 className="m-0 font-mono type-body break-all text-ink-heading">{entry.textKey}</h2>
       {isLegalWording(entry) && <Notice tone="warning">{t('legal.reminder')}</Notice>}
       <div className="grid gap-6 lg:grid-cols-2">
         {editedLocales.map((locale) => {

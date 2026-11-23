@@ -65,9 +65,9 @@ function LinkRow({ link, links }: { link: CaseAccountLink; links: Links }) {
           </InfoPill>
         )}
       </div>
-      <p className="m-0 text-sm text-meta">{origin}</p>
+      <p className="m-0 type-body text-ink-muted">{origin}</p>
       {/* The automatic reason is stored in English, so the panel says it in the page's language. */}
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {link.source === 'sign_up_ip' ? t('accountLinks.automaticReason') : link.reason}
       </p>
       {isRemoveOpen ? (
@@ -120,14 +120,14 @@ export function CaseAccountLinks({ caseId }: { caseId: string }) {
     <section aria-labelledby="case-account-links-heading" className="flex flex-col gap-4">
       <h2
         id="case-account-links-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('accountLinks.heading')}
       </h2>
-      <p className="m-0 text-body">{t('accountLinks.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('accountLinks.intro')}</p>
       {links.failure !== null && <Notice tone="error">{t(`failures.${links.failure}`)}</Notice>}
       {links.links.length === 0 ? (
-        <p className="m-0 text-meta">{t('accountLinks.none')}</p>
+        <p className="m-0 text-ink-muted">{t('accountLinks.none')}</p>
       ) : (
         <ul className="m-0 flex list-none flex-col gap-3 p-0">
           {links.links.map((link) => (

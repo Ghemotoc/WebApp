@@ -43,7 +43,7 @@ function ArchiveButtons({ archiving }: { archiving: Archiving }) {
   }
   return (
     <div role="group" aria-label={t('classArchive.confirmLabel')} className="flex flex-col gap-3">
-      <p className="m-0 font-semibold text-heading">{t('classArchive.confirm')}</p>
+      <p className="m-0 font-semibold text-ink-heading">{t('classArchive.confirm')}</p>
       <div className="flex flex-wrap gap-3">
         <Button
           variant="destructive"
@@ -81,7 +81,7 @@ export function ClassArchiveCard({ space }: { space: Space }) {
           <Notice tone="info">{t('classArchive.archived')}</Notice>
         ) : (
           <>
-            <p className="m-0 text-body">{t('classArchive.intro')}</p>
+            <p className="m-0 text-ink-muted">{t('classArchive.intro')}</p>
             <ArchiveButtons archiving={archiving} />
           </>
         )}

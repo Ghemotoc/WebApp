@@ -36,14 +36,14 @@ export function ClassInviteSheet({
       data-testid="class-invite-sheet"
       className="class-invite-sheet hidden flex-col items-center gap-6 text-center"
     >
-      <p className="m-0 text-xl">{t('classInvite.sheetIntro')}</p>
-      <p className="m-0 font-heading text-4xl font-bold">{className}</p>
-      <p className="m-0 font-heading text-5xl font-bold tracking-[0.08em] break-all">
+      <p className="m-0 type-subheading">{t('classInvite.sheetIntro')}</p>
+      <p className="m-0 font-heading type-display font-bold">{className}</p>
+      <p className="m-0 font-heading type-display font-bold tracking-[0.08em] break-all">
         {invite.code}
       </p>
       <ClassInviteQrCode link={invite.link} className="block size-[70mm]" />
-      <p className="m-0 text-base break-all">{invite.link}</p>
-      <p className="m-0 text-base">{t('classInvite.sheetUntil', { expires })}</p>
+      <p className="m-0 type-body break-all">{invite.link}</p>
+      <p className="m-0 type-body">{t('classInvite.sheetUntil', { expires })}</p>
     </section>
   );
 }

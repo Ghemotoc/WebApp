@@ -66,7 +66,7 @@ function TreeBoxes({
         >
           <MaybeLink
             to={addressOf(box.id)}
-            className="flex size-full items-center justify-center rounded-xl border-2 border-control-border bg-surface px-2 text-center text-sm leading-tight font-semibold text-heading no-underline hover:bg-tint"
+            className="flex size-full items-center justify-center rounded-field border-2 border-control-border bg-surface px-2 text-center type-body leading-tight font-semibold text-ink-heading no-underline hover:bg-tint"
           >
             {/* A long name stays inside its box: two lines at most, broken anywhere (GAPS-3
                 break test, 10 Nov 2026). The link still reads the whole name. */}
@@ -209,7 +209,7 @@ export function FamilyTreeView({ addressOf, cast, words, onAdd }: FamilyTreeView
   );
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <p className="m-0 text-sm text-meta">{t('connections.tree.hint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('connections.tree.hint')}</p>
       <TreeControls
         cast={cast}
         rootId={rootId}
@@ -234,7 +234,7 @@ export function FamilyTreeView({ addressOf, cast, words, onAdd }: FamilyTreeView
         />
       )}
       {tree.generations.length === 0 && (
-        <p className="m-0 text-body">{t('connections.tree.none')}</p>
+        <p className="m-0 text-ink-muted">{t('connections.tree.none')}</p>
       )}
       {tree.generations.length > 0 && (
         <>
@@ -243,7 +243,7 @@ export function FamilyTreeView({ addressOf, cast, words, onAdd }: FamilyTreeView
         </>
       )}
       {tree.leftOffCount > 0 && (
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('connections.tree.leftOff', { count: tree.leftOffCount })}
         </p>
       )}

@@ -15,7 +15,7 @@ import { ChevronRightIcon } from '@/components/icons/ChevronRightIcon';
 import { brand } from '@/config/brand';
 
 /** Each row's look: the whole row is the link, at least 64 px tall. */
-const rowClass = 'flex min-h-16 items-center gap-4 px-5 py-4 text-ink no-underline hover:bg-tint';
+const rowClass = 'flex min-h-16 items-center gap-4 px-4 py-4 text-ink no-underline hover:bg-tint';
 
 /**
  * A row's words: the bold title and the short line under it.
@@ -24,9 +24,9 @@ const rowClass = 'flex min-h-16 items-center gap-4 px-5 py-4 text-ink no-underli
  */
 function RowWords({ title, line }: { title: string; line: string }) {
   return (
-    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-      <span className="font-semibold text-heading">{title}</span>
-      <span className="text-sm break-words text-meta">{line}</span>
+    <span className="flex min-w-0 flex-1 flex-col gap-1">
+      <span className="font-semibold text-ink-heading">{title}</span>
+      <span className="type-body break-words text-ink-muted">{line}</span>
     </span>
   );
 }
@@ -40,7 +40,10 @@ export function ContactOtherWays() {
   const { t } = useTranslation('contact');
   return (
     <aside aria-labelledby="contact-other-ways" className="flex flex-col gap-3">
-      <h2 id="contact-other-ways" className="m-0 font-heading text-[22px] font-bold text-heading">
+      <h2
+        id="contact-other-ways"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('otherWays.heading')}
       </h2>
       <ul className="m-0 flex list-none flex-col overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">
@@ -52,13 +55,13 @@ export function ContactOtherWays() {
         <li className="border-b border-hairline">
           <Link to="/report" className={rowClass}>
             <RowWords title={t('otherWays.reportTitle')} line={t('otherWays.reportLine')} />
-            <ChevronRightIcon className="shrink-0 text-meta" />
+            <ChevronRightIcon className="shrink-0 text-ink-muted" />
           </Link>
         </li>
         <li>
           <Link to="/help" className={rowClass}>
             <RowWords title={t('otherWays.helpTitle')} line={t('otherWays.helpLine')} />
-            <ChevronRightIcon className="shrink-0 text-meta" />
+            <ChevronRightIcon className="shrink-0 text-ink-muted" />
           </Link>
         </li>
       </ul>

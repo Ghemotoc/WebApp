@@ -32,7 +32,7 @@ export function MyDataRequestFiles({ files }: { files: MyDataRequestFile[] }) {
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {files.map((file) => (
           <li key={file.fileName} className="flex flex-wrap items-center gap-3">
-            <span className="min-w-0 break-all text-body">
+            <span className="min-w-0 break-all text-ink-muted">
               {t('mine.fileLine', {
                 name: file.displayName,
                 size: fileSizeText(file.fileSize ?? 0, i18n.language),

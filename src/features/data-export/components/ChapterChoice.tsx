@@ -45,7 +45,7 @@ function ModeRadios({
   return (
     <div className="flex flex-wrap gap-x-6 gap-y-1">
       {modes.map((mode) => (
-        <div key={mode.id} className="flex min-h-11 items-center gap-2.5">
+        <div key={mode.id} className="flex min-h-11 items-center gap-3">
           <input
             id={mode.id}
             type="radio"
@@ -54,7 +54,7 @@ function ModeRadios({
             checked={onlyChosen === mode.value}
             onChange={() => onModeChange(mode.value)}
           />
-          <label htmlFor={mode.id} className="text-[15px] text-heading">
+          <label htmlFor={mode.id} className="type-body text-ink-heading">
             {mode.label}
           </label>
         </div>
@@ -75,7 +75,7 @@ function ChapterBoxes({
   if (chapters.isError) return <Notice tone="error">{t('stories.chapters.loadFailed')}</Notice>;
   const list = chapters.data ?? [];
   if (chapters.isSuccess && list.length === 0) {
-    return <p className="m-0 text-[15px] text-body">{t('stories.chapters.none')}</p>;
+    return <p className="m-0 type-body text-ink-muted">{t('stories.chapters.none')}</p>;
   }
 
   /** Ticks or unticks one chapter. */
@@ -91,7 +91,7 @@ function ChapterBoxes({
       {list.map((chapter) => (
         <li
           key={chapter.id}
-          className="flex min-h-11 items-center gap-2.5 border-t border-hairline py-1.5 first:border-t-0"
+          className="flex min-h-11 items-center gap-3 border-t border-hairline py-2 first:border-t-0"
         >
           <input
             id={`download-chapter-${chapter.id}`}
@@ -102,7 +102,7 @@ function ChapterBoxes({
           />
           <label
             htmlFor={`download-chapter-${chapter.id}`}
-            className="min-w-0 text-[15px] break-words text-heading"
+            className="min-w-0 type-body break-words text-ink-heading"
           >
             {chapterName(chapter)}
           </label>

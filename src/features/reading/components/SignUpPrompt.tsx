@@ -33,7 +33,7 @@ export function SignUpPrompt({ storySlug, chaptersAfter }: SignUpPromptProps) {
   return (
     <section
       aria-labelledby="teaser-prompt-title"
-      className="relative flex flex-col gap-4 rounded-[24px] border border-border bg-surface p-6 shadow-[0_8px_24px_rgba(72,28,95,0.08)] sm:p-8"
+      className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-[0_8px_24px_rgba(72,28,95,0.08)] sm:p-8"
     >
       <div className="flex flex-col gap-3">
         {chaptersAfter > 0 && (
@@ -41,29 +41,29 @@ export function SignUpPrompt({ storySlug, chaptersAfter }: SignUpPromptProps) {
         )}
         <h2
           id="teaser-prompt-title"
-          className="m-0 font-heading text-[26px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('teaser.promptTitle')}
         </h2>
-        <p className="m-0 text-[15px] leading-[1.6] text-body">
+        <p className="m-0 type-body leading-[1.6] text-ink-muted">
           {t('teaser.promptBody', { productName: brand.productName })}
         </p>
         <div className="flex flex-wrap gap-3 pt-1">
           <Link
             to="/sign-in"
-            className="inline-flex h-11 items-center rounded-full button-main px-5 text-sm font-semibold no-underline"
+            className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
           >
             {t('reader.signIn')}
           </Link>
           <Link
             to={`/s/${storySlug}`}
-            className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
+            className="inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline"
           >
             {t('reader.backToStory')}
           </Link>
         </div>
       </div>
-      <p className="m-0 border-t border-border pt-4 text-sm text-body">
+      <p className="m-0 border-t border-border pt-4 type-body text-ink-muted">
         {t('teaser.appsNote', { productName: brand.productName })}
       </p>
     </section>

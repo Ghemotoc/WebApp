@@ -49,9 +49,9 @@ export function MonthOfBirthField({
   const errorId = problem === undefined ? undefined : 'sign-up-birth-month-error';
   const describedBy = ['sign-up-birth-month-why', errorId].filter(Boolean).join(' ');
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <div className="relative flex items-center gap-2">
-        <label htmlFor="sign-up-birth-month" className="text-sm font-semibold text-ink">
+        <label htmlFor="sign-up-birth-month" className="type-body font-semibold text-ink">
           {t('signUp.birthMonth.label')}
         </label>
         <InfoTooltip
@@ -70,7 +70,7 @@ export function MonthOfBirthField({
           aria-describedby={describedBy}
           aria-invalid={problem === undefined ? undefined : true}
           onChange={(event) => onChange(event.target.value)}
-          className="h-11 w-auto cursor-pointer appearance-none rounded-full border border-control-border bg-surface pr-9 pl-4 font-body text-sm font-semibold text-ink"
+          className="h-11 w-auto cursor-pointer appearance-none rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
         >
           <option value="">{t('signUp.birthMonth.placeholder')}</option>
           {monthNames(i18n.language).map((name, index) => (
@@ -82,7 +82,7 @@ export function MonthOfBirthField({
         <ChevronDownIcon className="pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-ink" />
       </span>
       {problem !== undefined && (
-        <p id={errorId} className="m-0 text-sm text-destructive">
+        <p id={errorId} className="m-0 type-body text-destructive">
           {t(problem)}
         </p>
       )}

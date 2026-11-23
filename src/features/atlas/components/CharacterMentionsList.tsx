@@ -42,7 +42,7 @@ export function CharacterMentionsList({
     <FoldingCard title={t('links.mentionedIn.heading')} hint={hint} contentClassName="gap-2">
       {loadFailed && <Notice tone="error">{t('links.mentionedIn.loadFailed')}</Notice>}
       {mentions?.length === 0 && (
-        <p className="m-0 text-sm text-meta">{t('links.mentionedIn.none')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('links.mentionedIn.none')}</p>
       )}
       {mentions !== undefined && mentions.length > 0 && (
         <ul className="m-0 flex list-none flex-col gap-1 p-0" data-testid="atlas-mentions">
@@ -57,7 +57,7 @@ export function CharacterMentionsList({
               >
                 {mention.title.trim() === '' ? t('chapterPlan.untitled') : mention.title}
               </Link>
-              <span className="text-sm text-meta">
+              <span className="type-body text-ink-muted">
                 {t(`links.mentionedIn.kinds.${mention.kind}`)}
               </span>
             </li>

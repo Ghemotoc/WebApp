@@ -17,8 +17,8 @@ export function SpaceNotFound() {
   const { t } = useSpacesTranslation();
   return (
     <div className="flex flex-col items-start gap-3">
-      <h1 className="m-0 text-3xl font-extrabold">{t('space.notFound')}</h1>
-      <p className="m-0 text-base text-body">{t('space.notFoundNote')}</p>
+      <h1 className="m-0 type-title font-bold">{t('space.notFound')}</h1>
+      <p className="m-0 type-body text-ink-muted">{t('space.notFoundNote')}</p>
       <Link to="/spaces" className="inline-flex min-h-6 items-center text-link underline">
         {t('space.back')}
       </Link>

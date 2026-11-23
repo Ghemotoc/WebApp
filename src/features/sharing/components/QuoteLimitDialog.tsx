@@ -48,7 +48,7 @@ export function QuoteLimitDialog({ isOpen, onClose, chapter }: QuoteLimitDialogP
       closeLabel={t('limit.close')}
       width={460}
     >
-      <p role="status" className="m-0 min-h-5 text-sm text-body">
+      <p role="status" className="m-0 min-h-5 type-body text-ink-muted">
         {status}
       </p>
       <div className="flex flex-wrap justify-end gap-3">

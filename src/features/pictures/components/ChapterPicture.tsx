@@ -31,8 +31,8 @@ export interface ChapterPictureProps {
 function PicturePlaceholder({ title, note }: { title: string; note: string | null }) {
   return (
     <div className="flex min-h-40 flex-col items-center justify-center gap-1 rounded-card border border-dashed border-control-border bg-paper px-6 py-8 text-center">
-      <p className="m-0 text-[15px] font-semibold text-heading">{title}</p>
-      {note !== null && <p className="m-0 text-sm text-meta">{note}</p>}
+      <p className="m-0 type-body font-semibold text-ink-heading">{title}</p>
+      {note !== null && <p className="m-0 type-body text-ink-muted">{note}</p>}
     </div>
   );
 }
@@ -69,7 +69,7 @@ export function ChapterPicture({ pictureId, alt, view, canReport }: ChapterPictu
     <figure
       aria-label={t('pictures.chapter.figureLabel')}
       data-chapter-picture={pictureId}
-      className="my-7 flex flex-col items-center gap-2"
+      className="my-6 flex flex-col items-center gap-2"
     >
       {content}
       {isVisible && canReport && (

@@ -49,7 +49,7 @@ export function StoryBasicsSection({ answers, errors, languages, set }: StoryBas
         autoComplete="off"
         onChange={(event) => set('title', event.target.value)}
         errorMessage={errors.title === undefined ? undefined : t(errors.title)}
-        className="h-13 font-heading text-xl font-bold"
+        className="h-13 font-heading type-subheading font-bold"
       />
       <Textarea
         id="story-blurb"

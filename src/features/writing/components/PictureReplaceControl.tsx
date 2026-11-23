@@ -96,7 +96,7 @@ export function PictureReplaceControl(props: PictureReplaceControlProps) {
       </div>
       {isOpen && (
         <div className="flex flex-col gap-2">
-          <label htmlFor={fieldId} className="text-sm font-semibold text-ink">
+          <label htmlFor={fieldId} className="type-body font-semibold text-ink">
             {t('picture.replaceFileLabel')}
           </label>
           <input
@@ -105,10 +105,10 @@ export function PictureReplaceControl(props: PictureReplaceControlProps) {
             accept={pictureTypes.join(',')}
             aria-describedby={`${fieldId}-hint`}
             disabled={uploading.isUploading}
-            className="min-h-11 max-w-full text-sm text-body file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-heading"
+            className="min-h-11 max-w-full type-body text-ink-muted file:mr-3 file:h-11 file:rounded-full file:border file:border-control-border file:bg-surface file:px-4 file:font-semibold file:text-ink-heading"
             onChange={(event) => void choose(event.target.files?.[0] ?? null)}
           />
-          <p id={`${fieldId}-hint`} className="m-0 text-[13px] text-meta">
+          <p id={`${fieldId}-hint`} className="m-0 type-meta text-ink-muted">
             {t('picture.replaceHint')}
           </p>
           <div>
@@ -120,9 +120,9 @@ export function PictureReplaceControl(props: PictureReplaceControlProps) {
       )}
       <div aria-live="polite">
         {uploading.isUploading && (
-          <p className="m-0 text-sm text-body">{t('pictureDialog.uploading')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('pictureDialog.uploading')}</p>
         )}
-        {wasReplaced && <p className="m-0 text-sm text-body">{t('picture.replaced')}</p>}
+        {wasReplaced && <p className="m-0 type-body text-ink-muted">{t('picture.replaced')}</p>}
         {isOpen && failure !== null && (
           <Notice tone="error">{tCommon(failure.key, failure.values)}</Notice>
         )}

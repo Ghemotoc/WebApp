@@ -69,7 +69,7 @@ export function NoticeStrip() {
       lang={notice.languageCode}
       className={`border-b ${toneClasses[notice.content.noticeType]}`}
     >
-      <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 text-sm md:px-8">
+      <div className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 type-body md:px-8">
         <p className="m-0 min-w-0 flex-1">{withBrand(text)}</p>
         {notice.content.link !== null && notice.content.link !== '' && (
           <Link
@@ -85,7 +85,7 @@ export function NoticeStrip() {
           aria-label={t('website.noticeClose')}
           className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-surface"
         >
-          <span aria-hidden="true" className="text-lg leading-none">
+          <span aria-hidden="true" className="type-long leading-none">
             ×
           </span>
         </button>

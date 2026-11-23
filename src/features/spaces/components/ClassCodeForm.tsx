@@ -44,7 +44,7 @@ export function ClassCodeForm() {
   return (
     <form className="flex flex-col gap-4" onSubmit={submit} noValidate>
       {/* The example code stays on one line, so a phone never splits it at a dash. */}
-      <p className="m-0 text-base leading-relaxed text-body">
+      <p className="m-0 type-body leading-relaxed text-ink-muted">
         <Trans
           t={t}
           i18nKey="joinClass.enterIntro"
@@ -68,7 +68,7 @@ export function ClassCodeForm() {
       <Button type="submit" size="lg" className="self-start">
         {t('joinClass.check')}
       </Button>
-      <p className="m-0 text-sm text-body">{t('joinClass.privacyNote')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('joinClass.privacyNote')}</p>
     </form>
   );
 }

@@ -42,10 +42,10 @@ export function ChapterListCard({ problem, headingRef, ...listProps }: ChapterLi
   return (
     <section
       aria-labelledby="chapter-list-heading"
-      className="relative flex flex-col gap-2 rounded-card border border-border bg-surface px-[26px] py-6 shadow-card max-sm:px-4"
+      className="relative flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-6 shadow-card max-sm:px-4"
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <div className="w-fit">
             <Eyebrow>{t('manageChapters.listEyebrow')}</Eyebrow>
           </div>
@@ -53,12 +53,12 @@ export function ChapterListCard({ problem, headingRef, ...listProps }: ChapterLi
             id="chapter-list-heading"
             ref={headingRef}
             tabIndex={-1}
-            className="m-0 font-heading text-[28px] font-bold text-heading"
+            className="m-0 font-heading type-heading font-bold text-ink-heading"
           >
             {chapterSummary(t, listProps.chapters)}
           </h2>
         </div>
-        <p className="m-0 max-w-[460px] text-sm leading-normal text-meta sm:mr-24">
+        <p className="m-0 max-w-[460px] type-body leading-normal text-ink-muted sm:mr-20">
           {t('manageChapters.note')}
         </p>
       </div>

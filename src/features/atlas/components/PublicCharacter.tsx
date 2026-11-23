@@ -77,7 +77,7 @@ function CharacterLinks({ plan, characterId }: { plan: PublicPlan; characterId: 
     <section aria-labelledby="atlas-public-links-heading" className="flex flex-col gap-2">
       <h3
         id="atlas-public-links-heading"
-        className="m-0 text-[13px] font-semibold tracking-[0.08em] text-meta uppercase"
+        className="m-0 type-meta font-bold tracking-[0.08em] text-ink-muted uppercase"
       >
         {t('publicPlan.character.connections')}
       </h3>
@@ -85,7 +85,7 @@ function CharacterLinks({ plan, characterId }: { plan: PublicPlan; characterId: 
         {own.map((relationship) => (
           <li
             key={relationship.id}
-            className="border-t border-hairline px-5 py-3 font-semibold text-heading first:border-t-0"
+            className="border-t border-hairline px-4 py-3 font-semibold text-ink-heading first:border-t-0"
           >
             {words.sentence(relationship, characterId)}
           </li>
@@ -104,10 +104,10 @@ export function PublicCharacter({ plan, character, base, isPreview }: PublicChar
   const { t } = useAtlasTranslation();
   const rows = useSheetRows(plan, character);
   return (
-    <div className="flex min-w-0 flex-col gap-5">
+    <div className="flex min-w-0 flex-col gap-4">
       <Link
         to={`${base}/characters`}
-        className="inline-flex h-9 items-center gap-1.5 self-start rounded-full border border-control-border bg-surface px-4 text-[13px] font-semibold text-heading no-underline hover:bg-tint"
+        className="inline-flex h-9 items-center gap-2 self-start rounded-full border border-control-border bg-surface px-4 type-meta font-semibold text-ink-heading no-underline hover:bg-tint"
       >
         <span aria-hidden="true">←</span>
         {t('publicPlan.character.back')}
@@ -115,12 +115,12 @@ export function PublicCharacter({ plan, character, base, isPreview }: PublicChar
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <article
           aria-labelledby="atlas-public-character-heading"
-          className="flex min-w-0 flex-col gap-5 rounded-card border border-border bg-surface px-5 py-6 shadow-card md:px-8 md:py-8"
+          className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-6 shadow-card md:px-8 md:py-8"
         >
           <div className="flex min-w-0 flex-col gap-2">
             <h2
               id="atlas-public-character-heading"
-              className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-extrabold break-words text-heading"
+              className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-bold break-words text-ink-heading"
             >
               {character.name}
             </h2>
@@ -140,7 +140,7 @@ export function PublicCharacter({ plan, character, base, isPreview }: PublicChar
             </div>
           )}
         </article>
-        <aside className="flex min-w-0 flex-col gap-5">
+        <aside className="flex min-w-0 flex-col gap-4">
           <CharacterAvatar character={character} size="large" />
           <CharacterLinks plan={plan} characterId={character.id} />
         </aside>

@@ -35,7 +35,7 @@ export function SpaceNameField({ value, onChange, ownName, sentProblem }: SpaceN
   const check = useSpaceNameCheck(value, ownName);
   const problem = check.problem ?? sentProblem;
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <TextInput
         id={id}
         label={t('form.name')}
@@ -45,7 +45,7 @@ export function SpaceNameField({ value, onChange, ownName, sentProblem }: SpaceN
         onChange={(event) => onChange(event.target.value)}
         errorMessage={problem === null ? undefined : t(`failures.name.${problem.problem}`)}
       />
-      <p aria-live="polite" className="m-0 min-h-5 text-[13px] text-body">
+      <p aria-live="polite" className="m-0 min-h-5 type-meta text-ink-muted">
         {check.state === 'checking' && t('form.nameChecking')}
         {check.state === 'available' && t('form.nameAvailable')}
       </p>

@@ -37,12 +37,12 @@ export function SearchInput({ id, label, onChange, ref, ...inputProps }: SearchI
       <label htmlFor={id} className="sr-only">
         {label}
       </label>
-      <SearchIcon className="pointer-events-none absolute top-1/2 left-5 -translate-y-1/2 text-meta" />
+      <SearchIcon className="pointer-events-none absolute top-1/2 left-5 -translate-y-1/2 text-ink-muted" />
       <input
         ref={ref}
         id={id}
         type="search"
-        className="h-13 w-full rounded-full border border-control-border bg-surface pr-5 pl-13 font-body text-base text-ink"
+        className="h-13 w-full rounded-full border border-control-border bg-surface pr-4 pl-12 font-body type-body text-ink"
         {...inputProps}
         onChange={handleChange}
       />

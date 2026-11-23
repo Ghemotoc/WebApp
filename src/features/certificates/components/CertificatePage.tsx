@@ -59,7 +59,7 @@ function PrintableCertificate({ certificate }: { certificate: MyCertificate }) {
         />
         <Button onClick={() => window.print()}>{t('page.print')}</Button>
       </div>
-      <p className="m-0 text-sm text-body">{t('page.printHint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('page.printHint')}</p>
       <CertificateSheet certificate={certificate} language={language} />
     </>
   );
@@ -83,7 +83,7 @@ function CertificateBody({
   const { t } = useCertificatesTranslation();
   if (read.isError) return <Notice tone="error">{t('my.loadFailed')}</Notice>;
   if (!read.isSuccess) return null;
-  if (certificate === undefined) return <p className="m-0 text-body">{t('page.notFound')}</p>;
+  if (certificate === undefined) return <p className="m-0 text-ink-muted">{t('page.notFound')}</p>;
   if (certificate.isRevoked) return <Notice tone="info">{t('page.revokedNote')}</Notice>;
   return <PrintableCertificate certificate={certificate} />;
 }
@@ -107,7 +107,7 @@ export function CertificatePage() {
           {t('page.back')}
         </Link>
       </nav>
-      <h1 className="m-0 font-heading text-[clamp(28px,4vw,40px)] leading-[1.05] font-extrabold text-heading">
+      <h1 className="m-0 font-heading text-[clamp(28px,4vw,40px)] leading-[1.05] font-bold text-ink-heading">
         {heading}
       </h1>
       <CertificateBody read={read} certificate={certificate} />

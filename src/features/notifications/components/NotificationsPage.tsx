@@ -51,15 +51,15 @@ function NotificationsHeader({
 }) {
   const { t } = useNotificationsTranslation();
   return (
-    <header className="flex flex-col gap-5 pt-14 pb-7 md:flex-row md:items-end md:justify-between">
+    <header className="flex flex-col gap-4 pt-12 pb-6 md:flex-row md:items-end md:justify-between">
       <div className="flex max-w-[640px] flex-col gap-2">
         <Eyebrow>{t('page.eyebrow')}</Eyebrow>
         <h1 className="page-title">{t('page.title')}</h1>
-        <p role="status" className="m-0 text-lg leading-relaxed text-body">
+        <p role="status" className="m-0 type-long leading-relaxed text-ink-muted">
           {unread > 0 ? t('page.newSince', { count: unread }) : t('page.caughtUp')}
         </p>
       </div>
-      <div className="flex flex-wrap items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-3">
         {/* The board's Settings pill, to Settings › Notifications (LOOK-5; glass since G8d). */}
         <Link
           to="/settings#notifications"
@@ -88,7 +88,7 @@ function UnreadOnlySwitch({ isOn, onToggle }: { isOn: boolean; onToggle: () => v
   const { t } = useNotificationsTranslation();
   return (
     <div className="flex items-center gap-3">
-      <span aria-hidden="true" className="text-[15px] font-bold text-heading">
+      <span aria-hidden="true" className="type-body font-semibold text-ink-heading">
         {t('page.unreadOnly')}
       </span>
       <SwitchButton
@@ -129,12 +129,12 @@ function NotificationsBody() {
         isSaving={mark.isSaving}
       />
       {mark.saveFailed && <Notice tone="error">{t('page.markFailed')}</Notice>}
-      <div className="mb-7 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
         <NotificationFilters counts={list.counts} chosen={chosen} onChoose={setChosen} />
         <UnreadOnlySwitch isOn={isUnreadOnly} onToggle={() => setIsUnreadOnly(!isUnreadOnly)} />
       </div>
-      <div className="flex flex-wrap items-start gap-7 pb-16">
-        <div className="flex min-w-0 flex-[999_1_600px] flex-col gap-7">
+      <div className="flex flex-wrap items-start gap-6 pb-16">
+        <div className="flex min-w-0 flex-[999_1_600px] flex-col gap-6">
           <NotificationList
             notifications={shown}
             ownHandle={names?.handle ?? null}
@@ -153,7 +153,7 @@ function NotificationsBody() {
         </div>
         <aside
           aria-label={t('page.aboutLabel')}
-          className="flex min-w-0 flex-[1_1_300px] flex-col gap-5"
+          className="flex min-w-0 flex-[1_1_300px] flex-col gap-4"
         >
           <EmailChoicesCard />
           <DecisionsCard />
@@ -174,10 +174,10 @@ export function NotificationsPage() {
   return (
     <PageContainer>
       {isKnown && userId === null && (
-        <div className="flex flex-col gap-2 pt-14 pb-16">
+        <div className="flex flex-col gap-2 pt-12 pb-16">
           <Eyebrow>{t('page.eyebrow')}</Eyebrow>
           <h1 className="page-title">{t('page.title')}</h1>
-          <p className="m-0 text-body">
+          <p className="m-0 text-ink-muted">
             {t('page.signedOut')}{' '}
             <Link to="/sign-in" className="text-link underline">
               {t('page.logIn')}

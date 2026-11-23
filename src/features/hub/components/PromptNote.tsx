@@ -27,9 +27,9 @@ export function PromptNote() {
   const prompt = prompts.find((candidate) => candidate.promptId === promptId);
   if (prompt === undefined) return null;
   return (
-    <div className="flex max-w-[640px] flex-col gap-1.5 rounded-card bg-tint p-5">
+    <div className="flex max-w-[640px] flex-col gap-2 rounded-card bg-tint p-4">
       <p className="eyebrow m-0">{t('hub.prompt.writingFrom')}</p>
-      <p className="m-0 text-lg leading-normal break-words text-ink">
+      <p className="m-0 type-long leading-normal break-words text-ink">
         {i18n.language === 'ro' ? prompt.promptRo : prompt.promptEn}
       </p>
     </div>

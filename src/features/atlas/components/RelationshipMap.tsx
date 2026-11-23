@@ -160,7 +160,7 @@ export function RelationshipMap({
   return (
     <div className="flex min-w-0 flex-col gap-4">
       <MapCategorySwitches hiddenCategories={hiddenCategories} onChange={setHiddenCategories} />
-      {onMap.length === 0 && <p className="m-0 text-body">{t('connections.map.none')}</p>}
+      {onMap.length === 0 && <p className="m-0 text-ink-muted">{t('connections.map.none')}</p>}
       {/* Step 2: the map scrolls inside its own region; the region can be focused and scrolled
           by keyboard (DoD: a sideways list without arrows keeps its scrollbar). */}
       <div
@@ -189,7 +189,7 @@ export function RelationshipMap({
       </div>
       {onMap.length > 0 && <MapZoomBar zoomControls={zoomControls} />}
       {onMap.length > 0 && offMap.length > 0 && (
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('connections.map.offMap', { names: offMap.map((id) => words.nameOf(id)).join(', ') })}
         </p>
       )}

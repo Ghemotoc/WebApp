@@ -98,15 +98,15 @@ export function ReferralLog({
   });
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 text-base font-semibold text-heading">
+      <h3 className="m-0 type-body font-bold text-ink-heading">
         {t('safeguarding.referralsHeading')}
       </h3>
       {safeguarding.referrals.length === 0 && (
-        <p className="m-0 text-body">{t('safeguarding.noReferrals')}</p>
+        <p className="m-0 text-ink-muted">{t('safeguarding.noReferrals')}</p>
       )}
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {safeguarding.referrals.map((referral) => (
-          <li key={referral.referredAt} className="text-body">
+          <li key={referral.referredAt} className="text-ink-muted">
             {t('safeguarding.referralLine', {
               authority: referral.authorityName,
               reference: referral.authorityReference ?? t('safeguarding.noReference'),
@@ -114,7 +114,7 @@ export function ReferralLog({
               handle: referral.referredBy,
             })}
             {referral.note !== null && referral.note !== '' && (
-              <span className="block text-sm text-meta">{referral.note}</span>
+              <span className="block type-body text-ink-muted">{referral.note}</span>
             )}
           </li>
         ))}

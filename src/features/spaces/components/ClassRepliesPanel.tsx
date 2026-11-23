@@ -40,17 +40,17 @@ function MemberList({
 }) {
   const { t } = useSpacesTranslation();
   return (
-    <div className="flex flex-col gap-1.5">
-      <h3 className="m-0 text-sm font-semibold text-ink">{heading}</h3>
+    <div className="flex flex-col gap-2">
+      <h3 className="m-0 type-body font-bold text-ink">{heading}</h3>
       {members.length === 0 ? (
-        <p className="m-0 text-sm text-meta">{emptyText}</p>
+        <p className="m-0 type-body text-ink-muted">{emptyText}</p>
       ) : (
-        <ul aria-label={heading} className="m-0 flex list-none flex-col gap-1 p-0 text-sm">
+        <ul aria-label={heading} className="m-0 flex list-none flex-col gap-1 p-0 type-body">
           {members.map((member) => (
-            <li key={member.handle} className="text-body">
-              {member.displayName} <span className="text-meta">@{member.handle}</span>
+            <li key={member.handle} className="text-ink-muted">
+              {member.displayName} <span className="text-ink-muted">@{member.handle}</span>
               {member.isLate === true && (
-                <span className="font-semibold text-body"> · {t('classReplies.late')}</span>
+                <span className="font-semibold text-ink-muted"> · {t('classReplies.late')}</span>
               )}
             </li>
           ))}
@@ -87,10 +87,12 @@ export function ClassRepliesPanel({
   return (
     <section
       aria-label={t('classReplies.title')}
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
     >
-      <h2 className="m-0 font-heading text-xl font-bold text-heading">{t('classReplies.title')}</h2>
-      <p className="m-0 text-sm text-body">
+      <h2 className="m-0 font-heading type-subheading font-bold text-ink-heading">
+        {t('classReplies.title')}
+      </h2>
+      <p className="m-0 type-body text-ink-muted">
         {t('classReplies.summary', {
           replied: format.format(replies.replied.length),
           total: format.format(replies.replied.length + replies.notYet.length),

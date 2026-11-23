@@ -33,14 +33,14 @@ export function LabelCheckbox({ id, label, hint, isChecked, onChange }: LabelChe
         checked={isChecked}
         aria-describedby={hintId}
         onChange={(event) => onChange(event.target.checked)}
-        className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+        className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
       />
-      <div className="flex flex-col gap-0.5">
-        <label htmlFor={id} className="text-sm font-semibold text-ink">
+      <div className="flex flex-col gap-1">
+        <label htmlFor={id} className="type-body font-semibold text-ink">
           {label}
         </label>
         {hint !== undefined && (
-          <p id={hintId} className="m-0 text-[13px] leading-normal text-meta">
+          <p id={hintId} className="m-0 type-meta leading-normal text-ink-muted">
             {hint}
           </p>
         )}

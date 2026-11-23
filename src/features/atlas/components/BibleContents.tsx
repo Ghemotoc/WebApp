@@ -37,8 +37,8 @@ function EntryRow({ to, title, isOpen }: { to: string; title: string; isOpen: bo
         to={to}
         aria-current={isOpen ? 'page' : undefined}
         className={cn(
-          'flex min-h-[52px] items-center px-[18px] py-2.5 text-[15px] break-words text-heading no-underline hover:bg-tint',
-          isOpen ? 'bg-tint font-bold' : 'font-medium',
+          'flex min-h-[52px] items-center px-4 py-3 type-body break-words text-ink-heading no-underline hover:bg-tint',
+          isOpen ? 'bg-tint font-semibold' : 'font-normal',
         )}
       >
         {title}
@@ -67,10 +67,10 @@ function ContentsSection({
   const headingId = `atlas-bible-contents-${section.id}`;
   return (
     <li className="flex min-w-0 flex-col gap-1">
-      <div className="flex items-center justify-between gap-2 pr-2 pl-[18px]">
+      <div className="flex items-center justify-between gap-2 pr-2 pl-4">
         <h3
           id={headingId}
-          className="m-0 min-w-0 text-[13px] font-semibold tracking-[0.08em] break-words text-meta uppercase"
+          className="m-0 min-w-0 type-meta font-bold tracking-[0.08em] break-words text-ink-muted uppercase"
         >
           {sectionName}
         </h3>
@@ -81,13 +81,13 @@ function ContentsSection({
           aria-label={t('bible.contents.newEntryIn', { section: sectionName })}
           title={t('bible.contents.newEntryIn', { section: sectionName })}
           onClick={onCreate}
-          className="tmc-focus inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-meta hover:bg-tint hover:text-heading"
+          className="tmc-focus inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ink-muted hover:bg-tint hover:text-ink-heading"
         >
           <ActionIcon name="plus" size={16} />
         </button>
       </div>
       {entries.length === 0 && (
-        <p className="m-0 px-[18px] text-sm text-meta">{t('bible.contents.noEntries')}</p>
+        <p className="m-0 px-4 type-body text-ink-muted">{t('bible.contents.noEntries')}</p>
       )}
       {entries.length > 0 && (
         <ul
@@ -124,14 +124,14 @@ export function BibleContents({ slug, bible, openEntryId, onCreateEntry }: Bible
   }
 
   return (
-    <nav aria-labelledby="atlas-bible-contents-heading" className="flex min-w-0 flex-col gap-3.5">
+    <nav aria-labelledby="atlas-bible-contents-heading" className="flex min-w-0 flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id="atlas-bible-contents-heading" className="m-0 text-base font-bold text-heading">
+        <h2 id="atlas-bible-contents-heading" className="m-0 type-body font-bold text-ink-heading">
           {t('bible.contents.heading')}
         </h2>
         <Link
           to={`/plan/s/${slug}/world`}
-          className={buttonClassName({ variant: 'secondary' }, 'h-9 px-4 text-[13px]')}
+          className={buttonClassName({ variant: 'secondary' }, 'h-9 px-4 type-meta')}
         >
           {t('bible.contents.manage')}
         </Link>
@@ -139,7 +139,7 @@ export function BibleContents({ slug, bible, openEntryId, onCreateEntry }: Bible
       <div aria-live="polite">
         {failed && <Notice tone="error">{t('bible.contents.createFailed')}</Notice>}
       </div>
-      <ul className="m-0 flex list-none flex-col gap-3.5 p-0">
+      <ul className="m-0 flex list-none flex-col gap-4 p-0">
         {bible.sections.map((section) => (
           <ContentsSection
             key={section.id}

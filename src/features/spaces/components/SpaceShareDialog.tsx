@@ -53,12 +53,12 @@ function SpaceQrCode({ link }: { link: string }) {
           viewBox={`0 0 ${drawing.size} ${drawing.size}`}
           shapeRendering="crispEdges"
           data-testid="space-share-qr"
-          className="size-40 flex-none rounded-xl"
+          className="size-40 flex-none rounded-field"
         >
           <rect width={drawing.size} height={drawing.size} fill="#fff" />
           <path d={drawing.path} fill="#000" />
         </svg>
-        <p className="m-0 min-w-0 flex-1 basis-48 text-sm text-body">{t('share.qrNote')}</p>
+        <p className="m-0 min-w-0 flex-1 basis-48 type-body text-ink-muted">{t('share.qrNote')}</p>
       </div>
     </div>
   );
@@ -106,7 +106,7 @@ export function SpaceShareDialog({ isOpen, onClose, name, link }: SpaceShareDial
     >
       <ShareLinkRow link={link} wasCopied={null} />
       <SpaceQrCode link={link} />
-      <p className="m-0 text-sm text-body">{t('share.privacy')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('share.privacy')}</p>
       <div className="flex flex-wrap justify-end gap-3 border-t border-border pt-4">
         <SystemShareButton name={name} link={link} />
         <Button onClick={onClose}>{t('share.done')}</Button>

@@ -33,7 +33,7 @@ type ChatState = ReturnType<typeof useConversation>;
 
 /** A plain line at the bottom of the chat. */
 function BottomNote({ text }: { text: string }) {
-  return <p className="m-0 border-t border-border p-4 text-sm text-meta">{text}</p>;
+  return <p className="m-0 border-t border-border p-4 type-body text-ink-muted">{text}</p>;
 }
 
 /**
@@ -54,8 +54,10 @@ function NoThanksNote({ chat }: { chat: Conversation }) {
         }).format(askAgain);
   return (
     <div className="flex flex-col gap-2 border-t border-border p-4">
-      <p className="m-0 text-sm text-body">{t('chat.noThanksReply', { name: chat.displayName })}</p>
-      <p className="m-0 text-sm text-meta">{t('chat.noThanksAgain', { date })}</p>
+      <p className="m-0 type-body text-ink-muted">
+        {t('chat.noThanksReply', { name: chat.displayName })}
+      </p>
+      <p className="m-0 type-body text-ink-muted">{t('chat.noThanksAgain', { date })}</p>
     </div>
   );
 }
@@ -172,6 +174,7 @@ export function ChatPanel({ handle }: { handle: string }) {
       </div>
     );
   if (state.chat.isPending) return null;
-  if (state.chat.data === null) return <p className="m-0 p-4 text-body">{t('chat.notFound')}</p>;
+  if (state.chat.data === null)
+    return <p className="m-0 p-4 text-ink-muted">{t('chat.notFound')}</p>;
   return <LoadedChat chat={state.chat.data} state={state} />;
 }

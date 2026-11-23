@@ -32,12 +32,12 @@ export function BirthdaySettingsSection() {
     >
       <h2
         id="settings-birthday-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('birthday.heading')}
       </h2>
-      <p className="m-0 text-body">{t('birthday.intro')}</p>
-      <p className="m-0 text-[13px] text-meta">{t('birthday.private')}</p>
+      <p className="m-0 text-ink-muted">{t('birthday.intro')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('birthday.private')}</p>
       {birthday.loadFailed && <Notice tone="error">{t('errors.loadFailed')}</Notice>}
       {saved !== null && (
         <BirthdayForm key={String(saved.month)} saved={saved} birthday={birthday} />

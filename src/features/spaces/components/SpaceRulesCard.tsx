@@ -28,9 +28,9 @@ export function SpaceRulesCard({ space }: { space: Space }) {
       <h2 id="space-rules-heading" className="m-0 type-subheading">
         {t('rules.title')}
       </h2>
-      {space.rules.length === 0 && <p className="m-0 text-body">{t('rules.none')}</p>}
+      {space.rules.length === 0 && <p className="m-0 text-ink-muted">{t('rules.none')}</p>}
       {space.rules.length > 0 && (
-        <ol className="m-0 flex list-decimal flex-col gap-1.5 pl-5 break-words text-body">
+        <ol className="m-0 flex list-decimal flex-col gap-2 pl-4 break-words text-ink-muted">
           {space.rules.map((rule, index) => (
             <li key={`${index}-${rule}`}>{rule}</li>
           ))}

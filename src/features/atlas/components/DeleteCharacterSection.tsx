@@ -46,11 +46,11 @@ export function DeleteCharacterSection({ name, onDelete }: DeleteCharacterSectio
   return (
     <section
       aria-labelledby="atlas-delete-character-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
       <h2
         id="atlas-delete-character-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('characters.delete.heading')}
       </h2>
@@ -61,7 +61,7 @@ export function DeleteCharacterSection({ name, onDelete }: DeleteCharacterSectio
       )}
       {isAsking && (
         <>
-          <p ref={question} tabIndex={-1} className="m-0 text-body">
+          <p ref={question} tabIndex={-1} className="m-0 text-ink-muted">
             {t('characters.delete.confirm', { name })}
           </p>
           <div className="flex flex-wrap gap-3">

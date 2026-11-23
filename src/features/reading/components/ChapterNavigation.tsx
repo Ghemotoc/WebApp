@@ -24,7 +24,7 @@ import { BackIcon, ForwardIcon } from './ReaderIcons';
 
 /** The round 44 px arrow links' classes. */
 const arrowLink =
-  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-heading no-underline hover:bg-tint';
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink-heading no-underline hover:bg-tint';
 
 /** Each dot's look: where it stands against the chapter being read. */
 const dotLook: Record<ChapterDot, string> = {
@@ -67,7 +67,7 @@ export function ChapterNavigation({ chapter, previousTitle, nextTitle }: Chapter
   return (
     <nav
       aria-label={t('reader.chapterNavigation')}
-      className="glass-pill mx-auto mt-6 flex w-full max-w-[760px] items-center gap-4 rounded-full px-3 py-2.5"
+      className="glass-pill mx-auto mt-6 flex w-full max-w-[760px] items-center gap-4 rounded-full px-3 py-3"
     >
       {chapter.previousCode !== null ? (
         <Link
@@ -81,7 +81,7 @@ export function ChapterNavigation({ chapter, previousTitle, nextTitle }: Chapter
         <span aria-hidden="true" className="size-11 shrink-0" />
       )}
       <div className="flex min-w-0 flex-1 justify-center">
-        <span aria-hidden="true" className="flex items-center gap-1.5">
+        <span aria-hidden="true" className="flex items-center gap-2">
           {chapterDots(chapter.number, chapter.total).map((dot) => (
             <i key={dot.number} className={cn('block h-2 rounded-full', dotLook[dot.kind])} />
           ))}

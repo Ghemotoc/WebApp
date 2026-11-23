@@ -41,12 +41,13 @@ function SanctionMeta({ sanction }: { sanction: AccountSanction }) {
     reference: sanction.caseReference ?? t('sanctions.noCase'),
   });
   // A warning has no end; a ban's end is "none"; a suspension or pause ends on a date.
-  if (sanction.kind === 'warning') return <p className="m-0 text-sm text-meta">{appliedBy}</p>;
+  if (sanction.kind === 'warning')
+    return <p className="m-0 type-body text-ink-muted">{appliedBy}</p>;
   const until =
     sanction.endsAt === null
       ? t('sanctions.noEnd')
       : t('sanctions.until', { when: whenText(sanction.endsAt) });
-  return <p className="m-0 text-sm text-meta">{`${appliedBy} ${until}`}</p>;
+  return <p className="m-0 type-body text-ink-muted">{`${appliedBy} ${until}`}</p>;
 }
 
 /**
@@ -60,12 +61,14 @@ function SanctionRow({ sanction, sanctions }: { sanction: AccountSanction; sanct
   return (
     <li className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-semibold text-heading">{t(`sanctions.kinds.${sanction.kind}`)}</span>
+        <span className="font-semibold text-ink-heading">
+          {t(`sanctions.kinds.${sanction.kind}`)}
+        </span>
         {sanction.isLive && <InfoPill tone="blush">{t('sanctions.live')}</InfoPill>}
         {sanction.liftedAt !== null && <InfoPill tone="neutral">{t('sanctions.lifted')}</InfoPill>}
       </div>
       <SanctionMeta sanction={sanction} />
-      <p className="m-0 text-body">{sanction.note}</p>
+      <p className="m-0 text-ink-muted">{sanction.note}</p>
       {sanction.isLive && !isLiftOpen && (
         <div>
           <Button variant="secondary" onClick={() => setIsLiftOpen(true)}>
@@ -106,14 +109,16 @@ export function AccountSanctions({
     <section aria-labelledby="account-sanctions-heading" className="flex flex-col gap-4">
       <h2
         id="account-sanctions-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {heading ?? t('sanctions.heading')}
       </h2>
       {sanctions.liftFailure !== null && (
         <Notice tone="error">{t(`failures.${sanctions.liftFailure}`)}</Notice>
       )}
-      {sanctions.sanctions.length === 0 && <p className="m-0 text-body">{t('sanctions.none')}</p>}
+      {sanctions.sanctions.length === 0 && (
+        <p className="m-0 text-ink-muted">{t('sanctions.none')}</p>
+      )}
       <ul className="m-0 flex list-none flex-col gap-3 p-0">
         {sanctions.sanctions.map((sanction) => (
           <SanctionRow key={sanction.id} sanction={sanction} sanctions={sanctions} />

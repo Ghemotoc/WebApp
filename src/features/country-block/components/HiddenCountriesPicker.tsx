@@ -43,7 +43,7 @@ export function HiddenCountriesPicker({ hidden, onChange }: HiddenCountriesPicke
     ...choices.map((choice) => ({ value: choice.code, label: choice.name })),
   ];
   return (
-    <div className="flex flex-col gap-[18px]">
+    <div className="flex flex-col gap-4">
       {hidden.length > 0 && (
         <div
           role="group"
@@ -75,7 +75,7 @@ export function HiddenCountriesPicker({ hidden, onChange }: HiddenCountriesPicke
         }}
         descriptionId={hintId}
       />
-      <p id={hintId} className="m-0 text-sm text-meta">
+      <p id={hintId} className="m-0 type-body text-ink-muted">
         {t('hiddenCountries.hint')}
       </p>
     </div>

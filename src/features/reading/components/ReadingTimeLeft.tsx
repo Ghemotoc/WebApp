@@ -36,7 +36,7 @@ export function ReadingTimeLeft({ minutesToRead, progress }: ReadingTimeLeftProp
   return createPortal(
     <p
       data-testid="reading-time-left"
-      className="glass-float pointer-events-none fixed bottom-[calc(18px+env(safe-area-inset-bottom))] left-1/2 z-20 m-0 -translate-x-1/2 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap text-heading"
+      className="glass-float pointer-events-none fixed bottom-[calc(18px+env(safe-area-inset-bottom))] left-1/2 z-20 m-0 -translate-x-1/2 rounded-full px-4 py-2 type-body font-semibold whitespace-nowrap text-ink-heading"
     >
       {t('reader.minutesLeft', { count: minutes })}
     </p>,

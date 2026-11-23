@@ -51,13 +51,13 @@ export function HubTools() {
           <li key={tool.key}>
             <Link
               to={tool.href}
-              className="flex h-full flex-col gap-2 rounded-card border border-border bg-surface p-5 text-ink no-underline shadow-card hover:bg-tint"
+              className="flex h-full flex-col gap-2 rounded-card border border-border bg-surface p-4 text-ink no-underline shadow-card hover:bg-tint"
             >
-              <span className="text-heading">{tool.icon}</span>
-              <span className="font-heading text-[19px] font-bold text-heading">
+              <span className="text-ink-heading">{tool.icon}</span>
+              <span className="font-heading type-subheading font-bold text-ink-heading">
                 {t(`hub.tools.${tool.key}Title`)}
               </span>
-              <span className="text-sm text-meta">{t(`hub.tools.${tool.key}Line`)}</span>
+              <span className="type-body text-ink-muted">{t(`hub.tools.${tool.key}Line`)}</span>
             </Link>
           </li>
         ))}

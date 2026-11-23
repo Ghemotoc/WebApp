@@ -49,7 +49,7 @@ export function PupilControls({ competition }: ControlsProps) {
         </Button>
       )}
       {(competition.canJoin || competition.canLeave) && (
-        <p className="m-0 text-sm text-meta">{t('card.joinNote')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('card.joinNote')}</p>
       )}
       <div aria-live="polite">
         {action.failure !== null && (

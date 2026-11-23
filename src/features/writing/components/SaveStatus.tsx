@@ -18,7 +18,7 @@ import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** The box's tone per state, written out so Tailwind finds the classes. */
 const toneClasses: Record<SaveState['kind'], string> = {
-  idle: 'bg-panel text-body',
+  idle: 'bg-panel text-ink-muted',
   unsaved: 'bg-(--warning-bg) text-(--warning-text)',
   saving: 'bg-tint text-(--info-text)',
   saved: 'bg-(--success-bg) text-(--success-text)',
@@ -67,10 +67,10 @@ export function SaveStatus({ state }: { state: SaveState }) {
   return (
     <p
       role="status"
-      className={`m-0 flex items-start gap-2 rounded-card px-3.5 py-3 text-sm leading-normal ${toneClasses[state.kind]}`}
+      className={`m-0 flex items-start gap-2 rounded-card px-4 py-3 type-body leading-normal ${toneClasses[state.kind]}`}
     >
       {state.kind === 'saved' && (
-        <span className="mt-0.5 flex-none" aria-hidden="true">
+        <span className="mt-1 flex-none" aria-hidden="true">
           <CheckIcon size={16} />
         </span>
       )}

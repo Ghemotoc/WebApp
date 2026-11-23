@@ -49,22 +49,25 @@ export function MoveChapterDialog({ move, onConfirm, onClose }: MoveChapterDialo
       aria-labelledby="move-chapter-heading"
       aria-describedby="move-chapter-body"
       onClose={onClose}
-      className="m-auto w-[min(480px,calc(100vw-32px))] rounded-card border border-border bg-surface p-7 text-ink shadow-card backdrop:bg-ink/45"
+      className="m-auto w-[min(480px,calc(100vw-32px))] rounded-card border border-border bg-surface p-6 text-ink shadow-card backdrop:bg-ink/45"
     >
-      <div className="flex flex-col gap-3.5">
+      <div className="flex flex-col gap-4">
         <h2
           id="move-chapter-heading"
-          className="m-0 font-heading text-[26px] leading-[1.15] font-bold text-heading"
+          className="m-0 font-heading type-heading leading-[1.15] font-bold text-ink-heading"
         >
           {t('manageChapters.moveDialog.title')}
         </h2>
-        <p id="move-chapter-body" className="m-0 text-base leading-relaxed break-words text-body">
+        <p
+          id="move-chapter-body"
+          className="m-0 type-body leading-relaxed break-words text-ink-muted"
+        >
           {t('manageChapters.moveDialog.body', {
             title: move?.title ?? '',
             number: move?.newNumber ?? 0,
           })}
         </p>
-        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
+        <div className="mt-2 flex flex-wrap justify-end gap-2">
           <Button size="lg" variant="secondary" onClick={onClose}>
             {t('manageChapters.moveDialog.keep')}
           </Button>

@@ -29,7 +29,7 @@ import { WinnerCard } from './WinnerCard';
 
 /** The card's own classes, as the other cards on a class page. */
 const cardClasses =
-  'flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-5 shadow-card';
+  'flex flex-col gap-3 rounded-card border border-border bg-surface px-6 py-4 shadow-card';
 
 /**
  * Where the competition stands, in a sentence.
@@ -64,18 +64,18 @@ function RunningCard({ competitions, slug }: { competitions: ClassCompetitions; 
     <section aria-labelledby="class-competition-heading" className={cardClasses}>
       <h2
         id="class-competition-heading"
-        className="m-0 font-heading text-2xl font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {competition.name}
       </h2>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('card.dates', { start: moment(competition.startsAt), end: moment(competition.endsAt) })}
       </p>
       <p className="m-0 font-semibold text-ink">
         <PhaseLine competition={competition} />
       </p>
       {!competitions.areWinnersAllowed && (
-        <p className="m-0 text-sm text-body">{t('card.noWinners')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('card.noWinners')}</p>
       )}
       <CriteriaList criteria={competition.criteria} />
       {isTeacher ? (
@@ -109,12 +109,12 @@ function StartCard({ competitions, slug }: { competitions: ClassCompetitions; sl
     <section aria-labelledby="class-competition-heading" className={cardClasses}>
       <h2
         id="class-competition-heading"
-        className="m-0 font-heading text-2xl font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('card.startTitle')}
       </h2>
-      <p className="m-0 text-sm text-body">{t('card.startBody')}</p>
-      {!hasGrade && <p className="m-0 text-sm text-body">{t('card.needsGrade')}</p>}
+      <p className="m-0 type-body text-ink-muted">{t('card.startBody')}</p>
+      {!hasGrade && <p className="m-0 type-body text-ink-muted">{t('card.needsGrade')}</p>}
       <Link
         to={hasGrade ? `/spaces/${slug}/competition` : `/spaces/${slug}/settings`}
         className="w-fit font-semibold text-link underline"

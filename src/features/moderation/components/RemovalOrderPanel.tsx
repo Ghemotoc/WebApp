@@ -91,7 +91,7 @@ function DisableForm({ order }: { order: OrderState }) {
         value={note}
         onChange={(event) => setNote(event.target.value)}
       />
-      <label className="flex min-h-11 items-center gap-3 text-body">
+      <label className="flex min-h-11 items-center gap-3 text-ink-muted">
         <input
           type="checkbox"
           className="size-5"
@@ -112,7 +112,7 @@ function DisableForm({ order }: { order: OrderState }) {
         />
       )}
       {isMissing && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t('orders.missing')}
         </p>
       )}
@@ -143,10 +143,10 @@ export function RemovalOrderPanel({ caseId, isOpen }: { caseId: string; isOpen: 
       aria-labelledby="order-heading"
       className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="order-heading" className="m-0 font-heading text-[24px] font-bold text-heading">
+      <h2 id="order-heading" className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('orders.heading')}
       </h2>
-      <p className="m-0 text-body">{t('orders.intro')}</p>
+      <p className="m-0 text-ink-muted">{t('orders.intro')}</p>
       {order.timeline !== null && <TimelineRows timeline={order.timeline} />}
       {order.hasDisabled && <Notice tone="success">{t('orders.done')}</Notice>}
       {isOpen && <DisableForm order={order} />}

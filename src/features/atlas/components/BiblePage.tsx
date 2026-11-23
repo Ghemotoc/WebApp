@@ -53,7 +53,7 @@ function BibleBody({
     <div className="grid items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
       <BibleContents slug={slug} bible={bible} openEntryId={entryId} onCreateEntry={createEntry} />
       <div className="flex min-w-0 flex-col gap-4">
-        {entryId === undefined && <p className="m-0 text-body">{t('bible.pick')}</p>}
+        {entryId === undefined && <p className="m-0 text-ink-muted">{t('bible.pick')}</p>}
         {entryId !== undefined && entry === undefined && (
           <Notice tone="info">{t('bible.entryNotFound')}</Notice>
         )}
@@ -108,7 +108,7 @@ export function BiblePage() {
       <title>
         {bible ? t('bible.documentTitle', { title: bible.storyTitle }) : t('homeDocumentTitle')}
       </title>
-      {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {bible === null && <Notice tone="error">{t('notFound')}</Notice>}
       {bible !== undefined && bible !== null && (

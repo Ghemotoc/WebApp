@@ -114,7 +114,7 @@ export function ConnectionsMapView({
           {t('connections.map.arrange')}
         </Button>
       </div>
-      <p className="m-0 text-sm text-meta">{t('connections.map.dragHint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('connections.map.dragHint')}</p>
       <div aria-live="polite">{failure !== null && <Notice tone="error">{failure}</Notice>}</div>
       <RelationshipMap
         addressOf={addressOf}

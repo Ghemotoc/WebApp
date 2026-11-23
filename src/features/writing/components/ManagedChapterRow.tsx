@@ -58,10 +58,10 @@ function ChapterTitle(props: { slug: string; chapter: ManagedChapter; number: nu
   const { slug, chapter, number } = props;
   const { t } = useTranslation('writing');
   return (
-    <span className="flex flex-wrap items-center gap-2.5">
+    <span className="flex flex-wrap items-center gap-3">
       <Link
         to={`/write/s/${slug}/c/${chapter.code}`}
-        className="font-heading text-[19px] font-bold break-words text-ink no-underline hover:underline"
+        className="font-heading type-subheading font-bold break-words text-ink no-underline hover:underline"
       >
         {t('manageChapters.rowTitle', {
           number,
@@ -100,8 +100,10 @@ function ChapterRowText(props: {
       ) : (
         <ChapterTitle slug={props.slug} chapter={chapter} number={props.number} />
       )}
-      <span className="text-sm text-meta">{chapterMeta(t, chapter, i18n.language)}</span>
-      {movedNote !== null && <span className="text-sm font-semibold text-body">{movedNote}</span>}
+      <span className="type-body text-ink-muted">{chapterMeta(t, chapter, i18n.language)}</span>
+      {movedNote !== null && (
+        <span className="type-body font-semibold text-ink-muted">{movedNote}</span>
+      )}
     </div>
   );
 }
@@ -155,8 +157,8 @@ export function ManagedChapterRow(props: ManagedChapterRowProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        'relative flex flex-wrap items-center gap-x-4 gap-y-2.5 border-t border-border bg-surface py-3.5',
-        isDragging && 'z-10 rounded-2xl shadow-card',
+        'relative flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-border bg-surface py-4',
+        isDragging && 'z-10 rounded-card shadow-card',
       )}
     >
       <button
@@ -165,7 +167,7 @@ export function ManagedChapterRow(props: ManagedChapterRowProps) {
         {...attributes}
         {...listeners}
         aria-label={t('manageChapters.dragLabel', { number })}
-        className="inline-flex size-11 flex-none cursor-grab touch-none items-center justify-center rounded-full text-meta hover:bg-tint"
+        className="inline-flex size-11 flex-none cursor-grab touch-none items-center justify-center rounded-full text-ink-muted hover:bg-tint"
       >
         <GripIcon />
       </button>

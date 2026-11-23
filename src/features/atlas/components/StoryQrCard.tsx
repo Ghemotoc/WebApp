@@ -50,7 +50,7 @@ function QrFigure({ address, path }: { address: string; path: string }) {
   }, [address]);
   return (
     // White whatever the theme: scanners need dark squares on a light ground.
-    <figure className="m-0 flex shrink-0 flex-col items-center gap-1.5 self-center rounded-[20px] bg-white p-3 shadow-card">
+    <figure className="m-0 flex shrink-0 flex-col items-center gap-2 self-center rounded-card bg-white p-3 shadow-card">
       <svg
         role="img"
         aria-label={t('marketing.qr.codeLabel', { path })}
@@ -62,7 +62,7 @@ function QrFigure({ address, path }: { address: string; path: string }) {
         <rect width={drawing.size} height={drawing.size} fill="#fff" />
         <path d={drawing.path} fill="#000" />
       </svg>
-      <figcaption className="max-w-[168px] text-center text-xs break-all text-(--ink-on-white)">
+      <figcaption className="max-w-[168px] text-center type-meta break-all text-(--ink-on-white)">
         {path}
       </figcaption>
     </figure>
@@ -92,14 +92,14 @@ function QrDownloads({
       <div className="flex flex-wrap gap-2">
         <Button
           variant="secondary"
-          className="h-9 px-4 text-[13px]"
+          className="h-9 px-4 type-meta"
           onClick={() => void download('png')}
         >
           {t('marketing.qr.downloadPng')}
         </Button>
         <Button
           variant="secondary"
-          className="h-9 px-4 text-[13px]"
+          className="h-9 px-4 type-meta"
           onClick={() => void download('svg')}
         >
           {t('marketing.qr.downloadSvg')}
@@ -130,18 +130,18 @@ export function StoryQrCard({ slug }: { slug: string }) {
   return (
     <section
       aria-labelledby="atlas-story-qr-heading"
-      className="flex min-w-0 flex-col gap-3.5 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2
           id="atlas-story-qr-heading"
-          className="m-0 font-heading text-[26px] leading-[1.1] font-bold text-heading"
+          className="m-0 font-heading type-heading leading-[1.1] font-bold text-ink-heading"
         >
           {t('marketing.qr.heading')}
         </h2>
-        <p className="m-0 text-sm text-meta">{t('marketing.qr.use')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('marketing.qr.use')}</p>
       </div>
-      <p className="m-0 text-sm text-meta">{t('marketing.qr.hint')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('marketing.qr.hint')}</p>
       <div className="flex flex-wrap items-start gap-6">
         <div className="flex min-w-0 flex-1 basis-56 flex-col gap-3">
           <Select
@@ -159,7 +159,7 @@ export function StoryQrCard({ slug }: { slug: string }) {
               )
             }
           />
-          <p className="m-0 text-xs text-meta">{t('marketing.qr.whoCanOpen')}</p>
+          <p className="m-0 type-meta text-ink-muted">{t('marketing.qr.whoCanOpen')}</p>
           <QrDownloads
             address={address}
             fileBase={(kind) => qrFileName(slug, choice.destination, kind)}

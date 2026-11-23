@@ -57,10 +57,10 @@ function WinnerFields({ entrants, choice, onChange }: ChoiceFieldsProps) {
 
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0" aria-describedby="winner-hint">
-      <legend className="p-0 font-heading text-lg font-bold text-heading">
+      <legend className="p-0 font-heading type-long font-bold text-ink-heading">
         {t('scoring.winnerLegend')}
       </legend>
-      <p id="winner-hint" className="m-0 text-sm text-body">
+      <p id="winner-hint" className="m-0 type-body text-ink-muted">
         {t('scoring.winnerHint')}
       </p>
       {entrants.map((entrant) => (
@@ -109,10 +109,10 @@ function FinalistFields({ entrants, choice, onChange }: ChoiceFieldsProps) {
 
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0" aria-describedby="finalists-hint">
-      <legend className="p-0 font-heading text-lg font-bold text-heading">
+      <legend className="p-0 font-heading type-long font-bold text-ink-heading">
         {t('scoring.finalistsLegend')}
       </legend>
-      <p id="finalists-hint" className="m-0 text-sm text-body">
+      <p id="finalists-hint" className="m-0 type-body text-ink-muted">
         {t('scoring.finalistsHint')}
       </p>
       {entrants
@@ -159,9 +159,9 @@ export function ResultsForm({ scoring }: { scoring: CompetitionScoring }) {
   return (
     <section
       aria-labelledby="results-heading"
-      className="flex flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-card md:p-6"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
     >
-      <h2 id="results-heading" className="m-0 font-heading text-2xl font-bold text-heading">
+      <h2 id="results-heading" className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('scoring.resultsHeading')}
       </h2>
       {scoring.areWinnersAllowed ? (
@@ -170,7 +170,7 @@ export function ResultsForm({ scoring }: { scoring: CompetitionScoring }) {
           <FinalistFields entrants={scoring.entrants} choice={choice} onChange={setChoice} />
         </>
       ) : (
-        <p className="m-0 text-body">{t('scoring.noWinners')}</p>
+        <p className="m-0 text-ink-muted">{t('scoring.noWinners')}</p>
       )}
       <ConfirmedButton
         label={t('scoring.confirm')}

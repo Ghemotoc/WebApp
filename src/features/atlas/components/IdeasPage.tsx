@@ -46,7 +46,7 @@ function IdeaList({ slug, ideas }: { slug: string; ideas: StoryIdeas }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2
           id="atlas-ideas-list-heading"
-          className="m-0 font-heading text-[22px] font-bold text-heading"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
         >
           {t('ideas.listHeading')}
         </h2>
@@ -64,7 +64,9 @@ function IdeaList({ slug, ideas }: { slug: string; ideas: StoryIdeas }) {
           onChange={setFilter}
         />
       </div>
-      {shown.length === 0 && <p className="m-0 text-sm text-meta">{t(`ideas.empty.${filter}`)}</p>}
+      {shown.length === 0 && (
+        <p className="m-0 type-body text-ink-muted">{t(`ideas.empty.${filter}`)}</p>
+      )}
       {shown.length > 0 && (
         <ul
           aria-labelledby="atlas-ideas-list-heading"
@@ -108,7 +110,7 @@ export function IdeasPage() {
       <title>
         {ideas ? t('ideas.documentTitle', { title: ideas.storyTitle }) : t('homeDocumentTitle')}
       </title>
-      {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {ideas === null && <Notice tone="error">{t('notFound')}</Notice>}
       {ideas !== undefined && ideas !== null && (

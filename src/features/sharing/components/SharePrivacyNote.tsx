@@ -18,7 +18,7 @@ function ShieldIcon() {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      className="mt-0.5 flex-none text-(--success-text)"
+      className="mt-1 flex-none text-(--success-text)"
     >
       <path d="M12 3 5 6v6c0 4 3 7.5 7 9 4-1.5 7-5 7-9V6z" />
     </svg>
@@ -33,7 +33,7 @@ function ShieldIcon() {
  */
 export function SharePrivacyNote({ text }: { text: string }) {
   return (
-    <p className="m-0 flex gap-2 text-sm text-body">
+    <p className="m-0 flex gap-2 type-body text-ink-muted">
       <ShieldIcon />
       <span>{text}</span>
     </p>

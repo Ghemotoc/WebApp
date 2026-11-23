@@ -32,7 +32,7 @@ export function SocialSignUp({ form }: { form: ReturnType<typeof useSignUpForm> 
         isBusy={form.isSending}
         onChoose={(provider) => void form.continueWith(provider)}
       />
-      <p className="m-0 flex items-start gap-[10px] text-sm leading-[1.55] text-body">
+      <p className="m-0 flex items-start gap-3 type-body leading-[1.55] text-ink-muted">
         {/* An information icon: status icons stay ordinary icons (DoD design rules). */}
         <svg
           width="16"
@@ -44,7 +44,7 @@ export function SocialSignUp({ form }: { form: ReturnType<typeof useSignUpForm> 
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
-          className="mt-0.5 flex-none text-link"
+          className="mt-1 flex-none text-link"
         >
           <circle cx="12" cy="12" r="10" />
           <path d="M12 16v-4" />

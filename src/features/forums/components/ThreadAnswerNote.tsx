@@ -28,12 +28,12 @@ export function ThreadAnswerNote({ thread }: { thread: ForumThreadHeader }) {
   return (
     <aside
       aria-label={t('answer.noteLabel')}
-      className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-card border border-border bg-tint px-5 py-3"
+      className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-card border border-border bg-tint px-4 py-3"
     >
-      <span className="text-sm font-semibold text-heading">{t('answer.noteLead')}</span>
+      <span className="type-body font-semibold text-ink-heading">{t('answer.noteLead')}</span>
       <Link
         to={postAddress(thread.forumSlug, thread.number, thread.answer.number)}
-        className="inline-flex min-h-6 items-center text-sm font-semibold text-link underline"
+        className="inline-flex min-h-6 items-center type-body font-semibold text-link underline"
       >
         {t('answer.noteLink', { number: thread.answer.number, name })}
       </Link>

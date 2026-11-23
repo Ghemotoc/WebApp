@@ -48,7 +48,7 @@ function SaveLine({ look }: { look: ReturnType<typeof useCoverLook> }) {
   }
   if (look.data === 'ok') {
     return (
-      <p className="m-0 text-[13px] text-meta" role="status">
+      <p className="m-0 type-meta text-ink-muted" role="status">
         {t('cover.look.saved')}
       </p>
     );
@@ -67,7 +67,7 @@ export function CoverLookPicker({ story, formCoverKind }: CoverLookPickerProps) 
 
   // Step 1: the look belongs to the saved cover; a kind not saved yet waits for the form's Save.
   if (formCoverKind !== story.coverKind) {
-    return <p className="m-0 text-[13px] text-meta">{t('cover.look.saveCoverFirst')}</p>;
+    return <p className="m-0 type-meta text-ink-muted">{t('cover.look.saveCoverFirst')}</p>;
   }
 
   // Step 2: the choices for this kind, and what the story has now (the latest pick while saving).
@@ -84,7 +84,7 @@ export function CoverLookPicker({ story, formCoverKind }: CoverLookPickerProps) 
   return (
     <div className="flex flex-col gap-4">
       {story.coverKind === 'automatic' ? (
-        <p className="m-0 text-[13px] text-meta">{t('cover.look.automaticNote')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('cover.look.automaticNote')}</p>
       ) : (
         <ChoiceChips
           label={t('cover.look.styleLabel')}

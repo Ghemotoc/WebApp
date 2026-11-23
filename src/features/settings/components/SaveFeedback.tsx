@@ -28,7 +28,7 @@ export function SaveFeedback({
   if (failure !== null) return <SettingsFailureNotice failure={failure} />;
   if (!isSaved) return null;
   return (
-    <p className="m-0 text-sm text-body" role="status">
+    <p className="m-0 type-body text-ink-muted" role="status">
       {t('saved')}
     </p>
   );

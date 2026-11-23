@@ -86,7 +86,7 @@ export function ClassDueDateField({ threadId, dueAt }: { threadId: string; dueAt
         )}
       </div>
       {saving.isSuccess && (
-        <p role="status" className="m-0 text-sm text-body">
+        <p role="status" className="m-0 type-body text-ink-muted">
           {t('classReplies.due.saved')}
         </p>
       )}

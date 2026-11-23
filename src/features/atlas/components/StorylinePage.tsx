@@ -105,7 +105,7 @@ function ViewToggle({
         onChange={onChange}
       />
       <div className="flex min-w-0 flex-wrap items-center gap-3">
-        <p className="m-0 max-w-[60ch] text-sm text-meta">{t(`storyline.${view}.hint`)}</p>
+        <p className="m-0 max-w-[60ch] type-body text-ink-muted">{t(`storyline.${view}.hint`)}</p>
         {view === 'board' && <AddActForm slug={slug} />}
       </div>
     </div>
@@ -144,7 +144,7 @@ export function StorylinePage() {
           ? t('storyline.documentTitle', { title: storyline.storyTitle })
           : t('homeDocumentTitle')}
       </title>
-      {userId === null && <p className="m-0 text-body">{t('signedOut')}</p>}
+      {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {storyline === null && <Notice tone="error">{t('notFound')}</Notice>}
       {storyline !== undefined && storyline !== null && (

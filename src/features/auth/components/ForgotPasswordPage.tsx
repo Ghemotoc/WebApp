@@ -46,7 +46,7 @@ export function ForgotPasswordPage() {
     >
       {request.hasSent ? (
         <div className="flex flex-col gap-3">
-          <p className="m-0 text-sm text-body">{t('forgot.spam')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('forgot.spam')}</p>
           <SendProblem state={request.state} />
           <Button
             variant="secondary"
@@ -73,7 +73,7 @@ export function ForgotPasswordPage() {
           </Button>
         </form>
       )}
-      <Link to="/sign-in" className="self-start text-sm text-link underline">
+      <Link to="/sign-in" className="self-start type-body text-link underline">
         {t('forgot.backToLogIn')}
       </Link>
     </AuthCard>

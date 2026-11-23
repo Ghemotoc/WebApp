@@ -28,7 +28,7 @@ function OwnLibraryNote({ profile }: { profile: WriterProfile }) {
   const privacy = usePrivacyTranslation();
   if (profile.libraryAudience === null) return null;
   return (
-    <p className="m-0 flex flex-wrap items-center gap-x-3 text-sm text-body">
+    <p className="m-0 flex flex-wrap items-center gap-x-3 type-body text-ink-muted">
       {t('profile.libraryVisibleTo', {
         audience: privacy.t(`library.${profile.libraryAudience}`),
       })}

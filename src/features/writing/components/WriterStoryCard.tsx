@@ -126,14 +126,19 @@ function StoryCardCover({ story, cover }: { story: MyStory; cover: DrawnCoverCho
 function StoryCardSummary({ story }: { story: MyStory }) {
   const { t } = useTranslation('writing');
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-2.5">
+    <div className="flex min-w-0 flex-1 flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <h3 id={`story-${story.id}-title`} className="m-0 type-subheading break-words text-heading">
+        <h3
+          id={`story-${story.id}-title`}
+          className="m-0 type-subheading break-words text-ink-heading"
+        >
           {story.title}
         </h3>
         <MetaLine facts={writerStoryFacts(story, t)} />
       </div>
-      {story.blurb !== '' && <p className="m-0 max-w-[72ch] type-body text-body">{story.blurb}</p>}
+      {story.blurb !== '' && (
+        <p className="m-0 max-w-[72ch] type-body text-ink-muted">{story.blurb}</p>
+      )}
       {story.tags.length > 0 && (
         <p className="m-0 type-meta">
           <TagNames tags={story.tags} />
@@ -159,7 +164,7 @@ export function WriterStoryCard({ story, cover, chapterNumbers }: WriterStoryCar
       aria-labelledby={`story-${story.id}-title`}
       className="flex flex-col gap-4 border-t border-hairline pt-6 pb-8"
     >
-      <div className="flex gap-4 md:gap-7">
+      <div className="flex gap-4 md:gap-6">
         <StoryCardCover story={story} cover={cover} />
         <StoryCardSummary story={story} />
       </div>

@@ -30,7 +30,8 @@ export function OpenDataRequestForm({
 }) {
   const { t } = useSupportTranslation();
   const [requestType, setRequestType] = useState<DataRequestType>('copy');
-  if (!hasAccount) return <p className="m-0 text-sm text-body">{t('staff.links.noAccount')}</p>;
+  if (!hasAccount)
+    return <p className="m-0 type-body text-ink-muted">{t('staff.links.noAccount')}</p>;
 
   /** Opens the request. */
   function submit(event: FormEvent) {
@@ -40,7 +41,7 @@ export function OpenDataRequestForm({
 
   return (
     <form noValidate className="flex flex-col gap-3" onSubmit={submit}>
-      <h3 className="m-0 font-heading text-base font-bold text-heading">
+      <h3 className="m-0 font-heading type-body font-bold text-ink-heading">
         {t('staff.links.requestHeading')}
       </h3>
       <Select

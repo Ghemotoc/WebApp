@@ -39,16 +39,16 @@ function FooterLinkColumn({ column }: { column: FooterColumn }) {
   const { t } = useTranslation();
   return (
     <nav aria-label={t(column.titleKey)}>
-      <h2 className="m-0 font-body text-[15px] leading-5 font-semibold text-heading">
+      <h2 className="m-0 font-body type-body leading-5 font-semibold text-ink-heading">
         {t(column.titleKey)}
       </h2>
-      <ul className="mt-2.5 mb-0 flex list-none flex-col gap-0.5 p-0">
+      <ul className="mt-3 mb-0 flex list-none flex-col gap-1 p-0">
         {column.links.map((link) => (
           <li key={link.href}>
             {/* 32 px tall in a 44 px reach: the column's 2 px gaps add up to the touch target. */}
             <Link
               to={link.href}
-              className="inline-flex min-h-8 items-center text-[15px] text-ink no-underline hover:underline"
+              className="inline-flex min-h-8 items-center type-body text-ink no-underline hover:underline"
             >
               {t(link.labelKey)}
             </Link>
@@ -76,15 +76,15 @@ export function Footer({ about, endSlot }: FooterProps) {
   const { t } = useTranslation();
 
   return (
-    <footer className="mt-18">
+    <footer className="mt-16">
       <PageContainer>
         {/* The top line spans the content column only, as in the design, not the side padding. */}
-        <div className="border-t border-hairline pt-7 pb-10 sm:pt-8 lg:pt-10 lg:pb-12">
-          <div className="grid grid-cols-2 gap-x-5 gap-y-7 sm:gap-8 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
+        <div className="border-t border-hairline pt-6 pb-8 sm:pt-8 lg:pt-8 lg:pb-12">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-8 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
             {/* Step 1: the words: the whole width on phones, the first column from 640 px. */}
             <div className="col-span-2 sm:col-span-1">
               {about ?? (
-                <p className="m-0 max-w-[46ch] text-[15px] leading-6 text-body">
+                <p className="m-0 max-w-[46ch] type-body leading-6 text-ink-muted">
                   {t('shell.footer.about')}
                 </p>
               )}
@@ -100,7 +100,7 @@ export function Footer({ about, endSlot }: FooterProps) {
               {endSlot}
             </div>
             {/* Step 4: the maker's line: the last line on phones, the left of the bottom row after. */}
-            <p className="col-span-2 m-0 self-center text-[13px] leading-[18px] text-meta sm:col-span-1 lg:col-span-2">
+            <p className="col-span-2 m-0 self-center type-meta leading-[18px] text-ink-muted sm:col-span-1 lg:col-span-2">
               {t('shell.madeBy')}
             </p>
           </div>

@@ -40,7 +40,7 @@ function toggled(list: string[], value: string, isOn: boolean): string[] {
 function ChipGroup({ legend, choices, picked, onChange }: ChipGroupProps) {
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-      <legend className="mb-2 p-0 text-[13px] font-semibold text-body">{legend}</legend>
+      <legend className="mb-2 p-0 type-meta font-semibold text-ink-muted">{legend}</legend>
       <div className="flex flex-wrap gap-2">
         {choices.map((choice) => (
           <Chip
@@ -80,7 +80,7 @@ export function LikesFields({
   const count =
     value.readCategories.length + value.writeCategories.length + value.topicTagIds.length;
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <ChipGroup
         legend={t('onboarding.likes.read')}
         choices={categoryChoices}
@@ -94,7 +94,7 @@ export function LikesFields({
         onChange={(writeCategories) => onChange({ ...value, writeCategories })}
       />
       {topicChoices.length === 0 ? (
-        <p className="m-0 text-[13px] text-meta">{t('onboarding.likes.noTopics')}</p>
+        <p className="m-0 type-meta text-ink-muted">{t('onboarding.likes.noTopics')}</p>
       ) : (
         <ChipGroup
           legend={t('onboarding.likes.topics')}
@@ -103,7 +103,7 @@ export function LikesFields({
           onChange={(topicTagIds) => onChange({ ...value, topicTagIds })}
         />
       )}
-      <p role="status" className="m-0 text-[13px] text-meta">
+      <p role="status" className="m-0 type-meta text-ink-muted">
         {t('onboarding.likes.picked', { count })}
       </p>
     </div>

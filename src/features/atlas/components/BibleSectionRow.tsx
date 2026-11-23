@@ -77,7 +77,7 @@ function DragHandle({ sectionId, name }: { sectionId: string; name: string }) {
       draggable
       aria-hidden="true"
       title={t('bible.sections.drag', { name })}
-      className="flex size-11 shrink-0 cursor-grab items-center justify-center rounded-xl border border-control-border text-meta"
+      className="flex size-11 shrink-0 cursor-grab items-center justify-center rounded-field border border-control-border text-ink-muted"
       onDragStart={(event) => {
         event.dataTransfer.setData(sectionDragType, sectionId);
         event.dataTransfer.effectAllowed = 'move';
@@ -159,7 +159,7 @@ export function BibleSectionRow(props: BibleSectionRowProps) {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm text-meta">
+          <span className="type-body text-ink-muted">
             {t('bible.sections.entries', { count: props.entryCount })}
           </span>
           <MoveButtons

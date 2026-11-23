@@ -95,7 +95,7 @@ export function OnboardingSteps(props: {
   const onFinish = () => void finish().catch(errorShownByHook);
 
   return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-5">
+    <section aria-labelledby={headingId} className="flex flex-col gap-4">
       <StepHeader
         step={step}
         total={total}

@@ -29,7 +29,7 @@ function CertificateRow({ certificate }: { certificate: MyCertificate }) {
   const { t, i18n } = useCertificatesTranslation();
   const language = certificateLanguageOf(i18n.language);
   return (
-    <li className="flex flex-col gap-2 rounded-card border border-border bg-surface p-5">
+    <li className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4">
       {/* The result in bold and "Revoked" in red, as words (CALM-9f; was two pills). */}
       <MetaLine
         facts={[
@@ -37,7 +37,7 @@ function CertificateRow({ certificate }: { certificate: MyCertificate }) {
           { text: certificate.isRevoked ? t('my.revoked') : '', kind: 'urgent' },
         ]}
       />
-      <h2 className="m-0 font-heading text-xl font-bold text-heading">
+      <h2 className="m-0 font-heading type-subheading font-bold text-ink-heading">
         <Link to={`/certificates/${certificate.id}`} className="text-link underline">
           {t('my.open', { programme: certificate.programmeName })}
           {/* Two certificates can share a programme (a result and Readers' choice, S1-E8-17),
@@ -45,12 +45,12 @@ function CertificateRow({ certificate }: { certificate: MyCertificate }) {
           <span className="sr-only">, {t(`results.${certificate.result}`)}</span>
         </Link>
       </h2>
-      <p className="m-0 text-body">
+      <p className="m-0 text-ink-muted">
         {certificate.isContest
           ? t('sheet.contestLabel')
           : [certificate.className, certificate.schoolName].filter(Boolean).join(' · ')}
       </p>
-      <p className="m-0 text-sm text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('my.signed', { date: certificateDate(certificate.signedAt, language) })}
       </p>
     </li>
@@ -67,7 +67,7 @@ function MyCertificatesList() {
   const read = useMyCertificates();
   if (read.isError) return <Notice tone="error">{t('my.loadFailed')}</Notice>;
   if (read.data === undefined) return null;
-  if (read.data.length === 0) return <p className="m-0 text-body">{t('my.empty')}</p>;
+  if (read.data.length === 0) return <p className="m-0 text-ink-muted">{t('my.empty')}</p>;
   return (
     <ul className="m-0 flex list-none flex-col gap-4 p-0">
       {read.data.map((certificate) => (
@@ -90,10 +90,10 @@ export function MyCertificatesPage() {
       <title>{t('my.documentTitle')}</title>
       <header className="flex flex-col gap-3">
         <h1 className="m-0 type-title break-words lg:type-display">{t('my.title')}</h1>
-        <p className="m-0 text-meta">{t('my.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('my.intro')}</p>
       </header>
       {isKnown && userId === null && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('my.signedOut')}{' '}
           <Link to="/sign-in" className="text-link underline">
             {t('my.logIn')}

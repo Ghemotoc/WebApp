@@ -89,14 +89,14 @@ function RejectFeedback(props: { message: string; language: string; isIncomplete
     <>
       {props.message !== '' && (
         <div className="flex flex-col gap-1">
-          <p className="m-0 font-semibold text-heading">{t('pictures.rejectPreview')}</p>
-          <p className="m-0 text-body [overflow-wrap:anywhere]" lang={props.language}>
+          <p className="m-0 font-semibold text-ink-heading">{t('pictures.rejectPreview')}</p>
+          <p className="m-0 text-ink-muted [overflow-wrap:anywhere]" lang={props.language}>
             {props.message}
           </p>
         </div>
       )}
       {props.isIncomplete && (
-        <p role="alert" className="m-0 text-sm text-(--error-text)">
+        <p role="alert" className="m-0 type-body text-(--error-text)">
           {t('pictures.rejectIncomplete')}
         </p>
       )}
@@ -192,7 +192,7 @@ export function RejectPictureForm(props: RejectPictureFormProps) {
     <form
       onSubmit={submit}
       noValidate
-      className="flex flex-col gap-3 rounded-[12px] border border-border p-4"
+      className="flex flex-col gap-3 rounded-field border border-border p-4"
     >
       <Select
         id={`${idPrefix}-reason`}

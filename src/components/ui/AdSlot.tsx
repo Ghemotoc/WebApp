@@ -46,15 +46,15 @@ export function AdSlot({ format, labelKind, children }: AdSlotProps) {
     <aside
       aria-label={t('ads.regionLabel')}
       data-ad={format}
-      className={`relative box-border flex items-center justify-center rounded-ad border border-dashed border-dashed-border bg-panel px-4 text-sm font-medium text-meta ${formatClasses[format]}`}
+      className={`relative box-border flex items-center justify-center rounded-ad border border-dashed border-dashed-border bg-panel px-4 type-body font-normal text-ink-muted ${formatClasses[format]}`}
     >
-      <span className="absolute top-3 left-3.5 inline-flex h-6 items-center rounded-full border border-meta px-2.5 text-xs font-bold tracking-[0.12em] text-body uppercase">
+      <span className="absolute top-3 left-3.5 inline-flex h-6 items-center rounded-full border border-meta px-3 type-meta font-semibold tracking-[0.12em] text-ink-muted uppercase">
         {labelKind === 'ad' ? t('ads.labelAd') : t('ads.labelSponsored')}
       </span>
       <span className="text-center">{children}</span>
       <a
         href="#ad-formats"
-        className="absolute right-2 bottom-0 inline-flex min-h-11 items-center px-2 text-[13px] font-medium"
+        className="absolute right-2 bottom-0 inline-flex min-h-11 items-center px-2 type-meta font-normal"
       >
         {t('ads.whyThisAd')}
       </a>

@@ -20,13 +20,13 @@ import type { QueueCase } from '../api/moderationQueue';
 export function CaseSignals({ theCase }: { theCase: QueueCase }) {
   const { t } = useTranslation('moderation');
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-sm text-body">
+    <div className="flex flex-col gap-2">
+      <span className="type-body text-ink-muted">
         {theCase.source === 'report'
           ? t('signals.reports', { count: theCase.reportCount })
           : t('signals.noReports')}
       </span>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         {theCase.source === 'authority_order' && (
           <InfoPill tone="blush">{t('signals.authorityOrder')}</InfoPill>
         )}

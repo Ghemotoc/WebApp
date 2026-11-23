@@ -24,7 +24,7 @@ function ShieldIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      className="mt-px flex-none text-heading"
+      className="mt-px flex-none text-ink-heading"
     >
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
     </svg>
@@ -39,7 +39,7 @@ function ShieldIcon() {
 export function CopyNotice({ penName }: { penName: string }) {
   const { t } = useTranslation('reading');
   return (
-    <p className="mx-auto mt-7 flex w-full max-w-[760px] items-start gap-2.5 rounded-2xl bg-tint px-[18px] py-3.5 text-sm leading-[1.55] text-ink">
+    <p className="mx-auto mt-6 flex w-full max-w-[760px] items-start gap-3 rounded-card bg-tint px-4 py-4 type-body leading-[1.55] text-ink">
       <ShieldIcon />
       <span>{t('reader.copyNotice', { penName })}</span>
     </p>

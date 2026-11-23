@@ -37,7 +37,7 @@ export function AccountNamesSection({ account, names }: AccountNamesSectionProps
     >
       <h2
         id="settings-account-heading"
-        className="m-0 font-heading text-[24px] font-bold text-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
       >
         {t('settings.accountHeading')}
       </h2>

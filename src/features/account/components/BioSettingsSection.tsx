@@ -62,7 +62,7 @@ function BioForm({ handle, savedBio, saveBio }: BioFormProps) {
       <PersonalDetailsGateNote gate={gate} isSending={saveBio.isSaving} />
       <p
         aria-live="polite"
-        className={`m-0 text-[13px] ${isTooLong ? 'text-destructive' : 'text-meta'}`}
+        className={`m-0 type-meta ${isTooLong ? 'text-destructive' : 'text-ink-muted'}`}
       >
         {isTooLong
           ? t('settings.bioTooLong', { max: bioMaxLength })
@@ -73,7 +73,7 @@ function BioForm({ handle, savedBio, saveBio }: BioFormProps) {
         <Notice tone="error">{t('settings.bioFailed')}</Notice>
       )}
       {saveBio.isSaved && <Notice tone="success">{t('settings.bioSaved')}</Notice>}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <Button
           type="submit"
           variant="secondary"
@@ -83,7 +83,7 @@ function BioForm({ handle, savedBio, saveBio }: BioFormProps) {
         </Button>
         <Link
           to={`/u/${encodeURIComponent(handle)}`}
-          className="text-sm font-semibold text-link underline hover:text-link-hover"
+          className="type-body font-semibold text-link underline hover:text-link-hover"
         >
           {t('settings.viewProfile')}
         </Link>
@@ -107,7 +107,10 @@ export function BioSettingsSection({ handle }: { handle: string }) {
       aria-labelledby="settings-bio-heading"
       className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="settings-bio-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
+      <h2
+        id="settings-bio-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('settings.bioHeading')}
       </h2>
       {profile !== null && (

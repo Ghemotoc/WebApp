@@ -29,11 +29,11 @@ export function WhyWriteSection({ page, language }: WhyWriteSectionProps) {
   const { t } = useTranslation();
   return (
     <section aria-labelledby="why-write-heading" lang={language} className="flex flex-col gap-6">
-      <div className="flex max-w-[760px] flex-col gap-1.5">
+      <div className="flex max-w-[760px] flex-col gap-2">
         <Eyebrow>{t('website.whyEyebrow')}</Eyebrow>
         <h2
           id="why-write-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.08] font-bold tracking-[-0.015em] text-balance text-heading"
+          className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.08] font-bold tracking-[-0.015em] text-balance text-ink-heading"
         >
           {withBrand(page.whyHeading)}
         </h2>
@@ -45,12 +45,12 @@ export function WhyWriteSection({ page, language }: WhyWriteSectionProps) {
           return (
             <li
               key={card.title}
-              className="flex min-w-0 flex-col gap-2.5 rounded-card border border-border bg-surface p-7 shadow-card"
+              className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
             >
-              <h3 className="m-0 font-heading text-[21px] font-bold text-ink">
+              <h3 className="m-0 font-heading type-subheading font-bold text-ink">
                 {withBrand(card.title)}
               </h3>
-              <p className="m-0 text-[15px] leading-[1.6] text-body">{withBrand(card.body)}</p>
+              <p className="m-0 type-body leading-[1.6] text-ink-muted">{withBrand(card.body)}</p>
             </li>
           );
         })}

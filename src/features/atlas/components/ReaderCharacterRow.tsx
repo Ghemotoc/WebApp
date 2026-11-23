@@ -70,23 +70,23 @@ export function ReaderCharacterRow({
   const controlsId = `atlas-reader-character-${character.id}`;
   return (
     <li
-      className="flex flex-col gap-3 border-t border-hairline px-5 py-4 first:border-t-0 md:px-6"
+      className="flex flex-col gap-3 border-t border-hairline px-4 py-4 first:border-t-0 md:px-6"
       data-testid="atlas-reader-character"
     >
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <div className="flex min-w-0 flex-col gap-0.5">
+        <div className="flex min-w-0 flex-col gap-1">
           <Link
             to={`/plan/s/${slug}/characters/${character.id}`}
-            className="font-semibold break-words text-heading"
+            className="font-semibold break-words text-ink-heading"
           >
             {character.name}
           </Link>
-          <span className="text-sm text-body">{line}</span>
+          <span className="type-body text-ink-muted">{line}</span>
         </div>
         <Button
           type="button"
           variant="secondary"
-          className="h-9 px-4 text-[13px]"
+          className="h-9 px-4 type-meta"
           aria-expanded={isOpen}
           aria-controls={controlsId}
           aria-label={t('readers.characters.changeNamed', { name: character.name })}

@@ -32,7 +32,7 @@ export function CastToolbar({ count, filter, onFilterChange, onCreate }: CastToo
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex min-w-0 flex-1 basis-[320px] flex-wrap items-center gap-3">
-        <h2 id="atlas-cast-heading" className="m-0 text-base font-semibold text-meta">
+        <h2 id="atlas-cast-heading" className="m-0 type-body font-bold text-ink-muted">
           {t('characters.count', { count })}
         </h2>
         {count > 0 && (

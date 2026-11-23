@@ -86,7 +86,7 @@ function TeacherTools({ thread, saved, postId, postNumber }: TeacherToolsProps) 
           {t('reply.open')}
         </Button>
         {saved !== null && (
-          <span className="text-sm font-semibold text-ink">
+          <span className="type-body font-semibold text-ink">
             {t('chapter.teacher.shown', { points: saved.points })}
           </span>
         )}

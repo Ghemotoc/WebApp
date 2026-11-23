@@ -40,10 +40,15 @@ export function RemoveLanguageCard(props: RemoveLanguageCardProps) {
       aria-labelledby="remove-language-heading"
       className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
     >
-      <h2 id="remove-language-heading" className="m-0 font-heading text-lg font-bold text-heading">
+      <h2
+        id="remove-language-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
+      >
         {t('remove.heading')}
       </h2>
-      <p className="m-0 text-sm leading-relaxed text-body">{t('remove.body', { language })}</p>
+      <p className="m-0 type-body leading-relaxed text-ink-muted">
+        {t('remove.body', { language })}
+      </p>
       {!isAsking && (
         <div>
           <Button type="button" variant="secondary" onClick={() => setIsAsking(true)}>
@@ -57,7 +62,7 @@ export function RemoveLanguageCard(props: RemoveLanguageCardProps) {
           aria-labelledby="remove-language-question"
           className="flex flex-col gap-3"
         >
-          <p id="remove-language-question" className="m-0 text-sm font-semibold text-heading">
+          <p id="remove-language-question" className="m-0 type-body font-semibold text-ink-heading">
             {t('remove.confirm', { language })}
           </p>
           <div className="flex flex-wrap gap-3">

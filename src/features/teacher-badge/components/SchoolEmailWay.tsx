@@ -91,8 +91,8 @@ export function SchoolEmailWay({ idPrefix, isSending, failure, onSend }: SchoolE
         id={`${fieldId}-status`}
         aria-live="polite"
         className={cn(
-          'm-0 min-h-5 text-sm',
-          line?.isWarning === true ? 'text-destructive' : 'text-meta',
+          'm-0 min-h-5 type-body',
+          line?.isWarning === true ? 'text-destructive' : 'text-ink-muted',
         )}
       >
         {line === null ? '' : t(line.key)}

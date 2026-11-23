@@ -92,8 +92,8 @@ function Conversation({
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <TicketMessageList messages={items} label={t('staff.messages.label')} />
-      {isClosed && <p className="m-0 text-body">{t('staff.reply.closed')}</p>}
-      {ticket.isSpam && <p className="m-0 text-body">{t('staff.reply.spam')}</p>}
+      {isClosed && <p className="m-0 text-ink-muted">{t('staff.reply.closed')}</p>}
+      {ticket.isSpam && <p className="m-0 text-ink-muted">{t('staff.reply.spam')}</p>}
       <SupportReplyForm
         id="staff-support-reply"
         label={t('staff.reply.label')}
@@ -128,9 +128,11 @@ function TicketStateLinks({ ticket }: { ticket: StaffTicket }) {
   const { t } = useSupportTranslation();
   return (
     <>
-      {ticket.isSpam && <p className="m-0 text-sm font-semibold text-body">{t('staff.isSpam')}</p>}
+      {ticket.isSpam && (
+        <p className="m-0 type-body font-semibold text-ink-muted">{t('staff.isSpam')}</p>
+      )}
       {ticket.mergedInto !== null && (
-        <p className="m-0 text-sm text-body">
+        <p className="m-0 type-body text-ink-muted">
           <Link to={`/staff/support/${String(ticket.mergedInto)}`}>
             {t('staff.mergedInto', { number: ticket.mergedInto })}
           </Link>
@@ -156,10 +158,10 @@ function LoadedTicket({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="m-0 font-heading text-[30px] font-bold break-words text-heading">
+        <h1 className="m-0 font-heading type-title font-bold break-words text-ink-heading">
           {ticket.subject}
         </h1>
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('staff.ticketMeta', {
             number: ticket.number,
             channel: t(`staff.channels.${ticket.channel}`),
@@ -167,7 +169,7 @@ function LoadedTicket({
         </p>
         <TicketStateLinks ticket={ticket} />
         {ticket.followUpOf !== null && (
-          <p className="m-0 text-sm text-body">
+          <p className="m-0 type-body text-ink-muted">
             <Link to={`/staff/support/${String(ticket.followUpOf)}`}>
               {t('staff.followUpOf', { number: ticket.followUpOf })}
             </Link>
@@ -212,10 +214,11 @@ function LoadedTicket({
 function TicketBody({ state }: { state: ReturnType<typeof useStaffTicket> }) {
   const { t } = useSupportTranslation();
   if (state.loadFailure === 'not_allowed')
-    return <p className="m-0 text-body">{t('staff.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('staff.notAllowed')}</p>;
   if (state.ticket.isError) return <Notice tone="error">{t('staff.loadFailed')}</Notice>;
   if (state.ticket.isPending) return null;
-  if (state.ticket.data === null) return <p className="m-0 text-body">{t('staff.notFound')}</p>;
+  if (state.ticket.data === null)
+    return <p className="m-0 text-ink-muted">{t('staff.notFound')}</p>;
   return <LoadedTicket ticket={state.ticket.data} state={state} />;
 }
 
@@ -229,11 +232,11 @@ export function StaffSupportTicketPage() {
   const ticketNumber = Number(useParams().number ?? '0');
   const state = useStaffTicket(ticketNumber);
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('staff.documentTitle')}</title>
       <Eyebrow>{t('staff.eyebrow')}</Eyebrow>
       <TicketBody state={state} />
-      <Link to="/staff/support" className="w-fit text-sm font-semibold text-link underline">
+      <Link to="/staff/support" className="w-fit type-body font-semibold text-link underline">
         {t('staff.back')}
       </Link>
     </PageContainer>

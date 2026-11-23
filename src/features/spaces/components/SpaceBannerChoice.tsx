@@ -42,13 +42,13 @@ function BannerSwatch({
         name={groupName}
         value={banner}
         aria-label={t(`form.banners.${banner}`)}
-        className="peer absolute inset-0 size-full cursor-pointer appearance-none rounded-xl"
+        className="peer absolute inset-0 size-full cursor-pointer appearance-none rounded-field"
         checked={isChosen}
         onChange={onChoose}
       />
       <span
         aria-hidden="true"
-        className="pointer-events-none inline-flex h-10 w-16 items-center justify-center rounded-xl border border-border ring-offset-2 ring-offset-surface peer-checked:ring-2 peer-checked:ring-heading peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-focus-ring"
+        className="pointer-events-none inline-flex h-10 w-16 items-center justify-center rounded-field border border-border ring-offset-2 ring-offset-surface peer-checked:ring-2 peer-checked:ring-heading peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-focus-ring"
         style={{ background: bannerSwatch(banner), color: bannerTextColour(banner, false) }}
       >
         {isChosen && <CheckIcon />}
@@ -76,11 +76,13 @@ export function SpaceBannerChoice({
   const hintId = `${groupName}-hint`;
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0" aria-describedby={hintId}>
-      <legend className="mb-1 p-0 text-sm font-semibold text-heading">{t('form.banner')}</legend>
-      <p id={hintId} className="m-0 text-sm text-meta">
+      <legend className="mb-1 p-0 type-body font-semibold text-ink-heading">
+        {t('form.banner')}
+      </legend>
+      <p id={hintId} className="m-0 type-body text-ink-muted">
         {t('form.bannerHint')}
       </p>
-      <div className="flex flex-wrap gap-2.5">
+      <div className="flex flex-wrap gap-3">
         {spaceBanners.map((banner) => (
           <BannerSwatch
             key={banner}
@@ -91,7 +93,7 @@ export function SpaceBannerChoice({
           />
         ))}
       </div>
-      <p aria-live="polite" className="m-0 text-sm text-body">
+      <p aria-live="polite" className="m-0 type-body text-ink-muted">
         {t('form.bannerChosen', { name: t(`form.banners.${value}`) })}
       </p>
     </fieldset>

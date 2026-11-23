@@ -96,7 +96,7 @@ function MakingStatus({ state }: { state: EpubState }) {
   return (
     <div aria-live="polite">
       {state.phase === 'making' && (
-        <p role="status" className="m-0 text-[15px] text-body">
+        <p role="status" className="m-0 type-body text-ink-muted">
           {t('epub.making')}
         </p>
       )}
@@ -161,16 +161,16 @@ function AboutWriterChoice({
       <input
         id="epub-about-writer"
         type="checkbox"
-        className="mt-0.5 h-5 w-5 shrink-0"
+        className="mt-1 h-5 w-5 shrink-0"
         aria-describedby="epub-about-writer-hint"
         checked={isChecked}
         onChange={(event) => onChange(event.target.checked)}
       />
-      <div className="flex flex-col gap-0.5">
-        <label htmlFor="epub-about-writer" className="text-[15px] font-semibold text-heading">
+      <div className="flex flex-col gap-1">
+        <label htmlFor="epub-about-writer" className="type-body font-semibold text-ink-heading">
           {t('epub.aboutLabel')}
         </label>
-        <span id="epub-about-writer-hint" className="text-sm text-meta">
+        <span id="epub-about-writer-hint" className="type-body text-ink-muted">
           {t('epub.aboutHint')}
         </span>
       </div>
@@ -219,16 +219,16 @@ export function EpubDialog({
       aria-labelledby="epub-dialog-heading"
       aria-describedby="epub-dialog-intro"
       onClose={onClose}
-      className="m-auto max-h-[calc(100dvh-32px)] w-[min(560px,calc(100vw-32px))] overflow-y-auto rounded-card border border-border bg-surface p-7 text-ink shadow-card backdrop:bg-ink/45"
+      className="m-auto max-h-[calc(100dvh-32px)] w-[min(560px,calc(100vw-32px))] overflow-y-auto rounded-card border border-border bg-surface p-6 text-ink shadow-card backdrop:bg-ink/45"
     >
       <form className="flex flex-col gap-4" noValidate onSubmit={submit}>
         <h2
           id="epub-dialog-heading"
-          className="m-0 font-heading text-[26px] leading-[1.15] font-bold text-heading"
+          className="m-0 font-heading type-heading leading-[1.15] font-bold text-ink-heading"
         >
           {t(headingKey, { title: story.title })}
         </h2>
-        <p id="epub-dialog-intro" className="m-0 text-base leading-relaxed text-body">
+        <p id="epub-dialog-intro" className="m-0 type-body leading-relaxed text-ink-muted">
           {t('epub.dialogIntro')}
         </p>
         <EpubFields story={story} values={values} />

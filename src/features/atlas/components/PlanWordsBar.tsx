@@ -34,7 +34,7 @@ export function PlanWordsBar({
   const numbers = new Intl.NumberFormat(i18n.language);
   const percent = percentOfTarget(wordsWritten, wordTarget);
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <progress
         className="tmc-atlas-progress h-2 w-full"
         max={100}
@@ -42,7 +42,7 @@ export function PlanWordsBar({
         aria-label={label}
         aria-describedby={`${id}-numbers`}
       />
-      <p id={`${id}-numbers`} className="m-0 text-sm text-meta">
+      <p id={`${id}-numbers`} className="m-0 type-body text-ink-muted">
         {t('words.count', {
           written: numbers.format(wordsWritten),
           target: numbers.format(wordTarget),

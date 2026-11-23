@@ -64,7 +64,7 @@ function AddChapterButton({ name, onAdd }: { name: string; onAdd: () => Promise<
     <div className="flex flex-col gap-2">
       <Button
         variant="secondary"
-        className="h-9 self-start px-4 text-[13px]"
+        className="h-9 self-start px-4 type-meta"
         aria-label={t('storyline.board.addChapterIn', { name })}
         onClick={() => {
           setFailed(false);
@@ -147,12 +147,12 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
         <div className="flex items-baseline justify-between gap-2">
           <h2
             id={headingId}
-            className="m-0 min-w-0 font-heading text-lg font-bold break-words text-heading"
+            className="m-0 min-w-0 font-heading type-long font-bold break-words text-ink-heading"
           >
             {name}
           </h2>
           {/* How many chapters the act holds; the list below says the same to a screen reader. */}
-          <span aria-hidden="true" className="text-sm text-meta">
+          <span aria-hidden="true" className="type-body text-ink-muted">
             {column.chapters.length}
           </span>
         </div>
@@ -166,7 +166,7 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
           />
         )}
         {column.chapters.length === 0 && (
-          <p className="m-0 text-sm text-meta">{t('storyline.board.empty')}</p>
+          <p className="m-0 type-body text-ink-muted">{t('storyline.board.empty')}</p>
         )}
         <ColumnCards {...props} column={column} />
         <AddChapterButton name={name} onAdd={async () => props.addChapter(column.actId)} />

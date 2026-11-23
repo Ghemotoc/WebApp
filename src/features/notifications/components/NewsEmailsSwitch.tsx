@@ -23,7 +23,7 @@ export function NewsEmailsSwitch() {
   if (news.loadFailed) return <Notice tone="error">{t('emailSettings.news.loadFailed')}</Notice>;
   if (news.isOn === null) return null;
   return (
-    <div id="news-emails" className="flex scroll-mt-24 flex-col gap-1.5">
+    <div id="news-emails" className="flex scroll-mt-24 flex-col gap-2">
       <div className="flex items-start gap-3">
         <input
           id="settings-news-emails"
@@ -31,13 +31,13 @@ export function NewsEmailsSwitch() {
           checked={news.isOn}
           disabled={news.isSaving}
           onChange={(event) => news.save(event.target.checked)}
-          className="mt-0.5 size-6 shrink-0 cursor-pointer accent-(--link)"
+          className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link)"
         />
-        <label htmlFor="settings-news-emails" className="text-[15px] text-body">
+        <label htmlFor="settings-news-emails" className="type-body text-ink-muted">
           {t('emailSettings.news.label')}
         </label>
       </div>
-      <p role="alert" className="m-0 text-sm text-destructive empty:hidden">
+      <p role="alert" className="m-0 type-body text-destructive empty:hidden">
         {news.saveFailure !== null && t(`emailSettings.news.failures.${news.saveFailure}`)}
       </p>
     </div>

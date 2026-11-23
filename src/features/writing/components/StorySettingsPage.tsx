@@ -71,7 +71,10 @@ function DeleteStoryCard({ story }: { story: MyStory }) {
       className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <Eyebrow>{t('deleteStory.eyebrow')}</Eyebrow>
-      <h2 id="delete-story-heading" className="m-0 font-heading text-[22px] font-bold text-heading">
+      <h2
+        id="delete-story-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('deleteStory.heading')}
       </h2>
       <DeleteStoryControl story={story} />
@@ -89,11 +92,11 @@ function DeleteStoryCard({ story }: { story: MyStory }) {
 function SaveBar({ form }: { form: ReturnType<typeof useStorySettingsForm> }) {
   const { t } = useTranslation('writing');
   return (
-    <div className="sticky bottom-[calc(92px+env(safe-area-inset-bottom))] z-10 flex flex-col gap-3 rounded-card border border-border bg-tint p-5 shadow-card lg:bottom-4">
+    <div className="sticky bottom-[calc(92px+env(safe-area-inset-bottom))] z-10 flex flex-col gap-3 rounded-card border border-border bg-tint p-4 shadow-card lg:bottom-4">
       <SaveOutcome outcome={form.outcome} />
       <div className="flex flex-wrap items-center justify-end gap-3">
         {/* aria-live, so a screen reader hears it once something changes. */}
-        <p aria-live="polite" className="m-0 mr-auto text-sm font-semibold text-ink">
+        <p aria-live="polite" className="m-0 mr-auto type-body font-semibold text-ink">
           {form.isDirty ? t('settings.unsaved') : ''}
         </p>
         {form.isDirty && (
@@ -113,7 +116,7 @@ function SaveBar({ form }: { form: ReturnType<typeof useStorySettingsForm> }) {
 function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
   const form = useStorySettingsForm(story);
   return (
-    <div className="flex flex-col gap-10 md:flex-row md:items-start">
+    <div className="flex flex-col gap-8 md:flex-row md:items-start">
       <SettingsFields story={story} penName={penName} form={form} />
       <div className="w-full flex-[1_1_320px] md:max-w-[400px]">
         <StoryPreviewAside answers={form.answers} penName={penName} hasDeleteNote={false} />
@@ -170,7 +173,7 @@ function SettingsFields({
   const options = useStoryFormOptions();
   return (
     <form
-      className="flex min-w-0 flex-[999_1_560px] flex-col gap-5"
+      className="flex min-w-0 flex-[999_1_560px] flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
         form.submit();
@@ -220,7 +223,7 @@ function SettingsBody({
 }) {
   const { t } = useTranslation('writing');
   if (!writing.isKnown) return null;
-  if (!writing.isSignedIn) return <p className="m-0 text-body">{t('newStory.signedOut')}</p>;
+  if (!writing.isSignedIn) return <p className="m-0 text-ink-muted">{t('newStory.signedOut')}</p>;
   if (story === undefined) return <Notice tone="error">{t('settings.notFound')}</Notice>;
   return <SettingsForm story={story} penName={penName} />;
 }
@@ -233,17 +236,17 @@ function SettingsHeader({ story }: { story: MyStory | undefined }) {
       <div className="flex max-w-[760px] flex-col gap-2">
         <Link
           to="/write"
-          className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold no-underline hover:underline"
+          className="inline-flex min-h-11 items-center gap-2 self-start type-body font-semibold no-underline hover:underline"
         >
           <ChevronLeftIcon />
           {t('newStory.back')}
         </Link>
         <Eyebrow>{t('settings.eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-extrabold tracking-[-0.025em] break-words">
+        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em] break-words">
           {story?.title ?? t('settings.heading')}
         </h1>
         {story !== undefined && (
-          <p className="m-0 text-lg leading-relaxed text-body">{t('settings.intro')}</p>
+          <p className="m-0 type-long leading-relaxed text-ink-muted">{t('settings.intro')}</p>
         )}
       </div>
       {story !== undefined && (
@@ -266,7 +269,7 @@ function SettingsHeader({ story }: { story: MyStory | undefined }) {
 
 /** The glass pills in the header (the board's clear pills). */
 const headerLinkClass =
-  'inline-flex h-12 items-center rounded-full button-glass px-[22px] text-[15px] font-semibold no-underline';
+  'inline-flex h-12 items-center rounded-full button-glass px-6 type-body font-semibold no-underline';
 
 /**
  * Renders the page.
@@ -282,7 +285,7 @@ export function StorySettingsPage() {
   const story = writing.stories.find((candidate) => candidate.slug === storySlug);
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-12 pb-6">
       <title>{t('settings.documentTitle')}</title>
       <SettingsHeader story={story} />
       <SettingsBody writing={writing} story={story} penName={penName} />

@@ -27,36 +27,36 @@ export function NoPreviewNotice({ preview }: { preview: HiddenStoryPreview }) {
       <title>{preview.title}</title>
       <h1
         lang={preview.languageCode}
-        className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-extrabold tracking-[-0.025em] break-words"
+        className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-bold tracking-[-0.025em] break-words"
       >
         {preview.title}
       </h1>
       {preview.writerName === null ? null : (
-        <p className="m-0 text-base text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('linkPreview.byWriter', { name: preview.writerName })}
         </p>
       )}
       {preview.blurb === '' ? null : (
         <p
           lang={preview.languageCode}
-          className="m-0 max-w-[640px] text-base leading-relaxed text-body"
+          className="m-0 max-w-[640px] type-body leading-relaxed text-ink-muted"
         >
           {preview.blurb}
         </p>
       )}
       <section
         aria-labelledby="no-preview-title"
-        className="flex max-w-[640px] flex-col items-start gap-2 rounded-card border border-border bg-tint px-6 py-5"
+        className="flex max-w-[640px] flex-col items-start gap-2 rounded-card border border-border bg-tint px-6 py-4"
       >
-        <h2 id="no-preview-title" className="m-0 text-base font-semibold text-heading">
+        <h2 id="no-preview-title" className="m-0 type-body font-bold text-ink-heading">
           {t('teaser.noPreviewTitle')}
         </h2>
-        <p className="m-0 text-[15px] leading-normal text-body">
+        <p className="m-0 type-body leading-normal text-ink-muted">
           {t(`teaser.noPreviewBody_${preview.rating}`)}
         </p>
         <Link
           to="/sign-in"
-          className="mt-1 inline-flex min-h-6 items-center text-sm font-semibold text-link underline"
+          className="mt-1 inline-flex min-h-6 items-center type-body font-semibold text-link underline"
         >
           {t('teaser.noPreviewLogIn')}
         </Link>

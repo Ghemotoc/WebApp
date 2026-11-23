@@ -44,9 +44,9 @@ export function HighContrastRow({ isOn, onToggle }: HighContrastRowProps) {
   const hintKey = isDeviceAsking ? 'highContrastDeviceHint' : 'highContrastHint';
   return (
     <div className="flex min-h-[52px] items-center justify-between gap-4">
-      <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-[15px] font-bold text-ink">{t('highContrastLabel')}</span>
-        <span id="appearance-high-contrast-hint" className="text-[13px] text-meta">
+      <span className="flex min-w-0 flex-col gap-1">
+        <span className="type-body font-semibold text-ink">{t('highContrastLabel')}</span>
+        <span id="appearance-high-contrast-hint" className="type-meta text-ink-muted">
           {t(hintKey)}
         </span>
       </span>

@@ -175,7 +175,7 @@ export function SpaceSettingsPage() {
   const read = useSpace(spaceSlug);
   const space = read.data;
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       {read.isError && <Notice tone="error">{t('space.loadFailed')}</Notice>}
       {space === null && <SpaceNotFound />}
       {space !== undefined && space !== null && (

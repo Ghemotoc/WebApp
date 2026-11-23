@@ -41,7 +41,9 @@ function DeleteDetail({ name, onDelete }: { name: string; onDelete: () => void }
   }
   return (
     <div role="group" aria-label={t('marketing.details.delete')} className="flex flex-col gap-2">
-      <p className="m-0 text-sm text-body">{t('marketing.details.deleteQuestion', { name })}</p>
+      <p className="m-0 type-body text-ink-muted">
+        {t('marketing.details.deleteQuestion', { name })}
+      </p>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => setIsAsking(false)}>
           {t('marketing.details.keep')}
@@ -60,7 +62,7 @@ function EditDetailButton({ name, onOpen }: { name: string; onOpen: () => void }
   return (
     <Button
       variant="secondary"
-      className="h-8 self-start px-3 text-xs"
+      className="h-8 self-start px-3 type-meta"
       aria-label={t('marketing.details.editNamed', { name })}
       onClick={onOpen}
     >

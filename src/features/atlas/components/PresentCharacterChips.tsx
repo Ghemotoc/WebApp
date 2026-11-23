@@ -40,11 +40,11 @@ export function PresentCharacterChips({ slug, plan, setPresent }: PresentCharact
 
   return (
     <div role="group" aria-labelledby="atlas-chapter-present" className="flex flex-col gap-2">
-      <p id="atlas-chapter-present" className="m-0 text-sm font-semibold text-heading">
+      <p id="atlas-chapter-present" className="m-0 type-body font-semibold text-ink-heading">
         {t('chapterPlan.present')}
       </p>
       {plan.characters.length === 0 ? (
-        <p className="m-0 text-sm text-meta">
+        <p className="m-0 type-body text-ink-muted">
           {t('chapterPlan.noCharacters')}{' '}
           <Link to={`/plan/s/${slug}/characters`} className="font-semibold">
             {t('chapterPlan.addCharacters')}
@@ -64,7 +64,7 @@ export function PresentCharacterChips({ slug, plan, setPresent }: PresentCharact
           <Link
             to={`/plan/s/${slug}/characters`}
             aria-label={t('chapterPlan.addCharacter')}
-            className="inline-flex h-9 min-h-11 items-center rounded-full border border-dashed border-control-border px-3.5 text-sm font-semibold text-heading no-underline"
+            className="inline-flex h-9 min-h-11 items-center rounded-full border border-dashed border-control-border px-4 type-body font-semibold text-ink-heading no-underline"
           >
             <span aria-hidden="true">{t('chapterPlan.addChip')}</span>
           </Link>

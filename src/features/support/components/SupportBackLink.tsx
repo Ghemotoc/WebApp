@@ -27,7 +27,7 @@ export function SupportBackLink({ to, label }: SupportBackLinkProps) {
   return (
     <Link
       to={to}
-      className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-semibold text-heading no-underline hover:underline"
+      className="inline-flex min-h-11 items-center gap-2 self-start type-body font-semibold text-ink-heading no-underline hover:underline"
     >
       <ChevronLeftIcon />
       {label}

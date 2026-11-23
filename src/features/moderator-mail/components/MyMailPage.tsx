@@ -36,7 +36,7 @@ function SignedInList() {
   const mail = useMyMail(true);
   if (mail.isError) return <Notice tone="error">{t('list.loadFailed')}</Notice>;
   if (mail.isPending) return null;
-  if (mail.data.length === 0) return <p className="m-0 text-body">{t('list.empty')}</p>;
+  if (mail.data.length === 0) return <p className="m-0 text-ink-muted">{t('list.empty')}</p>;
   return <MailThreadTable threads={mail.data} />;
 }
 
@@ -49,11 +49,11 @@ function SignedInList() {
 function MailHeader({ isSignedIn }: { isSignedIn: boolean }) {
   const { t } = useMailTranslation();
   return (
-    <header className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+    <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
         <h1 className="page-title">{t('list.title')}</h1>
-        <p className="m-0 text-lg leading-relaxed text-body">{t('list.intro')}</p>
+        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('list.intro')}</p>
       </div>
       {isSignedIn && (
         <Link
@@ -76,7 +76,7 @@ function MailHeader({ isSignedIn }: { isSignedIn: boolean }) {
 function NoAccountNote() {
   const { t } = useMailTranslation();
   return (
-    <p className="m-0 text-sm text-meta">
+    <p className="m-0 type-body text-ink-muted">
       <Trans
         t={t}
         i18nKey="list.noAccount"
@@ -99,12 +99,12 @@ export function MyMailPage() {
   const { userId, isKnown } = useSession();
   const isSignedIn = isKnown && userId !== null;
   return (
-    <PageContainer className="flex flex-col gap-6 pt-10 pb-16">
+    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
       <title>{t('list.documentTitle')}</title>
       <MailBackLink to="/settings" label={t('list.settings')} />
       <MailHeader isSignedIn={isSignedIn} />
       {isKnown && userId === null && (
-        <p className="m-0 text-body">
+        <p className="m-0 text-ink-muted">
           {t('signedOut')}{' '}
           <Link to="/sign-in" className="text-link underline">
             {t('logIn')}

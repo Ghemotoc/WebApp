@@ -40,7 +40,7 @@ function OpenOffer({ slug, handover }: { slug: string; handover: SpaceHandover }
   const cancelling = useCancelHandover(slug);
   return (
     <div className="flex flex-col gap-3">
-      <p className="m-0 text-[15px] text-body">
+      <p className="m-0 type-body text-ink-muted">
         {t('handover.offered', {
           name: nameOf(handover.to, t('row.ownerDeleted')),
           time: postTime(handover.offeredAt, i18n.language),
@@ -81,7 +81,7 @@ function OfferForm({ slug }: { slug: string }) {
   const handle = chosen === '' ? (options[0]?.value ?? '') : chosen;
   if (moderators.isLoading) return null;
   if (options.length === 0)
-    return <p className="m-0 text-[15px] text-body">{t('handover.none')}</p>;
+    return <p className="m-0 type-body text-ink-muted">{t('handover.none')}</p>;
   return (
     <div className="flex flex-col gap-4">
       <Select

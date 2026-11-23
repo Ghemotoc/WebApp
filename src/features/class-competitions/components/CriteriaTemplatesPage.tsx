@@ -62,7 +62,7 @@ function TemplateEditor({ draft, isRunning, onChange, onSave, onCancel }: Templa
   return (
     <form
       onSubmit={submit}
-      className="flex flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-card md:p-6"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
     >
       <TextInput
         id="template-name"
@@ -104,17 +104,17 @@ interface TemplateListProps {
  */
 function TemplateList({ templates, isRunning, onEdit, onDelete }: TemplateListProps) {
   const { t } = useClassCompetitionsTranslation();
-  if (templates.length === 0) return <p className="m-0 text-body">{t('templates.empty')}</p>;
+  if (templates.length === 0) return <p className="m-0 text-ink-muted">{t('templates.empty')}</p>;
   return (
     <ul className="m-0 flex list-none flex-col gap-3 p-0">
       {templates.map((template) => (
         <li
           key={template.id}
-          className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-4 py-3"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-surface px-4 py-3"
         >
           <p className="m-0 min-w-0 wrap-anywhere">
             <span className="font-semibold text-ink">{template.name}</span>{' '}
-            <span className="text-sm text-meta">
+            <span className="type-body text-ink-muted">
               ({t('templates.criteriaCount', { count: template.criteria.length })})
             </span>
           </p>
@@ -196,7 +196,7 @@ function TemplatesBody() {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <TemplateList
         templates={read.data}
         isRunning={changer.isRunning}
@@ -234,12 +234,12 @@ export function CriteriaTemplatesPage() {
   const { spaceSlug = '' } = useParams();
   const name = useSpace(spaceSlug).data?.name ?? '';
   return (
-    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-10">
+    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-8">
       <title>{t('templates.documentTitle')}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('templates.title')} />
       <header className="flex flex-col gap-2">
         <h1 className="m-0 type-title break-words lg:type-display">{t('templates.title')}</h1>
-        <p className="m-0 max-w-[640px] text-meta">{t('templates.intro')}</p>
+        <p className="m-0 max-w-[640px] text-ink-muted">{t('templates.intro')}</p>
       </header>
       <TemplatesBody />
     </PageContainer>

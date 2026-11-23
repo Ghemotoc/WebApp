@@ -47,21 +47,21 @@ export function SpaceLogLine({ entry, space }: { entry: SpaceLogEntry; space: Sp
   });
   return (
     <li className="flex flex-col gap-1 border-b border-border py-3 last:border-b-0">
-      <span className="text-[15px] break-words text-heading">{text}</span>
+      <span className="type-body break-words text-ink-heading">{text}</span>
       {entry.thread !== null && (
         <Link
           to={`/forums/${space.forumSlug}/${entry.thread.number}`}
-          className="inline-flex min-h-6 items-center text-sm break-words text-link underline"
+          className="inline-flex min-h-6 items-center type-body break-words text-link underline"
         >
           {entry.thread.title}
         </Link>
       )}
       {entry.note !== null && (
-        <span className="text-sm break-words text-body">
+        <span className="type-body break-words text-ink-muted">
           {t('log.reason', { reason: entry.note })}
         </span>
       )}
-      <span className="text-[13px] text-meta">{postTime(entry.createdAt, i18n.language)}</span>
+      <span className="type-meta text-ink-muted">{postTime(entry.createdAt, i18n.language)}</span>
     </li>
   );
 }

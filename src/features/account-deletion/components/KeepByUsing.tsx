@@ -35,7 +35,7 @@ export function KeepByUsing() {
     mutate();
   }, [mutate]);
   return (
-    <PageContainer className="flex max-w-[640px] flex-col gap-5 pt-12 pb-7">
+    <PageContainer className="flex max-w-[640px] flex-col gap-4 pt-12 pb-6">
       {keep.isError ? (
         <>
           <Notice tone="error">{t('closing.keepFailed')}</Notice>
@@ -46,7 +46,7 @@ export function KeepByUsing() {
           </div>
         </>
       ) : (
-        <p role="status" className="m-0 text-body">
+        <p role="status" className="m-0 text-ink-muted">
           {t('closing.keeping')}
         </p>
       )}

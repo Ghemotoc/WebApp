@@ -17,7 +17,7 @@ export interface LanguagesBreadcrumbProps {
   languageName?: string;
 }
 
-const linkClass = 'inline-flex min-h-11 items-center text-sm font-semibold break-words';
+const linkClass = 'inline-flex min-h-11 items-center type-body font-semibold break-words';
 
 /**
  * Renders the breadcrumb.
@@ -28,7 +28,7 @@ export function LanguagesBreadcrumb({ story, languageName }: LanguagesBreadcrumb
   const { t } = useStoryLanguagesTranslation();
   const languagesStep =
     languageName === undefined ? (
-      <span aria-current="page" className="text-sm text-body">
+      <span aria-current="page" className="type-body text-ink-muted">
         {t('breadcrumb.languages')}
       </span>
     ) : (
@@ -38,7 +38,7 @@ export function LanguagesBreadcrumb({ story, languageName }: LanguagesBreadcrumb
     );
   return (
     <nav aria-label={t('breadcrumb.label')}>
-      <ol className="m-0 flex list-none flex-wrap items-center gap-x-2 p-0 text-sm text-meta">
+      <ol className="m-0 flex list-none flex-wrap items-center gap-x-2 p-0 type-body text-ink-muted">
         <li>
           <Link to="/write" className={linkClass}>
             {t('breadcrumb.write')}
@@ -60,7 +60,7 @@ export function LanguagesBreadcrumb({ story, languageName }: LanguagesBreadcrumb
           <>
             <li aria-hidden="true">/</li>
             <li>
-              <span aria-current="page" className="text-sm text-body">
+              <span aria-current="page" className="type-body text-ink-muted">
                 {languageName}
               </span>
             </li>

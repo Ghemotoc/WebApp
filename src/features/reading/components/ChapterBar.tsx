@@ -43,7 +43,7 @@ export interface ChapterBarProps {
 
 /** The round 44 px quiet icon button's classes, shared by Back. */
 const iconButton =
-  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-heading no-underline hover:bg-tint';
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink-heading no-underline hover:bg-tint';
 
 /**
  * The meta line under the title: "Chapter 14 of 15", then " · 3 min left" while there are
@@ -75,7 +75,7 @@ export function ChapterBar({ chapter, minutesLeft, settings }: ChapterBarProps) 
     <nav
       aria-label={t('reader.chapterBar')}
       data-testid="chapter-bar"
-      className="tmc-chapter-bar glass-float sticky z-20 flex items-center gap-1 rounded-full p-1.5"
+      className="tmc-chapter-bar glass-float sticky z-20 flex items-center gap-1 rounded-full p-2"
     >
       {/* Back to the story page, which lists every chapter. */}
       <Link
@@ -86,13 +86,13 @@ export function ChapterBar({ chapter, minutesLeft, settings }: ChapterBarProps) 
         <BackArrowIcon />
       </Link>
       {/* The title in the story's own language, so a screen reader says it right (WCAG 3.1.2). */}
-      <p className="m-0 min-w-0 flex-1 text-center text-[15px] leading-5 font-semibold text-heading">
+      <p className="m-0 min-w-0 flex-1 text-center type-body leading-5 font-semibold text-ink-heading">
         <span lang={chapter.story.languageCode} className="block truncate">
           {chapter.story.title}
         </span>
         <span
           data-testid="chapter-bar-meta"
-          className="block truncate text-[13px] leading-[18px] font-normal text-meta"
+          className="block truncate type-meta leading-[18px] font-normal text-ink-muted"
         >
           {metaLine}
         </span>
@@ -104,7 +104,7 @@ export function ChapterBar({ chapter, minutesLeft, settings }: ChapterBarProps) 
       {chapter.nextCode !== null && (
         <Link
           to={`${storyAddress}/${chapter.nextCode}`}
-          className="hidden h-11 shrink-0 items-center gap-1.5 rounded-full button-glass px-4 text-[15px] font-semibold no-underline md:inline-flex"
+          className="hidden h-11 shrink-0 items-center gap-2 rounded-full button-glass px-4 type-body font-semibold no-underline md:inline-flex"
         >
           {t('reader.next')}
           <ForwardArrowIcon />

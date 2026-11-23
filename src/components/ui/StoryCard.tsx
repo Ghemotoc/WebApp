@@ -77,7 +77,7 @@ export function StoryCard({
       {progressPercent !== undefined && <ProgressLine percent={progressPercent} />}
       {pill !== undefined && <span className="mt-3">{pill}</span>}
       <span
-        className={`${pill === undefined ? 'mt-2' : 'mt-1.5'} type-label break-words text-heading`}
+        className={`${pill === undefined ? 'mt-2' : 'mt-2'} type-label break-words text-ink-heading`}
       >
         {title}
       </span>

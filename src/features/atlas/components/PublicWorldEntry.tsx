@@ -56,13 +56,13 @@ function MoreFromWorld({
           <li key={entry.id} className="border-t border-hairline first:border-t-0">
             <Link
               to={`${base}/world/${entry.id}`}
-              className="flex min-h-11 items-center justify-between gap-3 px-5 py-3 text-heading no-underline hover:bg-tint"
+              className="flex min-h-11 items-center justify-between gap-3 px-4 py-3 text-ink-heading no-underline hover:bg-tint"
             >
-              <span className="flex min-w-0 flex-col gap-0.5">
+              <span className="flex min-w-0 flex-col gap-1">
                 <b className="break-words">{entry.title}</b>
-                <span className="text-sm break-words text-meta">{nameOf(section)}</span>
+                <span className="type-body break-words text-ink-muted">{nameOf(section)}</span>
               </span>
-              <ChevronRightIcon className="flex-none text-meta" />
+              <ChevronRightIcon className="flex-none text-ink-muted" />
             </Link>
           </li>
         ))}
@@ -81,10 +81,10 @@ export function PublicWorldEntry({ plan, placed, base, isPreview }: PublicWorldE
   const nameOf = useBibleSectionName();
   const { entry, section } = placed;
   return (
-    <div className="flex min-w-0 flex-col gap-5">
+    <div className="flex min-w-0 flex-col gap-4">
       <Link
         to={`${base}/world`}
-        className="inline-flex h-9 items-center gap-1.5 self-start rounded-full border border-control-border bg-surface px-4 text-[13px] font-semibold text-heading no-underline hover:bg-tint"
+        className="inline-flex h-9 items-center gap-2 self-start rounded-full border border-control-border bg-surface px-4 type-meta font-semibold text-ink-heading no-underline hover:bg-tint"
       >
         <span aria-hidden="true">←</span>
         {t('publicPlan.world.back')}
@@ -93,13 +93,13 @@ export function PublicWorldEntry({ plan, placed, base, isPreview }: PublicWorldE
         <article
           aria-labelledby="atlas-world-entry-heading"
           data-testid="atlas-public-entry"
-          className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-5 py-6 shadow-card md:px-10 md:py-9"
+          className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-6 shadow-card md:px-8 md:py-8"
         >
           <div className="flex min-w-0 flex-col gap-2">
-            <p className="m-0 text-sm break-words text-meta">{nameOf(section)}</p>
+            <p className="m-0 type-body break-words text-ink-muted">{nameOf(section)}</p>
             <h2
               id="atlas-world-entry-heading"
-              className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-extrabold break-words text-heading"
+              className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-bold break-words text-ink-heading"
             >
               {entry.title}
             </h2>

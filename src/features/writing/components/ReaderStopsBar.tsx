@@ -20,8 +20,8 @@ import { formatShownCount } from '../lib/dashboardNumbers';
 function TenthRow({ index, percent }: { index: number; percent: number }) {
   const { t } = useTranslation('writing');
   return (
-    <li className="grid grid-cols-[88px_1fr_auto] items-center gap-3 text-sm">
-      <span className="text-body">
+    <li className="grid grid-cols-[88px_1fr_auto] items-center gap-3 type-body">
+      <span className="text-ink-muted">
         {t('insights.tenth', { from: index * 10, to: index * 10 + 10 })}
       </span>
       <span aria-hidden="true" className="h-3 overflow-hidden rounded-full bg-tint">
@@ -45,13 +45,15 @@ export function ReaderStopsBar({ stops }: { stops: ReaderStops }) {
   const readers = formatShownCount(stops.readers, i18n.language, t('dashboard.fewerThanFive'));
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="m-0 type-subheading text-heading">{t('insights.stopsHeading')}</h3>
-      <p className="m-0 text-sm text-body">{t('insights.stopsIntro')}</p>
+      <h3 className="m-0 type-subheading text-ink-heading">{t('insights.stopsHeading')}</h3>
+      <p className="m-0 type-body text-ink-muted">{t('insights.stopsIntro')}</p>
       {stops.tenths === null ? (
-        <p className="m-0 text-sm text-body">{t('insights.stopsFewer')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('insights.stopsFewer')}</p>
       ) : (
         <>
-          <p className="m-0 text-sm font-semibold text-ink">{t('insights.readers', { readers })}</p>
+          <p className="m-0 type-body font-semibold text-ink">
+            {t('insights.readers', { readers })}
+          </p>
           <ol className="m-0 flex list-none flex-col gap-2 p-0">
             {stops.tenths.map((percent, index) => (
               <TenthRow key={index} index={index} percent={percent} />

@@ -70,7 +70,7 @@ export function CannedReplyItem({ reply, state, isEditing, onEdit, onDone }: Can
   if (isEditing) {
     return (
       <li>
-        <Card className="flex flex-col gap-3 p-5">
+        <Card className="flex flex-col gap-3 p-4">
           <CannedReplyForm
             initial={reply}
             isBusy={state.isChanging}
@@ -83,11 +83,13 @@ export function CannedReplyItem({ reply, state, isEditing, onEdit, onDone }: Can
   }
   return (
     <li>
-      <Card className="flex flex-col gap-3 p-5">
-        <h2 className="m-0 font-heading text-lg font-bold break-words text-heading">
+      <Card className="flex flex-col gap-3 p-4">
+        <h2 className="m-0 font-heading type-long font-bold break-words text-ink-heading">
           {reply.title}
         </h2>
-        <p className="m-0 text-sm break-words whitespace-pre-line text-body">{reply.bodyEn}</p>
+        <p className="m-0 type-body break-words whitespace-pre-line text-ink-muted">
+          {reply.bodyEn}
+        </p>
         <div className="flex flex-wrap gap-3">
           <Button
             variant="secondary"

@@ -31,12 +31,12 @@ export function ClaimControl({ theCase }: { theCase: QueueCase }) {
   return (
     <section
       aria-labelledby="claim-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="claim-heading" className="m-0 font-heading text-lg font-bold text-heading">
+      <h2 id="claim-heading" className="m-0 font-heading type-long font-bold text-ink-heading">
         {t('claims.heading')}
       </h2>
-      <p className="m-0 text-body" aria-live="polite">
+      <p className="m-0 text-ink-muted" aria-live="polite">
         {line}
       </p>
       <div className="flex flex-wrap gap-3">

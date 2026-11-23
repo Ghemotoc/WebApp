@@ -59,10 +59,10 @@ function StepNumber({ number, state }: { number: number; state: 'open' | 'done' 
     <span
       aria-hidden="true"
       className={cn(
-        'inline-flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold',
+        'inline-flex size-8 shrink-0 items-center justify-center rounded-full type-body font-semibold',
         state === 'open' && 'button-main',
         state === 'done' && 'border border-control-border text-ink',
-        state === 'later' && 'border border-border text-meta',
+        state === 'later' && 'border border-border text-ink-muted',
       )}
     >
       {state === 'done' ? <CheckIcon size={14} /> : number}
@@ -84,7 +84,7 @@ function StepActions({
 }) {
   const { t } = useTranslation('common');
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-5">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-4">
       {step.isOptional ? (
         <Button type="button" variant="text" onClick={onSkip}>
           {t('wizard.skip')}
@@ -118,12 +118,12 @@ function DoneStep({
   return (
     <div className="flex items-center gap-4">
       <StepNumber number={number} state="done" />
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <h2 className="m-0 font-heading text-lg leading-6 font-bold text-heading">
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <h2 className="m-0 font-heading type-long leading-6 font-bold text-ink-heading">
           {step.title}
           <span className="sr-only">{t('wizard.done')}</span>
         </h2>
-        <p className="m-0 text-sm break-words text-meta">{step.summary}</p>
+        <p className="m-0 type-body break-words text-ink-muted">{step.summary}</p>
       </div>
       <Button
         type="button"
@@ -140,9 +140,11 @@ function DoneStep({
 /** A later step: only its number and title, muted. */
 function LaterStep({ step, number }: { step: WizardStep; number: number }) {
   return (
-    <li className="flex items-center gap-4 px-7 py-3">
+    <li className="flex items-center gap-4 px-6 py-3">
       <StepNumber number={number} state="later" />
-      <h2 className="m-0 font-heading text-lg leading-6 font-bold text-meta">{step.title}</h2>
+      <h2 className="m-0 font-heading type-long leading-6 font-bold text-ink-muted">
+        {step.title}
+      </h2>
     </li>
   );
 }
@@ -162,14 +164,14 @@ function OpenStep({
   return (
     <li
       aria-current="step"
-      className="flex flex-col gap-5 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
       <div className="flex items-center gap-4">
         <StepNumber number={number} state="open" />
         <h2
           ref={titleRef}
           tabIndex={-1}
-          className="m-0 font-heading text-[26px] leading-[1.1] font-bold break-words text-heading"
+          className="m-0 font-heading type-heading leading-[1.1] font-bold break-words text-ink-heading"
         >
           {step.title}
         </h2>
@@ -224,7 +226,7 @@ export function StepWizard({
         // A done step, folded.
         if (index !== openIndex) {
           return (
-            <li key={step.key} className="rounded-card border border-border bg-surface px-7 py-4">
+            <li key={step.key} className="rounded-card border border-border bg-surface px-6 py-4">
               <DoneStep step={step} number={number} onChange={() => onOpenStep(index)} />
             </li>
           );

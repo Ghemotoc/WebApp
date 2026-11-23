@@ -31,13 +31,13 @@ export interface PictureToCheckCardProps {
  */
 function LargePicture({ picture }: { picture: PictureToCheck }) {
   const { t } = useTranslation('moderation');
-  if (picture.url === null) return <p className="m-0 text-body">{t('picture.unreadable')}</p>;
+  if (picture.url === null) return <p className="m-0 text-ink-muted">{t('picture.unreadable')}</p>;
   return (
     <img
       src={picture.url}
       alt={t('pictures.alt', { handle: picture.uploaderHandle })}
       draggable={false}
-      className="max-h-[560px] w-full rounded-[12px] border border-border bg-tint object-contain"
+      className="max-h-[560px] w-full rounded-field border border-border bg-tint object-contain"
     />
   );
 }
@@ -76,9 +76,9 @@ export function PictureToCheckCard(props: PictureToCheckCardProps) {
   return (
     <li
       aria-labelledby={headingId}
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id={headingId} className="m-0 font-heading text-lg font-bold text-heading">
+      <h2 id={headingId} className="m-0 font-heading type-long font-bold text-ink-heading">
         {t(`picture.kinds.${picture.kind}`, { defaultValue: picture.kind })} · @
         {picture.uploaderHandle}
       </h2>

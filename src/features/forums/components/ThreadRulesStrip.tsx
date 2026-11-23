@@ -30,20 +30,20 @@ export function ThreadRulesStrip({ rules }: { rules: ForumThreadPointer | null }
   return (
     <aside
       aria-label={t('rulesStrip.label')}
-      className="flex flex-wrap items-center gap-x-4 gap-y-2.5 rounded-[20px] border border-panel-border bg-panel px-5 py-4"
+      className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-card border border-panel-border bg-panel px-4 py-4"
     >
-      <span className="text-[13px] font-bold text-ink">{t('list.pinned')}</span>
-      <p className="m-0 min-w-0 flex-[1_1_360px] text-[15px] leading-normal [overflow-wrap:anywhere] text-body">
+      <span className="type-meta font-semibold text-ink">{t('list.pinned')}</span>
+      <p className="m-0 min-w-0 flex-[1_1_360px] type-body leading-normal [overflow-wrap:anywhere] text-ink-muted">
         <Link
           to={`/forums/${rules.forumSlug}/${rules.number}`}
-          className="font-bold text-ink underline"
+          className="font-semibold text-ink underline"
         >
           {rules.title}
         </Link>
         {rules.summary !== null && <> {rules.summary}</>}
       </p>
       {rules.isLocked && (
-        <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-body">
+        <span className="inline-flex items-center gap-2 type-meta font-semibold text-ink-muted">
           <ActionIcon name="lock" size={14} />
           {t('rulesStrip.readOnly')}
         </span>

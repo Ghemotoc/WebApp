@@ -85,11 +85,11 @@ export function TicketActionsPanel(props: TicketActionsPanelProps) {
   return (
     <section
       aria-labelledby="ticket-actions-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4"
     >
       <h2
         id="ticket-actions-heading"
-        className="m-0 font-heading text-[20px] font-bold text-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
       >
         {t('staff.actions.heading')}
       </h2>

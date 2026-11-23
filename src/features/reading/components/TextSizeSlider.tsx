@@ -41,10 +41,10 @@ export function TextSizeSlider({ chosenSize, deviceSize, onChange }: TextSizeSli
         <label htmlFor={inputId} className="eyebrow">
           {t('settings.textSize')}
         </label>
-        <span className="text-right text-[13px] font-semibold text-meta">{valueText}</span>
+        <span className="text-right type-meta font-semibold text-ink-muted">{valueText}</span>
       </div>
       <div className="flex min-h-11 items-center gap-3">
-        <span aria-hidden="true" className="text-[13px] text-body">
+        <span aria-hidden="true" className="type-meta text-ink-muted">
           A
         </span>
         <input
@@ -58,7 +58,7 @@ export function TextSizeSlider({ chosenSize, deviceSize, onChange }: TextSizeSli
           onChange={(event) => onChange(Number(event.target.value))}
           className="m-0 min-w-0 flex-1 accent-primary"
         />
-        <span aria-hidden="true" className="text-[22px] text-body">
+        <span aria-hidden="true" className="type-heading text-ink-muted">
           A
         </span>
       </div>
@@ -66,7 +66,7 @@ export function TextSizeSlider({ chosenSize, deviceSize, onChange }: TextSizeSli
         <button
           type="button"
           onClick={() => onChange(null)}
-          className="inline-flex min-h-11 w-fit items-center text-sm font-semibold text-link underline"
+          className="inline-flex min-h-11 w-fit items-center type-body font-semibold text-link underline"
         >
           {t('settings.followDevice')}
         </button>

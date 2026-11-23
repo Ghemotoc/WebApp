@@ -36,7 +36,7 @@ function PeriodList({ isOpen }: { isOpen: boolean }) {
   if (periods.isError) return <Notice tone="error">{t('keep.loadFailed')}</Notice>;
   if (periods.data === undefined) return null;
   return (
-    <ul className="m-0 flex list-none flex-col p-0 text-[15px] text-body">
+    <ul className="m-0 flex list-none flex-col p-0 type-body text-ink-muted">
       {periods.data.map((period) => (
         <PeriodLine key={period.kind} period={period} />
       ))}
@@ -59,16 +59,16 @@ export function HowLongWeKeep() {
       className="group border-t border-border pt-4"
       onToggle={(event) => setIsOpen(isOpen || event.currentTarget.open)}
     >
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold text-ink">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 type-body font-semibold text-ink">
         {t('keep.heading')}
-        <span aria-hidden="true" className="text-xl leading-none group-open:rotate-45">
+        <span aria-hidden="true" className="type-subheading leading-none group-open:rotate-45">
           +
         </span>
       </summary>
       <div className="flex flex-col gap-3 pt-2">
-        <p className="m-0 text-[15px] text-body">{t('keep.intro')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('keep.intro')}</p>
         <PeriodList isOpen={isOpen} />
-        <Link to="/legal/privacy" className="w-fit text-[15px] font-semibold text-link underline">
+        <Link to="/legal/privacy" className="w-fit type-body font-semibold text-link underline">
           {t('keep.fullList')}
         </Link>
       </div>

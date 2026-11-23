@@ -18,9 +18,11 @@ import { storyNumbers } from '../lib/chapterMoves';
 /** One tile: the big number and its label under it. */
 function StatTile({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex min-w-[140px] flex-[1_1_140px] flex-col-reverse gap-1 rounded-2xl border border-border bg-surface px-5 py-4 shadow-card">
-      <dt className="text-sm text-meta">{label}</dt>
-      <dd className="m-0 font-heading text-[28px] leading-none font-bold text-heading">{value}</dd>
+    <div className="flex min-w-[140px] flex-[1_1_140px] flex-col-reverse gap-1 rounded-card border border-border bg-surface px-4 py-4 shadow-card">
+      <dt className="type-body text-ink-muted">{label}</dt>
+      <dd className="m-0 font-heading type-heading leading-none font-bold text-ink-heading">
+        {value}
+      </dd>
     </div>
   );
 }

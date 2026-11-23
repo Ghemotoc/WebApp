@@ -29,8 +29,8 @@ export function StorySwitch({ idPrefix, label, isOn, note, onToggle }: StorySwit
   const labelId = `${idPrefix}-label`;
   const noteId = `${idPrefix}-note`;
   return (
-    <div className="flex flex-col gap-1.5">
-      <span id={labelId} className="text-sm font-semibold text-ink">
+    <div className="flex flex-col gap-2">
+      <span id={labelId} className="type-body font-semibold text-ink">
         {label}
       </span>
       <div className="flex flex-wrap items-center gap-3">
@@ -52,7 +52,7 @@ export function StorySwitch({ idPrefix, label, isOn, note, onToggle }: StorySwit
             }`}
           />
         </button>
-        <p id={noteId} className="m-0 text-sm text-body">
+        <p id={noteId} className="m-0 type-body text-ink-muted">
           {note}
         </p>
       </div>

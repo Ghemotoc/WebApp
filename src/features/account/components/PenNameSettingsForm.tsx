@@ -58,7 +58,7 @@ export function PenNameSettingsForm({ account, names }: PenNameSettingsFormProps
         hint={t('settings.penNameHint', { days: account.changeDays.penName })}
       />
       {waitUntil !== null && (
-        <p className="m-0 text-[13px] text-meta">
+        <p className="m-0 type-meta text-ink-muted">
           {t('settings.nextChange', {
             date: formatLegalDate(waitUntil.toISOString(), i18n.language),
           })}

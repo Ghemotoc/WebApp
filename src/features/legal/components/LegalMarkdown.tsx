@@ -72,7 +72,7 @@ function withoutNode<Props extends { node?: unknown }>(props: Props): Omit<Props
 /** How each Markdown element looks; everything else keeps the browser's plain HTML. */
 const legalComponents: Components = {
   p: (props) => <LegalParagraph {...withoutNode(props)} />,
-  ul: (props) => <ul className="m-0 flex list-disc flex-col gap-2 pl-5" {...withoutNode(props)} />,
+  ul: (props) => <ul className="m-0 flex list-disc flex-col gap-2 pl-4" {...withoutNode(props)} />,
   li: (props) => <LegalListItem {...withoutNode(props)} />,
   // Our own links only (email addresses, S1-E14-02): the drafts hold no user text.
   a: ({ children, ...props }) => (
@@ -82,7 +82,7 @@ const legalComponents: Components = {
   ),
   mark: (props) => (
     <mark
-      className="rounded-sm bg-(--pill-gold-bg) px-0.5 text-(--pill-gold-text)"
+      className="rounded-field bg-(--pill-gold-bg) px-1 text-(--pill-gold-text)"
       {...withoutNode(props)}
     />
   ),
@@ -95,7 +95,7 @@ const legalComponents: Components = {
  */
 export function LegalMarkdown({ markdown, language }: LegalMarkdownProps) {
   return (
-    <div lang={language} className="flex flex-col gap-3 text-body">
+    <div lang={language} className="flex flex-col gap-3 text-ink-muted">
       <Markdown remarkPlugins={[remarkLegalMarks]} components={legalComponents}>
         {markdown}
       </Markdown>

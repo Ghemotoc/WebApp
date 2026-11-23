@@ -36,7 +36,7 @@ export function StoryCardAtlasLine({ slug }: { slug: string }) {
           <li key={part.key} className="flex items-center">
             {/* A middot between parts, as in every meta line (MetaLine). */}
             {index > 0 && (
-              <span aria-hidden="true" className="px-1.5">
+              <span aria-hidden="true" className="px-2">
                 ·
               </span>
             )}

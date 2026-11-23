@@ -38,7 +38,7 @@ function RatingBanner({ rating }: { rating: StoryAnswers['rating'] }) {
   const { t } = useTranslation('writing');
   if (rating === null || rating === 'all_ages') return null;
   return (
-    <p className="m-0 rounded-card bg-tint px-3 py-2 text-[13px] font-semibold text-(--info-text)">
+    <p className="m-0 rounded-card bg-tint px-3 py-2 type-meta font-semibold text-(--info-text)">
       {t('labels.previewBanner', { rating: t(`rating.${rating}`), age: ratingMinimumAge[rating] })}
     </p>
   );
@@ -49,7 +49,7 @@ function SetInLine({ countries }: { countries: readonly string[] }) {
   const { t, i18n } = useTranslation('writing');
   if (countries.length === 0) return null;
   return (
-    <p className="m-0 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
+    <p className="m-0 inline-flex items-center gap-2 type-meta font-semibold text-ink">
       <ActionIcon name="pin" size={14} />
       {t('setIn.preview', { countries: setInPhrase(countries, i18n.language) })}
     </p>
@@ -74,9 +74,9 @@ export function StoryPreviewAside({
       <div className="flex items-center justify-between gap-3">
         <Eyebrow>{t('preview.eyebrow')}</Eyebrow>
         {/* CALM-9c: "Only you" is a bold word, as a meta line's state, not a pill. */}
-        <span className="text-[13px] font-bold text-ink">{t('preview.onlyYou')}</span>
+        <span className="type-meta font-semibold text-ink">{t('preview.onlyYou')}</span>
       </div>
-      <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card">
+      <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card">
         {/* A skipped cover shows the automatic design the story gets from its ID (S1-E3-13). */}
         <DrawnCover
           title={shownTitle}
@@ -87,25 +87,25 @@ export function StoryPreviewAside({
           size="card"
           className="h-[300px] w-full max-w-[188px] self-center"
         />
-        <h2 className="m-0 font-heading text-[22px] leading-[1.1] font-bold text-heading break-words">
+        <h2 className="m-0 font-heading type-heading leading-[1.1] font-bold text-ink-heading break-words">
           {shownTitle}
         </h2>
-        <p className="m-0 text-[13px] text-meta">{penName}</p>
+        <p className="m-0 type-meta text-ink-muted">{penName}</p>
         {/* CALM-9c: the story's labels as one meta line, as the story page shows them. */}
         <MetaLine facts={storyPreviewFacts(answers, t)} />
         <RatingBanner rating={answers.rating} />
-        <p className="m-0 text-sm leading-normal text-body">
+        <p className="m-0 type-body leading-normal text-ink-muted">
           {answers.blurb.trim() === '' ? t('preview.noBlurb') : answers.blurb}
         </p>
         <SetInLine countries={answers.setInCountries} />
         {answers.tags.length > 0 && (
-          <p className="m-0 text-[13px] text-meta">
+          <p className="m-0 type-meta text-ink-muted">
             <TagNames tags={answers.tags} />
           </p>
         )}
       </div>
       {hasDeleteNote && (
-        <p className="m-0 text-[13px] leading-normal text-meta">{t('preview.deleteLater')}</p>
+        <p className="m-0 type-meta leading-normal text-ink-muted">{t('preview.deleteLater')}</p>
       )}
     </aside>
   );

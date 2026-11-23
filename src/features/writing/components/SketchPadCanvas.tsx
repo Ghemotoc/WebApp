@@ -56,7 +56,7 @@ export function SketchPadCanvas(props: SketchPadCanvasProps) {
     top: `${(keyboardPen.y / SKETCH_HEIGHT) * 100}%`,
   };
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       {/* The sheet is a real control: it takes focus and the arrow keys draw on it. ARIA's
           "application" role is the one for a drawing surface (a screen reader passes the keys
           through), but the lint rule counts that role as non-interactive, so it is switched off
@@ -90,7 +90,7 @@ export function SketchPadCanvas(props: SketchPadCanvasProps) {
         )}
       </div>
       {/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
-      <p id="sketch-pad-hint" className="m-0 text-[13px] text-meta">
+      <p id="sketch-pad-hint" className="m-0 type-meta text-ink-muted">
         {t('drawingDialog.sheetHint')}
       </p>
       <p id="sketch-pad-count" className="sr-only" aria-live="polite">

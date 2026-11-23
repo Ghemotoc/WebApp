@@ -59,7 +59,7 @@ function ResultsList({
   ];
   return (
     <fieldset className="m-0 flex flex-col gap-0 border-0 p-0">
-      <legend className="mb-2 text-sm font-semibold text-ink">{t('class.resultsTitle')}</legend>
+      <legend className="mb-2 type-body font-semibold text-ink">{t('class.resultsTitle')}</legend>
       <ul className="m-0 flex list-none flex-col p-0">
         {students.map((student) => (
           <li
@@ -130,7 +130,7 @@ export function ClassResultsForm({
         programmeName={programmeName}
         space={{ slug, spaceId }}
       />
-      <p className="m-0 text-sm text-body">{t('class.intro')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('class.intro')}</p>
       <Button type="submit" className="self-start" disabled={issuing.isRunning}>
         {t('class.approve')}
       </Button>

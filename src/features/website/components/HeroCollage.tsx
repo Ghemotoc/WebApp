@@ -54,7 +54,7 @@ const trendingRequest: ListRequest = {
 const coversInOneRow = 3;
 
 /** Each column's push down from the top, so the three are staggered as on the board. */
-const columnOffsets = ['mt-14', 'mt-0', 'mt-[104px]'] as const;
+const columnOffsets = ['mt-12', 'mt-0', 'mt-20'] as const;
 
 /**
  * The covers in three staggered columns.
@@ -124,14 +124,12 @@ function RightsCard({
   const placement = isOverWall ? 'absolute top-0 right-0' : 'relative ml-auto';
   return (
     <div
-      className={`${placement} z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 glass-band-tint rounded-field bg-gold px-4 py-3.5 text-on-gold`}
+      className={`${placement} z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 glass-band-tint rounded-field bg-gold px-4 py-4 text-on-gold`}
     >
       {/* The eyebrow's type in the card's dark text: dark gold on gold would be unreadable. */}
       <p className="eyebrow-type m-0">{withBrand(card.eyebrow)}</p>
-      <p className="m-0 font-heading text-lg leading-[1.05] font-extrabold">
-        {withBrand(card.title)}
-      </p>
-      <p className="m-0 text-[13px] leading-snug">{withBrand(card.body)}</p>
+      <p className="m-0 font-heading type-long leading-[1.05] font-bold">{withBrand(card.title)}</p>
+      <p className="m-0 type-meta leading-snug">{withBrand(card.body)}</p>
     </div>
   );
 }
@@ -150,7 +148,7 @@ export function HeroCollage({ rightsCard }: HeroCollageProps) {
   const { shelf } = useStoryShelf(trendingRequest);
   const stories = wallStories(shelf?.stories ?? []);
   return (
-    <figure className="relative mx-auto my-0 min-w-0 max-w-[600px] flex-[1_1_520px] pt-10 pb-6">
+    <figure className="relative mx-auto my-0 min-w-0 max-w-[600px] flex-[1_1_520px] pt-8 pb-6">
       <CoverColumns stories={stories} />
       <RightsCard card={rightsCard} isOverWall={stories.length > 0} />
       {/* On a wall of two rows the card sits over its bottom left corner, as on the board. Under

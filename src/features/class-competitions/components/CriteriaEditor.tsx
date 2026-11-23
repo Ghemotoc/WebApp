@@ -54,8 +54,8 @@ function OutcomeFields({ fieldId, number, criterion, onChange }: CriterionFields
   const hintId = `${fieldId}-outcomes-hint`;
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0" aria-describedby={hintId}>
-      <legend className="p-0 text-sm font-semibold text-ink">{t('form.outcomesLegend')}</legend>
-      <p id={hintId} className="m-0 text-[13px] text-meta">
+      <legend className="p-0 type-body font-semibold text-ink">{t('form.outcomesLegend')}</legend>
+      <p id={hintId} className="m-0 type-meta text-ink-muted">
         {t('form.outcomesHint')}
       </p>
       {criterion.outcomes.map((outcome, index) => (
@@ -98,8 +98,8 @@ function CriterionFields(props: CriterionFieldsProps) {
   const { fieldId, number, criterion, canRemove, onChange, onRemove } = props;
   const { t } = useClassCompetitionsTranslation();
   return (
-    <fieldset className="m-0 flex flex-col gap-4 rounded-2xl border border-border px-4 py-4">
-      <legend className="px-1 font-heading text-lg font-bold text-heading">
+    <fieldset className="m-0 flex flex-col gap-4 rounded-card border border-border px-4 py-4">
+      <legend className="px-1 font-heading type-long font-bold text-ink-heading">
         {t('form.criterion', { number })}
       </legend>
       <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_160px]">

@@ -135,7 +135,7 @@ function ComposerControls({
   const count = composer.text.length;
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <label className="inline-flex min-h-11 cursor-pointer items-center gap-2.5 text-[15px] text-ink">
+      <label className="inline-flex min-h-11 cursor-pointer items-center gap-3 type-body text-ink">
         <input
           type="checkbox"
           checked={composer.isSpoiler}
@@ -144,7 +144,7 @@ function ComposerControls({
         />
         {t('composer.spoiler')}
       </label>
-      <span id={counterId} className="ml-auto text-[13px] text-meta">
+      <span id={counterId} className="ml-auto type-meta text-ink-muted">
         <span aria-hidden="true">{t('composer.counter', { count, limit })}</span>
         <span className="sr-only">{t('composer.counterLabel', { count, limit })}</span>
       </span>
@@ -176,14 +176,14 @@ function ComposerFeedback(props: {
   return (
     <>
       {failure !== null && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t(...failureText(failure, props.limit, i18n.language))}
         </p>
       )}
       <p role="status" className="sr-only">
         {props.composer.justPosted ? t('composer.posted') : ''}
       </p>
-      {!props.isCompact && <p className="m-0 text-[13px] text-meta">{t('composer.kind')}</p>}
+      {!props.isCompact && <p className="m-0 type-meta text-ink-muted">{t('composer.kind')}</p>}
     </>
   );
 }
@@ -262,10 +262,10 @@ export function CommentComposer(props: CommentComposerProps) {
       onSubmit={(event) => void composer.send(event)}
       className={cn(
         'flex flex-col gap-3',
-        !isCompact && 'rounded-[24px] border border-border bg-surface px-6 py-5',
+        !isCompact && 'rounded-card border border-border bg-surface px-6 py-4',
       )}
     >
-      <label htmlFor={fieldId} className="text-[15px] font-semibold text-ink">
+      <label htmlFor={fieldId} className="type-body font-semibold text-ink">
         {t(...labelText(props))}
       </label>
       <textarea
@@ -277,7 +277,7 @@ export function CommentComposer(props: CommentComposerProps) {
         onChange={(event) => composer.setText(event.target.value)}
         placeholder={isCompact ? undefined : t('composer.placeholder')}
         aria-describedby={counterId}
-        className="w-full resize-y rounded-2xl border border-control-border bg-paper px-[18px] py-3.5 text-base leading-normal text-ink"
+        className="w-full resize-y rounded-card border border-control-border bg-paper px-4 py-4 type-body leading-normal text-ink"
       />
       <ComposerQuestions composer={composer} />
       <ComposerControls

@@ -133,7 +133,7 @@ function ThreadNotFound({ forumSlug }: { forumSlug: string }) {
   const { t } = useForumsTranslation();
   return (
     <div className="flex flex-col items-start gap-3">
-      <h1 className="m-0 text-3xl font-extrabold">{t('thread.notFound')}</h1>
+      <h1 className="m-0 type-title font-bold">{t('thread.notFound')}</h1>
       <Link
         to={`/forums/${forumSlug}`}
         className="inline-flex min-h-6 items-center text-link underline"
@@ -208,7 +208,7 @@ export function ThreadPage() {
     );
   }
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       {read.loadFailed && <Notice tone="error">{t('thread.loadFailed')}</Notice>}
       {read.thread === null && <ThreadNotFound forumSlug={forumSlug} />}
       <ThreadContent read={read} threadNumber={threadNumber} />

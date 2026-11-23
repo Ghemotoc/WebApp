@@ -22,7 +22,7 @@ import { HubGuides } from './HubGuides';
 import { HubPrompt } from './HubPrompt';
 
 /** The reading paper the prompt and the guides sit on inside the band. */
-const paperClasses = 'box-surface rounded-card p-5 sm:p-6';
+const paperClasses = 'box-surface rounded-card p-4 sm:p-6';
 
 /**
  * Renders the section.
@@ -50,7 +50,7 @@ export function HubToolsSection({ now }: { now: Date }) {
         </Link>
       </div>
       {/* Step 2: the prompt on paper with the writers under it, and the guides on paper. */}
-      <div className="grid items-start gap-8 min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] min-[900px]:gap-10">
+      <div className="grid items-start gap-8 min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] min-[900px]:gap-8">
         <div className="flex flex-col gap-8 empty:hidden">
           <div className={cn(paperClasses, 'empty:hidden')}>
             <HubPrompt now={now} />

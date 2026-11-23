@@ -51,7 +51,7 @@ export function StoryResultRow({ story, cover }: { story: ListedStory; cover: Dr
     <li className="border-t border-hairline first:border-t-0">
       <Link
         to={`/s/${story.slug}`}
-        className="flex min-h-11 items-center gap-3.5 py-3 text-body no-underline hover:bg-tint"
+        className="flex min-h-11 items-center gap-4 py-3 text-ink-muted no-underline hover:bg-tint"
       >
         <StoryCoverArt
           story={story}
@@ -66,8 +66,8 @@ export function StoryResultRow({ story, cover }: { story: ListedStory; cover: Dr
             />
           }
         />
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="text-[15px] leading-5 font-semibold break-words text-heading">
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="type-body leading-5 font-semibold break-words text-ink-heading">
             {story.title}
           </span>
           <MetaLine

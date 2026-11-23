@@ -161,11 +161,11 @@ export function SafetyContactForm({ initial, isSaving, onSave, onCancel }: Safet
       noValidate
       onSubmit={handleSubmit}
       aria-label={draft.id === null ? t('admin.form.addLabel') : t('admin.form.editLabel')}
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4"
     >
       <ChoiceFields draft={draft} setField={setField} />
       <TextFields draft={draft} setField={setField} />
-      {!hasWayToReach && <p className="m-0 text-sm text-meta">{t('admin.form.needsWay')}</p>}
+      {!hasWayToReach && <p className="m-0 type-body text-ink-muted">{t('admin.form.needsWay')}</p>}
       <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={!isComplete || isSaving}>
           {t('admin.form.save')}

@@ -34,16 +34,16 @@ function ComfortCheckbox(props: {
       <input
         id={props.id}
         type="checkbox"
-        className="mt-0.5 h-5 w-5 shrink-0"
+        className="mt-1 h-5 w-5 shrink-0"
         checked={props.isChecked}
         aria-describedby={`${props.id}-hint`}
         onChange={(event) => props.onChange(event.target.checked)}
       />
-      <div className="flex flex-col gap-0.5">
-        <label htmlFor={props.id} className="text-[15px] font-semibold text-heading">
+      <div className="flex flex-col gap-1">
+        <label htmlFor={props.id} className="type-body font-semibold text-ink-heading">
           {props.label}
         </label>
-        <span id={`${props.id}-hint`} className="text-[13px] leading-normal text-meta">
+        <span id={`${props.id}-hint`} className="type-meta leading-normal text-ink-muted">
           {props.hint}
         </span>
       </div>
@@ -77,7 +77,7 @@ function NightHours({ settings, change }: ReadingComfortFieldsProps) {
           />
         </div>
       </div>
-      <p className="m-0 text-[13px] leading-normal text-meta" aria-live="polite">
+      <p className="m-0 type-meta leading-normal text-ink-muted" aria-live="polite">
         {isWaiting ? t('settings.nightWaiting') : t('settings.nightNextChapter')}
       </p>
     </div>

@@ -61,7 +61,7 @@ export function FocusHeader({ titleKey, backTo }: FocusHeaderProps) {
     // scrolls; the header's own box lets clicks through to the page beside them.
     // The page draws under a phone's status bar (viewport-fit=cover, bundle CALM-1), so Back and
     // the title sit 16 px below the notch or status bar; the reader's chapter bar follows below.
-    <header className="pointer-events-none sticky top-0 z-30 flex items-center gap-2 px-3.5 pt-[calc(16px+env(safe-area-inset-top))]">
+    <header className="pointer-events-none sticky top-0 z-30 flex items-center gap-2 px-4 pt-[calc(16px+env(safe-area-inset-top))]">
       <button
         type="button"
         onClick={goBack}
@@ -71,7 +71,7 @@ export function FocusHeader({ titleKey, backTo }: FocusHeaderProps) {
         <NavIcon name="back" size={22} />
       </button>
       {/* The title wraps rather than being cut off on the narrowest phones (CLAUDE.md rule 21). */}
-      <p className="glass-float pointer-events-auto m-0 inline-flex min-h-12 min-w-0 items-center rounded-[24px] px-5 py-2 font-heading text-[17px] leading-tight font-bold text-heading">
+      <p className="glass-float pointer-events-auto m-0 inline-flex min-h-12 min-w-0 items-center rounded-card px-4 py-2 font-heading type-long leading-tight font-bold text-ink-heading">
         {t(`shell.focus.${titleKey}`)}
       </p>
     </header>

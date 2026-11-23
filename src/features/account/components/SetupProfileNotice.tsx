@@ -40,13 +40,16 @@ export function SetupProfileNotice() {
         aria-labelledby="setup-notice-title"
         className="flex flex-col gap-3 rounded-card border border-border bg-tint p-6"
       >
-        <h2 id="setup-notice-title" className="m-0 font-heading text-[24px] font-bold text-heading">
+        <h2
+          id="setup-notice-title"
+          className="m-0 font-heading type-heading font-bold text-ink-heading"
+        >
           {t(`${keyPrefix}.heading`)}
         </h2>
-        <p className="m-0 text-body">{t(`${keyPrefix}.body`)}</p>
+        <p className="m-0 text-ink-muted">{t(`${keyPrefix}.body`)}</p>
         <Link
           to="/setup"
-          className="inline-flex h-11 items-center self-start rounded-full button-main px-5 text-sm font-semibold no-underline"
+          className="inline-flex h-11 items-center self-start rounded-full button-main px-4 type-body font-semibold no-underline"
         >
           {t(`${keyPrefix}.action`)}
         </Link>

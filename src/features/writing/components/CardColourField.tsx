@@ -72,7 +72,7 @@ export function CardColourField({ value, onChange }: CardColourFieldProps) {
           />
         )}
       </div>
-      <p id="story-card-colour-hint" className="m-0 text-sm text-body">
+      <p id="story-card-colour-hint" className="m-0 type-body text-ink-muted">
         {t('cardColour.hint')}
       </p>
     </div>

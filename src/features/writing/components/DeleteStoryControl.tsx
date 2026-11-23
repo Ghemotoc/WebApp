@@ -45,7 +45,7 @@ function ConfirmSteps({
   return (
     <div
       role="alert"
-      className="flex flex-col gap-3 rounded-2xl border border-(--error-border) bg-(--error-bg) p-4 text-sm text-(--error-text)"
+      className="flex flex-col gap-3 rounded-card border border-(--error-border) bg-(--error-bg) p-4 type-body text-(--error-text)"
     >
       <p className="m-0">
         <strong>
@@ -99,7 +99,7 @@ export function DeleteStoryControl({ story }: { story: MyStory }) {
   if (step === 'idle') {
     return (
       <div className="flex flex-col gap-3">
-        <p className="m-0 text-sm text-body">{t('deleteStory.intro')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('deleteStory.intro')}</p>
         <div>
           <Button variant="destructive" onClick={() => setStep('first')}>
             {t('deleteStory.button')}

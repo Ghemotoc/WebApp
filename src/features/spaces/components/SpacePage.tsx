@@ -113,8 +113,8 @@ function SpaceContent({ space }: { space: Space }) {
       <SpaceBreadcrumb current={space.name} />
       <SpaceHeaderCard space={space} />
       {/* CALM-9b (board simplified F08): 2.4 to 1 from 1024 px, 56 px apart. */}
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,2.4fr)_minmax(0,1fr)] lg:items-start lg:gap-14">
-        <div className="flex min-w-0 flex-col gap-10">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,2.4fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
+        <div className="flex min-w-0 flex-col gap-8">
           <SpaceHandoverOffer space={space} />
           <SpaceWelcomeNote space={space} />
           {space.isLocked && (
@@ -132,7 +132,7 @@ function SpaceContent({ space }: { space: Space }) {
             <PageAdSlot pageKey="space" position={1} context={{ spaceSlug: space.slug }} />
           )}
         </div>
-        <aside className="flex flex-col gap-10">
+        <aside className="flex flex-col gap-8">
           {space.joining === 'approve' && space.kind === 'open' && (
             <SpaceRequestsCard space={space} />
           )}
@@ -155,7 +155,7 @@ export function SpacePage() {
   const { spaceSlug = '' } = useParams();
   const read = useSpace(spaceSlug);
   return (
-    <PageContainer className="flex flex-col gap-6 py-10">
+    <PageContainer className="flex flex-col gap-6 py-8">
       {read.isError && <Notice tone="error">{t('space.loadFailed')}</Notice>}
       {read.data === null && <SpaceNotFound />}
       {read.data !== undefined && read.data !== null && <SpaceContent space={read.data} />}

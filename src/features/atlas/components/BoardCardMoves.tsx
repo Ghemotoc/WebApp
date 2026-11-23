@@ -32,7 +32,7 @@ function MoveButton({
     <Button
       variant="secondary"
       // Board AtlasStoryline: small pills, 32 px tall (over the 24 px smallest target).
-      className="h-8 px-2.5 text-xs"
+      className="h-8 px-3 type-meta"
       disabled={onMove === null}
       aria-label={accessibleName}
       onClick={() => onMove?.()}

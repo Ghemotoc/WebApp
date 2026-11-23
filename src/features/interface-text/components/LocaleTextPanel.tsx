@@ -125,7 +125,7 @@ export function LocaleTextPanel({
   };
   return (
     <section className="flex min-w-0 flex-col gap-3" aria-label={languageName}>
-      <h3 className="m-0 font-heading text-lg font-bold text-heading">{languageName}</h3>
+      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">{languageName}</h3>
       <TextPreview label={t('interfaceText.default')} text={fileText} language={locale} />
       <CountedField
         id={`text-${locale}`}

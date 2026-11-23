@@ -29,11 +29,11 @@ import { AppealCard } from './AppealCard';
 function AppealsList({ state }: { state: ReturnType<typeof useAppeals> }) {
   const { t } = useTranslation('moderation');
   if (state.loadFailure === 'not_allowed')
-    return <p className="m-0 text-body">{t('appeals.notAllowed')}</p>;
+    return <p className="m-0 text-ink-muted">{t('appeals.notAllowed')}</p>;
   if (state.loadFailure !== null)
     return <Notice tone="error">{t(`failures.${state.loadFailure}`)}</Notice>;
-  if (state.isLoading) return <p className="m-0 text-meta">{t('appeals.loading')}</p>;
-  if (state.appeals.length === 0) return <p className="m-0 text-body">{t('appeals.none')}</p>;
+  if (state.isLoading) return <p className="m-0 text-ink-muted">{t('appeals.loading')}</p>;
+  if (state.appeals.length === 0) return <p className="m-0 text-ink-muted">{t('appeals.none')}</p>;
   return (
     <ul className="m-0 flex list-none flex-col gap-4 p-0" aria-label={t('appeals.listLabel')}>
       {state.appeals.map((appeal) => (
@@ -61,14 +61,14 @@ export function AppealsPage() {
   const { t } = useTranslation('moderation');
   const state = useAppeals();
   return (
-    <PageContainer className="flex flex-col gap-6 pt-12 pb-7">
+    <PageContainer className="flex flex-col gap-6 pt-12 pb-6">
       <title>{t('appeals.documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-2">
         <Eyebrow>{t('queue.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[34px] font-bold text-heading">
+        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
           {t('appeals.heading')}
         </h1>
-        <p className="m-0 text-body">{t('appeals.intro')}</p>
+        <p className="m-0 text-ink-muted">{t('appeals.intro')}</p>
       </div>
       <Select
         id="appeals-status"

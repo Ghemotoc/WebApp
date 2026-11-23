@@ -126,7 +126,8 @@ function StoriesBody({
 }) {
   const { t } = useTranslation('writing');
   if (!writing.isKnown) return null;
-  if (!writing.isSignedIn) return <p className="m-0 text-body">{t('yourWriting.signedOut')}</p>;
+  if (!writing.isSignedIn)
+    return <p className="m-0 text-ink-muted">{t('yourWriting.signedOut')}</p>;
   if (writing.loadFailed) return <Notice tone="error">{t('errors.loadFailed')}</Notice>;
   const stories = liveStoriesFor(writing.stories, filter);
   if (stories.length === 0) {
@@ -166,11 +167,11 @@ function YourWritingHeader({
   return (
     <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
       <div className="flex min-w-0 flex-col gap-2">
-        <h1 className="m-0 type-display text-heading">{t('yourWriting.heading')}</h1>
-        <p className="m-0 max-w-[62ch] type-body text-body">{t('yourWriting.intro')}</p>
+        <h1 className="m-0 type-display text-ink-heading">{t('yourWriting.heading')}</h1>
+        <p className="m-0 max-w-[62ch] type-body text-ink-muted">{t('yourWriting.intro')}</p>
       </div>
       {isSignedIn && (
-        <div className="flex flex-wrap gap-2.5">
+        <div className="flex flex-wrap gap-3">
           <ContinueDraftLink chapters={chapters} />
           <NewStoryLink label={t('yourWriting.newStory')} look="quiet" />
         </div>
@@ -192,7 +193,7 @@ function StoriesSection({
   return (
     <section aria-labelledby="writing-stories-heading" className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-        <h2 id="writing-stories-heading" className="m-0 type-heading text-heading">
+        <h2 id="writing-stories-heading" className="m-0 type-heading text-ink-heading">
           {t('yourWriting.storiesHeading')}
         </h2>
         {writing.isSignedIn && <StatusFilterSwitch value={filter} onChange={setFilter} />}
@@ -267,7 +268,7 @@ export function YourWritingPage() {
   const hasStories = writing.isSignedIn && liveStories.length > 0;
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-7">
+    <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-6">
       <title>{t('yourWriting.documentTitle')}</title>
       <YourWritingHeader isSignedIn={writing.isSignedIn} chapters={chapters} />
       {justCreated && <Notice tone="success">{t('yourWriting.created')}</Notice>}

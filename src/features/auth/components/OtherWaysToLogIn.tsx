@@ -80,7 +80,7 @@ export function OtherWaysToLogIn({ onSignedIn }: { onSignedIn: () => void }) {
 
   return (
     <>
-      <div role="group" aria-label={t('social.logInGroup')} className="flex flex-col gap-[10px]">
+      <div role="group" aria-label={t('social.logInGroup')} className="flex flex-col gap-3">
         {isSocialLoginOn && (
           <SocialButtons
             groupLabel={t('social.providersGroup')}

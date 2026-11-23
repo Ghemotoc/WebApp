@@ -45,21 +45,21 @@ export function HubWeek() {
       </h2>
       {loadFailed && <Notice tone="error">{t('hub.week.loadFailed')}</Notice>}
       {week !== null && (
-        <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card">
+        <div className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card">
           <dl className="m-0 flex flex-col">
             {weekRows.map((row) => (
               <div
                 key={row.key}
-                className="flex items-baseline justify-between gap-4 border-b border-border py-2.5 last:border-b-0"
+                className="flex items-baseline justify-between gap-4 border-b border-border py-3 last:border-b-0"
               >
-                <dt className="text-sm text-body">{t(`hub.week.${row.key}`)}</dt>
-                <dd className="m-0 text-right font-heading text-[19px] font-bold text-heading">
+                <dt className="type-body text-ink-muted">{t(`hub.week.${row.key}`)}</dt>
+                <dd className="m-0 text-right font-heading type-subheading font-bold text-ink-heading">
                   {formatShownCount(week[row.field], i18n.language, fewerThanFive)}
                 </dd>
               </div>
             ))}
           </dl>
-          <Link to="/write" className="self-start text-sm font-semibold text-link underline">
+          <Link to="/write" className="self-start type-body font-semibold text-link underline">
             {t('hub.week.seeStatistics')}
           </Link>
         </div>

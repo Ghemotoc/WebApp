@@ -77,7 +77,7 @@ function DetailsField(props: {
         onChange={(event) => props.onChange(event.target.value)}
       />
       {props.isTooLong && (
-        <p role="alert" className="m-0 text-sm text-destructive">
+        <p role="alert" className="m-0 type-body text-destructive">
           {t('dialog.detailsTooLong')}
         </p>
       )}
@@ -115,9 +115,9 @@ function ReassuranceLines({ itemType }: { itemType: ReportableType }) {
   return (
     <>
       {itemType === 'message' && (
-        <p className="m-0 text-sm text-body">{t('dialog.messageContext')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('dialog.messageContext')}</p>
       )}
-      <p className="m-0 text-sm text-body">{t('dialog.aPersonReads')}</p>
+      <p className="m-0 type-body text-ink-muted">{t('dialog.aPersonReads')}</p>
     </>
   );
 }
@@ -158,7 +158,7 @@ function ReportForm(props: ReportDialogProps & { report: ReturnType<typeof useRe
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
       <ReportReasonList
         chosen={reason}
         onChoose={setReason}
@@ -202,7 +202,7 @@ function CloseButton(props: { label: string; onClick: () => void }) {
       type="button"
       aria-label={props.label}
       onClick={props.onClick}
-      className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-body hover:bg-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+      className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ink-muted hover:bg-ink/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
     >
       <svg
         width="20"
@@ -254,17 +254,19 @@ export function ReportDialog(props: ReportDialogProps) {
       className="m-auto w-[min(100%-32px,640px)] rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] text-ink shadow-card backdrop:bg-ink/50"
     >
       {props.isOpen && (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           <div className="flex items-start gap-3">
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <p className="m-0 eyebrow">{t('dialog.eyebrow')}</p>
               <h2
                 id="report-dialog-title"
-                className="m-0 font-heading text-[26px] font-bold text-heading"
+                className="m-0 font-heading type-heading font-bold text-ink-heading"
               >
                 {t(`dialog.title.${props.itemType}`)}
               </h2>
-              <p className="m-0 text-body">{t('dialog.anonymous', { item: props.itemLabel })}</p>
+              <p className="m-0 text-ink-muted">
+                {t('dialog.anonymous', { item: props.itemLabel })}
+              </p>
             </div>
             <CloseButton label={t('dialog.close')} onClick={() => dialogRef.current?.close()} />
           </div>
@@ -272,7 +274,7 @@ export function ReportDialog(props: ReportDialogProps) {
           {report.receipt === null && <SafetyContactsBlock />}
           {report.receipt !== null && <ReportSent receipt={report.receipt} onClose={handleClose} />}
           {report.receipt === null && report.isSessionKnown && !report.isSignedIn && (
-            <p className="m-0 text-body">
+            <p className="m-0 text-ink-muted">
               {t('dialog.signedOut')}{' '}
               <Link to="/sign-in" className="font-semibold text-link underline">
                 {t('dialog.logIn')}

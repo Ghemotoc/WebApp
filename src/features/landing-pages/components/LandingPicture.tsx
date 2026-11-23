@@ -50,7 +50,7 @@ export function LandingPicture({
   // Step 2: in the preview only, say why it isn't drawn yet.
   if (!isPreview) return null;
   return (
-    <p className="m-0 rounded-card border border-dashed border-border p-4 text-sm text-meta">
+    <p className="m-0 rounded-card border border-dashed border-border p-4 type-body text-ink-muted">
       {t(`picture.states.${view?.state ?? 'checking'}`)}
     </p>
   );

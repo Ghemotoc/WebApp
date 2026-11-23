@@ -37,7 +37,7 @@ export function RegionSelect({ id, regions, value, onChange }: RegionSelectProps
     })),
   ];
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <Select
         id={id}
         label={t('onboarding.name.regionLabel')}
@@ -47,7 +47,7 @@ export function RegionSelect({ id, regions, value, onChange }: RegionSelectProps
         onChange={onChange}
         descriptionId={hintId}
       />
-      <p id={hintId} className="m-0 text-[13px] text-meta">
+      <p id={hintId} className="m-0 type-meta text-ink-muted">
         {t('onboarding.name.regionHint')}
       </p>
     </div>

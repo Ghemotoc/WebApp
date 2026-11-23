@@ -47,9 +47,9 @@ const tabs: readonly Tab[] = [
  */
 function tabClasses({ isActive }: { isActive: boolean }): string {
   const base =
-    'flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[12px] leading-tight no-underline hover:bg-ink/5';
-  if (isActive) return `${base} font-bold text-heading`;
-  return `${base} font-medium text-body`;
+    'flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-full type-meta leading-tight no-underline hover:bg-ink/5';
+  if (isActive) return `${base} font-semibold text-ink-heading`;
+  return `${base} font-normal text-ink-muted`;
 }
 
 /**
@@ -60,7 +60,7 @@ function tabClasses({ isActive }: { isActive: boolean }): string {
  */
 function searchButtonClasses({ isActive }: { isActive: boolean }): string {
   const base =
-    'inline-flex size-16 shrink-0 flex-col items-center justify-center gap-1 rounded-full text-heading';
+    'inline-flex size-16 shrink-0 flex-col items-center justify-center gap-1 rounded-full text-ink-heading';
   if (isActive) return `${base} bg-surface shadow-card`;
   return `${base} glass-float`;
 }
@@ -91,7 +91,7 @@ export function TabBar() {
     <nav
       ref={barRef}
       aria-label={t('shell.mainNavigation')}
-      className="fixed inset-x-3.5 bottom-[calc(14px+env(safe-area-inset-bottom))] z-20 mx-auto flex max-w-[620px] items-center gap-2.5"
+      className="fixed inset-x-3.5 bottom-[calc(14px+env(safe-area-inset-bottom))] z-20 mx-auto flex max-w-[620px] items-center gap-3"
     >
       <ul className="glass-float m-0 flex h-16 min-w-0 flex-1 list-none items-center rounded-full p-1">
         {tabs.map((tab) => (

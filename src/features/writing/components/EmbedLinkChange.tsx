@@ -88,8 +88,10 @@ function ChangeStatus({ change }: { change: ReturnType<typeof useLinkChange> }) 
   const failure = change.adding.error === null ? null : embedFailureMessage(change.adding.error);
   return (
     <div aria-live="polite">
-      {change.adding.isAdding && <p className="m-0 text-sm text-body">{t('embedDialog.adding')}</p>}
-      {change.wasChanged && <p className="m-0 text-sm text-body">{t('embed.changed')}</p>}
+      {change.adding.isAdding && (
+        <p className="m-0 type-body text-ink-muted">{t('embedDialog.adding')}</p>
+      )}
+      {change.wasChanged && <p className="m-0 type-body text-ink-muted">{t('embed.changed')}</p>}
       {change.isOpen && failure !== null && (
         <Notice tone="error">{t(failure.key, failure.values)}</Notice>
       )}

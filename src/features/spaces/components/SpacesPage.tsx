@@ -38,27 +38,30 @@ function SpacesHeader() {
   return (
     <header className="flex flex-col gap-4">
       <nav aria-label={t('space.breadcrumb')}>
-        <Link to="/forums" className="inline-flex min-h-6 items-center text-sm text-link underline">
+        <Link
+          to="/forums"
+          className="inline-flex min-h-6 items-center type-body text-link underline"
+        >
           {t('space.forums')}
         </Link>
       </nav>
-      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="flex max-w-[760px] flex-col gap-2">
           <Eyebrow>{t('eyebrow')}</Eyebrow>
           <h1 className="page-title">{t('title')}</h1>
-          <p className="m-0 text-lg leading-relaxed text-body">{t('intro')}</p>
+          <p className="m-0 type-long leading-relaxed text-ink-muted">{t('intro')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           {/* A student with a class code types it on /class (bundle CLASSES, part b). */}
           <Link
             to="/class"
-            className="inline-flex min-h-6 items-center text-sm font-semibold text-link underline"
+            className="inline-flex min-h-6 items-center type-body font-semibold text-link underline"
           >
             {t('joinClassLink')}
           </Link>
           <Link
             to="/spaces/new"
-            className="inline-flex h-12 items-center rounded-full button-main px-6 text-[15px] font-semibold no-underline"
+            className="inline-flex h-12 items-center rounded-full button-main px-6 type-body font-semibold no-underline"
           >
             {t('create')}
           </Link>
@@ -77,15 +80,15 @@ export function SpacesPage() {
   const { t } = useSpacesTranslation();
   const list = useSpaceList(pageSize);
   return (
-    <PageContainer className="flex flex-col gap-8 py-10">
+    <PageContainer className="flex flex-col gap-8 py-8">
       <SpacesHeader />
       {list.loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {list.spaces !== null && list.spaces.length === 0 && (
-        <p className="m-0 text-base text-body">{t('empty')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('empty')}</p>
       )}
       {list.spaces !== null && list.spaces.length > 0 && (
         <section aria-label={t('title')} className="flex flex-col gap-6">
-          <ul className="m-0 grid list-none gap-5 p-0 md:grid-cols-2 xl:grid-cols-3">
+          <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2 xl:grid-cols-3">
             {list.spaces.map((space) => (
               <SpaceCard key={space.id} space={space} />
             ))}

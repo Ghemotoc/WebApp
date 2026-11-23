@@ -29,9 +29,9 @@ export function CaseEmbedPanel({ caseId }: { caseId: string }) {
   return (
     <section
       aria-labelledby="case-embed-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-5"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4"
     >
-      <h2 id="case-embed-heading" className="m-0 font-heading text-lg font-bold text-heading">
+      <h2 id="case-embed-heading" className="m-0 font-heading type-long font-bold text-ink-heading">
         {t('embed.heading')}
       </h2>
       <LabelRows
@@ -65,7 +65,7 @@ export function CaseEmbedPanel({ caseId }: { caseId: string }) {
           },
         ]}
       />
-      <p className="m-0 text-[13px] text-meta">{t('embed.decisionHint')}</p>
+      <p className="m-0 type-meta text-ink-muted">{t('embed.decisionHint')}</p>
     </section>
   );
 }

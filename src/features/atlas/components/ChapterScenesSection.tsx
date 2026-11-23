@@ -85,11 +85,14 @@ export function ChapterScenesSection(props: ChapterScenesSectionProps) {
 
   return (
     <section aria-labelledby="atlas-scenes-heading" className="flex flex-col gap-2">
-      <h3 id="atlas-scenes-heading" className="m-0 font-heading text-lg font-bold text-heading">
+      <h3
+        id="atlas-scenes-heading"
+        className="m-0 font-heading type-long font-bold text-ink-heading"
+      >
         {t('chapterPlan.scenes.heading')}
       </h3>
       {plan.scenes.length === 0 && (
-        <p className="m-0 text-sm text-meta">{t('chapterPlan.scenes.none')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('chapterPlan.scenes.none')}</p>
       )}
       <div aria-live="polite">
         {moveFailed && <Notice tone="error">{t('chapterPlan.scenes.moveFailed')}</Notice>}

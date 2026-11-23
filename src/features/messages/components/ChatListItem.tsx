@@ -74,29 +74,29 @@ export function ChatListItem(props: {
         className={`flex min-h-[64px] items-center gap-3 px-4 py-3 text-ink no-underline hover:bg-tint ${openStyle}`}
       >
         <ChatAvatar name={chat.otherDisplayName} handle={chat.otherHandle} />
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex items-baseline gap-2">
-            <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-heading">
+            <span className="min-w-0 flex-1 truncate type-body font-semibold text-ink-heading">
               {chat.otherDisplayName}
-              <span className="ml-1.5 inline-flex align-middle">
+              <span className="ml-2 inline-flex align-middle">
                 <OnlineDot isOnline={isOnline} />
               </span>
               {chat.hasUnread && (
                 <>
                   <span
                     aria-hidden="true"
-                    className="ml-1.5 inline-block size-2 rounded-full bg-primary"
+                    className="ml-2 inline-block size-2 rounded-full bg-primary"
                   />
                   <span className="sr-only">, {t('list.unread')}</span>
                 </>
               )}
             </span>
-            <span className="flex-none text-xs text-meta">
+            <span className="flex-none type-meta text-ink-muted">
               {shortTime(chat.lastMessageAt, i18n.language)}
             </span>
           </span>
           <span
-            className={`truncate text-sm ${chat.hasUnread ? 'font-semibold text-ink' : 'text-meta'}`}
+            className={`truncate type-body ${chat.hasUnread ? 'font-semibold text-ink' : 'text-ink-muted'}`}
           >
             {preview}
           </span>

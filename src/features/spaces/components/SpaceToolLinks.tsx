@@ -13,7 +13,7 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 /** The pill-shaped link style, as the board's header buttons. */
 const toolLink =
-  'inline-flex h-12 items-center rounded-full button-glass px-5 text-[15px] font-semibold no-underline';
+  'inline-flex h-12 items-center rounded-full button-glass px-4 type-body font-semibold no-underline';
 
 /** One link: where it goes and its words' key. */
 interface ToolLink {
