@@ -76,7 +76,7 @@ function InvitationCard({ invitation, isBusy, onAnswer }: InvitationCardProps) {
         {t('hub.invitation.heading')}
       </h3>
       <p className="m-0 text-body">{t('hub.invitation.body', days)}</p>
-      <blockquote className="m-0 border-l-2 border-border pl-4 text-body wrap-anywhere">
+      <blockquote className="m-0 rounded-field bg-tint px-4 py-3 text-body wrap-anywhere">
         {reason}
       </blockquote>
       <p className="m-0 text-sm text-meta" aria-live="polite">

@@ -72,7 +72,7 @@ function InvitationCard({ invitation, isBusy, onAnswer }: InvitationCardProps) {
       <p className="m-0 text-body">{t('hub.homeComment.body')}</p>
       <HomeCommentWords
         text={invitation.body}
-        className="m-0 border-l-2 border-border pl-4 text-body wrap-anywhere"
+        className="m-0 rounded-field bg-tint px-4 py-3 text-body wrap-anywhere"
       />
       <p className="m-0 text-sm wrap-anywhere text-meta">
         {t('hub.homeComment.place', {
