@@ -87,7 +87,7 @@ export function Footer({ about, endSlot }: FooterProps) {
           <div className="grid grid-cols-2 gap-x-5 gap-y-7 sm:gap-8 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
             {/* Step 1: the emblem, then the words: the whole width on phones, the first column
                 from 640 px. The emblem lines up with the words' left edge (Robert, 23 Nov 2026). */}
-            <div className="col-span-2 flex flex-col items-start gap-4 sm:col-span-1">
+            <div className="col-span-2 flex min-w-0 flex-col items-start gap-4 sm:col-span-1">
               <BrandEmblem />
               {about ?? (
                 <p className="m-0 max-w-[46ch] text-[15px] leading-6 text-body">
