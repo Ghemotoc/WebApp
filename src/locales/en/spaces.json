@@ -245,7 +245,9 @@
       "posts": "Make threads sticky, lock them, and hide or move replies, in this space only.",
       "members": "Answer requests to join and remove members.",
       "settings": "Change the name, description, rules and who can post or join."
-    }
+    },
+    "missingUsername": "Type a username first.",
+    "missingPowers": "Pick at least one thing they can do."
   },
   "members": {
     "title": "Members",
@@ -524,7 +526,8 @@
         "class_locked": "The class is locked, so its dates stay as they are.",
         "not_teacher": "Only the class’s teacher can set a due date.",
         "unknown": "We couldn’t save the date. Try again."
-      }
+      },
+      "missing": "Pick a date first."
     }
   },
   "welcome": {

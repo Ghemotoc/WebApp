@@ -22,6 +22,7 @@ import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
 import { Textarea } from '@/components/ui/Textarea';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import { supportLimits, ticketCategories, type TicketCategory } from '../api/supportTickets';
 import { useNewSupportRequest } from '../hooks/useMySupport';
@@ -52,11 +53,11 @@ function SentNotice({ ticketNumber }: { ticketNumber: number }) {
  *
  * @returns the row
  */
-function SendRow({ isSending, isIncomplete }: { isSending: boolean; isIncomplete: boolean }) {
+function SendRow({ isSending }: { isSending: boolean }) {
   const { t } = useSupportTranslation();
   return (
     <ButtonRow>
-      <Button type="submit" disabled={isSending || isIncomplete}>
+      <Button type="submit" disabled={isSending}>
         {isSending ? t('new.sending') : t('new.send')}
       </Button>
       <Link
@@ -80,13 +81,16 @@ function NewRequestForm() {
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const request = useNewSupportRequest();
+  // Design books item 9: Send stays pressable and says what is missing beside each field.
+  const missingSubject = useMissingField(subject.trim() === '', 'support-subject');
+  const missingBody = useMissingField(body.trim() === '', 'support-body');
   if (request.ticketNumber !== null) return <SentNotice ticketNumber={request.ticketNumber} />;
-  const isIncomplete = subject.trim() === '' || body.trim() === '';
 
-  /** Sends once both fields have words. */
+  /** Sends once both fields have words; otherwise says which one is missing. */
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (isIncomplete) return;
+    if (!missingSubject.isReadyToSend()) return;
+    if (!missingBody.isReadyToSend()) return;
     request.send({ subject: subject.trim(), body: body.trim(), category });
   }
 
@@ -109,6 +113,7 @@ function NewRequestForm() {
         id="support-subject"
         label={t('new.subject')}
         maxLength={supportLimits.subject}
+        errorMessage={missingSubject.isShown ? t('new.missingSubject') : undefined}
         value={subject}
         onChange={(event) => setSubject(event.target.value)}
       />
@@ -118,6 +123,7 @@ function NewRequestForm() {
         hint={t('new.bodyHint')}
         rows={7}
         maxLength={supportLimits.body}
+        errorMessage={missingBody.isShown ? t('new.missingBody') : undefined}
         value={body}
         onChange={(event) => setBody(event.target.value)}
       />
@@ -128,7 +134,7 @@ function NewRequestForm() {
           </Notice>
         )}
       </div>
-      <SendRow isSending={request.isSending} isIncomplete={isIncomplete} />
+      <SendRow isSending={request.isSending} />
     </form>
   );
 }

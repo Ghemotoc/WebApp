@@ -3,6 +3,8 @@
  * board J31): what it is (Something broke, Something looks wrong, An idea), what happened, the
  * line saying what else we send, and Send and Cancel.
  *
+ * The main button stays pressable; pressed with nothing typed, it says what is missing beside the
+ * field and puts the focus there (design books item 9).
  * Who uses it: BugReportPanel. What it calls: ChoiceChips, Textarea and Button.
  * Send stays disabled until something is written. If sending fails, the words stay in the box and
  * a plain line says to try again (board J31's note: a failure keeps the text).
@@ -12,6 +14,7 @@ import { useId, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import { Textarea } from '@/components/ui/Textarea';
+import { useMissingField } from '@/lib/forms/useMissingField';
 import { bugReportKinds, contactMessageMaxLength, type BugReportKind } from '@/schemas/contact';
 
 import type { BugReportDraft } from '../hooks/useBugReport';
@@ -45,14 +48,15 @@ export function BugReportForm({ isSending, hasFailed, onSend, onCancel }: BugRep
   const messageId = useId();
   const [kind, setKind] = useState<BugReportKind>('broke');
   const [message, setMessage] = useState('');
-  const hasWords = message.trim() !== '';
+  // Design books item 9: Send stays pressable and says what is missing beside the box.
+  const missing = useMissingField(message.trim() === '', messageId);
 
   return (
     <form
       className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
-        if (hasWords) onSend({ kind, message: message.trim() });
+        if (missing.isReadyToSend()) onSend({ kind, message: message.trim() });
       }}
     >
       <ChoiceChips
@@ -68,6 +72,7 @@ export function BugReportForm({ isSending, hasFailed, onSend, onCancel }: BugRep
         label={t('bugReport.message')}
         rows={5}
         maxLength={contactMessageMaxLength}
+        errorMessage={missing.isShown ? t('bugReport.missing') : undefined}
         value={message}
         onChange={(event) => setMessage(event.target.value)}
       />
@@ -78,7 +83,7 @@ export function BugReportForm({ isSending, hasFailed, onSend, onCancel }: BugRep
         </p>
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit" disabled={!hasWords} isLoading={isSending}>
+        <Button type="submit" isLoading={isSending}>
           {t('bugReport.send')}
         </Button>
         <Button variant="text" onClick={onCancel}>

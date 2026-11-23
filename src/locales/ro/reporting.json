@@ -121,6 +121,7 @@
     "send": "Trimite răspunsul",
     "thanks": "Mulțumim. Echipa de moderare a primit răspunsul tău.",
     "loadFailed": "Nu am putut încărca întrebările despre raportările tale. Încearcă din nou mai târziu.",
-    "answerFailed": "Nu am putut trimite răspunsul. Verifică-ți conexiunea și încearcă din nou."
+    "answerFailed": "Nu am putut trimite răspunsul. Verifică-ți conexiunea și încearcă din nou.",
+    "missing": "Scrie mai întâi un răspuns."
   }
 }

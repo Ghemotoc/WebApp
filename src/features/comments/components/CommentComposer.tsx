@@ -15,6 +15,8 @@
  * paragraph and every reply in its thread, from the public settings (useCommentLimit).
  * Before sending, a comment with a word from the nudge lists shows KindWordsNudge ("Still want to
  * send this?"), which never blocks it (bundle ADMIN-2, part d3; CLAUDE.md rule 19).
+ * The Post button stays pressable; pressed with an empty box, it says so under the box and puts
+ * the focus there (design books item 9).
  * Who uses it: CommentsSection (a new comment), CommentItem (a reply) and ParagraphThread (a
  * comment on a paragraph).
  * What it calls: useCommentComposer → post_comment(); useCommentLimit; KindWordsNudge; and
@@ -24,9 +26,11 @@
 import { useEffect, useId, useRef, type RefObject } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { FieldProblem } from '@/components/ui/FieldProblem';
 import { PersonalDetailsNote } from '@/features/privacy/components/PersonalDetailsNote';
 import { RulesWalkthrough } from '@/features/safety/components/RulesWalkthrough';
 import type { ChapterAddress } from '@/features/reading/api/likes';
+import { useMissingField } from '@/lib/forms/useMissingField';
 import { formatLocalDayAndTime } from '@/lib/local-time';
 import { cn } from '@/lib/utils';
 
@@ -153,7 +157,7 @@ function ComposerControls({
           {t('composer.cancel')}
         </Button>
       )}
-      <Button type="submit" disabled={composer.posting.isPosting || composer.text.trim() === ''}>
+      <Button type="submit" disabled={composer.posting.isPosting}>
         {t(isReply ? 'composer.postReply' : 'composer.post')}
       </Button>
     </div>
@@ -241,6 +245,7 @@ export function CommentComposer(props: CommentComposerProps) {
   const { t, i18n } = useCommentsTranslation();
   const fieldId = useId();
   const counterId = useId();
+  const missingId = useId();
   const textBoxRef = useRef<HTMLTextAreaElement>(null);
   const composer = useCommentComposer({
     textBoxRef,
@@ -255,11 +260,13 @@ export function CommentComposer(props: CommentComposerProps) {
   );
   const limit = new Intl.NumberFormat(i18n.language).format(limitNumber);
   const isReply = props.replyTo !== undefined;
+  // Design books item 9: Post stays pressable and says what is missing beside the box.
+  const missing = useMissingField(composer.text.trim() === '', fieldId);
   // A reply and a paragraph's comment sit inside a card already, so they get no card of their own.
   const isCompact = isReply || props.paragraph !== undefined;
   return (
     <form
-      onSubmit={(event) => void composer.send(event)}
+      onSubmit={missing.submitWhenReady((event) => void composer.send(event))}
       className={cn(
         'flex flex-col gap-3',
         !isCompact && 'rounded-[24px] border border-border bg-surface px-6 py-5',
@@ -276,9 +283,13 @@ export function CommentComposer(props: CommentComposerProps) {
         value={composer.text}
         onChange={(event) => composer.setText(event.target.value)}
         placeholder={isCompact ? undefined : t('composer.placeholder')}
-        aria-describedby={counterId}
+        aria-describedby={missing.isShown ? `${counterId} ${missingId}` : counterId}
+        aria-invalid={missing.isShown ? true : undefined}
         className="w-full resize-y rounded-2xl border border-control-border bg-paper px-[18px] py-3.5 text-base leading-normal text-ink"
       />
+      <FieldProblem id={missingId} isShown={missing.isShown}>
+        {t('composer.missing')}
+      </FieldProblem>
       <ComposerQuestions composer={composer} />
       <ComposerControls
         composer={composer}

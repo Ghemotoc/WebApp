@@ -4,7 +4,8 @@
  *
  * Real checkboxes in a fieldset, so a screen reader says the group's name with each one; the
  * legend is drawn as an eyebrow label (the eyebrow style), as the DoD's form section labels are drawn.
- * Each row is at least 44 px tall.
+ * Each row is at least 44 px tall. When a form is sent with nothing ticked, the form's message
+ * shows under the legend and the group takes the focus (design books item 9).
  * Who uses it: SpaceModeratorsCard (adding a moderator and changing one's powers).
  */
 import { useId } from 'react';
@@ -18,6 +19,10 @@ interface SpacePowerChoicesProps {
   legend: string;
   value: SpacePower[];
   onChange: (powers: SpacePower[]) => void;
+  /** Said under the legend when the form was sent with nothing ticked. */
+  errorMessage?: string;
+  /** The group's id, so the form can move the focus there when nothing is ticked. */
+  id?: string;
 }
 
 /**
@@ -25,12 +30,28 @@ interface SpacePowerChoicesProps {
  *
  * @returns the fieldset
  */
-export function SpacePowerChoices({ legend, value, onChange }: SpacePowerChoicesProps) {
+export function SpacePowerChoices({
+  legend,
+  value,
+  onChange,
+  errorMessage,
+  id,
+}: SpacePowerChoicesProps) {
   const { t } = useSpacesTranslation();
   const groupId = useId();
   return (
-    <fieldset className="m-0 flex flex-col gap-1 border-0 p-0">
+    <fieldset
+      id={id}
+      tabIndex={-1}
+      aria-describedby={errorMessage === undefined ? undefined : `${groupId}-error`}
+      className="m-0 flex flex-col gap-1 border-0 p-0"
+    >
       <legend className="mb-2 p-0 eyebrow">{legend}</legend>
+      {errorMessage !== undefined && (
+        <p id={`${groupId}-error`} className="m-0 text-sm text-destructive">
+          {errorMessage}
+        </p>
+      )}
       {spacePowers.map((power) => {
         const inputId = `${groupId}-${power}`;
         return (

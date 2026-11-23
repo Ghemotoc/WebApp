@@ -43,14 +43,17 @@ async function openPanel() {
 }
 
 describe('the Report a bug panel', () => {
-  it('keeps Send off until something is written', async () => {
+  it('keeps Send pressable and, pressed with nothing written, says what is missing', async () => {
     const box = await openPanel();
     const send = screen.getByRole('button', { name: 'Send' });
-    expect(send.hasAttribute('disabled')).toBe(true);
-    fireEvent.change(box, { target: { value: '   ' } });
-    expect(send.hasAttribute('disabled')).toBe(true);
-    fireEvent.change(box, { target: { value: 'The Like button does nothing.' } });
     expect(send.hasAttribute('disabled')).toBe(false);
+    fireEvent.change(box, { target: { value: '   ' } });
+    fireEvent.click(send);
+    expect(sendContactMessage).not.toHaveBeenCalled();
+    expect(screen.getByText('Say what happened first.')).toBeTruthy();
+    expect(box.getAttribute('aria-invalid')).toBe('true');
+    fireEvent.change(box, { target: { value: 'The Like button does nothing.' } });
+    expect(screen.queryByText('Say what happened first.')).toBeNull();
   });
 
   it('sends a bug report with its kind and the page details, then says thank you', async () => {

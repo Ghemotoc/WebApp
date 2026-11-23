@@ -14,9 +14,11 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
+import { FieldProblem } from '@/components/ui/FieldProblem';
 import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import type { Criterion } from '../api/classCompetitions';
 import type { CriteriaTemplate } from '../api/criteriaTemplates';
@@ -42,10 +44,12 @@ export function TemplatePicker({ slug, onUse }: TemplatePickerProps) {
   const [pickedId, setPickedId] = useState('');
   const [usedName, setUsedName] = useState<string | null>(null);
   const picked = templates.find((template) => template.id === pickedId);
+  // Design books item 9: "Use template" stays pressable and says what is missing beside the list.
+  const missingPick = useMissingField(picked === undefined, 'competition-template');
 
-  /** Copies the chosen template into the form, then says so. */
+  /** Copies the chosen template into the form, then says so; says first if none is picked. */
   function use() {
-    if (picked === undefined) return;
+    if (!missingPick.isReadyToSend() || picked === undefined) return;
     onUse(picked);
     setUsedName(picked.name);
   }
@@ -67,12 +71,16 @@ export function TemplatePicker({ slug, onUse }: TemplatePickerProps) {
             ]}
             value={pickedId}
             onChange={setPickedId}
+            descriptionId={missingPick.isShown ? 'competition-template-missing' : undefined}
           />
-          <Button variant="secondary" disabled={picked === undefined} onClick={use}>
+          <Button variant="secondary" onClick={use}>
             {t('form.templateUse')}
           </Button>
         </div>
       )}
+      <FieldProblem id="competition-template-missing" isShown={missingPick.isShown}>
+        {t('form.templateMissing')}
+      </FieldProblem>
       <Link
         to={`/spaces/${slug}/competition/templates`}
         className="w-fit font-semibold text-link underline"
@@ -99,9 +107,12 @@ export function SaveAsTemplate({ criteria }: { criteria: Criterion[] }) {
   const changer = useChangeCriteriaTemplates();
   const [name, setName] = useState('');
   const [savedName, setSavedName] = useState<string | null>(null);
+  // Design books item 9: "Save as template" stays pressable and says the name is missing.
+  const missingName = useMissingField(name.trim() === '', 'competition-template-name');
 
-  /** Saves the criteria under the typed name. */
+  /** Saves the criteria under the typed name, or says the name is missing. */
   async function save() {
+    if (!missingName.isReadyToSend()) return;
     setSavedName(null);
     const request = { templateId: null, name: name.trim(), criteria };
     const saved = await changer.save(request).catch(() => undefined);
@@ -118,15 +129,12 @@ export function SaveAsTemplate({ criteria }: { criteria: Criterion[] }) {
             id="competition-template-name"
             label={t('form.templateName')}
             maxLength={80}
+            errorMessage={missingName.isShown ? t('form.templateNameMissing') : undefined}
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
         </div>
-        <Button
-          variant="secondary"
-          disabled={changer.isRunning || name.trim() === ''}
-          onClick={save}
-        >
+        <Button variant="secondary" disabled={changer.isRunning} onClick={save}>
           {t('form.templateSave')}
         </Button>
       </div>

@@ -7,6 +7,8 @@
  * The dialog only opens /messages/:handle; whether the person may be written to is decided there
  * by the database, so this never reveals anything about anyone. A story link being sent into a
  * chat (GAPS-7a) stays in the address.
+ * The main button stays pressable; pressed with nothing typed, it says what is missing beside the
+ * field and puts the focus there (design books item 9).
  * Who shows it: ChatList. What it calls: PeopleDialog (S1-E5-05) and the router.
  */
 import { useId, useState, type FormEvent } from 'react';
@@ -16,6 +18,7 @@ import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 import { PeopleDialog } from '@/features/people/components/PeopleDialog';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import { useSharedLink } from '../hooks/useSharedLink';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
@@ -62,12 +65,14 @@ export function NewChatButton({ look = 'round' }: { look?: 'round' | 'pill' }) {
   const [handle, setHandle] = useState('');
   // Two of these can be on the page at once, so each dialog's field gets its own ID.
   const fieldId = `new-chat-handle-${useId()}`;
+  const username = handle.trim().replace(/^@/, '');
+  // Design books item 9: Open chat stays pressable and says what is missing beside the field.
+  const missing = useMissingField(username === '', fieldId);
 
   /** Opens the chat with the username typed, without the @. */
   function open(event: FormEvent) {
     event.preventDefault();
-    const username = handle.trim().replace(/^@/, '');
-    if (username === '') return;
+    if (!missing.isReadyToSend()) return;
     setIsOpen(false);
     setHandle('');
     void navigate(`/messages/${encodeURIComponent(username)}${shared.query}`);
@@ -89,10 +94,11 @@ export function NewChatButton({ look = 'round' }: { look?: 'round' | 'pill' }) {
             label={t('newChat.label')}
             hint={t('newChat.hint')}
             autoComplete="off"
+            errorMessage={missing.isShown ? t('newChat.missing') : undefined}
             value={handle}
             onChange={(event) => setHandle(event.target.value)}
           />
-          <Button type="submit" className="w-fit" disabled={handle.trim() === ''}>
+          <Button type="submit" className="w-fit">
             {t('newChat.open')}
           </Button>
         </form>

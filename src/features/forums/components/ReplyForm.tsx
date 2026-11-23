@@ -14,6 +14,8 @@
  * made on the reader's device, and sends nothing.
  * FORUMS-2a (S1-E8-06): in a space's thread, a reader who can't reply is told how to join the
  * space (SpaceReplyNote) instead of "Your account can't write yet".
+ * "Post reply" stays pressable; pressed with an empty box, it says so under the box and puts the
+ * focus there (design books item 9).
  * Who uses it: ThreadPage. What it calls: useReplyToThread → reply_to_forum_thread();
  * ForumQuoteBlock for the picked posts.
  * Before sending, usePersonalDetailsGate asks "Post anyway?" when the words look like contact
@@ -30,6 +32,7 @@ import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalD
 import { usePersonalDetailsGate } from '@/features/privacy/hooks/usePersonalDetailsCheck';
 import { RulesWalkthrough } from '@/features/safety/components/RulesWalkthrough';
 import { useRulesBeforeSubmit } from '@/features/safety/hooks/useRulesWalkthrough';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import type { ForumPost, ForumQuote, ForumThreadLock, ForumThreadSpace } from '../api/forumThreads';
 import { useReplyToThread } from '../hooks/useForumWrites';
@@ -187,16 +190,18 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
   const gate = usePersonalDetailsGate({ text: body, sendNow });
   // MUST-1c: the rules walkthrough before an under-18's first post, then the gate.
   const first = useRulesBeforeSubmit(gate.submit);
+  // Design books item 9: "Post reply" stays pressable and says what is missing beside the box.
+  const missing = useMissingField(body.trim() === '', replyBoxId);
 
   return (
-    <form onSubmit={first.submit} className="flex flex-col gap-4">
+    <form onSubmit={missing.submitWhenReady(first.submit)} className="flex flex-col gap-4">
       <PickedQuotes target={target} quotes={quotes} />
       <PostEditor
         id={replyBoxId}
         label={t('editor.reply')}
         value={body}
         onChange={gate.whileEditing(setBody)}
-        problem={messages.body}
+        problem={missing.isShown ? t('reply.missing') : messages.body}
       />
       <RulesWalkthrough
         walkthrough={first.rules}
@@ -215,7 +220,7 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
         >
           {isPreviewing ? t('reply.previewHide') : t('reply.preview')}
         </Button>
-        <Button type="submit" disabled={replying.isRunning || body.trim() === ''}>
+        <Button type="submit" disabled={replying.isRunning}>
           {t('reply.post')}
         </Button>
       </div>

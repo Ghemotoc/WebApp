@@ -245,7 +245,9 @@
       "posts": "Fixează sus și închide discuții, ascunde sau mută răspunsuri, doar în acest spațiu.",
       "members": "Răspunde la cererile de intrare și scoate oameni din spațiu.",
       "settings": "Schimbă numele, descrierea, regulile și cine poate posta sau intra."
-    }
+    },
+    "missingUsername": "Scrie mai întâi un nume de utilizator.",
+    "missingPowers": "Alege cel puțin un lucru pe care îl poate face."
   },
   "members": {
     "title": "Membri",
@@ -524,7 +526,8 @@
         "class_locked": "Clasa e blocată, așa că termenele rămân cum sunt.",
         "not_teacher": "Doar profesorul clasei poate stabili un termen.",
         "unknown": "N-am putut salva termenul. Încearcă din nou."
-      }
+      },
+      "missing": "Alege mai întâi o dată."
     }
   },
   "welcome": {

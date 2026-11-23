@@ -17,6 +17,7 @@ import { supportLimits, type SupportFailure } from '../api/supportTickets';
 import { withInsertedText } from '../lib/fillCannedReply';
 import { useSupportTranslation } from '../registerSupportTranslations';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 /** What the form needs. */
 export interface SupportReplyFormProps {
@@ -63,13 +64,15 @@ function FailureLine({
  * @returns the form
  */
 export function SupportReplyForm(props: SupportReplyFormProps) {
+  const { t } = useSupportTranslation();
   const [body, setBody] = useState('');
   const allowsReply = props.allowsReply ?? true;
-  const isEmpty = body.trim() === '';
+  // Design books item 9: the buttons stay pressable and say what is missing beside the box.
+  const missing = useMissingField(body.trim() === '', props.id);
 
   /** Sends the words, as an answer or a note, and empties the box once saved. */
   async function send(isNote: boolean) {
-    if (isEmpty) return;
+    if (!missing.isReadyToSend()) return;
     await props
       .onSend(body.trim(), isNote)
       .then(() => setBody(''))
@@ -98,13 +101,14 @@ export function SupportReplyForm(props: SupportReplyFormProps) {
         label={props.label}
         rows={5}
         maxLength={supportLimits.body}
+        errorMessage={missing.isShown ? t('reply.missing') : undefined}
         value={body}
         onChange={(event) => setBody(event.target.value)}
       />
       <FailureLine failure={props.failure} waitMinutes={props.waitMinutes} />
       <div className="flex flex-wrap gap-3">
         {allowsReply && (
-          <Button type="submit" disabled={props.isBusy || isEmpty}>
+          <Button type="submit" disabled={props.isBusy}>
             {props.sendLabel}
           </Button>
         )}
@@ -112,7 +116,7 @@ export function SupportReplyForm(props: SupportReplyFormProps) {
           <Button
             type="button"
             variant="secondary"
-            disabled={props.isBusy || isEmpty}
+            disabled={props.isBusy}
             onClick={() => void send(true)}
           >
             {props.noteLabel}

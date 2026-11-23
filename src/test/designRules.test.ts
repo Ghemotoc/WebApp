@@ -23,6 +23,10 @@
  *   7. Form and dialog buttons sit on the left, the main one first (design books item 8, Robert,
  *      23 Nov 2026, 13:25 UTC): a member file never pushes a row of buttons to the right edge with
  *      justify-end; it uses ButtonRow (src/components/ui/ButtonRow.tsx). Staff screens are left out.
+ *   8. A member form's button never greys out until something is typed (design books item 9,
+ *      Robert, 23 Nov 2026, 13:25 UTC): pressed with a field empty, it says what is missing beside
+ *      the field (src/lib/forms/useMissingField.ts). Disabled only while sending or saving. Staff
+ *      screens keep their behaviour.
  * Who runs it: Vitest (`npm test`), in CI on every pull request. Its sister guard is
  * src/test/noDoodles.test.ts.
  */
@@ -290,6 +294,23 @@ describe('the design rules are the defaults', () => {
     const offenders = codeFiles()
       .filter(([path]) => !isStaffFile(path) && !notFooters.includes(path))
       .filter(([, text]) => rightButtons.test(text))
+      .map(([path]) => path);
+    expect(offenders).toEqual([]);
+  });
+
+  it('no member form greys out its button until something is typed', () => {
+    // A button disabled while a typed value is empty; useMissingField says so on press instead.
+    const greyedUntilTyped = /disabled=\{[^}]*\.trim\(\) === ''/;
+    // Staff screens outside a staff folder: the safety contacts editor and the settings lists.
+    const staffScreens = [
+      '/src/features/safety/components/SafetyContactAdminCard.tsx',
+      '/src/features/settings/components/NudgeWordsSection.tsx',
+      '/src/features/settings/components/NameWordsSection.tsx',
+      '/src/features/settings/components/ReservedNamesSection.tsx',
+    ];
+    const offenders = codeFiles()
+      .filter(([path]) => !isStaffFile(path) && !staffScreens.includes(path))
+      .filter(([, text]) => greyedUntilTyped.test(text))
       .map(([path]) => path);
     expect(offenders).toEqual([]);
   });

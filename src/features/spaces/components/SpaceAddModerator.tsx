@@ -11,6 +11,7 @@ import { useId, useState, type FormEvent } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import type { SpacePower } from '../api/spaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
@@ -38,11 +39,15 @@ export function SpaceAddModerator({ onAdd, isRunning }: SpaceAddModeratorProps) 
   const [handle, setHandle] = useState('');
   const [powers, setPowers] = useState<SpacePower[]>(startingPowers);
   const cleanHandle = handle.trim().replace(/^@/, '');
+  // Design books item 9: Add stays pressable and says what is missing beside the field.
+  const missingHandle = useMissingField(cleanHandle === '', fieldId);
+  const missingPowers = useMissingField(powers.length === 0, `${fieldId}-powers`);
 
-  /** Sends the form, then empties it when it worked. */
+  /** Sends the form, then empties it when it worked; says first what is missing, if anything. */
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (cleanHandle === '' || powers.length === 0) return;
+    if (!missingHandle.isReadyToSend()) return;
+    if (!missingPowers.isReadyToSend()) return;
     const worked = await onAdd(cleanHandle, `@${cleanHandle}`, powers);
     if (!worked) return;
     setHandle('');
@@ -65,15 +70,18 @@ export function SpaceAddModerator({ onAdd, isRunning }: SpaceAddModeratorProps) 
         value={handle}
         maxLength={40}
         autoComplete="off"
+        errorMessage={missingHandle.isShown ? t('moderators.missingUsername') : undefined}
         onChange={(event) => setHandle(event.target.value)}
       />
       <SpacePowerChoices
         legend={t('moderators.powersLegend')}
+        id={`${fieldId}-powers`}
+        errorMessage={missingPowers.isShown ? t('moderators.missingPowers') : undefined}
         value={powers}
         onChange={setPowers}
       />
       <div>
-        <Button type="submit" disabled={isRunning || cleanHandle === '' || powers.length === 0}>
+        <Button type="submit" disabled={isRunning}>
           {t('moderators.add')}
         </Button>
       </div>

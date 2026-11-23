@@ -84,7 +84,7 @@ function PublicState(props: {
       <div>
         <Button
           type="button"
-          disabled={change.isRunning || classSlug === ''}
+          disabled={change.isRunning}
           onClick={() => void change.change(classSlug).catch(errorShownByHook)}
         >
           {t('storyClass.share')}

@@ -10,6 +10,8 @@
  *   form (why the decision is wrong) in place;
  * - after six months: when the time ended.
  * It always links to moderator mail for a question that isn't an appeal (S1-E10-11).
+ * The main button stays pressable; pressed with nothing typed, it says what is missing beside the
+ * field and puts the focus there (design books item 9).
  * Who shows it: StatementCard (not on the staff case page). What it calls: useAppeal.
  */
 import { useState, type FormEvent } from 'react';
@@ -18,6 +20,7 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import { appealExplanationLimit, type StatementOfReasons } from '../api/statements';
 import { useAppeal } from '../hooks/useAppeal';
@@ -69,11 +72,14 @@ function AppealForm({
   const [explanation, setExplanation] = useState('');
   const appeal = useAppeal(statement.reference);
   const fieldId = `appeal-${statement.reference}`;
+  // Design books item 9: Send stays pressable and says what is missing beside the box.
+  const missing = useMissingField(explanation.trim() === '', fieldId);
 
-  /** Sends the appeal, unless the explanation is empty (the field says so). */
+  /** Sends the appeal, or says under the box that the explanation is missing. */
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (explanation.trim() !== '') appeal.send(explanation.trim());
+    if (!missing.isReadyToSend()) return;
+    appeal.send(explanation.trim());
   }
 
   return (
@@ -88,6 +94,7 @@ function AppealForm({
         hint={t('appeals.hint')}
         rows={5}
         maxLength={appealExplanationLimit}
+        errorMessage={missing.isShown ? t('appeals.missing') : undefined}
         value={explanation}
         onChange={(event) => setExplanation(event.target.value)}
       />
@@ -99,7 +106,7 @@ function AppealForm({
         )}
       </div>
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={appeal.isSending || explanation.trim() === ''}>
+        <Button type="submit" disabled={appeal.isSending}>
           {appeal.isSending ? t('appeals.sending') : t('appeals.send')}
         </Button>
         <Button type="button" variant="secondary" onClick={onCancel}>

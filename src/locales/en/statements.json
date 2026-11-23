@@ -137,6 +137,7 @@
       "too_many": "You’ve sent a lot of appeals in the last hour. Try again in {{minutes}} minutes.",
       "not_found": "We couldn’t find this decision on your account.",
       "unreachable": "We couldn’t send your appeal. Check your connection and try again."
-    }
+    },
+    "missing": "Say why the decision is wrong first."
   }
 }

@@ -14,7 +14,8 @@
     "cancel": "Anulează",
     "sentBody": "Mulțumim. Am primit raportul și îl vom citi. Dacă avem nevoie de mai multe, îți scriem pe email.",
     "close": "Închide",
-    "unsent": "Nu am putut trimite raportul. Textul tău a rămas aici. Încearcă din nou peste câteva minute."
+    "unsent": "Nu am putut trimite raportul. Textul tău a rămas aici. Încearcă din nou peste câteva minute.",
+    "missing": "Scrie mai întâi ce s-a întâmplat."
   },
   "computerOnly": {
     "documentTitle": "Deocamdată, testul merge pe calculator · {{productName}}",

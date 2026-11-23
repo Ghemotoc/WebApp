@@ -62,7 +62,9 @@
     "sent": "Trimis. Cererea ta este #{{number}}. Îți răspundem aici.",
     "open": "Deschide o cerere",
     "cancel": "Renunță",
-    "safetyHeading": "Ești în pericol chiar acum?"
+    "safetyHeading": "Ești în pericol chiar acum?",
+    "missingSubject": "Scrie mai întâi un subiect.",
+    "missingBody": "Scrie cu ce ai nevoie de ajutor."
   },
   "ticket": {
     "documentTitle": "Cererea de ajutor #{{number}}",
@@ -307,5 +309,8 @@
         "unreachable": "Nu am putut ajunge la server. Verifică-ți conexiunea și încearcă din nou."
       }
     }
+  },
+  "reply": {
+    "missing": "Scrie mai întâi ceva."
   }
 }

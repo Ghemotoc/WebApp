@@ -155,7 +155,8 @@
     "preview": "Previzualizare",
     "previewHide": "Ascunde previzualizarea",
     "previewHeading": "Previzualizare",
-    "previewEmpty": "Scrie ceva ca să apară aici."
+    "previewEmpty": "Scrie ceva ca să apară aici.",
+    "missing": "Scrie mai întâi un răspuns."
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
