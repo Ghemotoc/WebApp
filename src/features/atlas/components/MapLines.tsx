@@ -2,15 +2,21 @@
  * MapLines: the relationship map's lines and their labels (story S1-E17-15; bundle G10 ATLAS,
  * part b2, board AtlasConnections: labels sit on small glass chips over the middle of each line).
  *
- * The lines are an SVG under the cards, each category in its own colour and line style with an
- * arrow at the second character; the labels are HTML chips laid over the lines, so they keep the
- * page's fonts and wrap like text. Both are drawing only (hidden from screen readers): the same
+ * The lines are an SVG under the cards, each category in the colour the writer picked (CALM-9,
+ * board E25) and its own line style, with an arrow at the second character. Every swatch stands
+ * 3:1 off the card by itself. The labels are HTML chips
+ * laid over the lines, so they keep the page's fonts and wrap like text. Both are drawing only (hidden from screen readers): the same
  * relationships are written out in the List view. With "Focus on" set, lines that don't touch
  * the chosen character fade back.
  * Who uses it: RelationshipMap. What it calls: the category helpers and the words hook's label.
  */
 import type { RelationshipWords } from '../hooks/useRelationshipWords';
-import { categoryOf, lineStyles, relationshipCategories } from '../lib/relationshipCategories';
+import {
+  categoryOf,
+  lineStyleOf,
+  relationshipCategories,
+  type RelationshipColours,
+} from '../lib/relationshipCategories';
 import type { MapEdge, MapLayout } from '../lib/relationshipMap';
 
 /** What the lines need. */
@@ -19,6 +25,8 @@ export interface MapLinesProps {
   words: RelationshipWords;
   /** The character in focus, or null for everyone. */
   focusId: string | null;
+  /** The colours the writer picked for the categories. */
+  colours: RelationshipColours;
 }
 
 /** True when a line should fade because it doesn't touch the character in focus. */
@@ -28,7 +36,7 @@ function isFaded(edge: MapEdge, focusId: string | null): boolean {
 }
 
 /** One arrow head per category, in that category's colour. */
-function ArrowMarkers() {
+function ArrowMarkers({ colours }: { colours: RelationshipColours }) {
   return (
     <defs>
       {relationshipCategories.map((category) => (
@@ -42,7 +50,7 @@ function ArrowMarkers() {
           markerHeight="7"
           orient="auto-start-reverse"
         >
-          <path d="M 0 0 L 10 5 L 0 10 z" fill={lineStyles[category].colour} />
+          <path d="M 0 0 L 10 5 L 0 10 z" fill={lineStyleOf(category, colours).colour} />
         </marker>
       ))}
     </defs>
@@ -54,7 +62,7 @@ function ArrowMarkers() {
  *
  * @returns the SVG and the labels, both hidden from screen readers
  */
-export function MapLines({ layout, words, focusId }: MapLinesProps) {
+export function MapLines({ layout, words, focusId, colours }: MapLinesProps) {
   return (
     <>
       <svg
@@ -63,14 +71,15 @@ export function MapLines({ layout, words, focusId }: MapLinesProps) {
         height={layout.height}
         className="pointer-events-none absolute inset-0"
       >
-        <ArrowMarkers />
+        <ArrowMarkers colours={colours} />
         {layout.edges.map((edge) => {
           const category = categoryOf(edge.relationship.kind);
-          const style = lineStyles[category];
+          const style = lineStyleOf(category, colours);
           return (
             <g
               key={edge.relationship.id}
               data-category={category}
+              data-colour={style.colour}
               opacity={isFaded(edge, focusId) ? 0.2 : 1}
             >
               <path

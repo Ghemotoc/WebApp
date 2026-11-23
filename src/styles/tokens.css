@@ -274,14 +274,19 @@
   --shadow-card: 0 1px 2px rgba(20, 10, 30, 0.04), 0 18px 44px -24px rgba(20, 10, 30, 0.18);
   --shadow-popover: 0 1px 2px rgba(20, 10, 30, 0.05), 0 24px 56px -20px rgba(20, 10, 30, 0.25);
 
-  /* Story Atlas relationship lines (S1-E17-15): one colour per category, each also drawn with its
-     own line style, so the meaning never rests on colour alone. At least 3:1 on cards. */
-  --atlas-line-family: #481c5f;
-  --atlas-line-love: #b0306a;
-  --atlas-line-lineage: #6b4f00;
-  --atlas-line-allies: #2f6b3a;
-  --atlas-line-conflict: #8c2b3a;
-  --atlas-line-other: #4a5866;
+  /* Story Atlas relationship colours (S1-E17-15; CALM-9, board E25): the eight swatches a writer
+     picks from for each category. Pink, yellow, aqua and orange are darker than the board's by
+     day, so every swatch stands at least 3:1 off a light card on its own (WCAG 2.2, 1.4.11;
+     Robert's pick, 23 Nov 2026: "Darker shades by day"). Each category also keeps its own line
+     style. */
+  --atlas-swatch-blue: #2a78d6;
+  --atlas-swatch-pink: #e35f91;
+  --atlas-swatch-yellow: #bd8000;
+  --atlas-swatch-aqua: #19a06f;
+  --atlas-swatch-orange: #ea632d;
+  --atlas-swatch-violet: #6250d6;
+  --atlas-swatch-green: #008300;
+  --atlas-swatch-red: #e34948;
 }
 
 [data-theme='night'] {
@@ -459,13 +464,16 @@
   --shadow-card: none;
   --shadow-popover: 0 0 0 1px #2f2f34;
 
-  /* Story Atlas relationship lines (S1-E17-15), light on night cards; family is white. */
-  --atlas-line-family: #f5f5f5;
-  --atlas-line-love: #f4a6c8;
-  --atlas-line-lineage: #e6c24c;
-  --atlas-line-allies: #9fd3a8;
-  --atlas-line-conflict: #f2a7b3;
-  --atlas-line-other: #c6d0da;
+  /* Story Atlas relationship colours at night (CALM-9, board E25's night values; green and red,
+     which the board leaves out, are lifted the same way). Each stands 3:1 off the dark card. */
+  --atlas-swatch-blue: #3987e5;
+  --atlas-swatch-pink: #d55181;
+  --atlas-swatch-yellow: #c98500;
+  --atlas-swatch-aqua: #199e70;
+  --atlas-swatch-orange: #d95926;
+  --atlas-swatch-violet: #9085e9;
+  --atlas-swatch-green: #2f9a2f;
+  --atlas-swatch-red: #e0504f;
 
   /* Ink on a white or light patch that stays light at night (the QR square, a pale swatch), and
      the category dots, kept as they were by day (CALM-7a). */
@@ -991,6 +999,17 @@
  */
 [data-contrast='more'] [data-theme='light'],
 [data-contrast='more'][data-theme='light'] {
+  /* Story Atlas relationship colours in high contrast: deeper still, so every line and dot
+     stands 4.5:1 on white (CONTRAST-1's line for edges; CALM-9, board E25). */
+  --atlas-swatch-blue: #2874d0;
+  --atlas-swatch-pink: #da2b6d;
+  --atlas-swatch-yellow: #9e6b00;
+  --atlas-swatch-aqua: #15835b;
+  --atlas-swatch-orange: #cd4914;
+  --atlas-swatch-violet: #6250d6;
+  --atlas-swatch-green: #008300;
+  --atlas-swatch-red: #df2c2b;
+
   /* High contrast boxes are the plain page surface with its dark edge (CALM-1c). */
   --surface-box: var(--surface);
   --surface-box-solid: var(--surface);
@@ -1121,6 +1140,17 @@
    carries white text at 8.6:1, with a white rim so their shape shows on black (CONTRAST-1). */
 [data-contrast='more'] [data-theme='night'],
 [data-contrast='more'][data-theme='night'] {
+  /* Story Atlas relationship colours in high contrast at night: the night values already stand
+     4.5:1 on black (CALM-9, board E25). */
+  --atlas-swatch-blue: #3987e5;
+  --atlas-swatch-pink: #d55181;
+  --atlas-swatch-yellow: #c98500;
+  --atlas-swatch-aqua: #199e70;
+  --atlas-swatch-orange: #d95926;
+  --atlas-swatch-violet: #9085e9;
+  --atlas-swatch-green: #2f9a2f;
+  --atlas-swatch-red: #e0504f;
+
   /* High contrast boxes are the plain page surface with its dark edge (CALM-1c). */
   --surface-box: var(--surface);
   --surface-box-solid: var(--surface);

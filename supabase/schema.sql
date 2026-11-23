@@ -41536,6 +41536,27 @@ COMMENT ON FUNCTION "public"."register_sponsor_creative"("target_path" "text") I
 
 
 
+CREATE OR REPLACE FUNCTION "public"."relationship_colours_are_valid"("colours" "jsonb") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_typeof(colours) = 'object'
+    and not exists (
+      select 1 from jsonb_each(colours) as entries
+      where entries.key not in ('family', 'love', 'lineage', 'allies', 'conflict', 'other')
+        or jsonb_typeof(entries.value) <> 'string'
+        or (entries.value #>> '{}') not in
+          ('blue', 'pink', 'yellow', 'aqua', 'orange', 'violet', 'green', 'red'));
+$$;
+
+
+ALTER FUNCTION "public"."relationship_colours_are_valid"("colours" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."relationship_colours_are_valid"("colours" "jsonb") IS 'True when a relationship colours map holds only known categories and swatches (CALM-9, E25).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."story_character_relationships" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "story_id" "uuid" NOT NULL,
@@ -47555,6 +47576,39 @@ COMMENT ON FUNCTION "public"."set_rank_badge_tags"("story_slug" "text", "tag_nam
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  saved jsonb;
+begin
+  -- Step 1: a signed-in writer and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your plan.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the new colour; the column's check refuses an unknown category or swatch.
+  update public.story_plans
+  set relationship_colours = relationship_colours || jsonb_build_object(category, colour)
+  where story_plans.story_id = target_story_id
+  returning relationship_colours into saved;
+  return jsonb_build_object('outcome', 'ok', 'relationship_colours', saved);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") IS 'Saves the colour of one relationship category on one of the caller''s stories (CALM-9, E25).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_shows_online_status"("should_show" boolean) RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -51373,8 +51427,9 @@ begin
     return jsonb_build_object('outcome', 'not_found');
   end if;
 
-  -- Step 2: the characters, the writer's own fields with their places, the chapters to pick from
-  -- and the relationships between the characters, with their notes (the writer's own).
+  -- Step 2: the characters, the writer's own fields with their places, the chapters to pick from,
+  -- the relationships between the characters, with their notes (the writer's own), and the
+  -- colours picked for the relationship categories.
   return (select jsonb_build_object(
     'outcome', 'ok',
     'story', jsonb_build_object('id', stories.id, 'slug', stories.slug, 'title', stories.title),
@@ -51393,7 +51448,10 @@ begin
       from public.chapters where chapters.story_id = stories.id and chapters.deleted_at is null), '[]'::jsonb),
     'relationships', coalesce((
       select jsonb_agg(public.relationship_json(links, true) order by links.created_at)
-      from public.story_character_relationships as links where links.story_id = stories.id), '[]'::jsonb))
+      from public.story_character_relationships as links where links.story_id = stories.id), '[]'::jsonb),
+    'relationship_colours', coalesce((
+      select story_plans.relationship_colours from public.story_plans
+      where story_plans.story_id = stories.id), '{}'::jsonb))
     from public.stories where stories.id = target_story_id);
 end;
 $$;
@@ -51402,7 +51460,7 @@ $$;
 ALTER FUNCTION "public"."story_cast"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_cast"("story_slug" "text") IS 'The cast of one of the caller''s stories: its characters, custom fields, chapters and relationships (S1-E17-08 to S1-E17-16).';
+COMMENT ON FUNCTION "public"."story_cast"("story_slug" "text") IS 'The cast of one of the caller''s stories: its characters, custom fields, chapters, relationships and relationship colours (S1-E17-08 to S1-E17-16; CALM-9, E25).';
 
 
 
@@ -59706,11 +59764,13 @@ CREATE TABLE IF NOT EXISTS "public"."story_plans" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "public_areas" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
+    "relationship_colours" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
     CONSTRAINT "story_plans_linked_project_label_length" CHECK (("char_length"("linked_project_label") <= 60)),
     CONSTRAINT "story_plans_linked_project_url_web" CHECK ((("linked_project_url" = ''::"text") OR (("linked_project_url" ~* '^https?://[^\s]+$'::"text") AND ("char_length"("linked_project_url") <= 2000)))),
     CONSTRAINT "story_plans_logline_length" CHECK (("char_length"("logline") <= 400)),
     CONSTRAINT "story_plans_public_areas_known" CHECK (("public_areas" <@ ARRAY['characters'::"text", 'relationship_map'::"text", 'family_tree'::"text", 'bible'::"text", 'timeline'::"text"])),
     CONSTRAINT "story_plans_publishing_route_known" CHECK (("publishing_route" = ANY (ARRAY['undecided'::"text", 'serial_here'::"text", 'complete_here'::"text", 'here_and_elsewhere'::"text"]))),
+    CONSTRAINT "story_plans_relationship_colours_known" CHECK ("public"."relationship_colours_are_valid"("relationship_colours")),
     CONSTRAINT "story_plans_series_name_length" CHECK (("char_length"("series_name") <= 120)),
     CONSTRAINT "story_plans_word_target_range" CHECK ((("word_target" >= 1) AND ("word_target" <= 5000000))),
     CONSTRAINT "story_plans_writing_status_known" CHECK (("writing_status" = ANY (ARRAY['planning'::"text", 'drafting'::"text", 'revising'::"text", 'editing'::"text", 'finished'::"text", 'on_hold'::"text"])))
@@ -59738,6 +59798,10 @@ COMMENT ON COLUMN "public"."story_plans"."publishing_route" IS 'How the writer m
 
 
 COMMENT ON COLUMN "public"."story_plans"."public_areas" IS 'The plan''s areas readers see once the story is published (S1-E17-32); none by default.';
+
+
+
+COMMENT ON COLUMN "public"."story_plans"."relationship_colours" IS 'The swatch the writer picked for each relationship category, only those changed (CALM-9, E25).';
 
 
 
@@ -74778,6 +74842,11 @@ GRANT ALL ON FUNCTION "public"."set_profile_audience"("audience" "public"."profi
 
 REVOKE ALL ON FUNCTION "public"."set_rank_badge_tags"("story_slug" "text", "tag_names" "text"[]) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_rank_badge_tags"("story_slug" "text", "tag_names" "text"[]) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_relationship_colour"("story_slug" "text", "category" "text", "colour" "text") TO "authenticated";
 
 
 
