@@ -33,6 +33,9 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 import { CousinPickers } from './CousinPickers';
 import { RelationshipClashPanel } from './RelationshipClashPanel';
 
+/** The heading's look: Funnel Display in the type scale (design books, 23 Nov 2026). */
+const formHeadingClass = 'm-0 font-heading type-long font-bold text-ink-heading';
+
 /** What the form needs. */
 export interface AddToTreeFormProps {
   cast: StoryCast;
@@ -240,10 +243,7 @@ export function AddToTreeForm({ cast, rootId, words, onAdd, onClose }: AddToTree
         void add();
       }}
     >
-      <h3
-        id="atlas-tree-add-heading"
-        className="m-0 font-heading type-long font-bold text-ink-heading"
-      >
+      <h3 id="atlas-tree-add-heading" className={formHeadingClass}>
         {anchorName === ''
           ? t('connections.tree.add.headingAny')
           : t('connections.tree.add.heading', { name: anchorName })}
