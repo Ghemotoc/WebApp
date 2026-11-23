@@ -37,7 +37,7 @@ export function LegalDocumentNav() {
   const { t } = useTranslation('legal');
   return (
     <nav aria-label={t('documentsNavLabel')}>
-      <ul className="m-0 flex list-none flex-wrap gap-2 rounded-[28px] border border-border bg-surface p-1.5">
+      <ul className="m-0 flex list-none flex-wrap gap-2 rounded-card border border-border bg-surface p-1.5">
         {legalDocumentSlugs.map((slug) => (
           // Each link is 36 px tall, well above the 24 px minimum target (WCAG 2.2, 2.5.8).
           <li key={slug} className="flex">

@@ -36,7 +36,7 @@ function CrestState({ slug }: { slug: string }) {
   const view = crest.data ?? null;
   if (view === null) return <p className="m-0 text-sm text-body">{t('look.crestStates.none')}</p>;
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-[14px] border border-dashed border-control-border p-3">
+    <div className="flex flex-wrap items-center gap-3 rounded-field border border-dashed border-control-border p-3">
       {view.url !== null && (
         <img
           src={view.url}

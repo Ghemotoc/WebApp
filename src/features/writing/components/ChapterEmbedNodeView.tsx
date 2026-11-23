@@ -69,7 +69,7 @@ export function ChapterEmbedNodeView({ node, updateAttributes, deleteNode }: Nod
       contentEditable={false}
       role="group"
       aria-label={t('embed.label')}
-      className="my-7 flex flex-wrap overflow-hidden rounded-[16px] border border-border bg-surface text-[15px] leading-normal"
+      className="my-7 flex flex-wrap overflow-hidden rounded-field border border-border bg-surface text-[15px] leading-normal"
     >
       <div
         aria-hidden="true"

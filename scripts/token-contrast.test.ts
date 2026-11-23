@@ -241,23 +241,40 @@ describe('design token contrast', () => {
   });
 
   it('takes the canvas v38 muted text, edges and pressed quiet button at night and in staff (CALM-1b)', () => {
-    expect(themes.night.get('body')).toBe('#d6d6d6');
-    expect(themes.night.get('control-border')).toBe('#a3a3a8');
+    // NIGHT-2 (Robert, 22 Nov 2026) set the muted text and the control edges again.
+    expect(themes.night.get('body')).toBe('#b4b4ba');
+    expect(themes.night.get('control-border')).toBe('#8e8e96');
     expect(themes.night.get('pill-gold-text')).toBe('#fff4e4');
-    expect(themes.night.get('quiet-pressed-bg')).toBe('#f5f5f5');
-    expect(themes.night.get('quiet-pressed-text')).toBe('#111113');
+    expect(themes.night.get('quiet-pressed-bg')).toBe('#f2f2f3');
+    expect(themes.night.get('quiet-pressed-text')).toBe('#0e0e10');
     expect(themes.staffLight.get('body')).toBe('#4f443a');
   });
 
   it('draws eyebrows black by day and white at night, never gold (Robert, 7 Nov 2026)', () => {
     expect(themes.light.get('eyebrow')).toBe('#141114');
-    expect(themes.night.get('eyebrow')).toBe('#ffffff');
+    expect(themes.night.get('eyebrow')).toBe('#f7f7f8');
   });
 
   it('turns the whole interface monochrome at night, with cobalt main buttons and switches (NIGHT-1)', () => {
-    expect(themes.night.get('paper')).toBe('#111113');
-    expect(themes.night.get('ink')).toBe('#f5f5f5');
+    expect(themes.night.get('paper')).toBe('#0e0e10');
+    expect(themes.night.get('ink')).toBe('#e8e8ea');
     expect(themes.night.get('plum-to')).toBe('#0047ab');
+  });
+
+  it('draws night as one flat page with solid grey boxes in four steps (NIGHT-2, Robert, 22 Nov 2026)', () => {
+    // Page < box < raised < field, all solid: no see-through glass, no galaxy picture.
+    expect(themes.night.get('night-sky')).toBe('#0e0e10');
+    expect(themes.night.get('surface')).toBe('#18181b');
+    expect(themes.night.get('surface-box')).toBe('#18181b');
+    expect(themes.night.get('surface-glass')).toBe('#18181b');
+    expect(themes.night.get('tint')).toBe('#222226');
+    expect(themes.night.get('field')).toBe('#1d1d21');
+    expect(themes.night.get('line-box')).toBe('#2a2a2f');
+    expect(themes.night.get('story-paper')).toBe('#141416');
+    // Soft white text that still reads at 7:1 or more on a box, so long reading doesn't glare.
+    const box = themes.night.get('surface') ?? '';
+    expect(contrastRatio(themes.night.get('ink') ?? '', box)).toBeGreaterThanOrEqual(7);
+    expect(contrastRatio(themes.night.get('body') ?? '', box)).toBeGreaterThanOrEqual(7);
   });
 
   it('draws the main button in one flat colour, plum by day and cobalt at night for members (CALM-1)', () => {
@@ -268,8 +285,8 @@ describe('design token contrast', () => {
     expect(themes.light.get('plum-hover-to')).toBe('#672786');
     expect(themes.night.get('plum-from')).toBe('#0047ab');
     expect(themes.night.get('plum-to')).toBe('#0047ab');
-    expect(themes.night.get('plum-hover-from')).toBe('#2663b8');
-    expect(themes.night.get('plum-hover-to')).toBe('#2663b8');
+    expect(themes.night.get('plum-hover-from')).toBe('#1a5bc4');
+    expect(themes.night.get('plum-hover-to')).toBe('#1a5bc4');
   });
 
   it('draws staff at night in pure black and grey, with amber kept for warnings (staff night, Robert, 22 Nov 2026)', () => {
@@ -295,9 +312,9 @@ describe('design token contrast', () => {
     expect(hues).toEqual([]);
   });
 
-  it("draws the thread in each look's own accent by day and white at night (CALM-1)", () => {
+  it("draws the thread in each look's own accent by day and soft white at night (CALM-1, NIGHT-2)", () => {
     expect(themes.light.get('thread')).toBe('#672786');
-    expect(themes.night.get('thread')).toBe('#f5f5f5');
+    expect(themes.night.get('thread')).toBe('#e8e8ea');
     expect(themes.staffLight.get('thread')).toBe(themes.staffLight.get('accent'));
     for (const [look, tokens] of lookTokens) {
       const day = resolveReferences(layered(lightTokens, tokens));
@@ -358,13 +375,20 @@ describe('design token contrast', () => {
   });
 
   it('defines the same tokens in both themes', () => {
-    // The box surface and its edge are see-through at night (dark glass, CALM-1c), so the reader
-    // above skips them there; their solid night look-alike is --surface-box-solid.
-    const seeThroughAtNight = new Set(['surface-box', 'line-box']);
-    const lightKeys = [...themes.light.keys(), 'surface-box-solid'].filter(
-      (name) => !seeThroughAtNight.has(name),
-    );
-    expect([...themes.night.keys()].sort()).toEqual(lightKeys.sort());
+    // The glass fills and rims are see-through by day, so the reader above skips them there; at
+    // night they are solid greys (NIGHT-2), and the night page colour lives only at night. The
+    // night block also keeps --surface-box-solid, the box's solid look-alike from CALM-1c.
+    const solidOnlyAtNight = new Set([
+      'field',
+      'glass-border',
+      'lg-rim',
+      'nav-glass',
+      'night-sky',
+      'surface-glass',
+    ]);
+    const nightKeys = [...themes.night.keys()].filter((name) => !solidOnlyAtNight.has(name));
+    const lightKeys = [...themes.light.keys(), 'surface-box-solid'];
+    expect(nightKeys.sort()).toEqual(lightKeys.sort());
   });
 
   it('keeps muted text and links readable on the box surface by day (CALM-1c)', () => {

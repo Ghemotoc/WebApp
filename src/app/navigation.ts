@@ -35,30 +35,52 @@ export const primaryNavigation: NavigationItem[] = [
   { href: '/forums', labelKey: 'nav.together' },
 ];
 
+/** One column of footer links: its heading's locale key and its links. */
+export interface FooterColumn {
+  titleKey: string;
+  links: NavigationItem[];
+}
+
 /**
- * Footer links that exist today: the Legal centre's documents (S1-E14-01), in the order of the
- * signed-in board footer, and the contact and company details (S1-E14-02), which stand in for
- * "Contact us" until S1-E14-04 builds it, and "Report content", the public report form for anyone
- * (S1-E10-02), and the accessibility statement (S1-E14-03). Coming: Help (S1-E11-12).
+ * The footer's three columns, as every page's footer is drawn in the design files (NIGHT-2;
+ * Robert, 23 Nov 2026: "the footer hasn't been updated"): Read, Write and talk, Help and legal.
+ * The design's "About the apps", "For teachers" and "For partners" wait for their pages.
+ * Help and legal keeps every legal link the app had in its single footer row, because each must be
+ * one tap from every page: Report content (S1-E10-02; DSA art. 16), the company and legal contacts
+ * (S1-E14-02; DSA arts. 11 and 12) and the accessibility statement (S1-E14-03).
  */
-export const footerNavigation: NavigationItem[] = [
-  // The board's order (Main.dc.html, LOOK-7): Help, the legal texts, Contact us, the community
-  // guidelines and Report content. The board's single "Legal" link is Terms and Privacy here,
-  // because there is no legal centre page yet (/legal opens the terms).
-  // Help: the CMS help pages and questions (S1-E11-12).
-  { href: '/help', labelKey: 'nav.help' },
-  { href: '/legal/terms', labelKey: 'nav.terms' },
-  { href: '/legal/privacy', labelKey: 'nav.privacy' },
-  // The one "Contact us": the form (S1-E14-04).
-  { href: '/contact', labelKey: 'nav.contactUs' },
-  { href: '/legal/guidelines', labelKey: 'nav.guidelines' },
-  // Report without an account (S1-E10-02): DSA art. 16 asks for it to be easy to find.
-  { href: '/report', labelKey: 'nav.reportContent' },
-  // The contact points for authorities and users and the company details, one tap from every page
-  // (S1-E14-02; DSA arts. 11 and 12). Named for what it holds, so it isn't a second "Contact".
-  { href: '/legal/contact', labelKey: 'nav.contact' },
-  // The accessibility statement (S1-E14-03): linked from every page, as statements usually are.
-  { href: '/legal/accessibility', labelKey: 'nav.accessibility' },
+export const footerColumns: FooterColumn[] = [
+  {
+    titleKey: 'shell.footer.read',
+    links: [
+      { href: '/discover', labelKey: 'shell.footer.trending' },
+      { href: '/library', labelKey: 'nav.library' },
+      { href: '/search', labelKey: 'shell.footer.search' },
+    ],
+  },
+  {
+    titleKey: 'shell.footer.writeAndTalk',
+    links: [
+      { href: '/write', labelKey: 'shell.footer.startWriting' },
+      { href: '/write/new', labelKey: 'shell.footer.firstStory' },
+      { href: '/forums', labelKey: 'nav.together' },
+    ],
+  },
+  {
+    titleKey: 'shell.footer.helpAndLegal',
+    links: [
+      // Help: the CMS help pages and questions (S1-E11-12).
+      { href: '/help', labelKey: 'nav.help' },
+      { href: '/legal/terms', labelKey: 'nav.terms' },
+      { href: '/legal/privacy', labelKey: 'nav.privacy' },
+      { href: '/legal/guidelines', labelKey: 'nav.guidelines' },
+      // The one "Contact us": the form (S1-E14-04).
+      { href: '/contact', labelKey: 'nav.contactUs' },
+      { href: '/report', labelKey: 'nav.reportContent' },
+      { href: '/legal/contact', labelKey: 'nav.contact' },
+      { href: '/legal/accessibility', labelKey: 'nav.accessibility' },
+    ],
+  },
 ];
 
 /** The full top bar from the boards, for the /design page only. */

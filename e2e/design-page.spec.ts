@@ -67,23 +67,27 @@ for (const colorScheme of ['light', 'dark'] as const) {
   }
 }
 
-test('the footer drop-down switches to night mode and the choice survives a reload', async ({
+test('the footer button switches to night mode and the choice survives a reload', async ({
   page,
 }) => {
   await page.goto('/design');
-  await page.getByRole('combobox', { name: 'Mod' }).selectOption('night');
+  await page.getByRole('button', { name: 'Mod de noapte' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
 
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
 });
 
-test('a chosen Light mode wins over a device in dark mode', async ({ page }) => {
+test('turning Night mode off wins over a device in dark mode', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('/design');
-  await page.getByRole('combobox', { name: 'Mod' }).selectOption('light');
+  // The device is dark, so the button starts pressed; a press picks Light for good.
+  const nightMode = page.getByRole('button', { name: 'Mod de noapte' });
+  await expect(nightMode).toHaveAttribute('aria-pressed', 'true');
+  await nightMode.click();
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(nightMode).toHaveAttribute('aria-pressed', 'false');
 });
 
 test('reduce motion removes the entrance animation', async ({ page }) => {

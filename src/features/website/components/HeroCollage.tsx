@@ -124,7 +124,7 @@ function RightsCard({
   const placement = isOverWall ? 'absolute top-0 right-0' : 'relative ml-auto';
   return (
     <div
-      className={`${placement} z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 glass-band-tint rounded-[18px] bg-gold px-4 py-3.5 text-on-gold`}
+      className={`${placement} z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 glass-band-tint rounded-field bg-gold px-4 py-3.5 text-on-gold`}
     >
       {/* The eyebrow's type in the card's dark text: dark gold on gold would be unreadable. */}
       <p className="eyebrow-type m-0">{withBrand(card.eyebrow)}</p>

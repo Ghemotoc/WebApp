@@ -29,7 +29,7 @@ export function ArrivedCoverNote({ story }: ArrivedCoverNoteProps) {
   return (
     <div
       role="status"
-      className="flex items-start gap-4 rounded-[14px] border border-border bg-panel p-4"
+      className="flex items-start gap-4 rounded-field border border-border bg-panel p-4"
     >
       <StoryCoverArt
         story={{ slug: story.slug, coverKind: 'upload' }}

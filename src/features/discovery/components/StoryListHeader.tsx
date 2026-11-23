@@ -111,7 +111,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
   return (
     <header
       className={cn(
-        'genre-band relative flex flex-col gap-5 overflow-hidden rounded-[40px] px-[clamp(24px,4vw,48px)] py-[clamp(28px,4vw,48px)] shadow-card',
+        'genre-band relative flex flex-col gap-5 overflow-hidden rounded-card px-[clamp(24px,4vw,48px)] py-[clamp(28px,4vw,48px)] shadow-card',
         accentDeepBandClasses[bandTone],
       )}
       data-band-tone={bandTone}

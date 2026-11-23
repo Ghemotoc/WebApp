@@ -10,8 +10,17 @@
     "skipToContent": "Sari la conținut",
     "pageTitle": "{{title}} · {{productName}}",
     "mainNavigation": "Principal",
-    "footerNavigation": "Subsol",
     "madeBy": "O aplicație de la {{companyName}}",
+    "footer": {
+      "about": "Un site gratuit pentru a scrie și a citi povești, poezii și eseuri. Scriitorii își păstrează drepturile asupra textelor și nu există reclame care urmăresc cititorii. În română și engleză, începând cu România.",
+      "read": "Citește",
+      "trending": "În tendințe săptămâna aceasta",
+      "search": "Caută povești",
+      "writeAndTalk": "Scrie și discută",
+      "startWriting": "Începe să scrii",
+      "firstStory": "Începe prima poveste",
+      "helpAndLegal": "Ajutor și informații legale"
+    },
     "search": "Caută",
     "searchLabel": "Caută povești, scriitori și în Împreună",
     "back": "Înapoi",
@@ -68,7 +77,8 @@
     "label": "Mod",
     "device": "Ca pe dispozitiv",
     "light": "Luminoasă",
-    "night": "Noapte"
+    "night": "Noapte",
+    "nightMode": "Mod de noapte"
   },
   "language": {
     "label": "Limbă",
@@ -249,15 +259,6 @@
     "threadLine_one": "Pornită de {{name}} · {{count}} răspuns",
     "threadLine_few": "Pornită de {{name}} · {{count}} răspunsuri",
     "threadLine_other": "Pornită de {{name}} · {{count}} de răspunsuri",
-    "footer": {
-      "label": "Despre {{productName}}",
-      "read": "Citește",
-      "writeAndTalk": "Scrie și discută",
-      "helpAndLegal": "Ajutor și informații legale",
-      "newWriters": "Scriitori noi",
-      "startWriting": "Începe să scrii",
-      "firstStory": "Începe prima poveste"
-    },
     "questionsEyebrow": "Întrebări",
     "moreHelp": {
       "lead": "Altceva?",

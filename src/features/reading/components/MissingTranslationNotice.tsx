@@ -93,7 +93,7 @@ export function MissingTranslationNotice({ chapter, missing }: MissingTranslatio
       <ChapterBar chapter={chapter} minutesLeft={null} settings={null} />
       <section
         aria-labelledby="missing-translation-title"
-        className="mx-auto mt-6 flex w-full max-w-[880px] flex-col items-start gap-3.5 rounded-[32px] border border-border bg-surface px-6 py-8 shadow-card sm:px-9"
+        className="mx-auto mt-6 flex w-full max-w-[880px] flex-col items-start gap-3.5 rounded-card border border-border bg-surface px-6 py-8 shadow-card sm:px-9"
       >
         <Eyebrow>
           <span lang={missing.original.languageCode}>

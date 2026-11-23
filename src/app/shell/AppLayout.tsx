@@ -206,7 +206,7 @@ export function AppLayout() {
         {/* "Show when I'm online": a beat a minute, only while switched on (S1-E13-01). */}
         <PresenceHeartbeat />
         <ActiveMinutesCounter />
-        <Footer endSlot={<LanguageSelect id="language-select-footer" isLabelVisible />} />
+        <Footer endSlot={<LanguageSelect id="language-select-footer" />} />
         {/* The floating tab bar, on narrow browse pages only (handoff "App header and tab bar"). */}
         {hasTabBar && <TabBar />}
         {/* "Report a bug" on the right edge, for members while the trial runs (TRIAL-FEEDBACK). */}

@@ -74,7 +74,7 @@ function StoryChatPreview({ story }: { story: SharedStory }) {
   return (
     <div className="flex flex-col gap-2">
       <h3 className="m-0 eyebrow">{t('dialog.previewHeading')}</h3>
-      <div className="flex gap-3 rounded-[14px] border border-border bg-paper p-4">
+      <div className="flex gap-3 rounded-field border border-border bg-paper p-4">
         {/* The preview's picture: a plain square in the cover colour, decorative only. */}
         <span
           aria-hidden="true"

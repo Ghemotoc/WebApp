@@ -23,7 +23,7 @@ export function SentNote({ sent }: { sent: SentNoteKind }) {
       ? t('teacherBadge.linkSent', { email: sent.email })
       : t('teacherBadge.proofSent');
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[16px] bg-tint p-4">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-field bg-tint p-4">
       <TeacherBadgePill isPending />
       <p className="m-0 flex-[1_1_320px] text-[15px] leading-relaxed text-ink">{sentence}</p>
     </div>

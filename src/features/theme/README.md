@@ -12,7 +12,7 @@ Light and night mode, the colour looks members pick, the "Less motion" switch an
 
 How it fits together:
 1. `public/theme-init.js` runs before the page draws and sets `data-theme`, `data-look`, `data-motion` and `data-contrast` on `<html>` from what this device remembers (and, for contrast, from the device's own setting), so there is no white flash, no flash of the default look, nothing sliding in for a member who asked for less motion and no pastel glass for one who needs high contrast.
-2. `src/styles/tokens.css` has the Lilac mist day colours, one block per other look (day only), the monochrome night colours with cobalt buttons and the galaxy background (the same with every look; NIGHT-1) and the staff set, which ignores looks.
+2. `src/styles/tokens.css` has the Lilac mist day colours, one block per other look (day only), the monochrome night colours with cobalt buttons on a flat page (NIGHT-2) (the same with every look; NIGHT-1) and the staff set, which ignores looks.
 3. `src/lib/theme.ts`, `src/lib/looks.ts`, `src/lib/motion.ts` and `src/lib/highContrast.ts` hold the shared logic: modes, the ten looks, the seasonal windows (public setting `seasonal_look_dates`), less motion (`wantsLessMotion()` is true when the switch is on or the device asks), high contrast (the colours are in `src/styles/tokens.css` under `data-contrast="more"`: plain white or black pages, each theme kept as its deep accent) and what the device remembers.
 4. A member who never saved a choice keeps each device's own choice at sign-in (`appearance_saved_at` is empty); once they save, every device they sign in on shows it.
 

@@ -61,7 +61,7 @@ function MessagesCard({ handle }: { handle: string | null }) {
   // On a narrow screen the list gives way to the open chat.
   const listVisibility = handle === null ? 'flex' : 'hidden lg:flex';
   return (
-    <div className="grid min-w-0 grid-cols-1 overflow-hidden rounded-[32px] border border-border bg-surface shadow-card lg:grid-cols-[300px_minmax(0,1fr)_260px]">
+    <div className="grid min-w-0 grid-cols-1 overflow-hidden rounded-card border border-border bg-surface shadow-card lg:grid-cols-[300px_minmax(0,1fr)_260px]">
       <div className={`${listVisibility} min-w-0 flex-col pb-2`}>
         <ChatList openHandle={handle} />
       </div>

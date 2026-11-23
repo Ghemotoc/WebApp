@@ -83,7 +83,7 @@ export function ClassPointsSettingsCard({ slug }: { slug: string }) {
   return (
     <section
       aria-labelledby="class-points-settings-heading"
-      className="flex w-full max-w-[760px] flex-col gap-3 rounded-[28px] border border-border bg-surface p-6"
+      className="flex w-full max-w-[760px] flex-col gap-3 rounded-card border border-border bg-surface p-6"
     >
       <h2
         id="class-points-settings-heading"

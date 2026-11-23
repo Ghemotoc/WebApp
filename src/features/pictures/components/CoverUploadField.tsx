@@ -64,7 +64,7 @@ export function CoverUploadField({ storyId, onUploaded }: CoverUploadFieldProps)
     onUploaded(uploadedPath);
   }, [uploadedPath, onUploaded]);
   return (
-    <div className="flex flex-col gap-4 rounded-[14px] bg-panel p-4 sm:flex-row sm:items-start">
+    <div className="flex flex-col gap-4 rounded-field bg-panel p-4 sm:flex-row sm:items-start">
       {/* The preview has the cover's 4 px corners and hairline edge (the simplified design,
           CALM-1). An <img> can't hold the hairline itself, so a box around it carries it. */}
       {preview !== null && (

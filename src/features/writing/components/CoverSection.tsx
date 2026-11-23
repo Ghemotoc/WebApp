@@ -145,7 +145,7 @@ function AutomaticCoverBox({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <div className="flex flex-col gap-2 rounded-[14px] bg-panel p-4 text-sm text-body">
+    <div className="flex flex-col gap-2 rounded-field bg-panel p-4 text-sm text-body">
       <p className="m-0">{t('cover.automatic.intro')}</p>
       <p className="m-0 text-[13px] text-meta">
         {isAutomatic

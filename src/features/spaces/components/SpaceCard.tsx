@@ -28,13 +28,13 @@ export function SpaceCard({ space }: { space: Space }) {
   const posting = t(space.posting === 'members' ? 'card.postingMembers' : 'card.postingAnyone');
   const members = t('space.members', { count: space.memberCount });
   return (
-    <li className="relative flex flex-col gap-3 rounded-[28px] border border-border bg-surface p-5 shadow-card transition-shadow hover:shadow-lg md:p-6">
+    <li className="relative flex flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card transition-shadow hover:shadow-lg md:p-6">
       <div className="flex items-center gap-3.5">
         <SpaceLogo space={space} size="small" />
         <div className="flex min-w-0 flex-col gap-0.5">
           <Link
             to={`/spaces/${space.slug}`}
-            className="font-heading text-xl leading-tight font-bold break-words text-heading no-underline after:absolute after:inset-0 after:rounded-[28px] hover:underline"
+            className="font-heading text-xl leading-tight font-bold break-words text-heading no-underline after:absolute after:inset-0 after:rounded-card hover:underline"
           >
             {space.name}
           </Link>

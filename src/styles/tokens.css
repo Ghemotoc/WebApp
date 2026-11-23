@@ -4,8 +4,8 @@
  * Where the values come from: the liquid glass design Robert approved on 7 Nov 2026, 19:51 UTC
  * (bundle G1 TOKENS): the handoff doc's "Design tokens and themes" tab and the canvas boards
  * (design/README.md links both). Light is "Lilac mist", the default theme; night is monochrome
- * black, white and grey with cobalt buttons on the "galaxy F" background (bundle NIGHT-1, Robert,
- * 8 Nov 2026), the same whichever theme a member picks. The staff area has its own flat beige set
+ * black, white and grey with cobalt buttons (bundle NIGHT-1, Robert, 8 Nov 2026) on one flat
+ * near-black page since NIGHT-2 (Robert, 22 Nov 2026), the same whichever theme a member picks. The staff area has its own flat beige set
  * by day, with no purple, so staff always know where they are (handoff, Staff tab), and the same
  * flat greys at night.
  *
@@ -83,6 +83,9 @@
   --lg-dark-shadow: 0 1px 2px rgb(20 10 30 / 0.05), 0 24px 56px -20px rgb(20 10 30 / 0.25);
   /* Small pills and tags: no edge light and no shadow. */
   --lg-pill-shadow: 0 0 0 0 transparent;
+  /* Nothing is blurred at night (NIGHT-2): boxes are solid, which is also lighter for weak phones. */
+  --lg-blur: none;
+  --lg-blur-narrow: none;
 
   /* Text. Headings the darkest plum; eyebrows black, never gold (Robert, 7 Nov 2026, 11:48). */
   --ink: #24133a;
@@ -289,114 +292,108 @@
    * v124): monochrome black, white and grey, the same with every theme, for members and staff.
    * Main buttons and switches are cobalt (#0047AB, "to feel like spatial"); links, selected tabs,
    * progress bars, dots and rings are white or grey. Replaces the plum "Revolver" night of 7 Nov.
-   * The page sits on the "galaxy F" background (--night-sky below; index.css, body::before).
+   *
+   * Flat night (NIGHT-2; Robert, 22 Nov 2026, "rebuild the dark mode so it looks nice"; night
+   * design file, kit "NIGHT, REBUILT"): one flat near-black page #0E0E10 with no galaxy, glows or
+   * gradients; depth from four grey steps (page #0E0E10, box #18181B, raised #222226, field
+   * #1D1D21), never from shadows or blur; soft white text (#E8E8EA, muted #B4B4BA) so long
+   * reading doesn't glare; solid boxes with no see-through glass; cobalt only on the main action.
    */
-  --paper: #111113;
-  /* White at 6% over the page: what a glass card looks like (the canvas glass). */
-  --surface: #1f1f21;
-  --surface-glass: rgba(255, 255, 255, 0.06);
-  --tint: #2a2a2d;
-  --panel: #232326;
-  --panel-border: #3a3a3d;
-  --nav-glass: rgba(255, 255, 255, 0.06);
-  /* The glass rim: white at 14%. */
-  --glass-border: rgba(255, 255, 255, 0.14);
-  --lg-rim: rgba(255, 255, 255, 0.14);
+  --paper: #0e0e10;
+  /* The box: solid grey, one step above the page (NIGHT-2). */
+  --surface: #18181b;
+  --surface-glass: #18181b;
+  --tint: #222226;
+  --panel: #18181b;
+  --panel-border: #2f2f34;
+  --nav-glass: #18181b;
+  /* The box edge: a solid grey line (NIGHT-2). */
+  --glass-border: #2a2a2f;
+  --lg-rim: #2a2a2f;
   /* No top edge light at night either (CALM-7a, canvas v47). */
   --glass-highlight: transparent;
-  --field: rgba(255, 255, 255, 0.08);
-  /* The same flat glass at night (CALM-7a): one even fill, no bevel, a soft black drop shadow. */
-  --lg-card-bg: linear-gradient(rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.06));
-  --lg-float-bg: linear-gradient(
-    color-mix(in srgb, var(--surface) 90%, transparent),
-    color-mix(in srgb, var(--surface) 90%, transparent)
-  );
-  --lg-card-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 18px 44px -24px rgb(0 0 0 / 0.55);
-  --lg-card-shadow-hover: 0 1px 2px rgb(0 0 0 / 0.35), 0 24px 56px -20px rgb(0 0 0 / 0.7);
-  --lg-dark-shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 24px 56px -20px rgb(0 0 0 / 0.7);
+  --field: #1d1d21;
+  /* Solid boxes with no shadow at night (NIGHT-2): one even fill, no bevel, no drop shadow. */
+  --lg-card-bg: linear-gradient(#18181b, #18181b);
+  --lg-float-bg: linear-gradient(#18181b, #18181b);
+  --lg-card-shadow: none;
+  --lg-card-shadow-hover: none;
+  --lg-dark-shadow: none;
   --lg-pill-shadow: 0 0 0 0 transparent;
 
-  /* Text #F5F5F5, muted #CCCCCC (night accessibility review, canvas v117), headings white. */
-  --ink: #f5f5f5;
-  --heading: #ffffff;
-  /* Muted text lifted to #D6D6D6 (canvas v38 contrast audit, Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b). */
-  --body: #d6d6d6;
-  --meta: #d6d6d6;
-  --eyebrow: #ffffff;
+  /* Soft white text #E8E8EA, muted #B4B4BA, headings #F7F7F8 (NIGHT-2; all above 7:1 on boxes). */
+  --ink: #e8e8ea;
+  --heading: #f7f7f8;
+  --body: #b4b4ba;
+  --meta: #b4b4ba;
+  --eyebrow: #f7f7f8;
   /* Links are white; in running text they keep their underline, so colour is never the only cue. */
-  --link: #ffffff;
-  --link-hover: #cccccc;
+  --link: #f7f7f8;
+  --link-hover: #ffffff;
   --destructive: #ff9aa8;
 
   /* "Gold" fills (count badges, the current step, unread dots, the switch knob) are white. */
   --gold: #f5f5f5;
-  --on-gold: #111113;
+  --on-gold: #0e0e10;
   /* Solid fills (selected tabs and section links, carousel dots, progress and chart bars, your own
      chat bubbles) are white with near-black on them (canvas v117: "white or grey"). */
-  --primary: #f5f5f5;
-  --on-primary: #111113;
+  --primary: #f2f2f3;
+  --on-primary: #0e0e10;
   /* A chip or tab that is on: white with near-black text. */
-  --chip-on: #f5f5f5;
-  --chip-on-text: #111113;
-  /* Accent text, such as the current chapter's dot (canvas v117). */
-  --accent: #5b95ee;
-  --accent-deep: #111113;
+  --chip-on: #f2f2f3;
+  --chip-on-text: #0e0e10;
+  /* Accent text, such as the current chapter's dot: a light cobalt (NIGHT-2). */
+  --accent: #8fb4f5;
+  --accent-deep: #0e0e10;
   /* The logo and wordmark are soft white at night (Robert, 7 Nov 2026, 19:36). */
-  --logo: #f5f5f5;
+  --logo: #f2f2f3;
   /* Main buttons: flat cobalt #0047AB, a lighter cobalt on hover, with white labels (the
      simplified design, Robert, 20 Nov 2026; both ends one colour, CALM-1). The white label reads
-     at 8.4:1, and 5.9:1 on hover. The 35% white rim stays until CALM-2 takes the rim and sheen off
-     every main button. */
+     at 8.4:1, and 6.4:1 on the #1A5BC4 hover (NIGHT-2). */
   --plum-from: #0047ab;
   --plum-to: #0047ab;
   --on-plum: #ffffff;
-  --plum-hover-from: #2663b8;
-  --plum-hover-to: #2663b8;
+  --plum-hover-from: #1a5bc4;
+  --plum-hover-to: #1a5bc4;
   --track: rgba(0, 0, 0, 0.35);
   /* The selected segment's knob: white glass at 22% (canvas v117). */
   --bubble: rgba(255, 255, 255, 0.22);
   --tab-current: var(--ink);
   /* The thread is white at night (the simplified design; the day block explains it). */
-  --thread: #f5f5f5;
+  --thread: #e8e8ea;
   --strength-weak: #ff9aa8;
   --strength-fair: #ffd36a;
   --strength-strong: #8fe0b5;
   --strength-very-strong: #3fcf8a;
 
-  /* Lines are white at 16%; field and chip edges stay at 3:1 or more (WCAG 2.2, 1.4.11). */
-  --border: #3a3a3d;
-  --hairline: #2a2a2d;
-  /* #A3A3A8 since CALM-1b (canvas v38). */
-  --control-border: #a3a3a8;
+  /* Lines are solid greys; field and chip edges stay at 3:1 or more (WCAG 2.2, 1.4.11). */
+  --border: #2f2f34;
+  --hairline: #232327;
+  /* #8E8E96 since NIGHT-2: 5.7:1 on a box. */
+  --control-border: #8e8e96;
   /* A pressed quiet button (Following) at night: a near-white fill with dark text, because a
      cobalt fill would look like the main button (canvas v38; CALM-1b). */
-  --quiet-pressed-bg: #f5f5f5;
+  --quiet-pressed-bg: #f2f2f3;
   --quiet-pressed-hover: #ffffff;
-  --quiet-pressed-text: #111113;
-  /* The box surface at night keeps the dark glass: near-black at 84% with a white edge at 18%
-     (CALM-1c; canvas v40). */
-  --surface-box: rgba(24, 26, 32, 0.84);
-  --surface-box-solid: #181a20;
-  --line-box: rgba(255, 255, 255, 0.18);
-  --dashed-border: #6e6e72;
+  --quiet-pressed-text: #0e0e10;
+  /* The box surface at night: solid #18181B with a #2A2A2F edge (NIGHT-2; was dark glass). */
+  --surface-box: #18181b;
+  --surface-box-solid: #18181b;
+  --line-box: #2a2a2f;
+  --dashed-border: #5c5c63;
   --focus-ring: #ffffff;
-  --focus-halo: rgba(17, 17, 19, 0.9);
+  --focus-halo: rgba(14, 14, 16, 0.9);
 
-  /* The day blobs are not drawn at night (the galaxy replaces them); greys for anything that
-     still reads them. */
-  --blob-1: #1c1c20;
-  --blob-2: #18181c;
-  --blob-3: #1e1e22;
-  /*
-   * The night background, in one variable so swapping it is a one-line change (Robert, 8 Nov 2026,
-   * 12:18 and 12:33 UTC): "galaxy F", two vector SVGs of soft glows drawn by us (no photo, no
-   * licence), static, sharp at any size. Phones and tablets under 1024 px get the portrait one.
-   */
-  --night-sky: #111113 url('/night-galaxy-desktop.svg') center / cover no-repeat;
+  /* No blobs and no galaxy at night (NIGHT-2): the page is one flat colour. --night-sky stays a
+     variable so index.css keeps one place to paint the night page. */
+  --blob-1: #0e0e10;
+  --blob-2: #0e0e10;
+  --blob-3: #0e0e10;
+  --night-sky: #0e0e10;
 
-  /* Dark reading paper with light text (canvas v117). */
-  --story-paper: #1a1a1c;
-  --story-ink: #ededed;
+  /* Dark reading paper with light text (NIGHT-2). */
+  --story-paper: #141416;
+  --story-ink: #e6e6e6;
 
   /* The cover hairline is white at night, so a dark cover keeps its shape on the night page. */
   --cover-edge: rgba(255, 255, 255, 0.16);
@@ -408,10 +405,10 @@
   --success-bg: #1d3a2e;
   --success-border: #4f8a6c;
   --success-text: #8fe0b5;
-  /* Info notices, and the shared-passage tint in the reader: white at 12% (canvas v117). */
-  --info-bg: #2e2e30;
-  --info-border: #5a5a5e;
-  --info-text: #f5f5f5;
+  /* Info notices, and the shared-passage tint in the reader: a raised grey (NIGHT-2). */
+  --info-bg: #1f1f23;
+  --info-border: #3a3a40;
+  --info-text: #e8e8ea;
   --warning-bg: #3f2c14;
   --warning-border: #8a6a33;
   --warning-text: #ffc98a;
@@ -444,22 +441,23 @@
   /* Genre bands at night: plum and the neutral indigo turn grey (no plum at night); the other
      hues are already deep, so a genre keeps its colour, as its pill does (G7c). */
   --band-text: #ffffff;
-  --band-plum-from: #3a3a3e;
-  --band-plum-to: #18181a;
+  /* Plum and neutral bands are one quiet box at night, with no gradient (NIGHT-2). */
+  --band-plum-from: #18181b;
+  --band-plum-to: #18181b;
   --band-sage-from: #005c42;
   --band-sage-to: #003728;
   --band-gold-from: #7a5600;
   --band-gold-to: #4a3400;
   --band-sky-from: #0047ab;
   --band-sky-to: #002b67;
-  --band-neutral-from: #333337;
-  --band-neutral-to: #141416;
+  --band-neutral-from: #18181b;
+  --band-neutral-to: #18181b;
   --band-blush-from: #b11226;
   --band-blush-to: #6a010e;
 
-  --shadow-nav: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px -12px rgba(0, 0, 0, 0.55);
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 18px 44px -24px rgba(0, 0, 0, 0.55);
-  --shadow-popover: 0 1px 2px rgba(0, 0, 0, 0.35), 0 24px 56px -20px rgba(0, 0, 0, 0.7);
+  --shadow-nav: none;
+  --shadow-card: none;
+  --shadow-popover: 0 0 0 1px #2f2f34;
 
   /* Story Atlas relationship lines (S1-E17-15), light on night cards; family is white. */
   --atlas-line-family: #f5f5f5;
@@ -470,8 +468,7 @@
   --atlas-line-other: #c6d0da;
 
   /* Ink on a white or light patch that stays light at night (the QR square, a pale swatch), and
-     the category dots, kept as they were by day (CALM-7a). The member night colours wait for
-     DESIGN's new night (Robert, 22 Nov 2026, 05:57 UTC), so these don't change yet. */
+     the category dots, kept as they were by day (CALM-7a). */
   --ink-on-white: #1d1a20;
   --ink-on-light: #2a0e33;
   --category-fiction: #4d1b5e;
@@ -479,28 +476,14 @@
   --category-essays: #2f6b4f;
 }
 
-/* Phones, tablets and any window under 1024 px: the softer portrait galaxy (canvas v123). */
-@media (max-width: 1023px) {
-  [data-theme='night'] {
-    --night-sky: #111113 url('/night-galaxy-mobile.svg') center / cover no-repeat;
-  }
-}
-
 /*
- * The phone browser's own bars at night (Robert, 20 Nov 2026, 16:04 UTC, screenshot: the status
- * bar and the toolbar showed black over the night sky). The galaxy is dark blue at its edges, not
- * the #111113 under it, so the bars (src/lib/browserBarColour.ts, public/theme-init.js) and the
- * page colour on <html> (index.css, seen when a phone over-scrolls) take the sky's own edge
- * colour: the average of the top 30 px of each galaxy picture, measured at 1440 x 900 and
- * 390 x 844. Every other look has no --browser-bar and the bars keep --paper.
+ * The phone browser's own bars at night (Robert, 20 Nov 2026, 16:04 UTC): the bars
+ * (src/lib/browserBarColour.ts, public/theme-init.js) and the page colour on <html> (index.css,
+ * seen when a phone over-scrolls) take the flat night page colour, so nothing shows a seam.
+ * Every other look has no --browser-bar and the bars keep --paper.
  */
 [data-theme='night'] {
-  --browser-bar: #0e1538;
-}
-@media (max-width: 1023px) {
-  [data-theme='night'] {
-    --browser-bar: #1d244f;
-  }
+  --browser-bar: #0e0e10;
 }
 
 /*

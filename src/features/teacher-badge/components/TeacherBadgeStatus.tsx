@@ -61,7 +61,7 @@ export function TeacherBadgeStatus({ teacherCheck }: { teacherCheck: MyTeacherCh
   const line = useStatusLine(teacherCheck);
   if (line === null) return null;
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[16px] bg-tint p-4">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-field bg-tint p-4">
       {line.pill !== null && <TeacherBadgePill isPending={line.pill === 'pending'} />}
       <p className="m-0 flex-[1_1_320px] text-[15px] leading-relaxed text-ink">{line.text}</p>
     </div>

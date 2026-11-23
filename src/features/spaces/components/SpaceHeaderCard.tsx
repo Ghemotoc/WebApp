@@ -122,7 +122,7 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
   return (
     <section
       aria-labelledby="space-title"
-      className="relative overflow-hidden rounded-[40px] border border-border bg-surface shadow-card"
+      className="relative overflow-hidden rounded-card border border-border bg-surface shadow-card"
     >
       <div className="relative">
         <SpaceBannerBand banner={space.banner} pictureUrl={pictureUrl} />

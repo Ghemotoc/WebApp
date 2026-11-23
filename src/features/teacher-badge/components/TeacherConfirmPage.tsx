@@ -99,7 +99,7 @@ export function TeacherConfirmPage() {
       <title>{t('teacherBadge.confirm.documentTitle')}</title>
       <section
         aria-labelledby="teacher-confirm-heading"
-        className="flex w-full max-w-[640px] flex-col gap-6 rounded-[40px] border border-border bg-surface p-6 shadow-card md:p-10"
+        className="flex w-full max-w-[640px] flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card md:p-10"
       >
         {state !== 'checking' && <OutcomeIcon isGood={isGood} />}
         {/* The heading and the line change once the link is checked, so they are read out. */}

@@ -60,7 +60,7 @@ function SentNotice({ reference }: { reference: string }) {
 function DecisionNote({ reference }: { reference: string }) {
   const { t } = useMailTranslation();
   return (
-    <p className="m-0 flex items-start gap-2 rounded-[16px] border border-border bg-panel px-4 py-3 text-sm text-body">
+    <p className="m-0 flex items-start gap-2 rounded-field border border-border bg-panel px-4 py-3 text-sm text-body">
       <ActionIcon name="info" size={16} className="mt-0.5 shrink-0" />
       <span>{t('new.about', { reference })}</span>
     </p>
@@ -90,7 +90,7 @@ function NewMailForm({ decision }: { decision: string | null }) {
     <form
       noValidate
       onSubmit={handleSubmit}
-      className="flex max-w-[760px] flex-col gap-5 rounded-[28px] border border-border bg-surface p-5 shadow-card md:p-7"
+      className="flex max-w-[760px] flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-card md:p-7"
     >
       {decision !== null && <DecisionNote reference={decision} />}
       <TextInput

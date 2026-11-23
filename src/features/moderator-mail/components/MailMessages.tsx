@@ -60,7 +60,7 @@ function MemberMessageItem({ message }: { message: MailMessage }) {
   return (
     <li className={`flex flex-col gap-1 ${sideStyle}`}>
       <p
-        className={`m-0 max-w-[min(560px,85%)] rounded-[18px] px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
+        className={`m-0 max-w-[min(560px,85%)] rounded-field px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
       >
         {message.body}
       </p>

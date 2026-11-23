@@ -71,7 +71,7 @@ export function SketchPadCanvas(props: SketchPadCanvasProps) {
         onKeyDown={props.onKeyDown}
         onFocus={() => setHasFocus(true)}
         onBlur={() => setHasFocus(false)}
-        className="relative rounded-[16px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+        className="relative rounded-field focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
       >
         <canvas
           ref={canvasRef}
@@ -79,7 +79,7 @@ export function SketchPadCanvas(props: SketchPadCanvasProps) {
           height={SKETCH_HEIGHT}
           aria-hidden="true"
           {...props.pointerHandlers}
-          className="block aspect-[8/3] w-full cursor-crosshair touch-none rounded-[16px] border border-border bg-surface"
+          className="block aspect-[8/3] w-full cursor-crosshair touch-none rounded-field border border-border bg-surface"
         />
         {hasFocus && (
           <span
