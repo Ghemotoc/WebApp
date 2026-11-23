@@ -6,7 +6,7 @@
  * same four addresses every few minutes and alerts the on-call phone; this script is the written
  * definition of "up" for each of them, so the monitor's settings can be checked against it, and
  * anyone can run it by hand after a deploy:
- *   SITE_URL=https://ghemotoc.themagiccoffin.com STORY_SLUG=<a public story> npx tsx scripts/ops/check-uptime.ts
+ *   SITE_URL=https://ghemotoc.tech STORY_SLUG=<a public story> npx tsx scripts/ops/check-uptime.ts
  * Who calls it: a person after a deploy or during an incident; its tests (check-uptime.test.ts).
  * What it calls: fetch, read-only. It never posts to the notice form (that would open a real case):
  * a GET answered 405 proves the function is deployed and answering, and the monthly end-to-end test
