@@ -170,8 +170,11 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     const story = await request.get(`/s/${slug}`);
     const storyHtml = await story.text();
     expect(story.headers()['x-robots-tag']).toBeUndefined();
-    expect(storyHtml).toContain('"@type":"CreativeWork"');
-    expect(storyHtml).toContain('"author":{"@type":"Person","name":"Lia Scrie"}');
+    // A story in a story category is a Book; the writer links to their profile (CALM-9s).
+    expect(storyHtml).toContain('"@type":"Book"');
+    expect(storyHtml).toMatch(
+      /"author":\{"@type":"Person","name":"Lia Scrie","url":"[^"]+\/u\/[^"]+"\}/,
+    );
     expect(storyHtml).not.toContain('Vântul bate');
     // A 16+ story: the same details as any story, never its rating (S1-E11-36).
     rateStory('16_plus');
