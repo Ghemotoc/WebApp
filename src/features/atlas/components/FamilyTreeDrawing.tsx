@@ -68,7 +68,9 @@ function TreeCards({
           >
             {/* Long words stay inside the card: one line each, cut with an ellipsis. The link
                 still reads the whole name and line. */}
-            <span className="truncate type-body font-semibold text-ink-heading">{words.nameOf(box.id)}</span>
+            <span className="truncate type-body font-semibold text-ink-heading">
+              {words.nameOf(box.id)}
+            </span>
             <span className="truncate type-meta text-ink-muted">{lineOf(box.id)}</span>
           </MaybeLink>
         </li>
