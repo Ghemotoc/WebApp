@@ -51,8 +51,8 @@ select is(public.get_link_preview('statia-meteo-seed01', 'epice4aa') -> 'chapter
   'the link preview names the chapter');
 select is(public.get_link_preview('statia-meteo-seed01', 'epice4aa') -> 'writer' ->> 'display_name', 'Lia Scrie',
   'and the pen name');
-select is(pg_temp.words(public.get_chapter('statia-meteo-seed01', 'epice4aa') ->> 'body'), 550,
-  'the visitor reads whole paragraphs up to 600 words');
+select is(pg_temp.words(public.get_chapter('statia-meteo-seed01', 'epice4aa') ->> 'body'), 150,
+  'the visitor reads only the first 150 words (TRIAL-WALL)');
 select ok((public.get_chapter('statia-meteo-seed01', 'epice4aa') ->> 'body') not like '%ultimul%',
   'and never the rest of the chapter');
 select is(public.get_chapter('statia-meteo-seed01', 'epice4aa') ->> 'next_code', 'epice4bb',

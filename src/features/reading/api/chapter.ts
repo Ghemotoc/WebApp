@@ -6,7 +6,7 @@
  * chapter's text. It answers nothing when the reader may not see the chapter: unpublished,
  * deleted, hidden by a moderator, rated above the reader's age or by someone either side blocks.
  * It never carries the user ID. A signed-out visitor gets only the teaser: the first whole
- * paragraphs up to 600 words, cut on the server (S1-E4-04). The pictures in the text come with
+ * paragraphs up to 150 words and at most half the chapter (TRIAL-WALL), cut on the server (S1-E4-04). The pictures in the text come with
  * it, each with its check state (S1-E3-09); their files are read through signed addresses. So
  * do the music and video cards, each with its service and what to play (S1-E3-10).
  * record_chapter_read(story_slug, chapter_code) adds one to today's total, never who read

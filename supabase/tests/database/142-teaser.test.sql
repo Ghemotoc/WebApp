@@ -1,8 +1,8 @@
 -- Database tests for the web teaser and link previews (story S1-E4-04).
 -- What it proves:
--- - teaser_length is a public setting of 600 words (decided 23 Oct 2026);
+-- - teaser_length is a public setting of 150 words (TRIAL-WALL, 23 Nov 2026; 600 from 23 Oct);
 -- - teaser_of() keeps whole paragraphs up to the limit, cuts a too-long first paragraph at the
---   limit with "…", returns a short chapter whole and skips empty blocks;
+--   limit with "…", never returns more than half a chapter (TRIAL-WALL) and skips empty blocks;
 -- - a signed-out visitor gets only the teaser from get_chapter() on All ages and 13+ stories,
 --   never the rest of the text, and nothing on 16+ and 18+ (they count as under 16, Q6); a
 --   signed-in reader still gets the whole chapter;
@@ -50,38 +50,40 @@ update public.stories set first_published_at = now(), blurb = 'O stație meteo p
 where id in ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-9000-000000000003');
 
 -- 1. The setting.
-select is((select value #>> '{}' from public.settings where key = 'teaser_length'), '600',
-  'the teaser is 600 words (decided 23 Oct 2026)');
+select is((select value #>> '{}' from public.settings where key = 'teaser_length'), '150',
+  'the teaser is 150 words (TRIAL-WALL, 23 Nov 2026)');
 select ok((select is_public from public.settings where key = 'teaser_length'), 'and the setting is public');
 
 -- 2. teaser_of() on its own.
-select is(public.word_total(public.teaser_of(pg_temp.long_body(), 600)), 550,
+-- The long chapter has 650 words, so half of it (325) is more than these limits.
+select is(public.word_total(public.teaser_of(pg_temp.long_body() || E'\n\n' || repeat('coda ', 500), 600)), 550,
   'whole paragraphs up to 600 words: 300 + 250, not the third');
-select ok(public.teaser_of(pg_temp.long_body(), 600) not like '%ultimul%', 'the paragraph that doesn''t fit is left out');
-select ok(public.teaser_of(pg_temp.long_body(), 600) like '%unu' || E'\n\n' || 'doi%',
+select ok(public.teaser_of(pg_temp.long_body(), 320) not like '%doi%', 'the paragraph that doesn''t fit is left out');
+select ok(public.teaser_of(pg_temp.long_body() || E'\n\n' || repeat('coda ', 500), 600) like '%unu' || E'\n\n' || 'doi%',
   'the paragraphs keep their blank line between them');
-select is(public.teaser_of(repeat('lung ', 700), 600), repeat('lung ', 599) || 'lung…',
+select is(public.teaser_of(repeat('lung ', 1400), 600), repeat('lung ', 599) || 'lung…',
   'a first paragraph longer than the limit is cut at 600 words with "…"');
-select is(public.teaser_of('Un capitol scurt.', 600), 'Un capitol scurt.', 'a short chapter comes back whole');
-select is(public.teaser_of(E'Unu.\n\n\n\nDoi.', 600), E'Unu.\n\nDoi.', 'empty blocks are skipped');
+select is(public.teaser_of('Un capitol scurt.', 600), 'Un…',
+  'a short chapter is never sent whole: the preview stops at half of it (TRIAL-WALL)');
+select is(public.teaser_of(E'Unu.\n\n\n\nDoi.\n\nTrei patru.', 600), E'Unu.\n\nDoi.', 'empty blocks are skipped');
 select is(public.teaser_of(null, 600), '', 'an empty chapter gives an empty teaser');
 
 -- 3. A signed-out visitor on an All ages story.
 select pg_temp.sign_out();
 select is(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'is_teaser', 'true', 'a visitor gets the teaser');
-select is(pg_temp.words(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'body'), 550,
-  'of at most 600 words, in whole paragraphs');
+select is(pg_temp.words(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'body'), 150,
+  'of 150 words, the first paragraph cut at the limit');
 select ok((public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'body') not like '%ultimul%',
   'the rest of the text never reaches a signed-out browser');
 select is(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'text_continues', 'true',
   'and the answer says the chapter goes on');
 select is(public.get_chapter('statia-meteo-seed01', 'teasera1') ->> 'minutes_to_read', '4',
   'the minutes to read are for the whole chapter (650 words)');
-select is(public.get_chapter('statia-meteo-seed01', 'teaserb2') ->> 'text_continues', 'false',
-  'a chapter shorter than the teaser doesn''t go on');
+select is(public.get_chapter('statia-meteo-seed01', 'teaserb2') ->> 'text_continues', 'true',
+  'a chapter shorter than the teaser still goes on after the preview (TRIAL-WALL)');
 
 -- 4. A signed-out visitor on a 13+ story: the teaser too (13+ is open to visitors, Q6).
-select is(public.get_chapter('scrisori-din-cutia-postala-seed03', 'teaserd4') ->> 'body', 'Dragă bunico, salut.',
+select is(public.get_chapter('scrisori-din-cutia-postala-seed03', 'teaserd4') ->> 'body', 'Dragă…',
   'a visitor gets the teaser of a 13+ story');
 
 -- 5. A signed-in reader still reads the whole chapter.

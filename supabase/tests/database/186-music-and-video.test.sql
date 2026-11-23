@@ -145,6 +145,11 @@ select is(
   'a reader gets the card''s service, what to play and its title');
 select is(public.my_embeds(array[(select id from named where label = 'video')]), '{}'::jsonb,
   'my_embeds tells nobody about another person''s cards');
+-- TRIAL-WALL: a visitor's preview stops at half a chapter, so a longer last paragraph keeps the
+-- pictures and cards in the first half, where the teaser shows them.
+reset role;
+update public.chapters set published_body = published_body || E'\n\n' || repeat('vreme ', 60)
+where code = 't186film';
 select pg_temp.sign_out();
 select is(
   public.get_chapter('statia-meteo-seed01', 't186film') #>> array['embeds', (select id::text from named where label = 'song'), 'service'],

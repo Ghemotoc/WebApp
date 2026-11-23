@@ -178,6 +178,11 @@ select is((select count(*)::integer from storage.objects
 select is(public.my_picture_states(array[(select id from named where label = 'clean')]), '{}'::jsonb,
   'my_picture_states tells nobody about another person''s pictures');
 
+-- TRIAL-WALL: a visitor's preview stops at half a chapter, so a longer last paragraph keeps the
+-- pictures and cards in the first half, where the teaser shows them.
+reset role;
+update public.chapters set published_body = published_body || E'\n\n' || repeat('vreme ', 60)
+where code = 't185pics';
 select pg_temp.sign_out();
 select is(
   public.get_chapter('statia-meteo-seed01', 't185pics') #>> array['pictures', (select id::text from named where label = 'clean'), 'state'],
