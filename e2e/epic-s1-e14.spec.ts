@@ -28,7 +28,7 @@ const documentTabs = [
 
 /** Walks the five tabs, checking each document opens and no cookie appears. */
 async function walkTheLegalCentre(page: Page): Promise<void> {
-  await page.getByRole('contentinfo').getByRole('link', { name: 'Terms' }).click();
+  await page.getByRole('contentinfo').getByRole('link', { name: 'Legal', exact: true }).click();
   const tabs = page.getByRole('navigation', { name: 'Legal documents' });
   for (const tab of documentTabs) {
     await tabs.getByRole('link', { name: tab, exact: true }).click();

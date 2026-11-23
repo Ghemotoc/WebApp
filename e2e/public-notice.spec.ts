@@ -79,7 +79,10 @@ test.describe('public report form (S1-E10-02)', () => {
   }) => {
     await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
     await page.goto('/');
-    await page.getByRole('contentinfo').getByRole('link', { name: 'Report content' }).click();
+    await page
+      .getByRole('contentinfo')
+      .getByRole('link', { name: 'Report without an account' })
+      .click();
     await expect(page).toHaveURL(/\/report$/);
 
     const form = page.getByRole('form', { name: 'Report' });

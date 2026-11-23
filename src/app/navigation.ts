@@ -42,20 +42,23 @@ export interface FooterColumn {
 }
 
 /**
- * The footer's three columns, as every page's footer is drawn in the design files (NIGHT-2;
- * Robert, 23 Nov 2026: "the footer hasn't been updated"): Read, Write and talk, Help and legal.
- * The design's "About the apps", "For teachers" and "For partners" wait for their pages; search
- * is left out because the top bar always has it.
- * Help and legal keeps every legal link the app had in its single footer row, because each must be
- * one tap from every page: Report content (S1-E10-02; DSA art. 16), the company and legal contacts
- * (S1-E14-02; DSA arts. 11 and 12) and the accessibility statement (S1-E14-03).
+ * The footer's three columns, exactly as every page's footer is drawn in the design files (NIGHT-2;
+ * Robert, 23 Nov 2026: "the footer hasn't been updated", then "fix the footer" on his approved
+ * canvas comments of 23 Nov 2026): Read, Write and talk (with Join a class), Help and legal.
+ * Only links whose page exists are listed: the design's "About the apps", "For teachers" and
+ * "For partners" wait for their pages (the partners link would only repeat Contact us).
+ * "Legal" opens the Legal centre, whose document row reaches the terms, the privacy notice, the
+ * company and legal contacts (S1-E14-02; DSA arts. 11 and 12) and the accessibility statement
+ * (S1-E14-03) in one more tap; "Report without an account" is the one report form (S1-E10-02;
+ * DSA art. 16).
  */
 export const footerColumns: FooterColumn[] = [
   {
     titleKey: 'shell.footer.read',
     links: [
-      { href: '/discover', labelKey: 'shell.footer.trending' },
-      { href: '/library', labelKey: 'nav.library' },
+      // The Discover shelves' See all pages (S1-E5-09): Trending and New writers ("rising").
+      { href: '/discover/all/popular', labelKey: 'shell.footer.trending' },
+      { href: '/discover/all/rising', labelKey: 'shell.footer.newWriters' },
     ],
   },
   {
@@ -64,6 +67,8 @@ export const footerColumns: FooterColumn[] = [
       { href: '/write', labelKey: 'shell.footer.startWriting' },
       { href: '/write/new', labelKey: 'shell.footer.firstStory' },
       { href: '/forums', labelKey: 'nav.together' },
+      // Joining a class with the teacher's code (S1-E8-11).
+      { href: '/class', labelKey: 'shell.footer.joinClass' },
     ],
   },
   {
@@ -71,14 +76,11 @@ export const footerColumns: FooterColumn[] = [
     links: [
       // Help: the CMS help pages and questions (S1-E11-12).
       { href: '/help', labelKey: 'nav.help' },
-      { href: '/legal/terms', labelKey: 'nav.terms' },
-      { href: '/legal/privacy', labelKey: 'nav.privacy' },
+      { href: '/legal/terms', labelKey: 'shell.footer.legal' },
       { href: '/legal/guidelines', labelKey: 'nav.guidelines' },
       // The one "Contact us": the form (S1-E14-04).
       { href: '/contact', labelKey: 'nav.contactUs' },
-      { href: '/report', labelKey: 'nav.reportContent' },
-      { href: '/legal/contact', labelKey: 'nav.contact' },
-      { href: '/legal/accessibility', labelKey: 'nav.accessibility' },
+      { href: '/report', labelKey: 'shell.footer.reportWithoutAccount' },
     ],
   },
 ];
