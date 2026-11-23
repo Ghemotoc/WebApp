@@ -50,13 +50,20 @@ function keepInView(item: HTMLElement): () => void {
  * Scrolls to the item once it exists.
  *
  * @param isReady - true once the page has drawn its items
+ * @param onlyId - when given, the hook acts only for an address naming this id. A block that
+ *   sits inside a bigger page (the stories block inside Settings › Download data) passes its own
+ *   id, so a link to the page's other anchors (#download-my-data) is left to the page: centring a
+ *   whole group taller than the screen would hide its top and its main button.
  */
-export function useScrollToHash(isReady: boolean): void {
+export function useScrollToHash(isReady: boolean, onlyId?: string): void {
   const { hash } = useLocation();
   useEffect(() => {
     // Nothing to do before the items are drawn, or when the address names none.
     if (!isReady || hash.length < 2) return;
-    const item = document.getElementById(decodeURIComponent(hash.slice(1)));
+    const id = decodeURIComponent(hash.slice(1));
+    // A block that owns one anchor leaves every other address to its page.
+    if (onlyId !== undefined && id !== onlyId) return;
+    const item = document.getElementById(id);
     if (item === null) return;
     return keepInView(item);
   }, [isReady, hash]);

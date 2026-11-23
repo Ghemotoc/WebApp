@@ -110,13 +110,13 @@ test('headings, body, eyebrows and handwriting use the fonts from the DoD', asyn
 
   expect((await fontOf('h1')).fontFamily).toContain('Funnel Display');
   expect((await fontOf('body')).fontFamily).toContain('Inter');
-  // Eyebrows: Inter Bold, 11 px, capitals, 0.18em, black (the liquid glass design, 7 Nov 2026).
+  // Eyebrows: Inter Semibold 600, 12 px, capitals, 0.18em (resized by the design books, 23 Nov 2026).
   const eyebrow = await fontOf('[data-testid="type-samples"] p.eyebrow');
   expect(eyebrow.fontFamily).toContain('Inter');
-  expect(eyebrow.fontSize).toBe('11px');
-  expect(eyebrow.fontWeight).toBe('700');
+  expect(eyebrow.fontSize).toBe('12px');
+  expect(eyebrow.fontWeight).toBe('600');
   expect(eyebrow.textTransform).toBe('uppercase');
-  expect(eyebrow.letterSpacing).toBe('1.98px');
+  expect(eyebrow.letterSpacing).toBe('2.16px');
   expect((await fontOf('[data-testid="type-samples"] p.font-hand')).fontFamily).toContain(
     'Playwrite CU',
   );
