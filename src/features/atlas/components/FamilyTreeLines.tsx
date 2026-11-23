@@ -1,126 +1,56 @@
 /**
- * FamilyTreeLines: the family tree's lines and the legend that names them (story S1-E17-16;
- * bundle G10 ATLAS, part b2, board AtlasFamilyTree; moved out of FamilyTreeView in GAPS-3 to keep
- * that file short).
+ * FamilyTreeLines: the family tree's lines (story S1-E17-16; CALM-9, board E26: "lines 2 px in
+ * the muted ink colour").
  *
- * Each kind of line has its own style, so meaning never rests on colour alone: parent solid
- * (maker dotted, in the lineage colour), sibling dashed, partner double, cousin dotted. The lines
- * are drawing only and hidden from screen readers, which get the generations as a list.
- * Who uses it: FamilyTreeView. What it calls: lib/relationshipCategories.ts for the colours.
+ * Partners are joined by a straight line at mid-height, children hang from the middle of it,
+ * and brothers and sisters share a dashed bracket over their cards. A maker's line ("turned or
+ * made") and a cousin's curve are dotted, so they read apart from birth lines by their shape, not
+ * by colour. The lines are drawing only and hidden from screen readers, which get the
+ * generations as a list.
+ * Who uses it: FamilyTreeView. What it calls: nothing; the paths come from
+ * lib/familyTreeLayout.ts.
  */
-import type { TreeLayout } from '../lib/familyTreeLayout';
-import { lineStyleOf } from '../lib/relationshipCategories';
-import { useAtlasTranslation } from '../registerAtlasTranslations';
+import type { TreeLayout, TreePath } from '../lib/familyTreeLayout';
 
-/** How each kind of family line is drawn (G10b2, board AtlasFamilyTree's legend). */
-const treeLines = {
-  sibling: '7 5',
-  cousin: '1 6',
-} as const;
+/** The dash patterns: the sibling bracket (board E26: 4 5) and the dotted maker and cousin lines. */
+const bracketDashes = '4 5';
+const dottedDashes = '1 5';
 
-/** The tree's lines: parent solid (maker dotted in the lineage colour), partner double,
- * sibling dashed, cousin dotted. */
-export function TreeLines({ layout, madeKeys }: { layout: TreeLayout; madeKeys: Set<string> }) {
-  // The tree draws in the categories' default colours; E26 redraws it (CALM-9).
-  const family = lineStyleOf('family', {});
-  const lineage = lineStyleOf('lineage', {});
+/** One set of paths, all in the same style. */
+function PathSet({ paths, dashes }: { paths: TreePath[]; dashes?: string }) {
+  return (
+    <>
+      {paths.map(({ key, path }) => (
+        <path key={key} d={path} strokeDasharray={dashes} />
+      ))}
+    </>
+  );
+}
+
+/**
+ * Draws every line of the tree in the muted ink colour, 2 px wide with round ends.
+ *
+ * @param props.layout - the laid-out tree
+ * @returns an SVG under the cards, hidden from screen readers
+ */
+export function TreeLines({ layout }: { layout: TreeLayout }) {
   return (
     <svg
       aria-hidden="true"
       width={layout.width}
       height={layout.height}
-      className="pointer-events-none absolute inset-0"
+      className="pointer-events-none absolute inset-0 overflow-visible"
+      fill="none"
+      stroke="var(--meta)"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      {layout.parentPaths.map(({ key, path }) => {
-        const style = madeKeys.has(key) ? lineage : family;
-        return (
-          <path
-            key={key}
-            d={path}
-            fill="none"
-            stroke={style.colour}
-            strokeWidth={style.width}
-            strokeDasharray={style.dashes}
-          />
-        );
-      })}
-      {/* A double line: a wide stroke with a thin gap of the card's colour along its middle. */}
-      {layout.partnerPaths.map(({ key, path }) => (
-        <g key={key}>
-          <path d={path} fill="none" stroke={family.colour} strokeWidth={7} />
-          <path d={path} fill="none" stroke="var(--surface)" strokeWidth={2.5} />
-        </g>
-      ))}
-      {layout.siblingPaths.map(({ key, path }) => (
-        <path
-          key={key}
-          d={path}
-          fill="none"
-          stroke={family.colour}
-          strokeWidth={2.5}
-          strokeDasharray={treeLines.sibling}
-        />
-      ))}
-      {layout.cousinPaths.map(({ key, path }) => (
-        <path
-          key={key}
-          d={path}
-          fill="none"
-          stroke={family.colour}
-          strokeWidth={3}
-          strokeLinecap="round"
-          strokeDasharray={treeLines.cousin}
-        />
-      ))}
+      <PathSet paths={layout.partnerPaths} />
+      <PathSet paths={layout.childPaths} />
+      <PathSet paths={layout.madePaths} dashes={dottedDashes} />
+      <PathSet paths={layout.siblingPaths} dashes={bracketDashes} />
+      <PathSet paths={layout.cousinPaths} dashes={dottedDashes} />
     </svg>
-  );
-}
-
-/** One legend entry: a short sample of the line, then its name. */
-function LegendLine({
-  label,
-  dashes,
-  isDouble,
-}: {
-  label: string;
-  dashes?: string;
-  isDouble?: boolean;
-}) {
-  const colour = lineStyleOf('family', {}).colour;
-  return (
-    <li className="flex items-center gap-2 text-sm text-ink">
-      <svg aria-hidden="true" width="32" height="12" viewBox="0 0 32 12" className="shrink-0">
-        <line
-          x1="2"
-          y1="6"
-          x2="30"
-          y2="6"
-          stroke={colour}
-          strokeWidth={isDouble ? 7 : 3}
-          strokeDasharray={dashes}
-          strokeLinecap={dashes === treeLines.cousin ? 'round' : undefined}
-        />
-        {isDouble && (
-          <line x1="2" y1="6" x2="30" y2="6" stroke="var(--surface)" strokeWidth={2.5} />
-        )}
-      </svg>
-      {label}
-    </li>
-  );
-}
-
-/** The legend: parent, sibling, partner and cousin lines. */
-export function TreeLegend() {
-  const { t } = useAtlasTranslation();
-  return (
-    <ul
-      aria-label={t('connections.tree.legend')}
-      className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0"
-    >
-      <LegendLine label={t('connections.tree.lineParent')} />
-      <LegendLine label={t('connections.tree.lineSibling')} dashes={treeLines.sibling} />
-      <LegendLine label={t('connections.tree.linePartner')} isDouble />
-      <LegendLine label={t('connections.tree.lineCousin')} dashes={treeLines.cousin} />
-    </ul>
   );
 }

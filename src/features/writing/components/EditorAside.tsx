@@ -4,8 +4,8 @@
  * Board values, top to bottom: "Saving" (the status box and "We save every 10 seconds…"),
  * "Publish" (the controls are PublishPanel, S1-E3-03), "Story details" (category, rating, tags, with
  * "Change in story settings": a read-only summary, because ratings and labels have one place
- * to be set, docs/board-fixes.md) and "Your stories" (each story opens its latest chapter, or its
- * settings while it has none). No doodles since bundle G4.
+ * to be set, docs/board-fixes.md). "Your stories" left the side in CALM-9 (board D05): the Write
+ * page lists them. No doodles since bundle G4.
  * Who uses it: ChapterEditorPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -18,8 +18,6 @@ import { useTagCatalogue } from '@/features/tags/hooks/useTagCatalogue';
 
 import type { MyStory } from '../api/stories';
 import type { SaveState } from '../hooks/useAutosave';
-
-import { storyEditorAddress } from '../lib/storyEditorAddress';
 
 import { SaveStatus } from './SaveStatus';
 import { useEditorTranslation } from '../registerEditorTranslations';
@@ -81,39 +79,6 @@ function StoryDetailsPanel({ story }: { story: MyStory }) {
   );
 }
 
-/** "Your stories": the writer's live stories, the open one marked. */
-function YourStoriesPanel({ stories, currentSlug }: { stories: MyStory[]; currentSlug: string }) {
-  const { t } = useEditorTranslation();
-  return (
-    <Panel label={t('yourStories.heading')}>
-      <div className="w-fit">
-        <Eyebrow>{t('yourStories.heading')}</Eyebrow>
-      </div>
-      <ul className="m-0 flex list-none flex-col p-0">
-        {stories.map((story) => (
-          <li key={story.id} className="border-t border-border first:border-t-0">
-            <Link
-              to={storyEditorAddress(story)}
-              aria-current={story.slug === currentSlug ? 'page' : undefined}
-              className={`flex min-h-11 items-center py-2 text-sm no-underline hover:underline ${
-                story.slug === currentSlug ? 'font-bold text-heading' : 'font-semibold text-body'
-              }`}
-            >
-              {story.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <Link
-        to="/write/new"
-        className="inline-flex min-h-11 items-center self-start text-sm font-semibold"
-      >
-        {t('yourStories.newStory')}
-      </Link>
-    </Panel>
-  );
-}
-
 /** "Keep this version" and "Compare versions", under the status after a conflict (S1-E3-02b). */
 function ConflictActions({
   onKeepMine,
@@ -142,8 +107,6 @@ export interface EditorAsideProps {
   onKeepMine: () => void;
   onCompare: () => void;
   story: MyStory | null;
-  stories: MyStory[];
-  currentSlug: string;
 }
 
 /**
@@ -152,7 +115,7 @@ export interface EditorAsideProps {
  * @returns the column of panels
  */
 export function EditorAside(props: EditorAsideProps) {
-  const { saveState, story, stories, currentSlug } = props;
+  const { saveState, story } = props;
   const { t } = useEditorTranslation();
   return (
     <aside className="flex flex-col gap-5">
@@ -174,7 +137,6 @@ export function EditorAside(props: EditorAsideProps) {
         {props.publishControls}
       </Panel>
       {story !== null && <StoryDetailsPanel story={story} />}
-      {stories.length > 0 && <YourStoriesPanel stories={stories} currentSlug={currentSlug} />}
     </aside>
   );
 }

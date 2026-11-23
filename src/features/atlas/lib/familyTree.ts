@@ -5,8 +5,8 @@
  *
  * - "Parent of" links a parent to a child; with "Include turned or made" on, "turned or made"
  *   counts as a parent too (vampire and maker bloodlines).
- * - "Partner or spouse of" and "Sibling of" put two characters in the same generation, side by
- *   side where the row allows.
+ * - "Partner or spouse of" and "Sibling of" put two characters in the same generation: partners
+ *   side by side, brothers and sisters on the far side of the couple (CALM-9, board E26).
  * - "Cousin of" puts cousins in the same generation, or, for a cousin removed, the second
  *   character that many generations below the first (the builder's reading: the first character
  *   is the older one, as in "Ana is the first cousin once removed of Vali").
@@ -21,6 +21,8 @@ import type { CharacterRelationship } from '../api/characters';
 export interface ParentLink {
   parentId: string;
   childId: string;
+  /** True for "turned or made" (a maker, not a birth parent), drawn dotted (S1-E17-16). */
+  isMade?: boolean;
 }
 
 /** One cousin line: the older character, the younger, and how many generations apart. */
@@ -55,7 +57,11 @@ function parentLinksFrom(
 ): ParentLink[] {
   return relationships
     .filter((link) => link.kind === 'parent_of' || (includeMade && link.kind === 'made'))
-    .map((link) => ({ parentId: link.fromId, childId: link.toId }));
+    .map((link) =>
+      link.kind === 'made'
+        ? { parentId: link.fromId, childId: link.toId, isMade: true }
+        : { parentId: link.fromId, childId: link.toId },
+    );
 }
 
 /**
@@ -94,23 +100,40 @@ function generationsOf(members: string[], links: FamilyLinks) {
 }
 
 /**
- * Orders one generation so partners, then siblings, sit side by side, otherwise in the cast's
- * order.
+ * Orders one generation in the cast's order, but in family clusters (CALM-9, board E26): a
+ * character's brothers and sisters stand on their left, their partner straight after them on
+ * the right, then the partner's brothers and sisters. So a couple sits side by side and each
+ * bracket of siblings stays clear of the partner line. A second partner goes on the far left of
+ * the character, so neither partner line crosses the other.
  *
- * @param pairs - the partner pairs, then the sibling pairs
+ * @param partners - the partner pairs
+ * @param siblings - the sibling pairs
  * @returns the row's character IDs
  */
-function orderRow(row: string[], pairs: [string, string][]): string[] {
+function orderRow(row: string[], partners: [string, string][], siblings: [string, string][]) {
   const ordered: string[] = [];
+  // The characters in this row joined to one character by the given pairs, not yet placed.
+  const linkedTo = (id: string, pairs: [string, string][]) =>
+    pairs
+      .filter((pair) => pair.includes(id))
+      .map(([first, second]) => (first === id ? second : first))
+      .filter((other) => row.includes(other) && !ordered.includes(other));
+  const place = (ids: string[]) => {
+    for (const id of ids) if (!ordered.includes(id)) ordered.push(id);
+  };
   for (const id of row) {
     if (ordered.includes(id)) continue;
-    ordered.push(id);
-    // Every partner or sibling of this character in the same row goes straight after them.
-    for (const [first, second] of pairs) {
-      if (first !== id && second !== id) continue;
-      const partner = first === id ? second : first;
-      if (row.includes(partner) && !ordered.includes(partner)) ordered.push(partner);
+    const partnersOf = linkedTo(id, partners);
+    const [firstPartner, ...laterPartners] = partnersOf;
+    if (firstPartner === undefined) {
+      // No partner: the character, then their brothers and sisters, in the cast's order.
+      place([id, ...linkedTo(id, siblings)]);
+      continue;
     }
+    place(linkedTo(id, siblings).filter((other) => !partnersOf.includes(other)));
+    place(laterPartners);
+    place([id, firstPartner]);
+    place(linkedTo(firstPartner, siblings));
   }
   return ordered;
 }
@@ -165,6 +188,16 @@ function familyOf(rootId: string, pairs: [string, string][]): Set<string> {
   return family;
 }
 
+/** Brothers and sisters by a shared parent, as pairs, so the row keeps them side by side. */
+function sharedParentPairs(parents: ParentLink[]): [string, string][] {
+  return parents.flatMap((link, index) =>
+    parents
+      .slice(index + 1)
+      .filter((other) => other.parentId === link.parentId && other.childId !== link.childId)
+      .map((other): [string, string] => [link.childId, other.childId]),
+  );
+}
+
 /** Only the lines between characters in the tree. */
 function linksAmong(links: FamilyLinks, members: Set<string>): FamilyLinks {
   const both = ([first, second]: [string, string]) => members.has(first) && members.has(second);
@@ -207,7 +240,8 @@ export function buildFamilyTree(
   const generations = Array.from({ length: deepest + 1 }, (_, row) =>
     orderRow(
       members.filter((id) => generation.get(id) === row),
-      [...links.partners, ...links.siblings],
+      links.partners,
+      [...links.siblings, ...sharedParentPairs(links.parents)],
     ),
   ).filter((row) => row.length > 0);
   return {
