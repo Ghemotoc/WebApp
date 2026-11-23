@@ -4,7 +4,8 @@
  *
  * Board values: a card with the 300 px cover, the title at 28 px with the pen name, then one
  * meta line (category, language and the labels from S1-E3-06; storyPreviewFacts, CALM-9c), the
- * rating banner when the story is 13+, 16+ or 18+ (S1-E3-06), the blurb and the tag line, with
+ * rating banner when the story is 13+, 16+ or 18+ (S1-E3-06), the blurb, the "Set in" line with
+ * its pin (CALM-9, board D02) and the tag line, with
  * "Only you" in bold at the top. Under the card: the line about deleting the story
  * later.
  * Who uses it: NewStoryPage, and StorySettingsPage without the line about deleting later
@@ -14,12 +15,14 @@ import { useTranslation } from 'react-i18next';
 
 import { automaticCoverFor } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { MetaLine } from '@/components/ui/MetaLine';
 import { ratingMinimumAge } from '@/schemas/story';
 import { TagNames } from '@/features/tags/components/TagNames';
 
 import type { StoryAnswers } from '../hooks/storyAnswers';
+import { setInPhrase } from '../lib/setInCountries';
 import { storyPreviewFacts } from '../lib/storyPreviewFacts';
 
 /** What the aside needs. */
@@ -37,6 +40,18 @@ function RatingBanner({ rating }: { rating: StoryAnswers['rating'] }) {
   return (
     <p className="m-0 rounded-card bg-tint px-3 py-2 text-[13px] font-semibold text-(--info-text)">
       {t('labels.previewBanner', { rating: t(`rating.${rating}`), age: ratingMinimumAge[rating] })}
+    </p>
+  );
+}
+
+/** "Set in Romania" with the pin (board D02); nothing when no country is chosen. */
+function SetInLine({ countries }: { countries: readonly string[] }) {
+  const { t, i18n } = useTranslation('writing');
+  if (countries.length === 0) return null;
+  return (
+    <p className="m-0 inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink">
+      <ActionIcon name="pin" size={14} />
+      {t('setIn.preview', { countries: setInPhrase(countries, i18n.language) })}
     </p>
   );
 }
@@ -82,6 +97,7 @@ export function StoryPreviewAside({
         <p className="m-0 text-sm leading-normal text-body">
           {answers.blurb.trim() === '' ? t('preview.noBlurb') : answers.blurb}
         </p>
+        <SetInLine countries={answers.setInCountries} />
         {answers.tags.length > 0 && (
           <p className="m-0 text-[13px] text-meta">
             <TagNames tags={answers.tags} />

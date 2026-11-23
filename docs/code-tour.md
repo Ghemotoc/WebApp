@@ -1417,7 +1417,7 @@ Tests: `supabase/tests/database/104-ratings-and-labels.test.sql`, `e2e/ratings.s
   │  useAutosave: every 10 s while there are changes, and on blur
   │    → chapterDraftSchema (src/schemas/chapter.ts: no HTML, safe links, ş/ţ corrected)
   │    → api/chapters.ts → save_chapter_draft(code, title, body, expected_version)
-  │  EditorAside: SaveStatus (role=status), Publish (S1-E3-03), Story details, Your stories
+  │  EditorAside: SaveStatus (role=status), Publish (S1-E3-03), Story details
   ▼
 save_chapter_draft(): is_active_member(), the caller's own live chapter (locked), a stale
   expected_version → {status: conflict} (S1-E3-02b shows it), check_chapter_text() (the same
@@ -1522,7 +1522,7 @@ ChapterReaderPage → useChapter → api/chapter.ts → get_chapter(story_slug, 
   │  ChapterNavigation (Previous, the dots, Next) → the 728 × 90 advert → ChapterComments
   │     (these and About this story wait one frame, useAfterFirstPaint, so the text paints first;
   │      the copy notice and the "Share quote" watcher listen from the first paint)
-  │  ReaderSideColumn from 1280 px: the open panel, AboutThisStory, the 300 × 250 advert
+  │  ReaderSideColumn from 1280 px: settings, AboutThisStory, the comment box, the advert
   │  (below 1280 px About and the advert follow the comments; the panels open in ReaderSheet)
   ▼
 useRecordRead → record_chapter_read(): +1 on today's chapter_reads total, once per tab
@@ -1551,10 +1551,18 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
    ChapterReaderPage → get_chapter() → is_teaser? → TeaserPage
        TeaserStoryCard (get_story_page()) · the teaser (teaser_of(): whole paragraphs up to
        40 words and at most half the chapter, cut in the database; TRIAL-WALL) · SignUpPrompt · CopyNotice
-     → nothing (a 16+ or 18+ story)? → useStoryPreview → get_link_preview() → NoPreviewNotice
+     → needs_adult_answer (an 18+ story, CALM-9m)? → AdultQuestionNotice: "I'm 18 or over,
+       show it" keeps the answer in this browser (src/lib/visitorAdult.ts), every request then
+       carries X-Visitor-Adult: yes, visitor_said_adult() reads it and the teaser comes as usual
+     → nothing (a 16+ story)? → useStoryPreview → get_link_preview() → NoPreviewNotice
 ```
 
-Tests: `142-teaser.test.sql`, `server/link-preview.test.ts`, `e2e/teaser.spec.ts`.
+An 18+ story's page opens for visitors (visitor_may_open_rating() in
+reader_visible_story_anywhere() and get_story_page()); lists keep leaving 18+ out for them, and a
+signed-in member's own age still decides (rating_allows()).
+
+Tests: `142-teaser.test.sql`, `396-mature-visitor-confirm.test.sql`, `server/link-preview.test.ts`,
+`src/lib/visitorAdult.test.ts`, `e2e/teaser.spec.ts`.
 
 ## A writer's profile, blocks and follows (S1-E5-05, S1-E6-05)
 
@@ -2400,7 +2408,7 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 
 - Start at `src/features/reading/components/ChapterReading.tsx` and `hooks/useReaderTools.ts`: `useParagraphCommentCounts` asks `paragraph_comment_counts()` for the count beside each paragraph and puts it in `ParagraphCommentsContext`.
 - `ChapterText` draws each top-level paragraph in a `.tmc-paragraph-row` with the addon the reader passes in, `ParagraphCommentMarker`. Its block number is the same one the share links use (`src/lib/chapter-blocks.ts` and `chapter_blocks()` in SQL).
-- Pressing a marker fetches `src/features/comments/components/ParagraphThread.tsx` (through `LazyParagraphThread`), which reads `paragraph_comments()` and posts with `post_paragraph_comment()`. Replies, reactions, downvotes and the Report button are the ordinary comment pieces. Where it opens (CALM-5): from 1280 px at the top of the sticky side column "Reading tools" (`ReaderSideColumn`), through a portal when `hooks/useIsWideReader.ts` says the window is wide, taking focus when the reader opened it (not when a `#paragraph-4` link did); below 1280 px in the bottom sheet, `ReaderSheet`, a modal `<dialog>`. Its head is the paragraph's opening words and Close, with no title or count. The marker sits in the left margin from 1024 px and at the paragraph's top right corner below that, and the open paragraph is tinted (`.tmc-paragraph-row--open`).
+- Pressing a marker fetches `src/features/comments/components/ParagraphThread.tsx` (through `LazyParagraphThread`), which reads `paragraph_comments()` and posts with `post_paragraph_comment()`. Replies, reactions, downvotes and the Report button are the ordinary comment pieces. Where it opens (CALM-5): from 1280 px in the side column "Reading tools" (`ReaderSideColumn`), under About this story and level with its paragraph (`hooks/useThreadLevelWithParagraph.ts`, CALM-9 board B03; the column stops sticking while a thread is open), through a portal when `hooks/useIsWideReader.ts` says the window is wide, taking focus when the reader opened it (not when a `#paragraph-4` link did); below 1280 px in the bottom sheet, `ReaderSheet`, a modal `<dialog>`. Its head is the paragraph's opening words and Close, with no title or count. The marker sits in the left margin from 1024 px and at the paragraph's top right corner below that, and the open paragraph is tinted (`.tmc-paragraph-row--open`).
 - How a comment stays on its paragraph: it stores the paragraph's number and a fingerprint of its words (`paragraph_key_of()`). `paragraph_now()` finds the paragraph with the same fingerprint nearest that number in the chapter as published now; none means "an earlier version" (`EarlierVersionComments`).
 - The thread is drawn outside the protected text (in the side column or the sheet); `data-paragraph-thread` still tells the copy protection and the "Share quote" bar to leave it alone.
 
@@ -3025,3 +3033,8 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 - `/write` › "Followers over time": `FollowersChart` (heading "147 followers", "+21 this week" from `writer_dashboard()`'s `followers_this_week`, and a Time range menu of 7, 30, 90 or 365 days, 90 by default) → `useFollowersLine` → `api/followersLine.ts` → `writer_followers_line(range_days)` (migration `calm7b_followers_line`).
 - The function counts the signed-in writer's own current followers at the end of each day (7 and 30 days), week (90 days, weeks start on Monday) or month (365 days), on Romania's calendar, with "fewer than 5" (null) below five. No table or policy; tested in `394-followers-line.test.sql`. It replaces `writer_followers_by_week()` and the weekly bars.
 - `FollowersLinePlot` draws the line (`lib/followersLineGeometry.ts`, dates from `lib/followersLabels.ts`); a pointer or the arrow keys, Home, End and Escape (`usePointPicker`) move the tooltip. The drawing is hidden from screen readers; `FollowersTable` gives them the same numbers.
+
+### New story wizard and "Set in" (CALM-9, board D02)
+
+- `/write/new` is five steps, one open at a time: `NewStoryPage` → `useNewStorySteps` (which section each step holds) → `StepWizard` (`src/components/ui/`, shared with later long forms such as the waitlist, H08). "Next" checks only the open step's answers (`checkFields()` in `useNewStoryForm`); Create checks them all and opens the first step with a mistake.
+- "Set in" (up to five countries) is its own column, `stories.set_in_countries`, saved by `set_my_story_set_in_countries()` after `create_story()` (`saveNewStoryExtras()`) and from story settings (`updateMyStory()`). The migration `…_calm9_d02_set_in_countries.sql` moved existing "set in <country>" tags into it.

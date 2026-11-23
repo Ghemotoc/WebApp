@@ -160,6 +160,14 @@ async function dragCard(page: Page, fromTitle: string, ontoTitle: string) {
   await cardOf(fromTitle).dispatchEvent('dragend', { dataTransfer });
 }
 
+/** Opens the chapter plan's "More details" fold, where the point of view sits (CALM-9, D05). */
+async function openMoreDetails(page: Page) {
+  await page
+    .getByRole('region', { name: 'Plan for this chapter' })
+    .getByText('More details', { exact: true })
+    .click();
+}
+
 test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
   test.describe.configure({ mode: 'serial' });
   test.beforeAll(() => {
@@ -323,6 +331,8 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
   }) => {
     // Pick the Narrator in the chapter's plan, in the writing view.
     const page = await openAs(browser, 'adult_writer', `/write/s/${slug}/c/e2estor3`);
+    // The point of view folds under "More details" in the plan (CALM-9, board D05).
+    await openMoreDetails(page);
     await page
       .locator('#atlas-chapter-pov')
       .selectOption({ label: 'Narrator (outside the story)' });
@@ -350,6 +360,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     ).toHaveText(['Told by Ana1', 'Told by Bogdan1', 'Told by the Narrator1']);
     // A character takes the Narrator off again (one teller at a time).
     await page.goto(`/write/s/${slug}/c/e2estor3`);
+    await openMoreDetails(page);
     await page.locator('#atlas-chapter-pov').selectOption({ label: 'Ana' });
     await expect(page.locator('#atlas-chapter-pov-save')).toHaveText('Saved');
     expect(

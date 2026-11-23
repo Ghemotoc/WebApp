@@ -23,7 +23,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `Switch` | The one on and off switch: `role="switch"`, a 52 × 32 px track, a 26 px knob, primary when on; `SwitchButton` draws it (CALM-4) |
 | `Shelf` (+ `useShelfScroll`, `ShelfArrows`, `ViewMoreCard`) | One sideways line of at most 20 stories: 5 whole covers from 1024 px, 4 from 600 px, 2.3 on phones, no fade, no scrollbar; Previous and Next beside "View 54" only when it overflows, aria-disabled at the ends; phones swipe and snap (CALM-4) |
 | `AdSlot` | Banner, portrait, side box and in-list card ad slots, labelled "Ad" or "Sponsored" |
-| `PageContainer` | The centred column (at most 1260 px), 10 px inside the navigation bar on each side (GLASS-4) |
+| `PageContainer` | The centred column (at most 1280 px), at least 10 px inside the navigation bar (up to 1376 px) on each side (GLASS-4, CALM-9) |
 | `MetaLine` | A line of facts joined by middots, a state first in bold, in place of information pills (CALM-2) |
 | `StateWord` | One state on its own as a bold word ("This device", "Connected"), where a pill used to stand (CALM-9d) |
 | `choiceRowStyles` | `choiceRowClassName`: one choice of a settings radio group as a glass row, the chosen one with a plum border (G11b) |

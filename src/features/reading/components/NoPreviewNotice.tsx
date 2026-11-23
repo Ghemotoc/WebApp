@@ -1,6 +1,8 @@
 /**
- * NoPreviewNotice: what a visitor who isn't logged in sees on a 16+ or 18+ story or chapter
- * (story S1-E4-04; board 3.8, "Other state · rated 16+ or 18+").
+ * NoPreviewNotice: what a visitor who isn't logged in sees on a 16+ story or chapter
+ * (story S1-E4-04; board 3.8, "Other state · rated 16+ or 18+"). Since CALM-9m (Robert,
+ * 23 Nov 2026, 09:04 UTC) an 18+ story's page opens for visitors and its chapters ask
+ * "I'm 18 or over" instead (AdultQuestionNotice), so this notice is left for 16+.
  *
  * The rule: signed-out visitors count as under 16 (decided 23 Oct 2026, Q6), so they see nothing
  * of the story's text. They do see the story's details, its title, writer and blurb, like any

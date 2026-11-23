@@ -200,8 +200,8 @@ test.describe('epic S1-E9 journeys', () => {
       await page.goto(`/messages/${other}`);
       await page.getByRole('button', { name: 'Delete chat' }).click();
       await page
-        .getByRole('dialog', { name: 'Delete this chat?' })
-        .getByRole('button', { name: 'Delete chat' })
+        .getByRole('alertdialog', { name: 'Delete this chat?' })
+        .getByRole('button', { name: 'Delete the chat' })
         .click();
       await expect(page).toHaveURL(/\/messages$/);
     }

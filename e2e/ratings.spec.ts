@@ -14,6 +14,7 @@
  */
 import { expect, test, type Browser } from '@playwright/test';
 
+import { goToLastNewStoryStep } from './support/newStoryWizard';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
@@ -62,6 +63,8 @@ test.describe('ratings and labels (S1-E3-06)', () => {
   }) => {
     const page = await openAsPersona(browser, 'adult_writer', '/write/new');
     await page.getByRole('textbox', { name: 'Title' }).fill(storyTitle);
+    // The rating and AI answer are the wizard's last step (CALM-9, board D02).
+    await goToLastNewStoryStep(page);
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
     await expect(page.getByText('Pick a rating.')).toBeVisible();
     await expect(page.getByText('Say whether you used AI.')).toBeVisible();

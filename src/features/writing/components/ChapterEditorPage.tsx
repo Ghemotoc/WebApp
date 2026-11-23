@@ -5,7 +5,7 @@
  * one" (NewStoryPage) and the cards on Your writing lead here.
  * What it shows: the breadcrumb (Writer dashboard › the story › Chapter n, with the state pill),
  * the title field, the toolbar, the text, the paste note and the rights line, with the aside
- * (Saving, Publish, Story details, Your stories) beside them (below on phones).
+ * (Saving, Publish, Story details; "Your stories" left in CALM-9, board D05) beside them (below on phones).
  * What it calls: useChapterDraft (the chapter, owner only), useDeviceDraft (the copy kept on
  * this device, S1-E3-02b), useChapterEditor (TipTap; pasted HTML cleaned), useAutosave (every
  * 10 seconds and on blur → save_chapter_draft(); offline keeps; conflicts), useMyStories (the
@@ -270,7 +270,7 @@ function EditorDialogs(props: {
   );
 }
 
-/** The aside column: Saving (with the conflict choices), Publish, Story details, Your stories. */
+/** The aside column: Saving (with the conflict choices), Publish, Story details and the plan. */
 function EditorSideColumn(props: {
   chapter: MyChapter;
   loaded: ReturnType<typeof useLoadedEditor>;
@@ -293,11 +293,15 @@ function EditorSideColumn(props: {
         onKeepMine={props.conflict.keepMine}
         onCompare={props.conflict.openCompare}
         story={story}
-        stories={props.stories.filter((candidate) => candidate.deletedAt === null)}
-        currentSlug={chapter.story.slug}
       />
       {/* The chapter's planning (Story Atlas, S1-E17-24), stacked under the aside on a phone. */}
-      {props.showsPlan && <ChapterPlanPanel slug={chapter.story.slug} chapterCode={chapter.code} />}
+      {props.showsPlan && (
+        <ChapterPlanPanel
+          slug={chapter.story.slug}
+          chapterCode={chapter.code}
+          wordCount={props.loaded.wordCount}
+        />
+      )}
     </div>
   );
 }

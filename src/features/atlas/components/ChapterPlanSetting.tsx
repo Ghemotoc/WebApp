@@ -1,13 +1,14 @@
 /**
- * ChapterPlanSetting: a chapter's word target, in-world date and sort value, location and summary
- * (story S1-E17-24), each saving by itself.
+ * ChapterPlanSetting: a chapter's in-world date and sort value and its location (story
+ * S1-E17-24), each saving by itself. They sit under "More details" (CALM-9, board D05); the word
+ * goal and the summary moved up (ChapterStatusAndGoal, ChapterPlanPanel).
  *
- * An empty word target or sort value means none; anything that isn't a number waits with a plain
- * message (lib/optionalNumbers.ts). Who uses it: ChapterPlanPanel. What it calls: the save prop
+ * An empty sort value means none; anything that isn't a number waits with a plain message
+ * (lib/optionalNumbers.ts). Who uses it: ChapterPlanPanel. What it calls: the save prop
  * (useChapterPlan's saveFields).
  */
 import type { ChapterPlanChange, ChapterPlanFields } from '../api/chapterPlans';
-import { chapterTargetFrom, sortValueFrom } from '../lib/optionalNumbers';
+import { sortValueFrom } from '../lib/optionalNumbers';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { PlanTextField } from './PlanTextField';
@@ -26,24 +27,12 @@ function boxText(value: number | null): string {
 /**
  * Renders the fields.
  *
- * @returns the target, date, sort value, location and summary boxes
+ * @returns the date, sort value and location boxes
  */
 export function ChapterPlanSetting({ fields, save }: ChapterPlanSettingProps) {
   const { t } = useAtlasTranslation();
   return (
     <div className="flex flex-col gap-2">
-      <PlanTextField
-        id="atlas-chapter-target"
-        label={t('chapterPlan.wordTarget')}
-        hint={t('chapterPlan.wordTargetHint')}
-        savedValue={boxText(fields.wordTarget)}
-        isValid={(typed) => chapterTargetFrom(typed).isValid}
-        invalidMessage={t('chapterPlan.wordTargetInvalid')}
-        save={async (typed) => {
-          const read = chapterTargetFrom(typed);
-          if (read.isValid) await save({ word_target: read.value });
-        }}
-      />
       <PlanTextField
         id="atlas-chapter-world-date"
         label={t('chapterPlan.worldDate')}
@@ -70,14 +59,6 @@ export function ChapterPlanSetting({ fields, save }: ChapterPlanSettingProps) {
         savedValue={fields.location}
         maxLength={200}
         save={async (value) => save({ location: value })}
-      />
-      <PlanTextField
-        id="atlas-chapter-summary"
-        label={t('chapterPlan.summary')}
-        savedValue={fields.summary}
-        isMultiline
-        maxLength={5000}
-        save={async (value) => save({ summary: value })}
       />
     </div>
   );

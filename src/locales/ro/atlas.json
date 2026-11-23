@@ -239,6 +239,20 @@
       "none": "Încă nu ai personaje.",
       "open": "Deschide personajele ({{count}})",
       "recentList": "Personaje · modificate recent"
+    },
+    "foldHints": {
+      "lookAndVoice": "Înfățișare, voce și ticuri",
+      "inside": "Dorințe, nevoi, temeri și secrete",
+      "inTheStory": "Arc și replici-cheie",
+      "relationships_one": "{{count}} relație",
+      "relationships_few": "{{count}} relații",
+      "relationships_other": "{{count}} de relații",
+      "chapters_one": "{{count}} capitol",
+      "chapters_few": "{{count}} capitole",
+      "chapters_other": "{{count}} de capitole",
+      "places_one": "{{count}} loc",
+      "places_few": "{{count}} locuri",
+      "places_other": "{{count}} de locuri"
     }
   },
   "fieldsSection": {
@@ -528,7 +542,6 @@
     "pov": "Punct de vedere",
     "act": "Act",
     "wordTarget": "Ținta de cuvinte",
-    "wordTargetHint": "Las-o goală dacă nu vrei o țintă.",
     "wordTargetInvalid": "Scrie un număr întreg de la 1 la 1.000.000 sau las-o goală.",
     "worldDate": "Data din poveste",
     "worldDateHint": "Cum o scrii tu, de exemplu „Primăvara, anul 3”.",
@@ -578,7 +591,12 @@
     },
     "narrator": "Narator",
     "narratorOption": "Narator (din afara poveștii)",
-    "narratorOutside": "din afara poveștii"
+    "narratorOutside": "din afara poveștii",
+    "goalProgress": "{{words}} din {{goal}} de cuvinte",
+    "moreDetails": "Mai multe detalii",
+    "moreDetailsLine": "Punctul de vedere, data, actul, locul și scenele.",
+    "addChip": "+ Adaugă",
+    "addCharacter": "Adaugă un personaj"
   },
   "storyline": {
     "documentTitle": "Firul poveștii pentru {{title}}: Story Atlas",
@@ -920,6 +938,14 @@
     "spoilers": {
       "heading": "Fără dezvăluiri",
       "body": "Alege capitolul de la care apare fiecare lucru. Cititorii care n-au ajuns acolo nu îl văd."
+    },
+    "summary": {
+      "private": "Păstrat privat",
+      "none": "Nicio parte din fișă nu e vizibilă",
+      "shared": "Vizibil: {{parts}}",
+      "ownDetails_one": "{{count}} detaliu propriu",
+      "ownDetails_few": "{{count}} detalii proprii",
+      "ownDetails_other": "{{count}} de detalii proprii"
     }
   },
   "publicPlan": {

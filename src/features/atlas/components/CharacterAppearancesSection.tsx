@@ -4,10 +4,10 @@
  * lists them"; "when I choose an item, then it opens with one click").
  *
  * Each chapter is a link to its editor, with whether the character is the point of view, present
- * or both. Under it, "Mentioned in": the places that link to the character with [[their name]]
- * or an alias (S1-E17-31).
+ * or both. The card folds shut with the number of chapters beside its title; "Mentioned in" is
+ * its own card since CALM-9 (board E23).
  * Who uses it: CharacterSheet. What it calls: useCharacterAppearances → character_appearances()
- * and CharacterMentionsList.
+ * and FoldingCard.
  */
 import { Link } from 'react-router';
 
@@ -17,7 +17,7 @@ import type { CharacterAppearance } from '../api/chapterPlans';
 import { useCharacterAppearances } from '../hooks/useCharacterAppearances';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { CharacterMentionsList } from './CharacterMentionsList';
+import { FoldingCard } from './FoldingCard';
 
 /** The words for how the character is in one chapter. */
 function roleKey(appearance: CharacterAppearance): string {
@@ -42,17 +42,12 @@ export function CharacterAppearancesSection({
 }) {
   const { t } = useAtlasTranslation();
   const { appearances, loadFailed } = useCharacterAppearances(characterId);
+  // The hint counts the chapters once they have loaded (CALM-9, board E23: "[N] chapters").
+  const hint = appearances
+    ? t('characters.foldHints.chapters', { count: appearances.length })
+    : undefined;
   return (
-    <section
-      aria-labelledby="atlas-appears-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card"
-    >
-      <h2
-        id="atlas-appears-heading"
-        className="m-0 font-heading text-[22px] font-bold text-heading"
-      >
-        {t('chapterPlan.appearsIn.heading')}
-      </h2>
+    <FoldingCard title={t('chapterPlan.appearsIn.heading')} hint={hint} contentClassName="gap-3">
       {loadFailed && <Notice tone="error">{t('chapterPlan.appearsIn.loadFailed')}</Notice>}
       {appearances?.length === 0 && (
         <p className="m-0 text-sm text-meta">{t('chapterPlan.appearsIn.none')}</p>
@@ -75,7 +70,6 @@ export function CharacterAppearancesSection({
           ))}
         </ul>
       )}
-      <CharacterMentionsList slug={slug} characterId={characterId} />
-    </section>
+    </FoldingCard>
   );
 }

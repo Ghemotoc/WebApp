@@ -97,10 +97,12 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select results_eq($$ select pg_temp.sees('a000'), pg_temp.sees('a013'), pg_temp.sees('a016'), pg_temp.sees('a018') $$,
   $$ values (true, true, true, true) $$, 'an adult with an "18 or over" result sees everything');
 
--- 5. Signed out: counts as under 16 (a proposal, L14).
+-- 5. Signed out: counts as under 16 (a proposal, L14), so 16+ stays closed. Since CALM-9m
+-- (Robert, 23 Nov 2026, 09:04 UTC) an 18+ story's page opens for a visitor, and its text waits
+-- for their "I'm 18 or over" answer (supabase/tests/database/396-mature-visitor-confirm.test.sql).
 select pg_temp.sign_out();
 select results_eq($$ select pg_temp.sees('a000'), pg_temp.sees('a013'), pg_temp.sees('a016'), pg_temp.sees('a018') $$,
-  $$ values (true, true, false, false) $$, 'a signed-out visitor sees All ages and 13+ only');
+  $$ values (true, true, false, true) $$, 'a signed-out visitor opens All ages, 13+ and 18+ story pages, never 16+');
 select is(public.rating_allows('16_plus'), false, 'rating_allows() says no to 16+ for a visitor');
 
 -- 6. pending_check: 18 by year, no Yoti result. March: yes. After March (flag off): no 18+.

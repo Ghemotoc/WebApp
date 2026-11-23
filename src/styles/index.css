@@ -448,6 +448,23 @@
   color: #2a0e33;
   border-color: transparent;
 }
+/*
+ * Follow inside the dark writers' band on the home page (board A01, canvas comments of 23 Nov 2026):
+ * no fill, text in the band's colour and an edge at 42 % of it. Pressed (Following), it turns into
+ * a solid fill of that colour with the band's own colour as text, so the state still shows by
+ * more than colour (the tick stays). --on-primary is white by day and the page's ink at night
+ * inside the band (NIGHT-2), so one rule serves both.
+ */
+[data-writers-tone='band'] .button-glass:not([aria-pressed='true']) {
+  background-color: transparent;
+  color: var(--on-primary);
+  border-color: color-mix(in srgb, var(--on-primary) 42%, transparent);
+}
+[data-writers-tone='band'] .button-glass[aria-pressed='true'] {
+  background-color: var(--on-primary);
+  color: var(--primary);
+  border-color: transparent;
+}
 [data-banner-tone='deep'] .button-main {
   background: #ffffff;
   color: #2a0e33;
@@ -1742,6 +1759,13 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     max-height: calc(100dvh - var(--reader-bar-top) - 88px);
     overflow-y: auto;
     overscroll-behavior: contain;
+  }
+  /* With a paragraph's comments open, the column scrolls with the text, so the comment box
+     (lined up with its paragraph by useThreadLevelWithParagraph) stays beside it (CALM-9, B03). */
+  .tmc-reader-side:has(> [data-thread-slot]:not(:empty)) {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
   }
 }
 /* The reader's bottom sheet sits on the screen's bottom edge, so it has no bottom edge line (the

@@ -3416,6 +3416,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "cover_style" "public"."cover_style" DEFAULT 'label'::"public"."cover_style" NOT NULL,
     "cover_title_font" "public"."cover_title_font" DEFAULT 'reading'::"public"."cover_title_font" NOT NULL,
     "hidden_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
+    "set_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3443,6 +3444,7 @@ END),
     CONSTRAINT "stories_hidden_in_countries_are_codes" CHECK ((("cardinality"("hidden_in_countries") <= 60) AND ("array_to_string"("hidden_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
+    CONSTRAINT "stories_set_in_countries_are_codes" CHECK ((("cardinality"("set_in_countries") <= 5) AND ("array_to_string"("set_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_slug_shape" CHECK ((("slug" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::"text") AND ("char_length"("slug") <= 80))),
     CONSTRAINT "stories_title_length" CHECK ((("char_length"("btrim"("title")) >= 1) AND ("char_length"("btrim"("title")) <= 120)))
 );
@@ -3565,6 +3567,10 @@ COMMENT ON COLUMN "public"."stories"."cover_title_font" IS 'The title''s font on
 
 
 COMMENT ON COLUMN "public"."stories"."hidden_in_countries" IS 'The countries where readers can''t find or open the story, by the connection''s country (COUNTRY-1).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the story takes place in, at most five, shown as "Set in" (CALM-9, board D02).';
 
 
 
@@ -27731,6 +27737,7 @@ declare
   text_to_send text;
   teaser_words integer;
   app_only boolean;
+  awaits_adult_answer boolean;
 begin
   -- Step 1: the story, if this caller may read it (age, blocks, deleted, moderated).
   select * into story from public.reader_visible_story(story_slug);
@@ -27827,7 +27834,11 @@ begin
   -- writer; otherwise all of it for a signed-in reader and the teaser for a signed-out visitor.
   app_only := public.story_app_only_applies(story.is_app_only)
     and story.user_id is distinct from caller_id;
-  if app_only then
+  -- CALM-9m (Robert, 23 Nov 2026, 09:04 UTC): a visitor opens an 18+ story's page, but its text
+  -- only once they have said in this browser that they are 18 or over.
+  awaits_adult_answer := caller_id is null and story.rating = '18_plus'
+    and not public.visitor_said_adult();
+  if app_only or awaits_adult_answer then
     text_to_send := '';
   elsif caller_id is not null then
     text_to_send := chapter.published_body;
@@ -27858,11 +27869,13 @@ begin
     'minutes_to_read', greatest(1, ceil(coalesce(chapter.published_word_count, 0) / 200.0))::integer,
     'is_owner', story.user_id = caller_id,
     'needs_sign_in', caller_id is null and not app_only,
-    'is_teaser', caller_id is null and not app_only,
+    'is_teaser', caller_id is null and not app_only and not awaits_adult_answer,
     'app_only', app_only,
+    -- CALM-9m: true while a visitor hasn't yet said they are 18 or over (no text is sent).
+    'needs_adult_answer', awaits_adult_answer,
     -- MUST-2: a poem's lines and stanzas are drawn as written.
     'is_poem', chapter.is_poem,
-    'text_continues', not app_only
+    'text_continues', not app_only and not awaits_adult_answer
       and public.word_total(text_to_send) < public.word_total(chapter.published_body),
     'body', text_to_send,
     'pictures', public.chapter_picture_states(text_to_send, story.user_id),
@@ -28086,7 +28099,8 @@ begin
     if not public.story_has_readable_chapter(story.id) then
       return null;
     end if;
-    if not public.rating_allows(story.rating) then
+    -- CALM-9m: a visitor who isn't logged in also opens an 18+ story's page.
+    if not public.visitor_may_open_rating(story.rating) then
       return null;
     end if;
     if public.is_moderated_away('story', story.id) then
@@ -39818,7 +39832,8 @@ CREATE OR REPLACE FUNCTION "public"."reader_visible_story_anywhere"("story_slug"
     and public.story_visibility_allows(stories.visibility, stories.user_id)
     and (
       stories.user_id = (select auth.uid())
-      or (public.rating_allows(stories.rating) and not public.is_blocked_with(stories.user_id))
+      or (public.visitor_may_open_rating(stories.rating)
+        and not public.is_blocked_with(stories.user_id))
     );
 $$;
 
@@ -39826,7 +39841,7 @@ $$;
 ALTER FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") IS 'Internal: the story behind an address when the caller may read it, the country aside (S1-E4-01a, COUNTRY-1).';
+COMMENT ON FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") IS 'Internal: the story behind an address when the caller may read it, the country aside (S1-E4-01a, COUNTRY-1, CALM-9m).';
 
 
 
@@ -47246,6 +47261,48 @@ ALTER FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "co
 
 
 COMMENT ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) IS 'The writer sets the countries where their story is hidden (COUNTRY-1, board D07).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  family_story_id uuid;
+  -- clean_country_codes() makes capitals, drops repeats and refuses anything not two letters.
+  cleaned text[] := public.clean_country_codes(countries);
+begin
+  -- Step 1: at most five countries (board D02).
+  if cardinality(cleaned) > 5 then
+    raise exception 'Choose at most 5 countries.' using errcode = 'check_violation', hint = 'too_many_countries';
+  end if;
+  -- Step 2: a signed-in writer who may write, and their own live story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 3: save it on the original and every edition, so each language says the same.
+  select coalesce(stories.edition_of_story_id, stories.id) into family_story_id
+  from public.stories where stories.id = target_story_id;
+  update public.stories set set_in_countries = cleaned
+  where stories.id = family_story_id or stories.edition_of_story_id = family_story_id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) IS 'The writer sets the countries their story takes place in, at most five (CALM-9, board D02).';
 
 
 
@@ -55367,6 +55424,39 @@ ALTER FUNCTION "public"."visible_story_by_slug"("story_slug" "text") OWNER TO "p
 
 
 COMMENT ON FUNCTION "public"."visible_story_by_slug"("story_slug" "text") IS 'Internal: a story the caller may find in a list, by its slug (S1-E15-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."visitor_may_open_rating"("story_rating" "public"."story_rating") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.rating_allows(story_rating)
+    or (story_rating = '18_plus' and (select auth.uid()) is null);
+$$;
+
+
+ALTER FUNCTION "public"."visitor_may_open_rating"("story_rating" "public"."story_rating") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."visitor_may_open_rating"("story_rating" "public"."story_rating") IS 'Internal: rating_allows(), plus 18+ story pages for visitors who aren''t logged in (CALM-9m).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."visitor_said_adult"() RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select (select auth.uid()) is null
+    and coalesce(
+      nullif(current_setting('request.headers', true), '')::jsonb ->> 'x-visitor-adult', '') = 'yes';
+$$;
+
+
+ALTER FUNCTION "public"."visitor_said_adult"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."visitor_said_adult"() IS 'Internal: a visitor said in this browser they are 18 or over (X-Visitor-Adult header; CALM-9m).';
 
 
 
@@ -74653,6 +74743,11 @@ GRANT ALL ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "tex
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_story_set_in_countries"("story_slug" "text", "countries" "text"[]) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_story_visibility"("story_slug" "text", "wanted" "public"."story_visibility") TO "authenticated";
 
@@ -75761,6 +75856,14 @@ REVOKE ALL ON FUNCTION "public"."viewer_country"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."visible_story_by_slug"("story_slug" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."visitor_may_open_rating"("story_rating" "public"."story_rating") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."visitor_said_adult"() FROM PUBLIC;
 
 
 

@@ -20,6 +20,8 @@ const good = {
   ratingReasons: [],
   contentNote: '',
   aiDisclosure: 'no_ai',
+  setInCountries: ['RO'],
+  visibility: 'public',
 } as const;
 
 /** The issues as [field, message key] pairs. */
@@ -151,5 +153,20 @@ describe('storySettingsSchema: pausing new comments (CALM-8)', () => {
     expect(
       storySettingsSchema.safeParse({ ...answers, hiddenInCountries: ['Moldova'] }).success,
     ).toBe(false);
+  });
+});
+
+describe('newStorySchema: where the story is set (CALM-9, board D02)', () => {
+  it('takes up to five two-letter country codes', () => {
+    expect(issuesOf({ ...good, setInCountries: ['RO', 'MD', 'SE', 'NO', 'DK'] })).toEqual([]);
+  });
+
+  it('refuses a sixth country and anything that isn’t a code', () => {
+    expect(issuesOf({ ...good, setInCountries: ['RO', 'MD', 'SE', 'NO', 'DK', 'FI'] })).toEqual([
+      ['setInCountries', 'errors.setInTooMany'],
+    ]);
+    expect(issuesOf({ ...good, setInCountries: ['Romania'] })).toEqual([
+      ['setInCountries.0', 'errors.setInInvalid'],
+    ]);
   });
 });

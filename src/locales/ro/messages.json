@@ -45,7 +45,6 @@
     "notTaking": "{{name}} nu primește mesaje acum.",
     "composerLabel": "Mesaj pentru {{name}}",
     "send": "Trimite",
-    "textOnly": "Doar text. Nu poți trimite poze sau fișiere.",
     "reportLabel": "mesajul de la {{name}} de la ora {{time}}",
     "noThanksReply": "{{name}} a răspuns: „Mulțumesc că mi-ai scris, dar acum aș prefera să nu vorbim.”",
     "noThanksAgain": "Poți trimite o cerere nouă începând cu {{date}}."
@@ -134,9 +133,10 @@
     "button": "Șterge conversația",
     "title": "Ștergi această conversație?",
     "explain": "Conversația dispare doar pentru tine. Când o ștergeți amândoi, mesajele se șterg definitiv.",
+    "body": "Dispare imediat din mesajele tale. Când o șterge și {{name}}, mesajele dispar definitiv.",
     "confirm": "Șterge conversația",
     "deleting": "Se șterge…",
-    "cancel": "Anulează",
+    "cancel": "Păstrează conversația",
     "close": "Închide",
     "failed": "Nu am putut șterge conversația. Încearcă din nou."
   },

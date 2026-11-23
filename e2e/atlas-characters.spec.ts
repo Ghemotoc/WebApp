@@ -95,6 +95,12 @@ async function newCharacter(page: Page, name: string) {
   await expect(page.locator('#atlas-character-name-save')).toHaveText('Saved');
 }
 
+/** Opens a folded card on the sheet by its title, unless it is open already (CALM-9, board E23). */
+async function openCard(page: Page, title: RegExp) {
+  const button = page.getByRole('button', { name: title }).first();
+  if ((await button.getAttribute('aria-expanded')) === 'false') await button.click();
+}
+
 test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
   test.describe.configure({ mode: 'serial' });
   test.beforeAll(() => {
@@ -114,7 +120,9 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await expect(page.locator('#atlas-character-role-save')).toHaveText('Saved');
     await page.getByRole('textbox', { name: 'Pronouns' }).fill('she/her');
     await expect(page.locator('#atlas-character-pronouns-save')).toHaveText('Saved');
-    // A long box grows with the text (S1-E17-09).
+    // A long box grows with the text (S1-E17-09). "What they want" sits in the Inside card,
+    // which folds shut until opened (CALM-9, board E23).
+    await page.getByRole('button', { name: /^Inside/ }).click();
     const wants = page.getByRole('textbox', { name: 'What they want' });
     const shortHeight = (await wants.boundingBox())?.height ?? 0;
     await wants.fill(
@@ -122,12 +130,17 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     );
     await expect(page.locator('#atlas-character-wants-save')).toHaveText('Saved');
     expect((await wants.boundingBox())?.height ?? 0).toBeGreaterThan(shortHeight);
+    // First appearance sits in the In the story card, folded shut too.
+    await page.getByRole('button', { name: /^In the story/ }).click();
     await page.getByLabel('First appearance').selectOption('e2ecast1');
     await expect(page.locator('#atlas-character-first-appearance-save')).toHaveText('Saved');
 
     // Still there after a reload, and listed under its role.
     await page.reload();
     await expect(page.getByRole('textbox', { name: 'Pronouns' })).toHaveValue('she/her');
+    // The cards fold shut again after a reload, so open the two this test filled.
+    await page.getByRole('button', { name: /^Inside/ }).click();
+    await page.getByRole('button', { name: /^In the story/ }).click();
     await expect(wants).toHaveValue(/who put the lighthouse out/);
     await expect(page.getByLabel('First appearance')).toHaveValue('e2ecast1');
     await expect(page.getByRole('list', { name: 'Protagonist (1)' })).toContainText('Ana Mureșan');
@@ -187,6 +200,8 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     );
 
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
+    // A field of the writer's own sits in the Custom fields card, folded shut (CALM-9, E23).
+    await page.getByRole('button', { name: /^Custom fields/ }).click();
     await page.getByRole('textbox', { name: 'Turned by' }).fill('Nobody yet');
     await expect(page.locator('[id$="-save"]').filter({ hasText: 'Saved' }).first()).toBeVisible();
     await page.getByRole('textbox', { name: 'Turned by' }).blur();
@@ -200,6 +215,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await fields.getByRole('button', { name: 'Bring back Turned by' }).click();
     await expect(fields.getByRole('button', { name: 'Remove Turned by' })).toBeVisible();
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
+    await page.getByRole('button', { name: /^Custom fields/ }).click();
     await expect(page.getByRole('textbox', { name: 'Turned by' })).toHaveValue('Nobody yet');
     await page.context().close();
   });
@@ -237,14 +253,16 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await page.getByRole('textbox', { name: 'Group name' }).fill('Magic');
     await page.getByRole('textbox', { name: 'First detail' }).fill('Wand');
     await page.getByRole('button', { name: 'Add group' }).click();
-    const magic = page.getByRole('group', { name: 'Magic' });
+    const magic = page.getByRole('region', { name: 'Magic' });
+    await openCard(page, /^Magic/);
     await magic.getByRole('textbox', { name: 'Wand' }).fill('Hazel, nine inches');
     await expect(page.locator('[id$="-save"]').filter({ hasText: 'Saved' }).first()).toBeVisible();
     await magic.getByRole('textbox', { name: 'Wand' }).blur();
     await magic.getByRole('button', { name: 'Rename the group Magic' }).click();
     await magic.getByRole('textbox', { name: 'Group name' }).fill('Spellwork');
     await magic.getByRole('button', { name: 'Save' }).click();
-    const spellwork = page.getByRole('group', { name: 'Spellwork' });
+    const spellwork = page.getByRole('region', { name: 'Spellwork' });
+    await openCard(page, /^Spellwork/);
     await expect(spellwork.getByRole('textbox', { name: 'Wand' })).toHaveValue(
       'Hazel, nine inches',
     );
@@ -281,8 +299,13 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await expect(
       page.getByRole('group', { name: 'Basics' }).getByRole('textbox', { name: 'Blood type' }),
     ).toHaveValue('');
+    // Wait for Ștefan's own sheet before opening his card.
+    await expect(page.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue(
+      'Ștefan the Keeper',
+    );
+    await openCard(page, /^Spellwork/);
     await expect(
-      page.getByRole('group', { name: 'Spellwork' }).getByRole('textbox', { name: 'Wand' }),
+      page.getByRole('region', { name: 'Spellwork' }).getByRole('textbox', { name: 'Wand' }),
     ).toHaveValue('');
     await expect(page.getByText(/Point of view in/)).toHaveCount(0);
     await expectNoDoodles(page);

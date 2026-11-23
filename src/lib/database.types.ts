@@ -9033,6 +9033,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -9089,6 +9090,7 @@ export type Database = {
             rank_badge_tag_ids: string[] | null;
             rating: Database['public']['Enums']['story_rating'];
             rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+            set_in_countries: string[];
             slug: string;
             title: string;
             title_hidden_at: string | null;
@@ -9151,6 +9153,7 @@ export type Database = {
           rank_badge_tag_ids?: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons?: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries?: string[];
           slug: string;
           title: string;
           title_hidden_at?: string | null;
@@ -9200,6 +9203,7 @@ export type Database = {
           rank_badge_tag_ids?: string[] | null;
           rating?: Database['public']['Enums']['story_rating'];
           rating_reasons?: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries?: string[];
           slug?: string;
           title?: string;
           title_hidden_at?: string | null;
@@ -12630,6 +12634,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -15314,6 +15319,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -16732,6 +16738,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -16790,6 +16797,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -17497,6 +17505,10 @@ export type Database = {
         Returns: Json;
       };
       set_my_story_hidden_countries: {
+        Args: { countries: string[]; story_slug: string };
+        Returns: Json;
+      };
+      set_my_story_set_in_countries: {
         Args: { countries: string[]; story_slug: string };
         Returns: Json;
       };
@@ -18270,6 +18282,7 @@ export type Database = {
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
           rating_reasons: Database['public']['Enums']['story_rating_reason'][];
+          set_in_countries: string[];
           slug: string;
           title: string;
           title_hidden_at: string | null;
@@ -18691,6 +18704,11 @@ export type Database = {
           writer_id: string;
         }[];
       };
+      visitor_may_open_rating: {
+        Args: { story_rating: Database['public']['Enums']['story_rating'] };
+        Returns: boolean;
+      };
+      visitor_said_adult: { Args: Record<PropertyKey, never>; Returns: boolean };
       vote_forum_post: { Args: { post_id: string; vote: string }; Returns: string };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
       waitlist_alert_worker_claim: {

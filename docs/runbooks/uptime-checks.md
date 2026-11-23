@@ -20,7 +20,7 @@ keep it honest. Four addresses:
 Run it by hand after a deploy or during an incident:
 
 ```
-SITE_URL=https://ghemotoc.themagiccoffin.com STORY_SLUG=<a public story that stays published> \
+SITE_URL=https://ghemotoc.tech STORY_SLUG=<a public story that stays published> \
   npx tsx scripts/ops/check-uptime.ts
 ```
 

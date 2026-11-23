@@ -23,6 +23,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
+import { goToLastNewStoryStep, goToNewStoryStep } from './support/newStoryWizard';
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
@@ -148,7 +149,10 @@ test.describe('epic S1-E3 journeys', () => {
     const page = await openAsPersona(browser, 'adult_writer', '/write/new');
     await page.getByRole('textbox', { name: 'Title' }).fill(storyTitle);
     await page.getByRole('radio', { name: 'Română' }).click();
+    // The form is a five-step wizard (CALM-9, board D02): the category is step 2, the rating step 5.
+    await goToNewStoryStep(page, 'Category, tags and setting');
     await page.getByRole('radio', { name: 'Fiction' }).click();
+    await goToLastNewStoryStep(page);
     await page.getByRole('radio', { name: 'All ages', exact: true }).click();
     await page.getByRole('radio', { name: 'No AI', exact: true }).click();
     await page.getByRole('button', { name: 'Create and write chapter one' }).click();
@@ -204,6 +208,7 @@ test.describe('epic S1-E3 journeys', () => {
     for (const persona of ['teen_17', 'kid_14_ok', 'kid_14_waiting'] as const) {
       const page = await openAsPersona(browser, persona, '/write/new');
       await page.getByRole('textbox', { name: 'Title' }).fill(`${storyTitle} (${persona})`);
+      await goToLastNewStoryStep(page);
       await page.getByRole('radio', { name: 'All ages', exact: true }).click();
       await page.getByRole('radio', { name: 'No AI', exact: true }).click();
       await page.getByRole('button', { name: 'Create and write chapter one' }).click();

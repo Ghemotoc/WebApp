@@ -17,7 +17,7 @@
  * Test data: one published chapter on adult_writer's "Stația meteo"; its comments go with it.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { expect, test, type Browser, type Locator, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -84,6 +84,34 @@ function markerOf(page: Page, block: number) {
     .locator('.tmc-paragraph-marker');
 }
 
+/**
+ * Checks the open comment box lines up with its paragraph (CALM-9, board B03): About this story
+ * ends above the box, and the box starts level with the paragraph, or just under About this story
+ * when that reaches lower than the paragraph's top.
+ *
+ * @param page - the reader
+ * @param panel - the side column
+ * @param block - the open paragraph's number
+ */
+async function expectBoxLevelWithParagraph(page: Page, panel: Locator, block: number) {
+  const slot = panel.locator('[data-thread-slot]');
+  const row = page.locator('.tmc-paragraph-row', { has: page.locator(`p[data-block="${block}"]`) });
+  // Wait a frame for the measuring, then compare the tops.
+  await expect
+    .poll(async () => {
+      const slotBox = await slot.boundingBox();
+      const rowBox = await row.boundingBox();
+      const aboveBox = await slot.locator('xpath=preceding-sibling::*[1]').boundingBox();
+      if (slotBox === null || rowBox === null || aboveBox === null) return 'not drawn';
+      if (aboveBox.y + aboveBox.height > slotBox.y + 1) return 'About this story overlaps';
+      if (slotBox.y < rowBox.y - 1) return 'box above its paragraph';
+      const aboutReachesLower = aboveBox.y + aboveBox.height > rowBox.y;
+      if (!aboutReachesLower && Math.abs(slotBox.y - rowBox.y) > 1) return 'box not level';
+      return 'level';
+    })
+    .toBe('level');
+}
+
 test.describe('comments on a paragraph (S1-E6-06)', () => {
   test.describe.configure({ mode: 'serial' });
   test.beforeAll(seedChapter);
@@ -102,6 +130,9 @@ test.describe('comments on a paragraph (S1-E6-06)', () => {
     // Its head: the paragraph's opening words, no title or count.
     await expect(thread.locator('blockquote')).toHaveText('The lift stopped between floors.');
     await expect(thread).toBeFocused();
+    // B03 (CALM-9): About this story sits above the box, and the box never starts above its
+    // paragraph; it starts level with it unless About this story reaches lower.
+    await expectBoxLevelWithParagraph(page, panel, 2);
     await thread
       .getByRole('textbox', { name: 'Comment on this paragraph' })
       .fill('That lift scared me.');

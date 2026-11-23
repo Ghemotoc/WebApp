@@ -121,12 +121,17 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
     await expect(chapters.getByRole('link', { name: /Calmul/ })).toBeVisible();
     const plan = page.getByRole('region', { name: 'Plan for this chapter' });
     await expect(plan.getByText('Only you see this. Readers never do.')).toBeVisible();
-    await pick(page, 'atlas-chapter-kind', 'Prologue');
+    // CALM-9, D05: the status and goal sit on top; type, point of view, act, date and place
+    // fold under "More details".
     await pick(page, 'atlas-chapter-status', 'Drafting');
+    await plan.getByText('More details', { exact: true }).click();
+    await expect(plan.getByText('Point of view, date, act, place and scenes.')).toBeVisible();
+    await pick(page, 'atlas-chapter-kind', 'Prologue');
     await pick(page, 'atlas-chapter-pov', 'Ana');
     await pick(page, 'atlas-chapter-act', 'Act I');
     await type(page, 'atlas-chapter-target', '3,000');
     await expect(page.getByTestId('atlas-chapter-words')).toHaveText('4 / 3,000 words');
+    await expect(plan.getByText('4 of 3,000 words', { exact: true })).toBeVisible();
     await expect(chapters.getByRole('link', { name: /Furtuna/ })).toContainText('4 / 3,000 words');
     await expect(chapters.getByRole('link', { name: /Furtuna/ })).toContainText('Prologue:');
     await type(page, 'atlas-chapter-world-date', 'Spring, year 3');
@@ -140,8 +145,9 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
     await expect(page.locator('#atlas-chapter-target-save')).toHaveText(
       'Type a whole number from 1 to 1,000,000, or leave it empty.',
     );
-    // After a reload, everything that saved is still there.
+    // After a reload, everything that saved is still there (the fold opens again first).
     await page.reload();
+    await plan.getByText('More details', { exact: true }).click();
     await expect(page.locator('#atlas-chapter-kind')).toHaveValue('prologue');
     await expect(page.locator('#atlas-chapter-target')).toHaveValue('3000');
     await expect(page.locator('#atlas-chapter-world-sort')).toHaveValue('3.5');
@@ -177,6 +183,10 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', editorAddress);
+    await page
+      .getByRole('region', { name: 'Plan for this chapter' })
+      .getByText('More details', { exact: true })
+      .click();
     const scenes = page.getByRole('region', { name: 'Scenes' });
     for (const title of ['Arrival', 'Dinner', 'Departure']) {
       await scenes.getByRole('textbox', { name: 'New scene’s title' }).fill(title);
@@ -210,6 +220,8 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
   }) => {
     const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}/characters`);
     await page.getByRole('link', { name: 'Ana', exact: true }).click();
+    // Every card but Basics folds shut on the sheet (CALM-9, board E23): open "Appears in".
+    await page.getByRole('button', { name: /^Appears in/ }).click();
     const appears = page.getByRole('region', { name: 'Appears in' });
     await expect(appears.getByRole('listitem')).toHaveCount(1);
     await expect(appears.getByRole('listitem')).toContainText('point of view, present');
@@ -250,7 +262,11 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
       const context = await browser.newContext();
       await useSessionInBrowser(context, (await signInPersona('suspended_user')).session);
       const page = await context.newPage();
-      await checkScreen(page, view);
+      // The type folds under "More details" (CALM-9, D05): it is opened before axe runs, so axe
+      // checks the folded fields too. The fold is found by what it holds, in either language.
+      await checkScreen(page, view, async (screen) => {
+        await screen.locator('details:has(#atlas-chapter-kind) > summary').click();
+      });
       await expect(page.locator('#atlas-chapter-kind')).toBeVisible();
       await expectNoDoodles(page);
       await context.close();

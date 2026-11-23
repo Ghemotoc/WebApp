@@ -23,6 +23,7 @@
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
+import { goToLastNewStoryStep, goToNewStoryStep } from './support/newStoryWizard';
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
@@ -74,7 +75,10 @@ function firstPlanLink(page: Page) {
 async function createStory(page: Page, title: string) {
   await page.getByRole('textbox', { name: 'Title' }).fill(title);
   await page.getByRole('radio', { name: 'Română' }).click();
+  // The form is a five-step wizard (CALM-9, board D02): the category is step 2, the rating step 5.
+  await goToNewStoryStep(page, 'Category, tags and setting');
   await page.getByRole('radio', { name: 'Fiction' }).click();
+  await goToLastNewStoryStep(page);
   await page.getByRole('radio', { name: 'All ages', exact: true }).click();
   await page.getByRole('radio', { name: 'No AI', exact: true }).click();
   await page.getByRole('button', { name: /^Create/ }).click();
