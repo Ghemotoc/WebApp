@@ -336,6 +336,24 @@
 }
 
 /*
+ * Hit areas for small text actions (the design books, item 10; WCAG 2.2, 2.5.8). An invisible box
+ * of at least 44 by 32 px, centred on the link or button, takes the tap; nothing changes on screen.
+ * Used on commenter names, the story's writer and tag links and the breadcrumb.
+ */
+@utility hit-target {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: max(100%, 44px);
+    min-height: max(100%, 32px);
+    translate: -50% -50%;
+  }
+}
+
+/*
  * Tiny covers (the design books, item 19; Robert, approved 23 Nov 2026, 13:25 UTC). Under 64 px wide
  * a drawn title would be 5 to 7 px tall and unreadable, so the cover keeps only its colour, pattern
  * and mark, and every place that shows a cover that small writes the title beside it. The words
