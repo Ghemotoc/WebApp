@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 
 import { copyText } from '../lib/clipboard';
@@ -51,12 +52,12 @@ export function QuoteLimitDialog({ isOpen, onClose, chapter }: QuoteLimitDialogP
       <p role="status" className="m-0 min-h-5 type-body text-ink-muted">
         {status}
       </p>
-      <div className="flex flex-wrap justify-end gap-3">
+      <ButtonRow>
+        <Button onClick={onClose}>{t('limit.close')}</Button>
         <Button variant="secondary" onClick={() => void copyLink()}>
           {t('limit.copyLink')}
         </Button>
-        <Button onClick={onClose}>{t('limit.close')}</Button>
-      </div>
+      </ButtonRow>
     </SharingModal>
   );
 }

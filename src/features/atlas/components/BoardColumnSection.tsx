@@ -2,13 +2,16 @@
  * BoardColumnSection: one act's column on the chapter board (story S1-E17-19), or "No act".
  *
  * No box of its own (bundle G10 ATLAS, part c1; board AtlasStoryline): the act's name as a heading
- * with its chapter count, its chapters as glass cards in book order, then "Add chapter", which
- * adds a draft at the end of this act. An act (never "No act") also has "Edit act", to rename or
- * delete it (bundle GAPS-2a). Dropping a card on the column (not on a card) puts it at the
- * column's end. Who uses it: ChapterBoard. What it calls: BoardCard, EditActForm and the handlers
- * it is given.
+ * with its chapter count, its chapters as cards in book order, then "Add chapter", which adds a
+ * draft at the end of this act. An act (never "No act") also has "Edit act", to rename or delete
+ * it (bundle GAPS-2a). The column is a drop zone too (CALM-9, board E28): while a card is dragged
+ * over it, it gets a ring in the main colour, and a dashed gap saying "Becomes chapter N" opens
+ * where the card will land; a card dropped on its empty space goes to the column's end.
+ * Who uses it: ChapterBoard. What it calls: BoardCard, EditActForm, dnd-kit and the handlers it
+ * is given.
  */
-import { useState } from 'react';
+import { useDroppable } from '@dnd-kit/core';
+import { useState, type ReactNode } from 'react';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
@@ -16,6 +19,7 @@ import { Notice } from '@/components/ui/Notice';
 
 import type { Storyline } from '../api/storyline';
 import type { BoardColumn, BoardTarget } from '../lib/boardColumns';
+import { columnDropId, landingGapDropId } from '../lib/boardDrag';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { BoardCard } from './BoardCard';
@@ -30,8 +34,11 @@ export interface BoardColumnSectionProps {
   /** "Chapter 3" or "Prologue" for each chapter. */
   labelOf: (code: string) => string;
   /** The code of the card being dragged, or null. */
-  draggingCode: string | null;
-  setDraggingCode: (code: string | null) => void;
+  draggedCode: string | null;
+  /** Where the dragged card would land, or null while it would change nothing. */
+  dropTarget: BoardTarget | null;
+  /** The words in the gap ("Becomes chapter 4"). */
+  gapLabel: string;
   move: (code: string, target: BoardTarget) => void;
   addChapter: (actId: string | null) => Promise<void>;
 }
@@ -79,15 +86,39 @@ function AddChapterButton({ name, onAdd }: { name: string; onAdd: () => Promise<
   );
 }
 
-/** The column's cards, each a drag source and a drop zone. */
+/** The dashed gap that opens where a dragged card will land (board E28). */
+function LandingGap({ label }: { label: string }) {
+  // The gap is a drop zone too, so a card let go over it lands where it shows (lib/boardDrag.ts).
+  const { setNodeRef } = useDroppable({ id: landingGapDropId });
+  // The board's live region says the same words, so the gap itself stays out of a screen reader.
+  return (
+    <li
+      ref={setNodeRef}
+      aria-hidden="true"
+      data-testid="atlas-board-gap"
+      className="grid min-h-16 place-items-center rounded-card border-2 border-dashed border-(--accent) px-3 text-center type-label text-(--accent)"
+    >
+      {label}
+    </li>
+  );
+}
+
+/** Where the gap goes in the column's list, which still holds the dragged card; null for none. */
+function gapPosition(props: BoardColumnSectionProps, column: BoardColumn): number | null {
+  const { dropTarget, draggedCode } = props;
+  if (dropTarget === null || dropTarget.actId !== column.actId) return null;
+  // The target counts places without the dragged card; find that card's place in the full list.
+  const others = column.chapters.filter((chapter) => chapter.code !== draggedCode);
+  const before = others[dropTarget.index];
+  if (before === undefined) return column.chapters.length;
+  return column.chapters.findIndex((chapter) => chapter.code === before.code);
+}
+
+/** The column's cards, with the landing gap among them while a card is dragged here. */
 function ColumnCards(props: BoardColumnSectionProps & { column: BoardColumn }) {
   const { t } = useAtlasTranslation();
-  const { slug, storyline, column, draggingCode, move } = props;
-  // Where a dropped card lands, counted without the card itself (it may come from this column).
-  const othersBefore = (code: string) =>
-    column.chapters
-      .filter((chapter) => chapter.code !== draggingCode)
-      .findIndex((chapter) => chapter.code === code);
+  const { slug, storyline, column } = props;
+  const gapAt = gapPosition(props, column);
   // Who tells a chapter, in words: the Narrator, a character's name, or null for nobody yet.
   const tellerOf = (chapter: BoardColumn['chapters'][number]) =>
     chapter.povIsNarrator
@@ -97,25 +128,37 @@ function ColumnCards(props: BoardColumnSectionProps & { column: BoardColumn }) {
   return (
     <ol className="m-0 flex list-none flex-col gap-3 p-0 empty:hidden">
       {column.chapters.map((chapter, index) => (
-        <BoardCard
-          key={chapter.code}
-          slug={slug}
-          chapter={chapter}
-          label={props.labelOf(chapter.code)}
-          povName={tellerOf(chapter)}
-          onDragStart={() => props.setDraggingCode(chapter.code)}
-          onDropOnCard={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            if (draggingCode !== null && draggingCode !== chapter.code) {
-              move(draggingCode, { actId: column.actId, index: othersBefore(chapter.code) });
-            }
-          }}
-          {...movesFor(props, index, chapter.code)}
-        />
+        <ColumnCardSlot key={chapter.code} showGap={gapAt === index} gapLabel={props.gapLabel}>
+          <BoardCard
+            slug={slug}
+            chapter={chapter}
+            label={props.labelOf(chapter.code)}
+            povName={tellerOf(chapter)}
+            {...movesFor(props, index, chapter.code)}
+          />
+        </ColumnCardSlot>
       ))}
+      {gapAt === column.chapters.length && <LandingGap label={props.gapLabel} />}
     </ol>
   );
+}
+
+/** One card, with the landing gap in front of it when the dragged card would land there. */
+function ColumnCardSlot(props: { showGap: boolean; gapLabel: string; children: ReactNode }) {
+  return (
+    <>
+      {props.showGap && <LandingGap label={props.gapLabel} />}
+      {props.children}
+    </>
+  );
+}
+
+/** The column's drop zone look: a ring in the main colour while a card would land in it. */
+function columnClasses(isTargeted: boolean): string {
+  // Board E28 (.acol.is-over): an inset 2 px ring in the main colour; the negative margin keeps
+  // the padding that makes room for the ring from moving the column.
+  const base = '-m-2 flex h-full flex-col gap-3 rounded-card p-2';
+  return isTargeted ? `${base} shadow-[inset_0_0_0_2px_var(--plum-to)]` : base;
 }
 
 /**
@@ -125,34 +168,24 @@ function ColumnCards(props: BoardColumnSectionProps & { column: BoardColumn }) {
  */
 export function BoardColumnSection(props: BoardColumnSectionProps) {
   const { t } = useAtlasTranslation();
-  const { columns, columnIndex, draggingCode, move } = props;
+  const { columns, columnIndex, draggedCode, dropTarget } = props;
   const column = columns[columnIndex];
+  // The column is a drop zone; a card dropped on its empty space goes to its end.
+  const { setNodeRef } = useDroppable({ id: columnDropId(column?.actId ?? null) });
   if (column === undefined) return null;
   const name = column.name ?? t('storyline.board.noAct');
   const headingId = `atlas-board-column-${columnIndex}`;
-  const restCount = column.chapters.filter((chapter) => chapter.code !== draggingCode).length;
+  const isTargeted = draggedCode !== null && dropTarget?.actId === column.actId;
 
   return (
     <section aria-labelledby={headingId} data-testid="atlas-board-column" className="min-w-0">
-      {/* The column's drop zone: a card dropped here (not on a card) goes to the column's end. */}
-      <div
-        role="presentation"
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={(event) => {
-          event.preventDefault();
-          if (draggingCode !== null) move(draggingCode, { actId: column.actId, index: restCount });
-        }}
-        className="flex h-full flex-col gap-3"
-      >
+      <div ref={setNodeRef} className={columnClasses(isTargeted)}>
         <div className="flex items-baseline justify-between gap-2">
-          <h2
-            id={headingId}
-            className="m-0 min-w-0 font-heading type-long font-bold break-words text-ink-heading"
-          >
+          <h2 id={headingId} className="m-0 min-w-0 type-subheading break-words text-ink-heading">
             {name}
           </h2>
           {/* How many chapters the act holds; the list below says the same to a screen reader. */}
-          <span aria-hidden="true" className="type-body text-ink-muted">
+          <span aria-hidden="true" className="type-meta">
             {column.chapters.length}
           </span>
         </div>
@@ -165,7 +198,7 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
             chapterCount={column.chapters.length}
           />
         )}
-        {column.chapters.length === 0 && (
+        {column.chapters.length === 0 && !isTargeted && (
           <p className="m-0 type-body text-ink-muted">{t('storyline.board.empty')}</p>
         )}
         <ColumnCards {...props} column={column} />

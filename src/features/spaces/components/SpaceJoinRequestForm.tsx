@@ -10,6 +10,7 @@
  */
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 
@@ -61,7 +62,10 @@ export function SpaceJoinRequestForm({
         ref={fieldRef}
         onChange={(event) => setNote(event.target.value)}
       />
-      <div className="flex flex-wrap gap-2 md:justify-end">
+      <ButtonRow>
+        <Button type="submit" disabled={membership.isRunning}>
+          {t('joinNote.send')}
+        </Button>
         <Button
           variant="secondary"
           disabled={membership.isRunning}
@@ -69,10 +73,7 @@ export function SpaceJoinRequestForm({
         >
           {t('joinNote.cancel')}
         </Button>
-        <Button type="submit" disabled={membership.isRunning}>
-          {t('joinNote.send')}
-        </Button>
-      </div>
+      </ButtonRow>
     </form>
   );
 }

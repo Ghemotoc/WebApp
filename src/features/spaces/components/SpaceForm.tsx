@@ -16,6 +16,7 @@
 import { useId, useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
@@ -219,17 +220,17 @@ export function SpaceForm(props: SpaceFormProps) {
         </>
       )}
       {general !== null && <Notice tone="error">{general}</Notice>}
-      <div className="flex flex-wrap justify-end gap-3">
+      <ButtonRow>
+        <Button type="submit" disabled={props.isRunning}>
+          {props.submitLabel}
+        </Button>
         <Link
           to={props.cancelTo}
           className="inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline"
         >
           {t('form.cancel')}
         </Link>
-        <Button type="submit" disabled={props.isRunning}>
-          {props.submitLabel}
-        </Button>
-      </div>
+      </ButtonRow>
     </form>
   );
 }

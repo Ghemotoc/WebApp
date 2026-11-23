@@ -31,6 +31,9 @@
  *  10. Text colours are ink, ink-muted, ink-heading, link and the state colours: a member screen
  *      writes text-ink-muted and text-ink-heading (not text-body, text-meta or text-heading), and
  *      no component types a hex colour (a QR code's black on white is the one exception).
+ *  11. Form and dialog buttons sit on the left, the main one first (design books item 8): a member
+ *      file never pushes a row of buttons to the right edge with justify-end; it uses ButtonRow
+ *      (src/components/ui/ButtonRow.tsx). Staff screens are left out.
  * Who runs it: Vitest (`npm test`), in CI on every pull request. Its sister guard is
  * src/test/noDoodles.test.ts.
  */
@@ -338,5 +341,21 @@ describe('the design rules are the defaults', () => {
   it('buttons and fields draw in the page font, never the browser default', () => {
     const base = styleSheets.find(([path]) => path.endsWith('/index.css'))?.[1] ?? '';
     expect(base).toMatch(/button,\s*input,\s*select,\s*textarea\s*\{\s*font: inherit;/);
+  });
+
+  it('no member form or dialog pushes its buttons to the right edge', () => {
+    // A justify-end row whose next line opens a button: the footer ButtonRow replaced (item 8).
+    const rightButtons = /justify-end[^\n]*>\s*\n\s*<(Button|Link)\b/;
+    // Not footers: the Share button under a chapter picture lines up with the picture's edge, and
+    // the translation editor's top bar keeps its actions at the right like the chapter editor's.
+    const notFooters = [
+      '/src/features/sharing/components/PictureShareButton.tsx',
+      '/src/features/story-languages/components/TranslationEditorBar.tsx',
+    ];
+    const offenders = codeFiles()
+      .filter(([path]) => !isStaffFile(path) && !notFooters.includes(path))
+      .filter(([, text]) => rightButtons.test(text))
+      .map(([path]) => path);
+    expect(offenders).toEqual([]);
   });
 });

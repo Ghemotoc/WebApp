@@ -11,15 +11,17 @@
  * heading is empty is left out. Shelf titles, the footer's columns and the top bar are interface
  * text from the locale files. The shelves keep to ratings, blocks and removed content
  * (S1-E5-01) and end with "View more" (S1-E5-09).
+ * A signed-in member is sent to the Writers' hub instead (TRIAL-WALL, 23 Nov 2026).
  * Who shows it: the router for "/". What it calls: useWebsiteContent for the home page and the
  * questions, HomeShelves and the four bands; the shared footer follows (NIGHT-2).
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link, Navigate } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
+import { useSession } from '@/features/auth/hooks/useSession';
 import { PageContainer } from '@/components/ui/PageContainer';
 import {
   homePageContentSchema,
@@ -192,6 +194,11 @@ export function WebsiteHomePage() {
   const { t } = useTranslation();
   const { entries, readFailed } = useWebsiteContent('home_page', homePageContentSchema);
   const homePage = entries.find((entry) => entry.entryKey === 'home');
+  const { userId } = useSession();
+  // A signed-in member who opens the site's address goes to their own home, the Writers' hub
+  // (Robert, 23 Nov 2026: "when people are signed in and they go to [the site], they don't go to
+  // their signed out page, they go to the signed in page for home").
+  if (userId !== null) return <Navigate to="/hub" replace />;
   return (
     <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-16">
       <title>{homeDocumentTitle(homePage?.content.search?.title ?? '', t)}</title>

@@ -4,16 +4,17 @@
  *
  * Board values: a 480 px white dialog, a 26 px heading, the line "We hide it from readers
  * straight away and delete it for good after 30 days. Until then you can undo it under Recently
- * deleted.", then "Keep chapter" (outlined) and "Delete chapter" (solid red), right-aligned.
+ * deleted.", then "Delete chapter" (solid red) and "Keep chapter" (outlined), from the left.
  * It is a native <dialog> with role="alertdialog": focus stays inside, Escape keeps the chapter.
- * Focus starts on "Keep chapter", the safe choice: it is the dialog's first button, and
- * showModal() focuses the first control.
+ * Focus starts on "Keep chapter", the safe choice, put there after showModal() because the
+ * main button comes first (design books item 8).
  * Who uses it: ManageChaptersPage. What it calls: onConfirm, which the page turns into
  * delete_chapter() through useManageChapters.
  */
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 
 /** What the dialog needs. */
@@ -38,7 +39,12 @@ export function DeleteChapterDialog({ title, onConfirm, onClose }: DeleteChapter
   useEffect(() => {
     const dialog = dialogRef.current;
     if (dialog === null) return;
-    if (isOpen && !dialog.open) dialog.showModal();
+    if (isOpen && !dialog.open) {
+      dialog.showModal();
+      // The main button now comes first (design books item 8), so the focus is put on the
+      // safe choice by hand instead of on the first button.
+      dialog.querySelector<HTMLElement>('[data-safe-choice]')?.focus();
+    }
     if (!isOpen && dialog.open) dialog.close();
   }, [isOpen]);
 
@@ -61,10 +67,7 @@ export function DeleteChapterDialog({ title, onConfirm, onClose }: DeleteChapter
         <p id="delete-chapter-body" className="m-0 type-body leading-relaxed text-ink-muted">
           {t('manageChapters.deleteDialog.body')}
         </p>
-        <div className="mt-2 flex flex-wrap justify-end gap-2">
-          <Button size="lg" variant="secondary" onClick={onClose}>
-            {t('manageChapters.deleteDialog.keep')}
-          </Button>
+        <ButtonRow className="mt-2">
           <Button
             size="lg"
             className="border-0 bg-destructive text-white hover:opacity-90"
@@ -72,7 +75,10 @@ export function DeleteChapterDialog({ title, onConfirm, onClose }: DeleteChapter
           >
             {t('manageChapters.deleteDialog.confirm')}
           </Button>
-        </div>
+          <Button size="lg" variant="secondary" onClick={onClose} data-safe-choice>
+            {t('manageChapters.deleteDialog.keep')}
+          </Button>
+        </ButtonRow>
       </div>
     </dialog>
   );
