@@ -3,7 +3,7 @@
  * 23 Nov 2026, approved the same day; boards B01 to B06).
  *
  * Why: the story page and the reader end with one sentence, "[Title] is a [genre] [type]
- * published on ghemotoc by [pen name or username].", then the blurb. The same words go into the
+ * published on [site] by [pen name or username].", then the blurb. The same words go into the
  * page's description, its Open Graph description and its JSON-LD, so people, search engines and
  * answer engines read one consistent statement. get_link_preview() already gives a visitor's
  * view of a story to the link preview (server/link-preview.ts) and the app; it now also gives:
