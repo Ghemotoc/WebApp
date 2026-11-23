@@ -43,6 +43,8 @@ export interface Brand {
   socialHandle: string;
   /** The company behind the product, for the footer line "An app by …" (S1-E1-03). */
   companyName: string;
+  /** The company's own website, which the company name in the footer links to (Robert, 23 Nov 2026). */
+  companySiteUrl: string;
 }
 
 /**
@@ -60,6 +62,7 @@ export interface BrandEnvironment {
   VITE_BRAND_AUTHORITIES_EMAIL?: string;
   VITE_BRAND_SOCIAL_HANDLE?: string;
   VITE_BRAND_COMPANY_NAME?: string;
+  VITE_BRAND_COMPANY_SITE_URL?: string;
 }
 
 /**
@@ -67,7 +70,8 @@ export interface BrandEnvironment {
  * Sources: working name "Ghemotoc" (decided 16 Oct 2026); working site and contact and support
  * address (decided 17 Oct 2026, 12:50); the privacy address is the same until the company exists
  * (decided 17 Oct 2026, 19:43, Q16), and so is the authorities' address; handle @ghemotoc everywhere (architecture.md, section 1.2);
- * the footer line "An app by The Magic Coffin" (canvas comment, 16 Oct 2026).
+ * the footer line "An app by The Magic Coffin" (canvas comment, 16 Oct 2026), its name linking to the
+ * company's site (Robert, 23 Nov 2026).
  */
 export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
   productName: 'Ghemotoc',
@@ -78,6 +82,7 @@ export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
   authoritiesEmail: 'hello@themagiccoffin.com',
   socialHandle: '@ghemotoc',
   companyName: 'The Magic Coffin',
+  companySiteUrl: 'https://themagiccoffin.com',
 };
 
 /**
@@ -117,6 +122,10 @@ export function readBrand(environment: BrandEnvironment | undefined): Brand {
     ),
     socialHandle: valueOrDefault(environment?.VITE_BRAND_SOCIAL_HANDLE, brandDefaults.socialHandle),
     companyName: valueOrDefault(environment?.VITE_BRAND_COMPANY_NAME, brandDefaults.companyName),
+    companySiteUrl: valueOrDefault(
+      environment?.VITE_BRAND_COMPANY_SITE_URL,
+      brandDefaults.companySiteUrl,
+    ),
   };
 }
 

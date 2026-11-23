@@ -21,6 +21,8 @@ interface ImportMetaEnv {
   readonly VITE_BRAND_SOCIAL_HANDLE?: string;
   /** Company name for the footer line "An app by …". */
   readonly VITE_BRAND_COMPANY_NAME?: string;
+  /** The company's website, linked from the company name in the footer. */
+  readonly VITE_BRAND_COMPANY_SITE_URL?: string;
   /** "true" includes the /design page in a build (staging only, decided 17 Oct 2026). */
   readonly VITE_SHOW_DESIGN_PAGE?: string;
   /** Supabase API address (local: printed by `npx supabase start`). */

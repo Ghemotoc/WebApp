@@ -11,14 +11,18 @@
  * comment, 16 Oct 2026); the full Device / Light / Night choice stays in Settings › Appearance and
  * the staff footer; the end slot holds the language drop-down from S1-E1-04. Links are listed in
  * src/app/navigation.ts and appear only when their page exists.
- * Who uses it: AppLayout. What it calls: FooterLinkColumn and NightModeButton.
+ * Robert, 23 Nov 2026: the emblem alone sits above the words, aligned left and in the theme's
+ * colour, and the company name links to the company's own site (brand.companySiteUrl).
+ * Who uses it: AppLayout. What it calls: BrandEmblem, FooterLinkColumn and NightModeButton.
  */
 import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { type FooterColumn, footerColumns } from '@/app/navigation';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { brand } from '@/config/brand';
+import { BrandEmblem } from '@/features/branding/components/BrandMark';
 import { NightModeButton } from '@/features/theme/components/NightModeButton';
 
 /** What the footer needs. */
@@ -81,8 +85,10 @@ export function Footer({ about, endSlot }: FooterProps) {
         {/* The top line spans the content column only, as in the design, not the side padding. */}
         <div className="border-t border-hairline pt-7 pb-10 sm:pt-8 lg:pt-10 lg:pb-12">
           <div className="grid grid-cols-2 gap-x-5 gap-y-7 sm:gap-8 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
-            {/* Step 1: the words: the whole width on phones, the first column from 640 px. */}
-            <div className="col-span-2 sm:col-span-1">
+            {/* Step 1: the emblem, then the words: the whole width on phones, the first column
+                from 640 px. The emblem lines up with the words' left edge (Robert, 23 Nov 2026). */}
+            <div className="col-span-2 flex flex-col items-start gap-4 sm:col-span-1">
+              <BrandEmblem />
               {about ?? (
                 <p className="m-0 max-w-[46ch] text-[15px] leading-6 text-body">
                   {t('shell.footer.about')}
@@ -101,7 +107,18 @@ export function Footer({ about, endSlot }: FooterProps) {
             </div>
             {/* Step 4: the maker's line: the last line on phones, the left of the bottom row after. */}
             <p className="col-span-2 m-0 self-center text-[13px] leading-[18px] text-meta sm:col-span-1 lg:col-span-2">
-              {t('shell.madeBy')}
+              {/* The company name opens the company's site in this tab (Robert, 23 Nov 2026). */}
+              <Trans
+                i18nKey="shell.madeBy"
+                components={{
+                  company: (
+                    // Trans puts the translated name inside; the brand name here is only its stand-in.
+                    <a href={brand.companySiteUrl} className="text-meta underline hover:text-ink">
+                      {brand.companyName}
+                    </a>
+                  ),
+                }}
+              />
             </p>
           </div>
         </div>
