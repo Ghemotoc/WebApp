@@ -94,7 +94,7 @@ export function WaitlistProfileSteps(props: WaitlistProfileStepsProps) {
   const wizard = useStepWizard(steps.length);
   // The last step ends with "Done"; the page has no other button to finish with.
   const doneButton = (
-    <div className="flex justify-end border-t border-hairline pt-5">
+    <div className="flex justify-end border-t border-hairline pt-6">
       <Button type="button" onClick={wizard.finish}>
         {t('waitlist.steps.done')}
       </Button>
@@ -113,7 +113,7 @@ export function WaitlistProfileSteps(props: WaitlistProfileStepsProps) {
         lastStepActions={doneButton}
       />
       {/* A polite live region, so a screen reader hears that the steps are finished. */}
-      <p role="status" className="m-0 text-body">
+      <p role="status" className="m-0 text-ink-muted">
         {wizard.isFinished ? t('waitlist.steps.finished') : null}
       </p>
     </div>
