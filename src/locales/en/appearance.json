@@ -27,7 +27,7 @@
   "highContrastDeviceHint": "This device already asks for more contrast, so it stays on here.",
   "on": "On",
   "off": "Off",
-  "nightNote": "Night mode looks the same with every theme.",
+  "nightNote": "Night mode keeps the theme colour on black.",
   "saving": "Saving…",
   "saved": "Saved. Every device you sign in on shows it.",
   "saveFailed": "We couldn’t save this on your account, so only this device shows it. Try again later."

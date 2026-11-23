@@ -27,7 +27,7 @@
   "highContrastDeviceHint": "Dispozitivul cere deja mai mult contrast, așa că rămâne pornit aici.",
   "on": "Pornit",
   "off": "Oprit",
-  "nightNote": "Modul de noapte arată la fel cu fiecare temă.",
+  "nightNote": "Modul de noapte păstrează culoarea temei pe negru.",
   "saving": "Se salvează…",
   "saved": "Salvat. Îl vezi pe fiecare dispozitiv pe care te conectezi.",
   "saveFailed": "Nu am putut salva asta în contul tău, așa că doar acest dispozitiv o arată. Încearcă din nou mai târziu."

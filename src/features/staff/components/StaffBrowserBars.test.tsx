@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { StaffBrowserBars } from './StaffBrowserBars';
 
 /** The two page colours from src/styles/tokens.css that this test uses. */
-const memberDay = '#f3eefb';
+const memberDay = '#f4f0ec';
 const staffDay = '#f3ece0';
 
 let added: HTMLElement[] = [];

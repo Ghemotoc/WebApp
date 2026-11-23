@@ -69,7 +69,8 @@ test.describe('Settings › Appearance (G2 THEMES)', () => {
     await expect(page.getByRole('radio', { name: 'Lilac mist' })).toBeChecked();
     await expect(page.locator('html')).toHaveAttribute('data-look', 'lilac');
 
-    // Step 2: picking Sea glass changes the page, and the logo takes its teal accent.
+    // Step 2: picking Sea glass changes the page, and the logo takes its teal accent text colour
+    // (the button colour #0F766E with 15% black, flat themes bundle).
     await page.getByText('Sea glass', { exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('data-look', 'seaglass');
     await expect(
@@ -79,7 +80,7 @@ test.describe('Settings › Appearance (G2 THEMES)', () => {
       .getByRole('banner')
       .locator('[data-brand-emblem]')
       .evaluate((emblem) => getComputedStyle(emblem).backgroundColor);
-    expect(logoColour).toBe('rgb(15, 118, 110)');
+    expect(logoColour).toBe('rgb(13, 100, 94)');
     expect(
       runSql(
         `select look || ' ' || (appearance_saved_at is not null) from public.profiles where handle = 'adult_writer'`,

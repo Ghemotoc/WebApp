@@ -168,8 +168,8 @@ export function AppLayout() {
   // Header A, header B with the tab bar, or the website top bar (bundle G4 SHELL).
   const { header, hasTabBar } = useShellHeader(isHeaderOwnedByPage);
 
-  // No background of its own: the page colour and the still colour blobs behind every page come
-  // from src/styles/index.css (bundle G1), and a background here would hide them.
+  // No background of its own: the flat page colour comes from <html> (src/styles/index.css), so
+  // every page and theme share one place for it.
   return (
     // While the trial runs on computers only, a phone or tablet sees one page instead (TRIAL-DESKTOP).
     <DesktopOnlyGate>

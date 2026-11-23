@@ -48,7 +48,10 @@ describe('the main website glass on this app (GLASS-2)', () => {
 
   it('turns the main button to its hover colour on hover, press and the current page', () => {
     expect(indexCss).toContain("&[aria-current='page']");
-    expect(indexCss).toContain('var(--plum-hover-from), var(--plum-hover-to)');
+    // One flat hover colour, no gradient (the flat themes bundle, Robert, 23 Nov 2026).
+    const mainButton = blockAfter(indexCss, '@utility button-main');
+    expect(mainButton).toContain('background-color: var(--plum-hover-to);');
+    expect(mainButton).toContain('background-image: none;');
   });
 
   it('draws the main button flat and the quiet button as the tint with no edge (CALM-2)', () => {

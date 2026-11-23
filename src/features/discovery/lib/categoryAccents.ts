@@ -25,14 +25,15 @@ export function categoryAccent(categorySlug: string): PillTone {
 }
 
 /**
- * The deep band at the top of a category page (bundle G7c; board DiscoverGenre): the tone's
- * gradient from tokens.css, which carries white text (the genre-band utility).
+ * The deep band at the top of a category page (bundle G7c; board DiscoverGenre): the tone's one
+ * flat colour from tokens.css (no gradients, Robert, 23 Nov 2026), which carries white text (the
+ * genre-band utility).
  */
 export const accentDeepBandClasses: Record<PillTone, string> = {
-  plum: 'bg-[linear-gradient(135deg,var(--band-plum-from),var(--band-plum-to)_70%)]',
-  sage: 'bg-[linear-gradient(135deg,var(--band-sage-from),var(--band-sage-to)_70%)]',
-  gold: 'bg-[linear-gradient(135deg,var(--band-gold-from),var(--band-gold-to)_70%)]',
-  sky: 'bg-[linear-gradient(135deg,var(--band-sky-from),var(--band-sky-to)_70%)]',
-  neutral: 'bg-[linear-gradient(135deg,var(--band-neutral-from),var(--band-neutral-to)_70%)]',
-  blush: 'bg-[linear-gradient(135deg,var(--band-blush-from),var(--band-blush-to)_70%)]',
+  plum: 'bg-[var(--band-plum-from)]',
+  sage: 'bg-[var(--band-sage-from)]',
+  gold: 'bg-[var(--band-gold-from)]',
+  sky: 'bg-[var(--band-sky-from)]',
+  neutral: 'bg-[var(--band-neutral-from)]',
+  blush: 'bg-[var(--band-blush-from)]',
 };
