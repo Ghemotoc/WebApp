@@ -3,10 +3,12 @@
  * "Create a space" and "See all 12 spaces" (bundle FORUMS-2, part a; S1-E8-06; board 5.1's
  * aside).
  * Since CALM-7c (board simplified/New-Together) it sits on the page, not on a card: "Run by
- * members" as a meta line over the subheading, the intro, hairline rows, then "Create a space"
+ * members" as a meta line over the subheading, the intro, the spaces, then "Create a space"
  * (quiet), "Join a class" and "See 37 spaces" (text buttons).
+ * Since CALM-9 (board F01, 23 Nov 2026) each space is a cover card (SpaceCoverCard): one a row in
+ * the side column and on phones, two a row on tablets.
  * Who shows it: the forums' ForumsPage and ForumPage, beside the categories. What it calls:
- * useSpaceList.
+ * useSpaceList and SpaceCoverCard.
  */
 import { Link } from 'react-router';
 
@@ -16,7 +18,7 @@ import { Notice } from '@/components/ui/Notice';
 import { useSpaceList } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
-import { SpaceRow } from './SpaceRow';
+import { SpaceCoverCard } from './SpaceCoverCard';
 
 /** How many spaces the card shows. */
 const cardSize = 4;
@@ -44,9 +46,13 @@ export function SpacesCard() {
         <p className="m-0 text-ink-muted">{t('empty')}</p>
       )}
       {list.spaces !== null && list.spaces.length > 0 && (
-        <ul className="m-0 list-none p-0">
+        // Board F01: one card a row in the side column and on phones, two a row on tablets.
+        <ul
+          aria-label={t('title')}
+          className="m-0 mt-2 grid list-none gap-3 p-0 md:grid-cols-2 min-[900px]:grid-cols-1"
+        >
           {list.spaces.slice(0, cardSize).map((space) => (
-            <SpaceRow key={space.id} space={space} isCompact />
+            <SpaceCoverCard key={space.id} space={space} />
           ))}
         </ul>
       )}

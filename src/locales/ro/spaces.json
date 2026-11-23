@@ -150,7 +150,8 @@
     "kindClass": "Spațiul unei clase",
     "kindClassNote": "Privat, doar pentru clasa ta. Elevii intră cu un cod pe care li-l dai, oricare le-ar fi vârsta.",
     "createClass": "Creează spațiul clasei",
-    "bannerHint": "Culori intense sau pasteluri.",
+    "bannerHint": "Una dintre culori sau o imagine a ta. Mărimea imaginii: 2800 × 400 px (7 la 1). Ține cuvintele și formele principale în caseta din mijloc: cardurile și telefoanele arată doar acea parte.",
+    "bannerGuide": "Se vede pe orice ecran și pe carduri",
     "bannerChosen": "Ales: {{name}}",
     "editIntro": "Doar proprietarul, un moderator cu dreptul de a schimba setările și echipa noastră de moderare le pot schimba."
   },
@@ -332,7 +333,7 @@
     "visible": "Imaginea de banner este afișată.",
     "removed": "Echipa de moderare a scos această imagine. Spațiul își arată culoarea.",
     "upload": "Alege o imagine de banner",
-    "hint": "JPEG, PNG sau WebP, până la 5 MB. O imagine lată arată cel mai bine.",
+    "hint": "2800 × 400 px (7 la 1). JPEG, PNG sau WebP, până la 5 MB.",
     "remove": "Folosește culoarea",
     "removeFailed": "Nu am putut scoate imaginea. Încearcă din nou.",
     "removedNotice": "Spațiul își folosește din nou culoarea."
@@ -572,7 +573,7 @@
     "visible": "Logoul este afișat.",
     "removed": "Echipa de moderare a scos acest logo. Spațiul nu arată nicio imagine.",
     "upload": "Alege un logo",
-    "hint": "JPEG, PNG sau WebP, până la 5 MB. O imagine pătrată arată cel mai bine.",
+    "hint": "Pătrată, 512 × 512 px sau mai mare. JPEG, PNG sau WebP, până la 5 MB.",
     "remove": "Scoate",
     "removeFailed": "Nu am putut scoate logoul. Încearcă din nou.",
     "removedNotice": "Logoul a fost scos. Spațiul nu mai arată nicio imagine."
@@ -600,5 +601,14 @@
     "due": "Termen: {{day}}",
     "replied": "Ai răspuns",
     "loadFailed": "N-am putut încărca temele. Reîncarcă pagina ca să încerci din nou."
+  },
+  "cover": {
+    "kindOpen": "Spațiu deschis",
+    "kindClass": "Clasă",
+    "members_one": "{{count, number}} membru",
+    "members_few": "{{count, number}} membri",
+    "members_other": "{{count, number}} de membri",
+    "private": "Privat",
+    "classOnly": "îl văd doar membrii clasei"
   }
 }

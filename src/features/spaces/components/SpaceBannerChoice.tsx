@@ -18,6 +18,8 @@ import { spaceBanners, type SpaceBanner } from '../api/spaces';
 import { bannerSwatch, bannerTextColour } from '../lib/spaceLook';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { SpaceBannerGuide } from './SpaceBannerGuide';
+
 /**
  * One swatch: the hidden radio button and the tile that shows it.
  *
@@ -96,6 +98,8 @@ export function SpaceBannerChoice({
       <p aria-live="polite" className="m-0 type-body text-ink-muted">
         {t('form.bannerChosen', { name: t(`form.banners.${value}`) })}
       </p>
+      {/* Board F07 (23 Nov 2026): where a banner picture's safe middle sits. */}
+      <SpaceBannerGuide />
     </fieldset>
   );
 }

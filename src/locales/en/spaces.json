@@ -150,7 +150,8 @@
     "kindClass": "Class space",
     "kindClassNote": "Private, for your class only. Students join with a code you give them, whatever their ages.",
     "createClass": "Create the class space",
-    "bannerHint": "Deep colours or pastels.",
+    "bannerHint": "One of the colours, or your own picture. Picture size: 2800 × 400 px (7 to 1). Keep words and the main shapes inside the middle box: cards and phones show only that part.",
+    "bannerGuide": "Shows on every screen and on cards",
     "bannerChosen": "Chosen: {{name}}",
     "editIntro": "Only the owner, a moderator given the settings power and our moderation team can change these."
   },
@@ -332,7 +333,7 @@
     "visible": "Banner picture is up.",
     "removed": "Our moderation team took this picture down. Your space shows its colour.",
     "upload": "Choose a banner picture",
-    "hint": "JPEG, PNG or WebP, up to 5 MB. A wide picture works best.",
+    "hint": "2800 × 400 px (7 to 1). JPEG, PNG or WebP, up to 5 MB.",
     "remove": "Use the colour instead",
     "removeFailed": "We couldn’t take the picture off. Try again.",
     "removedNotice": "The space uses its colour again."
@@ -572,7 +573,7 @@
     "visible": "The logo is up.",
     "removed": "Our moderation team took this logo down. Your space shows no picture.",
     "upload": "Choose a logo",
-    "hint": "JPEG, PNG or WebP, up to 5 MB. A square picture works best.",
+    "hint": "Square, 512 × 512 px or bigger. JPEG, PNG or WebP, up to 5 MB.",
     "remove": "Remove",
     "removeFailed": "We couldn’t take the logo off. Try again.",
     "removedNotice": "The logo is off. The space shows no picture now."
@@ -600,5 +601,14 @@
     "due": "Due {{day}}",
     "replied": "Replied",
     "loadFailed": "We couldn’t load the assignments. Refresh the page to try again."
+  },
+  "cover": {
+    "kindOpen": "Open space",
+    "kindClass": "Class",
+    "members_one": "{{count, number}} member",
+    "members_few": "{{count, number}} members",
+    "members_other": "{{count, number}} members",
+    "private": "Private",
+    "classOnly": "only class members see it"
   }
 }

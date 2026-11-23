@@ -2,11 +2,11 @@
  * SpaceCard: one space on the /spaces page, as board Spaces draws it in the liquid glass redesign
  * (bundle G8b; story S1-E8-06).
  *
- * A glass card with 28 px corners: the logo when the space has one (nothing otherwise), the name
+ * A card: the 64 px tile (the logo, or the banner colour as a blob; CALM-9, board F06), the name
  * as a link, "214 members · members-only posting", the description and "Latest post 14 Nov,
  * 19:02". The whole card isn't one link, so the name stays the one clear target and the text can
  * be selected; the name's link stretches over the card for a pointer.
- * Who shows it: SpacesPage. What it calls: SpaceLogo and forumDates.postTime().
+ * Who shows it: SpacesPage. What it calls: SpaceTile and forumDates.postTime().
  */
 import { Link } from 'react-router';
 
@@ -15,7 +15,7 @@ import { postTime } from '@/features/forums/lib/forumDates';
 import type { Space } from '../api/spaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
-import { SpaceLogo } from './SpaceLogo';
+import { SpaceTile } from './SpaceTile';
 
 /**
  * Renders the card.
@@ -30,7 +30,7 @@ export function SpaceCard({ space }: { space: Space }) {
   return (
     <li className="relative flex flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card transition-shadow hover:shadow-lg md:p-6">
       <div className="flex items-center gap-4">
-        <SpaceLogo space={space} size="small" />
+        <SpaceTile space={space} />
         <div className="flex min-w-0 flex-col gap-1">
           <Link
             to={`/spaces/${space.slug}`}
