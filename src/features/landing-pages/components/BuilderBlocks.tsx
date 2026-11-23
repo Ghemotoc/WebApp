@@ -1,12 +1,14 @@
 /**
  * BuilderBlocks: the page builder's five blocks as visitors see them (story S1-E11-34; bundle
- * CMS-2b): picture and text, cards, steps, a quote and a call to action.
+ * CMS-2b): picture and text, cards, steps, a quote and a call to action. Since CALM-9 (board A10)
+ * each step opens with a round icon tile and "Step 1".
  *
  * Every block is real HTML with an h2, like the other blocks (one heading order). Long text is the
  * CMS's safe Markdown subset (CmsMarkdown); card and step words are plain text. A call to action
  * links only to one of our pages or an https address, which the database checks before publishing.
  * Who shows it: LandingBlockView. What it calls: CmsMarkdown, LandingPicture and buttonClassName.
  */
+import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { CmsMarkdown } from '@/features/website/components/CmsMarkdown';
 import type { LandingBlock, LandingLanguage } from '@/schemas/landingPages';
@@ -15,6 +17,8 @@ import { safeLandingLink } from '@/schemas/landingPages';
 import type { LandingExtras } from '../api/landingPages';
 import { wordsOf } from '../lib/blocks';
 import { entriesOf } from '../lib/entries';
+
+import { useLandingPageTranslation } from '../registerLandingPageTranslations';
 
 import { LandingPicture } from './LandingPicture';
 
@@ -62,6 +66,45 @@ function PictureText(props: BuilderBlockProps) {
   );
 }
 
+/** The icon each step's tile shows, in order (board A10, 23 Nov 2026): a target, a pen, a book. */
+const stepIcons: readonly ActionIconName[] = ['target', 'pen', 'book'];
+
+/**
+ * The icon for one step. Steps past the third keep the book, the last of the board's three.
+ *
+ * @param position - the step's place, from 0
+ * @returns the icon's name
+ */
+function stepIconFor(position: number): ActionIconName {
+  return stepIcons[Math.min(position, stepIcons.length - 1)] ?? 'book';
+}
+
+/**
+ * The top of one step (board A10, 23 Nov 2026): a 48 px round tile with a 24 px line icon, then
+ * "Step 1". The numbers are also the list's own order, so the tile is decoration only.
+ *
+ * @param props.position - the step's place, from 0
+ * @param props.language - the page's language, for "Step 1"
+ * @returns the tile and the label
+ */
+function StepTop({ position, language }: { position: number; language: LandingLanguage }) {
+  const { t } = useLandingPageTranslation();
+  return (
+    <>
+      <span
+        aria-hidden="true"
+        className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-tint text-heading"
+      >
+        <ActionIcon name={stepIconFor(position)} size={24} />
+      </span>
+      {/* "Step 1" in the page's language, so a Romanian page never says "Step". */}
+      <span className="type-meta font-semibold">
+        {t('steps.label', { number: position + 1, lng: language })}
+      </span>
+    </>
+  );
+}
+
 /**
  * Cards in a row (one column on a phone), or numbered steps in order.
  *
@@ -70,32 +113,20 @@ function PictureText(props: BuilderBlockProps) {
 function Entries(props: BuilderBlockProps) {
   const { block, language } = props;
   const entries = entriesOf(block, language);
-  // Steps have an order, so they are a numbered list; cards sit side by side.
+  // Steps have an order, so they are a numbered list; cards sit side by side. Both share the
+  // row: steps three across from 1024 px, as the board draws them.
   const isSteps = block.kind === 'steps';
   const ListTag = isSteps ? 'ol' : 'ul';
   return (
     <section className="flex flex-col gap-4">
       <BlockHeading {...props} />
-      <ListTag
-        className={
-          isSteps
-            ? 'm-0 flex list-none flex-col gap-3 p-0'
-            : 'm-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]'
-        }
-      >
+      <ListTag className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
         {entries.map((entry, position) => (
           <li
             key={`${String(position)}-${entry.title}`}
-            className="flex min-w-0 gap-3 rounded-card border border-border bg-surface p-5 shadow-card"
+            className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface p-5 shadow-card"
           >
-            {isSteps && (
-              <span
-                aria-hidden="true"
-                className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-on-primary"
-              >
-                {position + 1}
-              </span>
-            )}
+            {isSteps && <StepTop position={position} language={language} />}
             <div className="flex min-w-0 flex-col gap-1">
               <h3 className="m-0 text-lg font-semibold text-ink [overflow-wrap:anywhere]">
                 {entry.title}

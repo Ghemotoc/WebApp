@@ -101,7 +101,7 @@
       "failed": "We couldn’t save the answer. Try again."
     },
     "month": {
-      "eyebrow": "Writing month",
+      "eyebrow": "Words written this month",
       "ofGoal": "of {{goal}} words",
       "progressLabel": "{{percent}}% of {{goal}} words this month",
       "streak_one": "{{count}}-day streak",

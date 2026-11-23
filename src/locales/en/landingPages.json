@@ -433,5 +433,8 @@
     "address": "Address of the copy",
     "button": "Copy page",
     "hint": "The copy takes the saved draft, or the newest version, and stays a draft until it is published."
+  },
+  "steps": {
+    "label": "Step {{number}}"
   }
 }

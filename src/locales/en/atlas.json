@@ -239,6 +239,20 @@
       "none": "No characters yet.",
       "open": "Open characters ({{count}})",
       "recentList": "Characters · edited recently"
+    },
+    "foldHints": {
+      "lookAndVoice": "Appearance, voice and mannerisms",
+      "inside": "Wants, needs, fears and secrets",
+      "inTheStory": "Arc and key lines",
+      "relationships_one": "{{count}} relationship",
+      "relationships_few": "{{count}} relationships",
+      "relationships_other": "{{count}} relationships",
+      "chapters_one": "{{count}} chapter",
+      "chapters_few": "{{count}} chapters",
+      "chapters_other": "{{count}} chapters",
+      "places_one": "{{count}} place",
+      "places_few": "{{count}} places",
+      "places_other": "{{count}} places"
     }
   },
   "fieldsSection": {
@@ -528,7 +542,6 @@
     "pov": "Point of view",
     "act": "Act",
     "wordTarget": "Word target",
-    "wordTargetHint": "Leave it empty for no target.",
     "wordTargetInvalid": "Type a whole number from 1 to 1,000,000, or leave it empty.",
     "worldDate": "In-world date",
     "worldDateHint": "As you write it, for example “Spring, year 3”.",
@@ -578,7 +591,12 @@
     },
     "narrator": "Narrator",
     "narratorOption": "Narrator (outside the story)",
-    "narratorOutside": "outside the story"
+    "narratorOutside": "outside the story",
+    "goalProgress": "{{words}} of {{goal}} words",
+    "moreDetails": "More details",
+    "moreDetailsLine": "Point of view, date, act, place and scenes.",
+    "addChip": "+ Add",
+    "addCharacter": "Add a character"
   },
   "storyline": {
     "documentTitle": "Storyline of {{title}}: Story Atlas",
@@ -918,6 +936,14 @@
     "spoilers": {
       "heading": "Spoilers stay safe",
       "body": "Pick the chapter each thing shows from. Readers who haven’t reached it don’t see it."
+    },
+    "summary": {
+      "private": "Kept private",
+      "none": "No parts of the sheet shared",
+      "shared": "Shared: {{parts}}",
+      "ownDetails_one": "{{count}} own detail",
+      "ownDetails_few": "{{count}} own details",
+      "ownDetails_other": "{{count}} own details"
     }
   },
   "publicPlan": {

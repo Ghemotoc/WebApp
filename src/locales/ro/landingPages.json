@@ -433,5 +433,8 @@
     "address": "Adresa copiei",
     "button": "Copiază pagina",
     "hint": "Copia ia ciorna salvată sau cea mai nouă versiune și rămâne ciornă până e publicată."
+  },
+  "steps": {
+    "label": "Pasul {{number}}"
   }
 }

@@ -107,10 +107,6 @@
     "change": "Change in story settings",
     "plan": "Plan this story"
   },
-  "yourStories": {
-    "heading": "Stories",
-    "newStory": "New story"
-  },
   "notFound": "We can’t find this chapter on this account.",
   "signedOut": "Log in to write.",
   "errors": {

@@ -3,8 +3,9 @@
  *
  * Board values: the category as choice chips with a coloured dot (Fiction #4D1B5E, Poetry
  * #2E4A8C, Essays #2F6B4F; decided 16 Oct 2026, Q52: fiction, poetry and nonfiction essays, no
- * journalism); the tag box with "n of 10 tags".
- * Who uses it: NewStoryPage.
+ * journalism); then "Set in", up to five countries the story takes place in (CALM-9, board D02:
+ * no longer a tag); then the tag box with "n of 10 tags".
+ * Who uses it: NewStoryPage (step 2 of the wizard) and StorySettingsPage.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +15,7 @@ import type { StoryCategory } from '../api/stories';
 import type { SetStoryAnswer, StoryAnswers, StoryFieldErrors } from '../hooks/storyAnswers';
 
 import { FormSection } from './FormSection';
+import { SetInCountriesField } from './SetInCountriesField';
 import { TagInput } from './TagInput';
 
 /** The board's dot colour for each category, from the tokens (CALM-7a: no colours in a page). */
@@ -56,6 +58,11 @@ export function CategoryTagsSection({
         onChange={(value) => set('categorySlug', value)}
         descriptionId={errors.categorySlug === undefined ? undefined : 'story-category-error'}
         description={errors.categorySlug === undefined ? undefined : t(errors.categorySlug)}
+      />
+      <SetInCountriesField
+        countries={answers.setInCountries}
+        onChange={(countries) => set('setInCountries', countries)}
+        errorMessage={errors.setInCountries === undefined ? undefined : t(errors.setInCountries)}
       />
       <TagInput
         tags={answers.tags}
