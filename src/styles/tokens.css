@@ -748,6 +748,11 @@
   --plum-hover-to: #5a4c26;
   --primary: #946b00;
   --chip-on: #946b00;
+  /* The one colour set's light text (#fbf7ec) reads at 4.497:1 on this gold, just under WCAG
+     AA's 4.5:1, so summer's main buttons and picked chips keep pure white (5.1:1) and the
+     accent #946b00 stays as Robert chose it (7 Nov 2026). */
+  --on-primary: #ffffff;
+  --chip-on-text: #ffffff;
   /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
   --link: #835e00;
   --link-hover: #3d2c00;
