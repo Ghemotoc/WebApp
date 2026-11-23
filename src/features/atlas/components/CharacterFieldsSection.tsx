@@ -18,6 +18,9 @@ import type { CharacterField } from '../api/characters';
 import { useStoryCast } from '../hooks/useStoryCast';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+/** The heading's look: Funnel Display in the type scale (design books, 23 Nov 2026). */
+const sectionHeadingClass = 'm-0 font-heading type-heading font-bold text-ink-heading';
+
 /** One field's row: its name, and Remove or Bring back. */
 function FieldRow({ field, onToggle }: { field: CharacterField; onToggle: () => void }) {
   const { t } = useAtlasTranslation();
@@ -72,10 +75,7 @@ export function CharacterFieldsSection({ slug }: { slug: string }) {
       aria-labelledby="atlas-fields-heading"
       className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
     >
-      <h2
-        id="atlas-fields-heading"
-        className="m-0 font-heading type-heading font-bold text-ink-heading"
-      >
+      <h2 id="atlas-fields-heading" className={sectionHeadingClass}>
         {t('fieldsSection.heading')}
       </h2>
       <p className="m-0 type-body text-ink-muted">{t('fieldsSection.hint')}</p>

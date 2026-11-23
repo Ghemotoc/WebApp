@@ -1551,10 +1551,18 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
    ChapterReaderPage → get_chapter() → is_teaser? → TeaserPage
        TeaserStoryCard (get_story_page()) · the teaser (teaser_of(): whole paragraphs up to
        600 words, cut in the database) · SignUpPrompt · CopyNotice
-     → nothing (a 16+ or 18+ story)? → useStoryPreview → get_link_preview() → NoPreviewNotice
+     → needs_adult_answer (an 18+ story, CALM-9m)? → AdultQuestionNotice: "I'm 18 or over,
+       show it" keeps the answer in this browser (src/lib/visitorAdult.ts), every request then
+       carries X-Visitor-Adult: yes, visitor_said_adult() reads it and the teaser comes as usual
+     → nothing (a 16+ story)? → useStoryPreview → get_link_preview() → NoPreviewNotice
 ```
 
-Tests: `142-teaser.test.sql`, `server/link-preview.test.ts`, `e2e/teaser.spec.ts`.
+An 18+ story's page opens for visitors (visitor_may_open_rating() in
+reader_visible_story_anywhere() and get_story_page()); lists keep leaving 18+ out for them, and a
+signed-in member's own age still decides (rating_allows()).
+
+Tests: `142-teaser.test.sql`, `396-mature-visitor-confirm.test.sql`, `server/link-preview.test.ts`,
+`src/lib/visitorAdult.test.ts`, `e2e/teaser.spec.ts`.
 
 ## A writer's profile, blocks and follows (S1-E5-05, S1-E6-05)
 
