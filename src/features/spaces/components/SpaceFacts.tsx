@@ -9,7 +9,7 @@
  * is for under-16s. A class space (bundle CLASSES, part a; S1-E8-11) starts with "Class space"
  * in bold and has no age group: it is for the people in the room. A locked class (part b) has
  * "Locked" in bold after it. A caller can put its own facts first (the member count on a row).
- * Who shows it: SpaceHeaderCard and SpaceRow. What it calls: MetaLine.
+ * Who shows it: SpaceHeaderCard. What it calls: MetaLine.
  */
 import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 

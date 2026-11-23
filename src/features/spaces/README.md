@@ -16,8 +16,9 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
 - `lib/spaceLook.ts`: the fourteen banner colours (eight deep, six pastel) and the text colour
   that reads on each (G8b); `lib/spaceFailures.ts`: which words a refusal gets;
   `lib/pictureOutcome.ts`: what the logo and banner upload fields say after an upload.
-- `components/SpacesPage.tsx` (`/spaces`) with a glass `SpaceCard` per space (G8b); `SpacesCard`
-  on the forum index with `SpaceRow`.
+- `components/SpacesPage.tsx` (`/spaces`) with a `SpaceCard` per space (G8b), each starting with
+  a 64 px `SpaceTile` (the logo or the colour, CALM-9 F06); `SpacesCard` on the forum index with
+  a `SpaceCoverCard` per space (CALM-9 F01).
 - `components/SpacePage.tsx` (`/spaces/:spaceSlug`): `SpaceBreadcrumb`, `SpaceHeaderCard`
   (`SpaceBannerBand`, `SpaceLogo`, `SpaceFacts`, `SpaceJoinActions`, Report: everything on the
   banner, in the colour that reads on it; G8b), the forums' `ThreadList`,
