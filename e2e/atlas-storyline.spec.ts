@@ -175,15 +175,24 @@ async function dragCard(
   const from = await cardOf(fromTitle).boundingBox();
   const onto = await cardOf(ontoTitle).boundingBox();
   if (from === null || onto === null) throw new Error('a card is not on screen');
-  await page.mouse.move(from.x + 16, from.y + 20);
-  await page.mouse.down();
-  await page.mouse.move(from.x + 30, from.y + 30, { steps: 4 });
-  // Held over the upper part of the other card, so the dragged card lands in front of it.
-  await page.mouse.move(onto.x + onto.width / 2, onto.y + 5, { steps: 12 });
-  // dnd-kit works out what the pointer is over on its own frame, after the move: letting go
-  // before the landing gap shows can drop the card on nothing, so wait for the gap first, as a
-  // person would see it before letting go.
-  await expect(page.getByTestId('atlas-board-gap')).toBeVisible();
+  const gap = page.getByTestId('atlas-board-gap');
+  // dnd-kit works out what the pointer is over on its own frame, after the move, and a drag
+  // started while the last drop is still settling does not pick the card up. So the test lets
+  // go only once the landing gap shows, as a person would, and picks the card up again when no
+  // gap came: a release with no gap lands nowhere and changes nothing.
+  await expect(async () => {
+    await page.mouse.move(from.x + 16, from.y + 20);
+    await page.mouse.down();
+    await page.mouse.move(from.x + 30, from.y + 30, { steps: 4 });
+    // Held over the upper part of the other card, so the dragged card lands in front of it.
+    await page.mouse.move(onto.x + onto.width / 2, onto.y + 5, { steps: 12 });
+    try {
+      await expect(gap).toBeVisible({ timeout: 1500 });
+    } catch (noGap) {
+      await page.mouse.up();
+      throw noGap;
+    }
+  }).toPass();
   if (whileHeld !== undefined) await whileHeld();
   await page.mouse.up();
 }
