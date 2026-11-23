@@ -78,6 +78,9 @@ export const footerColumns: FooterColumn[] = [
       { href: '/help', labelKey: 'nav.help' },
       { href: '/legal/terms', labelKey: 'shell.footer.legal' },
       { href: '/legal/guidelines', labelKey: 'nav.guidelines' },
+      // The accessibility statement stays one click from every page (the European Accessibility
+      // Act and WCAG 2.2 conformance statement, S1-E14-03); the 23 Nov canvas footer left it out.
+      { href: '/legal/accessibility', labelKey: 'nav.accessibility' },
       // The one "Contact us": the form (S1-E14-04).
       { href: '/contact', labelKey: 'nav.contactUs' },
       { href: '/report', labelKey: 'shell.footer.reportWithoutAccount' },

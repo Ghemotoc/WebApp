@@ -120,7 +120,8 @@ test.describe('the writer adds and translates a language (TRANSLATE-1c)', () => 
     await page
       .getByRole('textbox', { name: 'Translate paragraph 2' })
       .fill('Her notebook is forty years old.');
-    await expect(page.getByText('English · 2 of 3 paragraphs')).toBeVisible();
+    // 12 of the original's 15 words are translated (CALM-9, D09: words, not paragraphs).
+    await expect(page.getByText('12 of 15 words so far')).toBeVisible();
     await page.getByRole('button', { name: 'Save draft' }).click();
     await expect(page.getByText('Draft saved.')).toBeVisible();
     await page.getByRole('button', { name: 'Publish in English' }).click();

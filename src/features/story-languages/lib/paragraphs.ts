@@ -77,3 +77,16 @@ export function composeTranslation(originalParagraphs: string[], fields: string[
 export function translatedCount(fields: string[]): number {
   return fields.filter((field) => field.trim() !== '').length;
 }
+
+/**
+ * How many words a text has, for the heads "Original English · 64 words" and the progress line
+ * "41 of 64 words so far" (CALM-9, board D09).
+ *
+ * @param text - any text; Markdown marks count as part of the word they touch
+ * @returns the number of runs of letters between spaces
+ */
+export function countWords(text: string): number {
+  const trimmed = text.trim();
+  if (trimmed === '') return 0;
+  return trimmed.split(/\s+/).length;
+}

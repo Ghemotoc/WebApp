@@ -5,8 +5,8 @@
  *
  * Redrawn in bundle CALM-9a (board D01 and the Atlas boards E20 to E34, approved by Robert on
  * 22 Nov 2026 after "it's harder to find the relationship page"): each section has its line icon
- * beside its name, and the open one carries a 3 px thread-colour bar on its left edge and bold
- * text, so it shows by shape and weight, not colour alone (WCAG 1.4.1). "Connections" is called
+ * beside its name, and the open one sits on a soft tint with bold text (no side bar; NO-BARS,
+ * Robert, 23 Nov 2026), so it shows by shape and weight, not colour alone (WCAG 1.4.1). "Connections" is called
  * "Relationships" everywhere, the word the page itself already used.
  * Two layouts, one list: on a desktop (from 1024 px) AtlasFrame shows it as a side menu, one
  * section a line; on tablets and phones it is one line that scrolls sideways, keeping its scrollbar
@@ -111,7 +111,7 @@ export function AtlasSectionNav({
   );
 }
 
-/** One section's link: its icon and name; the open one gets the thread bar and bold text. */
+/** One section's link: its icon and name; the open one gets the soft tint and bold text. */
 function SectionLink({
   address,
   section,
@@ -129,9 +129,7 @@ function SectionLink({
       aria-current={isCurrent ? 'page' : undefined}
       className={cn(
         'flex min-h-11 items-center gap-2.5 rounded-lg px-3 text-sm whitespace-nowrap no-underline',
-        isCurrent
-          ? 'bg-tint font-bold text-heading shadow-[inset_3px_0_0_var(--thread)]'
-          : 'font-medium text-ink hover:bg-tint',
+        isCurrent ? 'bg-tint font-semibold text-heading' : 'font-medium text-ink hover:bg-tint',
       )}
     >
       <ActionIcon name={sectionIcons[section]} />

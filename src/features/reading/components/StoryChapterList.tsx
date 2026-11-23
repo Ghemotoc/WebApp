@@ -15,9 +15,14 @@
  * in their chapter's row, in bold words ("You are here, 42%"), as a link that opens the chapter
  * at that place (the address ends "#resume"). It stands in for the board's "Reading", because it
  * also says how far in.
+ * Long stories fold (CALM-9, Robert's canvas comments of 23 Nov 2026, board B01): from 600 px a
+ * story with more than 11 chapters lists chapters 1 to 10 and the latest, then "Show all N
+ * chapters" opens the rest. The reader's own chapter ("You are here") always stays in sight.
+ * Phones list every chapter, as before, so the folded rows are hidden only from 600 px.
  * Who uses it: StoryPage. What it calls: useStoryLibraryState → story_library_state(), the same
  * place "Continue chapter n" uses.
  */
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
@@ -30,6 +35,7 @@ import { formatLocalDate } from '@/lib/local-time';
 import type { EditionFacts } from '../api/editions';
 import type { NextChapter } from '../api/chapter';
 import type { StoryPageChapter } from '../api/storyPage';
+import { foldedChapterCodes } from '../lib/chapterFolding';
 import { nextChapterText } from '../lib/chapterPlace';
 import { isNewChapter } from '../lib/storyPageNumbers';
 import { useEditionsTranslation } from '../registerEditionsTranslations';
@@ -121,13 +127,17 @@ function ChapterRow(props: {
   place: StoryPlace | null;
   /** The language the story was written in, named on a chapter that isn't translated yet. */
   originalLanguage: string | null;
+  /** True while the row is folded away from 600 px (CALM-9); phones still show it. */
+  isFolded: boolean;
 }) {
-  const { chapter, storySlug, place, originalLanguage } = props;
+  const { chapter, storySlug, place, originalLanguage, isFolded } = props;
   const facts = useChapterFacts(chapter, originalLanguage);
   const isHere =
     place !== null && place.chapterCode === chapter.code && chapter.status === 'published';
   return (
-    <li className="grid break-inside-avoid grid-cols-[28px_minmax(0,1fr)] items-baseline gap-x-2.5 border-t border-(--hairline) py-3">
+    <li
+      className={`grid break-inside-avoid grid-cols-[28px_minmax(0,1fr)] items-baseline gap-x-2.5 border-t border-(--hairline) py-3 ${isFolded ? 'min-[600px]:hidden' : ''}`}
+    >
       <span className="text-[13px] text-body tabular-nums">{chapter.number}</span>
       <div className="flex min-w-0 flex-col gap-1">
         <ChapterTitle chapter={chapter} storySlug={storySlug} />
@@ -139,6 +149,28 @@ function ChapterRow(props: {
         </div>
       </div>
     </li>
+  );
+}
+
+/**
+ * "Show all N chapters" under a folded list, from 600 px only; it becomes "Show fewer chapters"
+ * once the list is open.
+ *
+ * @returns the button
+ */
+function FoldButton(props: { total: number; isOpen: boolean; onToggle: () => void }) {
+  const { t } = useTranslation('reading');
+  const { total, isOpen, onToggle } = props;
+  return (
+    <button
+      type="button"
+      aria-expanded={isOpen}
+      aria-controls="story-chapter-rows"
+      onClick={onToggle}
+      className="hidden min-h-11 items-center self-start text-sm font-semibold text-ink underline underline-offset-2 min-[600px]:inline-flex"
+    >
+      {isOpen ? t('storyPage.showFewerChapters') : t('storyPage.showAllChapters', { count: total })}
+    </button>
   );
 }
 
@@ -192,6 +224,9 @@ export function StoryChapterList({
   const { state } = useStoryLibraryState(storySlug);
   const place = state?.place ?? null;
   const headingFacts = useHeadingFacts(edition, nextChapter);
+  // CALM-9: long lists fold from 600 px until the reader opens them.
+  const [isOpen, setIsOpen] = useState(false);
+  const folded = foldedChapterCodes(chapters, place?.chapterCode ?? null);
   return (
     <section aria-labelledby="story-chapters-heading" className="flex flex-col gap-3">
       {/* The heading counts the chapters listed ("15 chapters"), with the facts beside it. */}
@@ -205,7 +240,7 @@ export function StoryChapterList({
         <p className="m-0 text-sm text-body">{t('storyPage.noChaptersOwner')}</p>
       )}
       {/* Two columns from 900 px, as on the board; one on narrower screens. */}
-      <ol className="m-0 list-none gap-x-12 p-0 min-[900px]:columns-2">
+      <ol id="story-chapter-rows" className="m-0 list-none gap-x-12 p-0 min-[900px]:columns-2">
         {chapters.map((chapter) => (
           <ChapterRow
             key={chapter.code}
@@ -213,9 +248,17 @@ export function StoryChapterList({
             storySlug={storySlug}
             place={place}
             originalLanguage={edition?.facts.originalLanguage ?? null}
+            isFolded={!isOpen && folded.has(chapter.code)}
           />
         ))}
       </ol>
+      {folded.size > 0 && (
+        <FoldButton
+          total={chapters.length}
+          isOpen={isOpen}
+          onToggle={() => setIsOpen((wasOpen) => !wasOpen)}
+        />
+      )}
     </section>
   );
 }
