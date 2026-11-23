@@ -385,7 +385,22 @@
       "zoomIn": "Mărește",
       "fit": "Potrivește",
       "zoomNow": "{{percent}}%",
-      "offMap": "Încă nu sunt pe hartă: {{names}}"
+      "offMap": "Încă nu sunt pe hartă: {{names}}",
+      "key": "Fiecare categorie are culoarea ei. Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență.",
+      "coloursButton": "Culorile categoriilor",
+      "coloursIntro": "Alege o culoare pentru fiecare categorie. Harta și lista o urmează.",
+      "colourFor": "Culoarea pentru {{category}}",
+      "colourFailed": "Culoarea nu a fost salvată. Verifică conexiunea și încearcă din nou.",
+      "swatches": {
+        "blue": "Albastru",
+        "pink": "Roz",
+        "yellow": "Galben",
+        "aqua": "Turcoaz",
+        "orange": "Portocaliu",
+        "violet": "Violet",
+        "green": "Verde",
+        "red": "Roșu"
+      }
     },
     "tree": {
       "heading": "Arborele familiei",

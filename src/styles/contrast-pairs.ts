@@ -138,13 +138,57 @@ const interfacePairs: ContrastPair[] = [
   // The thread: the 2px line for progress, the current tab, the unread row and the current
   // chapter dot (the simplified design, Robert, 20 Nov 2026; CALM-1).
   { foreground: 'thread', background: 'paper', minimumRatio: 3, usedFor: 'the thread' },
-  // Story Atlas relationship lines on the map's card (S1-E17-15).
-  ...['family', 'love', 'lineage', 'allies', 'conflict', 'other'].map((category): ContrastPair => ({
-    foreground: `atlas-line-${category}`,
+  // Story Atlas relationship lines and dots on the map's card (S1-E17-15): the writer picks each
+  // category's colour (CALM-9, board E25) from eight swatches, each 3:1 on the card by itself
+  // (Robert, 23 Nov 2026: darker shades by day).
+  {
+    foreground: 'atlas-swatch-blue',
     background: 'surface',
     minimumRatio: 3,
-    usedFor: `${category} lines on the relationship map`,
-  })),
+    usedFor: 'relationship lines and dots in blue',
+  },
+  {
+    foreground: 'atlas-swatch-pink',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in pink',
+  },
+  {
+    foreground: 'atlas-swatch-yellow',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in yellow',
+  },
+  {
+    foreground: 'atlas-swatch-aqua',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in aqua',
+  },
+  {
+    foreground: 'atlas-swatch-orange',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in orange',
+  },
+  {
+    foreground: 'atlas-swatch-violet',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in violet',
+  },
+  {
+    foreground: 'atlas-swatch-green',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in green',
+  },
+  {
+    foreground: 'atlas-swatch-red',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in red',
+  },
 ];
 
 /** All pairs, checked in both themes. */

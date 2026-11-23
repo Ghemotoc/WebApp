@@ -1,11 +1,16 @@
 /**
- * The six categories of the relationship map and how each one's lines look (story S1-E17-15:
- * "each category differs in both colour and line style (conflict dashed, lineage dotted), so
- * meaning never relies on colour alone").
+ * The six categories of the relationship map, the eight colours a writer can give them and how
+ * each category's lines look (story S1-E17-15; CALM-9, board E25: "Category colours: one row per
+ * category with 8 round swatches ... Save the choice per story").
  *
- * Who calls it: RelationshipMap and its legend. What it calls: nothing. The colours are CSS
- * variables in src/styles/index.css (--atlas-line-*), with light and night values that keep at
- * least 3:1 against the card (WCAG 2.2, 1.4.11).
+ * Meaning never rests on colour alone (WCAG 2.2, 1.4.1): every line carries its label in words,
+ * every chip its category's name, and the line style is the second cue Robert kept (CALM-9, E25:
+ * "solid for family and allies, dotted for love and other, dashed for conflict"; lineage, which
+ * the key leaves out, keeps fine dots of its own). This replaces S1-E17-15's six line styles.
+ * Who calls it: RelationshipMap, MapLines, MapCategorySwitches, CategoryColoursFold,
+ * RelationshipList and FamilyTreeLines. What it calls: nothing. The colours are CSS variables in
+ * src/styles/tokens.css (--atlas-swatch-*), with day and night values, each at least 3:1 against
+ * the card by itself (WCAG 2.2, 1.4.11; Robert, 23 Nov 2026: darker shades by day).
  */
 import type { RelationshipKind } from '../api/characters';
 
@@ -48,7 +53,67 @@ export function categoryOf(kind: RelationshipKind): RelationshipCategory {
   return categoryOfKind[kind];
 }
 
-/** How one category's lines are drawn: the colour variable, the dash pattern and the width. */
+/** The eight swatches, in the order the colour picker shows them (board E25). */
+export const relationshipSwatches = [
+  'blue',
+  'pink',
+  'yellow',
+  'aqua',
+  'orange',
+  'violet',
+  'green',
+  'red',
+] as const;
+export type RelationshipSwatch = (typeof relationshipSwatches)[number];
+
+/** The colours a writer picked, only for the categories they changed (story_cast()'s map). */
+export type RelationshipColours = Partial<Record<RelationshipCategory, RelationshipSwatch>>;
+
+/** Each category's colour until the writer picks another (board E25). */
+export const defaultSwatches: Record<RelationshipCategory, RelationshipSwatch> = {
+  family: 'blue',
+  love: 'pink',
+  lineage: 'yellow',
+  allies: 'aqua',
+  conflict: 'orange',
+  other: 'violet',
+};
+
+/**
+ * True when a value from the database is one of the eight swatch names.
+ *
+ * @param value - anything
+ * @returns whether it names a swatch
+ */
+export function isRelationshipSwatch(value: unknown): value is RelationshipSwatch {
+  return relationshipSwatches.some((swatch) => swatch === value);
+}
+
+/**
+ * The swatch one category is drawn in: the writer's pick, or the category's default.
+ *
+ * @param category - the category
+ * @param colours - the writer's picks
+ * @returns the swatch's name
+ */
+export function swatchOf(
+  category: RelationshipCategory,
+  colours: RelationshipColours,
+): RelationshipSwatch {
+  return colours[category] ?? defaultSwatches[category];
+}
+
+/**
+ * The CSS colour of a swatch, which follows day and night mode.
+ *
+ * @param swatch - the swatch's name
+ * @returns a var() reference to its token
+ */
+export function swatchColour(swatch: RelationshipSwatch): string {
+  return `var(--atlas-swatch-${swatch})`;
+}
+
+/** How one category's lines are drawn: the colour, the dash pattern and the width. */
 export interface LineStyle {
   colour: string;
   /** An SVG stroke-dasharray; empty for a solid line. */
@@ -56,12 +121,47 @@ export interface LineStyle {
   width: number;
 }
 
-/** Every category's look: solid, dash-dot, dotted, long dashes, dashed, dash-dot-dot. */
-export const lineStyles: Record<RelationshipCategory, LineStyle> = {
-  family: { colour: 'var(--atlas-line-family)', dashes: '', width: 2.5 },
-  love: { colour: 'var(--atlas-line-love)', dashes: '12 4 2 4', width: 2.5 },
-  lineage: { colour: 'var(--atlas-line-lineage)', dashes: '1 5', width: 3 },
-  allies: { colour: 'var(--atlas-line-allies)', dashes: '16 6', width: 2.5 },
-  conflict: { colour: 'var(--atlas-line-conflict)', dashes: '7 5', width: 2.5 },
-  other: { colour: 'var(--atlas-line-other)', dashes: '8 3 2 3 2 3', width: 2.5 },
+/**
+ * Each category's dashes and width (board E25: .maplines is-love "2 6" with round ends,
+ * is-conflict "10 6"); lineage fine dots, so the key's three groups stay apart from it.
+ */
+export const lineShapes: Record<RelationshipCategory, Omit<LineStyle, 'colour'>> = {
+  family: { dashes: '', width: 2.5 },
+  love: { dashes: '2 6', width: 3 },
+  lineage: { dashes: '1 4', width: 2.5 },
+  allies: { dashes: '', width: 2.5 },
+  conflict: { dashes: '10 6', width: 2.5 },
+  other: { dashes: '2 6', width: 3 },
 };
+
+/**
+ * How one category's lines look on this story's map.
+ *
+ * @param category - the category
+ * @param colours - the writer's picks (an empty map for the defaults)
+ * @returns the colour, dashes and width
+ */
+export function lineStyleOf(
+  category: RelationshipCategory,
+  colours: RelationshipColours,
+): LineStyle {
+  return { ...lineShapes[category], colour: swatchColour(swatchOf(category, colours)) };
+}
+
+/**
+ * Reads the colours map story_cast() returns, keeping only known categories and swatches, so a
+ * stray value can never reach a CSS variable name.
+ *
+ * @param value - the map as the database sent it
+ * @returns the writer's picks
+ */
+export function toRelationshipColours(value: unknown): RelationshipColours {
+  const colours: RelationshipColours = {};
+  if (typeof value !== 'object' || value === null) return colours;
+  const entries = value as Record<string, unknown>;
+  for (const category of relationshipCategories) {
+    const swatch = entries[category];
+    if (isRelationshipSwatch(swatch)) colours[category] = swatch;
+  }
+  return colours;
+}
