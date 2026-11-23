@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 23 Nov 2026 (doc "Product: feature ideas", by category; Notion Feature ideas database)
+
+10 ideas, IDEA-20261123-1 to 10: skip a marked scene, comparable books on the story page, typewriter mode, a ten-minute warm-up, quote the exact words in a comment, starter rules for a new space, a shared bank of class assignments, a quick exit on safety help pages, reading column width, how to say a character's name.
+
 ### Sent 22 Nov 2026 (doc "Product: feature ideas", by category; Notion Feature ideas database)
 
 8 ideas, IDEA-20261122-1 to 8: send a classic to my e-reader, a reading ruler, a Contest winners shelf, a quotation mark check for Romanian and Nordic text, a target length for a chapter, a finish-by date for a story, show that a comment was edited, move a thread to the right forum.
