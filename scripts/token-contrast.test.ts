@@ -250,8 +250,8 @@ describe('design token contrast', () => {
     expect(themes.staffLight.get('body')).toBe('#4f443a');
   });
 
-  it('draws eyebrows black by day and white at night, never gold (Robert, 7 Nov 2026)', () => {
-    expect(themes.light.get('eyebrow')).toBe('#141114');
+  it('draws eyebrows in the heading colour by day and white at night, never gold (one colour set for text, Robert, 23 Nov 2026)', () => {
+    expect(themes.light.get('eyebrow')).toBe('#2a0e33');
     expect(themes.night.get('eyebrow')).toBe('#f7f7f8');
   });
 
