@@ -28,7 +28,7 @@ import type { QuoteCardBackground } from './quoteCard';
 export const coverBackgroundKey = 'cover';
 
 /** The dark title colour of the covers code: a surface that takes it is a light one. */
-const darkWords = '#26142E';
+const darkWords = '#2A0E33';
 
 /**
  * The writer's drawn choice, when the answer holds a complete and known one.
