@@ -23,7 +23,7 @@ test('a signed-out visitor opens the terms from the footer, in Romanian, marked 
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('contentinfo').getByRole('link', { name: 'Termeni' }).click();
+  await page.getByRole('contentinfo').getByRole('link', { name: 'Informații legale' }).click();
 
   await expect(page).toHaveURL(/\/legal\/terms$/);
   await expect(

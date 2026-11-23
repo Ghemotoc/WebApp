@@ -76,8 +76,25 @@ function chapterTitle(story: StoryPageData | null, code: string | null): string 
 }
 
 /**
- * About this story and the 300 × 250 advert: in the side column from 1280 px, under the comments
+ * The 300 × 250 advert: at the foot of the side column from 1280 px, after About this story
  * below that (handover Step 3, point 7).
+ *
+ * @returns the advert
+ */
+function SideAdvert({ chapter }: { chapter: ReaderChapter }) {
+  return (
+    <PageAdSlot
+      pageKey="chapter"
+      position={2}
+      context={{ storySlug: chapter.story.slug, language: chapter.story.languageCode }}
+      isSpaceReserved={false}
+    />
+  );
+}
+
+/**
+ * About this story and the advert, under the comments below 1280 px. From 1280 px the side
+ * column places them itself, with the comment box between them (CALM-9, board B03).
  *
  * @returns the facts and the advert
  */
@@ -89,12 +106,7 @@ function StoryFacts({ chapter, story }: { chapter: ReaderChapter; story: StoryPa
         chapterTotal={chapter.total}
         nextChapter={chapter.nextChapter}
       />
-      <PageAdSlot
-        pageKey="chapter"
-        position={2}
-        context={{ storySlug: chapter.story.slug, language: chapter.story.languageCode }}
-        isSpaceReserved={false}
-      />
+      <SideAdvert chapter={chapter} />
     </>
   );
 }
@@ -290,8 +302,18 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
     </Suspense>
   ) : null;
   const side = isWide ? (
-    <ReaderSideColumn onThreadSlot={screen.setThreadSlot} settings={settingsPanel}>
-      <StoryFacts chapter={chapter} story={story} />
+    <ReaderSideColumn
+      onThreadSlot={screen.setThreadSlot}
+      settings={settingsPanel}
+      about={
+        <AboutThisStory
+          story={story}
+          chapterTotal={chapter.total}
+          nextChapter={chapter.nextChapter}
+        />
+      }
+    >
+      <SideAdvert chapter={chapter} />
     </ReaderSideColumn>
   ) : null;
   // Aa only for a signed-in reader: the settings are saved to the account (S1-E4-02).

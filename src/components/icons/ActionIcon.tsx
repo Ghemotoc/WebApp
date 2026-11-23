@@ -16,7 +16,8 @@
  * hand-drawn icon set, every screen that used it (the home page hero and safety lines, sign-up,
  * log-in ways, story stats, the writer dashboard, the chapter editor's insert buttons, forum
  * locks, the messages rules note, export status and the profile's safety card); and the forum
- * reply's formatting toolbar (GAPS-16b: link, quote, list).
+ * reply's formatting toolbar (GAPS-16b: link, quote, list); and a landing page's steps (target,
+ * pen, book; CALM-9, board A10).
  */
 import type { SVGProps } from 'react';
 
@@ -229,6 +230,14 @@ const drawings = {
     <>
       <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6" />
       <path d="M14 21c3 0 7-1 7-8V5c0-1.25-.76-2-2-2h-4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 6" />
+    </>
+  ),
+  // Target: three rings round a dot, for a goal (a landing page's first step, CALM-9, board A10).
+  target: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1" />
     </>
   ),
   // List: three dots, each with a line (GAPS-16b).

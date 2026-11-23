@@ -112,6 +112,15 @@ async function openAs(
 }
 
 /** Opens "Add a relationship" on the Relationships page, unless it is open already. */
+/**
+ * Opens the Relationships card on a character's sheet: every card but Basics folds shut on a
+ * fresh sheet (CALM-9, board E23). Does nothing when it is open already.
+ */
+async function openRelationshipsCard(page: Page) {
+  const button = page.getByRole('button', { name: /^Relationships/ });
+  if ((await button.getAttribute('aria-expanded')) === 'false') await button.click();
+}
+
 async function openAddForm(page: Page) {
   const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
   const opener = page.getByRole('button', { name: 'Add a relationship' });
@@ -197,6 +206,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
 
   test('a relationship added on a sheet shows on both sheets', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/characters/${cast.ana}`);
+    await openRelationshipsCard(page);
     const section = page.getByRole('region', { name: 'Relationships', exact: true });
     await expect(section.getByText('No relationships yet.')).toBeVisible();
     // Kind first, then the relationships of that kind (S1-E17-14; G10b, handoff A4).
@@ -236,6 +246,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     // Listed on Vali's sheet too.
     await page.goto(`${planAddress}/characters/${cast.vali}`);
     // Listed on Vali's sheet too, told from his side (GAPS-3).
+    await openRelationshipsCard(page);
     const valiSection = page.getByRole('region', { name: 'Relationships', exact: true });
     await expect(
       valiSection.getByText('Vali is the child of Ana', { exact: true }).first(),
@@ -413,6 +424,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await list.getByRole('button', { name: 'Yes, delete' }).click();
     await expect(list.getByText('Ion killed Lupul', { exact: true })).toHaveCount(0);
     await page.goto(`${planAddress}/characters/${cast.lupul}`);
+    await openRelationshipsCard(page);
     await expect(
       page
         .getByRole('region', { name: 'Relationships', exact: true })
@@ -461,6 +473,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     ).toHaveText('Generation 1: Ana, Ion, Mara');
     // Mara's sheet tells it from her side.
     await page.goto(`${planAddress}/characters/${cast.mara}`);
+    await openRelationshipsCard(page);
     const maraSection = page.getByRole('region', { name: 'Relationships', exact: true });
     await expect(
       maraSection.getByText('Mara: goddaughter of Ana', { exact: true }).first(),
@@ -472,6 +485,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/characters/${cast.vali}`);
+    await openRelationshipsCard(page);
     const section = page.getByRole('region', { name: 'Relationships', exact: true });
     // Ana is Vali's parent; making them siblings too is a clash (G10b, handoff A5).
     await section.getByLabel('Relationship', { exact: true }).selectOption({ label: 'Sibling of' });
@@ -506,6 +520,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await expect(gender.locator('option')).toHaveText(['Not set', 'She', 'He', 'They']);
     await gender.selectOption({ label: 'She' });
     await expect(page.locator('#atlas-character-gender-save')).toHaveText('Saved');
+    await openRelationshipsCard(page);
     await expect(
       page
         .getByRole('region', { name: 'Relationships', exact: true })
@@ -516,6 +531,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.goto(`${planAddress}/characters/${cast.vali}`);
     await page.getByLabel('Gender', { exact: true }).selectOption({ label: 'He' });
     await expect(page.locator('#atlas-character-gender-save')).toHaveText('Saved');
+    await openRelationshipsCard(page);
     await expect(
       page
         .getByRole('region', { name: 'Relationships', exact: true })

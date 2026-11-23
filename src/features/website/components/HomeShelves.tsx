@@ -1,14 +1,14 @@
 /**
  * HomeShelves: the home page's rows (story S1-E5-08, bundle LOOK-3; board Website-Home):
- * "Trending this week" with genre chips that narrow the row, "Completed stories" and "New and
- * rising writers".
+ * "Trending this week" with genre chips that narrow the row and "Completed stories". "New and
+ * rising writers" left the rows on 23 Nov 2026 (CALM-9, board A01): it now sits in the "Start
+ * your first story" band, and on a member's home (/hub) in the Tools band.
  *
  * The rows are the shared Discover shelves, which already keep to ratings, blocks and removed
  * content (S1-E5-01) and end with "View more" (S1-E5-09, CLAUDE.md rule 20). The chips are one
  * radio group: "All" or one category; the row keeps its stories while the next ones load, so the
- * chips never move. New and rising writers lists only writers who may be put on show
- * (rising_writers(), LOOK-4c; D4) and is hidden when there are none. Titles are interface text.
- * Who shows it: WebsiteHomePage. What it calls: DiscoverShelf, RisingWritersShelf, ChoiceChips.
+ * chips never move. Titles are interface text.
+ * Who shows it: WebsiteHomePage. What it calls: DiscoverShelf, ChoiceChips.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,6 @@ import { useTranslation } from 'react-i18next';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import type { ListRequest } from '@/features/discovery/api/storyLists';
 import { DiscoverShelf } from '@/features/discovery/components/DiscoverShelf';
-import { RisingWritersShelf } from '@/features/discovery/components/RisingWritersShelf';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 /** The value of the "All" chip. */
@@ -88,7 +87,6 @@ export function HomeShelves() {
         title={t('website.completed')}
         request={shelfRequest('completed')}
       />
-      <RisingWritersShelf place="home" anchorId="writers" />
     </>
   );
 }

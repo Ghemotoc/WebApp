@@ -239,6 +239,20 @@
       "none": "No characters yet.",
       "open": "Open characters ({{count}})",
       "recentList": "Characters · edited recently"
+    },
+    "foldHints": {
+      "lookAndVoice": "Appearance, voice and mannerisms",
+      "inside": "Wants, needs, fears and secrets",
+      "inTheStory": "Arc and key lines",
+      "relationships_one": "{{count}} relationship",
+      "relationships_few": "{{count}} relationships",
+      "relationships_other": "{{count}} relationships",
+      "chapters_one": "{{count}} chapter",
+      "chapters_few": "{{count}} chapters",
+      "chapters_other": "{{count}} chapters",
+      "places_one": "{{count}} place",
+      "places_few": "{{count}} places",
+      "places_other": "{{count}} places"
     }
   },
   "fieldsSection": {
@@ -920,6 +934,14 @@
     "spoilers": {
       "heading": "Spoilers stay safe",
       "body": "Pick the chapter each thing shows from. Readers who haven’t reached it don’t see it."
+    },
+    "summary": {
+      "private": "Kept private",
+      "none": "No parts of the sheet shared",
+      "shared": "Shared: {{parts}}",
+      "ownDetails_one": "{{count}} own detail",
+      "ownDetails_few": "{{count}} own details",
+      "ownDetails_other": "{{count}} own details"
     }
   },
   "publicPlan": {

@@ -126,7 +126,6 @@
     "addFailed": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
   },
   "writersToFollow": {
-    "eyebrow": "În ascensiune",
     "title": "Scriitori de urmărit săptămâna asta",
     "growth_one": "+{{count}} urmăritor săptămâna asta",
     "growth_few": "+{{count}} urmăritori săptămâna asta",
@@ -154,8 +153,8 @@
     "savedWhen": "salvată {{when}}"
   },
   "risingWriters": {
-    "eyebrow": "În ascensiune",
     "title": "Scriitori noi și în ascensiune",
+    "bandTitle": "Inspiră-te de la scriitori noi și în ascensiune",
     "writes": "Scrie {{category}}"
   },
   "popularIn": {

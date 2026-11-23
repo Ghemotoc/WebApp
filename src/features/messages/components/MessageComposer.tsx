@@ -1,8 +1,9 @@
 /**
- * MessageComposer: the box at the bottom of a chat, "Send" and "Text only…" (story S1-E9-01,
- * criterion 4; board Messages 5.5).
+ * MessageComposer: the box at the bottom of a chat and "Send" (story S1-E9-01, criterion 4;
+ * board Messages 5.5). The "Text only…" line under the box was removed in CALM-9 (board E13).
  *
- * Text only: images in messages are OPEN and off (the story's proposal). The box takes at most
+ * Text only: images in messages are OPEN and off (the story's proposal), so the box has no file
+ * button. The box takes at most
  * 2,000 characters, as the database does. A refusal shows in plain words; "isn't taking
  * messages" never says why (S1-E9-03). The box empties once the message is saved. It can start
  * with words already in it: the story link a reader is sending from a share dialog (GAPS-7a).
@@ -84,7 +85,6 @@ export function MessageComposer({
           maxLength={longestMessage}
           value={body}
           placeholder={t('chat.composerLabel', { name: otherName })}
-          aria-describedby="message-text-only"
           onChange={(event) => gate.whileEditing(setBody)(event.target.value)}
           className="min-h-11 min-w-0 flex-1 resize-y rounded-[22px] border border-control-border bg-surface px-4 py-2.5 text-[15px] text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
         />
@@ -94,9 +94,6 @@ export function MessageComposer({
         </Button>
       </div>
       <PersonalDetailsGateNote gate={gate} isSending={isSending} />
-      <p id="message-text-only" className="m-0 px-4 text-xs text-meta">
-        {t('chat.textOnly')}
-      </p>
       <div aria-live="polite">
         {failure !== null && (
           <Notice tone="error">{t(`failures.${failure}`, { minutes: waitMinutes ?? 60 })}</Notice>

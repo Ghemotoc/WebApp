@@ -18,7 +18,11 @@
       "writeAndTalk": "Write and talk",
       "startWriting": "Start writing",
       "firstStory": "Start a first story",
-      "helpAndLegal": "Help and legal"
+      "helpAndLegal": "Help and legal",
+      "newWriters": "New writers",
+      "joinClass": "Join a class",
+      "legal": "Legal",
+      "reportWithoutAccount": "Report without an account"
     },
     "search": "Search",
     "searchLabel": "Search stories, writers and Together",

@@ -1,6 +1,6 @@
 /**
  * The writing month in a real browser (bundle GAPS-12f; since CALM-7c the Home page's hero holds
- * "Writing month" and the badges sit lower, board New-Home).
+ * "Words written this month" (CALM-9, board A10) and the badges sit lower, board New-Home).
  *
  * What it proves:
  * - a writer with no words this month sees the bar at 0, "no streak yet" and five badges not yet
@@ -46,8 +46,9 @@ test.describe('the writing month (GAPS-12f)', () => {
 
   test('a month with no words starts at 0% with no badge', async ({ browser }) => {
     const page = await openHubAs(browser, 'adult_writer', 1440);
-    // CALM-7c: the words, the bar and the streak sit in the hero; the badges lower down.
-    const card = page.getByRole('region', { name: 'Luna de scris' });
+    // CALM-7c: the words, the bar and the streak sit in the hero; the badges lower down. CALM-9
+    // (board A10) names the card "Words written this month".
+    const card = page.getByRole('region', { name: 'Cuvinte scrise luna aceasta' });
     await expect(card.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0');
     await expect(card.getByText('din 15.000 de cuvinte')).toBeVisible();
     await expect(card.getByText('Nicio serie încă')).toBeVisible();
@@ -64,7 +65,7 @@ test.describe('the writing month (GAPS-12f)', () => {
     runSql(`insert into public.writing_days (user_id, day, words)
       select '${writerId}', public.romania_today() - back, 1260 from generate_series(0, 4) as back;`);
     const page = await openHubAs(browser, 'adult_writer', 390);
-    const card = page.getByRole('region', { name: 'Luna de scris' });
+    const card = page.getByRole('region', { name: 'Cuvinte scrise luna aceasta' });
     await expect(card.getByText('5 zile la rând')).toBeVisible();
     const bar = card.getByRole('progressbar');
     // Early in a month some of the five days fall in the month before, so the share is lower.
@@ -90,7 +91,7 @@ test.describe('the writing month (GAPS-12f)', () => {
 
   test('another member sees only their own month', async ({ browser }) => {
     const page = await openHubAs(browser, 'teacher', 1440);
-    const card = page.getByRole('region', { name: 'Luna de scris' });
+    const card = page.getByRole('region', { name: 'Cuvinte scrise luna aceasta' });
     await expect(card.getByText('5 zile la rând')).toHaveCount(0);
     await expect(card.getByText('6.300')).toHaveCount(0);
     await page.context().close();

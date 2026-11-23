@@ -81,7 +81,11 @@
     "parodyLabel": "Parodie",
     "whereToReadLabel": "Unde se citește",
     "followersPublicNote": "Numărul de urmăritori este public. Doar {{name}} vede cine sunt.",
-    "sideColumnLabel": "Despre această poveste"
+    "sideColumnLabel": "Despre această poveste",
+    "showAllChapters_one": "Arată {{count}} capitol",
+    "showAllChapters_few": "Arată toate cele {{count}} capitole",
+    "showAllChapters_other": "Arată toate cele {{count}} de capitole",
+    "showFewerChapters": "Arată mai puține capitole"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
