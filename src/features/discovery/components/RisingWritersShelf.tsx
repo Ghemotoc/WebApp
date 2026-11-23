@@ -6,8 +6,8 @@
  * 20). On the Read page it is for visitors only and has no eyebrow (CALM-7c): a member meets the
  * same writers in the side column (RisingWritersList). No See all page: the list never holds more than 20. Hidden while it loads,
  * when it fails and when nobody may be suggested, so Discover never shows an empty shelf.
- * Who shows it: DiscoverPage (ShelfFromSetting), and the home page as "New and rising writers"
- * (LOOK-3, with place "home"). What it calls: useRisingWriters.
+ * Who shows it: DiscoverPage (ShelfFromSetting); the home page lists the same writers as rows in
+ * its bands since CALM-9 (RisingWritersList). What it calls: useRisingWriters.
  */
 import { Shelf } from '@/components/ui/Shelf';
 
@@ -19,27 +19,15 @@ import { WriterToFollowCard } from './WriterToFollowCard';
 /**
  * Renders the shelf, or nothing.
  *
- * @param props.place - discover ("Writers to follow this week") or home ("New and rising
- *   writers", board Website-Home)
- * @param props.anchorId - the section's id on the home page ("#writers")
  * @returns the shelf section or null
  */
-export function RisingWritersShelf({
-  place = 'discover',
-  anchorId,
-}: {
-  place?: 'discover' | 'home';
-  anchorId?: string;
-}) {
+export function RisingWritersShelf() {
   const { t } = useDiscoveryTranslation();
   const { writers } = useRisingWriters();
   if (writers.length === 0) return null;
-  const words = place === 'home' ? 'risingWriters' : 'writersToFollow';
   return (
     <Shelf
-      anchorId={anchorId}
-      eyebrow={place === 'home' ? t(`${words}.eyebrow`) : undefined}
-      title={t(`${words}.title`)}
+      title={t('writersToFollow.title')}
       items={writers.map((writer) => ({
         key: writer.handle,
         content: <WriterToFollowCard writer={writer} />,
