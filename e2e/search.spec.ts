@@ -68,16 +68,20 @@ test.describe('search (S1-E5-04)', () => {
     // The top bar's search shows only to a signed-in member (TRIAL-WALL, Robert, 23 Nov 2026).
     await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
     await page.goto('/discover');
-    // The top bar's search pill (bundle G4 SHELL): Enter opens the Search page.
-    const topBarSearch = page.getByRole('banner').getByRole('searchbox', {
-      name: 'Search stories, writers and Together',
-    });
-    await topBarSearch.fill(foldedWord);
+    // The top bar's search pill (bundle G4 SHELL): Enter opens the Search page. The member's own
+    // account language takes over from the English set above once the profile loads, which
+    // redraws the bar, so the search box is found by its role alone and typed into until the
+    // word stays put.
+    const topBarSearch = page.getByRole('banner').getByRole('searchbox');
+    await expect(async () => {
+      await topBarSearch.fill(foldedWord);
+      await expect(topBarSearch).toHaveValue(foldedWord, { timeout: 1000 });
+    }).toPass();
     await topBarSearch.press('Enter');
     await expect(page).toHaveURL(new RegExp(`/search\\?q=${foldedWord}$`));
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(`Results for “${foldedWord}”`);
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(foldedWord);
     // An adult member also sees the 16+ story, so all 22 are found (a visitor's 21 are below).
-    await expect(page.getByRole('heading', { name: '22 stories' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /^22 / })).toBeVisible();
     await expect(
       page.getByRole('link', { name: new RegExp(`${word} 1\\b`) }).first(),
     ).toBeVisible();
