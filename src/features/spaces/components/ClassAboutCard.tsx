@@ -8,7 +8,6 @@
  * Who shows it: SpacePage, in the side column of a class space.
  * What it calls: lockMomentText() in api/classTools.ts for the lock date and time, on the viewer's own clock.
  */
-import { Eyebrow } from '@/components/ui/Eyebrow';
 
 import { lockMomentText } from '../api/classTools';
 import type { Space } from '../api/spaces';
@@ -30,7 +29,6 @@ export function ClassAboutCard({ space }: { space: Space }) {
       aria-labelledby="class-about-heading"
       className="flex flex-col gap-3 rounded-card border border-panel-border bg-panel px-6 py-5"
     >
-      <Eyebrow>{t('classSpace.eyebrow')}</Eyebrow>
       <h2 id="class-about-heading" className="m-0 font-heading text-2xl font-bold text-heading">
         {t('classSpace.howTitle')}
       </h2>

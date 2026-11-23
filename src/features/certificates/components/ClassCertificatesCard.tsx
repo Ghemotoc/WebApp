@@ -7,8 +7,6 @@
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
-
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
 /**
@@ -24,7 +22,6 @@ export function ClassCertificatesCard({ slug }: { slug: string }) {
       aria-labelledby="class-certificates-heading"
       className="flex w-full max-w-[760px] flex-col gap-3 rounded-[28px] border border-border bg-surface p-6"
     >
-      <Eyebrow>{t('settingsCard.eyebrow')}</Eyebrow>
       <h2
         id="class-certificates-heading"
         className="m-0 font-heading text-2xl font-bold text-heading"

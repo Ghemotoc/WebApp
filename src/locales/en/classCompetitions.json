@@ -1,6 +1,5 @@
 {
   "card": {
-    "eyebrow": "Class competition",
     "loadFailed": "We couldn’t load the class competition. Check the connection and try again.",
     "startTitle": "Class competition",
     "startBody": "Set grading criteria, let pupils join and assess the entries. The teacher confirms one Winner. Nobody is ranked.",
@@ -58,7 +57,6 @@
     "readersChoice": "Readers’ choice"
   },
   "grade": {
-    "eyebrow": "Class competition",
     "title": "School year",
     "intro": "A class competition needs the school year. Below the 8th there is no Winner and no Finalist: every entrant is a Contestant.",
     "label": "School year",

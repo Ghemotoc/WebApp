@@ -14,7 +14,6 @@
  */
 import { useParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { SpaceBreadcrumb } from '@/features/spaces/components/SpaceBreadcrumb';
@@ -167,11 +166,8 @@ export function CompetitionResultsPage() {
       <title>{t('scoring.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name: className }} current={title} />
       <header className="flex flex-col gap-2">
-        <Eyebrow>{name}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] leading-[1.05] font-extrabold text-heading">
-          {title}
-        </h1>
-        {!isPublished && <p className="m-0 max-w-[640px] text-body">{t('scoring.intro')}</p>}
+        <h1 className="m-0 type-title break-words lg:type-display">{title}</h1>
+        {!isPublished && <p className="m-0 max-w-[640px] text-meta">{t('scoring.intro')}</p>}
       </header>
       <ResultsBody competitionId={competitionId} />
     </PageContainer>

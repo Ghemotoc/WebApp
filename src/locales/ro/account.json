@@ -387,7 +387,6 @@
     },
     "confirm": {
       "documentTitle": "Adresa de la școală · {{productName}}",
-      "eyebrow": "Insigna de Profesor",
       "approved": "Apare pe profil și acum poți deschide spații de clasă.",
       "waiting_for_staff": "Un moderator verifică acum dacă adresa aparține unei școli. Răspunsul vine în notificări.",
       "expired": "Cere unul nou din Setări.",

@@ -14,7 +14,6 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 
 import type { ClassPointsSummary } from '../api/classPoints';
@@ -86,7 +85,6 @@ export function ClassPointsSettingsCard({ slug }: { slug: string }) {
       aria-labelledby="class-points-settings-heading"
       className="flex w-full max-w-[760px] flex-col gap-3 rounded-[28px] border border-border bg-surface p-6"
     >
-      <Eyebrow>{t('settings.eyebrow')}</Eyebrow>
       <h2
         id="class-points-settings-heading"
         className="m-0 font-heading text-2xl font-bold text-heading"

@@ -11,7 +11,6 @@
 import { type FormEvent, useId, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
-import { InfoPill } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 
@@ -27,7 +26,7 @@ export interface ReportPointsControlProps {
 }
 
 /**
- * Renders the pill, the button or the open form.
+ * Renders the "Reported" word, the button or the open form.
  *
  * @returns the control
  */
@@ -50,9 +49,8 @@ export function ReportPointsControl({ chapter, chapterName }: ReportPointsContro
 
   if (chapter.isReported) {
     return (
-      <span className="self-start">
-        <InfoPill tone="sky">{t('table.reported')}</InfoPill>
-      </span>
+      // A state in bold words, not a pill (CALM-9f).
+      <span className="self-start text-[13px] font-bold text-ink">{t('table.reported')}</span>
     );
   }
   if (!isOpen) {

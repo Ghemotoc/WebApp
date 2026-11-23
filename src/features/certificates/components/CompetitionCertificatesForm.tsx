@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 
 import { useIssueClassCertificates } from '../hooks/useClassCertificates';
 import type { CertificateLook } from '../lib/certificateLook';
@@ -68,14 +68,13 @@ function ConfirmedResultsList({ entrants }: { entrants: CompetitionCertificateEn
             className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-2"
           >
             <span className="text-ink">{entrant.displayName}</span>
-            <span className="flex flex-wrap items-center gap-2">
-              <InfoPill tone={entrant.result === 'participant' ? 'sky' : 'gold'}>
-                {t(`results.${entrant.result ?? 'participant'}`)}
-              </InfoPill>
-              {entrant.isReadersChoice && (
-                <InfoPill tone="plum">{t('results.readers_choice')}</InfoPill>
-              )}
-            </span>
+            {/* The result in bold, then Readers' choice, as words (CALM-9f; was two pills). */}
+            <MetaLine
+              facts={[
+                { text: t(`results.${entrant.result ?? 'participant'}`), kind: 'state' },
+                { text: entrant.isReadersChoice ? t('results.readers_choice') : '' },
+              ]}
+            />
           </li>
         ))}
       </ul>

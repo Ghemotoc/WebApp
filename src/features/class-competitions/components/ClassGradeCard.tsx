@@ -13,7 +13,6 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 
@@ -117,7 +116,6 @@ export function ClassGradeCard({ slug }: { slug: string }) {
       aria-labelledby="class-grade-heading"
       className="flex w-full max-w-[760px] flex-col gap-3 rounded-[28px] border border-border bg-surface p-6"
     >
-      <Eyebrow>{t('grade.eyebrow')}</Eyebrow>
       <h2 id="class-grade-heading" className="m-0 font-heading text-2xl font-bold text-heading">
         {t('grade.title')}
       </h2>

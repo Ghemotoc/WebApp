@@ -389,7 +389,6 @@
     "sheetUntil": "Codul funcționează până pe {{expires}}."
   },
   "joinClass": {
-    "eyebrow": "Invitație pentru clasă",
     "title": "Intră într-o clasă",
     "checking": "Verificăm codul…",
     "join": "Intră în clasă",
@@ -407,7 +406,6 @@
     "codeEmpty": "Scrie codul primit de la profesor.",
     "check": "Găsește clasa",
     "enterIntro": "Scrie codul pe care profesorul l-a scris pe tablă sau l-a trimis. Arată așa: <example>K4TQ-72BX-9MNA</example>.",
-    "formEyebrow": "Spațiu de clasă",
     "privacyNote": "Înainte să intri vezi doar numele clasei. Spațiile de clasă sunt private: nimeni din afara clasei nu le vede postările sau poveștile.",
     "invitedBody": "Ai o invitație în acest spațiu de clasă. Doar membrii clasei îl văd. Membrii împărtășesc povești cu clasa și discută în firele ei.",
     "notNow": "Nu acum"
@@ -448,7 +446,6 @@
     }
   },
   "classSpace": {
-    "eyebrow": "Despre spațiile claselor",
     "lockedTitle": "Acest spațiu e închis.",
     "lockedText": "Spațiile claselor se închid la sfârșitul anului școlar și nimeni nu mai poate posta aici. Poți citi în continuare tot ce e în el cât timp ai cont și îți păstrezi poveștile și ciornele.",
     "howTitle": "Cum începe spațiul unei clase",

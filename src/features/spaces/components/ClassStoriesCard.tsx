@@ -11,7 +11,6 @@
  * What it calls: useClassSpaceStories() → class_space_stories().
  */
 import { designsForRow, resolveCoverChoice } from '@/components/covers/automaticCover';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { Shelf } from '@/components/ui/Shelf';
 import { ListedStoryCard } from '@/features/discovery/components/ListedStoryCard';
@@ -39,7 +38,6 @@ export function ClassStoriesCard({ space }: { space: Space }) {
         aria-labelledby="class-stories-heading"
         className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-5 shadow-card"
       >
-        <Eyebrow>{t('classStories.eyebrow')}</Eyebrow>
         <h2 id="class-stories-heading" className="m-0 font-heading text-2xl font-bold text-heading">
           {t('classStories.title')}
         </h2>

@@ -13,8 +13,6 @@
  */
 import { useParams, useSearchParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { InfoPill } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import type { Space } from '@/features/spaces/api/spaces';
@@ -58,10 +56,13 @@ function SignedCertificates({ slug }: { slug: string }) {
           >
             <span className="font-semibold text-ink">{certificate.studentName}</span>
             <span className="text-body">{certificate.programmeName}</span>
-            <InfoPill tone={certificate.result === 'participant' ? 'sky' : 'gold'}>
-              {t(`results.${certificate.result}`)}
-            </InfoPill>
-            {certificate.isRevoked && <InfoPill tone="blush">{t('class.revoked')}</InfoPill>}
+            {/* The result in bold and "Revoked" in red, as words (CALM-9f; was two pills).
+                Plain spans rather than MetaLine, so each row stays one list item without a
+                list inside it. */}
+            <span className="font-semibold text-ink">{t(`results.${certificate.result}`)}</span>
+            {certificate.isRevoked && (
+              <span className="font-bold text-destructive">{t('class.revoked')}</span>
+            )}
             <span className="text-sm text-body">{certificate.code}</span>
           </li>
         ))}
@@ -213,10 +214,7 @@ export function ClassCertificatesPage() {
       <title>{t('class.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('class.title')} />
       <header className="flex flex-col gap-2">
-        <Eyebrow>{name}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] leading-[1.05] font-extrabold text-heading">
-          {t('class.title')}
-        </h1>
+        <h1 className="m-0 type-title break-words lg:type-display">{t('class.title')}</h1>
       </header>
       <ClassCertificatesBody slug={spaceSlug} space={space.data} />
     </PageContainer>
