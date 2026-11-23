@@ -93,7 +93,8 @@
   /* Muted text and links deepened for contrast (canvas v38 contrast audit, Robert via DESIGN, 20 Nov 2026, 21:03 UTC; CALM-1b). */
   --body: #4a3e60;
   --meta: #4a3e60;
-  --eyebrow: #141114;
+  /* Kickers share the heading colour (one colour set for text, Robert, 23 Nov 2026, 14:46 UTC). */
+  --eyebrow: #2a0e33;
   --link: #3d4290;
   --link-hover: #2a0e33;
   --destructive: #a3122a;
@@ -101,11 +102,11 @@
   /* Accents and actions. No strong yellow anywhere, a soft honey tint at most (rulebook 6). */
   --gold: #f3dc9b;
   /* Text on the honey fill (count badges, the current sign-up step): about 12:1. */
-  --on-gold: #26142e;
+  --on-gold: #2a0e33;
   --primary: #48125d;
-  --on-primary: #ffffff;
+  --on-primary: #fbf7ec;
   --chip-on: #48125d;
-  --chip-on-text: #ffffff;
+  --chip-on-text: #fbf7ec;
   /* The theme accent (buttons, active tab, bars, dots, switches, the logo): Lilac mist is plum.
      Bundle G2 sets one per theme (Robert, 7 Nov 2026, 17:52 and 18:44); at night it is the light
      cobalt #5B95EE (NIGHT-1). */
@@ -255,7 +256,7 @@
    * is checked for white text at 4.5:1 or more at both ends (contrast-pairs.ts). Staff choosing
    * their own band colours waits for GENRE-LOOK-1 (rulebook, line 75).
    */
-  --band-text: #ffffff;
+  --band-text: #fbf7ec;
   --band-plum-from: #702963;
   --band-plum-to: #43143b;
   --band-sage-from: #005c42;
@@ -393,7 +394,7 @@
 
   /* Dark reading paper with light text (NIGHT-2). */
   --story-paper: #141416;
-  --story-ink: #e6e6e6;
+  --story-ink: #e8e8ea;
 
   /* The cover hairline is white at night, so a dark cover keeps its shape on the night page. */
   --cover-edge: rgba(255, 255, 255, 0.16);
@@ -1360,11 +1361,11 @@
 /* Tailwind classes from the tokens: bg-paper, text-ink, border-control-border and so on. */
 @theme inline {
   /* Featured this week on Discover (S1-E5-10; board Discover): the board's dark plum card with
-   * light text, the same in both themes; #faf8f5 on #2a0e33 is about 16:1, on #672786 about 9:1. */
+   * light text, the same in both themes; #fbf7ec on #2a0e33 is about 16:1, on #672786 about 9:1. */
   --color-featured-from: #2a0e33;
   --color-featured-via: #481c5f;
   --color-featured-to: #672786;
-  --color-on-featured: #faf8f5;
+  --color-on-featured: #fbf7ec;
   --color-on-featured-soft: #e5d7ea;
   --color-paper: var(--paper);
   /* Cards paint the see-through glass; --surface stays the solid look-alike for the contrast test. */
