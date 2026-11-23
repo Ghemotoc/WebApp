@@ -18704,6 +18704,11 @@ export type Database = {
           writer_id: string;
         }[];
       };
+      visitor_may_open_rating: {
+        Args: { story_rating: Database['public']['Enums']['story_rating'] };
+        Returns: boolean;
+      };
+      visitor_said_adult: { Args: Record<PropertyKey, never>; Returns: boolean };
       vote_forum_post: { Args: { post_id: string; vote: string }; Returns: string };
       wait_minutes_until_free: { Args: { oldest_in_window: string }; Returns: number };
       waitlist_alert_worker_claim: {
