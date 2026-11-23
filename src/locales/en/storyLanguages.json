@@ -30,7 +30,8 @@
     "open": "Open",
     "openLabel": "Open the chapters of {{title}}",
     "translate": "Translate",
-    "translateLabel": "Translate into {{language}}"
+    "translateLabel": "Translate into {{language}}",
+    "translateOnBiggerScreen": "Translate on a tablet or computer"
   },
   "add": {
     "eyebrow": "Add a language",
@@ -108,13 +109,10 @@
     "publish": "Publish in {{language}}",
     "publishChanges": "Publish changes",
     "working": "Working…",
-    "original": "Original",
-    "translation": "Translation",
-    "progress": "{{language}} · {{count}} of {{total}} paragraphs",
+    "progress": "{{count}} of {{total}} words so far",
     "chapterTitle": "Chapter title in {{language}}",
-    "paragraphNumber": "Paragraph {{number}}",
     "translateParagraph": "Translate paragraph {{number}}",
-    "tip": "Paragraphs stay side by side. A paragraph you leave empty is shown to readers in the original until it’s translated.",
+    "tip": "The original and the translation stay side by side. A paragraph you leave empty is shown to readers in the original until it’s translated.",
     "fullEditor": "Open in the full editor",
     "fullEditorHint": "For headings, pictures and other formatting.",
     "noParagraphs": "The original chapter has no text yet.",
@@ -130,6 +128,17 @@
       "notActive": "This account can’t publish yet.",
       "tooLong": "The text is too long to save.",
       "failed": "Not saved. Check the connection and try again."
+    },
+    "originalHead": "Original {{language}}",
+    "translationHead": "Translation {{language}}",
+    "wordCount_one": "{{count}} word",
+    "wordCount_few": "{{count}} words",
+    "wordCount_other": "{{count}} words",
+    "scrollTogether": "Scroll both sides together",
+    "phone": {
+      "heading": "Translate on a bigger screen",
+      "line": "Translating a chapter works on a tablet or computer, where the original and your translation fit side by side. Your draft of Chapter {{number}} in {{language}} is saved.",
+      "back": "Back to languages"
     }
   }
 }
