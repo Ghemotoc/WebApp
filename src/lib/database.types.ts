@@ -9978,6 +9978,7 @@ export type Database = {
           logline: string;
           public_areas: string[];
           publishing_route: string;
+          relationship_colours: NonNullable<Json>;
           series_name: string;
           story_id: string;
           updated_at: string;
@@ -9993,6 +9994,7 @@ export type Database = {
           logline?: string;
           public_areas?: string[];
           publishing_route?: string;
+          relationship_colours?: NonNullable<Json>;
           series_name?: string;
           story_id: string;
           updated_at?: string;
@@ -10007,6 +10009,7 @@ export type Database = {
           logline?: string;
           public_areas?: string[];
           publishing_route?: string;
+          relationship_colours?: NonNullable<Json>;
           series_name?: string;
           story_id?: string;
           updated_at?: string;
@@ -16935,6 +16938,7 @@ export type Database = {
       register_space_banner: { Args: { target_path: string }; Returns: string };
       register_space_logo: { Args: { target_path: string }; Returns: string };
       register_sponsor_creative: { Args: { target_path: string }; Returns: string };
+      relationship_colours_are_valid: { Args: { colours: Json }; Returns: boolean };
       relationship_json: {
         Args: {
           link: Omit<
@@ -17534,6 +17538,10 @@ export type Database = {
         Returns: undefined;
       };
       set_rank_badge_tags: { Args: { story_slug: string; tag_names: string[] }; Returns: Json };
+      set_relationship_colour: {
+        Args: { category: string; colour: string; story_slug: string };
+        Returns: Json;
+      };
       set_shows_online_status: { Args: { should_show: boolean }; Returns: undefined };
       set_shows_reader_level: { Args: { should_show: boolean }; Returns: undefined };
       set_space_banner_picture: { Args: { picture_id?: string; slug: string }; Returns: Json };

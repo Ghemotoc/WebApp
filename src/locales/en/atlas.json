@@ -385,7 +385,22 @@
       "zoomIn": "Zoom in",
       "fit": "Fit",
       "zoomNow": "{{percent}}%",
-      "offMap": "Not on the map yet: {{names}}"
+      "offMap": "Not on the map yet: {{names}}",
+      "key": "Each category has its own colour. Solid lines: family and allies. Dotted: love and other. Dashed: conflict. Fine dots: lineage.",
+      "coloursButton": "Category colours",
+      "coloursIntro": "Pick a colour for each category. The map and the list follow it.",
+      "colourFor": "Colour for {{category}}",
+      "colourFailed": "The colour wasn’t saved. Check the connection and try again.",
+      "swatches": {
+        "blue": "Blue",
+        "pink": "Pink",
+        "yellow": "Yellow",
+        "aqua": "Aqua",
+        "orange": "Orange",
+        "violet": "Violet",
+        "green": "Green",
+        "red": "Red"
+      }
     },
     "tree": {
       "heading": "Family tree",
