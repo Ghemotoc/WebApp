@@ -5,7 +5,8 @@
  * src/features/language/api/profileLocale.ts. Screens never call it directly; they use a hook.
  * What it calls next: the Supabase API (Auth, and the database through row-level security) at
  * VITE_SUPABASE_URL, with the public anon key; each request carries the page's language and the
- * connection's signed country (src/lib/viewerCountry.ts, COUNTRY-1). Every rule about who may read or change what lives
+ * connection's signed country (src/lib/viewerCountry.ts, COUNTRY-1) and a visitor's "I'm 18 or
+ * over" answer (src/lib/visitorAdult.ts, CALM-9m). Every rule about who may read or change what lives
  * in the database, not here (architecture 1.1, principle 3).
  * Security: only the public anon key may be used here, never the service role key (CLAUDE.md
  * rule 2); `npm run scan:bundle` fails the build if a service role key reaches the bundle.
@@ -20,6 +21,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { AUTH_SESSION_STORAGE_KEY } from './auth-session-key';
 import type { Database } from './database.types';
 import { fetchWithViewerCountry, startViewerCountry } from './viewerCountry';
+import { fetchWithVisitorAdult } from './visitorAdult';
 
 /** The client type, typed from the generated database types (CLAUDE.md rule 14). */
 export type AppSupabaseClient = SupabaseClient<Database>;
@@ -62,14 +64,16 @@ async function makeClient(): Promise<AppSupabaseClient | null> {
   startViewerCountry();
 
   // Step 5: fetch the library, then make the client. It keeps the session in this browser under
-  // a fixed name and refreshes it before it expires. Every request carries the page's language
-  // and the connection's country.
+  // a fixed name and refreshes it before it expires. Every request carries the page's language,
+  // the connection's country and, once given, a visitor's "I'm 18 or over" answer (CALM-9m).
   const { createClient } = await import('@supabase/supabase-js');
   return createClient<Database>(supabaseUrl, anonKey, {
     auth: { storageKey: AUTH_SESSION_STORAGE_KEY, persistSession: true, autoRefreshToken: true },
     global: {
       fetch: (input: RequestInfo | URL, init?: RequestInit) =>
-        fetchWithViewerCountry(input, init, fetchWithPageLanguage),
+        fetchWithViewerCountry(input, init, (nextInput, nextInit) =>
+          fetchWithVisitorAdult(nextInput, nextInit, fetchWithPageLanguage),
+        ),
     },
   });
 }

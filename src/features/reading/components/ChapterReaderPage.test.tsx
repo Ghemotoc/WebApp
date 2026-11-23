@@ -37,6 +37,7 @@ const publishedChapter: ReaderChapter = {
   needsSignIn: false,
   isTeaser: false,
   appOnly: false,
+  needsAdultAnswer: false,
   isPoem: false,
   textContinues: false,
   body: 'Primul paragraf.\n\nAl doilea paragraf.',

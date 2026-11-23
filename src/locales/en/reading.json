@@ -264,6 +264,13 @@
     "body": "{{writer}} chose to publish this story in the {{productName}} app only. The app gives writers more privacy and more control over their work, and makes chapters harder to copy.",
     "backToStory": "Back to the story"
   },
+  "adultQuestion": {
+    "title": "For mature readers",
+    "body": "{{writer}} wrote this story for readers 18 or over. Say you are 18 or over to read it. Your answer stays in this browser only.",
+    "confirm": "I’m 18 or over, show it",
+    "logIn": "Log in instead",
+    "backToStory": "Back to the story"
+  },
   "poem": {
     "stanza": "Stanza {{number}}"
   },
