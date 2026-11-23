@@ -4,9 +4,9 @@
  * budget, e2e/reader-performance.spec.ts).
  *
  * Where they open (bundle CALM-5; design handover Step 4, "Comments on a paragraph", point 4;
- * boards New-Reader and New-PhoneReader): from 1280 px at the top of the reader's side column
- * (ReaderSideColumn), so the text doesn't move and the paragraph and its comments sit side by
- * side; there the thread takes focus when the reader opened it, because it sits away from its
+ * boards New-Reader and New-PhoneReader): from 1280 px in the reader's side column
+ * (ReaderSideColumn), under About this story and level with its paragraph (CALM-9, board B03),
+ * so the text doesn't move and the paragraph and its comments sit side by side; there the thread takes focus when the reader opened it, because it sits away from its
  * button. Below 1280 px they open in the reader's bottom sheet (ReaderSheet), a modal dialog
  * named "Comments on this paragraph" that keeps focus inside until it closes; the thread takes
  * focus as it opens there.

@@ -1743,6 +1743,13 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+  /* With a paragraph's comments open, the column scrolls with the text, so the comment box
+     (lined up with its paragraph by useThreadLevelWithParagraph) stays beside it (CALM-9, B03). */
+  .tmc-reader-side:has(> [data-thread-slot]:not(:empty)) {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
 }
 /* The reader's bottom sheet sits on the screen's bottom edge, so it has no bottom edge line (the
    box surface draws all four sides; CALM-7a). */
