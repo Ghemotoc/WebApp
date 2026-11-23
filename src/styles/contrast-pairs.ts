@@ -139,12 +139,55 @@ const interfacePairs: ContrastPair[] = [
   // chapter dot (the simplified design, Robert, 20 Nov 2026; CALM-1).
   { foreground: 'thread', background: 'paper', minimumRatio: 3, usedFor: 'the thread' },
   // Story Atlas relationship lines and dots on the map's card (S1-E17-15): the writer picks each
-  // category's colour (CALM-9, board E25), and the thin edge under every line keeps it 3:1.
+  // category's colour (CALM-9, board E25) from eight swatches, each 3:1 on the card by itself
+  // (Robert, 23 Nov 2026: darker shades by day).
   {
-    foreground: 'atlas-line-edge',
+    foreground: 'atlas-swatch-blue',
     background: 'surface',
     minimumRatio: 3,
-    usedFor: 'the edge of relationship lines and colour dots',
+    usedFor: 'relationship lines and dots in blue',
+  },
+  {
+    foreground: 'atlas-swatch-pink',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in pink',
+  },
+  {
+    foreground: 'atlas-swatch-yellow',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in yellow',
+  },
+  {
+    foreground: 'atlas-swatch-aqua',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in aqua',
+  },
+  {
+    foreground: 'atlas-swatch-orange',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in orange',
+  },
+  {
+    foreground: 'atlas-swatch-violet',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in violet',
+  },
+  {
+    foreground: 'atlas-swatch-green',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in green',
+  },
+  {
+    foreground: 'atlas-swatch-red',
+    background: 'surface',
+    minimumRatio: 3,
+    usedFor: 'relationship lines and dots in red',
   },
 ];
 

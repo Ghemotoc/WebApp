@@ -3,8 +3,8 @@
  * part b2, board AtlasConnections: labels sit on small glass chips over the middle of each line).
  *
  * The lines are an SVG under the cards, each category in the colour the writer picked (CALM-9,
- * board E25) and its own line style, with an arrow at the second character. A thin edge runs
- * under every line, so even a light colour stands 3:1 off the card. The labels are HTML chips
+ * board E25) and its own line style, with an arrow at the second character. Every swatch stands
+ * 3:1 off the card by itself. The labels are HTML chips
  * laid over the lines, so they keep the page's fonts and wrap like text. Both are drawing only (hidden from screen readers): the same
  * relationships are written out in the List view. With "Focus on" set, lines that don't touch
  * the chosen character fade back.
@@ -13,7 +13,6 @@
 import type { RelationshipWords } from '../hooks/useRelationshipWords';
 import {
   categoryOf,
-  lineEdgeColour,
   lineStyleOf,
   relationshipCategories,
   type RelationshipColours,
@@ -36,7 +35,7 @@ function isFaded(edge: MapEdge, focusId: string | null): boolean {
   return edge.relationship.fromId !== focusId && edge.relationship.toId !== focusId;
 }
 
-/** One arrow head per category, in that category's colour with the same thin edge. */
+/** One arrow head per category, in that category's colour. */
 function ArrowMarkers({ colours }: { colours: RelationshipColours }) {
   return (
     <defs>
@@ -51,12 +50,7 @@ function ArrowMarkers({ colours }: { colours: RelationshipColours }) {
           markerHeight="7"
           orient="auto-start-reverse"
         >
-          <path
-            d="M 0 0 L 10 5 L 0 10 z"
-            fill={lineStyleOf(category, colours).colour}
-            stroke={lineEdgeColour}
-            strokeWidth={1}
-          />
+          <path d="M 0 0 L 10 5 L 0 10 z" fill={lineStyleOf(category, colours).colour} />
         </marker>
       ))}
     </defs>
@@ -88,15 +82,6 @@ export function MapLines({ layout, words, focusId, colours }: MapLinesProps) {
               data-colour={style.colour}
               opacity={isFaded(edge, focusId) ? 0.2 : 1}
             >
-              {/* The edge first, 2 px wider, so the colour sits inside it. */}
-              <path
-                d={edge.path}
-                fill="none"
-                stroke={lineEdgeColour}
-                strokeWidth={style.width + 2}
-                strokeDasharray={style.dashes}
-                strokeLinecap="round"
-              />
               <path
                 d={edge.path}
                 fill="none"

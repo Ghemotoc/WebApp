@@ -18,7 +18,6 @@ import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Notice } from '@/components/ui/Notice';
 
 import {
-  lineEdgeColour,
   relationshipCategories,
   relationshipSwatches,
   swatchColour,
@@ -79,11 +78,8 @@ function SwatchButton({
       className="size-7 rounded-full"
       style={{
         backgroundColor: swatchColour(swatch),
-        // The chosen swatch: a ring in the heading colour with a gap of the card's colour; the
-        // others a thin edge, so a light swatch still shows on the card.
-        boxShadow: isChosen
-          ? '0 0 0 2px var(--surface), 0 0 0 4px var(--heading)'
-          : `inset 0 0 0 1px ${lineEdgeColour}`,
+        // The chosen swatch: a ring in the heading colour with a gap of the card's colour.
+        boxShadow: isChosen ? '0 0 0 2px var(--surface), 0 0 0 4px var(--heading)' : undefined,
       }}
     />
   );

@@ -9,8 +9,8 @@
  * the key leaves out, keeps fine dots of its own). This replaces S1-E17-15's six line styles.
  * Who calls it: RelationshipMap, MapLines, MapCategorySwitches, CategoryColoursFold,
  * RelationshipList and FamilyTreeLines. What it calls: nothing. The colours are CSS variables in
- * src/styles/tokens.css (--atlas-swatch-*), with day and night values; every line also has a thin
- * edge (--atlas-line-edge) that keeps it at least 3:1 against the card (WCAG 2.2, 1.4.11).
+ * src/styles/tokens.css (--atlas-swatch-*), with day and night values, each at least 3:1 against
+ * the card by itself (WCAG 2.2, 1.4.11; Robert, 23 Nov 2026: darker shades by day).
  */
 import type { RelationshipKind } from '../api/characters';
 
@@ -112,9 +112,6 @@ export function swatchOf(
 export function swatchColour(swatch: RelationshipSwatch): string {
   return `var(--atlas-swatch-${swatch})`;
 }
-
-/** The thin edge under every line and dot, which keeps it 3:1 against the card. */
-export const lineEdgeColour = 'var(--atlas-line-edge)';
 
 /** How one category's lines are drawn: the colour, the dash pattern and the width. */
 export interface LineStyle {

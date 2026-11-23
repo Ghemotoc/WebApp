@@ -3,13 +3,11 @@
  * category has a colour, shown as a dot on its filter chip, on its map lines and on the list
  * labels"; .reldot, 10 px).
  *
- * The dot has a thin edge (--atlas-line-edge) so even a light swatch stands 3:1 off the card
- * (WCAG 2.2, 1.4.11). It is decoration only: the category's name always sits beside it.
+ * Every swatch stands 3:1 off the card by itself (WCAG 2.2, 1.4.11). It is decoration only: the category's name always sits beside it.
  * Who uses it: MapCategorySwitches, CategoryColoursFold and RelationshipList. What it calls: the
  * category helpers.
  */
 import {
-  lineEdgeColour,
   swatchColour,
   swatchOf,
   type RelationshipCategory,
@@ -35,10 +33,7 @@ export function CategoryDot({
       aria-hidden="true"
       data-category-dot={category}
       className="inline-block size-2.5 shrink-0 rounded-full"
-      style={{
-        backgroundColor: swatchColour(swatchOf(category, colours)),
-        boxShadow: `0 0 0 1px ${lineEdgeColour}`,
-      }}
+      style={{ backgroundColor: swatchColour(swatchOf(category, colours)) }}
     />
   );
 }
