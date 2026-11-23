@@ -20,7 +20,7 @@ const settingFreshMilliseconds = 60 * 1000;
 /**
  * Loads the flags.
  *
- * @returns isOn(flagKey, safeDefault) and whether the flags have loaded
+ * @returns isOn(flagKey, safeDefault), whether the flags have loaded and whether the read failed
  */
 export function useFeatureFlags() {
   const flags = useQuery<FeatureFlags>({
@@ -44,5 +44,7 @@ export function useFeatureFlags() {
      */
     isOn: (flagKey: string, safeDefault: boolean) => flags.data?.[flagKey] ?? safeDefault,
     isLoaded: flags.isSuccess,
+    /** True when the last read failed, so a screen can fall back to its safe default. */
+    hasFailed: flags.isError,
   };
 }

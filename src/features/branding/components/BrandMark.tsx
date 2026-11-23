@@ -14,6 +14,8 @@
  * Light and night uploads are both in the page and CSS shows the one for the current theme
  * (.tmc-light-only and .tmc-night-only in src/styles/index.css), so a theme switch needs no new
  * read. With no logo uploaded the name is drawn once, so its link has one plain name.
+ * BrandEmblem draws the emblem alone, larger, for the top of the member footer (Robert, 23 Nov
+ * 2026: "just the emblem ... above the SEO text", left-aligned and following the theme).
  * Who shows it: TopBar, StaffBar and the two footers. What it calls: useBrandAssets().
  */
 import { brand } from '@/config/brand';
@@ -23,6 +25,36 @@ import { defaultBrandPicture } from '../lib/brandDefaults';
 
 /** Which theme an emblem is for; 'both' when one drawing serves light and night. */
 type EmblemTheme = 'light' | 'dark' | 'both';
+
+/** What one emblem needs: its address, its theme and its size. */
+interface EmblemProps {
+  source: string;
+  theme: EmblemTheme;
+  size: EmblemSize;
+}
+
+/** What the pair of emblems needs. */
+interface EmblemsProps {
+  light: string | null;
+  dark: string | null;
+  size: EmblemSize;
+}
+
+/** How big an emblem is drawn: in a bar beside the name, or alone at the top of the footer. */
+export type EmblemSize = 'bar' | 'footer';
+
+/**
+ * The size classes for the tinted cat (kept at its 30:32 shape) and for an uploaded picture.
+ * Footer: 120 px tall on phones and tablets, 160 px from 1024 px (Robert asked about 300 px; the
+ * builder's reading, 23 Nov 2026: big enough to read as the brand without outweighing the links).
+ */
+const emblemSizeClass: Record<EmblemSize, { tinted: string; picture: string }> = {
+  bar: { tinted: 'h-8 w-[30px]', picture: 'h-8 w-auto' },
+  footer: {
+    tinted: 'h-[120px] w-[113px] lg:h-[160px] lg:w-[150px]',
+    picture: 'h-[120px] w-auto lg:h-[160px]',
+  },
+};
 
 /** The CSS class that shows an emblem only in its theme. */
 const themeOnlyClass: Record<EmblemTheme, string> = {
@@ -37,16 +69,17 @@ const themeOnlyClass: Record<EmblemTheme, string> = {
  *
  * @param source - the bundled SVG used as the mask's shape
  * @param theme - which theme it is shown in
+ * @param size - how big it is drawn
  * @returns a decorative span the size of the emblem
  */
-function TintedEmblem({ source, theme }: { source: string; theme: EmblemTheme }) {
+function TintedEmblem({ source, theme, size }: EmblemProps) {
   const mask = `url(${source})`;
   return (
     <span
       aria-hidden="true"
       data-brand-emblem={theme}
       data-brand-emblem-kind="tinted"
-      className={`${themeOnlyClass[theme]} inline-block h-8 w-[30px] shrink-0 bg-logo`}
+      className={`${themeOnlyClass[theme]} inline-block ${emblemSizeClass[size].tinted} shrink-0 bg-logo`}
       style={{
         maskImage: mask,
         WebkitMaskImage: mask,
@@ -66,19 +99,20 @@ function TintedEmblem({ source, theme }: { source: string; theme: EmblemTheme })
  *
  * @param source - the emblem's address (bundled default or approved upload)
  * @param theme - which theme it is shown in
+ * @param size - how big it is drawn
  * @returns the emblem
  */
-function Emblem({ source, theme }: { source: string; theme: EmblemTheme }) {
+function Emblem({ source, theme, size }: EmblemProps) {
   const isBundledDefault =
     source === defaultBrandPicture.emblem_light || source === defaultBrandPicture.emblem_dark;
-  if (isBundledDefault) return <TintedEmblem source={source} theme={theme} />;
+  if (isBundledDefault) return <TintedEmblem source={source} theme={theme} size={size} />;
   return (
     <img
       src={source}
       alt=""
       aria-hidden="true"
       data-brand-emblem={theme}
-      className={`${themeOnlyClass[theme]} h-8 w-auto`}
+      className={`${themeOnlyClass[theme]} ${emblemSizeClass[size].picture}`}
     />
   );
 }
@@ -87,18 +121,32 @@ function Emblem({ source, theme }: { source: string; theme: EmblemTheme }) {
  * The emblems for both themes. When neither was replaced, one tinted cat serves both, because
  * the --logo token already changes with the theme.
  *
+ * @param props.light - the light emblem's address, or null
+ * @param props.dark - the night emblem's address, or null
+ * @param props.size - how big they are drawn
  * @returns zero, one or two emblems
  */
-function Emblems({ light, dark }: { light: string | null; dark: string | null }) {
+function Emblems({ light, dark, size }: EmblemsProps) {
   const bothDefault =
     light === defaultBrandPicture.emblem_light && dark === defaultBrandPicture.emblem_dark;
-  if (bothDefault && light !== null) return <Emblem source={light} theme="both" />;
+  if (bothDefault && light !== null) return <Emblem source={light} theme="both" size={size} />;
   return (
     <>
-      {light !== null && <Emblem source={light} theme="light" />}
-      {dark !== null && <Emblem source={dark} theme="dark" />}
+      {light !== null && <Emblem source={light} theme="light" size={size} />}
+      {dark !== null && <Emblem source={dark} theme="dark" size={size} />}
     </>
   );
+}
+
+/**
+ * The emblem alone, at the top of the member footer. Decorative: the footer's words say what the
+ * site is. It follows the look and night mode like the top bar's emblem.
+ *
+ * @returns the emblem for the current theme, footer-sized
+ */
+export function BrandEmblem() {
+  const pictures = useBrandAssets();
+  return <Emblems light={pictures.emblem_light} dark={pictures.emblem_dark} size="footer" />;
 }
 
 /**
@@ -131,7 +179,7 @@ export function BrandMark() {
   const hasAnyLogo = pictures.logo_light !== null || pictures.logo_dark !== null;
   return (
     <span className="inline-flex items-center gap-2">
-      <Emblems light={pictures.emblem_light} dark={pictures.emblem_dark} />
+      <Emblems light={pictures.emblem_light} dark={pictures.emblem_dark} size="bar" />
       {/* The name: once as text by default; per theme once a logo is uploaded. */}
       {hasAnyLogo ? (
         <>

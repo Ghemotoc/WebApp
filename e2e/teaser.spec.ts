@@ -6,7 +6,8 @@
  * the same server/link-preview.ts as Cloudflare does for /s/….
  * What it proves:
  * - a signed-out visitor on a shared chapter sees the story (title, pen name, blurb), the first
- *   whole paragraphs up to 600 words and never the rest, then the prompt to log in; a signed-in
+ *   part up to 40 words (TRIAL-WALL, 23 Nov 2026; 600 before) and never the rest, then the
+ *   prompt to log in; a signed-in
  *   reader gets the whole chapter;
  * - on a 16+ story a visitor sees the title and "No preview for this story" naming the rating,
  *   never any text, on the chapter and the story page;
@@ -104,10 +105,12 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await expect(
       page.getByRole('main').getByText('Bunica mea notează vremea în fiecare dimineață'),
     ).toBeVisible();
-    // The chapter: its heading, the first two paragraphs and never the third.
+    // The chapter: its heading and the first 40 words of the first paragraph, never the rest
+    // (TRIAL-WALL: a short preview, then sign in).
     await expect(page.getByRole('heading', { level: 2, name: 'Caietele bunicii' })).toBeVisible();
     await expect(page.getByText('You’re reading the first part')).toBeVisible();
-    await expect(page.locator('.tmc-chapter-text p')).toHaveCount(2);
+    await expect(page.locator('.tmc-chapter-text p')).toHaveCount(1);
+    expect(await page.content()).not.toContain('Vântul bate');
     expect(await page.content()).not.toContain('ultimul');
     // The prompt.
     await expect(page.getByText('1 more chapter')).toBeVisible();

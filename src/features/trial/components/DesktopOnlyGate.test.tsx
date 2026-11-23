@@ -27,6 +27,7 @@ function setUp(device: 'phone' | 'computer', isFlagOn: boolean) {
   vi.mocked(useFeatureFlags).mockReturnValue({
     isOn: (key: string, safeDefault: boolean) => (key === 'desktop_only' ? isFlagOn : safeDefault),
     isLoaded: true,
+    hasFailed: false,
   });
 }
 

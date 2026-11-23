@@ -1559,7 +1559,7 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
        statement with the title in <cite> and the writer linked to /u/<handle>
    ChapterReaderPage → get_chapter() → is_teaser? → TeaserPage
        TeaserStoryCard (get_story_page()) · the teaser (teaser_of(): whole paragraphs up to
-       600 words, cut in the database) · SignUpPrompt · CopyNotice
+       40 words and at most half the chapter, cut in the database; TRIAL-WALL) · SignUpPrompt · CopyNotice
      → needs_adult_answer (an 18+ story, CALM-9m)? → AdultQuestionNotice: "I'm 18 or over,
        show it" keeps the answer in this browser (src/lib/visitorAdult.ts), every request then
        carries X-Visitor-Adult: yes, visitor_said_adult() reads it and the teaser comes as usual
@@ -1892,7 +1892,7 @@ What the reading epic left in place. The epic report, `docs/epic-reports/S1-E4.m
 | Functions | `get_chapter()` (the teaser for visitors), `record_chapter_read()`, `get_link_preview()`, `is_blocked_with()` (a stub until S1-E5-05); internal `reader_visible_story()`, `teaser_of()`, `word_total()`; the setting `teaser_length` (600) | 4-01a, 4-04 |
 | Tests | `supabase/tests/database/140` to `142` and `093` (the epic), `server/link-preview.test.ts`, `e2e/epic-s1-e4.spec.ts` and each story's spec (`chapter-reader`, `reader-performance`, `copy-protection`, `teaser`) | each story, S1-E4-QA |
 
-**One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 600 words → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
+**One main journey through the whole epic:** someone pastes `/s/<story>/<chapter>` into WhatsApp → the preview robot gets the page from `functions/s/[[path]].ts`, which asks `get_link_preview()` and writes the Open Graph tags (`server/link-preview.ts`) → a visitor opens it: the route's loader starts `get_chapter()` early (`prefetchChapter()`), which answers with `is_teaser` and the first 40 words (at most half the chapter) → `TeaserPage` shows the story card, the teaser (copy off) and "Log in to read on" → signed in, the same address gives the whole chapter in `ChapterReaderPage`; `useRecordRead` adds one to today's total in `chapter_reads`. `e2e/epic-s1-e4.spec.ts` walks it in the browser and `093-epic-s1-e4.test.sql` in the database.
 
 ## Epic S1-E6 at a glance (checked by S1-E6-QA)
 
