@@ -23,10 +23,12 @@ test('the contact page lists every contact point, the languages and the company 
 }) => {
   await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   await page.goto('/');
-  // The footer's one "Contact us" is the form (S1-E14-04); this page has its own name (LOOK-7).
+  // The footer's one "Contact us" is the form (S1-E14-04); this page has its own name (LOOK-7) and
+  // is one tap from the footer's "Legal", in the Legal centre's row of documents.
+  await page.getByRole('contentinfo').getByRole('link', { name: 'Legal', exact: true }).click();
   await page
-    .getByRole('contentinfo')
-    .getByRole('link', { name: 'Company and legal contacts' })
+    .getByRole('navigation', { name: 'Legal documents' })
+    .getByRole('link', { name: 'Contact', exact: true })
     .click();
   await expect(page).toHaveURL(/\/legal\/contact$/);
   await expect(
