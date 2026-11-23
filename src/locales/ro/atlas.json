@@ -542,7 +542,6 @@
     "pov": "Punct de vedere",
     "act": "Act",
     "wordTarget": "Ținta de cuvinte",
-    "wordTargetHint": "Las-o goală dacă nu vrei o țintă.",
     "wordTargetInvalid": "Scrie un număr întreg de la 1 la 1.000.000 sau las-o goală.",
     "worldDate": "Data din poveste",
     "worldDateHint": "Cum o scrii tu, de exemplu „Primăvara, anul 3”.",
@@ -592,7 +591,12 @@
     },
     "narrator": "Narator",
     "narratorOption": "Narator (din afara poveștii)",
-    "narratorOutside": "din afara poveștii"
+    "narratorOutside": "din afara poveștii",
+    "goalProgress": "{{words}} din {{goal}} de cuvinte",
+    "moreDetails": "Mai multe detalii",
+    "moreDetailsLine": "Punctul de vedere, data, actul, locul și scenele.",
+    "addChip": "+ Adaugă",
+    "addCharacter": "Adaugă un personaj"
   },
   "storyline": {
     "documentTitle": "Firul poveștii pentru {{title}}: Story Atlas",
