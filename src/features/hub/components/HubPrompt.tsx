@@ -1,7 +1,8 @@
 /**
  * HubPrompt: the prompt of the week on the Home page, the Writers' hub (bundle GAPS-12c; since
- * CALM-7c the left of "Tools for the next chapter" on the simplified board New-Home: a small
- * heading, the prompt as a quote, a meta line and a quiet button, with no card around it).
+ * CALM-7c the left of "Tools for the next chapter"; since CALM-9 on reading paper inside the dark
+ * Tools band, board A01, with the prompt as a big quote, board A03: a small heading, the quote, a
+ * meta line and a quiet button).
  *
  * The card shows this week's prompt in the reader's language, how many writers started a story
  * from it and how long it still runs, then "Write from this prompt" (the new-story screen, which
@@ -67,13 +68,24 @@ export function HubPrompt({ now }: { now: Date }) {
       <h3 id="hub-prompt" className="m-0 type-subheading">
         {prompt.isCurrent ? t('hub.prompt.eyebrow') : t('hub.prompt.earlierEyebrow')}
       </h3>
-      {/* Announced when "Another prompt" swaps the words, so a screen reader hears the new one. */}
-      <blockquote
-        aria-live="polite"
-        className="m-0 border-l-2 border-thread pl-4 font-story text-[19px] leading-snug break-words text-heading italic"
-      >
-        {words}
-      </blockquote>
+      {/* The prompt as a big quote (board A03, 23 Nov 2026): a large curly opening mark in the
+          accent colour over the words in the reading font, italic, 26/38 (21/31 on phones). No
+          left bar (CALM-9 rule). Announced when "Another prompt" swaps the words, so a screen
+          reader hears the new one; the mark is decoration and stays silent. */}
+      <figure className="m-0 flex flex-col">
+        <span
+          aria-hidden="true"
+          className="h-10 font-story text-[64px] leading-[1] font-semibold text-accent"
+        >
+          “
+        </span>
+        <blockquote
+          aria-live="polite"
+          className="m-0 font-story text-[21px] leading-[31px] break-words text-heading italic sm:text-[26px] sm:leading-[38px]"
+        >
+          {words}
+        </blockquote>
+      </figure>
       <PromptFacts prompt={prompt} now={now} />
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
         <Link

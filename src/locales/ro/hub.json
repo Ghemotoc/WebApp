@@ -101,7 +101,7 @@
       "failed": "Nu am putut salva răspunsul. Încearcă din nou."
     },
     "month": {
-      "eyebrow": "Luna de scris",
+      "eyebrow": "Cuvinte scrise luna aceasta",
       "ofGoal": "din {{goal}} de cuvinte",
       "progressLabel": "{{percent}}% din {{goal}} de cuvinte luna aceasta",
       "streak_one": "Serie de {{count}} zi",
