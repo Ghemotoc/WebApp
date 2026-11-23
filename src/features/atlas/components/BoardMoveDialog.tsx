@@ -10,6 +10,7 @@
  */
 import { useEffect, useRef } from 'react';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -57,14 +58,14 @@ export function BoardMoveDialog({ isOpen, onConfirm, onClose }: BoardMoveDialogP
         <p id="atlas-board-move-body" className="m-0 text-base leading-relaxed text-body">
           {t('storyline.board.confirm.body')}
         </p>
-        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
-          <Button size="lg" variant="secondary" onClick={onClose}>
-            {t('storyline.board.confirm.keep')}
-          </Button>
+        <ButtonRow className="mt-1.5">
           <Button size="lg" onClick={onConfirm}>
             {t('storyline.board.confirm.move')}
           </Button>
-        </div>
+          <Button size="lg" variant="secondary" onClick={onClose}>
+            {t('storyline.board.confirm.keep')}
+          </Button>
+        </ButtonRow>
       </div>
     </dialog>
   );

@@ -14,6 +14,7 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 
 /** What the dialog needs. */
@@ -61,10 +62,7 @@ export function DeleteChapterDialog({ title, onConfirm, onClose }: DeleteChapter
         <p id="delete-chapter-body" className="m-0 text-base leading-relaxed text-body">
           {t('manageChapters.deleteDialog.body')}
         </p>
-        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
-          <Button size="lg" variant="secondary" onClick={onClose}>
-            {t('manageChapters.deleteDialog.keep')}
-          </Button>
+        <ButtonRow className="mt-1.5">
           <Button
             size="lg"
             className="border-0 bg-destructive text-white hover:opacity-90"
@@ -72,7 +70,10 @@ export function DeleteChapterDialog({ title, onConfirm, onClose }: DeleteChapter
           >
             {t('manageChapters.deleteDialog.confirm')}
           </Button>
-        </div>
+          <Button size="lg" variant="secondary" onClick={onClose}>
+            {t('manageChapters.deleteDialog.keep')}
+          </Button>
+        </ButtonRow>
       </div>
     </dialog>
   );

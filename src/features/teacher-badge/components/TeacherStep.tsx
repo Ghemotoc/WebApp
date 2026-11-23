@@ -9,6 +9,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
@@ -39,14 +40,14 @@ export function TeacherStep({ onFinish, isFinishing }: TeacherStepProps) {
       {teacherCheck != null && (
         <TeacherBadgePanel idPrefix="onboarding" teacherCheck={teacherCheck} state={state} />
       )}
-      <div className="flex flex-wrap justify-end gap-2.5 border-t border-border pt-5">
-        <Button variant="secondary" disabled={isFinishing} onClick={onFinish}>
-          {t('teacherBadge.skip')}
-        </Button>
+      <ButtonRow className="border-t border-border pt-6">
         <Button disabled={isFinishing} onClick={onFinish}>
           {t('teacherBadge.goToDiscover')}
         </Button>
-      </div>
+        <Button variant="secondary" disabled={isFinishing} onClick={onFinish}>
+          {t('teacherBadge.skip')}
+        </Button>
+      </ButtonRow>
     </div>
   );
 }

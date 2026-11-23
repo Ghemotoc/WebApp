@@ -16,6 +16,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { brand } from '@/config/brand';
 
@@ -93,9 +94,9 @@ export function ShareDialog({ isOpen, onClose, chapter, wasCopied }: ShareDialog
         <p className="m-0 text-sm text-body">{t('dialog.deviceNote')}</p>
       </div>
       <ChatPreview chapter={chapter} />
-      <div className="flex justify-end border-t border-border pt-4">
+      <ButtonRow className="border-t border-border pt-4">
         <Button onClick={onClose}>{t('dialog.done')}</Button>
-      </div>
+      </ButtonRow>
     </SharingModal>
   );
 }

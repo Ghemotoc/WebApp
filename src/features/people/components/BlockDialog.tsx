@@ -9,6 +9,7 @@
  */
 import { usePeopleTranslation } from '../registerPeopleTranslations';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
@@ -54,10 +55,7 @@ export function BlockDialog({ isOpen, onClose, handle }: BlockDialogProps) {
     >
       <p className="m-0 text-body">{t('blockDialog.body')}</p>
       {block.hasFailed && <Notice tone="error">{t('blockDialog.failed')}</Notice>}
-      <div className="flex flex-wrap justify-end gap-3">
-        <Button variant="secondary" onClick={handleClose}>
-          {t('blockDialog.cancel')}
-        </Button>
+      <ButtonRow>
         <Button
           variant="destructive"
           disabled={block.isSaving}
@@ -65,7 +63,10 @@ export function BlockDialog({ isOpen, onClose, handle }: BlockDialogProps) {
         >
           {t(block.isSaving ? 'blockDialog.saving' : 'blockDialog.confirm')}
         </Button>
-      </div>
+        <Button variant="secondary" onClick={handleClose}>
+          {t('blockDialog.cancel')}
+        </Button>
+      </ButtonRow>
     </PeopleDialog>
   );
 }

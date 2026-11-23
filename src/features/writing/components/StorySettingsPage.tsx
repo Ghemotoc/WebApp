@@ -23,6 +23,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { coverLookOf } from '@/components/covers/automaticCover';
 import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
 import { Button } from '@/components/ui/Button';
@@ -91,20 +92,20 @@ function SaveBar({ form }: { form: ReturnType<typeof useStorySettingsForm> }) {
   return (
     <div className="sticky bottom-[calc(92px+env(safe-area-inset-bottom))] z-10 flex flex-col gap-3 rounded-card border border-border bg-tint p-5 shadow-card lg:bottom-4">
       <SaveOutcome outcome={form.outcome} />
-      <div className="flex flex-wrap items-center justify-end gap-3">
-        {/* aria-live, so a screen reader hears it once something changes. */}
-        <p aria-live="polite" className="m-0 mr-auto text-sm font-semibold text-ink">
-          {form.isDirty ? t('settings.unsaved') : ''}
-        </p>
+      <ButtonRow>
+        <Button size="lg" type="submit" disabled={form.isSaving}>
+          {form.isSaving ? t('settings.saving') : t('settings.save')}
+        </Button>
         {form.isDirty && (
           <Button size="lg" variant="secondary" onClick={form.discard}>
             {t('settings.cancel')}
           </Button>
         )}
-        <Button size="lg" type="submit" disabled={form.isSaving}>
-          {form.isSaving ? t('settings.saving') : t('settings.save')}
-        </Button>
-      </div>
+        {/* aria-live, so a screen reader hears it once something changes. */}
+        <p aria-live="polite" className="m-0 text-sm font-semibold text-ink">
+          {form.isDirty ? t('settings.unsaved') : ''}
+        </p>
+      </ButtonRow>
     </div>
   );
 }

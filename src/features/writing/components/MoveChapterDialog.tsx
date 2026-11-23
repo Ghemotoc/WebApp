@@ -14,6 +14,7 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 
 /** What the dialog needs. */
@@ -64,14 +65,14 @@ export function MoveChapterDialog({ move, onConfirm, onClose }: MoveChapterDialo
             number: move?.newNumber ?? 0,
           })}
         </p>
-        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
-          <Button size="lg" variant="secondary" onClick={onClose}>
-            {t('manageChapters.moveDialog.keep')}
-          </Button>
+        <ButtonRow className="mt-1.5">
           <Button size="lg" onClick={onConfirm}>
             {t('manageChapters.moveDialog.confirm')}
           </Button>
-        </div>
+          <Button size="lg" variant="secondary" onClick={onClose}>
+            {t('manageChapters.moveDialog.keep')}
+          </Button>
+        </ButtonRow>
       </div>
     </dialog>
   );

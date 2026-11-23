@@ -13,6 +13,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -54,17 +55,17 @@ function SentNotice({ ticketNumber }: { ticketNumber: number }) {
 function SendRow({ isSending, isIncomplete }: { isSending: boolean; isIncomplete: boolean }) {
   const { t } = useSupportTranslation();
   return (
-    <div className="flex flex-wrap justify-end gap-2">
+    <ButtonRow>
+      <Button type="submit" disabled={isSending || isIncomplete}>
+        {isSending ? t('new.sending') : t('new.send')}
+      </Button>
       <Link
         to="/support"
         className="inline-flex h-11 items-center rounded-full button-glass px-5 text-sm font-semibold no-underline"
       >
         {t('new.cancel')}
       </Link>
-      <Button type="submit" disabled={isSending || isIncomplete}>
-        {isSending ? t('new.sending') : t('new.send')}
-      </Button>
-    </div>
+    </ButtonRow>
   );
 }
 

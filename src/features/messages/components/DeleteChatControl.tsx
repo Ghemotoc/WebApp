@@ -19,6 +19,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -130,14 +131,14 @@ function DeleteChatDialog(props: DeleteChatDialogProps) {
         </p>
         {/* A failed attempt keeps the popup open with a plain message. */}
         {props.hasFailed && <Notice tone="error">{t('deleteChat.failed')}</Notice>}
-        <div className="mt-1.5 flex flex-wrap justify-end gap-2">
-          <Button variant="secondary" onClick={props.onClose}>
-            {t('deleteChat.cancel')}
-          </Button>
+        <ButtonRow className="mt-1.5">
           <Button variant="destructive" disabled={props.isDeleting} onClick={props.onConfirm}>
             {t(props.isDeleting ? 'deleteChat.deleting' : 'deleteChat.confirm')}
           </Button>
-        </div>
+          <Button variant="secondary" onClick={props.onClose}>
+            {t('deleteChat.cancel')}
+          </Button>
+        </ButtonRow>
       </div>
     </dialog>
   );
