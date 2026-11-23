@@ -188,6 +188,7 @@ function ConnectionsViewCard({
         <RelationshipList
           relationships={cast.relationships}
           words={words}
+          colours={cast.relationshipColours}
           onDelete={unrelate}
           extra={(relationship, sentence) => (
             <ItemVisibilityControls

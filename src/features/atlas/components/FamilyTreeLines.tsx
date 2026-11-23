@@ -9,7 +9,7 @@
  * Who uses it: FamilyTreeView. What it calls: lib/relationshipCategories.ts for the colours.
  */
 import type { TreeLayout } from '../lib/familyTreeLayout';
-import { lineStyles } from '../lib/relationshipCategories';
+import { lineStyleOf } from '../lib/relationshipCategories';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 /** How each kind of family line is drawn (G10b2, board AtlasFamilyTree's legend). */
@@ -21,8 +21,9 @@ const treeLines = {
 /** The tree's lines: parent solid (maker dotted in the lineage colour), partner double,
  * sibling dashed, cousin dotted. */
 export function TreeLines({ layout, madeKeys }: { layout: TreeLayout; madeKeys: Set<string> }) {
-  const family = lineStyles.family;
-  const lineage = lineStyles.lineage;
+  // The tree draws in the categories' default colours; E26 redraws it (CALM-9).
+  const family = lineStyleOf('family', {});
+  const lineage = lineStyleOf('lineage', {});
   return (
     <svg
       aria-hidden="true"
@@ -85,7 +86,7 @@ function LegendLine({
   dashes?: string;
   isDouble?: boolean;
 }) {
-  const colour = lineStyles.family.colour;
+  const colour = lineStyleOf('family', {}).colour;
   return (
     <li className="flex items-center gap-2 text-sm text-ink">
       <svg aria-hidden="true" width="32" height="12" viewBox="0 0 32 12" className="shrink-0">

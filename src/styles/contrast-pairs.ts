@@ -138,13 +138,14 @@ const interfacePairs: ContrastPair[] = [
   // The thread: the 2px line for progress, the current tab, the unread row and the current
   // chapter dot (the simplified design, Robert, 20 Nov 2026; CALM-1).
   { foreground: 'thread', background: 'paper', minimumRatio: 3, usedFor: 'the thread' },
-  // Story Atlas relationship lines on the map's card (S1-E17-15).
-  ...['family', 'love', 'lineage', 'allies', 'conflict', 'other'].map((category): ContrastPair => ({
-    foreground: `atlas-line-${category}`,
+  // Story Atlas relationship lines and dots on the map's card (S1-E17-15): the writer picks each
+  // category's colour (CALM-9, board E25), and the thin edge under every line keeps it 3:1.
+  {
+    foreground: 'atlas-line-edge',
     background: 'surface',
     minimumRatio: 3,
-    usedFor: `${category} lines on the relationship map`,
-  })),
+    usedFor: 'the edge of relationship lines and colour dots',
+  },
 ];
 
 /** All pairs, checked in both themes. */
