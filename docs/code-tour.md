@@ -1365,7 +1365,7 @@ StoryHeader, the page's one glass Hero (CALM-7c, board New-Story): the cover fro
 resolveCoverChoice() on the left, and beside it the meta line from lib/storyLabelFacts.ts
 ("Fiction · Ongoing · No AI · 13+"; "Ongoing" only while unfinished), the title, "by <pen name>",
 the numbers (StoryStats, a MetaLine named "Story numbers"), blurb, tags as links and the buttons;
-then StoryChapterList ("15 chapters", two columns, the state in words) and StoryLabels
+then StoryChapterList ("15 chapters", two columns, the state in words; from 600 px a list over 11 chapters shows 1 to 10 and the latest until "Show all N chapters", lib/chapterFolding.ts, CALM-9) and StoryLabels
 ("Labels from the writer" with "First published": a classic's first_published_year, copied from
 classic_works by a trigger, or the year of first_published_at; the content note under it);
 StorySideColumn ("About this story": the writer, the advert in StoryAdSlot and for readers
