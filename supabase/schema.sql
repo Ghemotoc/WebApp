@@ -27737,6 +27737,7 @@ declare
   text_to_send text;
   teaser_words integer;
   app_only boolean;
+  awaits_adult_answer boolean;
 begin
   -- Step 1: the story, if this caller may read it (age, blocks, deleted, moderated).
   select * into story from public.reader_visible_story(story_slug);
@@ -27833,7 +27834,11 @@ begin
   -- writer; otherwise all of it for a signed-in reader and the teaser for a signed-out visitor.
   app_only := public.story_app_only_applies(story.is_app_only)
     and story.user_id is distinct from caller_id;
-  if app_only then
+  -- CALM-9m (Robert, 23 Nov 2026, 09:04 UTC): a visitor opens an 18+ story's page, but its text
+  -- only once they have said in this browser that they are 18 or over.
+  awaits_adult_answer := caller_id is null and story.rating = '18_plus'
+    and not public.visitor_said_adult();
+  if app_only or awaits_adult_answer then
     text_to_send := '';
   elsif caller_id is not null then
     text_to_send := chapter.published_body;
@@ -27864,11 +27869,13 @@ begin
     'minutes_to_read', greatest(1, ceil(coalesce(chapter.published_word_count, 0) / 200.0))::integer,
     'is_owner', story.user_id = caller_id,
     'needs_sign_in', caller_id is null and not app_only,
-    'is_teaser', caller_id is null and not app_only,
+    'is_teaser', caller_id is null and not app_only and not awaits_adult_answer,
     'app_only', app_only,
+    -- CALM-9m: true while a visitor hasn't yet said they are 18 or over (no text is sent).
+    'needs_adult_answer', awaits_adult_answer,
     -- MUST-2: a poem's lines and stanzas are drawn as written.
     'is_poem', chapter.is_poem,
-    'text_continues', not app_only
+    'text_continues', not app_only and not awaits_adult_answer
       and public.word_total(text_to_send) < public.word_total(chapter.published_body),
     'body', text_to_send,
     'pictures', public.chapter_picture_states(text_to_send, story.user_id),
@@ -28100,7 +28107,8 @@ begin
     if not public.story_has_readable_chapter(story.id) then
       return null;
     end if;
-    if not public.rating_allows(story.rating) then
+    -- CALM-9m: a visitor who isn't logged in also opens an 18+ story's page.
+    if not public.visitor_may_open_rating(story.rating) then
       return null;
     end if;
     if public.is_moderated_away('story', story.id) then
@@ -39832,7 +39840,8 @@ CREATE OR REPLACE FUNCTION "public"."reader_visible_story_anywhere"("story_slug"
     and public.story_visibility_allows(stories.visibility, stories.user_id)
     and (
       stories.user_id = (select auth.uid())
-      or (public.rating_allows(stories.rating) and not public.is_blocked_with(stories.user_id))
+      or (public.visitor_may_open_rating(stories.rating)
+        and not public.is_blocked_with(stories.user_id))
     );
 $$;
 
@@ -39840,7 +39849,7 @@ $$;
 ALTER FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") IS 'Internal: the story behind an address when the caller may read it, the country aside (S1-E4-01a, COUNTRY-1).';
+COMMENT ON FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "text") IS 'Internal: the story behind an address when the caller may read it, the country aside (S1-E4-01a, COUNTRY-1, CALM-9m).';
 
 
 
@@ -55476,6 +55485,39 @@ ALTER FUNCTION "public"."visible_story_by_slug"("story_slug" "text") OWNER TO "p
 
 
 COMMENT ON FUNCTION "public"."visible_story_by_slug"("story_slug" "text") IS 'Internal: a story the caller may find in a list, by its slug (S1-E15-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."visitor_may_open_rating"("story_rating" "public"."story_rating") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select public.rating_allows(story_rating)
+    or (story_rating = '18_plus' and (select auth.uid()) is null);
+$$;
+
+
+ALTER FUNCTION "public"."visitor_may_open_rating"("story_rating" "public"."story_rating") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."visitor_may_open_rating"("story_rating" "public"."story_rating") IS 'Internal: rating_allows(), plus 18+ story pages for visitors who aren''t logged in (CALM-9m).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."visitor_said_adult"() RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select (select auth.uid()) is null
+    and coalesce(
+      nullif(current_setting('request.headers', true), '')::jsonb ->> 'x-visitor-adult', '') = 'yes';
+$$;
+
+
+ALTER FUNCTION "public"."visitor_said_adult"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."visitor_said_adult"() IS 'Internal: a visitor said in this browser they are 18 or over (X-Visitor-Adult header; CALM-9m).';
 
 
 
@@ -75883,6 +75925,14 @@ REVOKE ALL ON FUNCTION "public"."viewer_country"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."visible_story_by_slug"("story_slug" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."visitor_may_open_rating"("story_rating" "public"."story_rating") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."visitor_said_adult"() FROM PUBLIC;
 
 
 

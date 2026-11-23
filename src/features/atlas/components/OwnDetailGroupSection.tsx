@@ -5,8 +5,10 @@
  * The group's name is the card's heading; under it one box per detail, "Add detail" and
  * "Rename group". A group shows on every character's sheet in the story, like the details in it
  * (S1-E17-10). A group whose details are all removed doesn't show; bringing one back on the
- * at-a-glance page brings the group back.
- * Who uses it: CharacterSheet. What it calls: OwnDetailBoxes, AddDetailForm and useDetailChangers'
+ * at-a-glance page brings the group back. The card folds shut, with the details' names as its
+ * hint (CALM-9, board E23).
+ * Who uses it: CharacterSheet. What it calls: FoldingCard, OwnDetailBoxes, AddDetailForm and
+ * useDetailChangers'
  * renameDetailGroup and useDetailFormSave.
  */
 import { useEffect, useState } from 'react';
@@ -14,14 +16,15 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
-import { FormSection } from '@/features/writing/components/FormSection';
 
 import type { CharacterField, StoryCharacter } from '../api/characters';
 import { useDetailChangers } from '../hooks/useDetailChangers';
 import { useBuiltInGroupNames, useDetailFormSave } from '../hooks/useDetailFormSave';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
+import { detailNames } from '../lib/detailNames';
 
 import { AddDetailForm } from './AddDetailForm';
+import { FoldingCard } from './FoldingCard';
 import { OwnDetailBoxes } from './OwnDetailBoxes';
 
 /** What the section needs. */
@@ -118,7 +121,8 @@ function RenameGroupForm({
 export function OwnDetailGroupSection(props: OwnDetailGroupSectionProps) {
   const { slug, name, index, character, fields, saveValue } = props;
   return (
-    <FormSection legend={name}>
+    // A writer's own group folds shut; its hint names the details in it (CALM-9, board E23).
+    <FoldingCard title={name} hint={detailNames(fields)}>
       <OwnDetailBoxes character={character} fields={fields} saveValue={saveValue} />
       <div className="flex flex-wrap items-start gap-3">
         <AddDetailForm
@@ -129,6 +133,6 @@ export function OwnDetailGroupSection(props: OwnDetailGroupSectionProps) {
         />
         <RenameGroupForm slug={slug} name={name} index={index} />
       </div>
-    </FormSection>
+    </FoldingCard>
   );
 }

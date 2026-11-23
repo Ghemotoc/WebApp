@@ -8,8 +8,11 @@
  * - a signed-out visitor on a shared chapter sees the story (title, pen name, blurb), the first
  *   whole paragraphs up to 600 words and never the rest, then the prompt to log in; a signed-in
  *   reader gets the whole chapter;
- * - on 16+ and 18+ stories a visitor sees the title and "No preview for this story" naming the
- *   rating, never the blurb or any text, on the chapter and the story page;
+ * - on a 16+ story a visitor sees the title and "No preview for this story" naming the rating,
+ *   never any text, on the chapter and the story page;
+ * - on an 18+ story (CALM-9m; Robert, 23 Nov 2026, 09:04 UTC) a visitor opens the story page,
+ *   and a chapter asks "I'm 18 or over" first: no text before the answer, the teaser after it,
+ *   and the answer stays in the browser for the next chapter;
  * - the HTML a link preview reads carries the Open Graph tags (title, pen name, blurb, the cover's
  *   colour), chapter pages carry noindex in the page and the header, story pages carry JSON-LD
  *   without chapter text, and a 16+ story's tags hold its title only;
@@ -122,26 +125,43 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await expect(page.getByRole('heading', { name: 'Log in to read on' })).toHaveCount(0);
   });
 
-  test('16+ and 18+: a visitor sees the story’s details and why, never the text', async ({
+  test('16+: a visitor sees the story’s details and why, never the text', async ({ page }) => {
+    rateStory('16_plus');
+    for (const address of [chapterAddress, `/s/${slug}`]) {
+      await openAsVisitor(page, address);
+      await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'No preview for this story' })).toBeVisible();
+      await expect(page.getByText('The writer rated it 16+.')).toBeVisible();
+      await expect(
+        page.getByRole('link', { name: 'Get in to check if you can read it' }),
+      ).toBeVisible();
+      // S1-E11-36: the blurb shows like any story's; the chapter text never does (Q6).
+      expect(await page.content()).not.toContain('ultimul ultimul');
+    }
+  });
+
+  test('18+: a visitor says they are 18 or over before the text shows (CALM-9m)', async ({
     page,
   }) => {
-    for (const rating of ['16_plus', '18_plus'] as const) {
-      rateStory(rating);
-      const label = rating === '16_plus' ? '16+' : '18+';
-      for (const address of [chapterAddress, `/s/${slug}`]) {
-        await openAsVisitor(page, address);
-        await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
-        await expect(
-          page.getByRole('heading', { name: 'No preview for this story' }),
-        ).toBeVisible();
-        await expect(page.getByText(`The writer rated it ${label}.`)).toBeVisible();
-        await expect(
-          page.getByRole('link', { name: 'Get in to check if you can read it' }),
-        ).toBeVisible();
-        // S1-E11-36: the blurb shows like any story's; the chapter text never does (Q6).
-        expect(await page.content()).not.toContain('ultimul ultimul');
-      }
-    }
+    rateStory('18_plus');
+    // The story page opens like any other story's.
+    await openAsVisitor(page, `/s/${slug}`);
+    await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'No preview for this story' })).toHaveCount(0);
+    // A chapter asks first and holds no text.
+    await page.goto(chapterAddress);
+    await expect(page.getByRole('heading', { name: 'For mature readers' })).toBeVisible();
+    await expect(page.locator('.tmc-chapter-text')).toHaveCount(0);
+    await expect(page.locator('main')).not.toContainText('18+');
+    // After the answer, the teaser shows as for any story, never the rest.
+    await page.getByRole('button', { name: 'I’m 18 or over, show it' }).click();
+    await expect(page.getByRole('heading', { name: 'Log in to read on' })).toBeVisible();
+    await expect(page.locator('.tmc-chapter-text')).toBeVisible();
+    expect(await page.content()).not.toContain('ultimul ultimul');
+    // The answer stays in this browser: the page opened again doesn't ask.
+    await page.reload();
+    await expect(page.locator('.tmc-chapter-text')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'For mature readers' })).toHaveCount(0);
   });
 
   test('a shared link’s HTML carries the preview, and only story pages are indexable', async ({
@@ -209,7 +229,7 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
       });
       await page.close();
     }
-    rateStory('18_plus');
+    rateStory('16_plus');
     for (const width of screenWidths) {
       const page = await context.newPage();
       await test.step(`notice at ${width} px`, async () => {
@@ -219,6 +239,18 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
         ).toBeVisible();
       });
       await page.close();
+    }
+    // CALM-9m: the "For mature readers" question on an 18+ chapter, day and night.
+    rateStory('18_plus');
+    for (const width of screenWidths) {
+      for (const theme of ['light', 'night'] as const) {
+        const page = await context.newPage();
+        await test.step(`18+ question at ${width} px, ${theme}`, async () => {
+          await checkScreen(page, { address: chapterAddress, width, theme, language: 'en' });
+          await expect(page.getByRole('heading', { name: 'For mature readers' })).toBeVisible();
+        });
+        await page.close();
+      }
     }
     await context.close();
   });

@@ -268,6 +268,13 @@
     "body": "{{writer}} a ales să publice această poveste doar în aplicația {{productName}}. Aplicația le oferă scriitorilor mai multă intimitate și mai mult control asupra textelor și face capitolele mai greu de copiat.",
     "backToStory": "Înapoi la poveste"
   },
+  "adultQuestion": {
+    "title": "Pentru cititori maturi",
+    "body": "{{writer}} a scris această poveste pentru cititori de 18 ani sau mai mult. Confirmă că ai cel puțin 18 ani ca s-o citești. Răspunsul rămâne doar în acest browser.",
+    "confirm": "Am 18 ani sau mai mult, arată-mi",
+    "logIn": "Intră în cont",
+    "backToStory": "Înapoi la poveste"
+  },
   "poem": {
     "stanza": "Strofa {{number}}"
   },

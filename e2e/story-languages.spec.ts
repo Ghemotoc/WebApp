@@ -21,6 +21,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
+import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser } from './support/personas';
@@ -106,6 +107,9 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
     await page.getByRole('button', { name: 'Read in: English' }).click();
     const list = page.getByRole('navigation', { name: 'Read in' });
     await expect(list.getByRole('link')).toHaveCount(2);
+    // The list fades in; axe read the half-faded "Original" as low contrast now and then (#561),
+    // so wait until it has stopped moving before checking it.
+    await waitForAnimationsToFinish(page);
     // The open list on its own passes axe (the whole page is checked closed, in the last test).
     const listIssues = await new AxeBuilder({ page })
       .include('nav[aria-label="Read in"]')
