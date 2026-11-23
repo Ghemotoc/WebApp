@@ -275,5 +275,19 @@
     "body": "Din păcate, pagina nu este încă disponibilă în țara ta.",
     "goHome": "Mergi la pagina principală",
     "search": "Caută povești"
+  },
+  "storyFooter": {
+    "story": "{{title}} este o poveste publicată pe {{site}} de {{writer}}.",
+    "storyGenre": "{{title}} este o poveste din genul {{genre}}, publicată pe {{site}} de {{writer}}.",
+    "poem": "{{title}} este o poezie publicată pe {{site}} de {{writer}}.",
+    "poemGenre": "{{title}} este o poezie din genul {{genre}}, publicată pe {{site}} de {{writer}}.",
+    "essay": "{{title}} este un eseu publicat pe {{site}} de {{writer}}.",
+    "essayGenre": "{{title}} este un eseu din genul {{genre}}, publicat pe {{site}} de {{writer}}.",
+    "site": "{{site}} este un site gratuit pentru a scrie și a citi povești, poezii și eseuri.",
+    "matureReaders": "Pentru cititori maturi",
+    "pageTitle": "{{title}} de {{writer}}, {{genre}}, {{site}}",
+    "pageTitlePlain": "{{title}} de {{writer}}, {{site}}",
+    "breadcrumbRead": "Citește",
+    "label": "Despre această poveste"
   }
 }

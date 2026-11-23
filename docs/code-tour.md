@@ -1547,14 +1547,23 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
        og:image /link-previews/<cover colour>.png (scripts/make-link-preview-images.ts),
        noindex on chapters, JSON-LD with genre and keywords on story pages (Q36); every rating
        the same, 18+ adds "For mature readers", 16+ and 18+ never share text (S1-E11-36)
+     → a public story page (CALM-9s) also gets the story statement from src/lib/story-statement.ts
+       ("<Title> is a <genre> <type> published on <site> by <writer>." + the blurb) as its
+       description and og:description, the title "<Title> by <writer>, <genre>, <site>", JSON-LD
+       Book (CreativeWork for poems and essays) plus a BreadcrumbList, hreflang per edition, and
+       the same words as visible text in the page before the app starts. Unlisted, app-only and
+       country-hidden stories get noindex, no statement and no sitemap row.
 2. The visitor's browser: the same page, then the app starts as usual:
+   StoryPage and ChapterReaderPage → useStoryStatement → get_link_preview() → the footer's
+       about column becomes StoryFooterAbout (FooterAboutContext in AppLayout), the same
+       statement with the title in <cite> and the writer linked to /u/<handle>
    ChapterReaderPage → get_chapter() → is_teaser? → TeaserPage
        TeaserStoryCard (get_story_page()) · the teaser (teaser_of(): whole paragraphs up to
        600 words, cut in the database) · SignUpPrompt · CopyNotice
      → nothing (a 16+ or 18+ story)? → useStoryPreview → get_link_preview() → NoPreviewNotice
 ```
 
-Tests: `142-teaser.test.sql`, `server/link-preview.test.ts`, `e2e/teaser.spec.ts`.
+Tests: `142-teaser.test.sql`, `395-story-footer-seo.test.sql`, `server/link-preview.test.ts`, `src/lib/story-statement.test.ts`, `e2e/teaser.spec.ts`.
 
 ## A writer's profile, blocks and follows (S1-E5-05, S1-E6-05)
 

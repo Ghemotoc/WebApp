@@ -275,5 +275,19 @@
     "body": "Unfortunately, this page is not yet available in your country.",
     "goHome": "Go to the home page",
     "search": "Search stories"
+  },
+  "storyFooter": {
+    "story": "{{title}} is {{article}} story published on {{site}} by {{writer}}.",
+    "storyGenre": "{{title}} is {{article}} {{genre}} story published on {{site}} by {{writer}}.",
+    "poem": "{{title}} is {{article}} poem published on {{site}} by {{writer}}.",
+    "poemGenre": "{{title}} is {{article}} {{genre}} poem published on {{site}} by {{writer}}.",
+    "essay": "{{title}} is {{article}} essay published on {{site}} by {{writer}}.",
+    "essayGenre": "{{title}} is {{article}} {{genre}} essay published on {{site}} by {{writer}}.",
+    "site": "{{site}} is a free website for writing and reading stories, poems and essays.",
+    "matureReaders": "For mature readers",
+    "pageTitle": "{{title}} by {{writer}}, {{genre}}, {{site}}",
+    "pageTitlePlain": "{{title}} by {{writer}}, {{site}}",
+    "breadcrumbRead": "Read",
+    "label": "About this story"
   }
 }
