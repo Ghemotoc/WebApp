@@ -107,10 +107,6 @@
     "change": "Schimbă din setările poveștii",
     "plan": "Plănuiește povestea"
   },
-  "yourStories": {
-    "heading": "Povești",
-    "newStory": "Poveste nouă"
-  },
   "notFound": "Nu găsim acest capitol în cont.",
   "signedOut": "Intră în cont ca să scrii.",
   "errors": {

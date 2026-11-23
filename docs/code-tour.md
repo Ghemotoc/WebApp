@@ -1417,7 +1417,7 @@ Tests: `supabase/tests/database/104-ratings-and-labels.test.sql`, `e2e/ratings.s
   │  useAutosave: every 10 s while there are changes, and on blur
   │    → chapterDraftSchema (src/schemas/chapter.ts: no HTML, safe links, ş/ţ corrected)
   │    → api/chapters.ts → save_chapter_draft(code, title, body, expected_version)
-  │  EditorAside: SaveStatus (role=status), Publish (S1-E3-03), Story details, Your stories
+  │  EditorAside: SaveStatus (role=status), Publish (S1-E3-03), Story details
   ▼
 save_chapter_draft(): is_active_member(), the caller's own live chapter (locked), a stale
   expected_version → {status: conflict} (S1-E3-02b shows it), check_chapter_text() (the same

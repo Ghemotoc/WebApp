@@ -4,7 +4,8 @@
  *
  * One chip per character of the story; pressing one marks the character present at once, and
  * its state shows with a tick and aria-pressed, never by colour alone (DoD pill system). A failed
- * change says so plainly. Who uses it: ChapterPlanPanel. What it calls: the setPresent prop.
+ * change says so plainly. A dashed "+ Add" chip at the end opens the story's characters, where
+ * New character is (CALM-9, board D05). Who uses it: ChapterPlanPanel. What it calls: the setPresent prop.
  */
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -60,6 +61,13 @@ export function PresentCharacterChips({ slug, plan, setPresent }: PresentCharact
               {character.name}
             </Chip>
           ))}
+          <Link
+            to={`/plan/s/${slug}/characters`}
+            aria-label={t('chapterPlan.addCharacter')}
+            className="inline-flex h-9 min-h-11 items-center rounded-full border border-dashed border-control-border px-3.5 text-sm font-semibold text-heading no-underline"
+          >
+            <span aria-hidden="true">{t('chapterPlan.addChip')}</span>
+          </Link>
         </div>
       )}
       <div aria-live="polite">

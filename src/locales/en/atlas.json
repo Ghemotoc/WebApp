@@ -528,7 +528,6 @@
     "pov": "Point of view",
     "act": "Act",
     "wordTarget": "Word target",
-    "wordTargetHint": "Leave it empty for no target.",
     "wordTargetInvalid": "Type a whole number from 1 to 1,000,000, or leave it empty.",
     "worldDate": "In-world date",
     "worldDateHint": "As you write it, for example “Spring, year 3”.",
@@ -578,7 +577,12 @@
     },
     "narrator": "Narrator",
     "narratorOption": "Narrator (outside the story)",
-    "narratorOutside": "outside the story"
+    "narratorOutside": "outside the story",
+    "goalProgress": "{{words}} of {{goal}} words",
+    "moreDetails": "More details",
+    "moreDetailsLine": "Point of view, date, act, place and scenes.",
+    "addChip": "+ Add",
+    "addCharacter": "Add a character"
   },
   "storyline": {
     "documentTitle": "Storyline of {{title}}: Story Atlas",
