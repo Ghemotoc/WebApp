@@ -38,7 +38,13 @@ function SentencePiece({
 }) {
   if (piece.kind === 'title') return <cite className="font-semibold not-italic">{piece.text}</cite>;
   if (piece.kind === 'writer' && writerHandle !== null) {
-    return <Link to={`/u/${writerHandle}`}>{piece.text}</Link>;
+    // Underlined: a link inside a sentence must not rely on colour alone (WCAG 1.4.1, axe
+    // link-in-text-block).
+    return (
+      <Link to={`/u/${writerHandle}`} className="underline underline-offset-2">
+        {piece.text}
+      </Link>
+    );
   }
   return <>{piece.text}</>;
 }
@@ -56,7 +62,8 @@ export function StoryFooterAbout({ statement }: { statement: StoryStatement }) {
   const pieces = statementSentence(statement.facts, words, brand.productName);
 
   return (
-    <div className="max-w-[46ch] text-[15px] leading-6">
+    // break-words: a title or name that is one long word stays inside a 390 px screen.
+    <div className="max-w-[46ch] text-[15px] leading-6 break-words">
       <p className="m-0 text-ink">
         {pieces.map((piece, index) => (
           <SentencePiece key={index} piece={piece} writerHandle={statement.writerHandle} />

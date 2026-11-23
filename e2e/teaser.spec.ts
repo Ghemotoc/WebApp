@@ -97,7 +97,10 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
     await expect(page.getByText('Shared with you · chapter 1', { exact: true })).toBeVisible();
     await expect(page.getByText('Lia Scrie').first()).toBeVisible();
-    await expect(page.getByText('Bunica mea notează vremea în fiecare dimineață')).toBeVisible();
+    // In the page's main part: the footer's story statement repeats the blurb (CALM-9s).
+    await expect(
+      page.getByRole('main').getByText('Bunica mea notează vremea în fiecare dimineață'),
+    ).toBeVisible();
     // The chapter: its heading, the first two paragraphs and never the third.
     await expect(page.getByRole('heading', { level: 2, name: 'Caietele bunicii' })).toBeVisible();
     await expect(page.getByText('You’re reading the first part')).toBeVisible();
