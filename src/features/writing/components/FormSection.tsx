@@ -1,12 +1,28 @@
 /**
- * FormSection: one card of the new story form, a fieldset with its legend (story S1-E3-01).
+ * FormSection: one card of a story form, a fieldset with its legend (story S1-E3-01).
  *
  * Board values (NewStory 4.2): a white card, 26 by 28 px padding, 24 px radius, the legend in
  * Funnel Display 700 at 26 px in the heading colour, 20 px between fields.
- * Who uses it: StoryBasicsSection, CategoryTagsSection, CoverSection and, later, the status,
- * where-to-read and labels sections (S1-E3-05, S1-E3-06).
+ * Inside the new story wizard (CALM-9, board D02) the wizard's step is already the card and its
+ * title already says what the step is, so a section there drops its own card and keeps its
+ * legend for screen readers only (InWizardFormSections).
+ * Who uses it: StoryBasicsSection, CategoryTagsSection, CoverSection, StoryVisibilitySection,
+ * StoryLabelsSection and the other story settings sections (S1-E3-05, S1-E3-06).
  */
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
+
+/** True inside a wizard step (NewStoryPage); false everywhere else. */
+const InWizardContext = createContext(false);
+
+/**
+ * Wraps a wizard step's sections so they draw without their own card.
+ *
+ * @param props.children - the sections
+ * @returns the children, told they are inside a wizard step
+ */
+export function InWizardFormSections({ children }: { children: ReactNode }) {
+  return <InWizardContext.Provider value>{children}</InWizardContext.Provider>;
+}
 
 /** What a FormSection needs. */
 export interface FormSectionProps {
@@ -15,11 +31,20 @@ export interface FormSectionProps {
 }
 
 /**
- * Renders the card.
+ * Renders the card, or the plain fieldset inside a wizard step.
  *
  * @returns the fieldset
  */
 export function FormSection({ legend, children }: FormSectionProps) {
+  const isInWizard = useContext(InWizardContext);
+  if (isInWizard) {
+    return (
+      <fieldset className="m-0 flex min-w-0 flex-col gap-5 border-0 p-0">
+        <legend className="sr-only">{legend}</legend>
+        {children}
+      </fieldset>
+    );
+  }
   return (
     <fieldset className="relative m-0 flex min-w-0 flex-col gap-5 rounded-card border border-border bg-surface px-7 py-[26px] shadow-card">
       <legend className="float-left mb-4 w-fit max-w-full font-heading text-[26px] leading-[1.1] font-bold wrap-anywhere text-heading">

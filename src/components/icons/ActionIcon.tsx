@@ -172,6 +172,13 @@ const drawings = {
       <path d="m10 9 5 3-5 3z" />
     </>
   ),
+  // A place: a map pin ("Set in" on the new story form, CALM-9, board D02).
+  pin: (
+    <>
+      <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
+      <circle cx="12" cy="9.5" r="2.5" />
+    </>
+  ),
   // Story Atlas: a folded map (CALM-9a, board D01).
   map: (
     <>

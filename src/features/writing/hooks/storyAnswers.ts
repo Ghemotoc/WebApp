@@ -41,6 +41,8 @@ export interface StoryAnswers {
    * new story, changed in its settings.
    */
   hiddenInCountries: string[];
+  /** Where the story takes place (CALM-9, board D02): up to five country codes; none to start. */
+  setInCountries: string[];
   /** Whether readers may comment (S1-E3-05; enforced by S1-E6-01); on for a new story. */
   commentsEnabled: boolean;
   /**

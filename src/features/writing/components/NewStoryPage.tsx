@@ -2,14 +2,16 @@
  * NewStoryPage: "Start a new story", screen 4.2 (story S1-E3-01; design/boards/NewStory.dc.html).
  *
  * Who shows it: the router, at /write/new; the "New story" button on /write leads here.
- * What it shows: the back link, the eyebrow, the heading and intro, then the form sections
- * (the basics, category and tags, cover, labels) and the action bar, with the live preview
- * beside them (below them on phones). The board's "Status and comments" section lives in story
- * settings (S1-E3-05) and "Where can people read this story?" is S1-E3-08 (after March).
+ * What it shows: the back link, the eyebrow, the heading and intro, then the form as a five-step
+ * wizard (CALM-9, board D02: the basics; category, tags and setting; cover; who can read it;
+ * labels, rating and AI) ending in the action bar, with the live preview beside it (below it on
+ * phones). Enter or "Next" moves on a step; only the last step creates the story, and when a
+ * mistake is found there the step that holds it opens again.
  * Coming from the hub's "Write from this prompt" (?prompt=<ID>, GAPS-12c), PromptNote shows the
  * prompt under the header and the new story remembers it.
  * What it calls: useNewStoryForm (the answers, checks and create_story()), useStoryFormOptions
- * (languages and categories), useMyNames (the pen name for the preview).
+ * (languages and categories), useMyNames (the pen name for the preview), useNewStorySteps and
+ * useStepWizard with StepWizard (the steps).
  * Errors: a read-only account or a failed save shows a plain message above the buttons.
  */
 import { useTranslation } from 'react-i18next';
@@ -20,17 +22,16 @@ import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { StepWizard } from '@/components/ui/StepWizard';
+import { useStepWizard } from '@/components/ui/useStepWizard';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
 import { PromptNote } from '@/features/hub/components/PromptNote';
 
 import { useNewStoryForm } from '../hooks/useNewStoryForm';
+import { newStoryStepFields, stepOfField, useNewStorySteps } from '../hooks/useNewStorySteps';
 import { useStoryFormOptions } from '../hooks/useStoryFormOptions';
 
-import { CategoryTagsSection } from './CategoryTagsSection';
-import { CoverSection } from './CoverSection';
-import { StoryBasicsSection } from './StoryBasicsSection';
-import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryPreviewAside } from './StoryPreviewAside';
 
 /** The page header: back link, eyebrow, heading, intro and the writing prompt, if any. */
@@ -68,7 +69,7 @@ function NewStoryActionBar({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <div className="flex flex-col gap-4 rounded-card bg-tint p-5">
+    <div className="flex flex-col gap-4 border-t border-hairline pt-5">
       <p className="m-0 text-sm leading-normal text-(--info-text)">{t('newStory.rights')}</p>
       {formError !== null && (
         <Notice tone={formError === 'notActive' ? 'warning' : 'error'}>
@@ -91,16 +92,44 @@ function NewStoryActionBar({
 }
 
 /**
+ * The wizard's moves: "Next" checks the open step's own answers first; Create checks them all
+ * and, on a mistake, opens the first step that holds one.
+ *
+ * @returns the form, the wizard's place, the moves and the steps
+ */
+function useNewStoryWizard(penName: string) {
+  const form = useNewStoryForm();
+  const options = useStoryFormOptions();
+  const steps = useNewStorySteps({ ...form, ...options, penName });
+  const wizard = useStepWizard(steps.length);
+  const isLastStep = wizard.openIndex === steps.length - 1;
+
+  function next() {
+    // Only the basics have a must-have (the title); the other steps start with good answers.
+    const fields = newStoryStepFields[wizard.openIndex] ?? [];
+    if (form.checkFields(fields)) wizard.goToNextStep();
+  }
+
+  function create() {
+    const fieldsWithMistakes = form.submit();
+    if (fieldsWithMistakes.length === 0) return;
+    const firstStep = Math.min(...fieldsWithMistakes.map(stepOfField));
+    if (firstStep !== wizard.openIndex) wizard.openStep(firstStep);
+  }
+
+  return { form, options, steps, wizard, isLastStep, next, create };
+}
+
+/**
  * Renders the page.
  *
  * @returns the new story screen
  */
 export function NewStoryPage() {
   const { t } = useTranslation('writing');
-  const form = useNewStoryForm();
-  const options = useStoryFormOptions();
   const { names, isKnown, isSignedIn } = useMyNames();
   const penName = names === null ? '' : (displayName(names.handle, names.penName) ?? '');
+  const { form, options, steps, wizard, isLastStep, next, create } = useNewStoryWizard(penName);
 
   if (isKnown && !isSignedIn) {
     return (
@@ -120,34 +149,27 @@ export function NewStoryPage() {
         <form
           className="flex min-w-0 flex-[999_1_560px] flex-col gap-5"
           onSubmit={(event) => {
+            // Enter in a field moves on a step; only the last step creates the story.
             event.preventDefault();
-            form.submit();
+            if (isLastStep) create();
+            else next();
           }}
         >
-          <StoryBasicsSection
-            answers={form.answers}
-            errors={form.errors}
-            languages={options.languages}
-            set={form.set}
-          />
-          <CategoryTagsSection
-            answers={form.answers}
-            errors={form.errors}
-            categories={options.categories}
-            set={form.set}
-          />
-          <CoverSection
-            storyId={form.answers.storyId}
-            title={form.answers.title}
-            penName={penName}
-            cover={form.answers.cover}
-            onChange={(cover) => form.set('cover', cover)}
-          />
-          <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
-          <NewStoryActionBar
-            formError={form.formError}
-            isSubmitting={form.isSubmitting}
-            onCreate={() => undefined}
+          <StepWizard
+            label={t('newStory.stepsLabel')}
+            steps={steps}
+            openIndex={wizard.openIndex}
+            furthestIndex={wizard.furthestIndex}
+            onOpenStep={wizard.openStep}
+            onNext={next}
+            onSkip={wizard.goToNextStep}
+            lastStepActions={
+              <NewStoryActionBar
+                formError={form.formError}
+                isSubmitting={form.isSubmitting}
+                onCreate={() => undefined}
+              />
+            }
           />
         </form>
         <div className="w-full flex-[1_1_320px] md:max-w-[400px]">
