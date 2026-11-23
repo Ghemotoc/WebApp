@@ -8,8 +8,9 @@
  * appearance), each with the writer's details placed in it and "Add detail"; then the writer's
  * own groups of details, the fields with no place and "Add a group of details" (bundle GAPS-1).
  * The side column: the relationships (S1-E17-14), where
- * the character appears, what readers see of them (S1-E17-32) and Delete. Every field saves by
- * itself.
+ * the character appears and is mentioned, what readers see of them (S1-E17-32) and Delete. Every
+ * field saves by itself. Basics stays open; every other card folds shut with a short hint beside
+ * its title (CALM-9, board E23).
  * The caller gives it a key per character, so switching characters saves what was waiting and
  * starts the next sheet fresh.
  * Who uses it: CharactersPage. What it calls: useStoryCast's changers (through the props),
@@ -28,6 +29,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 import { AddDetailGroupForm } from './AddDetailGroupForm';
 import { CharacterIdentityFields } from './CharacterIdentityFields';
 import { CharacterAppearancesSection } from './CharacterAppearancesSection';
+import { CharacterMentionsList } from './CharacterMentionsList';
 import { CharacterRelationshipsSection } from './CharacterRelationshipsSection';
 import { CharacterSheetHeader } from './CharacterSheetHeader';
 import { CustomValuesSection } from './CustomValuesSection';
@@ -76,7 +78,7 @@ function FirstAppearanceField({
   );
 }
 
-/** The side column: relationships, appearances, what readers see and Delete. */
+/** The side column: relationships, appears in, mentioned in, what readers see and Delete. */
 function SheetSideColumn({
   slug,
   cast,
@@ -88,6 +90,7 @@ function SheetSideColumn({
     <aside aria-label={t('characters.sideColumn')} className="flex min-w-0 flex-col gap-5">
       <CharacterRelationshipsSection slug={slug} cast={cast} characterId={character.id} />
       <CharacterAppearancesSection slug={slug} characterId={character.id} />
+      <CharacterMentionsList slug={slug} characterId={character.id} />
       <ReaderVisibilitySection
         slug={slug}
         characterId={character.id}
