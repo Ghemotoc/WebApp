@@ -41,37 +41,37 @@ export function AdultQuestionNotice({ chapter }: { chapter: ReaderChapter }) {
       <title>{chapter.story.title}</title>
       <h1
         lang={chapter.story.languageCode}
-        className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-extrabold tracking-[-0.025em] break-words"
+        className="m-0 font-heading type-title font-bold break-words text-ink-heading lg:type-display"
       >
         {chapter.story.title}
       </h1>
       <section
         aria-labelledby="adult-question-title"
-        className="flex max-w-[640px] flex-col items-start gap-3 rounded-card border border-border bg-surface px-6 py-5"
+        className="flex max-w-[640px] flex-col items-start gap-3 rounded-card border border-border bg-surface px-6 py-6"
       >
-        <h2 id="adult-question-title" className="m-0 text-base font-semibold text-heading">
+        <h2 id="adult-question-title" className="m-0 type-label font-semibold text-ink-heading">
           {t('adultQuestion.title')}
         </h2>
-        <p className="m-0 text-[15px] leading-normal text-body">
+        <p className="m-0 type-body text-ink">
           {t('adultQuestion.body', { writer: chapter.story.writer.displayName })}
         </p>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <button
             type="button"
             onClick={showChapter}
-            className="inline-flex min-h-11 items-center rounded-full button-main px-5 py-2 text-[15px] font-semibold"
+            className="inline-flex min-h-11 items-center rounded-full button-main px-6 py-2 type-label font-semibold"
           >
             {t('adultQuestion.confirm')}
           </button>
           <Link
             to="/sign-in"
-            className="inline-flex min-h-6 items-center text-sm font-semibold text-link underline"
+            className="inline-flex min-h-6 items-center type-body font-semibold text-link underline"
           >
             {t('adultQuestion.logIn')}
           </Link>
           <Link
             to={`/s/${chapter.story.slug}`}
-            className="inline-flex min-h-6 items-center text-sm font-semibold text-link underline"
+            className="inline-flex min-h-6 items-center type-body font-semibold text-link underline"
           >
             {t('adultQuestion.backToStory')}
           </Link>
