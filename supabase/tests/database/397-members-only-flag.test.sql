@@ -1,5 +1,5 @@
 -- Database tests for the trial's members-only switch (TRIAL-WALL; migration
--- 20270205100426_trial_wall_members_only.sql).
+-- 20270205100429_trial_wall_and_preview.sql).
 -- What it proves:
 -- - the members_only flag exists, starts off and is public;
 -- - a signed-out visitor can read it, as the app's front door needs it before anyone signs in.
