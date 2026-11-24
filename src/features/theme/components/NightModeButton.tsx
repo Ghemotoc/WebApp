@@ -8,50 +8,28 @@
  * says on or off; WCAG 4.1.2). A member who leaves the mode on "Device" sees the mode the device
  * shows now; pressing the button then picks light or night for good. Device stays a choice in Settings › Appearance, where the full
  * Device / Light / Night choice lives, and the staff footer keeps its drop-down (ThemeSelect).
- * It changes the same mode as Settings (useAppearance), so the two never disagree.
+ * It changes the same mode as Settings and Reading settings (useNightMode), so they never disagree.
  * Who uses it: the member footer (src/app/shell/Footer.tsx).
- * What it calls: useAppearance and resolveTheme (src/lib/theme.ts).
+ * What it calls: useNightMode.
  */
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
-import { DEVICE_DARK_QUERY, resolveTheme } from '@/lib/theme';
 
-import { useAppearance } from '../hooks/useAppearance';
-
-/**
- * Reads whether the device is in dark mode now, safely where matchMedia is missing (old browsers,
- * some test set-ups).
- *
- * @returns true when the device asks for dark colours
- */
-function deviceIsDarkNow(): boolean {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
-  return window.matchMedia(DEVICE_DARK_QUERY).matches;
-}
+import { useNightMode } from '../hooks/useNightMode';
 
 /**
- * Renders the button and applies the change straight away.
+ * Renders the button.
  *
- * @returns the button
+ * @returns the quiet button naming the other mode
  */
 export function NightModeButton() {
   const { t } = useTranslation();
-  const { appearance, change } = useAppearance();
-
-  // Step 1: is night showing now? "Device" follows the device's own setting.
-  const isNightOn = resolveTheme(appearance.mode, deviceIsDarkNow()) === 'night';
-
-  // Step 2: the button names the mode it goes to, the other one.
+  const { isNightOn, toggle } = useNightMode();
+  // The button names the mode it goes to, the other one; a press picks it and saves it.
   const label = isNightOn ? t('theme.dayMode') : t('theme.nightMode');
-
   return (
-    <Button
-      type="button"
-      variant="secondary"
-      // Step 3: a press picks the other mode and saves it (on the account when signed in).
-      onClick={() => void change({ mode: isNightOn ? 'light' : 'night' })}
-    >
+    <Button type="button" variant="secondary" onClick={toggle}>
       {label}
     </Button>
   );
