@@ -64,7 +64,7 @@ select is(public.like_story('statia-meteo-seed01', true) ->> 'like_count', '1', 
 select is((public.get_story_page('statia-meteo-seed01') #>> '{stats,likes}')::integer, 1,
   'the stats line counts the story like');
 select is((select count(*)::integer from public.story_likes), 1,
-  'policy story_likes_select_own: teacher reads their own like (allowed)');
+  'allowed: story_likes_select_own: teacher reads their own like');
 select throws_ok($$ insert into public.story_likes (user_id, story_id)
     values ('00000000-0000-4000-8000-000000000007', '00000000-0000-4000-9000-000000000002') $$, '42501', null,
   'nobody writes the table directly');
@@ -81,7 +81,7 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select throws_ok($$ select public.like_story('statia-meteo-seed01', true) $$, '42501', null,
   'the writer can''t like their own story');
 select is((select count(*)::integer from public.story_likes), 0,
-  'policy story_likes_select_own: the writer reads none of the likes (denied)');
+  'denied: story_likes_select_own: the writer reads none of the likes');
 
 /* ---------- 4. A read-only account takes a like back but can't like ---------- */
 
