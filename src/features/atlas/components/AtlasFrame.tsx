@@ -10,12 +10,14 @@
  * screen, because the other is display:none.
  * Who uses it: StoryAtlasPage, CharactersPage, ConnectionsPage, BiblePage, StorylinePage,
  * IdeasPage, MarketingPage, ReaderViewPage, PlanPreviewPage and AtlasSearchPage. What it calls:
- * PageContainer, AtlasTopBar and AtlasSectionNav.
+ * PageContainer, AtlasTopBar and AtlasSectionNav; useRememberAtlasSection keeps the open section
+ * for the story, so links into the Atlas come back to it (design books item 17).
  */
 import type { ReactNode } from 'react';
 
 import { PageContainer } from '@/components/ui/PageContainer';
 
+import { useRememberAtlasSection } from '../hooks/useLastAtlasSection';
 import { AtlasSectionNav, type AtlasSection } from './AtlasSectionNav';
 import { AtlasTopBar } from './AtlasTopBar';
 
@@ -45,6 +47,8 @@ export function AtlasFrame({
   showsChrome,
   children,
 }: AtlasFrameProps) {
+  // The writer's own Atlas: keep the open section for the next visit (design books item 17).
+  useRememberAtlasSection(slug, showsChrome ? section : null);
   // Signed out: the content alone, which says the plan is only for its writer.
   if (!showsChrome) {
     return (

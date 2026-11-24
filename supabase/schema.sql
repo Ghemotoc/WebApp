@@ -925,6 +925,21 @@ COMMENT ON TYPE "public"."reading_theme" IS 'The reader''s theme for the chapter
 
 
 
+CREATE TYPE "public"."remembered_place_kind" AS ENUM (
+    'story_edition',
+    'atlas_section',
+    'write_caret',
+    'atlas_hint'
+);
+
+
+ALTER TYPE "public"."remembered_place_kind" OWNER TO "postgres";
+
+
+COMMENT ON TYPE "public"."remembered_place_kind" IS 'What a remembered place holds: a story''s last edition, Atlas section or caret in Write, or an Atlas hint''s visits (design books item 17).';
+
+
+
 CREATE TYPE "public"."revision_reason" AS ENUM (
     'published',
     'edited',
@@ -1521,6 +1536,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('reading_positions', 'delete', 1, null),
     ('reading_preferences', 'delete', 1, null),
     ('reading_settings', 'delete', 1, null),
+    ('remembered_places', 'delete', 1, null),
     ('report_detail_requests', 'kept', 0, 'part of a report, kept as long as the report and its case (docs/retention.md)'),
     ('reports', 'kept', 0, 'a moderation record, kept as long as its case (docs/retention.md, OPEN)'),
     ('space_join_notes', 'delete', 1, null),
@@ -23154,6 +23170,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('reading_positions', true, null),
     ('reading_preferences', true, null),
     ('reading_settings', true, null),
+    ('remembered_places', true, null),
     ('report_detail_requests', true, null),
     ('reports', true, null),
     ('space_join_notes', true, null),
@@ -41606,6 +41623,33 @@ COMMENT ON FUNCTION "public"."relationship_json"("link" "public"."story_characte
 
 
 
+CREATE OR REPLACE FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller uuid := (select auth.uid());
+begin
+  -- Step 1: only a signed-in person has places to keep; a visitor's stay in the browser.
+  if caller is null then
+    raise exception 'Log in to keep your place.' using errcode = '42501';
+  end if;
+  -- Step 2: one row per kind and item, created the first time and replaced after that.
+  insert into public.remembered_places (user_id, kind, item_key, place)
+  values (caller, place_kind, place_key, place_value)
+  on conflict (user_id, kind, item_key) do update
+    set place = excluded.place;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") IS 'Keeps one of the caller''s places (a story''s edition, Atlas section or caret, or a hint''s visits) for every device (design books item 17).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."removal_order_log_rows"() RETURNS SETOF "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -59151,6 +59195,27 @@ The counties a person may pick in onboarding and Settings (S1-E2-06). Reference 
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."remembered_places" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "kind" "public"."remembered_place_kind" NOT NULL,
+    "item_key" "text" NOT NULL,
+    "place" "jsonb" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "remembered_places_item_key_check" CHECK ((("char_length"("item_key") >= 1) AND ("char_length"("item_key") <= 200))),
+    CONSTRAINT "remembered_places_place_check" CHECK (("pg_column_size"("place") <= 2048))
+);
+
+
+ALTER TABLE "public"."remembered_places" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."remembered_places" IS 'kind: user_action
+Where a person was, per story or hint, so they come back to the same place on every device (design books item 17). Private.';
+
+
+
 CREATE SEQUENCE IF NOT EXISTS "public"."removal_order_reference_seq"
     START WITH 1
     INCREMENT BY 1
@@ -61327,6 +61392,16 @@ ALTER TABLE ONLY "public"."reading_settings"
 
 ALTER TABLE ONLY "public"."regions"
     ADD CONSTRAINT "regions_pkey" PRIMARY KEY ("code");
+
+
+
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_user_id_kind_item_key_key" UNIQUE ("user_id", "kind", "item_key");
 
 
 
@@ -63987,6 +64062,10 @@ CREATE OR REPLACE TRIGGER "regions_set_updated_at" BEFORE UPDATE ON "public"."re
 
 
 
+CREATE OR REPLACE TRIGGER "remembered_places_set_updated_at" BEFORE UPDATE ON "public"."remembered_places" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "removed_passages_refuse_user_id_change" BEFORE UPDATE ON "public"."removed_passages" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
 
 
@@ -65854,6 +65933,11 @@ ALTER TABLE ONLY "public"."reading_preferences"
 
 ALTER TABLE ONLY "public"."reading_settings"
     ADD CONSTRAINT "reading_settings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -67923,6 +68007,13 @@ ALTER TABLE "public"."regions" ENABLE ROW LEVEL SECURITY;
 
 
 CREATE POLICY "regions_select_everyone" ON "public"."regions" FOR SELECT TO "authenticated", "anon" USING (true);
+
+
+
+ALTER TABLE "public"."remembered_places" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "remembered_places_select_own" ON "public"."remembered_places" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -74181,6 +74272,11 @@ REVOKE ALL ON FUNCTION "public"."relationship_json"("link" "public"."story_chara
 
 
 
+REVOKE ALL ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."removal_order_log_rows"() FROM PUBLIC;
 
 
@@ -76714,6 +76810,11 @@ GRANT SELECT ON TABLE "public"."reading_settings" TO "authenticated";
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."regions" TO "service_role";
 GRANT SELECT ON TABLE "public"."regions" TO "anon";
 GRANT SELECT ON TABLE "public"."regions" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."remembered_places" TO "service_role";
+GRANT SELECT ON TABLE "public"."remembered_places" TO "authenticated";
 
 
 

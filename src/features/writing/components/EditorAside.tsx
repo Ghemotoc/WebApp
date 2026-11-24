@@ -21,6 +21,7 @@ import type { SaveState } from '../hooks/useAutosave';
 
 import { SaveStatus } from './SaveStatus';
 import { useEditorTranslation } from '../registerEditorTranslations';
+import { atlasEntryAddress } from '@/features/atlas/lib/atlasSections';
 
 /** One white panel of the aside, a named region so a screen reader can jump to it. */
 function Panel({ label, children }: { label: string; children: React.ReactNode }) {
@@ -70,7 +71,7 @@ function StoryDetailsPanel({ story }: { story: MyStory }) {
       </Link>
       {/* Story Atlas, the story's planning side (S1-E17-01: "Plan this story" beside the usual next step). */}
       <Link
-        to={`/plan/s/${story.slug}`}
+        to={atlasEntryAddress(story.slug)}
         className="inline-flex min-h-11 items-center self-start type-body font-semibold"
       >
         {t('details.plan')}
