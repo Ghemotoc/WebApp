@@ -364,9 +364,7 @@
       "sheetHeading": "Relații",
       "none": "Încă nu ai legături.",
       "delete": "Șterge",
-      "confirm": "Ștergi „{{sentence}}”?",
-      "yes": "Da, șterge",
-      "keep": "Păstreaz-o",
+      "deletedUndo": "Ai șters „{{sentence}}”.",
       "failed": "Legătura nu a fost ștearsă. Verifică-ți conexiunea și încearcă din nou."
     },
     "map": {

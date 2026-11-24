@@ -322,3 +322,16 @@ export async function deleteComment(client: AppSupabaseClient, commentId: string
   const { error } = await client.rpc('delete_comment', { comment_id: commentId });
   if (error !== null) throw commentErrorFrom(error);
 }
+
+/**
+ * Brings back a comment the caller just deleted: the Undo in "Comment deleted. Undo" (design
+ * books item 14; restore_comment() allows only the person who deleted it, within 10 minutes).
+ *
+ * @param client - the shared Supabase client
+ * @param commentId - the comment's row ID
+ * Errors: throws a CommentError when the database refuses it or can't be reached.
+ */
+export async function restoreComment(client: AppSupabaseClient, commentId: string): Promise<void> {
+  const { error } = await client.rpc('restore_comment', { comment_id: commentId });
+  if (error !== null) throw commentErrorFrom(error);
+}

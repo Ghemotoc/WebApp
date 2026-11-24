@@ -116,11 +116,31 @@ test.describe('comments on a chapter (S1-E6-01)', () => {
     await reader.context().close();
   });
 
-  test('the writer deletes a comment on their own story', async ({ browser }) => {
+  test('the writer deletes a comment at once and Undo brings it back', async ({ browser }) => {
     const writer = await openAs(browser, 'adult_writer');
     const spoiler = writer.getByRole('article', { name: 'teacher' }).filter({ hasText: 'Spoiler' });
+    // Design books item 14: no question first; the undo note offers Undo for 8 seconds.
     await spoiler.getByRole('button', { name: 'Delete the comment by teacher' }).click();
-    await spoiler.getByRole('button', { name: 'Yes, delete it' }).click();
+    await expect(writer.getByRole('heading', { name: '2 comments' })).toBeVisible();
+    const note = writer.locator('[aria-live]').filter({ hasText: 'Comment deleted.' });
+    await note.getByRole('button', { name: 'Undo' }).click();
+    await expect(writer.getByRole('heading', { name: '3 comments' })).toBeVisible();
+    await writer.context().close();
+  });
+
+  test('when Undo fails, the note says so and the comment stays deleted', async ({ browser }) => {
+    const writer = await openAs(browser, 'adult_writer');
+    const spoiler = writer.getByRole('article', { name: 'teacher' }).filter({ hasText: 'Spoiler' });
+    // Break test: the restore is refused, as a dropped connection would.
+    await writer.route('**/rest/v1/rpc/restore_comment', (route) =>
+      route.fulfill({ status: 500, body: '{"message":"broken on purpose"}' }),
+    );
+    await spoiler.getByRole('button', { name: 'Delete the comment by teacher' }).click();
+    const note = writer.locator('[aria-live]').filter({ hasText: 'Comment deleted.' });
+    await note.getByRole('button', { name: 'Undo' }).click();
+    await expect(
+      writer.locator('[aria-live]').filter({ hasText: 'couldn’t be undone' }),
+    ).toContainText('That couldn’t be undone. Try again from the page.');
     await expect(writer.getByRole('heading', { name: '2 comments' })).toBeVisible();
     await expect(writer.getByText('This comment is marked as a spoiler.')).toHaveCount(0);
     await writer.context().close();
