@@ -4,8 +4,9 @@
  *
  * A grid of labels and values, three across from 640 px and two on phones, each pair under a
  * hairline (board B01, bundle 2; DoD label rows), in the board's order: Fan fiction, Parody,
- * Rating, AI use, Language and Where to read, then the page's own: Status (until "Completed" moves to the
- * facts line, which waits for Robert's answer), First published and Comments. The rating row adds "hidden
+ * Rating, AI use, Language and Where to read, then the page's own: First published and Comments.
+ * Ongoing or Completed is said once, in bold, in the hero's facts line (board B01; Robert, 24 Nov
+ * 2026), so it has no row here. The rating row adds "hidden
  * from readers under 16" for 16+ and 18+, which says what the rating does. While the writer has
  * paused new comments, the Comments row says until when, in the reader's own local time (bundles
  * CALM-8 and CALM-8b). Under the list, "Content notes from the writer" with the writer's words,
@@ -137,12 +138,6 @@ function labelRowsFor(
       ),
     },
     { label: t('storyPage.whereToReadLabel'), value: whereToReadText(story, t) },
-    // Board B01 says the state in the facts line instead; until Robert answers whether
-    // "Completed" goes there (asked through DESIGN, 24 Nov 2026), it stays here.
-    {
-      label: t('storyPage.statusLabel'),
-      value: t(`status.${story.completionStatus}`, { ns: 'writing' }),
-    },
     ...firstPublishedRows(story, t),
     ...commentsRows(story, t, language),
   ];

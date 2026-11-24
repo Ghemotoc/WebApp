@@ -97,10 +97,10 @@ export interface StoryPageData {
   /** What "About this edition" says; null in answers saved before TRANSLATE-1. */
   edition: EditionFacts | null;
   /**
-   * The stats row's totals (S1-E5-03): likes on its chapters and live comments. Read totals stay
-   * private to the writer (S1-E3-07), so they aren't here.
+   * The stats row's totals: the public reads total (bundle 2, board B01; it was private under
+   * S1-E5-03), the story's own Likes (story_likes) and live comments.
    */
-  stats: { likes: number; comments: number };
+  stats: { reads: number; likes: number; comments: number };
   /** The labels (S1-E3-06); a stored story always has a rating and an AI answer. */
   labels: {
     rating: StoryRating;
@@ -164,7 +164,7 @@ interface StoryPageRow {
   editions?: unknown;
   edition?: unknown;
   /** Missing only from an answer older than S1-E5-03. */
-  stats?: { likes: number; comments: number };
+  stats?: { reads?: number; likes: number; comments: number };
   labels: {
     rating: StoryRating;
     is_fan_fiction: boolean;
@@ -249,6 +249,16 @@ function lastChapterFactsFrom(
 }
 
 /**
+ * The stats row's totals, with 0 for any an older answer leaves out.
+ *
+ * @param stats - the answer's stats, if any
+ * @returns reads, likes and comments
+ */
+function statsFrom(stats: StoryPageRow['stats']): StoryPageData['stats'] {
+  return { reads: stats?.reads ?? 0, likes: stats?.likes ?? 0, comments: stats?.comments ?? 0 };
+}
+
+/**
  * Reads the page for a story's public address.
  *
  * @param client - the shared Supabase client
@@ -292,7 +302,7 @@ export async function fetchStoryPage(
     isOwner: row.is_owner,
     appOnly: row.app_only === true,
     isPublic: row.is_public,
-    stats: { likes: row.stats?.likes ?? 0, comments: row.stats?.comments ?? 0 },
+    stats: statsFrom(row.stats),
     chapters: row.chapters.map((chapter) => ({
       code: chapter.code,
       number: chapter.number,

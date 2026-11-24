@@ -52,6 +52,9 @@ select public.record_chapter_read('the-girl-who-fixed-radios-seed02', 'epics502'
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select public.record_chapter_read('the-girl-who-fixed-radios-seed02', 'epics502');
 select public.like_chapter('the-girl-who-fixed-radios-seed02', 'epics502', true);
+-- The story page's "likes" counts the story's own Likes (bundle 2, board B01), so the reader
+-- likes the story too.
+select public.like_story('the-girl-who-fixed-radios-seed02', true);
 reset role;
 select public.compute_story_scores();
 select is(pg_temp.slugs(public.browse_stories('popular')),
@@ -61,7 +64,7 @@ select is(pg_temp.slugs(public.browse_stories('category', 'fiction')),
   pg_temp.slugs(public.browse_stories('popular')),
   'and its category page opens in the same popular order (S1-E5-02)');
 select is(public.get_story_page('the-girl-who-fixed-radios-seed02') #>> '{stats,likes}', '1',
-  'and its story page counts the like');
+  'and its story page counts the story''s like');
 
 /* ---------- 2. Ratings across every list ---------- */
 
