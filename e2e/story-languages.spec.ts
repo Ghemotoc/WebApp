@@ -5,7 +5,8 @@
  * Who runs it: `npm run test:e2e`, and CI (Supabase started first).
  * What it proves:
  * - a story with an English edition opens in English on an English page, with "Read in: English",
- *   "4 of 6 in English" on the chapter list and the untranslated chapters marked; choosing Română
+ *   "4 of 6 in English" on the chapter list, the untranslated chapters marked and "About this
+ *   edition" with "One story, counted once" (board B09, user story 2.9); choosing Română
  *   opens the original and the choice is remembered for the story;
  * - in the reader the switch keeps the chapter; a chapter the edition doesn't have yet shows
  *   "This chapter isn't in English yet" with a link to the original and to the last translated
@@ -102,6 +103,11 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
     ).toBeVisible();
     await expect(page.getByText('4 of 6 in English')).toBeVisible();
     await expect(page.getByText('Română only for now').first()).toBeVisible();
+    // Board B09 (user story 2.9): "About this edition" and "One story, counted once" as sections.
+    await expect(page.getByRole('heading', { level: 2, name: 'About this edition' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'One story, counted once' }),
+    ).toBeVisible();
 
     // The switch lists both languages; Română opens the original.
     await page.getByRole('button', { name: 'Read in: English' }).click();

@@ -6,8 +6,8 @@
  * order, 12 px apart:
  *   - the breadcrumb "Read / Fiction / title" (StoryBreadcrumb);
  *   - the facts line "Fiction · Ongoing · No AI · 13+" (lib/storyLabelFacts.ts);
- *   - the title in the display style, with the "Read in" switch beside it (TRANSLATE-1b), then
- *     "by <name>" as a link to the profile and, for a translated classic, who translated it;
+ *   - the title in the display style, then "by <name>" as a link to the profile and, for a
+ *     translated classic, who translated it, then "Read in [English]" (TRANSLATE-1b; board B09);
  *   - the numbers as a meta line (StoryStats, S1-E5-03);
  *   - where the story ranks, as links (RankBadges: its tags, CMS-1g, and its category, S1-E15-05);
  *   - the blurb, the note on which language is shown (StoryLanguageNote), and the tags as
@@ -190,8 +190,8 @@ function WriterName({ writer }: { writer: StoryPageData['writer'] }) {
 }
 
 /**
- * The title with "Read in" beside it (it wraps under the title on narrow screens), then "by
- * <name>" and, for a translated classic, who translated it (TRANSLATE-1b; board TrStory).
+ * The title, then "by <name>", for a translated classic who translated it, and "Read in" with
+ * the language as a field under them (TRANSLATE-1b; since BOOKS B09, board B09-StoryLanguages).
  *
  * @returns the title block
  */
@@ -199,22 +199,20 @@ function StoryTitleBlock({ story }: { story: StoryPageData }) {
   const { t } = useTranslation('reading');
   return (
     <>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <h1
-          id="story-title"
-          lang={story.languageCode}
-          className="m-0 min-w-0 flex-[1_1_240px] type-display break-words text-ink-heading"
-        >
-          {story.title}
-        </h1>
-        <ReadInSwitch editions={story.editions} chapterNumber={null} />
-      </div>
+      <h1
+        id="story-title"
+        lang={story.languageCode}
+        className="m-0 min-w-0 type-display break-words text-ink-heading"
+      >
+        {story.title}
+      </h1>
       <div className="flex flex-col gap-1">
         <p className="m-0 type-body text-ink-muted">
           {t('storyPage.by')} <WriterName writer={story.writer} />
         </p>
         <TranslationCredit story={story} />
       </div>
+      <ReadInSwitch editions={story.editions} chapterNumber={null} look="field" />
     </>
   );
 }

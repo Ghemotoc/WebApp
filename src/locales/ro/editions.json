@@ -4,8 +4,8 @@
   "staysOnChapter": "Rămâi la capitolul {{number}}.",
   "original": "Original",
   "translatedBy": "Tradus de {{name}}",
-  "shownForPage": "Afișat în {{language}} pentru că pagina este în {{language}}. Disponibil și în {{others}}. Alegerea ta se păstrează pentru această poveste.",
-  "shown": "Afișat în {{language}}. Disponibil și în {{others}}. Alegerea ta se păstrează pentru această poveste.",
+  "shownForPage": "Afișat în {{language}} pentru că pagina este în {{language}}. Disponibil și în {{others}}. Alegerea se păstrează pentru această poveste.",
+  "shown": "Afișat în {{language}}. Disponibil și în {{others}}. Alegerea se păstrează pentru această poveste.",
   "theOriginal": "{{language}}, limba originală",
   "alsoInOriginal": "{{language}} (original)",
   "chaptersIn": "{{count}} din {{total}} în {{language}}",
@@ -23,7 +23,7 @@
     },
     "alsoIn": "Disponibil și în"
   },
-  "countedOnceTitle": "O poveste, numărată o singură dată.",
+  "countedOnceTitle": "O poveste, numărată o singură dată",
   "countedOnceBody": "Aprecierile, salvările și citirile din toate limbile se adună la aceeași poveste. Rafturile și căutarea o arată o singură dată.",
   "missing": {
     "documentTitle": "{{title}} · {{story}}",

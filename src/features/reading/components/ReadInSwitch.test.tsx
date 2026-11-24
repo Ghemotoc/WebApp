@@ -98,4 +98,18 @@ describe('ReadInSwitch', () => {
     fireEvent.click(screen.getByRole('link', { name: /română/i }));
     expect(readRememberedEdition('luceafarul')).toBe('ro');
   });
+
+  it('on the story page shows "Read in" beside a field with the language (board B09)', () => {
+    renderWithProviders(
+      <MemoryRouter>
+        <ReadInSwitch editions={editions} chapterNumber={null} look="field" />
+      </MemoryRouter>,
+      'en',
+    );
+    const field = screen.getByRole('button', { name: 'Read in: English' });
+    expect(field).toHaveTextContent(/^English$/);
+    expect(screen.getByText('Read in')).toBeInTheDocument();
+    fireEvent.click(field);
+    expect(screen.getByRole('navigation', { name: 'Read in' })).toBeVisible();
+  });
 });
