@@ -1,9 +1,10 @@
 /**
  * useCommentActions: posting, replying and deleting on one chapter (story S1-E6-01).
  *
- * Who calls it: CommentComposer (post and reply) and CommentActions (delete). What it calls:
- * api/comments.ts → post_comment() and delete_comment(). After either, the chapter's comments are
- * read again, so the list shows what the database now holds.
+ * Who calls it: CommentComposer (post and reply) and CommentActions (delete, and its Undo). What
+ * it calls: api/comments.ts → post_comment(), delete_comment() and restore_comment() (design books
+ * item 14). After each, the chapter's comments are read again, so the list shows what the
+ * database now holds.
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -11,7 +12,13 @@ import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 
-import { CommentError, deleteComment, postComment, type NewComment } from '../api/comments';
+import {
+  CommentError,
+  deleteComment,
+  postComment,
+  restoreComment,
+  type NewComment,
+} from '../api/comments';
 
 import { commentsQueryKey } from './useChapterComments';
 
@@ -50,7 +57,8 @@ export function usePostComment(address: ChapterAddress) {
  * Deletes comments on one chapter.
  *
  * @param address - the chapter
- * @returns remove(commentId), isDeleting and the last failure
+ * @returns remove(commentId), restore(commentId) (the Undo; throws when refused), isDeleting and
+ *   the last failure
  */
 export function useDeleteComment(address: ChapterAddress) {
   const { userId } = useSession();
@@ -59,8 +67,14 @@ export function useDeleteComment(address: ChapterAddress) {
     mutationFn: async (commentId: string) => deleteComment(await requireClient(), commentId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: commentsQueryKey(address, userId) }),
   });
+  /** Undo: brings the comment back, then reads the list again. */
+  async function restore(commentId: string) {
+    await restoreComment(await requireClient(), commentId);
+    await queryClient.invalidateQueries({ queryKey: commentsQueryKey(address, userId) });
+  }
   return {
     remove: (commentId: string) => remove.mutateAsync(commentId),
+    restore,
     isDeleting: remove.isPending,
     failure: commentErrorOf(remove.error),
   };

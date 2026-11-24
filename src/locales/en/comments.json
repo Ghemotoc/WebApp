@@ -54,16 +54,14 @@
     "showSpoiler": "Show spoiler",
     "reply": "Reply",
     "delete": "Delete",
-    "deleteConfirm": "Delete this comment?",
-    "deleteYes": "Yes, delete it",
-    "keep": "Keep it",
     "deleted": "Comment deleted.",
     "removed": "[Removed by the moderation team]",
     "hiddenNote": "Hidden by the moderation team. Only you can see it.",
     "reportLabel": "the comment by {{name}}",
     "replies": "Replies to {{name}}",
     "onParagraph": "On paragraph {{number}}",
-    "onEarlierVersion": "On an earlier version"
+    "onEarlierVersion": "On an earlier version",
+    "deletedUndo": "Comment deleted."
   },
   "reactions": {
     "add": "Add a reaction",

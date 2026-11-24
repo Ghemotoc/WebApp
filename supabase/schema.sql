@@ -24007,17 +24007,23 @@ CREATE OR REPLACE FUNCTION "public"."delete_character_relationship"("relationshi
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+declare
+  removed public.story_character_relationships;
 begin
   if (select auth.uid()) is null then
     raise exception 'Sign in to change your characters.' using errcode = 'insufficient_privilege';
   end if;
+  -- Step 1: delete only the caller's own relationship, keeping what was removed.
   delete from public.story_character_relationships
   where story_character_relationships.id = relationship_id
-    and story_character_relationships.user_id = (select auth.uid());
-  if not found then
+    and story_character_relationships.user_id = (select auth.uid())
+  returning * into removed;
+  if removed.id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  return jsonb_build_object('outcome', 'ok');
+  -- Step 2: hand the row back for Undo; the owner's id and the story's id stay on the server.
+  return jsonb_build_object('outcome', 'ok',
+    'relationship', to_jsonb(removed) - 'user_id' - 'story_id');
 end;
 $$;
 
@@ -24025,7 +24031,7 @@ $$;
 ALTER FUNCTION "public"."delete_character_relationship"("relationship_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."delete_character_relationship"("relationship_id" "uuid") IS 'Deletes one of the caller''s relationships between characters (S1-E17-14).';
+COMMENT ON FUNCTION "public"."delete_character_relationship"("relationship_id" "uuid") IS 'Deletes one of the caller''s relationships between characters and returns it for Undo (S1-E17-14; design books item 14).';
 
 
 
@@ -43579,6 +43585,108 @@ ALTER FUNCTION "public"."restore_chapter"("chapter_code" "text") OWNER TO "postg
 
 
 COMMENT ON FUNCTION "public"."restore_chapter"("chapter_code" "text") IS 'Undoes the caller''s own chapter deletion within content_purge_days; it comes back at the end (S1-E3-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."restore_character_relationship"("removed" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  from_character public.story_characters;
+  to_character public.story_characters;
+  removed_kind text := removed ->> 'kind';
+  reads_both_ways boolean := (removed ->> 'kind') in
+    ('sibling_of', 'partner_of', 'cousin_of', 'friend_of', 'ally_of', 'enemy_of');
+begin
+  -- Step 1: a signed-in writer and two of their own characters, in one story.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your characters.' using errcode = 'insufficient_privilege';
+  end if;
+  from_character := public.my_story_character((removed ->> 'from_character_id')::uuid);
+  to_character := public.my_story_character((removed ->> 'to_character_id')::uuid);
+  if from_character.id is null or to_character.id is null
+     or from_character.story_id <> to_character.story_id then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the same lock and the same "recorded once" rule as add_character_relationship().
+  perform pg_advisory_xact_lock(hashtext('story_character_relationships:' || from_character.story_id));
+  if removed_kind <> 'custom' and exists (
+    select 1 from public.story_character_relationships as existing
+    where existing.kind = removed_kind
+      -- The row itself, already back after a first Undo, doesn't count as a duplicate.
+      and existing.id <> (removed ->> 'id')::uuid
+      and ((existing.from_character_id = from_character.id and existing.to_character_id = to_character.id)
+        or (reads_both_ways
+            and existing.from_character_id = to_character.id and existing.to_character_id = from_character.id))
+  ) then
+    raise exception 'That relationship is already there.'
+      using errcode = 'check_violation', hint = 'already_there';
+  end if;
+  -- Step 3: the row as it was; a second Undo of the same row changes nothing.
+  insert into public.story_character_relationships
+    (id, story_id, user_id, from_character_id, to_character_id, kind, custom_label,
+     reverse_label, note, cousin_degree, cousin_removed, is_private, created_at)
+  values ((removed ->> 'id')::uuid, from_character.story_id, from_character.user_id,
+    from_character.id, to_character.id, removed_kind,
+    coalesce(removed ->> 'custom_label', ''), coalesce(removed ->> 'reverse_label', ''),
+    coalesce(removed ->> 'note', ''), (removed ->> 'cousin_degree')::smallint,
+    (removed ->> 'cousin_removed')::smallint, coalesce((removed ->> 'is_private')::boolean, false),
+    coalesce((removed ->> 'created_at')::timestamptz, now()))
+  on conflict (id) do nothing;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."restore_character_relationship"("removed" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_character_relationship"("removed" "jsonb") IS 'Puts back a relationship the caller just deleted, with the same id and privacy (design books item 14).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."restore_comment"("comment_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target public.comments;
+  story_writer_id uuid;
+begin
+  -- Step 1: a signed-in, active member.
+  if caller_id is null or not public.is_active_member() then
+    raise exception 'Only an active member can undo a delete.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: a comment deleted in the last 10 minutes.
+  select * into target from public.comments
+  where comments.id = comment_id
+    and comments.deleted_at is not null
+    and comments.deleted_at > now() - interval '10 minutes'
+  for update;
+  if target.id is null then
+    raise exception 'That comment can''t be brought back any more.' using errcode = 'no_data_found';
+  end if;
+  -- Step 3: the caller is the one who deleted it.
+  select stories.user_id into story_writer_id
+  from public.chapters join public.stories on stories.id = chapters.story_id
+  where chapters.id = target.chapter_id;
+  if not ((target.deleted_by = 'author' and caller_id = target.user_id)
+       or (target.deleted_by = 'writer' and caller_id = story_writer_id)) then
+    raise exception 'Only the person who deleted a comment can undo it.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 4: back as it was.
+  update public.comments set deleted_at = null, deleted_by = null where comments.id = target.id;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."restore_comment"("comment_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_comment"("comment_id" "uuid") IS 'Undoes the caller''s own delete of a comment within 10 minutes (design books item 14).';
 
 
 
@@ -74427,6 +74535,16 @@ REVOKE ALL ON FUNCTION "public"."restore_archived_story"("document" "jsonb", "ne
 
 REVOKE ALL ON FUNCTION "public"."restore_chapter"("chapter_code" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."restore_chapter"("chapter_code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."restore_character_relationship"("removed" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."restore_character_relationship"("removed" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."restore_comment"("comment_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."restore_comment"("comment_id" "uuid") TO "authenticated";
 
 
 

@@ -16,6 +16,7 @@ import {
   addRelationship,
   arrangeMap,
   deleteRelationship,
+  restoreRelationship,
   moveOnMap,
   storyCastQueryKey,
   type MapPlace,
@@ -26,7 +27,7 @@ import {
  * The two relationship changers for one story.
  *
  * @param slug - the story's address
- * @returns relate (records one), unrelate (deletes one), move (saves a card's place on the map)
+ * @returns relate (records one), unrelate (deletes one and returns its Undo), move (saves a card's place on the map)
  *   and arrange (forgets every place); each throws when it can't
  */
 export function useRelationshipChangers(slug: string) {
@@ -44,10 +45,17 @@ export function useRelationshipChangers(slug: string) {
     await refresh();
   }
 
-  /** Deletes a relationship (after the screen's second click). */
-  async function unrelate(relationshipId: string) {
-    await deleteRelationship(await requireClient(), relationshipId);
+  /**
+   * Deletes a relationship at once and returns how to put it back, for the Undo note
+   * (design books item 14).
+   */
+  async function unrelate(relationshipId: string): Promise<() => Promise<void>> {
+    const removed = await deleteRelationship(await requireClient(), relationshipId);
     await refresh();
+    return async () => {
+      await restoreRelationship(await requireClient(), removed);
+      await refresh();
+    };
   }
 
   /** Saves where a card was dropped on the map. */

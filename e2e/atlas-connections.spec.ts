@@ -501,14 +501,19 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('Delete asks twice, then the relationship is gone from both sheets', async ({ browser }) => {
+  test('Delete happens at once, Undo puts it back, and a second delete is gone from both sheets', async ({
+    browser,
+  }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections?view=list`);
     const list = page.getByRole('region', { name: 'Relationships', exact: true });
+    // Design books item 14: no question first; the undo note offers Undo for 8 seconds.
     await list.getByRole('button', { name: 'Delete Ion killed Lupul' }).click();
-    await expect(list.getByText('Delete “Ion killed Lupul”?')).toBeFocused();
-    await list.getByRole('button', { name: 'Keep it' }).click();
+    await expect(list.getByText('Ion killed Lupul', { exact: true })).toHaveCount(0);
+    const note = page.locator('[aria-live]').filter({ hasText: 'Deleted “Ion killed Lupul”.' });
+    await note.getByRole('button', { name: 'Undo' }).click();
+    await expect(list.getByRole('button', { name: 'Delete Ion killed Lupul' })).toBeVisible();
+    await expect(note).toHaveCount(0);
     await list.getByRole('button', { name: 'Delete Ion killed Lupul' }).click();
-    await list.getByRole('button', { name: 'Yes, delete' }).click();
     await expect(list.getByText('Ion killed Lupul', { exact: true })).toHaveCount(0);
     await page.goto(`${planAddress}/characters/${cast.lupul}`);
     await openRelationshipsCard(page);

@@ -78,6 +78,16 @@ test.describe('follows (S1-E6-05)', () => {
     await following.click();
     await expect(page.getByRole('button', { name: 'Follow Lia Scrie' })).toBeVisible();
     await expect(followerCount).toHaveText('1');
+    // Unfollowing offers Undo for 8 seconds instead of asking first (design books item 14).
+    await page
+      .locator('[aria-live]')
+      .filter({ hasText: 'You no longer follow Lia Scrie.' })
+      .getByRole('button', { name: 'Undo' })
+      .click();
+    await expect(page.getByRole('button', { name: 'Following Lia Scrie' })).toBeVisible();
+    await expect(followerCount).toHaveText('2');
+    await page.getByRole('button', { name: 'Following Lia Scrie' }).click();
+    await expect(followerCount).toHaveText('1');
     await page.context().close();
   });
 

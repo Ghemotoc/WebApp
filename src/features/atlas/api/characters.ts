@@ -455,17 +455,43 @@ export async function addRelationship(
 }
 
 /**
- * Deletes one of the writer's relationships (S1-E17-14; the screen asks twice first).
+ * The row delete_character_relationship() hands back, kept only to give it to
+ * restoreRelationship() for Undo (design books item 14). The screen never reads inside it.
+ */
+export type RemovedRelationship = Json;
+
+/**
+ * Deletes one of the writer's relationships at once (S1-E17-14; design books item 14: Undo
+ * instead of asking first).
  *
  * @param client - the shared Supabase client
  * @param relationshipId - the relationship
+ * @returns the removed row, for Undo
  * Errors: throws when the database can't be reached or the relationship isn't the writer's.
  */
-export async function deleteRelationship(client: AppSupabaseClient, relationshipId: string) {
+export async function deleteRelationship(
+  client: AppSupabaseClient,
+  relationshipId: string,
+): Promise<RemovedRelationship> {
   const answer = await client.rpc('delete_character_relationship', {
     relationship_id: relationshipId,
   });
-  okAnswer(answer, 'delete the relationship');
+  const data = checkedAnswer(answer, 'delete the relationship');
+  return (data.relationship ?? null) as RemovedRelationship;
+}
+
+/**
+ * Puts back a relationship the writer just deleted, with the same id and "Keep private"
+ * (design books item 14). Called by the Undo note.
+ *
+ * @param client - the shared Supabase client
+ * @param removed - what deleteRelationship() returned
+ * Errors: throws when a character is gone, the same relationship was added again meanwhile
+ *   (hint 'already_there') or the database can't be reached.
+ */
+export async function restoreRelationship(client: AppSupabaseClient, removed: RemovedRelationship) {
+  const answer = await client.rpc('restore_character_relationship', { removed });
+  checkedAnswer(answer, 'put the relationship back');
 }
 
 /**

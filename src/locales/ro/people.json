@@ -70,7 +70,8 @@
     "followingStory": "Urmărești povestea",
     "logIn": "Intră ca să urmărești",
     "readOnly": "Contul nu poate urmări pe nimeni deocamdată.",
-    "failed": "Nu am putut salva, așa că a revenit cum era. Încearcă din nou."
+    "failed": "Nu am putut salva, așa că a revenit cum era. Încearcă din nou.",
+    "unfollowed": "Nu mai urmărești {{name}}."
   },
   "followers": {
     "eyebrow": "Doar tu vezi asta",

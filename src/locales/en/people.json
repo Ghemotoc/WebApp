@@ -70,7 +70,8 @@
     "followingStory": "Following story",
     "logIn": "Get in to follow",
     "readOnly": "This account can’t follow anyone yet.",
-    "failed": "We couldn’t save that, so it’s back as it was. Try again."
+    "failed": "We couldn’t save that, so it’s back as it was. Try again.",
+    "unfollowed": "You no longer follow {{name}}."
   },
   "followers": {
     "eyebrow": "Only you see this",
