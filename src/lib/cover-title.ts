@@ -50,12 +50,12 @@ export type CoverTitleFontKey = 'reading' | 'display' | 'sans' | 'hand';
 /**
  * The room each look gives its title, in cqi (1% of the cover's width; a 2:3 cover is 150 tall):
  * the title's base size and the width and height it may fill. They mirror index.css (cover-label,
- * cover-big, cover-initial): the label is 80.8 wide less 5.8 padding each side; Big title and
+ * cover-big, cover-initial): the label is 80.8 wide less 8 padding each side; Big title and
  * Initial are 100 wide less 10.4 each side. The heights leave room for the rule, the pen name and,
  * on Initial, the big letter.
  */
 const roomForTitle: Record<CoverTitleLook, { baseSize: number; width: number; height: number }> = {
-  label: { baseSize: 11.67, width: 69.2, height: 85 },
+  label: { baseSize: 9, width: 64.8, height: 85 },
   big_title: { baseSize: 20, width: 79.2, height: 95 },
   initial: { baseSize: 12.5, width: 79.2, height: 62 },
 };

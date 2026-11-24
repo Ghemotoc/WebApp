@@ -13,12 +13,12 @@
  * title; preview 14 px padding, 21 px title; card 22 px padding, 28 px title. The story card on
  * shelves uses 18 px padding and a 21 px title (Discover board). The artwork is drawn on a
  * 100 × 160 canvas and scaled to the box.
- * Corners and edge (the simplified design, Robert, 20 Nov 2026; bundle CALM-1): every cover has
- * 4 px corners at every size (--radius-cover, rounded-cover) and a 1 px hairline just inside its
- * edge (the cover-edge utility in index.css), with no shadow. They replace the boards' 8 and 16 px
- * corners and the darker 1 px border.
+ * Corners and edge: every cover has 12 px corners at every size (--radius-cover, rounded-cover;
+ * the brand page's covers, Robert, 23 Nov 2026, 20:26 UTC, replacing CALM-1's 4 px) and a 1 px
+ * hairline just inside its edge (the cover-edge utility in index.css), with no shadow.
  * The three looks (bundle CALM-4, handover Step 2; choice.style): Label puts the pattern behind a
- * paper label near the top (80.8% of the width, 9.6% each side, 8.9% from the top), Big title sets
+ * paper label near the top (80.8% of the width, 9.6% each side, 12% from the top, 4 px corners, no
+ * outline or rule: the brand page's label, Robert, 23 Nov 2026, 20:26 UTC), Big title sets
  * the title large on the plain background with a short accent rule and the pen name at the foot,
  * and Initial draws the title's first letter huge in the accent, cropped by the edge. Every size
  * inside is in cqi (1% of the cover's width; the cover-* classes in index.css), so a cover looks
@@ -103,8 +103,9 @@ interface CoverWordsProps {
 }
 
 /**
- * Label: the paper label near the top, with the title, a short rule in the accent and the pen
- * name. The label is always paper with dark ink, so it reads at 4.5:1 on every pattern.
+ * Label: the paper label near the top, with the title (Literata 600 at 9cqi) and the pen name
+ * (Inter 500 at 5.5cqi). The label is always paper with dark ink, so it reads at 4.5:1 on every
+ * pattern.
  *
  * @returns the label
  */
@@ -112,12 +113,7 @@ function LabelWords({ title, penName }: CoverWordsProps) {
   return (
     <span className="cover-label">
       <span className="cover-words-title">{title}</span>
-      {penName !== undefined && (
-        <>
-          <span className="cover-label-rule" aria-hidden="true" />
-          <span className="cover-words-by">{penName}</span>
-        </>
-      )}
+      {penName !== undefined && <span className="cover-words-by">{penName}</span>}
     </span>
   );
 }
@@ -173,8 +169,8 @@ function InitialWords({ title, penName }: CoverWordsProps) {
 /**
  * Renders the cover: the background, then the look the writer picked. The box is 2:3 (DESIGN,
  * 20 Nov 2026, CALM-4 check: "covers are 2:3"; bundle.css aspect-ratio 2 / 3); an upload is
- * cropped to it with object-fit: cover (StoryCoverArt). Give it a width with className. It has 4 px corners and the hairline edge, and casts
- * no shadow (the simplified design, CALM-1).
+ * cropped to it with object-fit: cover (StoryCoverArt). Give it a width with className. It has 12 px corners and the hairline edge, and casts
+ * no shadow.
  *
  * @returns the cover
  */
