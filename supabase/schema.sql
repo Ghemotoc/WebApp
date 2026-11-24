@@ -21123,10 +21123,19 @@ CREATE TABLE IF NOT EXISTS "public"."comments" (
     "deleted_by" "public"."comment_deleted_by",
     "paragraph_key" "text",
     "paragraph_number" integer,
+    "quote_text" "text",
+    "quote_start_offset" integer,
+    "quote_end_block" integer,
+    "quote_end_key" "text",
+    "quote_end_offset" integer,
     CONSTRAINT "comments_body_is_written" CHECK (((("btrim"("body") <> ''::"text") OR ("deleted_at" IS NOT NULL)) AND ("char_length"("body") <= 10000))),
     CONSTRAINT "comments_deletion_fields_go_together" CHECK ((("deleted_at" IS NULL) = ("deleted_by" IS NULL))),
     CONSTRAINT "comments_paragraph_fields_go_together" CHECK ((("paragraph_key" IS NULL) = ("paragraph_number" IS NULL))),
-    CONSTRAINT "comments_paragraph_number_counts_from_one" CHECK ((("paragraph_number" IS NULL) OR ("paragraph_number" >= 1)))
+    CONSTRAINT "comments_paragraph_number_counts_from_one" CHECK ((("paragraph_number" IS NULL) OR ("paragraph_number" >= 1))),
+    CONSTRAINT "comments_quote_fields_go_together" CHECK (((("quote_text" IS NULL) AND ("quote_start_offset" IS NULL) AND ("quote_end_block" IS NULL) AND ("quote_end_key" IS NULL) AND ("quote_end_offset" IS NULL)) OR (("quote_text" IS NOT NULL) AND ("quote_start_offset" IS NOT NULL) AND ("quote_end_block" IS NOT NULL) AND ("quote_end_key" IS NOT NULL) AND ("quote_end_offset" IS NOT NULL)))),
+    CONSTRAINT "comments_quote_is_on_a_paragraph" CHECK ((("quote_text" IS NULL) OR ("paragraph_key" IS NOT NULL))),
+    CONSTRAINT "comments_quote_length" CHECK ((("quote_text" IS NULL) OR (("char_length"("quote_text") >= 1) AND ("char_length"("quote_text") <= 1000)))),
+    CONSTRAINT "comments_quote_runs_forwards" CHECK ((("quote_text" IS NULL) OR (("quote_start_offset" >= 0) AND ("quote_end_offset" >= 0) AND ("quote_end_block" >= "paragraph_number") AND (("quote_end_block" > "paragraph_number") OR ("quote_end_offset" > "quote_start_offset")))))
 );
 
 
@@ -21143,6 +21152,26 @@ COMMENT ON COLUMN "public"."comments"."paragraph_key" IS 'A fingerprint of the p
 
 
 COMMENT ON COLUMN "public"."comments"."paragraph_number" IS 'The block the comment was left on, counted from 1 (chapter_blocks()), or null (S1-E6-06).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_text" IS 'The writer''s words a reader chose to comment on, or null for the whole paragraph (READER-SELECT, board B12).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_start_offset" IS 'Where the chosen words start in the first paragraph''s text as the reader draws it (READER-SELECT).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_end_block" IS 'The paragraph the chosen words end in, counted from 1 like paragraph_number (READER-SELECT, board B14).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_end_key" IS 'A fingerprint of that last paragraph''s words, like paragraph_key (READER-SELECT).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_end_offset" IS 'Where the chosen words end in the last paragraph''s text (READER-SELECT).';
 
 
 
@@ -21194,7 +21223,8 @@ begin
       else jsonb_build_object('counts', '{}'::jsonb, 'mine', null) end,
     'downvoted_by_me', caller_id is not null and exists (
       select 1 from public.comment_downvotes
-      where comment_downvotes.comment_id = target.id and comment_downvotes.user_id = caller_id));
+      where comment_downvotes.comment_id = target.id and comment_downvotes.user_id = caller_id),
+    'quote', public.comment_quote_json(target));
 end;
 $$;
 
@@ -21202,7 +21232,7 @@ $$;
 ALTER FUNCTION "public"."comment_json"("target" "public"."comments", "story_writer_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."comment_json"("target" "public"."comments", "story_writer_id" "uuid") IS 'Internal: one comment as the comments area draws it, with its reactions and the caller''s own downvote, never a user ID or a downvote count (S1-E6-01, S1-E6-02, S1-E6-04).';
+COMMENT ON FUNCTION "public"."comment_json"("target" "public"."comments", "story_writer_id" "uuid") IS 'Internal: one comment as the comments area draws it, with its reactions, the caller''s own downvote and its chosen words, never a user ID or a downvote count (S1-E6-01, S1-E6-02, S1-E6-04, READER-SELECT).';
 
 
 
@@ -21294,6 +21324,26 @@ ALTER FUNCTION "public"."comment_pause_json"("story" "public"."stories") OWNER T
 
 
 COMMENT ON FUNCTION "public"."comment_pause_json"("story" "public"."stories") IS 'Internal: the pause''s end and whether the caller may end it, for the comment lists, while a pause runs (CALM-8).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."comment_quote_json"("target" "public"."comments") RETURNS "jsonb"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case when target.quote_text is null then null else jsonb_build_object(
+    'text', target.quote_text,
+    'start_block', target.paragraph_number,
+    'start_offset', target.quote_start_offset,
+    'end_block', target.quote_end_block,
+    'end_offset', target.quote_end_offset) end;
+$$;
+
+
+ALTER FUNCTION "public"."comment_quote_json"("target" "public"."comments") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."comment_quote_json"("target" "public"."comments") IS 'Internal: a comment''s chosen words for the comment lists, or null (READER-SELECT, board B13).';
 
 
 
@@ -36913,25 +36963,46 @@ begin
   end if;
   select * into story from public.stories where stories.id = chapter.story_id;
   if not story.comments_enabled then
-    return jsonb_build_object('comments_enabled', false, 'paragraphs', '[]'::jsonb, 'earlier', 0);
+    return jsonb_build_object('comments_enabled', false, 'paragraphs', '[]'::jsonb, 'earlier', 0,
+      'parts', '[]'::jsonb);
   end if;
   -- Step 2: each comment the caller may read, placed on the paragraph it shows on today.
-  with placed as (
-    select public.paragraph_now(chapter.published_body, comments.paragraph_key, comments.paragraph_number) as block
+  with shown as (
+    select comments.*
     from public.comments
     where comments.chapter_id = chapter.id
       and comments.paragraph_key is not null
       and public.comment_is_shown_to_caller(comments)
   ),
+  placed as (
+    select public.paragraph_now(chapter.published_body, shown.paragraph_key, shown.paragraph_number) as block
+    from shown
+  ),
   counted as (
     select placed.block, count(*)::integer as total from placed where placed.block is not null group by placed.block
+  ),
+  -- Step 3: the chosen words still in the text, each set counted once with its replies.
+  parts as (
+    select public.paragraph_now(chapter.published_body, shown.paragraph_key, shown.paragraph_number) as block,
+           public.paragraph_now(chapter.published_body, shown.quote_end_key, shown.quote_end_block) as end_block,
+           shown.quote_start_offset as start_offset, shown.quote_end_offset as end_offset,
+           shown.quote_text as quote, count(*)::integer as total
+    from shown
+    where shown.quote_text is not null and public.quote_still_there(chapter.published_body, shown)
+    group by 1, 2, 3, 4, 5
   )
-  -- Step 3: the counts by paragraph, the earlier-version ones and, during a pause (CALM-8), its end.
+  -- Step 4: the counts by paragraph, the earlier-version ones, the parts and, during a pause
+  -- (CALM-8), its end.
   select jsonb_build_object(
     'comments_enabled', true,
     'paragraphs', coalesce((select jsonb_agg(jsonb_build_object('block', counted.block, 'count', counted.total)
                               order by counted.block) from counted), '[]'::jsonb),
-    'earlier', (select count(*)::integer from placed where placed.block is null))
+    'earlier', (select count(*)::integer from placed where placed.block is null),
+    'parts', coalesce((select jsonb_agg(jsonb_build_object('block', parts.block, 'end_block', parts.end_block,
+                         'start_offset', parts.start_offset, 'end_offset', parts.end_offset,
+                         'quote', parts.quote, 'count', parts.total)
+                         order by parts.block, parts.start_offset, parts.end_block, parts.end_offset)
+                       from parts), '[]'::jsonb))
     || public.comment_pause_json(story)
   into answer;
   return answer;
@@ -36942,7 +37013,7 @@ $$;
 ALTER FUNCTION "public"."paragraph_comment_counts"("story_slug" "text", "chapter_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."paragraph_comment_counts"("story_slug" "text", "chapter_code" "text") IS 'How many comments each paragraph has, and how many are on an earlier version; never a user ID (S1-E6-06).';
+COMMENT ON FUNCTION "public"."paragraph_comment_counts"("story_slug" "text", "chapter_code" "text") IS 'How many comments each paragraph has, how many are on an earlier version, and the chosen words with their counts; never a user ID (S1-E6-06, READER-SELECT).';
 
 
 
@@ -37232,6 +37303,27 @@ ALTER FUNCTION "public"."passage_discussion_allowed"("story_slug" "text", "chapt
 
 
 COMMENT ON FUNCTION "public"."passage_discussion_allowed"("story_slug" "text", "chapter_code" "text") IS 'Whether the reader may start a forum thread quoting a passage of a public chapter (IDEA-20261102-10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."passage_text"("body" "text", "first_block" integer, "last_block" integer) RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  -- A missing number, or a run that goes backwards, has no text; between() finds the rest.
+  select case
+    when first_block is null or last_block is null or last_block < first_block then null
+    else (select string_agg(blocks.block_text, E'\n\n' order by blocks.block_number)
+          from public.chapter_blocks(body) as blocks
+          where blocks.block_number between first_block and last_block)
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."passage_text"("body" "text", "first_block" integer, "last_block" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."passage_text"("body" "text", "first_block" integer, "last_block" integer) IS 'Internal: a run of a chapter''s paragraphs as one text, or null when one is missing (READER-SELECT).';
 
 
 
@@ -37784,6 +37876,76 @@ ALTER FUNCTION "public"."post_paragraph_comment"("story_slug" "text", "chapter_c
 
 
 COMMENT ON FUNCTION "public"."post_paragraph_comment"("story_slug" "text", "chapter_code" "text", "block_number" integer, "body" "text", "is_spoiler" boolean) IS 'Posts a comment on one paragraph of a chapter, through the account gate and the limit (S1-E6-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean DEFAULT false) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  chapter public.chapters;
+  story public.stories;
+  chosen_words text := btrim(coalesce(quote, ''), E' \t\n');
+  first_text text;
+  last_text text;
+  new_comment_id uuid;
+begin
+  -- Step 1: signed in, and the chapter is one this reader may open.
+  if caller_id is null then
+    raise exception 'Log in to comment.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into chapter from public.readable_chapter(story_slug, chapter_code);
+  if chapter.id is null then
+    raise exception 'There is no such chapter.' using errcode = 'no_data_found';
+  end if;
+  select * into story from public.stories where stories.id = chapter.story_id;
+  -- Step 2: comments on and not paused, the account gate and the limit (as post_comment()).
+  perform public.require_comment_allowed(caller_id, story);
+  -- Step 3: the words: some, at most 1,000 characters (board B14, 8), running forwards.
+  if public.quote_words(chosen_words) = '  ' then
+    raise exception 'Choose some words to comment on.' using errcode = 'check_violation', hint = 'quote_not_found';
+  end if;
+  if char_length(chosen_words) > 1000 then
+    raise exception 'Select less to comment.' using errcode = 'check_violation', hint = 'quote_too_long';
+  end if;
+  if start_offset is null or end_offset is null or start_offset < 0 or end_offset < 0
+     or end_block < start_block or (end_block = start_block and end_offset <= start_offset) then
+    raise exception 'Those words aren''t in the chapter.' using errcode = 'check_violation', hint = 'quote_not_found';
+  end if;
+  -- Step 4: both paragraphs are there, and the words are in them, as the chapter is published now.
+  select blocks.block_text into first_text from public.chapter_blocks(chapter.published_body) as blocks
+  where blocks.block_number = post_passage_comment.start_block;
+  select blocks.block_text into last_text from public.chapter_blocks(chapter.published_body) as blocks
+  where blocks.block_number = post_passage_comment.end_block;
+  if first_text is null or last_text is null then
+    raise exception 'That paragraph isn''t there any more.' using errcode = 'no_data_found';
+  end if;
+  if position(public.quote_words(chosen_words)
+              in public.quote_words(public.passage_text(chapter.published_body, start_block, end_block))) = 0 then
+    raise exception 'Those words aren''t in the chapter.' using errcode = 'check_violation', hint = 'quote_not_found';
+  end if;
+  -- Step 5: save it on the first paragraph, with the words and where they end, and queue the
+  -- notification job (the same job as any comment).
+  insert into public.comments (user_id, chapter_id, body, is_spoiler, paragraph_key, paragraph_number,
+    quote_text, quote_start_offset, quote_end_block, quote_end_key, quote_end_offset)
+  values (caller_id, chapter.id, public.check_comment_text(body), coalesce(is_spoiler, false),
+          public.paragraph_key_of(first_text), start_block,
+          chosen_words, start_offset, end_block, public.paragraph_key_of(last_text), end_offset)
+  returning id into new_comment_id;
+  insert into public.jobs (kind, payload)
+  values ('comment_posted', jsonb_build_object('comment_id', new_comment_id, 'chapter_id', chapter.id,
+    'parent_comment_id', null));
+  return jsonb_build_object('id', new_comment_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean) IS 'Posts a comment on words a reader chose in a chapter, through the account gate and the limit (READER-SELECT, board B12).';
 
 
 
@@ -39534,6 +39696,41 @@ ALTER FUNCTION "public"."quote_card_state"("story_slug" "text", "chapter_code" "
 
 
 COMMENT ON FUNCTION "public"."quote_card_state"("story_slug" "text", "chapter_code" "text") IS 'Whether the caller may make a quote card from a chapter, and whether they already did (S1-E4-07).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."quote_still_there"("body" "text", "target" "public"."comments") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    target.quote_text is not null
+    and position(public.quote_words(target.quote_text) in public.quote_words(public.passage_text(body,
+      public.paragraph_now(body, target.paragraph_key, target.paragraph_number),
+      public.paragraph_now(body, target.quote_end_key, target.quote_end_block)))) > 0,
+    false);
+$$;
+
+
+ALTER FUNCTION "public"."quote_still_there"("body" "text", "target" "public"."comments") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."quote_still_there"("body" "text", "target" "public"."comments") IS 'Internal: whether a comment''s chosen words are still in the chapter where they were (READER-SELECT, board B13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."quote_words"("value" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select ' ' || btrim(regexp_replace(lower(coalesce(value, '')), '[^[:alnum:]]+', ' ', 'g')) || ' ';
+$$;
+
+
+ALTER FUNCTION "public"."quote_words"("value" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."quote_words"("value" "text") IS 'Internal: a text''s words only, for matching chosen words against a chapter (READER-SELECT).';
 
 
 
@@ -54207,8 +54404,10 @@ CREATE OR REPLACE FUNCTION "public"."take_parent_paragraph"() RETURNS "trigger"
     AS $$
 begin
   if new.parent_comment_id is not null then
-    select comments.paragraph_key, comments.paragraph_number
-      into new.paragraph_key, new.paragraph_number
+    select comments.paragraph_key, comments.paragraph_number, comments.quote_text, comments.quote_start_offset,
+           comments.quote_end_block, comments.quote_end_key, comments.quote_end_offset
+      into new.paragraph_key, new.paragraph_number, new.quote_text, new.quote_start_offset,
+           new.quote_end_block, new.quote_end_key, new.quote_end_offset
     from public.comments where comments.id = new.parent_comment_id;
   end if;
   return new;
@@ -54219,7 +54418,7 @@ $$;
 ALTER FUNCTION "public"."take_parent_paragraph"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."take_parent_paragraph"() IS 'Trigger: a reply takes its comment''s paragraph (S1-E6-06).';
+COMMENT ON FUNCTION "public"."take_parent_paragraph"() IS 'Trigger: a reply takes its comment''s paragraph and chosen words (S1-E6-06, READER-SELECT).';
 
 
 
@@ -73930,6 +74129,11 @@ GRANT ALL ON FUNCTION "public"."post_comment"("story_slug" "text", "chapter_code
 
 REVOKE ALL ON FUNCTION "public"."post_paragraph_comment"("story_slug" "text", "chapter_code" "text", "block_number" integer, "body" "text", "is_spoiler" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."post_paragraph_comment"("story_slug" "text", "chapter_code" "text", "block_number" integer, "body" "text", "is_spoiler" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean) TO "authenticated";
 
 
 
