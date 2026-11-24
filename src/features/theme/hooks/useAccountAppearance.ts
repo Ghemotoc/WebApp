@@ -3,9 +3,8 @@
  *
  * Two jobs, run once for the whole app:
  * 1. Show the choices: night or light (following the device live with "Match my device") on
- *    <html data-theme>, and the look on <html data-look>: the season's look when Seasonal themes
- *    is on and a season is running (public setting seasonal_look_dates), otherwise the member's
- *    year-round theme. The "Less motion" switch goes on <html data-motion> (bundle MOTION-1) and
+ *    <html data-theme>, and the member's theme on <html data-look> (the seasonal looks were
+ *    removed in the flat themes bundle). The "Less motion" switch goes on <html data-motion> (bundle MOTION-1) and
  *    high contrast on <html data-contrast>, for the member's switch or a device that asks for
  *    more contrast (bundle CONTRAST-1).
  * 2. Follow the account: when a member signs in (or the page opens with a stored session), read
@@ -16,21 +15,14 @@
  * What it calls: lib/appearanceStore.ts, api/appearance.ts, src/lib/theme.ts, src/lib/looks.ts,
  * src/lib/motion.ts and src/lib/highContrast.ts.
  */
-import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
-import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
 import {
   applyHighContrast,
   deviceAsksForMoreContrast,
   subscribeToDeviceContrast,
 } from '@/lib/highContrast';
-import {
-  applyLook,
-  decidedSeasonalWindows,
-  parseSeasonalWindows,
-  shownLookFor,
-  type SeasonalWindow,
-} from '@/lib/looks';
+import { applyLook } from '@/lib/looks';
 import { applyLessMotion } from '@/lib/motion';
 import { getSupabaseClient, type AppSupabaseClient } from '@/lib/supabase';
 import { applyTheme, DEVICE_DARK_QUERY, resolveTheme } from '@/lib/theme';
@@ -60,15 +52,13 @@ function logReadFailure(error: unknown): void {
 /**
  * Job 1: shows the current choices, and follows the device's dark mode live when the mode is
  * "Match my device".
- *
- * @param windows - the seasonal look windows
  */
-function useShowAppearance(windows: readonly SeasonalWindow[]): void {
+function useShowAppearance(): void {
   const appearance = useSyncExternalStore(subscribeToAppearance, getAppearance);
 
   useEffect(() => {
     // Step 1: the look (it only changes the light colours; night is the same monochrome set with every look).
-    applyLook(shownLookFor(appearance.look, appearance.isSeasonalOn, new Date(), windows));
+    applyLook(appearance.look);
     // Step 2: the member's "Less motion" switch (src/styles/index.css stops every animation).
     applyLessMotion(appearance.isLessMotionOn);
     // Step 3: night or light, now and whenever the device switches (for "Match my device").
@@ -78,7 +68,7 @@ function useShowAppearance(windows: readonly SeasonalWindow[]): void {
     if (appearance.mode !== 'device') return undefined;
     deviceDarkQuery.addEventListener('change', showMode);
     return () => deviceDarkQuery.removeEventListener('change', showMode);
-  }, [appearance, windows]);
+  }, [appearance]);
 }
 
 /**
@@ -152,14 +142,7 @@ function useFollowAccountAppearance(): void {
  * Keeps the page in the member's colours and in step with their account.
  */
 export function useAccountAppearance(): void {
-  const settings = usePublicSettings();
-  // The setting as text, so the windows are worked out again only when the setting changes.
-  const windowsText = JSON.stringify(settings.valueOf('seasonal_look_dates') ?? null);
-  const windows = useMemo(
-    () => parseSeasonalWindows(JSON.parse(windowsText)) ?? decidedSeasonalWindows,
-    [windowsText],
-  );
-  useShowAppearance(windows);
+  useShowAppearance();
   useShowHighContrast();
   useFollowAccountAppearance();
 }

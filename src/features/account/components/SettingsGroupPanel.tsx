@@ -5,7 +5,7 @@
  * Which panels sit in which group, in menu order:
  * - Profile: the Account panel (username, pen name and country), About you, Your avatar, Forum
  *   signature, What you like, Birthday and the Teacher badge;
- * - Appearance: the theme, light or night mode and the seasonal looks (bundle G2 THEMES);
+ * - Appearance: the theme and light or night mode (bundle G2 THEMES);
  * - Language: the interface language and the reading languages (MARKETS-2c);
  * - Email and sign-in (key "account"): email address, ways to log in (hidden while their flags
  *   are off), signed-in devices and Canva;
@@ -103,7 +103,7 @@ function ProfileGroup({ account, names }: { account: LoadedAccount; names: Loade
 
 /** The groups that need nothing but the signed-in person, each with its panels. */
 const plainGroups: Record<Exclude<SettingsGroupKey, 'profile'>, () => ReactNode> = {
-  // The theme, mode and seasonal looks, saved on the account (bundle G2 THEMES).
+  // The theme and mode, saved on the account (bundle G2 THEMES).
   appearance: () => <AppearanceSettingsSection />,
   // The interface language; the footer has the other menu (S1-E1-04; bundle FIX-3).
   language: () => (

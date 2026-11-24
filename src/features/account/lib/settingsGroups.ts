@@ -12,7 +12,7 @@
 /** Every group, in the order of the menu. */
 export const settingsGroupKeys = [
   'profile',
-  // How the site looks: theme, mode and seasonal looks (bundle G2 THEMES).
+  // How the site looks: theme and mode (bundle G2 THEMES).
   'appearance',
   // The interface language, saved on the account (S1-E1-04; bundle FIX-3, which took the
   // language menu out of the top bar).

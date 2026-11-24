@@ -6612,7 +6612,6 @@ export type Database = {
           reading_languages: string[] | null;
           region_code: string | null;
           rules_walkthrough_seen_at: string | null;
-          seasonal_looks: boolean;
           shows_online_status: boolean;
           shows_reader_level: boolean;
           signature: string | null;
@@ -6690,7 +6689,6 @@ export type Database = {
           reading_languages?: string[] | null;
           region_code?: string | null;
           rules_walkthrough_seen_at?: string | null;
-          seasonal_looks?: boolean;
           shows_online_status?: boolean;
           shows_reader_level?: boolean;
           signature?: string | null;
@@ -6747,7 +6745,6 @@ export type Database = {
           reading_languages?: string[] | null;
           region_code?: string | null;
           rules_walkthrough_seen_at?: string | null;
-          seasonal_looks?: boolean;
           shows_online_status?: boolean;
           shows_reader_level?: boolean;
           signature?: string | null;
@@ -12565,7 +12562,6 @@ export type Database = {
         };
         Returns: boolean;
       };
-      admin_set_seasonal_look_dates: { Args: { new_windows: Json }; Returns: Json };
       admin_set_setting: { Args: { new_value: Json; setting_key: string }; Returns: Json };
       admin_set_staff_languages: {
         Args: { language_codes: string[]; target_user_id: string };
@@ -13227,7 +13223,6 @@ export type Database = {
           reading_languages: string[] | null;
           region_code: string | null;
           rules_walkthrough_seen_at: string | null;
-          seasonal_looks: boolean;
           shows_online_status: boolean;
           shows_reader_level: boolean;
           signature: string | null;
@@ -15609,7 +15604,6 @@ export type Database = {
           reading_languages: string[] | null;
           region_code: string | null;
           rules_walkthrough_seen_at: string | null;
-          seasonal_looks: boolean;
           shows_online_status: boolean;
           shows_reader_level: boolean;
           signature: string | null;
@@ -16453,7 +16447,6 @@ export type Database = {
           reading_languages: string[] | null;
           region_code: string | null;
           rules_walkthrough_seen_at: string | null;
-          seasonal_looks: boolean;
           shows_online_status: boolean;
           shows_reader_level: boolean;
           signature: string | null;
@@ -17402,7 +17395,6 @@ export type Database = {
         Args: { page_offset?: number; page_size?: number; term: string };
         Returns: Json;
       };
-      seasonal_window_problem: { Args: { windows: Json }; Returns: string };
       send_assignment_reminders: { Args: { run_at?: string }; Returns: number };
       send_finished_thanks: { Args: { story_slug: string }; Returns: Json };
       send_landing_reminders: { Args: Record<PropertyKey, never>; Returns: number };
@@ -17487,7 +17479,6 @@ export type Database = {
           new_high_contrast?: boolean;
           new_less_motion?: boolean;
           new_look: string;
-          new_seasonal_looks: boolean;
         };
         Returns: Json;
       };

@@ -1,7 +1,7 @@
 /**
  * appearanceStore: the one copy of the member's appearance choices on this page: mode (light,
- * night or device), year-round look, the seasonal switch (bundle G2 THEMES), the "Less motion"
- * switch (bundle MOTION-1) and the "High contrast" switch (bundle CONTRAST-1).
+ * night or device), look (bundle G2 THEMES), the "Less motion" switch (bundle MOTION-1) and the
+ * "High contrast" switch (bundle CONTRAST-1).
  *
  * Why a store: Settings › Appearance, the footer's mode drop-down and the account sync all read
  * and change the same choices, and each must see the others' changes at once. React reads it with
@@ -17,14 +17,12 @@ import { readStoredLookChoice, saveStoredLookChoice, type YearRoundLook } from '
 import { readLessMotionChoice, saveLessMotionChoice } from '@/lib/motion';
 import { readThemePreference, saveThemePreference, type ThemePreference } from '@/lib/theme';
 
-/** The member's five choices. */
+/** The member's four choices. */
 export interface Appearance {
   /** Light, night or device ("Match my device"). */
   mode: ThemePreference;
-  /** The year-round theme. */
+  /** The theme. */
   look: YearRoundLook;
-  /** Whether the seasonal looks may switch on by themselves. */
-  isSeasonalOn: boolean;
   /** Whether the member turned "Less motion" on (the device's own setting counts by itself). */
   isLessMotionOn: boolean;
   /** Whether the member turned "High contrast" on (the device's own setting counts by itself). */
@@ -37,11 +35,9 @@ export interface Appearance {
  * @returns the stored choices, or the defaults
  */
 function readStoredAppearance(): Appearance {
-  const lookChoice = readStoredLookChoice();
   return {
     mode: readThemePreference(),
-    look: lookChoice.look,
-    isSeasonalOn: lookChoice.isSeasonalOn,
+    look: readStoredLookChoice().look,
     isLessMotionOn: readLessMotionChoice(),
     isHighContrastOn: readHighContrastChoice(),
   };
@@ -84,7 +80,7 @@ export function subscribeToAppearance(listener: () => void): () => void {
 export function replaceAppearance(next: Appearance): void {
   current = next;
   saveThemePreference(next.mode);
-  saveStoredLookChoice({ look: next.look, isSeasonalOn: next.isSeasonalOn });
+  saveStoredLookChoice({ look: next.look });
   saveLessMotionChoice(next.isLessMotionOn);
   saveHighContrastChoice(next.isHighContrastOn);
   listeners.forEach((listener) => listener());

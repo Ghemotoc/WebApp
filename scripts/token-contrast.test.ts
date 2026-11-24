@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { contrastRatio } from '../src/lib/contrast';
-import { seasonalLooks, yearRoundLooks } from '../src/lib/looks';
+import { yearRoundLooks } from '../src/lib/looks';
 import { contrastPairs } from '../src/styles/contrast-pairs';
 
 const tokensCss = readFileSync(
@@ -155,7 +155,7 @@ function failingPairs(tokens: Map<string, string>): string[] {
  * a line in tokens.css ("[data-look-swatch='sorbet'] {").
  */
 const lookTokens = new Map(
-  [...yearRoundLooks, ...seasonalLooks]
+  [...yearRoundLooks]
     .filter((look) => look !== 'lilac')
     .map((look) => [look, readTokenBlock(`[data-look-swatch='${look}']`)] as const),
 );

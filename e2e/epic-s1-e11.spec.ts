@@ -267,7 +267,7 @@ test.describe('epic S1-E11 journeys', () => {
   test('journey 4: a moderator and a content editor are refused on every Website tab', async ({
     browser,
   }) => {
-    const tabs = ['', '/notices', '/help', '/interface-text', '/emails', '/seasonal'];
+    const tabs = ['', '/notices', '/help', '/interface-text', '/emails'];
     for (const persona of ['moderator', 'editor'] as const) {
       const page = await openAs(browser, persona, '/staff/website');
       for (const tab of tabs) {

@@ -55,7 +55,6 @@ afterEach(() => {
   replaceAppearance({
     mode: 'device',
     look: 'lilac',
-    isSeasonalOn: false,
     isLessMotionOn: false,
     isHighContrastOn: false,
   });

@@ -1,15 +1,15 @@
 /**
- * AppearanceSettingsSection: Settings › Appearance, where a member picks their theme, light or
- * night mode, whether the seasonal looks switch on by themselves (bundle G2 THEMES; design/
- * boards Settings.dc.html, "Appearance"; handoff "Themes: members choose their look") and
- * whether the app stays still ("Less motion", bundle MOTION-1; Robert, 13 Nov 2026) and whether
+ * AppearanceSettingsSection: Settings › Appearance, where a member picks their theme and light or
+ * night mode (bundle G2 THEMES; design/boards Settings.dc.html, "Appearance"; handoff "Themes:
+ * members choose their look"; the seasonal switch was removed in the flat themes bundle), whether
+ * the app stays still ("Less motion", bundle MOTION-1; Robert, 13 Nov 2026) and whether
  * it is drawn in high contrast ("High contrast", bundle CONTRAST-1; Robert, 13 Nov 2026).
  *
  * Every choice shows at once and is saved on the account, so it follows the member to every
  * device they sign in on (set_my_appearance); this device remembers it too, so the next visit
  * draws it before anything loads (public/theme-init.js). A short line under the choices says
  * whether the last change was saved, or kept on this device only when the save failed.
- * Rules: six year-round themes, Lilac mist by default; the seasonal switch is off by default;
+ * Rules: six themes, Lilac mist by default;
  * night mode is the same with every theme (Robert, 7 Nov 2026; handoff "Design tokens and
  * themes"). "Less motion" is off by default; on a device that already asks for reduced motion
  * it shows as on and can't be switched off here, because the device's setting always counts
@@ -17,11 +17,10 @@
  * device asks for more contrast; it keeps the chosen theme in its deep accent on plain white
  * pages, black at night (WCAG 2.2, 1.4.6).
  * Who shows it: the Appearance group of Settings (SettingsGroupPanel). What it calls:
- * useAppearance, LookTiles, ModeChoice, LessMotionRow, HighContrastRow and the shared SwitchButton.
+ * useAppearance, LookTiles, ModeChoice, LessMotionRow and HighContrastRow.
  */
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { SwitchButton } from '@/features/settings/components/SwitchButton';
 
 import { useAppearanceTranslation } from '../registerAppearanceTranslations';
 import { useAppearance, type AppearanceSaveState } from '../hooks/useAppearance';
@@ -37,35 +36,6 @@ const saveStateKey: Partial<Record<AppearanceSaveState, string>> = {
   saved: 'saved',
   failed: 'saveFailed',
 };
-
-/**
- * The seasonal switch with its name and hint, as one row. The hint is tied to the switch
- * (aria-describedby), so a screen reader reads it with the switch, as on the High contrast and
- * Less motion rows (bundle CALM-1's break test found it missing).
- *
- * @returns the row
- */
-function SeasonalRow({ isOn, onToggle }: { isOn: boolean; onToggle: () => void }) {
-  const { t } = useAppearanceTranslation();
-  return (
-    <div className="flex min-h-[52px] items-center justify-between gap-4">
-      <span className="flex min-w-0 flex-col gap-1">
-        <span className="type-body font-semibold text-ink">{t('seasonalLabel')}</span>
-        <span id="appearance-seasonal-hint" className="type-meta text-ink-muted">
-          {t('seasonalHint')}
-        </span>
-      </span>
-      <SwitchButton
-        label={t('seasonalLabel')}
-        isOn={isOn}
-        stateWord={t(isOn ? 'on' : 'off')}
-        isDisabled={false}
-        onToggle={onToggle}
-        describedBy="appearance-seasonal-hint"
-      />
-    </div>
-  );
-}
 
 /**
  * Renders the section.
@@ -94,10 +64,6 @@ export function AppearanceSettingsSection() {
       </div>
       <LookTiles picked={appearance.look} onPick={(look) => void change({ look })} />
       <ModeChoice picked={appearance.mode} onPick={(mode) => void change({ mode })} />
-      <SeasonalRow
-        isOn={appearance.isSeasonalOn}
-        onToggle={() => void change({ isSeasonalOn: !appearance.isSeasonalOn })}
-      />
       <LessMotionRow
         isOn={appearance.isLessMotionOn}
         onToggle={() => void change({ isLessMotionOn: !appearance.isLessMotionOn })}

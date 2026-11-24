@@ -8,7 +8,8 @@
  * - a member who never chose keeps each device's own night or light choice at sign-in;
  * - the look a device remembers is drawn before the app's code loads (public/theme-init.js), so
  *   there is no flash of Lilac mist;
- * - with Seasonal themes on, the summer look shows in summer;
+ * - a choice saved while the seasonal switch existed keeps its theme, even in summer (the
+ *   seasonal themes were removed in the flat themes bundle);
  * - "Less motion" (bundle MOTION-1) stops transitions the moment it is switched on, follows the
  *   member to another device, is marked on the page before the app's code loads, and shows as on
  *   and fixed on a device that already asks for reduced motion;
@@ -38,7 +39,7 @@ const LESS_MOTION_KEY = 'less-motion';
 function resetAppearance(language: 'en' | 'ro' = 'en') {
   runSql(`
     update public.profiles
-      set look = 'lilac', colour_mode = 'device', seasonal_looks = false, less_motion = false,
+      set look = 'lilac', colour_mode = 'device', less_motion = false,
           high_contrast = false,
           appearance_saved_at = null,
           locale = '${language}'
@@ -117,14 +118,18 @@ test.describe('Settings › Appearance (G2 THEMES)', () => {
     await expect(page.locator('html')).toHaveAttribute('data-look', 'candy');
   });
 
-  test('with Seasonal themes on, summer shows the summer look', async ({ page }) => {
+  test('a choice saved with Seasonal themes on keeps its theme in summer', async ({ page }) => {
     await page.clock.install({ time: new Date(2027, 6, 1, 12, 0, 0) });
     await page.addInitScript(
-      (key) => localStorage.setItem(key, JSON.stringify({ look: 'sorbet', isSeasonalOn: true })),
-      LOOK_CHOICE_KEY,
+      ({ choiceKey, shownKey }) => {
+        // What a device remembers from before the removal: the switch on, summer on screen.
+        localStorage.setItem(choiceKey, JSON.stringify({ look: 'sorbet', isSeasonalOn: true }));
+        localStorage.setItem(shownKey, 'summer');
+      },
+      { choiceKey: LOOK_CHOICE_KEY, shownKey: SHOWN_LOOK_KEY },
     );
     await page.goto('/');
-    await expect(page.locator('html')).toHaveAttribute('data-look', 'summer');
+    await expect(page.locator('html')).toHaveAttribute('data-look', 'sorbet');
   });
 
   test('Less motion stops transitions at once and follows the member to another device', async ({
