@@ -1,14 +1,16 @@
 /**
  * CommentActions: the row under a comment: Reply, Delete and Report (story S1-E6-01; board 3.5).
  *
- * - Reply (top-level comments only: replies go one level deep) opens the reply box.
+ * - Reply (top-level comments only: replies go one level deep), an underlined text button, opens
+ *   the reply box.
  * - Delete, for the author and for the story's writer (criterion 3), deletes at once and offers
  *   "Comment deleted. Undo" for 8 seconds (design books item 14; it asked "Delete this comment?"
  *   before).
  * - Report is the shared ReportButton (S1-E10-01; CLAUDE.md rule 6, DSA art. 16), on everyone
- *   else's comments, pushed to the right as on the board.
- * - Downvote (S1-E6-04), private, on everyone else's live comments for a signed-in reader, with
- *   the board's line under the row once it is on.
+ *   else's comments, last in the row (board B05-ReaderEnd, BOOKS B05: in line, no longer pushed
+ *   to the right).
+ * - Downvote (S1-E6-04), private, an arrow-only button on everyone else's live comments for a
+ *   signed-in reader, with the board's line under the row once it is on.
  * The reactions (S1-E6-02, CommentReactions) come first in the row, through the `before` slot.
  * Who uses it: CommentItem. What it calls: useDeleteComment → delete_comment() (and
  * restore_comment() from the Undo note, useUndo); ReportButton.
@@ -103,11 +105,7 @@ function whatTheReaderMayDo(comment: ChapterComment, isSignedIn: boolean, canHav
 function ReplyButton({ name, onReply }: { name: string; onReply: () => void }) {
   const { t } = useCommentsTranslation();
   return (
-    <Button
-      variant="text"
-      className="px-3 font-semibold text-ink-heading no-underline"
-      onClick={onReply}
-    >
+    <Button variant="text" className="px-3" onClick={onReply}>
       {t('comment.reply')}
       <span className="sr-only"> {name}</span>
     </Button>
@@ -136,13 +134,11 @@ export function CommentActions({ address, comment, onReply, before }: CommentAct
         {mayDownvote && <DownvoteButton address={address} comment={comment} />}
         {comment.canDelete && <DeleteControl address={address} comment={comment} />}
         {mayReport && (
-          <span className="ml-auto">
-            <ReportButton
-              itemType="comment"
-              itemReference={comment.id}
-              itemLabel={t('comment.reportLabel', { name })}
-            />
-          </span>
+          <ReportButton
+            itemType="comment"
+            itemReference={comment.id}
+            itemLabel={t('comment.reportLabel', { name })}
+          />
         )}
       </div>
       {mayDownvote && comment.isDownvotedByMe && (

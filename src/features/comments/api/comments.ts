@@ -148,24 +148,35 @@ export function commentFrom(row: CommentRow): ChapterComment {
   };
 }
 
+/** The order a chapter's comments are listed in (BOOKS B05: the heading's choice). */
+export type CommentOrder = 'newest' | 'oldest';
+
+/** Which page to read: where it starts and in which order. */
+export interface CommentsPageRequest {
+  /** null for the first page; the last shown comment's createdAt for the next. */
+  pageAfter: string | null;
+  order: CommentOrder;
+}
+
 /**
  * Reads one page of a chapter's comments.
  *
  * @param client - the shared Supabase client
  * @param address - the chapter
- * @param olderThan - null for the first page; the last shown comment's createdAt for the next
+ * @param page - where the page starts and the order (newest or oldest first)
  * @returns the page, or null when the reader may not read the chapter
  * Errors: throws with Supabase's message when the database can't be reached.
  */
 export async function fetchCommentsPage(
   client: AppSupabaseClient,
   address: ChapterAddress,
-  olderThan: string | null,
+  page: CommentsPageRequest,
 ): Promise<CommentsPage | null> {
   const { data, error } = await client.rpc('chapter_comments', {
     story_slug: address.storySlug,
     chapter_code: address.chapterCode,
-    ...(olderThan === null ? {} : { older_than: olderThan }),
+    oldest_first: page.order === 'oldest',
+    ...(page.pageAfter === null ? {} : { page_after: page.pageAfter }),
   });
   if (error !== null) throw new Error(`Could not read the comments: ${error.message}`);
   if (data === null) return null;
