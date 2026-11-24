@@ -105,6 +105,7 @@
     "readNext": "Next: chapter {{number}}",
     "latestChapter": "That’s the latest chapter so far.",
     "endOfStory": "That’s the end of the story.",
+    "followWriterAtEnd": "Follow {{name}} to hear of the next story.",
     "nextChapterDay": "Next chapter {{day}}",
     "lastChapterDay": "Last chapter {{day}}",
     "chapterDay": {

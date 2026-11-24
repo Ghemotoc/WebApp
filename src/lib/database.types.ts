@@ -15016,6 +15016,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      instant_email_send_time: { Args: { made_at: string; person_id: string }; Returns: string };
       interface_language_codes: { Args: Record<PropertyKey, never>; Returns: string[] };
       interface_text_live: {
         Args: { wanted_locale: string };
@@ -18917,6 +18918,7 @@ export type Database = {
           writer_count: number;
         }[];
       };
+      writing_streak: { Args: { today: string; writer_id: string }; Returns: number };
       written_language_for: { Args: { code: string }; Returns: string };
       youngest_age: {
         Args: { birth_month: number; birth_year: number; on_date: string };

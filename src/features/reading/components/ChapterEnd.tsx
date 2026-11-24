@@ -10,13 +10,16 @@
  * After the latest chapter: "That's the latest chapter so far." with a way back to the story, and
  * More by and Stories like this, fetched when the end comes near (S1-E15-06). CALM-6: after the
  * chapter the writer marked as the last, "That's the end of the story." instead; while a chapter
- * is scheduled, "Next chapter Thursday" (or "Last chapter Thursday") under it.
- * Who uses it: ChapterReaderPage. What it calls: LikeButton, ShareButtonWhenNear, ReportButton,
+ * is scheduled, "Next chapter Thursday" (or "Last chapter Thursday") under it. Design books S5:
+ * at the end of a finished story a reader who isn't its writer is offered to follow the writer,
+ * so they hear of the next story (FollowButton, S1-E6-05).
+ * Who uses it: ChapterReaderPage. What it calls: LikeButton, FollowButton, ShareButtonWhenNear, ReportButton,
  * ChapterClassPointsWhenNear and StorySuggestionsWhenNear.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { FollowButton } from '@/features/people/components/FollowButton';
 import { ChapterClassPointsWhenNear } from '@/features/class-points/components/ChapterClassPointsWhenNear';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { StorySuggestionsWhenNear } from '@/features/suggestions/components/StorySuggestionsWhenNear';
@@ -87,6 +90,19 @@ function NoNextYet({ chapter }: { chapter: ReaderChapter }) {
         {isEnd ? t('reader.endOfStory') : t('reader.latestChapter')}
       </p>
       {nextLine !== null && <p className="m-0 type-body text-ink-muted">{nextLine}</p>}
+      {/* Design books S5: the end of a story is the moment to follow its writer; never the
+          writer's own story. */}
+      {isEnd && !chapter.isOwner && (
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <p className="m-0 type-body text-ink-muted">
+            {t('reader.followWriterAtEnd', { name: chapter.story.writer.displayName })}
+          </p>
+          <FollowButton
+            target={{ kind: 'writer', handle: chapter.story.writer.handle }}
+            targetLabel={chapter.story.writer.displayName}
+          />
+        </div>
+      )}
     </div>
   );
 }

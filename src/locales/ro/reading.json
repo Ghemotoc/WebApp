@@ -105,6 +105,7 @@
     "readNext": "Următorul: capitolul {{number}}",
     "latestChapter": "Acesta e cel mai nou capitol de până acum.",
     "endOfStory": "Acesta e sfârșitul poveștii.",
+    "followWriterAtEnd": "Află de povestea următoare: urmărește {{name}}.",
     "nextChapterDay": "Următorul capitol {{day}}",
     "lastChapterDay": "Ultimul capitol {{day}}",
     "chapterDay": {

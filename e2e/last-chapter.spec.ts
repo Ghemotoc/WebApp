@@ -7,6 +7,8 @@
  * - the Publish panel's "This is the last chapter" switch publishes the chapter as the last;
  * - the reader then says "Chapter 1 of 1" and "That's the end of the story.", and the story page
  *   says Completed;
+ * - design books S5: at the end of the story another reader is offered to follow the writer, and
+ *   the button follows them; the writer never sees the offer on their own story;
  * - the panel with the switch, and the reader, pass axe at 390 and 1440 px.
  * Test data: one chapter made in SQL on the seed story "Stația meteo"; deleted after, and the
  * story set back to Ongoing.
@@ -21,6 +23,7 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 const storyId = '00000000-0000-4000-9000-000000000001';
 const slug = 'statia-meteo-seed01';
 const writerId = '00000000-0000-4000-8000-000000000001';
+const readerId = '00000000-0000-4000-8000-000000000007';
 
 /** Removes this spec's chapter and jobs, and puts the story and the writer back as they were. */
 function cleanUp() {
@@ -28,7 +31,22 @@ function cleanUp() {
   runSql(`delete from public.jobs where kind = 'chapter_published';`);
   runSql(`update public.stories set completion_status = 'ongoing', first_published_at = null,
     last_chapter_published_at = null where id = '${storyId}';`);
-  runSql(`update public.profiles set locale = 'ro' where id = '${writerId}';`);
+  runSql(`update public.profiles set locale = 'ro' where id in ('${writerId}', '${readerId}');`);
+  runSql(
+    `delete from public.follows_users where user_id = '${readerId}' and followed_user_id = '${writerId}';`,
+  );
+}
+
+/** Opens the last chapter as another reader (the teacher persona, an adult), in English. */
+async function openAsReader(browser: Browser): Promise<Page> {
+  runSql(`update public.profiles set locale = 'en' where id = '${readerId}';`);
+  const context = await browser.newContext();
+  await useSessionInBrowser(context, (await signInPersona('teacher')).session);
+  await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
+  const page = await context.newPage();
+  await page.goto(`/s/${slug}/lastch01`);
+  await expect(page.getByText('That’s the end of the story.')).toBeVisible();
+  return page;
 }
 
 /** Opens the editor on the chapter as adult_writer, in English. */
@@ -91,7 +109,24 @@ test.describe('the last chapter (CALM-6)', () => {
     await page.goto(`/s/${slug}/lastch01`);
     await expect(page.locator('header').getByText('Chapter 1 of 1', { exact: true })).toBeVisible();
     await expect(page.getByText('That’s the end of the story.')).toBeVisible();
+    await expect(page.getByText(/to hear of the next story/)).toHaveCount(0);
     await expectAccessibleAt(page, [390, 1440]);
+
+    // Step 3b (design books S5): another reader is offered to follow the writer at the end.
+    const reader = await openAsReader(browser);
+    await expect(reader.getByText(/to hear of the next story\./)).toBeVisible();
+    await expectAccessibleAt(reader, [390, 1440]);
+    const followWriter = reader
+      .getByText(/to hear of the next story/)
+      .locator('..')
+      .getByRole('button', { name: /^Follow/ });
+    await followWriter.click();
+    await expect(followWriter).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      runSql(
+        `select count(*) from public.follows_users where user_id = '${readerId}' and followed_user_id = '${writerId}'`,
+      ),
+    ).toBe('1');
 
     // Step 4: the story page says Completed.
     await page.goto(`/s/${slug}`);
