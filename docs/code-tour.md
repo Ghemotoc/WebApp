@@ -3057,3 +3057,7 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 - **Story Atlas section:** `AtlasFrame` keeps the open section (`atlas_section`, `hooks/useLastAtlasSection.ts`). Links into a story's Atlas from outside it use `atlasEntryAddress()` (`/plan/s/<slug>?resume`), and `StoryAtlasPage` moves `?resume` to that section; the menu's "At a glance" has no `?resume`, so it still opens At a glance.
 - **Caret in Write:** `useRememberedCaret` keeps the caret's chapter and position a second after it stops (and at once on leaving the text), and puts it back, with the focus, when the same chapter opens again.
 - Reading settings already follow the account (`reading_settings`, S1-E4-02). Visitors read only the teaser, which has no settings, so there is nothing to keep for them there.
+
+## Hints that retire themselves (design books item 18)
+
+- The Atlas top bar's two adds, "New character" and "Add a relationship", show their words on a writer's first three visits, then fold to 44 px icon buttons whose words stay their accessible names. `hooks/useAtlasHintsFolded.ts` counts a visit once per browser session (sessionStorage) in the account (`remembered_places`, kind `atlas_hint`, see item 17), and decides once per visit from the count before it, so the buttons never change mid-visit.

@@ -17,9 +17,10 @@ import { NewCharacterButton } from './NewCharacterButton';
  * Renders the button for one story.
  *
  * @param props.slug - the story open now
+ * @param props.isFolded - true shows the icon only (design books item 18)
  * @returns NewCharacterButton wired to this story
  */
-export function AtlasNewCharacter({ slug }: { slug: string }) {
+export function AtlasNewCharacter({ slug, isFolded }: { slug: string; isFolded: boolean }) {
   const { t } = useAtlasTranslation();
   const navigate = useNavigate();
   const { create } = useStoryCast(slug);
@@ -30,5 +31,5 @@ export function AtlasNewCharacter({ slug }: { slug: string }) {
     await navigate(`/plan/s/${slug}/characters/${characterId}`);
   }
 
-  return <NewCharacterButton onCreate={createAndOpen} />;
+  return <NewCharacterButton onCreate={createAndOpen} isFolded={isFolded} />;
 }

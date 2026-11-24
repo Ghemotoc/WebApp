@@ -11,6 +11,8 @@
  * relationship". A page whose own main button already does one of them leaves it out here, so
  * the same button never shows twice (Characters drops New character, Relationships drops Add a
  * relationship).
+ * The two adds show their words for the writer's first three visits, then fold to their icons
+ * (design books item 18, hooks/useAtlasHintsFolded.ts); the words stay their accessible names.
  * The sections menu is not part of the bar: AtlasFrame puts it at the side on a desktop and under
  * the bar on tablets and phones.
  * Who uses it: AtlasFrame. What it calls: StorySwitcher, AtlasSearchBox and AtlasNewCharacter.
@@ -20,6 +22,8 @@ import { Link } from 'react-router';
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 
+import { cn } from '@/lib/utils';
+import { useAtlasHintsFolded } from '../hooks/useAtlasHintsFolded';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasNewCharacter } from './AtlasNewCharacter';
@@ -91,19 +95,22 @@ function AtlasWhereYouAre({ slug, writeAddress }: { slug: string; writeAddress: 
 /** Search, then New character and Add a relationship unless the page already has that button. */
 function AtlasTopActions({ slug, section }: { slug: string; section: AtlasSection | null }) {
   const { t } = useAtlasTranslation();
+  // Design books item 18: the words fold away after the first three visits.
+  const isFolded = useAtlasHintsFolded();
   return (
     <div className="flex min-w-0 flex-wrap items-start gap-2">
       {/* The search page has its own wide bar, so the small box stays out there. */}
       {section !== null && <AtlasSearchBox slug={slug} />}
-      {section !== 'characters' && <AtlasNewCharacter slug={slug} />}
+      {section !== 'characters' && <AtlasNewCharacter slug={slug} isFolded={isFolded} />}
       {section !== 'connections' && (
         // ?add=1 opens the Relationships page with its add form already open.
         <Link
           to={`/plan/s/${slug}/connections?add=1`}
-          className={buttonClassName({ variant: 'secondary' })}
+          className={cn(buttonClassName({ variant: 'secondary' }), isFolded && 'w-11 px-0')}
         >
           <ActionIcon name="link" />
-          {t('connections.add.open')}
+          {/* Folded, the words stay as the link's name for screen readers. */}
+          <span className={isFolded ? 'sr-only' : undefined}>{t('connections.add.open')}</span>
         </Link>
       )}
     </div>
