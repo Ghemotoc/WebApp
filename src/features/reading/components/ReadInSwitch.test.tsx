@@ -3,7 +3,7 @@
  * chapter and remembers the choice (bundle TRANSLATE-1b; Robert, 16 Nov 2026, 12:23 UTC).
  */
 import { fireEvent, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { renderWithProviders } from '@/test/renderWithProviders';
@@ -35,11 +35,23 @@ const editions: StoryEdition[] = [
   },
 ];
 
-/** Draws the switch in English. */
+/** Shows where a link led and the state it carried, so a test can read both. */
+function WhereWeLanded() {
+  const location = useLocation();
+  return <output>{`${location.pathname} ${JSON.stringify(location.state)}`}</output>;
+}
+
+/** Draws the switch in English, with every other address showing where a link led. */
 function renderSwitch(list: StoryEdition[], chapterNumber: number | null) {
   return renderWithProviders(
-    <MemoryRouter>
-      <ReadInSwitch editions={list} chapterNumber={chapterNumber} />
+    <MemoryRouter initialEntries={['/s/the-evening-star/enchapte']}>
+      <Routes>
+        <Route
+          path="/s/the-evening-star/enchapte"
+          element={<ReadInSwitch editions={list} chapterNumber={chapterNumber} />}
+        />
+        <Route path="*" element={<WhereWeLanded />} />
+      </Routes>
     </MemoryRouter>,
     'en',
   );
@@ -71,16 +83,37 @@ describe('ReadInSwitch', () => {
     const current = screen.getByRole('link', { name: /English/ });
     expect(current).toHaveAttribute('aria-current', 'true');
     expect(current).toHaveTextContent('Translated by Ana Vlad');
-    expect(screen.getByText('Original')).toBeInTheDocument();
-    expect(screen.getByText('You stay on chapter 3.')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /română/i })).toHaveTextContent('Română · Original');
   });
 
-  it('leads to the story page, with no chapter line, outside the reader', () => {
+  it('in the reader, opens the same chapter and carries the paragraph on screen (BOOKS B07)', () => {
+    // The chapter's third paragraph is the first one below the bars.
+    const text = document.createElement('div');
+    text.className = 'tmc-chapter-text';
+    [-200, 60, 400].forEach((bottom, index) => {
+      const paragraph = document.createElement('p');
+      paragraph.setAttribute('data-block', String(index + 1));
+      paragraph.getBoundingClientRect = () => ({ bottom }) as DOMRect;
+      text.append(paragraph);
+    });
+    document.body.append(text);
+    renderSwitch(editions, 3);
+    fireEvent.click(screen.getByRole('button', { name: 'Read in: English' }));
+    fireEvent.click(screen.getByRole('link', { name: /română/i }));
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '/s/luceafarul/rochapte {"languageSwitch":{"block":3}}',
+    );
+    text.remove();
+  });
+
+  it('leads to the story page, carrying no paragraph, outside the reader', () => {
     const onStoryPage = editions.map((edition) => ({ ...edition, chapterCode: null }));
     renderSwitch(onStoryPage, null);
     fireEvent.click(screen.getByRole('button', { name: 'Read in: English' }));
     expect(screen.getByRole('link', { name: /română/i })).toHaveAttribute('href', '/s/luceafarul');
-    expect(screen.queryByText(/You stay on chapter/)).toBeNull();
+    // The story page carries no paragraph: the link opens as it is.
+    fireEvent.click(screen.getByRole('link', { name: /română/i }));
+    expect(screen.getByRole('status')).toHaveTextContent('/s/luceafarul null');
   });
 
   it('closes on Escape and puts the focus back on the pill', () => {

@@ -1,7 +1,7 @@
 {
   "readIn": "Read in: {{language}}",
   "readInList": "Read in",
-  "staysOnChapter": "You stay on chapter {{number}}.",
+  "staysOnChapter": "You stay on chapter {{number}}. Your choice is remembered for this story.",
   "original": "Original",
   "translatedBy": "Translated by {{name}}",
   "shownForPage": "Shown in {{language}} because this page is in {{language}}. Also in {{others}}. The choice is remembered for this story.",
