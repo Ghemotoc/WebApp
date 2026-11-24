@@ -173,6 +173,33 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
       }
       window.addEventListener('scroll', knockToTop);
     }, `/s/${slug}/langro02`);
+    // TEMPORARY (CI-4 diagnosis): record the page's scroll position while it changes language.
+    await page.evaluate(() => {
+      const record: (string | number)[][] = [];
+      Object.assign(window, { scrollRecord: record });
+      const startedAt = performance.now();
+      const note = (why: string) => {
+        const eight = document.querySelector('[data-block="8"]');
+        record.push([
+          why,
+          Math.round(performance.now() - startedAt),
+          window.location.pathname,
+          Math.round(window.scrollY),
+          document.documentElement.scrollHeight,
+          window.innerHeight,
+          Math.round(eight?.getBoundingClientRect().top ?? -1),
+        ]);
+      };
+      window.addEventListener('scroll', () => note('scroll'));
+      for (const name of ['pointerdown', 'keydown', 'wheel', 'touchstart']) {
+        window.addEventListener(name, () => note(name), true);
+      }
+      const everyFrame = () => {
+        note('frame');
+        if (performance.now() - startedAt < 6000) requestAnimationFrame(everyFrame);
+      };
+      requestAnimationFrame(everyFrame);
+    });
     await list.getByRole('link', { name: /Română/ }).click();
     await expect(page).toHaveURL(`/s/${slug}/langro02`);
     await expect(page.getByRole('heading', { level: 1, name: 'Capitolul 2' })).toBeVisible();
@@ -181,6 +208,16 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
       page.getByText('You stay on chapter 2. Your choice is remembered for this story.'),
     ).toBeAttached();
     // The same paragraph, in Romanian, is back at the top of the screen.
+    await page.waitForTimeout(4500);
+    const scrollRecord = await page.evaluate(
+      () => (window as unknown as { scrollRecord: (string | number)[][] }).scrollRecord,
+    );
+    let previous = '';
+    for (const row of scrollRecord) {
+      const key = row.slice(2).join(',');
+      if (row[0] !== 'frame' || key !== previous) console.log('CI4 ' + row.join(','));
+      previous = key;
+    }
     await expect(page.locator('[data-block="8"]')).toBeInViewport();
     await expect(page.locator('[data-block="2"]')).not.toBeInViewport();
   });
