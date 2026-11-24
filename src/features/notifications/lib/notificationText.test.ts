@@ -62,6 +62,14 @@ describe('notificationText', () => {
     expect(text.actionLabel).toBe('Read now');
   });
 
+  it('the end of a followed story says the writer finished it and opens the story (BOOKS B06)', () => {
+    const completed: AppNotification = { ...newChapter, kind: 'story_completed' };
+    const text = notificationText(englishT(), completed, null);
+    expect(`${text.who} ${text.what}`).toBe('Ink Wolf finished The Salt Mine Choir.');
+    expect(text.href).toBe('/s/salt-mine-choir');
+    expect(text.actionLabel).toBe('Open the story');
+  });
+
   it("a comment on paragraph 4 opens the chapter at that paragraph's thread (IDEAS-1e)", () => {
     const comment: AppNotification = {
       ...newChapter,

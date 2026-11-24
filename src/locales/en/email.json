@@ -56,6 +56,8 @@
     "where": "chapter {{position}} of “{{story}}”",
     "newChapter": "{{who}} published {{where}}.",
     "newChapterMany": "{{who}} published {{where}}.",
+    "storyCompleted": "{{who}} finished “{{story}}”.",
+    "storyCompletedMany": "{{who}} finished “{{story}}”.",
     "commentOnChapter": "{{who}} commented on {{where}}.",
     "commentOnChapterMany": "{{who}} commented on {{where}}.",
     "commentReply": "{{who}} replied to your comment on {{where}}.",
