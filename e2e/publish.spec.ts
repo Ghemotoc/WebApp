@@ -139,14 +139,19 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     );
 
     await visitor.goto(`/s/${slug}`);
-    await expect(visitor.getByText('Caietele bunicii', { exact: true })).toBeVisible();
+    // The story page names each chapter with its number ("1. Caietele bunicii", board B01).
+    await expect(
+      visitor.getByRole('link', { name: '1. Caietele bunicii', exact: true }),
+    ).toBeVisible();
 
     await publishPanel(page).getByRole('button', { name: 'Update chapter' }).click();
     await expect
       .poll(() => runSql(`select published_title from public.chapters where code = 'publish1'`))
       .toBe('Caietele bunicii (2)');
     await visitor.reload();
-    await expect(visitor.getByText('Caietele bunicii (2)', { exact: true })).toBeVisible();
+    await expect(
+      visitor.getByRole('link', { name: '1. Caietele bunicii (2)', exact: true }),
+    ).toBeVisible();
     await expect(visitor.getByText(/Modificat|Edited/)).toBeVisible();
   });
 
