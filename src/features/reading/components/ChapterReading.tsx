@@ -17,10 +17,13 @@
  * Who uses it: ChapterReaderPage.
  * What it calls: useReadingProgress, useRecordRead → record_chapter_read(), useReadingMinutes,
  * useSavedPlace, useReadingLook, useReaderTools, useStoryPage → get_story_page() (the chapter
- * titles for the arrows and the facts in About this story), useIsWideReader.
+ * titles for the arrows and the facts in About this story), useIsWideReader. After a change of
+ * language ("Read in", BOOKS B07) LanguageSwitchNote sits above the paper and brings back the
+ * paragraph the reader was on.
  */
 import { lazy, Suspense, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { useReadingMinutes } from '@/features/reading-habit/hooks/useReadingMinutes';
@@ -38,6 +41,7 @@ import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useRecordRead } from '../hooks/useRecordRead';
 import { useSavedPlace } from '../hooks/useSavedPlace';
 import { useStoryPage } from '../hooks/useStoryPage';
+import { languageSwitchFrom } from '../lib/languageSwitchPlace';
 import { ParagraphCommentsContext } from '../lib/paragraphCommentsContext';
 import { minutesLeft } from '../lib/readingTimeLeft';
 import { toSharedChapter } from '../lib/toSharedChapter';
@@ -57,6 +61,9 @@ const ReaderToolPlace = lazy(async () => {
   const module = await import('./ReaderToolPlace');
   return { default: module.ReaderToolPlace };
 });
+
+/** "You stay on chapter n.", fetched only after a change of language (BOOKS B07). */
+const LanguageSwitchNote = lazy(() => import('./LanguageSwitchNote'));
 
 /** Contents' place, fetched when Contents is first pressed (the same budget). */
 const ChapterContentsPlace = lazy(async () => {
@@ -231,6 +238,24 @@ function ReaderRow(props: { side: ReactNode; children: ReactNode }) {
 }
 
 /**
+ * The note after a change of language, above the paper, as wide as the paper (BOOKS B07, user
+ * story 2.7): only when "Read in" opened this page and the chapter's text is on screen.
+ *
+ * @returns the note, or nothing
+ */
+function AfterLanguageSwitch(props: { chapter: ReaderChapter; look: ReadingLook }) {
+  const { chapter, look } = props;
+  const change = languageSwitchFrom(useLocation().state);
+  if (change === null || chapter.body === null) return null;
+  const style = { maxWidth: `calc(${look.columnWidth}px + 2 * var(--reading-page-pad))` };
+  return (
+    <Suspense fallback={null}>
+      <LanguageSwitchNote chapterNumber={chapter.number} block={change.block} style={style} />
+    </Suspense>
+  );
+}
+
+/**
  * Reads the chapter's progress and keeps the reader's place, minutes and read count.
  *
  * @returns the text's element, the progress and the saved places
@@ -374,6 +399,7 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
       />
       <ParagraphCommentsContext.Provider value={tools.paragraphComments}>
         <ReaderRow side={side}>
+          <AfterLanguageSwitch chapter={chapter} look={look} />
           <PaperWithText chapter={chapter} spot={props.spot} look={look} track={screen.track} />
           {hasText && <UnderThePaper chapter={chapter} story={story} hasPainted={hasPainted} />}
           {screen.hasFactsBelow && (
