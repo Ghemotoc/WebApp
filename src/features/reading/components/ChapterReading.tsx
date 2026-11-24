@@ -354,10 +354,9 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
       <SideAdvert chapter={chapter} />
     </ReaderSideColumn>
   ) : null;
-  // Aa only for a signed-in reader: the settings are saved to the account (S1-E4-02).
-  const aa = look.isSignedIn
-    ? { isOpen: tools.isSettingsOpen, onToggle: tools.toggleSettings }
-    : null;
+  // Aa for everyone: a reader's settings go to the account, a visitor's stay in this browser
+  // (BOOKS B04, user story 2.4).
+  const aa = { isOpen: tools.isSettingsOpen, onToggle: tools.toggleSettings };
   // Contents only when there is more than one chapter to list (user story 2.2).
   const contents =
     chapter.total > 1 ? { isOpen: tools.isContentsOpen, onToggle: tools.toggleContents } : null;
