@@ -75,10 +75,7 @@ function PictureLabel({ story }: { story: StoryCoverArtProps['story'] }) {
     <span className="cover-label" aria-hidden="true" style={fit}>
       <span className="cover-words-title">{story.title}</span>
       {story.writer !== undefined && (
-        <>
-          <span className="cover-label-rule" />
-          <span className="cover-words-by">{story.writer.displayName}</span>
-        </>
+        <span className="cover-words-by">{story.writer.displayName}</span>
       )}
     </span>
   );

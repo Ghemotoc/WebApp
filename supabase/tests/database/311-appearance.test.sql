@@ -1,10 +1,11 @@
 -- Database tests for the member's look on the account (bundle G2 THEMES; handoff "Themes:
 -- members choose their look").
--- What it proves: every account starts on Lilac mist, Match my device and seasonal themes off; a
+-- What it proves: every account starts on Lilac mist and Match my device; a
 -- signed-in member reads and changes only their own look (allowed and denied, CLAUDE.md rule 1);
 -- unknown values and signed-out visitors are refused; the API still can't update profiles
--- directly; the seasonal look dates are a public setting; "Less motion" is off until a member
--- turns it on, is saved with the look and is kept by a call that leaves it out (bundle MOTION-1);
+-- directly; the seasonal themes are gone (no switch, no setting; flat themes bundle);
+-- "Less motion" is off until a member turns it on, is saved with the look and is kept by a call
+-- that leaves it out (bundle MOTION-1);
 -- "High contrast" follows the same rules (bundle CONTRAST-1).
 -- How a persona is "signed in": the authenticated role plus the JWT claims, as in
 -- 014-profile-locale.test.sql. Persona IDs are listed in supabase/README.md.
@@ -12,12 +13,17 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(23);
+select plan(24);
 
 -- Defaults: what every member sees today.
 select is_empty(
-  $$ select id from public.profiles where look <> 'lilac' or colour_mode <> 'device' or seasonal_looks $$,
-  'every account starts on Lilac mist, Match my device, with seasonal themes off'
+  $$ select id from public.profiles where look <> 'lilac' or colour_mode <> 'device' $$,
+  'every account starts on Lilac mist and Match my device'
+);
+
+select hasnt_column(
+  'public', 'profiles', 'seasonal_looks',
+  'the seasonal themes switch is gone from the profile'
 );
 
 select is_empty(
@@ -46,14 +52,14 @@ select is(
 );
 
 select is(
-  public.set_my_appearance('seaglass', 'night', true),
-  '{"look": "seaglass", "colour_mode": "night", "seasonal_looks": true, "less_motion": false, "high_contrast": false}'::jsonb,
-  'adult_writer saves Sea glass, Night and seasonal themes on'
+  public.set_my_appearance('seaglass', 'night'),
+  '{"look": "seaglass", "colour_mode": "night", "less_motion": false, "high_contrast": false}'::jsonb,
+  'adult_writer saves Sea glass and Night'
 );
 
 select results_eq(
-  $$ select look, colour_mode, seasonal_looks from public.profiles where id = '00000000-0000-4000-8000-000000000001' $$,
-  $$ values ('seaglass'::text, 'night'::text, true) $$,
+  $$ select look, colour_mode from public.profiles where id = '00000000-0000-4000-8000-000000000001' $$,
+  $$ values ('seaglass'::text, 'night'::text) $$,
   'the saved look is what adult_writer reads back on their next device'
 );
 
@@ -64,25 +70,25 @@ select isnt(
 );
 
 select is(
-  public.set_my_appearance('seaglass', 'night', true, true) ->> 'less_motion',
+  public.set_my_appearance('seaglass', 'night', true) ->> 'less_motion',
   'true',
   'adult_writer turns Less motion on and it is saved on the account'
 );
 
 select is(
-  public.set_my_appearance('lilac', 'light', false) ->> 'less_motion',
+  public.set_my_appearance('lilac', 'light') ->> 'less_motion',
   'true',
   'a save that leaves Less motion out (a page loaded before the switch existed) keeps it on'
 );
 
 select is(
-  public.set_my_appearance('lilac', 'light', false, false) ->> 'less_motion',
+  public.set_my_appearance('lilac', 'light', false) ->> 'less_motion',
   'false',
   'adult_writer turns Less motion off again'
 );
 
 select is(
-  public.set_my_appearance('lilac', 'light', false, false, true) ->> 'high_contrast',
+  public.set_my_appearance('lilac', 'light', false, true) ->> 'high_contrast',
   'true',
   'adult_writer turns High contrast on and it is saved on the account'
 );
@@ -94,13 +100,13 @@ select is(
 );
 
 select is(
-  public.set_my_appearance('lilac', 'light', false, true) ->> 'high_contrast',
+  public.set_my_appearance('lilac', 'light', true) ->> 'high_contrast',
   'true',
   'a save that leaves High contrast out (a page loaded before the switch existed) keeps it on'
 );
 
 select is(
-  public.set_my_appearance('lilac', 'light', false, false, false) ->> 'high_contrast',
+  public.set_my_appearance('lilac', 'light', false, false) ->> 'high_contrast',
   'false',
   'adult_writer turns High contrast off again'
 );
@@ -111,21 +117,21 @@ select is_empty(
 );
 
 select throws_ok(
-  $$ select public.set_my_appearance('neon', 'light', false) $$,
+  $$ select public.set_my_appearance('neon', 'light') $$,
   '22023',
   null,
   'a theme that is not one of the six year-round themes is refused'
 );
 
 select throws_ok(
-  $$ select public.set_my_appearance('winter', 'light', false) $$,
+  $$ select public.set_my_appearance('winter', 'light') $$,
   '22023',
   null,
-  'a seasonal look can''t be picked as the year-round theme'
+  'a retired seasonal look can''t be picked as the theme'
 );
 
 select throws_ok(
-  $$ select public.set_my_appearance('lilac', 'dusk', false) $$,
+  $$ select public.set_my_appearance('lilac', 'dusk') $$,
   '22023',
   null,
   'a mode that is not light, night or device is refused'
@@ -142,7 +148,7 @@ select throws_ok(
 reset role;
 set local role anon;
 select throws_ok(
-  $$ select public.set_my_appearance('candy', 'light', false) $$,
+  $$ select public.set_my_appearance('candy', 'light') $$,
   '42501',
   null,
   'a signed-out visitor cannot save a look to any account'
@@ -156,11 +162,10 @@ select is(
   'teen_17''s look is unchanged by other people saving theirs'
 );
 
--- The seasonal windows are public, so the page can pick the look before anyone signs in.
-select is(
-  (select jsonb_array_length(value) from public.settings where key = 'seasonal_look_dates' and is_public),
-  4,
-  'the four seasonal look windows are a public setting'
+-- The seasonal weeks went with the seasonal themes.
+select is_empty(
+  $$ select key from public.settings where key = 'seasonal_look_dates' $$,
+  'the seasonal weeks are no longer a setting'
 );
 
 select * from finish();

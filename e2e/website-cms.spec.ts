@@ -152,6 +152,17 @@ test.describe('Website CMS (S1-E11-06, S1-E11-10, S1-E11-12, S1-E5-08)', () => {
     await expect(page.getByRole('button', { name: 'Publish' })).toHaveCount(0);
   });
 
+  test('the old Seasonal looks address opens the Home page tab', async ({ browser }) => {
+    // The Seasonal looks tab went with the seasonal themes (flat themes bundle, part 3).
+    const page = await openAs(browser, 'admin', '/staff/website/seasonal');
+    await expect(page).toHaveURL(/\/staff\/website$/);
+    await expect(page.getByRole('link', { name: 'Home page' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await expect(page.getByRole('link', { name: /Seasonal/ })).toHaveCount(0);
+  });
+
   for (const view of everyView(['/', '/help', '/help/getting-started'])) {
     test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,

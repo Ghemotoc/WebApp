@@ -9,18 +9,18 @@
  * S1-E11-19) and Landing pages
  * (/staff/website/landing-pages, S1-E11-14), Search and sharing (/staff/website/search, S1-E11-39:
  * what search engines and share cards show for every public page) and Branding (/staff/website/branding, BRAND-1a: the
- * logo and emblem for each theme) and Seasonal looks (/staff/website/seasonal, G12a: the days
- * each seasonal look shows) and Genre and tag pages (/staff/website/list-pages, G12b: the band
+ * logo and emblem for each theme) and Genre and tag pages (/staff/website/list-pages, G12b: the band
  * colour of each genre and tag page). The website tabs have the language picker at the side
  * (PagePlacePicker, LOCALISE-1): one page per entry, edited in the picked language. Plain
  * components (staff screens). The seasonal doodle schedule (S1-E11-11) was retired in bundle
- * NO-DOODLES (Robert, 9 Nov 2026); Seasonal looks replaces it. Staff without
+ * NO-DOODLES (Robert, 9 Nov 2026), and the Seasonal looks tab (G12a) went with the seasonal themes
+ * in the flat themes bundle (Robert's brand answers, 23 Nov 2026). Staff without
  * the website area see why; the database refuses their changes anyway (decided 17 Oct 2026, 19:19).
  * Who shows it: the router, inside StaffLayout. What it calls: the editor for each tab.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, Navigate, useParams } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -42,7 +42,6 @@ import { ListBackgroundsTab } from './ListBackgroundsTab';
 import { NoticeEditor } from './NoticeEditor';
 import { PagePlacePicker } from './PagePlacePicker';
 import { SearchSharingTab } from './SearchSharingTab';
-import { SeasonalLooksTab } from './SeasonalLooksTab';
 
 /** The tabs: their address part and label key. */
 const tabs = [
@@ -58,8 +57,6 @@ const tabs = [
   { area: 'search', href: '/staff/website/search', labelKey: 'tabs.search' },
   // BRAND-1a: the logo and emblem for the light and night themes; the emblem is the tab icon.
   { area: 'branding', href: '/staff/website/branding', labelKey: 'tabs.branding' },
-  // G12a: which days each seasonal look shows, for members who turned seasonal looks on.
-  { area: 'seasonal', href: '/staff/website/seasonal', labelKey: 'tabs.seasonal' },
   // G12b: the band colour at the top of each genre and tag page, everywhere or per market.
   { area: 'list-pages', href: '/staff/website/list-pages', labelKey: 'tabs.listPages' },
 ] as const;
@@ -111,8 +108,6 @@ function WebsiteEditors({ area }: { area: string | undefined }) {
   if (area === 'search') return <SearchSharingTab />;
   // The logo and emblem are the same in every market and language (BRAND-1a).
   if (area === 'branding') return <BrandingTab />;
-  // The seasonal looks show on the same days in every market (bundle G12a).
-  if (area === 'seasonal') return <SeasonalLooksTab />;
   // Genre and tag pages have their own market choice, with "Everywhere" (bundle G12b).
   if (area === 'list-pages') return <ListBackgroundsTab />;
   if (area === 'emails') {
@@ -180,6 +175,9 @@ export function WebsiteAdminPage() {
   const mayEdit = access.areas.some(
     (allowed) => allowed.area === 'website_cms' && allowed.access === 'act',
   );
+  // An address for a tab that no longer exists (for example the Seasonal looks tab, removed in the
+  // flat themes bundle) opens the Home page tab instead of an empty page.
+  if (!tabs.some((tab) => tab.area === area)) return <Navigate to="/staff/website" replace />;
   return (
     <PageContainer className="flex flex-col gap-6 pt-12 pb-10">
       <title>{t('documentTitle')}</title>

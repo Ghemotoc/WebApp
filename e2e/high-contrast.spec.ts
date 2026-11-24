@@ -38,7 +38,7 @@ const THEME_KEY = 'theme-preference';
 function resetAppearance(language: 'en' | 'ro' = 'en') {
   runSql(`
     update public.profiles
-      set look = 'lilac', colour_mode = 'device', seasonal_looks = false, less_motion = false,
+      set look = 'lilac', colour_mode = 'device', less_motion = false,
           high_contrast = false, appearance_saved_at = null, locale = '${language}'
       where handle = 'adult_writer';
   `);
@@ -217,10 +217,7 @@ test.describe('Settings › Appearance: High contrast (CONTRAST-1)', () => {
               localStorage.setItem(contrastKey, 'on');
               localStorage.setItem(themeKey, themeValue);
               localStorage.setItem(lookKey, 'sorbet');
-              localStorage.setItem(
-                choiceKey,
-                JSON.stringify({ look: 'sorbet', isSeasonalOn: false }),
-              );
+              localStorage.setItem(choiceKey, JSON.stringify({ look: 'sorbet' }));
               localStorage.setItem(languageKey, 'en');
             },
             [

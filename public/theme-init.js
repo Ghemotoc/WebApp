@@ -36,19 +36,10 @@
   document.documentElement.setAttribute('data-theme', theme);
 
   // Step 4: the look last shown on this device (Lilac mist when none is stored). tokens.css only
-  // uses it by day; night mode is Revolver with every look (bundle G2).
-  const looks = [
-    'lilac',
-    'sorbet',
-    'seaglass',
-    'pistachio',
-    'candy',
-    'tmc',
-    'winter',
-    'spring',
-    'summer',
-    'autumn',
-  ];
+  // uses it by day; night mode is the same with every look (bundle G2). A seasonal look stored
+  // before they were removed (flat themes bundle) falls back to Lilac mist here, and the app then
+  // shows the member's own theme.
+  const looks = ['lilac', 'sorbet', 'seaglass', 'pistachio', 'candy', 'tmc'];
   let look = 'lilac';
   try {
     const storedLook = window.localStorage.getItem('theme-shown-look');

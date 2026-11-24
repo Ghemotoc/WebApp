@@ -18,7 +18,6 @@ afterEach(() => {
   replaceAppearance({
     mode: 'device',
     look: 'lilac',
-    isSeasonalOn: false,
     isLessMotionOn: false,
     isHighContrastOn: false,
   });
@@ -51,14 +50,9 @@ describe('AppearanceSettingsSection', () => {
     expect(getAppearance().mode).toBe('night');
   });
 
-  it('keeps seasonal themes off until the member turns them on', () => {
+  it('has no seasonal themes switch any more', () => {
     renderWithProviders(<AppearanceSettingsSection />, 'en');
-    const seasonal = screen.getByRole('switch', { name: 'Seasonal themes' });
-    expect(seasonal).toHaveAccessibleDescription(/switch on by themselves for a few weeks/);
-    expect(seasonal).toHaveAttribute('aria-checked', 'false');
-    fireEvent.click(seasonal);
-    expect(seasonal).toHaveAttribute('aria-checked', 'true');
-    expect(readStoredLookChoice().isSeasonalOn).toBe(true);
+    expect(screen.queryByRole('switch', { name: /seasonal/i })).not.toBeInTheDocument();
   });
 
   it('keeps Less motion off until the member turns it on, then remembers it', () => {
@@ -135,7 +129,6 @@ describe('AppearanceSettingsSection', () => {
   it('is in Romanian with ș and ț', () => {
     expect.hasAssertions();
     renderWithProviders(<AppearanceSettingsSection />, 'ro');
-    expect(screen.getByRole('switch', { name: 'Teme de sezon' })).toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'Mai puțină mișcare' })).toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'Contrast ridicat' })).toBeInTheDocument();
     expect(screen.getByText(/Modul de noapte păstrează culoarea temei/)).toBeInTheDocument();
