@@ -61,7 +61,8 @@
       "reading": "Reading",
       "saved": "Saved",
       "finished": "Finished"
-    }
+    },
+    "newChapter": "new chapter"
   },
   "following": {
     "heading": "What you follow",
@@ -190,7 +191,8 @@
       "emptyTitle": "No stories yet",
       "emptyOwn": "Use “Add to a bookshelf” on a story’s page.",
       "emptyOther": "Nothing on this bookshelf is open to you right now.",
-      "discover": "Find stories"
+      "discover": "Find stories",
+      "removedUndo": "{{title}} is off the bookshelf."
     },
     "books": "{{filled}} of {{count}} books",
     "full": "Full",

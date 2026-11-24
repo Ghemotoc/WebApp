@@ -15,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(22);
+select plan(23);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -127,8 +127,19 @@ insert into discarded select public.set_library_shelf('lib2', 'reading');
 select is((public.my_library() -> 'counts') || jsonb_build_object('first', public.my_library() #>> '{continue_reading,0,story,slug}'),
   '{"reading": 1, "saved": 0, "finished": 1, "first": "lib2"}'::jsonb,
   'the Library counts each shelf and offers the latest story to continue');
-select is(public.my_library() #> '{places,lib1}', '{"number": 2, "total": 2, "last_chapter_number": null}'::jsonb,
+-- lib1's last chapter came out an hour before the reader's place was saved: nothing new.
+reset role;
+update public.stories set last_chapter_published_at = now() - interval '1 hour' where slug = 'lib1';
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
+select is(public.my_library() #> '{places,lib1}',
+  '{"number": 2, "total": 2, "last_chapter_number": null, "has_new_chapter": false}'::jsonb,
   'each card knows the chapter the reader reached, with no "of N" while no chapter is marked last (CALM-6)');
+-- A chapter comes out after the reader's place: the cover shows the new-chapter dot (design books 16).
+reset role;
+update public.stories set last_chapter_published_at = now() where slug = 'lib1';
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
+select is(public.my_library() #>> '{places,lib1,has_new_chapter}', 'true',
+  'a chapter published after the reader''s place marks the card as having a new chapter');
 
 /* ---------- 4. Blocks and follows ---------- */
 

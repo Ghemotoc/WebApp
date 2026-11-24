@@ -284,5 +284,12 @@
     "label": "Mod poezie",
     "hint": "Enter începe un vers nou, iar un al doilea Enter o strofă nouă. Spațiile de la începutul unui vers rămân, iar cititorii văd fiecare vers așa cum l-ai scris.",
     "failed": "Nu am putut schimba modul poezie. Încearcă din nou."
+  },
+  "saveWord": {
+    "saved": "Salvat",
+    "saving": "Se salvează…",
+    "unsaved": "Nesalvat încă",
+    "onDevice": "Salvat pe acest dispozitiv",
+    "notSaved": "Nesalvat"
   }
 }

@@ -75,6 +75,7 @@ function failureOf(hasFailed: boolean, error: unknown): FollowFailure | null {
  *
  * @param target - the writer or the story
  * @returns state (null while loading or when the target can't be seen), isSignedIn, toggle(),
+ *   setFollowing() (follow or stop and wait for the answer, used by Undo; design books item 14),
  *   isSaving and failure (why the last toggle failed, or null)
  */
 export function useFollow(target: FollowTarget) {
@@ -118,6 +119,10 @@ export function useFollow(target: FollowTarget) {
     toggle: () => {
       const following = state.data?.following ?? false;
       change.mutate(!following);
+    },
+    // Undo after "Unfollowed." calls this and waits, so the undo note can say if it failed.
+    setFollowing: async (shouldFollow: boolean) => {
+      await change.mutateAsync(shouldFollow);
     },
     isSaving: change.isPending,
     failure,

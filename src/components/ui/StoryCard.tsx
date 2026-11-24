@@ -11,6 +11,10 @@
  *     title is written right under it.
  *   - Continue reading adds a 2 px thread line under the cover with the progress, and the value in
  *     the link's name ("72% read").
+ *   - A Library card whose story has a chapter out since the reader last read it shows a 12 px
+ *     dark dot with a white ring at the cover's top right, the same in every theme because covers
+ *     keep their colours; the caller says it in words in the meta line too (design books item 16,
+ *     "Show what is inside").
  * Who uses it: rows on Read and Discover (ListedStoryCard), the Library, profiles and /design.
  */
 import type { ReactNode } from 'react';
@@ -35,6 +39,8 @@ export interface StoryCardProps {
   wrapCover?: (drawnCover: ReactNode) => ReactNode;
   /** How much of the story the reader has read, 0 to 100, for Continue reading rows. */
   progressPercent?: number;
+  /** True when a chapter came out since the reader last read: the dot on the cover (books 16). */
+  hasNewChapter?: boolean;
 }
 
 /**
@@ -63,6 +69,7 @@ export function StoryCard({
   pill,
   wrapCover,
   progressPercent,
+  hasNewChapter = false,
 }: StoryCardProps) {
   const { t } = useTranslation();
   // The drawn cover: decorative, because the title is repeated as text below.
@@ -73,7 +80,17 @@ export function StoryCard({
     // min-w-0 with break-words on the title: a title that is one long word wraps inside the card
     // instead of running over the next one (GAPS-6 break test, 10 Nov 2026).
     <a href={href} className="flex w-full min-w-0 flex-col no-underline">
-      {wrapCover === undefined ? drawnCover : wrapCover(drawnCover)}
+      <span className="relative block">
+        {wrapCover === undefined ? drawnCover : wrapCover(drawnCover)}
+        {/* The new-chapter dot: decorative, because the meta line says it in words. */}
+        {hasNewChapter && (
+          <span
+            aria-hidden="true"
+            data-new-chapter-dot
+            className="absolute top-2 right-2 size-3 rounded-full bg-(--new-dot) ring-2 ring-(--new-dot-ring)"
+          />
+        )}
+      </span>
       {progressPercent !== undefined && <ProgressLine percent={progressPercent} />}
       {pill !== undefined && <span className="mt-3">{pill}</span>}
       <span

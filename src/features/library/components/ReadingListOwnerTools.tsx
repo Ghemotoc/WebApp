@@ -6,7 +6,8 @@
  *   long) is said under the field.
  * - "Who sees it": a drop-down in the shared style, "Only you" or "Anyone with the link"; it
  *   saves at once. A public list can be reported by whoever opens it.
- * - Each story has a "Remove" button named after the story.
+ * - Each story has a "Remove" button named after the story; it takes the story out at once and
+ *   offers "Undo" for 8 seconds instead of asking first (design books item 14).
  * - "Delete list" asks once more (TwoStepDelete), then returns to the Library.
  * Who uses it: ReadingListPage. What it calls: useReadingListActions → update_reading_list(),
  * set_story_in_reading_list() and delete_reading_list().
@@ -19,6 +20,7 @@ import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
 import { TwoStepDelete } from '@/features/atlas/components/TwoStepDelete';
+import { useUndo } from '@/lib/undo/useUndo';
 
 import {
   readingListFailureKey,
@@ -119,13 +121,24 @@ function AudienceChoice({ list }: { list: ReadingListDetails }) {
 function EntryRows({ list }: { list: ReadingListDetails }) {
   const { t } = useLibraryTranslation();
   const { setStoryInList } = useReadingListActions();
+  const { offerUndo } = useUndo();
   const [hasFailed, setHasFailed] = useState(false);
   if (list.entries.length === 0) return null;
 
-  /** Takes one story out of the list. */
-  function remove(storySlug: string) {
+  /** Takes one story out of the list, then offers to put it back. */
+  async function remove(storySlug: string, title: string) {
     setHasFailed(false);
-    setStoryInList({ listId: list.id, storySlug, isIn: false }).catch(() => setHasFailed(true));
+    try {
+      await setStoryInList({ listId: list.id, storySlug, isIn: false });
+    } catch {
+      setHasFailed(true);
+      return;
+    }
+    // Undo puts the same story back on the same bookshelf.
+    offerUndo({
+      message: t('lists.page.removedUndo', { title }),
+      undo: () => setStoryInList({ listId: list.id, storySlug, isIn: true }).then(() => undefined),
+    });
   }
 
   return (
@@ -144,7 +157,7 @@ function EntryRows({ list }: { list: ReadingListDetails }) {
               variant="text"
               className="shrink-0"
               aria-label={t('lists.page.removeLabel', { title: entry.title })}
-              onClick={() => remove(entry.slug)}
+              onClick={() => void remove(entry.slug, entry.title)}
             >
               {t('lists.page.remove')}
             </Button>
