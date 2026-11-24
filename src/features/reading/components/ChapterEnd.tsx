@@ -2,7 +2,8 @@
  * ChapterEnd: what follows a chapter's text on the paper (story S1-E4-01a; the simplified design,
  * bundle CALM-5; design handover Step 3, "Reader on wide screens", point 4; board New-Reader).
  *
- * Top row: "End of chapter 14" in the meta style on the left and the one main button,
+ * Top row: "End of chapter 14 of 15" (board B02; "End of chapter 14" until the writer marks a
+ * last chapter, the CALM-6 rule in lib/chapterPlace.ts) in the meta style on the left and the one main button,
  * "Next: chapter 15", on the right. Under it the quiet Like (S1-E6-03) and "Comment on the
  * chapter", which takes the reader to the comment field under the chapter (it moves focus there),
  * then Share (S1-E4-05, fetched when the row nears the screen) and "Report chapter" (the shared
@@ -54,7 +55,12 @@ function WayOn({ chapter }: { chapter: ReaderChapter }) {
   return (
     <div className="mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-hairline pt-6">
       <p className="m-0 type-body text-ink-muted">
-        {t('reader.endOfChapter', { number: chapter.number })}
+        {chapter.lastChapterNumber === null
+          ? t('reader.endOfChapter', { number: chapter.number })
+          : t('reader.endOfChapterOf', {
+              number: chapter.number,
+              total: chapter.lastChapterNumber,
+            })}
       </p>
       {chapter.nextCode !== null ? (
         <Link

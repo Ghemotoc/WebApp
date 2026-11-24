@@ -1,7 +1,7 @@
 /**
  * CommentsSection: "Comments" under the chapter (story S1-E6-01; board 3.5).
  *
- * Board values: the eyebrow "Comments", the heading "86 comments" (28 px, Funnel Display) with
+ * Board values: the heading "86 comments" (28 px, Funnel Display; no eyebrow since board B02) with
  * "Newest first" beside it, the composer card, then one white card (24 px corners) listing the
  * comments with fine lines between them, and "Show more comments" under it. A visitor gets a
  * "Get in to comment" link instead of the composer; with comments off the section says so and
@@ -16,7 +16,6 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PlaceholderComments } from '@/components/ui/PlaceholderComments';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -126,15 +125,13 @@ export function CommentsSection({ address }: { address: ChapterAddress }) {
   return (
     <section aria-labelledby="comments-heading" className="mt-12 flex flex-col">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-col gap-2">
-          <Eyebrow>{t('section.eyebrow')}</Eyebrow>
-          <h2
-            id="comments-heading"
-            className="m-0 font-heading type-heading font-bold tracking-[-0.01em] text-ink-heading"
-          >
-            {t('section.heading', { count: firstPage.total })}
-          </h2>
-        </div>
+        {/* No eyebrow over "212 comments": it would repeat the heading (board B02; COPY-1). */}
+        <h2
+          id="comments-heading"
+          className="m-0 font-heading type-heading font-bold tracking-[-0.01em] text-ink-heading"
+        >
+          {t('section.heading', { count: firstPage.total })}
+        </h2>
         {firstPage.total > 0 && (
           <span className="type-body text-ink-muted">{t('section.newestFirst')}</span>
         )}
