@@ -399,10 +399,13 @@
   transition: transform 120ms ease-out;
   /* Hover, press and the current page turn deep plum into the brighter plum (Robert, 11 Nov 2026;
      kept by CALM-2); every other theme takes its button colour with 18% black (tokens.css). */
+  /* The label keeps its colour on hover: a link drawn as a button would otherwise take the
+     link hover colour (flat themes bundle, part 2). */
   &:hover,
   &:active,
   &[aria-current='page'] {
     background-color: var(--plum-hover-to);
+    color: var(--on-plum);
   }
   &:active {
     transform: scale(0.98);
@@ -426,8 +429,10 @@
     transform 120ms ease-out,
     background-color 120ms ease-out,
     color 120ms ease-out;
+  /* The label stays ink on hover, also on a link drawn as a quiet button (flat themes, part 2). */
   &:hover {
     background-color: var(--border);
+    color: var(--ink);
   }
   &:active {
     transform: scale(0.98);
@@ -450,6 +455,7 @@
   }
   &[aria-pressed='true']:hover {
     background-color: var(--quiet-pressed-hover, var(--plum-hover-to));
+    color: var(--quiet-pressed-text, var(--on-plum));
   }
 }
 
@@ -622,33 +628,24 @@
  */
 
 /*
- * Glass: every card that uses bg-surface is see-through white over the still colour blobs
- * (handoff: --glass-bg). Blurring what lies behind (handoff: --glass-blur, blur(24px)
- * saturate(180%)) costs a weaker phone a lot when a page has dozens of cards, and over soft blobs
- * it looks the same, so only what floats over other content is blurred: dialogs and pop-overs
- * (menus, the quote bar), where the blur also keeps the text underneath from showing through
- * (Robert, 7 Nov 2026, 21:47 UTC: keep it light for weaker devices). The staff area is flat.
- * "Reduce transparency" (a system setting) swaps the glass for the solid colour it looks like.
+ * Dialogs and pop-overs (menus, the quote bar, sheets): no glass. Only the four nav bars are glass
+ * (the flat themes bundle; Robert, 23 Nov 2026, 19:26 UTC: "no glass except nav bars"), so a
+ * dialog paints the one solid box surface with its soft edge, by day and at night (#18181b). Being
+ * solid, the text in it reads whatever lies underneath (WCAG 1.4.3). The staff area keeps its own
+ * flat fill (its look from before 20 Nov 2026), also without blur.
  */
 dialog.bg-surface,
 .bg-surface.shadow-popover {
-  /*
-   * A pop-over can float over anything, even a chapter page in night colours under a light panel
-   * (the reader's settings at night by the clock), so it paints its own colour almost solid: the
-   * text in it stays readable whatever lies underneath (WCAG 1.4.3), and the blur still softens
-   * the edges of what shows through.
-   */
-  background-color: color-mix(in srgb, var(--surface) 92%, transparent);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  backdrop-filter: blur(24px) saturate(180%);
+  background-color: var(--surface-box);
+  border-color: var(--line-box);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 [data-area='staff'] dialog.bg-surface,
-[data-area='staff'] .bg-surface.shadow-popover,
-[data-theme='night'] dialog.bg-surface,
-[data-theme='night'] .bg-surface.shadow-popover {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+[data-area='staff'] .bg-surface.shadow-popover {
+  background-color: var(--surface);
+  border-color: var(--border);
 }
 
 /*
@@ -668,19 +665,19 @@ dialog.bg-surface,
 }
 
 /*
- * The shell's glass (bundle G4 SHELL; handoff "App header and tab bar", "Navigation"). glass-pill
- * is see-through glass with the bright rim, a top highlight and the nav shadow, for pills that sit
- * over the still blobs only, so it needs no blur (Robert, 7 Nov 2026: keep it light for weaker
- * devices). glass-float is the tab bar and, since NAV-1, every header's pills, which float over
- * the page's own text and cards, so it paints its colour almost solid and its labels stay
- * readable over anything (WCAG 1.4.3). No blur on either: a blurred bar fixed over a scrolling page
- * repaints on every frame, which weaker phones feel (Robert, 7 Nov 2026, 21:49: blur only on
- * dialogs and pop-overs).
+ * The shell's bars and pills (bundle G4 SHELL; handoff "App header and tab bar", "Navigation").
+ * glass-pill is a small solid box with the nav shadow, for pills and panels that float over the
+ * page (the chapter links, search, the reading-time pill): the one box surface since the flat
+ * themes bundle. glass-float is the one glass left (Robert, 23 Nov 2026, 19:26 UTC: "no glass except
+ * nav bars"): the top bar, the phone header, the tab bar, the focus header and the reader's chapter
+ * bar, near-solid white with the --nav-blur frosting by day, solid at night (NIGHT-2), so its labels
+ * stay readable over anything (WCAG 1.4.3).
  */
 @utility glass-pill {
-  background-color: var(--nav-glass);
-  background-image: var(--lg-card-bg);
-  border: 1px solid var(--glass-border);
+  /* No glass outside the nav bars (Robert, 23 Nov 2026, 19:26 UTC): the one solid box surface. */
+  background-color: var(--surface-box);
+  background-image: none;
+  border: 1px solid var(--line-box);
   /* Flat (CALM-7a, canvas v47): no top edge light and no inner shade, only the nav shadow. */
   box-shadow: var(--shadow-nav);
 }
@@ -695,8 +692,9 @@ dialog.bg-surface,
 @utility glass-float {
   background-color: transparent;
   background-image: var(--lg-float-bg);
-  -webkit-backdrop-filter: var(--lg-blur);
-  backdrop-filter: var(--lg-blur);
+  /* The one glass left (Robert, 23 Nov 2026, 19:26 UTC): only the nav bars use glass-float. */
+  -webkit-backdrop-filter: var(--nav-blur);
+  backdrop-filter: var(--nav-blur);
   border: 1px solid var(--glass-border);
   box-shadow: var(--lg-card-shadow);
 }
@@ -887,23 +885,18 @@ dialog.bg-surface,
 }
 
 /*
- * Glass on every member card (GLASS-2; Robert, 11 Nov 2026: "the same on this app like
- * on the main website"), made flat in CALM-7a (canvas v47): one even see-through fill
- * (--lg-card-bg), a strong blur of what lies behind, the bright rim and a soft drop shadow, with no
- * white top edge and no inner shade. CALM-1c then paints most cards the box surface (below). This reverses the 7 Nov 2026 rule of
- * blur only on dialogs and pop-overs; to stay light on weaker devices the blur drops to 8 px
- * under 1024 px wide, as the website does, and "Reduce transparency" turns it off. A link or
- * button drawn as a card lifts its shadow on hover. The staff area stays flat.
+ * Every member card is one solid box (the flat themes bundle; Robert, 23 Nov 2026, 19:26 UTC: no
+ * glass anywhere except the nav bars): the box surface, its soft edge and a soft drop shadow, with
+ * no blur, no see-through fill, no top edge light and no inner shade. A link or button drawn as a
+ * card lifts its shadow on hover. The staff area stays flat.
  */
 :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
     dialog,
     .shadow-popover,
     [data-area='staff'] *
   ) {
-  background-color: transparent;
-  background-image: var(--lg-card-bg);
-  -webkit-backdrop-filter: var(--lg-blur);
-  backdrop-filter: var(--lg-blur);
+  background-color: var(--surface-box);
+  background-image: none;
   box-shadow: var(--lg-card-shadow);
   transition:
     box-shadow 160ms ease-out,
@@ -924,15 +917,13 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 /*
- * Every other box and pill that paints bg-surface is the website's light glass too (GLASS-3;
- * Robert, 11 Nov 2026: "copy the transparency of all the elements from the [main website], including
- * transparency of the boxes ... a full-on match"). On the website everything that is not a photo
- * is .lg-light: white at 72% thinning to 44%, the 24 px blur, the bright rim, a white top edge, a
- * soft inner shade and the violet drop shadow. Here that reaches the cards with 2xl or 3xl corners,
- * the round icon wells and the pills the rule above does not catch. Left out on purpose: dialogs
- * and pop-overs (they float over text, so they stay near-solid), form fields (typing needs a steady
- * surface), anything sticky or fixed (it floats over the page) and the flat staff area. An
- * interactive pill keeps its 3:1 control edge (DoD, pill system); only soft edges take the rim.
+ * Every other box and pill that paints bg-surface is the same solid box (no glass outside the nav
+ * bars, Robert, 23 Nov 2026, 19:26 UTC; it replaces the see-through glass of GLASS-3): the cards
+ * with 2xl or 3xl corners, the round icon wells and the pills the rule above does not catch. Left
+ * out: dialogs and pop-overs (their own rule above), form fields (they keep the field fill),
+ * anything sticky or fixed (bg-surface alone already paints the box colour there) and the flat staff
+ * area. An interactive pill keeps its 3:1 control edge (DoD, pill system); only soft edges take
+ * the box edge.
  */
 .bg-surface:not(
   dialog,
@@ -946,10 +937,8 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   [data-area='staff'],
   [data-area='staff'] *
 ) {
-  background-color: transparent;
-  background-image: var(--lg-card-bg);
-  -webkit-backdrop-filter: var(--lg-blur);
-  backdrop-filter: var(--lg-blur);
+  background-color: var(--surface-box);
+  background-image: none;
   box-shadow: var(--lg-card-shadow);
 }
 
@@ -958,7 +947,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     .shadow-popover,
     [data-area='staff'] *
   ) {
-  border-color: var(--lg-rim);
+  border-color: var(--line-box);
 }
 
 /* A pill or card that tints on hover keeps its tint under the glass (the rule above is unlayered,
@@ -972,19 +961,6 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     [data-area='staff'] *
   ):hover {
   background-color: var(--tint);
-}
-
-@media (max-width: 1023px) {
-  .bg-surface:not(dialog, .shadow-popover, [data-area='staff'] *),
-  :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
-      dialog,
-      .shadow-popover,
-      [data-area='staff'] *
-    ) {
-    /* High contrast sets --lg-blur-narrow to none (tokens.css; CONTRAST-1). */
-    -webkit-backdrop-filter: var(--lg-blur-narrow, blur(8px) saturate(140%));
-    backdrop-filter: var(--lg-blur-narrow, blur(8px) saturate(140%));
-  }
 }
 
 [data-area='staff']
@@ -1019,18 +995,6 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   backdrop-filter: none;
 }
 
-[data-theme='night']
-  :is(
-    .rounded-card,
-    [class*='rounded-[2'],
-    [class*='rounded-[3'],
-    .rounded-3xl
-  ).bg-surface.border-border:not(dialog, .shadow-popover, [data-area='staff'] *),
-[data-theme='night'] .box-surface:not([data-area='staff'] *) {
-  -webkit-backdrop-filter: var(--lg-blur);
-  backdrop-filter: var(--lg-blur);
-}
-
 /* The box keeps its colour when a card link is hovered; only the shadow lifts (rule below). */
 .box-surface:not([data-area='staff'] *) {
   border-width: 1px;
@@ -1061,7 +1025,15 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 .glass-band-inner {
-  /* Flat: no wash and no top edge light (CALM-7a, canvas v47; no gradients, 23 Nov 2026). */
+  /*
+   * A card inside a deep band is the band's colour a step darker: its main colour at 88% with
+   * black (the flat themes bundle, Robert, 23 Nov 2026: no glass, so no see-through wash). The
+   * design's 88% with white lets the white text fall under 4.5:1 on three themes (sorbet 4.23,
+   * sea glass 4.35, pistachio 3.96), so it darkens instead; scripts/theme-colours.test.ts checks
+   * the text on it in every theme. At night the band is the box colour, so the card is one step
+   * darker grey.
+   */
+  background-color: color-mix(in srgb, var(--primary) 88%, #000000);
   background-image: none;
 }
 
@@ -1150,55 +1122,20 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 @media (prefers-reduced-transparency: reduce) {
+  /*
+   * Boxes, dialogs and pop-overs are already solid (no glass outside the nav bars, 23 Nov 2026), so
+   * "Reduce transparency" (a system setting) only has the nav bars left to turn solid, the top bar
+   * at rest included.
+   */
   :root {
-    --surface-glass: var(--surface);
     --nav-glass: var(--surface);
   }
 
-  dialog.bg-surface,
-  .bg-surface.shadow-popover {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
   .glass-float,
-  .nav-bubble {
-    background-color: var(--surface);
-    background-image: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
-  /* Every other glass box and pill turns solid too (GLASS-3), and so does the top bar at rest. */
-  .bg-surface:not([data-area='staff'] *),
+  .nav-bubble,
   .top-bar-pill[data-solid='false'] {
-    background-image: none;
     background-color: var(--surface);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
-  /* The cards' glass turns solid: the colour it looks like, no blur (GLASS-2). */
-  :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
-      dialog,
-      .shadow-popover,
-      [data-area='staff'] *
-    ) {
     background-image: none;
-    background-color: var(--surface);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
-  /* The box surface is already solid by day; at night it turns solid near-black (CALM-1c). */
-  :is(
-      .rounded-card,
-      [class*='rounded-[2'],
-      [class*='rounded-[3'],
-      .rounded-3xl
-    ).bg-surface.border-border:not(dialog, .shadow-popover, [data-area='staff'] *),
-  .box-surface:not([data-area='staff'] *) {
-    background-color: var(--surface-box-solid, var(--surface-box));
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
@@ -1345,7 +1282,25 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   scroll-behavior: auto !important;
 }
 
-/* A sideways list with scroll arrows hides its scrollbar but stays scrollable (DoD design rules). */
+/*
+ * No scrollbar shows in any list or widget, on member and staff screens alike (Robert, 23 Nov
+ * 2026: "I don't want to have the scrollbar visible ever in any list widgets, always scroll to
+ * access the button part if needed"; staff: "same, no scrollbars in their widgets either"). Every
+ * box that scrolls still scrolls by swipe, trackpad, wheel and keyboard; only the bar is hidden.
+ * Two places keep theirs: the page itself (html and body), so a reader can see how long a page is,
+ * and a text box being typed in (textarea), where the bar is the only sign of text out of sight.
+ * A scrolling list must still be reachable by keyboard: a focusable region with a name, or links
+ * and buttons inside it (DoD scroll rule).
+ */
+:where(*:not(html, body, textarea)) {
+  scrollbar-width: none;
+}
+
+:where(*:not(html, body, textarea))::-webkit-scrollbar {
+  display: none;
+}
+
+/* The sideways lists that name it say so on their own; the rule above already hides every bar. */
 .tmc-noscroll {
   scrollbar-width: none;
   -ms-overflow-style: none;

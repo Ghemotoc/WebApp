@@ -21,7 +21,7 @@
 
 **Full text**
 
-These guidelines apply everywhere on Ghemotoc: stories, chapters, comments, forums, spaces, profiles, usernames, pictures and private messages.
+These guidelines apply everywhere on ghemotoc: stories, chapters, comments, forums, spaces, profiles, usernames, pictures and private messages.
 
 Talk about the writing, not the writer. Honest feedback helps writers grow. Say what worked and what didn’t, and be specific. Don’t attack the person.
 
@@ -31,7 +31,7 @@ Not allowed:
 - threats of any kind, including “jokes” that sound like threats;
 - hate: attacking or demeaning people because of their race, ethnicity, nationality, religion, disability, sex, gender, sexual orientation, age or any similar trait;
 - spam: the same message again and again, unwanted ads or links posted only to bring people somewhere else;
-- usernames or pen names with swearwords, or that pretend to be our staff or Ghemotoc.
+- usernames or pen names with swearwords, or that pretend to be our staff or ghemotoc.
 
 Stories are different from comments. A story can show a bully, a villain or a hateful character. That’s fiction. What isn’t allowed is using a story, comment or message to attack real people or groups.
 
@@ -45,7 +45,7 @@ Stories are different from comments. A story can show a bully, a villain or a ha
 
 **Full text**
 
-Many people on Ghemotoc are under 18. Keeping them safe comes first.
+Many people on ghemotoc are under 18. Keeping them safe comes first.
 
 Never allowed, and reported to the authorities where the law says so:
 
@@ -58,7 +58,7 @@ Pictures. Any picture is fine, photos of places and things included, as long as 
 
 Private information. Don’t share anyone’s address, phone number, email, school, real name or photos without their permission. That includes your own if you’re under 18: keep it off your profile and out of public posts.
 
-Messages. Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on, and only you can turn them on. Nobody on Ghemotoc can see how old you are, so when someone isn’t taking messages, it just says that.
+Messages. Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on, and only you can turn them on. Nobody on ghemotoc can see how old you are, so when someone isn’t taking messages, it just says that.
 
 Spaces. Spaces made by under-16s are only for under-16s. Spaces made by people 16 or over are only for people 16 or over. Class spaces are the one exception: they’re by invitation, and the teacher and pupils of any age are there together.
 

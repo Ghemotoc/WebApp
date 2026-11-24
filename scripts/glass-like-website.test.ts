@@ -5,11 +5,13 @@
  * It reads the two style files as text and checks the rules a later change could quietly drop:
  * the main look's plum action buttons with cream text (flat plum #48125D since the simplified
  * design, Robert, 20 Nov 2026; bundle CALM-1; drawn flat with no sheen and the quiet button as the
- * tint since CALM-2), a lighter hover and press colour in every look, the floating bars and cards as blurred glass, the coloured bands as glass, and the
- * staff area kept flat. Colour contrast itself is tested in token-contrast.test.ts.
- * Who runs it: Vitest (npm test). What it reads: src/styles/tokens.css and src/styles/index.css.
+ * tint since CALM-2), a lighter hover and press colour in every look, the nav bars as the one
+ * blurred glass left (the flat themes bundle, Robert, 23 Nov 2026: no glass except nav bars), the
+ * coloured bands flat, and the staff area kept flat. Colour contrast itself is tested in token-contrast.test.ts.
+ * Who runs it: Vitest (npm test). What it reads: src/styles/tokens.css, src/styles/index.css and
+ * every component file under src/ (for a blur of its own).
  */
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
@@ -21,6 +23,17 @@ function readStyles(name: string): string {
 
 const tokensCss = readStyles('tokens.css');
 const indexCss = readStyles('index.css');
+
+/** Every component file under src/ (tests left out), with its text. */
+const componentSources = readdirSync(fileURLToPath(new URL('../src', import.meta.url)), {
+  recursive: true,
+  encoding: 'utf8',
+})
+  .filter((path) => path.endsWith('.tsx') && !path.endsWith('.test.tsx'))
+  .map((path) => ({
+    path,
+    source: readFileSync(fileURLToPath(new URL(`../src/${path}`, import.meta.url)), 'utf8'),
+  }));
 
 /** The text of the first block whose selector list starts with the given text. */
 function blockAfter(css: string, selectorStart: string): string {
@@ -68,11 +81,24 @@ describe('the main website glass on this app (GLASS-2)', () => {
   it('draws the floating bars as the website navbar island: blurred near-solid glass', () => {
     const floatingBar = blockAfter(indexCss, '@utility glass-float');
     expect(floatingBar).toContain('background-image: var(--lg-float-bg);');
-    expect(floatingBar).toContain('backdrop-filter: var(--lg-blur);');
+    expect(floatingBar).toContain('backdrop-filter: var(--nav-blur);');
   });
 
-  it('draws member cards and the coloured bands as glass', () => {
-    expect(indexCss).toContain('background-image: var(--lg-card-bg);');
+  it('blurs nothing but the nav bars (no glass except nav bars, Robert, 23 Nov 2026)', () => {
+    // Every blur in the style sheet is either none or the nav bars' own frosting.
+    const blurs = [...indexCss.matchAll(/(?<!-)backdrop-filter:\s*([^;]+);/g)].map(
+      (match) => match[1],
+    );
+    expect(blurs.filter((value) => value !== 'none' && value !== 'var(--nav-blur)')).toEqual([]);
+    // Boxes never blur by day; the nav bars do.
+    const dayBlock = blockAfter(tokensCss, "[data-theme='light'] {");
+    expect(dayBlock).toContain('--lg-blur: none;');
+    expect(dayBlock).toContain('--nav-blur: blur(24px) saturate(180%);');
+    // No component asks for a blur of its own.
+    expect(componentSources.filter(({ source }) => /backdrop-blur-\[/.test(source))).toEqual([]);
+  });
+
+  it('draws the coloured bands flat', () => {
     expect(indexCss).toContain('.glass-band-deep');
     expect(indexCss).toContain('.glass-band-tint');
   });

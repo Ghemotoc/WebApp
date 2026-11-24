@@ -81,6 +81,7 @@
     "device": "Ca pe dispozitiv",
     "light": "Luminoasă",
     "night": "Noapte",
+    "dayMode": "Mod de zi",
     "nightMode": "Mod de noapte"
   },
   "language": {

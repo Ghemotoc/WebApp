@@ -6,7 +6,7 @@
 
 ## In short
 
-- This is the agreement between you and the company that runs Ghemotoc.
+- This is the agreement between you and the company that runs ghemotoc.
 - You must be 13 or over. Yoti checks your age and we only get the result. Under-16s also need a parent or guardian to say yes.
 - Your writing stays yours. You give us a narrow, free permission to host and show it, which ends when you delete it.
 - A person reads every report. We may hide, limit or cut an unlawful part, but we never change your words, and we always tell you why.
@@ -23,11 +23,11 @@
 
 **Full text**
 
-These terms are the agreement between you and [Company name] [SRL or AB] (“we”, “us”), the company that runs Ghemotoc, “An app by The Magic Coffin”. Our company details are on the Contact and company details page. When you create an account, you agree to these terms. The Privacy notice and the Community guidelines go with them, so please read those too.
+These terms are the agreement between you and [Company name] [SRL or AB] (“we”, “us”), the company that runs ghemotoc, “An app by The Magic Coffin”. Our company details are on the Contact and company details page. When you create an account, you agree to these terms. The Privacy notice and the Community guidelines go with them, so please read those too.
 
 You must be 13 or older. If you’re younger, you can’t sign up. We don’t keep anything you typed, and you can try again once you turn 13.
 
-Your year of birth. When you sign up, we ask for your year of birth. If the year alone can’t tell us whether you are under or over 13 or 16, we also ask for the month. We never ask for your full date of birth. Nobody else on Ghemotoc can see your age, your year of birth or your age check result.
+Your year of birth. When you sign up, we ask for your year of birth. If the year alone can’t tell us whether you are under or over 13 or 16, we also ask for the month. We never ask for your full date of birth. Nobody else on ghemotoc can see your age, your year of birth or your age check result.
 
 The age check. After you sign up, Yoti checks your age. You choose how: a quick selfie that estimates your age, or an ID document. Yoti only tells us the result (for example “13 or over” or “18 or over”), how the check was done and when. We never get the photo or the document. If the check doesn’t work, you can try again, use an ID document instead or ask for a check by a person. Until a check passes, your account is read-only: you can read and report, but you can’t publish, comment, post or message. If no check passes within 14 days of sign-up and you haven’t asked for a check by a person, we delete the account.
 
@@ -37,7 +37,7 @@ If you’re below your country’s age for consent. Where you live sets the age 
 
 Google, Apple or Microsoft. You can sign up and log in with these accounts. The year of birth, the age check and, for under-16s, the parent or guardian step still apply, because these services don’t tell us how old you are.
 
-Where Ghemotoc is open. Ghemotoc opens one country at a time. When you sign up you tell us the country you live in (we suggest the one your connection shows), and its rules apply to you: some countries set a higher age to join, and in Australia you must be 16 or older. “Your country” and “Ages by country”, under these terms, show the rules. If Ghemotoc isn’t open in your country yet, you can’t sign up from there. [lawyer to check]
+Where ghemotoc is open. ghemotoc opens one country at a time. When you sign up you tell us the country you live in (we suggest the one your connection shows), and its rules apply to you: some countries set a higher age to join, and in Australia you must be 16 or older. “Your country” and “Ages by country”, under these terms, show the rules. If ghemotoc isn’t open in your country yet, you can’t sign up from there. [lawyer to check]
 
 Teachers. Adults with an “18 or over” result can ask for a Teacher badge by confirming a school email address or sending proof that they teach. Our staff check it and then delete the proof. A Teacher badge lets you create class spaces. It is not a background check, and teachers follow the same messaging rules as everyone else.
 
@@ -46,7 +46,7 @@ Teachers. Adults with an “18 or over” result can ask for a Teacher badge by 
 **In short** (as on the board)
 
 - You keep the rights to everything you write.
-- To show your work to readers, you give Ghemotoc permission to host and display it. [What this permission covers: to be drafted by a Romanian lawyer]
+- To show your work to readers, you give ghemotoc permission to host and display it. [What this permission covers: to be drafted by a Romanian lawyer]
 - You can unpublish or delete your work.
 
 *Suggested new short line, now that the full text fills the placeholder:*
@@ -55,18 +55,18 @@ Teachers. Adults with an “18 or over” result can ask for a Teacher badge by 
 
 **Full text**
 
-You own what you write. Posting on Ghemotoc doesn’t change that. You keep the copyright in your stories, poems, essays, comments, posts and pictures. You also keep your rights as an author, including the right to be named the way you choose (by your pen name or your username) and the right to have your work kept whole.
+You own what you write. Posting on ghemotoc doesn’t change that. You keep the copyright in your stories, poems, essays, comments, posts and pictures. You also keep your rights as an author, including the right to be named the way you choose (by your pen name or your username) and the right to have your work kept whole.
 
-The permission you give us. To show your work to readers, we need your permission. This permission is called a licence. When you save or publish anything on Ghemotoc, you give [Company name] a licence on these terms:
+The permission you give us. To show your work to readers, we need your permission. This permission is called a licence. When you save or publish anything on ghemotoc, you give [Company name] a licence on these terms:
 
-- What it lets us do: store your work; copy it only as far as running Ghemotoc needs (for example in our database, in backups and in short-lived caches); and make it available to the readers your settings allow, on the Ghemotoc website and web app and, once they exist, the Ghemotoc apps.
+- What it lets us do: store your work; copy it only as far as running ghemotoc needs (for example in our database, in backups and in short-lived caches); and make it available to the readers your settings allow, on the ghemotoc website and web app and, once they exist, the ghemotoc apps.
 - The technical versions this needs: resizing your pictures; fitting your text to different screens; showing your story’s card (cover, title, blurb and pen name) on shelves, in lists and in link previews; letting search engines see your title, blurb and writer name only; and putting your work in the export files that you, or your parent or guardian, ask for.
-- What it doesn’t let us do: sell your work; publish it in print or as an ebook; translate or adapt it; use it in our advertising outside Ghemotoc; or give it to anyone else to use for their own purposes. If we ever want to do any of these, we will ask you first, separately and in writing.
+- What it doesn’t let us do: sell your work; publish it in print or as an ebook; translate or adapt it; use it in our advertising outside ghemotoc; or give it to anyone else to use for their own purposes. If we ever want to do any of these, we will ask you first, separately and in writing.
 - Not exclusive: you can publish your work anywhere else, at the same time, with anyone.
-- Worldwide: readers can see your work in every country where Ghemotoc is open.
+- Worldwide: readers can see your work in every country where ghemotoc is open.
 - Free of charge: we don’t pay you for the licence and you don’t pay us.
-- Companies that help us: the companies that host and run Ghemotoc for us (listed in the Privacy notice) may handle your work only to do that job for us, and you agree that we can let them. They can’t use it for anything else.
-- How long it lasts: for each piece of work, until you delete it, or until it is deleted with your account. Then we take it off Ghemotoc straight away. Copies can stay for a short time in caches (up to [number] days) and in backups (up to [number] days) before they are overwritten. We keep a copy longer only where the law requires it, or where it is needed for an open report, a legal case or an order from an authority, and only for as long as that lasts.
+- Companies that help us: the companies that host and run ghemotoc for us (listed in the Privacy notice) may handle your work only to do that job for us, and you agree that we can let them. They can’t use it for anything else.
+- How long it lasts: for each piece of work, until you delete it, or until it is deleted with your account. Then we take it off ghemotoc straight away. Copies can stay for a short time in caches (up to [number] days) and in backups (up to [number] days) before they are overwritten. We keep a copy longer only where the law requires it, or where it is needed for an open report, a legal case or an order from an authority, and only for as long as that lasts.
 - AI: [OPEN: whether anyone may use your work to train AI; see “Writing with AI”]
 
 Unpublishing and deleting. You can edit, unpublish or delete your work at any time. If you unpublish a story, readers can’t see it any more, but we keep it safe for you as a draft until you delete it. If you delete your account, your stories, chapters and comments are deleted with it.
@@ -75,7 +75,7 @@ Forum posts are different. When you delete your account, your forum posts stay s
 
 Your copy. You can download your stories as Word files from Settings at any time.
 
-Reading in the browser. Until the Ghemotoc apps exist, signed-in readers can read full chapters in their browser. We switch off right-click and copying on chapter text. That makes copying harder, but it can’t stop it: screenshots still work. When the apps arrive, you’ll also be able to choose that a story can be read in the app only.
+Reading in the browser. Until the ghemotoc apps exist, signed-in readers can read full chapters in their browser. We switch off right-click and copying on chapter text. That makes copying harder, but it can’t stop it: screenshots still work. When the apps arrive, you’ll also be able to choose that a story can be read in the app only.
 
 We never change your words. What our staff can and can’t do to a story is explained in “How moderation works”.
 
@@ -89,7 +89,7 @@ We never change your words. What our staff can and can’t do to a story is expl
 
 **Full text**
 
-You’re responsible for everything you publish, post, comment, upload or send on Ghemotoc.
+You’re responsible for everything you publish, post, comment, upload or send on ghemotoc.
 
 - Only post work you wrote, or work you have the right to share. If you share someone else’s work, you need their permission, or the work must be in the public domain (and you should say so).
 - Only upload pictures you made or have permission to use. When you add a picture, you confirm you have that right. Every picture needs alt text: a short description for people who can’t see it.
@@ -99,7 +99,7 @@ You’re responsible for everything you publish, post, comment, upload or send o
 - Don’t post anything illegal, anything that breaks someone else’s rights or anything the Community guidelines don’t allow.
 - Don’t pretend to be someone else, including our staff.
 - Don’t send spam, and don’t try to trick people.
-- Don’t try to get around our age checks, safety features or limits, and don’t use bots or scrapers to copy what’s on Ghemotoc.
+- Don’t try to get around our age checks, safety features or limits, and don’t use bots or scrapers to copy what’s on ghemotoc.
 
 If someone tells us that something you posted breaks the law or their rights, we look at it as explained in “How moderation works” and in our Notice and action policy. You can always tell us your side.
 
@@ -115,7 +115,7 @@ If someone tells us that something you posted breaks the law or their rights, we
 
 **Full text**
 
-Our own team moderates Ghemotoc, in Romanian and English. We don’t use outside moderation companies.
+Our own team moderates ghemotoc, in Romanian and English. We don’t use outside moderation companies.
 
 Reports. Anyone can report a story, chapter, comment, profile, space, thread, post, picture or message, with or without an account. A person on our team reads every report. We don’t scan your writing automatically and we don’t hold anything back before it is published: we act on reports. The most serious reports, such as anything that puts a child at risk, are dealt with first. How reports work, and what a good report includes, is in our Notice and action policy.
 
@@ -155,7 +155,7 @@ Orders from authorities. If an authority sends us an order to remove terrorist c
 
 **Full text**
 
-Discover is the main page of Ghemotoc. It mixes several shelves, for example Popular, New, Completed and New and rising, so new writers get seen as well as popular ones.
+Discover is the main page of ghemotoc. It mixes several shelves, for example Popular, New, Completed and New and rising, so new writers get seen as well as popular ones.
 
 Popular. A story’s place on Popular lists comes from what readers do with it: reads, likes, comments, shares and how many readers finish its chapters. Recent activity counts more than older activity. Private downvotes are never used for ranking.
 
@@ -186,7 +186,7 @@ Sponsors. Items from our sponsors are always labelled “Sponsored”. A sponsor
 
 **Full text**
 
-Ads and sponsors help keep Ghemotoc running. Here is how they work.
+Ads and sponsors help keep ghemotoc running. Here is how they work.
 
 Two labels. Ads from ad networks are labelled “Ad” (“Reclamă” in Romanian). Items from our own sponsors, for example a bookshop or a public body, are labelled “Sponsored” (“Sponsorizat”) and name the sponsor.
 
@@ -219,13 +219,13 @@ If a story isn’t labelled honestly. Readers can report a story they think was 
 
 [OPEN: rules on work written mostly or fully by AI. To be decided by the founder, then drafted by a Romanian lawyer.]
 
-[OPEN: whether we or anyone else may use work on Ghemotoc to train AI, and how writers can say no. To be decided by the founder, then drafted by a Romanian lawyer.]
+[OPEN: whether we or anyone else may use work on ghemotoc to train AI, and how writers can say no. To be decided by the founder, then drafted by a Romanian lawyer.]
 
 ## 8. When these terms change
 
 **In short** (as on the board)
 
-- If we make an important change, we tell you on Ghemotoc.
+- If we make an important change, we tell you on ghemotoc.
 - You accept the new version before you can post again.
 - Older versions stay on this page.
 
@@ -233,7 +233,7 @@ If a story isn’t labelled honestly. Readers can report a story they think was 
 
 We may need to change these terms, for example when the law changes or when we add a new feature.
 
-Important changes. If we make an important change, we tell you on Ghemotoc, say what changed and why, and give you [number] days’ notice before it applies [lawyer to confirm the notice period]. You can keep reading at any time, but you accept the new version before you can post again. If you don’t want to accept it, you can download your data and delete your account.
+Important changes. If we make an important change, we tell you on ghemotoc, say what changed and why, and give you [number] days’ notice before it applies [lawyer to confirm the notice period]. You can keep reading at any time, but you accept the new version before you can post again. If you don’t want to accept it, you can download your data and delete your account.
 
 Small changes. If we only fix a typo or make the wording clearer without changing what it means, we publish the new version with its date.
 
@@ -261,29 +261,29 @@ Your username and pen name. You choose a username, and you can add a pen name. B
 
 Leaving. You can delete your account at any time from Settings, on any device or on the website. We switch it off straight away and delete it for good after 14 days, unless you change your mind before then. Your stories, chapters and comments are deleted with it. Your forum posts stay, shown under “Deleted user”. Before you go, you can download your data and your stories.
 
-Accounts nobody uses. If nobody uses an account for 5 years, we close it and then delete it, after the emails described in the Privacy notice. So that your work isn’t lost, we keep your stories, their chapters and their Story Atlas (not pictures) in a private archive for 5 more years. Nobody reads the archive, our team included, and nothing in it is published. To get the stories back, open a new account with the same email address, confirm it, and give the year of birth and the pen name, the username or a story’s title from the old account; the stories return as private drafts. After 5 years the archive is deleted. It is also deleted if the company stops trading and Ghemotoc closes. If you delete your account yourself, nothing is archived. [lawyer to check]
+Accounts nobody uses. If nobody uses an account for 5 years, we close it and then delete it, after the emails described in the Privacy notice. So that your work isn’t lost, we keep your stories, their chapters and their Story Atlas (not pictures) in a private archive for 5 more years. Nobody reads the archive, our team included, and nothing in it is published. To get the stories back, open a new account with the same email address, confirm it, and give the year of birth and the pen name, the username or a story’s title from the old account; the stories return as private drafts. After 5 years the archive is deleted. It is also deleted if the company stops trading and ghemotoc closes. If you delete your account yourself, nothing is archived. [lawyer to check]
 
 If we suspend or close your account. We may suspend or close an account that seriously or repeatedly breaks these terms or the Community guidelines, or the law. We tell you why and how to appeal. While your account is suspended, you can still sign in, read and download your data, but you can’t post, comment or message. If we close your account, you can’t sign up again with the same email address.
 
 Closed for good. If we close your account for breaking the rules, it stays closed. You may not create another account or use someone else’s. We block the email address you used, and we may close any new account we reasonably believe is yours. We always tell you why and how to appeal. [lawyer to check]
 
-If we close Ghemotoc. If we ever have to stop running Ghemotoc, we will tell you at least [number] days before, so you can download your data and your stories.
+If we close ghemotoc. If we ever have to stop running ghemotoc, we will tell you at least [number] days before, so you can download your data and your stories.
 
 ## 10. Our responsibility, complaints and the law
 
 **In short** (proposed)
 
-- We work hard to keep Ghemotoc safe and running, but we can’t promise it will never break.
+- We work hard to keep ghemotoc safe and running, but we can’t promise it will never break.
 - We’re responsible for harm we cause, as the law says.
 - If something goes wrong, tell us first. You can also go to a court or an authority.
 
 **Full text**
 
-What we promise. We work to keep Ghemotoc safe, private and running, and to follow these terms. We can’t promise that Ghemotoc will always be available or free of mistakes, and we may change or remove features. If we remove a feature you rely on, we’ll tell you in good time.
+What we promise. We work to keep ghemotoc safe, private and running, and to follow these terms. We can’t promise that ghemotoc will always be available or free of mistakes, and we may change or remove features. If we remove a feature you rely on, we’ll tell you in good time.
 
 What we’re responsible for. We’re responsible for harm we cause by breaking these terms or the law, as the law says. Nothing in these terms limits our responsibility where the law doesn’t allow it, for example for harm we cause on purpose or through serious carelessness, or your rights as a consumer. We’re not responsible for what other people post, but we act on reports as these terms explain.
 
-Other services. Some things on Ghemotoc come from other services, such as music and video you choose to play, or signing in with Google, Apple or Microsoft. Their own terms and age rules apply when you use them.
+Other services. Some things on ghemotoc come from other services, such as music and video you choose to play, or signing in with Google, Apple or Microsoft. Their own terms and age rules apply when you use them.
 
 Complaints. If something goes wrong, please tell us first through Contact us in Settings or at hello@themagiccoffin.com. We answer in Romanian or English. For decisions about content or accounts, you can also use the appeal routes in our Notice and action policy. If you’re not happy with how we handled a complaint, you can contact [consumer protection authority] or ANCOM, which supervises online platforms in Romania.
 
@@ -308,7 +308,7 @@ The law. These terms are governed by [Romanian law / Swedish law: depends on whe
 - Section 2 (Your writing stays yours): Cache and backup periods are not set anywhere in the pack: placeholders.
 - Section 3 (You’re responsible for what you post): Writers are responsible for what they publish (Q33; S1-E14-01).
 - Section 3 (You’re responsible for what you post): Ratings All ages, 13+, 16+, 18+, each hidden from anyone younger; staff may raise, never lower (Q17, S1-E3-06). Rating descriptions are L14.
-- Section 3 (You’re responsible for what you post): Quotation and parody exceptions: Law 8/1996 art. 35(1)(b), 35(4) and art. 37(b) (research A3). Users must be told about the exceptions where art. 17 of Directive 2019/790 applies (Law 8/1996 art. 128^3, as inserted by Law 69/2022); whether Ghemotoc is an online content-sharing service provider is L19.
+- Section 3 (You’re responsible for what you post): Quotation and parody exceptions: Law 8/1996 art. 35(1)(b), 35(4) and art. 37(b) (research A3). Users must be told about the exceptions where art. 17 of Directive 2019/790 applies (Law 8/1996 art. 128^3, as inserted by Law 69/2022); whether ghemotoc is an online content-sharing service provider is L19.
 - Section 3 (You’re responsible for what you post): Picture rights confirmation: S1-E3-09. Alt text required: S1-E3-09.
 - Section 3 (You’re responsible for what you post): Scraping and bot clause is a proposed default, not a recorded decision.
 - Section 4 (How moderation works): In-house, report-based moderation, no vendors, no pre-publication hold, no text screening (Q42, Q43). Picture check by Arachnid Shield, held for a human (S1-E10-05); Sightengine dropped on 2 Nov 2026. Pictures and Closed for good paragraphs: Robert’s brief of 2 Nov 2026 (bundle 12, sections 4 and 6).
@@ -353,7 +353,7 @@ Every placeholder in the full text, in order. Each needs the founder or the lawy
 - Section 2 (Your writing stays yours): [number]
 - Section 2 (Your writing stays yours): [OPEN: whether anyone may use your work to train AI; see “Writing with AI”]
 - Section 7 (Writing with AI): [OPEN: rules on work written mostly or fully by AI. To be decided by the founder, then drafted by a Romanian lawyer.]
-- Section 7 (Writing with AI): [OPEN: whether we or anyone else may use work on Ghemotoc to train AI, and how writers can say no. To be decided by the founder, then drafted by a Romanian lawyer.]
+- Section 7 (Writing with AI): [OPEN: whether we or anyone else may use work on ghemotoc to train AI, and how writers can say no. To be decided by the founder, then drafted by a Romanian lawyer.]
 - Section 8 (When these terms change): [number]
 - Section 8 (When these terms change): [lawyer to confirm the notice period]
 - Section 8 (When these terms change): [OPEN: which version applies if the two ever differ; lawyer to decide]

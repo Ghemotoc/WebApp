@@ -23,9 +23,9 @@
 
 **Textul complet**
 
-Vrem ca toată lumea să poată citi și scrie pe Ghemotoc, inclusiv cei care folosesc un cititor de ecran, tastatura, mărirea, comanda vocală sau alte tehnologii de asistare.
+Vrem ca toată lumea să poată citi și scrie pe ghemotoc, inclusiv cei care folosesc un cititor de ecran, tastatura, mărirea, comanda vocală sau alte tehnologii de asistare.
 
-Ținta noastră sunt Ghidurile de accesibilitate pentru conținutul web (WCAG) 2.2, la nivelul AA. Această declarație acoperă site-ul și aplicația web Ghemotoc la [adresa web]. Aplicațiile Ghemotoc vin după lansare. Când vor apărea, vor urmări același nivel, iar această declarație le va acoperi și pe ele.
+Ținta noastră sunt Ghidurile de accesibilitate pentru conținutul web (WCAG) 2.2, la nivelul AA. Această declarație acoperă site-ul și aplicația web ghemotoc la [adresa web]. Aplicațiile ghemotoc vin după lansare. Când vor apărea, vor urmări același nivel, iar această declarație le va acoperi și pe ele.
 
 Ce facem ca să ajungem acolo:
 
@@ -35,7 +35,7 @@ Ce facem ca să ajungem acolo:
 - textul este text adevărat, niciodată o imagine cu text, inclusiv titlurile de pe copertele poveștilor;
 - fiecare schimbare este verificată cu teste automate, cu un cititor de ecran și la o mărire de 200% înainte să intre live.
 
-Legea. Actul european privind accesibilitatea (Directiva (UE) 2019/882, în România Legea 232/2022) se aplică din 28 iunie 2025 unor servicii vândute consumatorilor, de exemplu magazinelor online și cărților electronice. Microîntreprinderile care prestează servicii sunt scutite. [Avocatul confirmă dacă Actul se aplică Ghemotoc] Urmărim oricum WCAG 2.2 AA, pentru că mulți dintre cititorii și scriitorii noștri sunt tineri și toată lumea ar trebui să poată participa.
+Legea. Actul european privind accesibilitatea (Directiva (UE) 2019/882, în România Legea 232/2022) se aplică din 28 iunie 2025 unor servicii vândute consumatorilor, de exemplu magazinelor online și cărților electronice. Microîntreprinderile care prestează servicii sunt scutite. [Avocatul confirmă dacă Actul se aplică ghemotoc] Urmărim oricum WCAG 2.2 AA, pentru că mulți dintre cititorii și scriitorii noștri sunt tineri și toată lumea ar trebui să poată participa.
 
 Această declarație a fost pregătită pe [data] și revizuită ultima dată pe [data].
 
@@ -59,7 +59,7 @@ Această declarație a fost pregătită pe [data] și revizuită ultima dată pe
 
 [Probleme cunoscute: listate după primul audit, fiecare cu ce nu merge, pe cine afectează, o soluție de ocolire, dacă există, și data planificată a reparării.]
 
-Părți pe care nu le controlăm pe deplin. Unele părți din Ghemotoc vin de la alte companii: pagina Yoti pentru verificarea vârstei, muzica și videoclipurile de la alte servicii pe care alegi să le pornești și conectarea cu Google, Apple sau Microsoft. Alegem servicii care iau accesibilitatea în serios și transmitem mai departe orice problemă ne semnalezi.
+Părți pe care nu le controlăm pe deplin. Unele părți din ghemotoc vin de la alte companii: pagina Yoti pentru verificarea vârstei, muzica și videoclipurile de la alte servicii pe care alegi să le pornești și conectarea cu Google, Apple sau Microsoft. Alegem servicii care iau accesibilitatea în serios și transmitem mai departe orice problemă ne semnalezi.
 
 ## 4. Spune-ne despre un obstacol
 
@@ -70,7 +70,7 @@ Părți pe care nu le controlăm pe deplin. Unele părți din Ghemotoc vin de la
 
 **Textul complet**
 
-Dacă ceva din Ghemotoc îți este greu sau imposibil de folosit, te rugăm să ne spui. Preferăm să aflăm decât să te chinui.
+Dacă ceva din ghemotoc îți este greu sau imposibil de folosit, te rugăm să ne spui. Preferăm să aflăm decât să te chinui.
 
 Cum ne găsești:
 
@@ -93,7 +93,7 @@ Dacă nu ești mulțumit de răspunsul nostru, poți depune o plângere la [auto
 
 Nu folosim cookie-uri de urmărire și nici scripturi de urmărire din afară. Asta contează și pentru accesibilitate: mai puține scripturi înseamnă pagini mai rapide și mai puține ferestre care le stau în cale cititoarelor de ecran și tastaturii.
 
-Nu avem un banner de cookie-uri, pentru că păstrăm doar ce îi trebuie lui Ghemotoc ca să funcționeze, de exemplu ca să rămâi conectat. Muzica și videoclipurile de la alte servicii se încarcă doar când apeși pe redare.
+Nu avem un banner de cookie-uri, pentru că păstrăm doar ce îi trebuie lui ghemotoc ca să funcționeze, de exemplu ca să rămâi conectat. Muzica și videoclipurile de la alte servicii se încarcă doar când apeși pe redare.
 
 Fiecare script, cookie sau element stocat nou este verificat automat înainte să intre live. Dacă nu este pe lista noastră aprobată, nu ajunge pe site. Detaliile sunt în Nota de confidențialitate, la „Cookie-uri și stocare”.
 

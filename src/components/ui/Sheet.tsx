@@ -26,10 +26,13 @@ export interface SheetProps {
   children: ReactNode;
 }
 
-/** The panel's classes: glass, the corners, and where it sits at each width. */
+/**
+ * The panel's classes: the one solid box surface (no glass outside the nav bars, Robert, 23 Nov
+ * 2026, 19:26 UTC), the corners, and where it sits at each width.
+ */
 const sheetClasses = [
-  'm-0 max-h-[85vh] w-full max-w-none overflow-y-auto border border-[var(--glass-border)]',
-  'bg-[var(--surface-glass)] p-0 text-ink-muted shadow-popover backdrop-blur-[24px] backdrop-saturate-[1.8]',
+  'box-surface m-0 max-h-[85vh] w-full max-w-none overflow-y-auto',
+  'p-0 text-ink-muted shadow-popover',
   'backdrop:bg-black/30',
   // Phones: a bottom sheet, its top corners rounded.
   'top-auto bottom-0 rounded-t-card rounded-b-none',

@@ -81,13 +81,11 @@ test('the footer button switches to night mode and the choice survives a reload'
 test('turning Night mode off wins over a device in dark mode', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('/design');
-  // The device is dark, so the button starts pressed; a press picks Light for good.
-  const nightMode = page.getByRole('button', { name: 'Mod de noapte' });
-  await expect(nightMode).toHaveAttribute('aria-pressed', 'true');
-  await nightMode.click();
+  // The device is dark, so the button names the other mode, Day; a press picks Light for good.
+  await page.getByRole('button', { name: 'Mod de zi' }).click();
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await expect(nightMode).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByRole('button', { name: 'Mod de noapte' })).toBeVisible();
 });
 
 test('reduce motion removes the entrance animation', async ({ page }) => {

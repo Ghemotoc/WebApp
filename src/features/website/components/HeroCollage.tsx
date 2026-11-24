@@ -104,7 +104,7 @@ function CoverColumns({ stories }: { stories: ListedStory[] }) {
 }
 
 /**
- * The gold card on the wall, in the CMS's words.
+ * The rights note on the wall (pale yellow paper since the flat themes bundle), in the CMS's words.
  *
  * @param card - the card's words from the CMS
  * @param isOverWall - true when covers are drawn, so the card sits over their top right corner
@@ -124,12 +124,12 @@ function RightsCard({
   const placement = isOverWall ? 'absolute top-0 right-0' : 'relative ml-auto';
   return (
     <div
-      className={`${placement} z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 glass-band-tint rounded-field bg-gold px-4 py-4 text-on-gold`}
+      className={`${placement} z-10 flex w-[210px] max-w-[46%] rotate-[5deg] flex-col gap-1 rounded-field border border-[var(--line-box)] bg-note-paper px-4 py-4 text-on-note shadow-card`}
     >
-      {/* The eyebrow's type in the card's dark text: dark gold on gold would be unreadable. */}
+      {/* The eyebrow's type in the note's own dark text (no glass, 23 Nov 2026: pale yellow paper). */}
       <p className="eyebrow-type m-0">{withBrand(card.eyebrow)}</p>
       <p className="m-0 font-heading type-long leading-[1.05] font-bold">{withBrand(card.title)}</p>
-      <p className="m-0 type-meta leading-snug text-on-gold">{withBrand(card.body)}</p>
+      <p className="m-0 type-meta leading-snug text-on-note">{withBrand(card.body)}</p>
     </div>
   );
 }
