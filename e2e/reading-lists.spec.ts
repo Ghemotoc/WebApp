@@ -182,9 +182,19 @@ test.describe('reading lists (GAPS-6)', () => {
       page.getByText('Another bookshelf has that name. Choose a different one.'),
     ).toBeVisible();
     await page.getByRole('button', { name: 'Cancel' }).click();
-    // Step 2: on the list's page, "Remove" takes the story out.
+    // Step 2: on the list's page, "Remove" takes the story out at once and Undo puts it back
+    // (design books item 14); a second Remove keeps it out.
     await page.getByRole('link', { name: listName, exact: true }).click();
-    await page.getByRole('button', { name: 'Remove Lista de ploaie from this bookshelf' }).click();
+    const remove = page.getByRole('button', { name: 'Remove Lista de ploaie from this bookshelf' });
+    await remove.click();
+    await expect(page.getByText('0 stories')).toBeVisible();
+    await page
+      .locator('[aria-live]')
+      .filter({ hasText: 'Lista de ploaie is off the bookshelf.' })
+      .getByRole('button', { name: 'Undo' })
+      .click();
+    await expect(page.getByText('1 story')).toBeVisible();
+    await remove.click();
     await expect(page.getByText('0 stories')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'No stories yet' })).toBeVisible();
     // Step 3: "Delete list" asks once more, then the Library no longer shows it.

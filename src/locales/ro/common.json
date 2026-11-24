@@ -295,5 +295,9 @@
   },
   "loading": {
     "shelf": "Se încarcă poveștile…"
+  },
+  "undo": {
+    "undo": "Anulează",
+    "failed": "Nu s-a putut anula. Încearcă din nou din pagină."
   }
 }

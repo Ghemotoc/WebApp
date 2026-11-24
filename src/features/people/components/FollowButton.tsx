@@ -8,14 +8,17 @@
  * is followed ("Follow Ana Pop": the visible words, then the name for screen readers). Signed out, it is a "Get in to follow" link instead. A
  * read-only account (for example under 18 during the invited test) is told why it can't follow.
  * Nothing shows while the target can't be seen (a block, a hidden story).
+ * Unfollowing happens at once and offers "Undo" for 8 seconds in the shared undo note instead of
+ * asking first (design books item 14).
  * Who uses it: ProfileHeader, the story page's writer card and StoryHeader.
- * What it calls: useFollow → follow_writer() / follow_story().
+ * What it calls: useFollow → follow_writer() / follow_story(), and useUndo for the note.
  */
 import { usePeopleTranslation } from '../registerPeopleTranslations';
 import { Link } from 'react-router';
 
 import { CheckIcon } from '@/components/icons/CheckIcon';
 import { Button } from '@/components/ui/Button';
+import { useUndo } from '@/lib/undo/useUndo';
 
 import type { FollowTarget } from '../api/follows';
 import { useFollow } from '../hooks/useFollow';
@@ -47,6 +50,7 @@ function buttonTextKey(target: FollowTarget, isFollowing: boolean): string {
 export function FollowButton({ target, targetLabel }: FollowButtonProps) {
   const { t } = usePeopleTranslation();
   const follow = useFollow(target);
+  const { offerUndo } = useUndo();
   if (!follow.isSessionKnown || follow.state === null) return null;
   if (!follow.isSignedIn) {
     return (
@@ -59,6 +63,24 @@ export function FollowButton({ target, targetLabel }: FollowButtonProps) {
     );
   }
   const isFollowing = follow.state.following;
+
+  /** Follows, or stops following and offers Undo once the database agreed. */
+  async function press() {
+    if (!isFollowing) {
+      follow.toggle();
+      return;
+    }
+    try {
+      await follow.setFollowing(false);
+    } catch {
+      // The failure note below already says what went wrong; nothing to undo.
+      return;
+    }
+    offerUndo({
+      message: t('follow.unfollowed', { name: targetLabel }),
+      undo: () => follow.setFollowing(true),
+    });
+  }
   return (
     <div className="flex flex-col items-start gap-2">
       {/* Always the quiet button: pressed (Following) reverses it to the filled look in index.css,
@@ -67,7 +89,7 @@ export function FollowButton({ target, targetLabel }: FollowButtonProps) {
         variant="secondary"
         aria-pressed={isFollowing}
         disabled={follow.isSaving}
-        onClick={follow.toggle}
+        onClick={() => void press()}
       >
         {isFollowing && <CheckIcon />}
         {t(buttonTextKey(target, isFollowing))}

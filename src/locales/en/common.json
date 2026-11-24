@@ -295,5 +295,9 @@
   },
   "loading": {
     "shelf": "Loading the stories…"
+  },
+  "undo": {
+    "undo": "Undo",
+    "failed": "That couldn’t be undone. Try again from the page."
   }
 }
