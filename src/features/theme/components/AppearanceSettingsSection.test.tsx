@@ -138,6 +138,6 @@ describe('AppearanceSettingsSection', () => {
     expect(screen.getByRole('switch', { name: 'Teme de sezon' })).toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'Mai puțină mișcare' })).toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'Contrast ridicat' })).toBeInTheDocument();
-    expect(screen.getByText(/Modul de noapte arată la fel/)).toBeInTheDocument();
+    expect(screen.getByText(/Modul de noapte păstrează culoarea temei/)).toBeInTheDocument();
   });
 });

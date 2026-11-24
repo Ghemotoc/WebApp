@@ -3,26 +3,28 @@
  *
  * Where the values come from: the liquid glass design Robert approved on 7 Nov 2026, 19:51 UTC
  * (bundle G1 TOKENS): the handoff doc's "Design tokens and themes" tab and the canvas boards
- * (design/README.md links both). Light is "Lilac mist", the default theme; night is monochrome
- * black, white and grey with cobalt buttons (bundle NIGHT-1, Robert, 8 Nov 2026) on one flat
- * near-black page since NIGHT-2 (Robert, 22 Nov 2026), the same whichever theme a member picks. The staff area has its own flat beige set
+ * (design/README.md links both). Light is "Lilac mist", the default theme; night is black, white
+ * and grey (bundle NIGHT-1, Robert, 8 Nov 2026) on one flat near-black page since NIGHT-2 (Robert,
+ * 22 Nov 2026), with each theme's button colour kept on black (Valentino #7B3A91 in Lilac mist;
+ * the flat themes bundle, Robert, 23 Nov 2026). No gradient, mesh or glow in any theme: every
+ * page is one flat colour (Robert, 23 Nov 2026, 18:09 UTC). The staff area has its own flat beige set
  * by day, with no purple, so staff always know where they are (handoff, Staff tab), and the same
  * flat greys at night.
  *
  * The names stay the ones the app already uses (paper, surface, ink, heading and so on); only the
  * values changed, so every screen took the new colours without being edited. New tokens for the
- * glass look (blobs, glass edge, story paper, progress, accent) sit beside them.
+ * glass look (glass edge, story paper, progress, accent) sit beside them.
  *
  * The simplified design (Robert, 20 Nov 2026; bundle CALM-1, from the handover doc linked in
- * design/README.md) changed only a few of them: the flat main button (plum #48125D by day, cobalt
- * #0047AB at night), the thread (--thread), the paler page mesh (--mesh-lilac, --mesh-blue,
- * --mesh-peach), the cover hairline (--cover-edge) and the corners in the @theme block at the end.
+ * design/README.md) changed only a few of them: the flat main button (plum #48125D by day), the
+ * thread (--thread), the cover hairline (--cover-edge) and the corners in the @theme block at the
+ * end. (Its paler page mesh went with the flat themes bundle, 23 Nov 2026.)
  * Every other colour and shadow already matched its design system (design/simplified-system/).
  * CALM-1b (canvas v38, Robert via DESIGN, 20 Nov 2026, 21:03 UTC) then deepened the muted text,
  * the link and the control edge for contrast, lifted the night warning pill's text and added the
  * pressed quiet button's night colours (--quiet-pressed-*).
  *
- * Glass: cards (bg-surface) are see-through white over the moving colour blobs. `--surface` keeps
+ * Glass: cards (bg-surface) are see-through white over the flat page. `--surface` keeps
  * the solid colour the glass looks like on the page, because the contrast test can only measure
  * solid colours; `--surface-glass` is what the card actually paints (see @theme inline below).
  *
@@ -44,8 +46,9 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  /* Surfaces. Page background, under the blobs (handoff: --bg #F3EEFB). */
-  --paper: #f3eefb;
+  /* Surfaces. The page: one flat colour, Isabelline #F4F0EC (Robert, 23 Nov 2026, 18:09 UTC: no
+     gradients in any theme; design system v25). Content sits straight on it. */
+  --paper: #f4f0ec;
   /* The solid colour a glass card looks like on the page (white at 50% over --paper). */
   --surface: #f9f7fd;
   /* What a glass card paints: white at 50% (handoff: --glass-bg). */
@@ -108,8 +111,8 @@
   --chip-on: #48125d;
   --chip-on-text: #fbf7ec;
   /* The theme accent (buttons, active tab, bars, dots, switches, the logo): Lilac mist is plum.
-     Bundle G2 sets one per theme (Robert, 7 Nov 2026, 17:52 and 18:44); at night it is the light
-     cobalt #5B95EE (NIGHT-1). */
+     Bundle G2 sets one per theme (Robert, 7 Nov 2026, 17:52 and 18:44); at night it is a light
+     Valentino #C4A6CE (23 Nov 2026). */
   --accent: #672786;
   --accent-deep: #2a0e33;
   /* The sleeping-cat logo and the wordmark: Revolver #2A0E33 in the main look (bundle LOGO-2;
@@ -188,21 +191,6 @@
   --category-poetry: #2e4a8c;
   --category-essays: #2f6b4f;
 
-  /* Background colour blobs, still, under everything (handoff: --blob-1 to 3). */
-  --blob-1: #d9ccf5;
-  --blob-2: #c9d8f7;
-  --blob-3: #f9d9cf;
-  /*
-   * The paler page mesh drawn behind every page (the simplified design, Robert, 20 Nov 2026,
-   * 12:16 UTC: paler, so nothing reads as lines; index.css, body::before). Each blob is lifted with
-   * 40% white: exactly the design system's #e8e0f9, #dfe8fa and #fbe8e2 in Lilac mist, and the same
-   * lift in every other look, because each look sets its own blobs on this same element. Meta text
-   * (--body) keeps 6.3:1 or more on all three.
-   */
-  --mesh-lilac: color-mix(in srgb, var(--blob-1) 60%, #fff);
-  --mesh-blue: color-mix(in srgb, var(--blob-2) 60%, #fff);
-  --mesh-peach: color-mix(in srgb, var(--blob-3) 60%, #fff);
-
   /* Story paper: only where story text sits (reader, editor; rulebook 3). */
   --story-paper: #fffbf2;
   --story-ink: #2b211c;
@@ -211,9 +199,9 @@
      (the simplified design, Robert, 20 Nov 2026; the cover-edge utility in index.css). */
   --cover-edge: rgba(38, 20, 46, 0.16);
 
-  /* Progress bars run from very dark plum to light lilac (rulebook 6). */
-  --progress-from: #2a0e33;
-  --progress-to: #c9a5e6;
+  /* Progress bars: one flat fill in the theme accent, no gradient (Robert, 23 Nov 2026). */
+  --progress-from: var(--accent);
+  --progress-to: var(--accent);
 
   /* Notices: whole tinted glass cards; green done, red blocked or error, amber warning. */
   --success-bg: #e3f1ea;
@@ -251,24 +239,25 @@
   --pill-blush-text: #a3122a;
 
   /*
-   * Genre and tag page bands (bundle G7c; boards DiscoverGenre and DiscoverAll): a deep gradient
-   * per category accent, from the top left to the bottom right, with white text on it. Each pair
-   * is checked for white text at 4.5:1 or more at both ends (contrast-pairs.ts). Staff choosing
-   * their own band colours waits for GENRE-LOOK-1 (rulebook, line 75).
+   * Genre and tag page bands (bundle G7c; boards DiscoverGenre and DiscoverAll): one flat deep
+   * colour per category accent with white text on it (Robert, 23 Nov 2026: no gradients; the
+   * plum band is the main action's plum). "from" and "to" are the same colour, kept as two names
+   * so every rule that reads them goes flat at once. White text reads at 4.5:1 or more on each
+   * (contrast-pairs.ts). Staff choosing their own band colours waits for GENRE-LOOK-1.
    */
   --band-text: #fbf7ec;
-  --band-plum-from: #702963;
-  --band-plum-to: #43143b;
+  --band-plum-from: #48125d;
+  --band-plum-to: #48125d;
   --band-sage-from: #005c42;
-  --band-sage-to: #003728;
+  --band-sage-to: #005c42;
   --band-gold-from: #7a5600;
-  --band-gold-to: #4a3400;
+  --band-gold-to: #7a5600;
   --band-sky-from: #0047ab;
-  --band-sky-to: #002b67;
+  --band-sky-to: #0047ab;
   --band-neutral-from: #4b4fa8;
-  --band-neutral-to: #201a53;
+  --band-neutral-to: #4b4fa8;
   --band-blush-from: #b11226;
-  --band-blush-to: #6a010e;
+  --band-blush-to: #b11226;
 
   /* Shadows: soft and wide, so glass seems to float (handoff: --glass-shadow rgba(20,10,30,.10)). */
   --shadow-nav: 0 1px 2px rgba(20, 10, 30, 0.04), 0 10px 30px -12px rgba(20, 10, 30, 0.1);
@@ -296,14 +285,14 @@
   /*
    * Night (bundle NIGHT-1; Robert, 8 Nov 2026, 11:19 to 12:33 UTC, DESIGN thread, canvas v117 to
    * v124): monochrome black, white and grey, the same with every theme, for members and staff.
-   * Main buttons and switches are cobalt (#0047AB, "to feel like spatial"); links, selected tabs,
-   * progress bars, dots and rings are white or grey. Replaces the plum "Revolver" night of 7 Nov.
+   * Links, selected tabs, progress bars, dots and rings are white or grey. Main buttons were cobalt
+   * #0047AB; since 23 Nov 2026 they are Valentino #7B3A91, or each theme's own colour (below).
    *
    * Flat night (NIGHT-2; Robert, 22 Nov 2026, "rebuild the dark mode so it looks nice"; night
    * design file, kit "NIGHT, REBUILT"): one flat near-black page #0E0E10 with no galaxy, glows or
    * gradients; depth from four grey steps (page #0E0E10, box #18181B, raised #222226, field
    * #1D1D21), never from shadows or blur; soft white text (#E8E8EA, muted #B4B4BA) so long
-   * reading doesn't glare; solid boxes with no see-through glass; cobalt only on the main action.
+   * reading doesn't glare; solid boxes with no see-through glass; colour only on the main action.
    */
   --paper: #0e0e10;
   /* The box: solid grey, one step above the page (NIGHT-2). */
@@ -348,19 +337,21 @@
   /* A chip or tab that is on: white with near-black text. */
   --chip-on: #f2f2f3;
   --chip-on-text: #0e0e10;
-  /* Accent text, such as the current chapter's dot: a light cobalt (NIGHT-2). */
-  --accent: #8fb4f5;
+  /* Accent text, such as the current chapter's dot: a light Valentino #C4A6CE, 8.2:1 on a box
+     (Robert, 23 Nov 2026: purple at night too, no more cobalt). */
+  --accent: #c4a6ce;
   --accent-deep: #0e0e10;
   /* The logo and wordmark are soft white at night (Robert, 7 Nov 2026, 19:36). */
   --logo: #f2f2f3;
-  /* Main buttons: flat cobalt #0047AB, a lighter cobalt on hover, with white labels (the
-     simplified design, Robert, 20 Nov 2026; both ends one colour, CALM-1). The white label reads
-     at 8.4:1, and 6.4:1 on the #1A5BC4 hover (NIGHT-2). */
-  --plum-from: #0047ab;
-  --plum-to: #0047ab;
+  /* Main buttons: flat Valentino #7B3A91, a lighter #8F4FA6 on hover, with white labels (Robert,
+     23 Nov 2026, 18:19 UTC: "purple at night too"; replaces the cobalt of NIGHT-1). The white
+     label reads at 7.4:1, and 5.5:1 on the hover. Other themes keep their own colour at night
+     (the night theme blocks below). */
+  --plum-from: #7b3a91;
+  --plum-to: #7b3a91;
   --on-plum: #ffffff;
-  --plum-hover-from: #1a5bc4;
-  --plum-hover-to: #1a5bc4;
+  --plum-hover-from: #8f4fa6;
+  --plum-hover-to: #8f4fa6;
   --track: rgba(0, 0, 0, 0.35);
   /* The selected segment's knob: white glass at 22% (canvas v117). */
   --bubble: rgba(255, 255, 255, 0.22);
@@ -378,7 +369,7 @@
   /* #8E8E96 since NIGHT-2: 5.7:1 on a box. */
   --control-border: #8e8e96;
   /* A pressed quiet button (Following) at night: a near-white fill with dark text, because a
-     cobalt fill would look like the main button (canvas v38; CALM-1b). */
+     coloured fill would look like the main button (canvas v38; CALM-1b). */
   --quiet-pressed-bg: #f2f2f3;
   --quiet-pressed-hover: #ffffff;
   --quiet-pressed-text: #0e0e10;
@@ -390,13 +381,6 @@
   --focus-ring: #ffffff;
   --focus-halo: rgba(14, 14, 16, 0.9);
 
-  /* No blobs and no galaxy at night (NIGHT-2): the page is one flat colour. --night-sky stays a
-     variable so index.css keeps one place to paint the night page. */
-  --blob-1: #0e0e10;
-  --blob-2: #0e0e10;
-  --blob-3: #0e0e10;
-  --night-sky: #0e0e10;
-
   /* Dark reading paper with light text (NIGHT-2). */
   --story-paper: #141416;
   --story-ink: #e8e8ea;
@@ -404,8 +388,8 @@
   /* The cover hairline is white at night, so a dark cover keeps its shape on the night page. */
   --cover-edge: rgba(255, 255, 255, 0.16);
 
-  /* Progress bars are white (canvas v117: "bars white"). */
-  --progress-from: #cccccc;
+  /* Progress bars are flat white (canvas v117: "bars white"; no gradient, 23 Nov 2026). */
+  --progress-from: #ffffff;
   --progress-to: #ffffff;
 
   --success-bg: #1d3a2e;
@@ -451,15 +435,15 @@
   --band-plum-from: #18181b;
   --band-plum-to: #18181b;
   --band-sage-from: #005c42;
-  --band-sage-to: #003728;
+  --band-sage-to: #005c42;
   --band-gold-from: #7a5600;
-  --band-gold-to: #4a3400;
+  --band-gold-to: #7a5600;
   --band-sky-from: #0047ab;
-  --band-sky-to: #002b67;
+  --band-sky-to: #0047ab;
   --band-neutral-from: #18181b;
   --band-neutral-to: #18181b;
   --band-blush-from: #b11226;
-  --band-blush-to: #6a010e;
+  --band-blush-to: #b11226;
 
   --shadow-nav: none;
   --shadow-card: none;
@@ -496,188 +480,266 @@
 }
 
 /*
- * Looks (bundle G2 THEMES; handoff "Design tokens and themes", "Themes" and "Accent colour per
- * theme"): the year-round themes a member picks in Settings › Appearance and the seasonal looks.
- * src/lib/looks.ts sets data-look on <html>; each block applies only by day (data-theme="light"),
- * because night mode is the same monochrome set with every look. Lilac mist is the :root set above. A look
- * changes the page colour, the text colours, the three blobs and its one accent, which colours
- * main buttons, chips that are on, links, focus rings, progress bars and the logo (Robert, 7 Nov
- * 2026, 17:52 and 18:44). One exception: Sorbet, Pistachio, Summer and Autumn draw links a
- * shade darker than their accent, because the accent itself reaches only 3.8 to 4.3:1 on the
- * centre of the paler mesh (bundle CALM-1; a design deviation, listed in docs/board-fixes.md).
- * White on every accent and every accent on its page pass AA, and links reach 4.5:1 on every mesh
- * colour (checked by scripts/token-contrast.test.ts). The staff area ignores looks: its own block
- * sets every one of these again. --surface is the solid colour glass looks like on that page
- * (white at 50%). Summer's and Autumn's dark ends are the canvas kit's --a2 values (#3D2C00,
- * #232D12; DESIGN thread, 8 Nov 2026).
+ * Themes (bundle G2 THEMES, made flat in the flat themes bundle; Robert, 23 Nov 2026, 18:09 to
+ * 18:19 UTC; design system v25 and v26): the year-round themes a member picks in Settings ›
+ * Appearance. src/lib/looks.ts sets data-look on <html>. Lilac mist is the :root set above.
+ *
+ * A theme is two colours: its page and its button colour m. Every other accent is worked out
+ * from m, the same way in every theme, so the five read as one family:
+ * - hover and press: m 82% with black; accent text and links: m 85% with black;
+ * - the quiet fills: the tint m 12% with white, side panels 9%, the solid ground 3%;
+ * - lines: dividers m 22% with white, hairlines 12%, dashed outlines 38%, the control edge m 60%
+ *   with #333;
+ * - info notices: fill m 12% with white, edge 35%, text m 70% with black.
+ * The logo and wordmark take the accent text colour (m 85% with black), because the wordmark is
+ * text and m itself reaches only 4.47:1 on Pistachio's page. Night keeps m on the black page (the night blocks after these); Lilac mist is
+ * the one theme with values of its own (the design system's), and its night button is Valentino.
+ * scripts/theme-colours.test.ts checks that every value below is the rule's result, and
+ * scripts/token-contrast.test.ts that white on each m, the accent text on each page and the night
+ * accent on the night box all reach 4.5:1. The staff area ignores themes: its block sets every one
+ * of these again. The text colours (--ink, --body, --meta) and --accent-deep, which high contrast
+ * uses, stay each theme's own.
  */
 
 /*
  * Swatches: the tiles in Settings › Appearance carry data-look-swatch, so each tile draws its own
- * look's day colours whatever look and theme the page shows. Every look block below also matches
+ * theme's day colours whatever theme and mode the page shows. Every theme block below also matches
  * its swatch; Lilac mist's day colours are the :root set, so its swatch needs this block of its
  * own (a tile in night mode would otherwise take the night colours).
  */
 [data-look-swatch='lilac'] {
-  --paper: #f3eefb;
-  --blob-1: #d9ccf5;
-  --blob-2: #c9d8f7;
-  --blob-3: #f9d9cf;
+  --paper: #f4f0ec;
   --accent: #672786;
+  --plum-to: #48125d;
 }
 
-/*
- * Every swatch works out its paler mesh again from its own blobs (the simplified design, CALM-1;
- * index.css, .look-swatch). The mesh tokens on <html> were already worked out from the page's
- * look, and a tile inherits them as finished colours, so without this every tile would show the
- * page's mesh instead of its own look's.
- */
-[data-look-swatch] {
-  --mesh-lilac: color-mix(in srgb, var(--blob-1) 60%, #fff);
-  --mesh-blue: color-mix(in srgb, var(--blob-2) 60%, #fff);
-  --mesh-peach: color-mix(in srgb, var(--blob-3) 60%, #fff);
-}
-
-/* Peach sorbet: accent coral. */
+/* Peach sorbet: page #fdeee7, button #c2412d (coral). */
 [data-theme='light'][data-look='sorbet'],
 [data-look-swatch='sorbet'] {
-  --paper: #fff1ea;
-  --surface: #fff8f4;
+  --paper: #fdeee7;
+  --surface: #fdf9f9;
+  --tint: #f8e8e6;
+  --panel: #faeeec;
+  --panel-border: #f2d5d1;
   --ink: #2b1530;
   --body: #5e4860;
   --meta: #5e4860;
-  --blob-1: #ffd3c2;
-  --blob-2: #cdeedf;
-  --blob-3: #e4d6f7;
-  --accent: #c2412d;
+  --accent: #a53726;
   --accent-deep: #6b1d12;
   --plum-from: #c2412d;
-  --plum-to: #6b1d12;
+  --plum-to: #c2412d;
   --on-plum: #ffffff;
-  --plum-hover-from: #c64e3c;
-  --plum-hover-to: #813f36;
+  --plum-hover-from: #9f3525;
+  --plum-hover-to: #9f3525;
   --primary: #c2412d;
+  --on-primary: #ffffff;
   --chip-on: #c2412d;
-  /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
-  --link: #b83e2b;
-  --link-hover: #6b1d12;
+  --chip-on-text: #ffffff;
+  --link: #a53726;
+  --link-hover: #9f3525;
   --focus-ring: #c2412d;
-  --progress-from: #6b1d12;
-  --progress-to: #ebc2bc;
-  --logo: #c2412d;
+  --border: #f2d5d1;
+  --hairline: #f8e8e6;
+  --dashed-border: #e8b7af;
+  --control-border: #893b2f;
+  --info-bg: #f8e8e6;
+  --info-border: #eabdb6;
+  --info-text: #882e1f;
+  --logo: #a53726;
 }
 
-/* Sea glass: accent teal. */
+/* Sea glass: page #e4f3f0, button #0f766e (teal). */
 [data-theme='light'][data-look='seaglass'],
 [data-look-swatch='seaglass'] {
-  --paper: #edf6f4;
-  --surface: #f6fafa;
+  --paper: #e4f3f0;
+  --surface: #f8fbfb;
+  --tint: #e2efee;
+  --panel: #e9f3f2;
+  --panel-border: #cae1df;
   --ink: #1c2433;
   --body: #4a5666;
   --meta: #4a5666;
-  --blob-1: #c4e6df;
-  --blob-2: #cfe0f5;
-  --blob-3: #f6d6e1;
-  --accent: #0f766e;
+  --accent: #0d645e;
   --accent-deep: #0b3d3a;
   --plum-from: #0f766e;
-  --plum-to: #0b3d3a;
+  --plum-to: #0f766e;
   --on-plum: #ffffff;
-  --plum-hover-from: #25827b;
-  --plum-hover-to: #305a58;
+  --plum-hover-from: #0c615a;
+  --plum-hover-to: #0c615a;
   --primary: #0f766e;
+  --on-primary: #ffffff;
   --chip-on: #0f766e;
-  --link: #0f766e;
-  --link-hover: #0b3d3a;
+  --chip-on-text: #ffffff;
+  --link: #0d645e;
+  --link-hover: #0c615a;
   --focus-ring: #0f766e;
-  --progress-from: #0b3d3a;
-  --progress-to: #b2d3d1;
-  --logo: #0f766e;
+  --border: #cae1df;
+  --hairline: #e2efee;
+  --dashed-border: #a4cbc8;
+  --control-border: #1d5b56;
+  --info-bg: #e2efee;
+  --info-border: #abcfcc;
+  --info-text: #0b534d;
+  --logo: #0d645e;
 }
 
-/* Pistachio and butter: accent olive green. */
+/* Pistachio: page #eff5e1, button #4d7c0f (olive green). */
 [data-theme='light'][data-look='pistachio'],
 [data-look-swatch='pistachio'] {
-  --paper: #f3f7ec;
-  --surface: #f9fbf6;
+  --paper: #eff5e1;
+  --surface: #fafbf8;
+  --tint: #eaefe2;
+  --panel: #eff3e9;
+  --panel-border: #d8e2ca;
   --ink: #1f2418;
   --body: #4f5547;
   --meta: #4f5547;
-  --blob-1: #d7e8c2;
-  --blob-2: #ffeba8;
-  --blob-3: #e2d5f2;
-  --accent: #4d7c0f;
+  --accent: #41690d;
   --accent-deep: #1f3a0a;
   --plum-from: #4d7c0f;
-  --plum-to: #1f3a0a;
+  --plum-to: #4d7c0f;
   --on-plum: #ffffff;
-  --plum-hover-from: #548119;
-  --plum-hover-to: #41582f;
+  --plum-hover-from: #3f660c;
+  --plum-hover-to: #3f660c;
   --primary: #4d7c0f;
+  --on-primary: #ffffff;
   --chip-on: #4d7c0f;
-  /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
-  --link: #48730e;
-  --link-hover: #1f3a0a;
+  --chip-on-text: #ffffff;
+  --link: #41690d;
+  --link-hover: #3f660c;
   --focus-ring: #4d7c0f;
-  --progress-from: #1f3a0a;
-  --progress-to: #c6d5b2;
-  --logo: #4d7c0f;
+  --border: #d8e2ca;
+  --hairline: #eaefe2;
+  --dashed-border: #bbcda4;
+  --control-border: #435f1d;
+  --info-bg: #eaefe2;
+  --info-border: #c1d1ab;
+  --info-text: #36570b;
+  --logo: #41690d;
 }
 
-/* Candy floss: accent raspberry. */
+/* Candy floss: page #fce8f1, button #c0266d (raspberry). */
 [data-theme='light'][data-look='candy'],
 [data-look-swatch='candy'] {
-  --paper: #fceff5;
-  --surface: #fef7fa;
+  --paper: #fce8f1;
+  --surface: #fdf8fb;
+  --tint: #f7e5ed;
+  --panel: #f9ebf2;
+  --panel-border: #f1cfdf;
   --ink: #2a1428;
   --body: #5d465a;
   --meta: #5d465a;
-  --blob-1: #f8cfe1;
-  --blob-2: #d3e1fb;
-  --blob-3: #e8daf8;
-  --accent: #c0266d;
+  --accent: #a3205d;
   --accent-deep: #5a0b2e;
   --plum-from: #c0266d;
-  --plum-to: #5a0b2e;
+  --plum-to: #c0266d;
   --on-plum: #ffffff;
-  --plum-hover-from: #c84280;
-  --plum-hover-to: #73304d;
+  --plum-hover-from: #9d1f59;
+  --plum-hover-to: #9d1f59;
   --primary: #c0266d;
+  --on-primary: #ffffff;
   --chip-on: #c0266d;
-  --link: #c0266d;
-  --link-hover: #5a0b2e;
+  --chip-on-text: #ffffff;
+  --link: #a3205d;
+  --link-hover: #9d1f59;
   --focus-ring: #c0266d;
-  --progress-from: #5a0b2e;
-  --progress-to: #ebbad0;
-  --logo: #c0266d;
+  --border: #f1cfdf;
+  --hairline: #f7e5ed;
+  --dashed-border: #e7adc8;
+  --control-border: #882b56;
+  --info-bg: #f7e5ed;
+  --info-border: #e9b3cc;
+  --info-text: #861b4c;
+  --logo: #a3205d;
 }
 
-/* Magic Coffin cream: accent Magic Coffin red. */
+/* Magic Coffin cream: page #faf2e4, button #9f1239 (Magic Coffin red). */
 [data-theme='light'][data-look='tmc'],
 [data-look-swatch='tmc'] {
-  --paper: #faf8f5;
-  --surface: #fcfcfa;
+  --paper: #faf2e4;
+  --surface: #fcf8f9;
+  --tint: #f3e3e7;
+  --panel: #f6eaed;
+  --panel-border: #eacbd3;
   --ink: #26142e;
   --body: #5c4965;
   --meta: #5c4965;
-  --blob-1: #ded3e4;
-  --blob-2: #f1eaf4;
-  --blob-3: #efd98f;
-  --accent: #9f1239;
+  --accent: #870f30;
   --accent-deep: #3b0a16;
   --plum-from: #9f1239;
-  --plum-to: #3b0a16;
+  --plum-to: #9f1239;
   --on-plum: #ffffff;
-  --plum-hover-from: #ad3657;
-  --plum-hover-to: #582f39;
+  --plum-hover-from: #820f2f;
+  --plum-hover-to: #820f2f;
   --primary: #9f1239;
+  --on-primary: #ffffff;
   --chip-on: #9f1239;
-  --link: #9f1239;
-  --link-hover: #3b0a16;
+  --chip-on-text: #ffffff;
+  --link: #870f30;
+  --link-hover: #820f2f;
   --focus-ring: #9f1239;
-  --progress-from: #3b0a16;
-  --progress-to: #e0b3c0;
-  --logo: #9f1239;
+  --border: #eacbd3;
+  --hairline: #f3e3e7;
+  --dashed-border: #dba5b4;
+  --control-border: #741f37;
+  --info-bg: #f3e3e7;
+  --info-border: #ddacba;
+  --info-text: #6f0d28;
+  --logo: #870f30;
+}
+
+/*
+ * The themes at night (Robert, 23 Nov 2026, 18:19 UTC: "night mode keeps the theme colour on
+ * black"). The page, boxes, text and lines stay the night greys; only the main button, its hover,
+ * the accent text and the logo take the theme. Accent text is m 55% with white, so it reads at
+ * 4.5:1 or more on the night box. The hover is m 82% with black, as by day: the design's m 85%
+ * with white leaves the white label under 4.5:1 on Peach sorbet, Sea glass, Pistachio and Candy
+ * floss (4.0, 4.1, 3.7 and 4.5), so the darker hover keeps it readable (a deviation, listed in
+ * docs/board-fixes.md). Lilac mist's night is the night block above (Valentino).
+ */
+[data-theme='night'][data-look='sorbet'] {
+  --plum-from: #c2412d;
+  --plum-to: #c2412d;
+  --plum-hover-from: #9f3525;
+  --plum-hover-to: #9f3525;
+  --accent: #dd978c;
+  --logo: #dd978c;
+}
+
+[data-theme='night'][data-look='seaglass'] {
+  --plum-from: #0f766e;
+  --plum-to: #0f766e;
+  --plum-hover-from: #0c615a;
+  --plum-hover-to: #0c615a;
+  --accent: #7bb4af;
+  --logo: #7bb4af;
+}
+
+[data-theme='night'][data-look='pistachio'] {
+  --plum-from: #4d7c0f;
+  --plum-to: #4d7c0f;
+  --plum-hover-from: #3f660c;
+  --plum-hover-to: #3f660c;
+  --accent: #9db77b;
+  --logo: #9db77b;
+}
+
+[data-theme='night'][data-look='candy'] {
+  --plum-from: #c0266d;
+  --plum-to: #c0266d;
+  --plum-hover-from: #9d1f59;
+  --plum-hover-to: #9d1f59;
+  --accent: #dc88af;
+  --logo: #dc88af;
+}
+
+[data-theme='night'][data-look='tmc'] {
+  --plum-from: #9f1239;
+  --plum-to: #9f1239;
+  --plum-hover-from: #820f2f;
+  --plum-hover-to: #820f2f;
+  --accent: #ca7d92;
+  --logo: #ca7d92;
 }
 
 /* Winter (seasonal): accent ice blue. */
@@ -688,9 +750,6 @@
   --ink: #1b2236;
   --body: #4a5268;
   --meta: #4a5268;
-  --blob-1: #cbdbf3;
-  --blob-2: #e2e7ee;
-  --blob-3: #b9cceb;
   --accent: #1d4ed8;
   --accent-deep: #172554;
   --plum-from: #1d4ed8;
@@ -716,9 +775,6 @@
   --ink: #2a1a26;
   --body: #5a4a55;
   --meta: #5a4a55;
-  --blob-1: #f7d3df;
-  --blob-2: #e2e0e6;
-  --blob-3: #fbe4ec;
   --accent: #b4235f;
   --accent-deep: #4a1028;
   --plum-from: #b4235f;
@@ -744,9 +800,6 @@
   --ink: #2a1830;
   --body: #5c4860;
   --meta: #5c4860;
-  --blob-1: #ffdf85;
-  --blob-2: #bedffa;
-  --blob-3: #f7c4e5;
   --accent: #946b00;
   --accent-deep: #3d2c00;
   --plum-from: #946b00;
@@ -761,7 +814,7 @@
      accent #946b00 stays as Robert chose it (7 Nov 2026). */
   --on-primary: #ffffff;
   --chip-on-text: #ffffff;
-  /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
+  /* A shade darker than the accent (CALM-1). */
   --link: #835e00;
   --link-hover: #3d2c00;
   --focus-ring: #946b00;
@@ -778,9 +831,6 @@
   --ink: #2a1a14;
   --body: #5a4a40;
   --meta: #5a4a40;
-  --blob-1: #c9d6bc;
-  --blob-2: #e9b8a2;
-  --blob-3: #e8d1ac;
   --accent: #556b2f;
   --accent-deep: #232d12;
   --plum-from: #556b2f;
@@ -790,7 +840,7 @@
   --plum-hover-to: #444c36;
   --primary: #556b2f;
   --chip-on: #556b2f;
-  /* A shade darker than the accent: 4.5:1 on the centre of the paler mesh (CALM-1). */
+  /* A shade darker than the accent (CALM-1). */
   --link: #50652d;
   --link-hover: #232d12;
   --focus-ring: #556b2f;
@@ -878,10 +928,6 @@
   --paper: #000000;
   /* No galaxy here, so the phone's bars keep the flat page colour (CALM-1). */
   --browser-bar: #000000;
-  --night-sky: #000000;
-  --blob-1: #000000;
-  --blob-2: #000000;
-  --blob-3: #000000;
   --surface: #161616;
   --surface-glass: #161616;
   --surface-box: #161616;
@@ -1085,11 +1131,6 @@
   --focus-ring: var(--accent-deep);
   --focus-halo: #ffffff;
 
-  /* No colour blobs (index.css also stops drawing them). */
-  --blob-1: #ffffff;
-  --blob-2: #ffffff;
-  --blob-3: #ffffff;
-
   --story-paper: #ffffff;
   --story-ink: #000000;
 
@@ -1130,11 +1171,17 @@
 
   /* Genre bands: each hue's darker end across the whole band, so white text has 7:1 everywhere. */
   --band-plum-from: #43143b;
+  --band-plum-to: #43143b;
   --band-sage-from: #003728;
+  --band-sage-to: #003728;
   --band-gold-from: #4a3400;
+  --band-gold-to: #4a3400;
   --band-sky-from: #002b67;
+  --band-sky-to: #002b67;
   --band-neutral-from: #201a53;
+  --band-neutral-to: #201a53;
   --band-blush-from: #6a010e;
+  --band-blush-to: #6a010e;
 
   /* A dark line instead of each soft shadow. */
   --shadow-nav: 0 0 0 1px var(--border);
@@ -1142,8 +1189,9 @@
   --shadow-popover: 0 0 0 2px var(--control-border);
 }
 
-/* High contrast at night: plain black, white text, white edges; main buttons stay cobalt, which
-   carries white text at 8.6:1, with a white rim so their shape shows on black (CONTRAST-1). */
+/* High contrast at night: plain black, white text, white edges; main buttons are Valentino
+   #7B3A91 (cobalt until 23 Nov 2026), which carries white text at 7.4:1, with a white rim so their
+   shape shows on black (CONTRAST-1). */
 [data-contrast='more'] [data-theme='night'],
 [data-contrast='more'][data-theme='night'] {
   /* Story Atlas relationship colours in high contrast at night: the night values already stand
@@ -1199,14 +1247,14 @@
   --on-primary: #000000;
   --chip-on: #ffffff;
   --chip-on-text: #000000;
-  --accent: #8fb8ff;
+  --accent: #c4a6ce;
   --accent-deep: #000000;
   --logo: #ffffff;
-  --plum-from: #0047ab;
-  --plum-to: #0047ab;
+  --plum-from: #7b3a91;
+  --plum-to: #7b3a91;
   --on-plum: #ffffff;
-  --plum-hover-from: #003a8c;
-  --plum-hover-to: #003a8c;
+  --plum-hover-from: #652f77;
+  --plum-hover-to: #652f77;
   --button-main-rim: #ffffff;
   --track: #333333;
   /* The picked segment is black with a white ring (index.css): its label stays white, as the
@@ -1224,11 +1272,7 @@
   --focus-ring: #ffffff;
   --focus-halo: #000000;
 
-  --blob-1: #000000;
-  --blob-2: #000000;
-  --blob-3: #000000;
   /* No galaxy: plain black. */
-  --night-sky: #000000;
 
   --story-paper: #000000;
   --story-ink: #ffffff;
@@ -1268,11 +1312,17 @@
   --pill-blush-text: #ffc9d1;
 
   --band-plum-from: #18181a;
+  --band-plum-to: #18181a;
   --band-sage-from: #003728;
+  --band-sage-to: #003728;
   --band-gold-from: #4a3400;
+  --band-gold-to: #4a3400;
   --band-sky-from: #002b67;
+  --band-sky-to: #002b67;
   --band-neutral-from: #141416;
+  --band-neutral-to: #141416;
   --band-blush-from: #6a010e;
+  --band-blush-to: #6a010e;
 
   --shadow-nav: 0 0 0 1px var(--border);
   --shadow-card: 0 0 0 1px var(--border);

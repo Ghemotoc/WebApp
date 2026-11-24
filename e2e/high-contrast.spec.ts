@@ -81,7 +81,7 @@ test.describe('Settings › Appearance: High contrast (CONTRAST-1)', () => {
     const highContrast = page.getByRole('switch', { name: 'High contrast' });
     await expect(highContrast).toHaveAttribute('aria-checked', 'false');
     await expect(page.locator('html')).not.toHaveAttribute('data-contrast');
-    expect(await rootToken(page, '--paper')).toBe('rgb(243, 238, 251)');
+    expect(await rootToken(page, '--paper')).toBe('rgb(244, 240, 236)');
 
     // Step 2: switched on, the page is white, the blobs are gone and the card is solid.
     await highContrast.click();
@@ -147,7 +147,7 @@ test.describe('Settings › Appearance: High contrast (CONTRAST-1)', () => {
     // Switched off again, the peach page is back.
     await page.getByRole('switch', { name: 'High contrast' }).click();
     await expect(page.locator('html')).not.toHaveAttribute('data-contrast');
-    expect(await rootToken(page, '--paper')).toBe('rgb(255, 241, 234)');
+    expect(await rootToken(page, '--paper')).toBe('rgb(253, 238, 231)');
     await page.context().close();
   });
 

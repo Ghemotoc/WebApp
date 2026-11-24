@@ -340,7 +340,7 @@
  * the soft tint look on 20 Nov 2026, 10:07 to 10:18 UTC; design/simplified-system/components/
  * Button/README.md). Three kinds, and one main button on a screen:
  * - button-main is the one next step (Publish, Continue): a flat fill of the theme accent (plum
- *   #48125D in Lilac mist, cobalt at night), --on-plum text, no sheen, rim or coloured shadow;
+ *   #48125D in Lilac mist, Valentino #7B3A91 at night), --on-plum text, no sheen, rim or coloured shadow;
  *   hover, press and the current page take --plum-hover-from and -to (violet #672786 by day).
  * - button-glass is the quiet button (Follow, Share, Add to a bookshelf): the --tint fill with no
  *   edge, no blur and no shadow, --ink text; --border on hover. Its label (13.7:1) carries it,
@@ -352,20 +352,19 @@
  * look changes in this one place.
  */
 @utility button-main {
+  /* One flat colour in every theme, day and night: no gradient (Robert, 23 Nov 2026). */
   background-color: var(--plum-to);
-  /* One colour in Lilac mist and at night, where both ends match; the other looks keep a gentle
-     gradient of their own accent, flat in feel because nothing else is drawn on it. */
-  background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
+  background-image: none;
   color: var(--on-plum);
   border: 1px solid transparent;
   box-shadow: none;
   transition: transform 120ms ease-out;
   /* Hover, press and the current page turn deep plum into the brighter plum (Robert, 11 Nov 2026;
-     kept by CALM-2); every other look takes a slightly lighter version of its own accent. */
+     kept by CALM-2); every other theme takes its button colour with 18% black (tokens.css). */
   &:hover,
   &:active,
   &[aria-current='page'] {
-    background-image: linear-gradient(180deg, var(--plum-hover-from), var(--plum-hover-to));
+    background-color: var(--plum-hover-to);
   }
   &:active {
     transform: scale(0.98);
@@ -373,7 +372,7 @@
   &:disabled,
   &[aria-disabled='true'] {
     transform: none;
-    background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
+    background-color: var(--plum-to);
   }
 }
 
@@ -403,7 +402,7 @@
   /* Pressed (aria-pressed="true", such as Follow turned into Following) reverses the quiet button:
      the theme's main fill with --on-plum text, so the state reads without colour alone (the label
      changes too). At night tokens.css sets --quiet-pressed-* to a near-white fill with dark text,
-     so it never passes for the cobalt main button (canvas v38; Robert via DESIGN, 20 Nov 2026,
+     so it never passes for the coloured main button (canvas v38; Robert via DESIGN, 20 Nov 2026,
      21:03 UTC; CALM-1b). */
   &[aria-pressed='true'] {
     background-color: var(--quiet-pressed-bg, var(--plum-to));
@@ -496,8 +495,8 @@
 
 @layer base {
   /*
-   * The page: the background colour sits on <html>; <body> stays see-through so the colour blobs
-   * (body::before, below) show between them and the page.
+   * The page: the flat background colour sits on <html>; <body> stays see-through, so a phone's
+   * over-scroll shows the same colour.
    * Body text is Inter at 15 px with a 1.5 line height (handoff: --font-ui).
    */
   html {
@@ -515,8 +514,7 @@
     line-height: 1.5;
     /* viewport-fit=cover (index.html, bundle CALM-1) also lets the page run under a phone's notch
        and rounded corners when the phone is turned sideways. This keeps the content clear of
-       them, while the page colour and the background (body::before, fixed to the window) still
-       reach the edges. env() is 0 on every screen without a notch on its side. */
+       them, while the page colour on <html> still reaches the edges. env() is 0 on every screen without a notch on its side. */
     padding-right: env(safe-area-inset-right);
     padding-left: env(safe-area-inset-left);
   }
@@ -570,135 +568,11 @@
 }
 
 /*
- * The background. The simplified design (Robert, 20 Nov 2026, 12:16 UTC): four soft blobs, lifted
- * with 40% white, sized in px and fading in six steps, so no band shows. It replaces the three
- * larger blobs of the liquid glass design (bundle G1). The colours are --mesh-lilac, --mesh-blue
- * and --mesh-peach (tokens.css): each look's own blobs mixed with white, so every look gets the
- * same lift. The gradients are copied from .gh-mesh and .gh-mesh--phone in
- * design/simplified-system/components/bundle.css, without their last layer: the page colour is
- * already on <html>.
- * Each blob fades in six even steps: 100, 90, 65, 35, 10 and 0% of its colour at 0, 20, 40, 60, 80
- * and 100% of its radius, so no edge or band shows. The blobs stay still and there is no film
- * grain (Robert, 7 Nov 2026, 21:46 UTC). The staff area paints its own flat beige over them
- * (data-area="staff").
- * Phones (Robert, 20 Nov 2026, 13:10 UTC: "at the moment it shows black on website on phone"):
- * the layer is as tall as the large viewport (100lvh), so it also fills the space behind a phone
- * browser's toolbars as they slide away. Browsers without the lvh unit get 100vh: the rule just
- * after this one switches to 100lvh only where it is supported, because the build drops a plain
- * second "height" line as a duplicate. With viewport-fit=cover in
- * index.html the page draws under the status bar and the home bar, and the lilac blobs in the
- * top-left and bottom-right corners give those edges the soft colour fade.
+ * The background: one flat colour, the theme's page colour on <html> (the html rule above), in
+ * every theme, day and night (Robert, 23 Nov 2026, 18:09 UTC: no gradients). The soft colour mesh
+ * that body::before drew since the simplified design (20 Nov 2026), and the liquid glass blobs
+ * before it, are gone, so nothing is painted behind the page any more.
  */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  z-index: -1;
-  pointer-events: none;
-  /* Wide screens (1024 px and wider): four large blobs, two on each side. */
-  background:
-    radial-gradient(
-      1100px 800px at 8% 0%,
-      color-mix(in srgb, var(--mesh-lilac) 100%, transparent) 0%,
-      color-mix(in srgb, var(--mesh-lilac) 90%, transparent) 20%,
-      color-mix(in srgb, var(--mesh-lilac) 65%, transparent) 40%,
-      color-mix(in srgb, var(--mesh-lilac) 35%, transparent) 60%,
-      color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
-      color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
-    ),
-    radial-gradient(
-      1000px 800px at 96% 14%,
-      color-mix(in srgb, var(--mesh-blue) 100%, transparent) 0%,
-      color-mix(in srgb, var(--mesh-blue) 90%, transparent) 20%,
-      color-mix(in srgb, var(--mesh-blue) 65%, transparent) 40%,
-      color-mix(in srgb, var(--mesh-blue) 35%, transparent) 60%,
-      color-mix(in srgb, var(--mesh-blue) 10%, transparent) 80%,
-      color-mix(in srgb, var(--mesh-blue) 0%, transparent) 100%
-    ),
-    radial-gradient(
-      1100px 900px at 4% 48%,
-      color-mix(in srgb, var(--mesh-peach) 100%, transparent) 0%,
-      color-mix(in srgb, var(--mesh-peach) 90%, transparent) 20%,
-      color-mix(in srgb, var(--mesh-peach) 65%, transparent) 40%,
-      color-mix(in srgb, var(--mesh-peach) 35%, transparent) 60%,
-      color-mix(in srgb, var(--mesh-peach) 10%, transparent) 80%,
-      color-mix(in srgb, var(--mesh-peach) 0%, transparent) 100%
-    ),
-    radial-gradient(
-      1000px 900px at 94% 80%,
-      color-mix(in srgb, var(--mesh-lilac) 100%, transparent) 0%,
-      color-mix(in srgb, var(--mesh-lilac) 90%, transparent) 20%,
-      color-mix(in srgb, var(--mesh-lilac) 65%, transparent) 40%,
-      color-mix(in srgb, var(--mesh-lilac) 35%, transparent) 60%,
-      color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
-      color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
-    );
-}
-
-/* The large viewport's height wherever the browser knows the lvh unit (see the comment above). */
-@supports (height: 100lvh) {
-  body::before {
-    height: 100lvh;
-  }
-}
-
-/*
- * Narrower than 1024 px: the same four blobs drawn smaller and pushed into the corners and sides,
- * as on the phone boards (.gh-mesh--phone). Lilac sits in the top-left and bottom-right corners,
- * so the top and bottom of a phone screen show the soft fade (no separate gradient bar).
- */
-@media (width < 1024px) {
-  body::before {
-    background:
-      radial-gradient(
-        420px 340px at 0% 0%,
-        color-mix(in srgb, var(--mesh-lilac) 100%, transparent) 0%,
-        color-mix(in srgb, var(--mesh-lilac) 90%, transparent) 20%,
-        color-mix(in srgb, var(--mesh-lilac) 65%, transparent) 40%,
-        color-mix(in srgb, var(--mesh-lilac) 35%, transparent) 60%,
-        color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
-        color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
-      ),
-      radial-gradient(
-        380px 340px at 100% 32%,
-        color-mix(in srgb, var(--mesh-blue) 100%, transparent) 0%,
-        color-mix(in srgb, var(--mesh-blue) 90%, transparent) 20%,
-        color-mix(in srgb, var(--mesh-blue) 65%, transparent) 40%,
-        color-mix(in srgb, var(--mesh-blue) 35%, transparent) 60%,
-        color-mix(in srgb, var(--mesh-blue) 10%, transparent) 80%,
-        color-mix(in srgb, var(--mesh-blue) 0%, transparent) 100%
-      ),
-      radial-gradient(
-        420px 360px at 0% 70%,
-        color-mix(in srgb, var(--mesh-peach) 100%, transparent) 0%,
-        color-mix(in srgb, var(--mesh-peach) 90%, transparent) 20%,
-        color-mix(in srgb, var(--mesh-peach) 65%, transparent) 40%,
-        color-mix(in srgb, var(--mesh-peach) 35%, transparent) 60%,
-        color-mix(in srgb, var(--mesh-peach) 10%, transparent) 80%,
-        color-mix(in srgb, var(--mesh-peach) 0%, transparent) 100%
-      ),
-      radial-gradient(
-        380px 320px at 100% 100%,
-        color-mix(in srgb, var(--mesh-lilac) 100%, transparent) 0%,
-        color-mix(in srgb, var(--mesh-lilac) 90%, transparent) 20%,
-        color-mix(in srgb, var(--mesh-lilac) 65%, transparent) 40%,
-        color-mix(in srgb, var(--mesh-lilac) 35%, transparent) 60%,
-        color-mix(in srgb, var(--mesh-lilac) 10%, transparent) 80%,
-        color-mix(in srgb, var(--mesh-lilac) 0%, transparent) 100%
-      );
-  }
-}
-
-/*
- * At night the blobs give way to one flat page colour (NIGHT-2; Robert, 22 Nov 2026: no galaxy,
- * no glows, no gradients), kept in one variable (--night-sky in tokens.css).
- */
-[data-theme='night'] body::before {
-  background: var(--night-sky);
-}
 
 /*
  * Glass: every card that uses bg-surface is see-through white over the still colour blobs
@@ -1140,8 +1014,8 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 .glass-band-inner {
-  /* One even faint wash, no top edge light (CALM-7a, canvas v47). */
-  background-image: linear-gradient(rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.08));
+  /* Flat: no wash and no top edge light (CALM-7a, canvas v47; no gradients, 23 Nov 2026). */
+  background-image: none;
 }
 
 /*
@@ -1175,7 +1049,8 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 [data-theme='night'] .band-first-on-dark {
-  background-image: linear-gradient(180deg, var(--plum-from), var(--plum-to));
+  background-color: var(--plum-to);
+  background-image: none;
   color: var(--on-plum);
 }
 
@@ -1193,11 +1068,18 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 [data-theme='night'] .switch-track-on {
-  /* An "on" switch at night is cobalt with a 35% white rim, so its edge still reads on the black
-     page (WCAG 2.2, 1.4.11); its white knob and the On word say the state (canvas v117; NIGHT-1).
-     By day it is the theme's solid colour (bg-primary in src/components/ui/Switch.tsx). */
-  background-color: #0047ab;
+  /* An "on" switch at night takes the theme's main button colour (Valentino in Lilac mist; the
+     flat themes bundle, 23 Nov 2026, replacing the cobalt of NIGHT-1) with a 35% white rim, so its
+     edge still reads on the black page (WCAG 2.2, 1.4.11); its white knob and the On word say the
+     state. By day it is the theme's solid colour (bg-primary in src/components/ui/Switch.tsx). */
+  background-color: var(--plum-to);
   border-color: rgb(255 255 255 / 0.35);
+}
+
+/* The staff area keeps its look from before (Robert, 21 Nov 2026): its night main button is
+   near-white, which would hide the white knob, so its "on" switch stays cobalt. */
+[data-theme='night'] [data-area='staff'] .switch-track-on {
+  background-color: #0047ab;
 }
 
 /*
@@ -1278,17 +1160,13 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 /*
  * High contrast (bundle CONTRAST-1; Robert, 13 Nov 2026: "Build, plain white pages"). Most of it
  * is colours, in tokens.css under data-contrast="more": white pages (black at night), black text,
- * dark edges and each theme kept in its deep accent. These rules cover what a colour can't: the
- * blobs and the galaxy are not drawn, nothing is see-through or blurred, the soft sheens and
+ * dark edges and each theme kept in its deep accent. These rules cover what a colour can't:
+ * nothing is see-through or blurred, the soft sheens and
  * shadows written into the rules above give way to plain lines, and links are always underlined
  * so colour is never the only cue (WCAG 2.2, 1.4.1 and 1.4.6). src/lib/highContrast.ts and
  * public/theme-init.js set the attribute on <html>, for the member's switch in Settings ›
  * Appearance and for a device that asks for more contrast.
  */
-:root[data-contrast='more'] body::before {
-  background: none;
-}
-
 :root[data-contrast='more'] dialog.bg-surface,
 :root[data-contrast='more'] .bg-surface.shadow-popover {
   background-color: var(--surface);
@@ -1362,7 +1240,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   box-shadow: 0 0 0 1px var(--control-border);
 }
 
-/* An "on" switch at night keeps its cobalt and takes a full white edge. */
+/* An "on" switch at night keeps its colour and takes a full white edge. */
 :root[data-contrast='more'][data-theme='night'] .switch-track-on {
   border-color: #ffffff;
 }
@@ -1882,17 +1760,12 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 
 /*
- * The theme tiles in Settings › Appearance (bundle G2 THEMES; LookTiles.tsx): the look's page
- * colour with its blobs, drawn small, as on the Settings board. Since the simplified design
- * (bundle CALM-1) the blobs are the paler mesh colours, so each tile shows the background its look
- * now has. Each tile carries data-look-swatch, so these variables are that look's day colours
- * (tokens.css, "Swatches", which also works out each tile's own --mesh-* colours).
+ * The theme tiles in Settings › Appearance (bundle G2 THEMES; LookTiles.tsx): the theme's flat
+ * page colour, drawn small (no gradients since 23 Nov 2026). Each tile carries data-look-swatch,
+ * so --paper is that theme's day page colour (tokens.css, "Swatches").
  */
 .look-swatch {
-  background:
-    radial-gradient(60% 70% at 20% 20%, var(--mesh-lilac), transparent 70%),
-    radial-gradient(60% 70% at 85% 30%, var(--mesh-blue), transparent 70%),
-    radial-gradient(70% 70% at 50% 100%, var(--mesh-peach), transparent 70%), var(--paper);
+  background: var(--paper);
 }
 
 /*

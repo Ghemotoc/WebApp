@@ -122,7 +122,7 @@
     const fromTokens = style.getPropertyValue('--paper').trim();
     if (fromTokens !== '') return fromTokens;
     const isNight = document.documentElement.getAttribute('data-theme') === 'night';
-    if (!isNight) return '#f3eefb';
+    if (!isNight) return '#f4f0ec';
     // Before the style sheet: the flat night page colour, as in tokens.css (NIGHT-2).
     return '#0e0e10';
   }
