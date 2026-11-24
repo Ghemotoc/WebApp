@@ -295,6 +295,7 @@ function EditorSideColumn(props: {
         }
         onKeepMine={props.conflict.keepMine}
         onCompare={props.conflict.openCompare}
+        onRetry={() => void props.loaded.autosave.saveNow()}
         story={story}
       />
       {/* The chapter's planning (Story Atlas, S1-E17-24), stacked under the aside on a phone. */}

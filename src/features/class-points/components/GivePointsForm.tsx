@@ -70,12 +70,18 @@ export function GivePointsForm({ chapterId, giving }: GivePointsFormProps) {
     t('chapter.give.points', { count }),
   );
 
-  /** Saves the choice; zero takes the points back. */
+  /**
+   * Saves the choice; zero takes the points back. The "Saved" note shows at once (design books
+   * item 13: within 100 ms) and is taken away again if the server says no, when the failure
+   * note shows instead.
+   */
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSavedPoints(null);
+    // Step 1: show the result straight away.
+    setSavedPoints(points);
+    // Step 2: send it; a refusal takes the note back and the failure note explains why.
     const saved = await giver.give({ points, note }).catch(() => null);
-    if (saved !== null) setSavedPoints(points);
+    if (saved === null) setSavedPoints(null);
   }
 
   return (

@@ -78,7 +78,7 @@
   "button": {
     "label": "Bibliotecă",
     "none": "Nu e în bibliotecă",
-    "saveFailed": "Nu s-a salvat. Încearcă din nou.",
+    "saveFailed": "Nu s-a salvat, așa că raftul a revenit cum era. Încearcă din nou.",
     "logIn": "Intră ca s-o păstrezi"
   },
   "startReading": "Începe lectura",

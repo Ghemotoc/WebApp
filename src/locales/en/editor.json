@@ -45,9 +45,10 @@
     "savedJustNow": "Saved now.",
     "savedAt": "Saved at {{time}}.",
     "conflict": "This chapter was changed on another device. Saving has stopped so nothing is overwritten. Choose which version to keep.",
-    "failed": "We couldn’t save. Check your connection; we’ll try again in 10 seconds.",
+    "failed": "Could not save. We’ll try again in 10 seconds.",
     "notActive": "This account can’t save chapters yet.",
-    "offline": "You’re offline. Your changes are kept on this device and will save when you’re back online."
+    "offline": "Saved on this device. It saves online when the connection is back.",
+    "retry": "Retry"
   },
   "link": {
     "heading": "Add a link",

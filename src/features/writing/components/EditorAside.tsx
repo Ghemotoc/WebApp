@@ -106,6 +106,8 @@ export interface EditorAsideProps {
   /** The two ways out of a conflict (S1-E3-02b). */
   onKeepMine: () => void;
   onCompare: () => void;
+  /** Saves again at once after "Could not save" (design books item 13). */
+  onRetry: () => void;
   story: MyStory | null;
 }
 
@@ -124,6 +126,11 @@ export function EditorAside(props: EditorAsideProps) {
           <Eyebrow>{t('saving.heading')}</Eyebrow>
         </div>
         <SaveStatus state={saveState} />
+        {saveState.kind === 'failed' && (
+          <Button variant="secondary" className="self-start" onClick={props.onRetry}>
+            {t('saving.retry')}
+          </Button>
+        )}
         {saveState.kind === 'conflict' && (
           <ConflictActions onKeepMine={props.onKeepMine} onCompare={props.onCompare} />
         )}

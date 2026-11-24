@@ -1,6 +1,6 @@
 /**
  * The chapter draft kept on the device (story S1-E3-02b; board 4.3: "You're offline. Your
- * changes are kept on this device and will save when you're back online").
+ * changes are kept on this device"; the Saving box says "Saved on this device", design books 13).
  *
  * What it is: a small IndexedDB store, one record per chapter code, holding the title, the body
  * (Markdown), the server version the text started from and when it was kept. The autosave

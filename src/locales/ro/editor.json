@@ -45,9 +45,10 @@
     "savedJustNow": "Salvat acum.",
     "savedAt": "Salvat la {{time}}.",
     "conflict": "Acest capitol a fost modificat pe alt dispozitiv. Salvarea s-a oprit ca să nu se suprascrie nimic. Alege ce versiune păstrezi.",
-    "failed": "Nu am putut salva. Verifică conexiunea; încercăm din nou în 10 secunde.",
+    "failed": "Nu s-a putut salva. Încercăm din nou în 10 secunde.",
     "notActive": "Contul nu poate salva capitole încă.",
-    "offline": "Nu ești conectat. Modificările rămân pe acest dispozitiv și se salvează când revii online."
+    "offline": "Salvat pe acest dispozitiv. Se salvează online când revine conexiunea.",
+    "retry": "Reîncearcă"
   },
   "link": {
     "heading": "Adaugă un link",
