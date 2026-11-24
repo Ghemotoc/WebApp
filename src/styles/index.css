@@ -1628,11 +1628,26 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 .tmc-chapter-bar {
   top: var(--reader-bar-top);
 }
+/* The page column's side space (PageContainer: px-6 md:px-8 lg:px-16), which the reader's bar and
+   paper reach past on smaller screens. Keep the two in step when the column changes. */
+:root {
+  --page-column-side: 24px;
+}
+@media (min-width: 768px) {
+  :root {
+    --page-column-side: 32px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --page-column-side: 64px;
+  }
+}
 /* Below 1024 px the bar sits 12 px from each edge of the screen (board New-PhoneReader), so it
    reaches past the page column's side space. */
 @media (max-width: 1023px) {
   .tmc-chapter-bar {
-    margin-inline: calc(12px - (clamp(16px, 4vw, 64px) + 10px));
+    margin-inline: calc(12px - var(--page-column-side));
   }
 }
 @media (min-width: 1280px) {
@@ -1675,7 +1690,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 @media (max-width: 599px) {
   .tmc-reading-page {
     --reading-page-pad: 24px;
-    margin-inline: calc(-1 * (clamp(16px, 4vw, 64px) + 10px));
+    margin-inline: calc(-1 * var(--page-column-side));
     width: auto;
     max-width: none !important;
     border-radius: 0;

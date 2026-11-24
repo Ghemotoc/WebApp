@@ -8,6 +8,8 @@
  * design books' spacing steps (user stories Section 1: 64 px gutter at 1440 px): 24 px on phones,
  * 32 px from 768 px and 64 px from 1024 px, so at 1440 px the column sits 48 px inside the bar on
  * each side, and at least 8 px inside it at every width. Nothing touches the screen edge (CLAUDE.md rule 21).
+ * The same three steps are `--page-column-side` in src/styles/index.css, which the reader's
+ * chapter bar and phone paper use to reach past this space; change both together.
  * A page with one column and nothing on the right (the waiting list's holding page, board H08)
  * passes `narrow`: the column is then at most 760 px wide and centred, so on a desktop the text
  * doesn't run along the left edge with an empty band beside it (flat themes bundle, part 2;

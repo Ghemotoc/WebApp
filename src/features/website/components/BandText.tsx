@@ -17,15 +17,23 @@ interface BandTextProps {
   tone: 'page' | 'dark' | 'gold';
 }
 
-/** The classes for each tone: label, heading and paragraph. */
+/**
+ * The classes for each tone: label, heading and paragraph. The heading repeats its colour from
+ * 1024 px (lg:), because lg:type-display brings the heading colour with it and would otherwise
+ * win over the band's own colour there (white on the light gold band at night).
+ */
 const toneClasses = {
   page: { eyebrow: 'eyebrow', heading: 'text-ink-heading', lede: 'text-ink-muted' },
   dark: {
     eyebrow: 'eyebrow-type text-on-primary',
-    heading: 'text-on-primary',
+    heading: 'text-on-primary lg:text-on-primary',
     lede: 'text-on-primary',
   },
-  gold: { eyebrow: 'eyebrow-type text-on-gold', heading: 'text-on-gold', lede: 'text-on-gold' },
+  gold: {
+    eyebrow: 'eyebrow-type text-on-gold',
+    heading: 'text-on-gold lg:text-on-gold',
+    lede: 'text-on-gold',
+  },
 } as const;
 
 /**
