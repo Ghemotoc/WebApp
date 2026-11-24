@@ -763,6 +763,7 @@ export function notificationText(
         href: commentAddress(notification),
       };
     case 'story_finished':
+    case 'story_completed':
       return finishedText(t, notification, base);
   }
   // Step 4: what is left is a new follower (the team's kinds were answered in step 1).
@@ -770,8 +771,10 @@ export function notificationText(
 }
 
 /**
- * A reader finished the writer's story and says thanks (IDEAS-1c, idea IDEA-20261031-3): fixed
- * words with the reader's name, never any text of theirs; the action opens the story.
+ * A story finished, either way round: a reader finished the writer's story and says thanks
+ * (story_finished; IDEAS-1c, idea IDEA-20261031-3), or a followed writer finished their story
+ * ("inkwolf finished The Salt Mine Choir.", story_completed; BOOKS B06, user story 2.6). Fixed
+ * words with the person's name, never any text of theirs; the action opens the story.
  *
  * @returns the row's words
  */
@@ -783,7 +786,13 @@ function finishedText(
   const story = notification.story;
   return {
     ...base,
-    what: t('what.storyFinished', { story: story?.title ?? '' }),
+    // The writer's own "finished" names only the story; a reader's thanks says thank you too.
+    what: t(
+      notification.kind === 'story_completed' ? 'what.storyCompleted' : 'what.storyFinished',
+      {
+        story: story?.title ?? '',
+      },
+    ),
     actionLabel: story === null ? null : t('actions.openStory'),
     href: story === null ? null : `/s/${story.slug}`,
   };
