@@ -47,7 +47,7 @@ function storyWith(changes: Partial<StoryPageData>): StoryPageData {
     chapters: [],
     editions: [],
     edition: null,
-    stats: { likes: 0, comments: 0 },
+    stats: { reads: 0, likes: 0, comments: 0 },
     labels: {
       rating: 'all_ages',
       isFanFiction: false,

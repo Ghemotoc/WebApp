@@ -5,20 +5,21 @@
  * The page's one hero box (Hero): the 240 px cover on the left and, on the right, in the board's
  * order, 12 px apart:
  *   - the breadcrumb "Read / Fiction / title" (StoryBreadcrumb);
- *   - the facts line "Fiction · Ongoing · No AI · 13+" (lib/storyLabelFacts.ts);
+ *   - the facts line "Completed · Fiction · No AI · 13+ · Web and app" (lib/storyLabelFacts.ts);
  *   - the title in the display style, with the "Read in" switch beside it (TRANSLATE-1b), then
  *     "by <name>" as a link to the profile and, for a translated classic, who translated it;
- *   - the numbers as a meta line (StoryStats, S1-E5-03);
+ *   - the numbers as a meta line, reads first (StoryStats, S1-E5-03; reads public since bundle 2);
  *   - where the story ranks, as links (RankBadges: its tags, CMS-1g, and its category, S1-E15-05);
  *   - the blurb, the note on which language is shown (StoryLanguageNote), and the tags as
  *     "#mystery" links to their tag pages (S1-E5-01);
  *   - one row of buttons: Start reading, Continue or Read again (main; StoryReadButton), "Tell
  *     the writer you finished it" once finished (IDEAS-1c), Follow (S1-E6-05), "Add to library"
- *     or "In library" (StoryLibraryButton, S1-E4-03) and Share (IDEAS-1c); then what following
+ *     or "In library" (StoryLibraryButton, S1-E4-03), the story's own Like (StoryLikeButton) and
+ *     Share (IDEAS-1c); then what following
  *     does, or for a visitor "Get in to follow, like or save". "You are here, 72% through chapter
  *     14" sits in that chapter's row of the list (StoryChapterList).
- * The board's story-level Like, its reads total and "Completed" in the facts line wait for
- * Robert's answer (asked through DESIGN, 24 Nov 2026).
+ * The story-level Like, the public reads total and "Completed" in the facts line are built as
+ * drawn on board B01 (Robert, 24 Nov 2026; docs/board-fixes.md).
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -49,6 +50,7 @@ import { StoryLanguageNote, TranslationCredit } from './StoryLanguageNote';
 import { storyLabelFacts } from '../lib/storyLabelFacts';
 
 import { StoryBreadcrumb } from './StoryBreadcrumb';
+import { StoryLikeButton } from './StoryLikeButton';
 import { StoryStats } from './StoryStats';
 
 /**
@@ -127,7 +129,7 @@ function ActionNote({ story }: { story: StoryPageData }) {
 
 /**
  * The one row of buttons (board B01): read (main), "Tell the writer you finished it" once
- * finished, Follow, the library and Share. The writer sees only Share on their own story; a
+ * finished, Follow, the library, Like and Share. The writer sees only Share on their own story; a
  * visitor sees the read button and Share.
  *
  * @returns the row and the lines under it
@@ -153,7 +155,7 @@ function StoryActions({ story }: { story: StoryPageData }) {
 
 /**
  * A member's buttons between the main one and Share: "Tell the writer you finished it" once
- * finished, Follow and the library.
+ * finished, Follow, the library and the story's Like (bundle 2, board B01).
  *
  * @returns the buttons
  */
@@ -165,6 +167,7 @@ function MemberButtons({ story }: { story: StoryPageData }) {
         <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
       )}
       <StoryLibraryButton storySlug={story.slug} />
+      {story.isPublic && <StoryLikeButton storySlug={story.slug} />}
     </>
   );
 }

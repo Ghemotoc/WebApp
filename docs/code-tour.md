@@ -1612,6 +1612,8 @@ ChapterEnd
 
 The popularity job (S1-E5-03) reads `chapter_like_totals()`, which leaves out the writer's own like.
 
+The story page has its own Like too (bundle 2, board B01): `StoryHeader` → `StoryLikeButton` → `useStoryLike` → `api/storyLikes.ts` → `story_like_state()` / `like_story(story, should_like)` → `story_likes` (one row per reader and story, kept on the first edition so every language shows one total; the writer can't like their own story). Its count is the "likes" in the story page's numbers line, beside the public reads total (`story_read_total()`). Chapter likes stay on their chapters and in the popularity job.
+
 Comments (S1-E6-01) sit under the banner slot, in their own file, fetched when the reader nears the end of the chapter:
 
 ```
@@ -1910,7 +1912,7 @@ What the comments, reactions and follows epic left in place. The epic report, `d
 | Kind | Where | Story |
 | --- | --- | --- |
 | Screens | the like button and the comments under the chapter (`src/features/reading/components/LikeButton.tsx`, `src/features/comments/`), Follow on the writer's profile and the story page (`src/features/people/components/FollowButton.tsx`) | 6-03, 6-01, 6-02, 6-04, 6-05 |
-| Tables | `chapter_likes`, `comments`, `comment_reactions`, `comment_downvotes`, `follows_users`, `follows_stories` | each story |
+| Tables | `chapter_likes`, `story_likes`, `comments`, `comment_reactions`, `comment_downvotes`, `follows_users`, `follows_stories` | each story |
 | Functions | `like_chapter()`, `chapter_comments()`, `post_comment()`, `delete_comment()`, `react_to_comment()`, `downvote_comment()` (with `open_downvote_case()`), `follow_writer()`, `follow_story()`; every one asks `readable_chapter()` or the profile's rules first | each story |
 | Jobs | `purge-deleted-comments` nightly; `post_comment()` queues `comment_posted` for notifications | 6-01 |
 | Tests | `148`, `149`, `150`, `153`, `144` and `096` (the epic); `e2e/epic-s1-e6.spec.ts` and each story's spec | each story, S1-E6-QA |
