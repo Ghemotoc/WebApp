@@ -8,7 +8,7 @@
  * - "Given a mid-range Android phone on 4G, when a chapter opens, then the text is readable within
  *   2 seconds" (a proposal): a cold load at phone size, with the CPU 4 times slower and Chrome's
  *   "Fast 4G" network (9 Mbit/s down, 1.5 Mbit/s up, 60 ms), shows the first paragraph in under
- *   2,000 ms. The median of five loads counts, so one or two slow loads on a busy machine don't
+ *   2,000 ms (2,500 ms on CI for now, until the reader is trimmed; Robert, 24 Nov 2026). The median of five loads counts, so one or two slow loads on a busy machine don't
  *   decide (a median of three let two slow loads on a busy CI runner fail it at 2,213 ms, 24 Nov 2026).
  * - The reader stays small: a cold chapter load downloads under READER_SCRIPT_BUDGET_KB of script
  *   before compression (QA-6), so a later change can't quietly make chapters slow.
@@ -24,8 +24,13 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 const storyId = '00000000-0000-4000-9000-000000000001';
 const chapterAddress = '/s/statia-meteo-seed01/perfread';
 
-/** The budget for the first paragraph, in milliseconds (S1-E4-01, a proposal). */
-const FIRST_PARAGRAPH_BUDGET_MS = 2000;
+/**
+ * The budget for the first paragraph, in milliseconds (S1-E4-01, a proposal). The goal is 2,000;
+ * on CI's shared runners the limit is 2,500 for now, while the reader's load is trimmed back
+ * under 2,000 (Robert, 24 Nov 2026, "2.5 s on CI for now, then trim"). A local run keeps 2,000.
+ */
+const FIRST_PARAGRAPH_GOAL_MS = 2000;
+const FIRST_PARAGRAPH_BUDGET_MS = process.env.CI ? 2500 : FIRST_PARAGRAPH_GOAL_MS;
 
 /**
  * The most script, in KB before compression, a cold chapter load may download (QA-6, finding S4).
