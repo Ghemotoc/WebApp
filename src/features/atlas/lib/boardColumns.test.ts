@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { StorylineAct, StorylineChapter } from '../api/storyline';
 
-import { boardColumns, chapterNumbers, orderAfterMove } from './boardColumns';
+import { boardColumns, chapterNumbers, chaptersAfterMove, orderAfterMove } from './boardColumns';
 
 /** A chapter in an act (or none). */
 function chapter(code: string, actId: string | null, kind = 'chapter'): StorylineChapter {
@@ -106,5 +106,27 @@ describe('chapterNumbers', () => {
       ['a', 1],
       ['b', 2],
     ]);
+  });
+});
+
+describe('chaptersAfterMove', () => {
+  it('draws the moved chapter in its new act and place, numbered again from 1', () => {
+    const chapters = [chapter('a', 'act1'), chapter('b', 'act1'), chapter('c', null)];
+    const moved = chaptersAfterMove(chapters, {
+      chapterCode: 'c',
+      actId: 'act1',
+      order: ['c', 'a', 'b'],
+    });
+    expect(moved.map((item) => [item.code, item.actId, item.position])).toEqual([
+      ['c', 'act1', 1],
+      ['a', 'act1', 2],
+      ['b', 'act1', 3],
+    ]);
+  });
+
+  it('leaves the chapters it was given untouched, so a failed save can put the board back', () => {
+    const chapters = [chapter('a', 'act1'), chapter('b', null)];
+    chaptersAfterMove(chapters, { chapterCode: 'b', actId: 'act1', order: ['b', 'a'] });
+    expect(chapters[1]?.actId).toBeNull();
   });
 });
