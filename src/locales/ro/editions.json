@@ -27,11 +27,11 @@
   "countedOnceBody": "Aprecierile, salvările și citirile din toate limbile se adună la aceeași poveste. Rafturile și căutarea o arată o singură dată.",
   "missing": {
     "documentTitle": "{{title}} · {{story}}",
-    "eyebrow": "Capitolul {{number}} · {{title}}",
+    "chapter": "Capitolul {{number}}",
     "title": "Acest capitol nu este încă în {{language}}",
     "translatedFirst": "{{translator}} a tradus capitolul 1.",
     "translatedThrough": "{{translator}} a tradus capitolele 1–{{through}}.",
-    "body": "Poți citi capitolul {{number}} în {{original}}, limba originală, și te poți întoarce la {{language}} pentru următorul.",
+    "body": "Citește capitolul {{number}} în {{original}}, limba originală, și revino la {{language}} pentru următorul.",
     "readOriginal": "Citește capitolul {{number}} în {{original}}",
     "back": "Înapoi la capitolul {{number}}",
     "follow": "Urmărești povestea? Primești o notificare când capitolul {{number}} apare în {{language}}."

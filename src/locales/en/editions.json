@@ -27,13 +27,13 @@
   "countedOnceBody": "Likes, saves and reads from every language add up on the same story. Bookshelves and search show it once.",
   "missing": {
     "documentTitle": "{{title}} · {{story}}",
-    "eyebrow": "Chapter {{number}} · {{title}}",
+    "chapter": "Chapter {{number}}",
     "title": "This chapter isn’t in {{language}} yet",
     "translatedFirst": "{{translator}} has translated chapter 1.",
     "translatedThrough": "{{translator}} has translated chapters 1 to {{through}}.",
-    "body": "You can read chapter {{number}} in {{original}}, the original, and come back to {{language}} for the next one.",
+    "body": "Read chapter {{number}} in {{original}}, the original, and come back to {{language}} for the next one.",
     "readOriginal": "Read chapter {{number}} in {{original}}",
     "back": "Back to chapter {{number}}",
-    "follow": "Following the story? You get a notification when chapter {{number}} comes out in {{language}}."
+    "follow": "Following the story? A notification comes when chapter {{number}} is out in {{language}}."
   }
 }
