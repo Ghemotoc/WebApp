@@ -88,7 +88,9 @@ test.describe('after a new important version of the terms', () => {
     await useSessionInBrowser(context, session);
     const page = await context.newPage();
 
-    await page.goto('/');
+    // Open the signed-in home directly: "/" forwards to /ro/ro and then /hub, and a click made
+    // during that chain is lost (it made this test flaky in CI, 24 Nov 2026).
+    await page.goto('/hub');
     const notice = page.getByRole('region', { name: 'Am actualizat Termenii' });
     await expect(notice).toBeVisible();
     await expect(notice.getByText(/A test change/)).toBeVisible();
