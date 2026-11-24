@@ -42,10 +42,7 @@ function EditionHeader({ edition }: { edition: StoryLanguage }) {
   return (
     <header className="flex max-w-[760px] flex-col gap-2">
       <Eyebrow>{t('chapters.eyebrow', { language })}</Eyebrow>
-      <h1
-        lang={edition.languageCode}
-        className="m-0 text-[clamp(32px,4vw,56px)] leading-[1.02] font-bold tracking-[-0.025em] break-words"
-      >
+      <h1 lang={edition.languageCode} className="m-0 type-title lg:type-display break-words">
         {edition.title}
       </h1>
       <p className="m-0 type-long leading-relaxed text-ink-muted">{t('chapters.intro')}</p>

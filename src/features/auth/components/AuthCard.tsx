@@ -32,7 +32,7 @@ export function AuthCard({ documentTitle, heading, intro, children }: AuthCardPr
       <title>{documentTitle}</title>
       <section
         aria-labelledby="auth-card-heading"
-        className="flex w-full max-w-[520px] flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[520px] flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
       >
         <div className="flex flex-col gap-2">
           <h1 id="auth-card-heading" className="m-0 type-title break-words lg:type-display">

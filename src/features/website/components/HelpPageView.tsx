@@ -86,9 +86,7 @@ function HelpArticle({ page }: { page: ParsedEntry<HelpPageContent> }) {
         lang={page.languageCode}
         className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:p-8 lg:px-12 lg:py-12"
       >
-        <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] font-bold text-ink-heading">
-          {title}
-        </h1>
+        <h1 className="m-0 type-title text-ink-heading">{title}</h1>
         <p className="m-0 type-body text-ink-muted" lang={i18n.language}>
           {t('website.help.updatedLine', { date: updated, count: minutes })}
         </p>

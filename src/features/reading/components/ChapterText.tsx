@@ -288,8 +288,14 @@ export function ChapterText({
   const elements = isPoem
     ? [...safeMarkdownElements.chapter, 'h1', 'span']
     : [...safeMarkdownElements.chapter, 'h1'];
+  // data-story-text marks the reader's own text size (Aa), which the look check leaves out
+  // (e2e/support/lookCheck.ts; design books look rules, Section 1).
   return (
-    <div lang={language} className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}>
+    <div
+      lang={language}
+      data-story-text=""
+      className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}
+    >
       <ChapterMediaContext.Provider value={media}>
         <SafeMarkdown
           text={markdown}

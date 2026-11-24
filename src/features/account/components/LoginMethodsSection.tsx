@@ -85,7 +85,7 @@ export function LoginMethodsSection() {
     <section
       id="ways-to-log-in"
       aria-labelledby="settings-login-methods-heading"
-      className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="settings-login-methods-heading"

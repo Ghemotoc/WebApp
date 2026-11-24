@@ -23,9 +23,7 @@ export function TypeSection() {
     <DesignSection id="type" title={t('sections.type')}>
       <div className="flex flex-col gap-4" data-testid="type-samples">
         <Eyebrow>{t('type.eyebrow')}</Eyebrow>
-        <p className="m-0 font-heading text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em] text-ink-heading">
-          {t('type.heading1')}
-        </p>
+        <p className="m-0 type-display text-ink-heading">{t('type.heading1')}</p>
         <p className="m-0 font-heading type-title font-bold tracking-[-0.01em] text-ink-heading">
           {t('type.heading2')}
         </p>

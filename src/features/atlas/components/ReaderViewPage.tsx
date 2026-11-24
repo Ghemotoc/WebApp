@@ -59,9 +59,7 @@ function ReaderViewBody({ slug, title }: { slug: string; title: string }) {
   return (
     <>
       <header className="flex flex-col gap-2">
-        <h1 className="m-0 text-[clamp(36px,4.4vw,56px)] leading-[0.98] font-bold tracking-[-0.025em] break-words">
-          {t('readers.heading')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display break-words">{t('readers.heading')}</h1>
         <p className="m-0 type-body break-words text-ink-muted">{title}</p>
         <p className="m-0 max-w-[70ch] text-ink-muted">{t('readers.intro')}</p>
       </header>

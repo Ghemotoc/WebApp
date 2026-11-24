@@ -27,10 +27,7 @@ export function AppOnlyNotice({ chapter }: { chapter: ReaderChapter }) {
   return (
     <div className="flex flex-col gap-6">
       <title>{chapter.story.title}</title>
-      <h1
-        lang={chapter.story.languageCode}
-        className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-bold tracking-[-0.025em] break-words"
-      >
+      <h1 lang={chapter.story.languageCode} className="m-0 type-title lg:type-display break-words">
         {chapter.story.title}
       </h1>
       <section

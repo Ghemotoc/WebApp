@@ -35,7 +35,7 @@ export function HubToolsSection({ now }: { now: Date }) {
   return (
     <section
       aria-labelledby="hub-tools-heading"
-      className="flex flex-col gap-6 rounded-card bg-primary glass-band-deep p-[clamp(20px,4vw,40px)]"
+      className="flex flex-col gap-6 rounded-card bg-primary glass-band-deep p-4 lg:p-8"
     >
       {/* Step 1: the heading and the Guides link, in the band's own text colour. */}
       <div className="flex items-center justify-between gap-4">

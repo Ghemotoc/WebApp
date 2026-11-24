@@ -45,7 +45,7 @@ export function ComputerOnlyPage() {
       <title>{t('computerOnly.documentTitle', { productName: brand.productName })}</title>
       <section
         aria-labelledby="computer-only-heading"
-        className="flex w-full max-w-[600px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,40px)]"
+        className="flex w-full max-w-[600px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-4 lg:p-8"
       >
         <BrandMark />
         <h1

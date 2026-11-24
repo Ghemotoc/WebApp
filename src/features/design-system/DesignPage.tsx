@@ -44,9 +44,7 @@ export function DesignPage() {
       <meta name="robots" content="noindex" />
       <header className="tmc-rise flex flex-col gap-4">
         <Eyebrow>{t('page.eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
-          {t('page.title')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display">{t('page.title')}</h1>
         <p className="m-0 max-w-[720px] type-long leading-[1.6] text-ink-muted">
           {t('page.intro')}
         </p>

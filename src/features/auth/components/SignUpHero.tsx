@@ -31,7 +31,7 @@ export function SignUpHero() {
   return (
     <div className="flex max-w-[600px] flex-col gap-4">
       <MetaLine facts={[{ text: t('signUp.hero.tagMarch'), kind: 'state' }]} />
-      <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em] break-words">
+      <h1 className="m-0 type-title lg:type-display break-words">
         {t('signUp.hero.headingStart')} {t('signUp.hero.headingEnd')}
       </h1>
       <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('signUp.hero.lead')}</p>

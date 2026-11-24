@@ -20,8 +20,8 @@ export function UnavailableHereNotice() {
   return (
     <div className="flex flex-col items-start gap-4">
       <title>{t('unavailableHere.title')}</title>
-      {/* Board B11: the display style (48/52) at every width, and the line in the body colour. */}
-      <h1 className="m-0 type-display break-words text-ink-heading">
+      {/* Board B11: the title style on phone and tablet, display from 1024 px; the line in the body colour. */}
+      <h1 className="m-0 type-title lg:type-display text-ink-heading">
         {t('unavailableHere.title')}
       </h1>
       <p className="m-0 type-body text-ink">{t('unavailableHere.body')}</p>

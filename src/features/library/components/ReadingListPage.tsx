@@ -98,9 +98,7 @@ function ListHeader({ list }: { list: ReadingListDetails }) {
   return (
     <header className="flex flex-col gap-4">
       <ListBreadcrumb name={list.name} />
-      <h1 className="m-0 font-heading text-[clamp(36px,5vw,64px)] leading-[1.02] font-bold tracking-[-0.03em] break-words text-ink-heading">
-        {list.name}
-      </h1>
+      <h1 className="m-0 type-title lg:type-display break-words text-ink-heading">{list.name}</h1>
       <div className="flex flex-wrap items-center gap-3">
         <p aria-live="polite" className="m-0 type-long text-ink-muted">
           {t('lists.count', { count: list.storyCount })}

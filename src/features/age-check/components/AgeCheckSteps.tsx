@@ -22,7 +22,7 @@ export function AgeCheckSteps() {
   return (
     <section
       aria-labelledby="age-check-steps-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,28px)]"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-6"
     >
       <div className="flex flex-col gap-1">
         <Eyebrow>{t('ageCheck.howEyebrow')}</Eyebrow>
