@@ -3,9 +3,10 @@
  * every signed-in board draws it before "Write").
  *
  * Look (bundle G4 SHELL; handoff "App header and tab bar": bell 44 px, a mark when something is
- * new): a clear 44 px round button with the line bell in ink. Something new shows one 8 px dot in
- * the thread colour, never a number badge (the simplified design, bundle CALM-2; TopBar/README.md);
- * the count lives in the accessible name ("Notifications, 3 new"), so it never relies on the dot.
+ * new): a clear 44 px round button with the line bell in ink. Something new shows a small count,
+ * 1 to 9 then 9+ (CountBadge; design books item 16, Robert's pick of 24 Nov 2026, replacing the
+ * CALM-2 dot); the full count is in the accessible name ("Notifications, 12 new"), so the badge is
+ * only for the eye.
  * Who shows it: AppLayout, in the top bar's end slot and the phone header, only while signed in.
  * Where it goes: /notifications. What it calls: hooks/useUnreadNotificationCount.ts (every minute
  * and on focus). Its words are in common.json (nav.notifications…), because the bell is on every
@@ -15,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 
 import { NavIcon } from '@/components/icons/NavIcon';
+import { CountBadge } from '@/components/ui/CountBadge';
 
 import { useUnreadNotificationCount } from '../hooks/useUnreadNotificationCount';
 
@@ -38,13 +40,7 @@ export function NotificationBell() {
       className="relative inline-flex size-11 items-center justify-center rounded-full text-ink hover:bg-ink/5"
     >
       <NavIcon name="bell" size={22} />
-      {unreadCount > 0 && (
-        <span
-          aria-hidden="true"
-          data-new-dot
-          className="absolute top-2.5 right-2.5 size-2 rounded-full bg-thread"
-        />
-      )}
+      <CountBadge count={unreadCount} />
     </NavLink>
   );
 }

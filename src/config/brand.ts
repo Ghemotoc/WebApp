@@ -70,7 +70,8 @@ export interface BrandEnvironment {
  * Sources: working name "ghemotoc" (decided 16 Oct 2026), written lower case everywhere it shows,
  * running sentences too, even at the start of one (Robert, 20 Nov 2026 and 23 Nov 2026); the site ghemotoc.tech, with ghemotoc.com
  * forwarding to it (Robert bought both, 23 Nov 2026; it replaces the working site of 17 Oct 2026,
- * 12:50); the contact and support address (decided 17 Oct 2026, 12:50); the privacy address is the same until the company exists
+ * 12:50); the contact and support address hello@ghemotoc.tech (Robert, 24 Nov 2026, 09:12 UTC; it replaces
+ * hello@themagiccoffin.com of 17 Oct 2026, 12:50); the privacy address is the same inbox until the company exists
  * (decided 17 Oct 2026, 19:43, Q16), and so is the authorities' address; handle @ghemotoc everywhere (architecture.md, section 1.2);
  * the footer line "An app by The Magic Coffin" (canvas comment, 16 Oct 2026), its name linking to the
  * company's site (Robert, 23 Nov 2026).
@@ -78,10 +79,10 @@ export interface BrandEnvironment {
 export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
   productName: 'ghemotoc',
   siteDomain: 'ghemotoc.tech',
-  contactEmail: 'hello@themagiccoffin.com',
-  supportEmail: 'hello@themagiccoffin.com',
-  privacyEmail: 'hello@themagiccoffin.com',
-  authoritiesEmail: 'hello@themagiccoffin.com',
+  contactEmail: 'hello@ghemotoc.tech',
+  supportEmail: 'hello@ghemotoc.tech',
+  privacyEmail: 'hello@ghemotoc.tech',
+  authoritiesEmail: 'hello@ghemotoc.tech',
   socialHandle: '@ghemotoc',
   companyName: 'The Magic Coffin',
   companySiteUrl: 'https://themagiccoffin.com',

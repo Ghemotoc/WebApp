@@ -6,7 +6,7 @@
 
 ## In short
 
-- Users: hello@themagiccoffin.com or Contact us in Settings.
+- Users: hello@ghemotoc.tech or Contact us in Settings.
 - Authorities: one contact point by email or through the report form.
 - Terrorist content removal orders: through the report form; we act within one hour.
 - Your data: [privacy email].
@@ -16,7 +16,7 @@
 
 **In short** (as on the board)
 
-- Questions, problems or complaints: hello@themagiccoffin.com.
+- Questions, problems or complaints: hello@ghemotoc.tech.
 - Logged in? Use Contact us in Settings, Help or the footer. Every message gets a reference number and an email to confirm we’ve got it.
 - Languages: Romanian and English.
 
@@ -24,7 +24,7 @@
 
 This is our contact point for everyone who uses ghemotoc.
 
-Questions, problems or complaints: email hello@themagiccoffin.com. You don’t need an account.
+Questions, problems or complaints: email hello@ghemotoc.tech. You don’t need an account.
 
 Logged in? Use Contact us in Settings, Help or the footer. Every message gets a reference number and an email to confirm we’ve got it. Keep the reference in case you write again about the same thing.
 
