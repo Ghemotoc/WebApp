@@ -14,9 +14,8 @@
  * Light and night uploads are both in the page and CSS shows the one for the current theme
  * (.tmc-light-only and .tmc-night-only in src/styles/index.css), so a theme switch needs no new
  * read. With no logo uploaded the name is drawn once, so its link has one plain name.
- * BrandEmblem draws the emblem alone, larger, for the top of the member footer (Robert, 23 Nov
- * 2026: "just the emblem ... above the SEO text", left-aligned and following the theme).
- * Who shows it: TopBar, StaffBar and the two footers. What it calls: useBrandAssets().
+ * Who shows it: TopBar, PhoneHeader, StaffBar, StaffFooter, ComputerOnlyPage and the member
+ * footer (the same mark at the top of its first column, Robert, 24 Nov 2026). What it calls: useBrandAssets().
  */
 import { brand } from '@/config/brand';
 
@@ -40,20 +39,12 @@ interface EmblemsProps {
   size: EmblemSize;
 }
 
-/** How big an emblem is drawn: in a bar beside the name, or alone at the top of the footer. */
-export type EmblemSize = 'bar' | 'footer';
+/** How big an emblem is drawn: beside the name, 32 px tall (the one size since 24 Nov 2026). */
+type EmblemSize = 'bar';
 
-/**
- * The size classes for the tinted cat (kept at its 30:32 shape) and for an uploaded picture.
- * Footer: 120 px tall on phones and tablets, 160 px from 1024 px (Robert asked about 300 px; the
- * builder's reading, 23 Nov 2026: big enough to read as the brand without outweighing the links).
- */
+/** The size classes for the tinted cat (kept at its 30:32 shape) and for an uploaded picture. */
 const emblemSizeClass: Record<EmblemSize, { tinted: string; picture: string }> = {
   bar: { tinted: 'h-8 w-[30px]', picture: 'h-8 w-auto' },
-  footer: {
-    tinted: 'h-[120px] w-[113px] lg:h-[160px] lg:w-[150px]',
-    picture: 'h-[120px] w-auto lg:h-[160px]',
-  },
 };
 
 /** The CSS class that shows an emblem only in its theme. */
@@ -136,17 +127,6 @@ function Emblems({ light, dark, size }: EmblemsProps) {
       {dark !== null && <Emblem source={dark} theme="dark" size={size} />}
     </>
   );
-}
-
-/**
- * The emblem alone, at the top of the member footer. Decorative: the footer's words say what the
- * site is. It follows the look and night mode like the top bar's emblem.
- *
- * @returns the emblem for the current theme, footer-sized
- */
-export function BrandEmblem() {
-  const pictures = useBrandAssets();
-  return <Emblems light={pictures.emblem_light} dark={pictures.emblem_dark} size="footer" />;
 }
 
 /**
