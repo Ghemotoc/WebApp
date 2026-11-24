@@ -160,6 +160,10 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
     );
     await page.getByRole('link', { name: 'Read chapter 5 in Română' }).click();
     await expect(page).toHaveURL(`/s/${slug}/langro05`);
+    // User story 2.8: reading the original doesn't change the choice, which stays English.
+    expect(
+      await page.evaluate((key) => localStorage.getItem(key), 'story-reading-language'),
+    ).toContain('"en"');
   });
 
   test('a story in one language shows no switch', async ({ browser }) => {
@@ -188,7 +192,12 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
       );
       await test.step(`axe at ${view.width} px, ${view.theme}, ${view.language}`, async () => {
         await checkScreen(page, view);
-        await expect(page.getByRole('button', { name: /English/ }).first()).toBeVisible();
+        // The story page shows the English edition's switch; the notice (board B08, no chapter
+        // bar) shows its heading, which names English in either interface language.
+        const englishOnScreen = view.address.endsWith('/langro05')
+          ? page.getByRole('heading', { level: 1 })
+          : page.getByRole('button', { name: /English/ }).first();
+        await expect(englishOnScreen).toBeVisible();
       });
       await page.close();
     }
