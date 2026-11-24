@@ -98,7 +98,11 @@ describe('cover designs', () => {
     });
     expect(defaultChoiceFor('forestwaves').background).toBe('sage');
     // The brand page's tonal shades are outside the palette, so each takes a palette accent.
-    expect(defaultChoiceFor('blushdots')).toEqual({ design: 'blushdots', background: 'blush', accent: 'plum' });
+    expect(defaultChoiceFor('blushdots')).toEqual({
+      design: 'blushdots',
+      background: 'blush',
+      accent: 'plum',
+    });
     expect(defaultChoiceFor('skylines').background).toBe('sky');
     expect(defaultChoiceFor('goldgrid').accent).toBe('paper');
   });

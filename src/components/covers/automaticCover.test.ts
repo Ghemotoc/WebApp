@@ -42,7 +42,14 @@ describe('automaticCoverFor', () => {
     expect(automaticDesignKeys).toHaveLength(7);
     // G9c's and the brand page's new patterns are for writers to pick, so existing automatic
     // covers stay put.
-    for (const key of ['arches', 'rings', 'forestwaves', 'blushdots', 'skylines', 'goldgrid'] as const) {
+    for (const key of [
+      'arches',
+      'rings',
+      'forestwaves',
+      'blushdots',
+      'skylines',
+      'goldgrid',
+    ] as const) {
       expect(automaticDesignKeys).not.toContain(key);
     }
     for (let number = 0; number < 1000; number += 1) {
