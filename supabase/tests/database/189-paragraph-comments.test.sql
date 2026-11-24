@@ -9,7 +9,8 @@
 -- - the same rules as other comments: visitors can't post, comments off refuse and count nothing,
 --   a block hides a paragraph comment from the count, no such paragraph is refused;
 -- - nothing answers a user ID, and the paragraph's words are never stored with the comment.
--- No new table or policy: comments' policies are tested in 149-comments.test.sql.
+-- No new table or policy: comments' policies are tested in 149-comments.test.sql. Since READER-SELECT
+-- the counts also carry "parts" (chosen words), empty here: 405-comment-on-chosen-words.test.sql.
 begin;
 
 create extension if not exists pgtap with schema extensions;
@@ -46,7 +47,7 @@ insert into named select 'on_two', (public.post_paragraph_comment('statia-meteo-
 insert into named select 'whole', (public.post_comment('statia-meteo-seed01', 'para0001',
   'Un capitol bun.') ->> 'id')::uuid;
 select is(public.paragraph_comment_counts('statia-meteo-seed01', 'para0001'),
-  '{"comments_enabled": true, "paragraphs": [{"block": 2, "count": 1}], "earlier": 0}'::jsonb,
+  '{"comments_enabled": true, "paragraphs": [{"block": 2, "count": 1}], "earlier": 0, "parts": []}'::jsonb,
   'paragraph 2''s marker counts its comment; a comment on the whole chapter isn''t counted on a paragraph');
 select is(public.paragraph_comments('statia-meteo-seed01', 'para0001', 2) #>> '{comments,0,body}',
   'Liftul m-a speriat.', 'the thread for paragraph 2 shows it (criterion 1)');
@@ -107,7 +108,7 @@ set published_body = E'Un paragraf nou.\n\nPrimul paragraf.\n\nAl doilea paragra
 where code = 'para0001';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(public.paragraph_comment_counts('statia-meteo-seed01', 'para0001'),
-  '{"comments_enabled": true, "paragraphs": [], "earlier": 2}'::jsonb,
+  '{"comments_enabled": true, "paragraphs": [], "earlier": 2, "parts": []}'::jsonb,
   'a changed paragraph''s comments move to an earlier version');
 select is(public.paragraph_comments('statia-meteo-seed01', 'para0001', null) #>> '{comments,0,body}',
   'Liftul m-a speriat.', 'where the earlier-version thread shows them');
@@ -134,7 +135,7 @@ reset role;
 update public.stories set comments_enabled = false where id = '00000000-0000-4000-9000-000000000001';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(public.paragraph_comment_counts('statia-meteo-seed01', 'para0001'),
-  '{"comments_enabled": false, "paragraphs": [], "earlier": 0}'::jsonb, 'with comments off, nothing is counted');
+  '{"comments_enabled": false, "paragraphs": [], "earlier": 0, "parts": []}'::jsonb, 'with comments off, nothing is counted');
 select throws_ok($$ select public.post_paragraph_comment('statia-meteo-seed01', 'para0001', 1, 'Hei') $$,
   '55000', null, 'and nothing can be posted');
 reset role;
