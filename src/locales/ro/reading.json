@@ -122,6 +122,7 @@
     "edited": "modificat {{date}}",
     "untitled": "Capitol fără titlu",
     "endOfChapter": "Sfârșitul capitolului {{number}}",
+    "endOfChapterOf": "Sfârșitul capitolului {{number}} din {{total}}",
     "readNext": "Următorul: capitolul {{number}}",
     "latestChapter": "Acesta e cel mai nou capitol de până acum.",
     "endOfStory": "Acesta e sfârșitul poveștii.",
@@ -201,6 +202,8 @@
   },
   "likes": {
     "like": "Apreciază capitolul",
+    "likeWord": "Apreciază",
+    "likeRest": "capitolul",
     "liked": "Apreciat",
     "logIn": "Intră ca să apreciezi",
     "count_one": "{{count}} apreciere",
@@ -325,5 +328,13 @@
     "pageTitlePlain": "{{title}} de {{writer}}, {{site}}",
     "breadcrumbRead": "Citește",
     "label": "Despre această poveste"
+  },
+  "contents": {
+    "button": "Cuprins",
+    "title": "Cuprins",
+    "close": "Închide cuprinsul",
+    "youAreHere": "Ești aici",
+    "loading": "Se încarcă capitolele…",
+    "row": "{{number}}. {{title}}"
   }
 }

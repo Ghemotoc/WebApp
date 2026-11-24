@@ -133,18 +133,24 @@ test.describe('coming back to the same place (design books item 17)', () => {
     const address = `/write/s/${romanianSlug}/c/pastra01`;
     const page = await openOnNewDevice(browser, 'adult_writer', address);
     // Put the caret at the end of the second line, then leave the text (that keeps it at once).
-    await chapterText(page).getByText('Al doilea rând.').click();
-    await page.keyboard.press('End');
-    await page.getByRole('textbox', { name: 'Chapter title' }).focus();
-    // The kept place is past the first line (positions count from the text's start).
-    await expect
-      .poll(() =>
-        runSql(
-          `select (place ->> 'position')::integer > 20 from public.remembered_places
-           where user_id = '${writerId}' and kind = 'write_caret';`,
-        ).trim(),
-      )
-      .toBe('t');
+    // The editor can still be settling its first content when the click lands, which puts the
+    // caret back at the start; so the steps are tried again until the kept place is past the
+    // first line (positions count from the text's start). The check itself is unchanged.
+    await expect(async () => {
+      await chapterText(page).getByText('Al doilea rând.').click();
+      await page.keyboard.press('End');
+      await page.getByRole('textbox', { name: 'Chapter title' }).focus();
+      await expect
+        .poll(
+          () =>
+            runSql(
+              `select (place ->> 'position')::integer > 20 from public.remembered_places
+               where user_id = '${writerId}' and kind = 'write_caret';`,
+            ).trim(),
+          { timeout: 3000 },
+        )
+        .toBe('t');
+    }).toPass({ timeout: 15000 });
     await page.context().close();
     // Another device: the text has the focus, and typing lands at the end.
     const again = await openOnNewDevice(browser, 'adult_writer', address);
