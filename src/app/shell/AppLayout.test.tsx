@@ -71,13 +71,13 @@ describe('the app shell', () => {
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main');
   });
 
-  it('shows the wordmark from the brand config as a link home', () => {
+  it('shows the wordmark from the brand config as a link home in the top bar and the footer', () => {
     renderApp();
 
-    expect(screen.getByRole('link', { name: `${brand.productName}, Home` })).toHaveAttribute(
-      'href',
-      '/',
-    );
+    // Two brand links since 24 Nov 2026: the top bar's and the one at the top of the footer.
+    const brandLinks = screen.getAllByRole('link', { name: `${brand.productName}, Home` });
+    expect(brandLinks).toHaveLength(2);
+    for (const brandLink of brandLinks) expect(brandLink).toHaveAttribute('href', '/');
   });
 
   it('says "An app by" with the company name from the brand config in the footer', () => {
@@ -183,10 +183,10 @@ describe('the shell on a narrow window (bundle G4 SHELL)', () => {
     useNarrowWindow();
     renderApp('/discover');
 
-    expect(screen.getByRole('link', { name: `${brand.productName}, Home` })).toHaveAttribute(
-      'href',
-      '/hub',
-    );
+    // The header's brand link and the footer's both open the Writers' hub when signed in.
+    const brandLinks = screen.getAllByRole('link', { name: `${brand.productName}, Home` });
+    expect(brandLinks.length).toBeGreaterThan(0);
+    for (const brandLink of brandLinks) expect(brandLink).toHaveAttribute('href', '/hub');
     const tabBar = screen.getByRole('navigation', { name: 'Main' });
     const readTab = within(tabBar).getByRole('link', { name: 'Read' });
     expect(readTab).toHaveAttribute('aria-current', 'page');
