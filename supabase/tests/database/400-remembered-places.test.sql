@@ -60,11 +60,11 @@ select is(pg_temp.refusal($$ update public.remembered_places set place = '{}' $$
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((select count(*)::integer from public.remembered_places), 0,
-  'denied: another person sees none of the reader''s places');
+  'denied: remembered_places_select_own: another person sees none of the reader''s places');
 select lives_ok($$ select public.remember_place('story_edition', 'some-story', '{"slug": "some-story-en"}') $$,
   'allowed: a second person keeps a place of their own');
 select is((select count(*)::integer from public.remembered_places), 1,
-  'allowed: each person reads only their own places');
+  'allowed: remembered_places_select_own: each person reads only their own places');
 
 /* ---------- 3. The account registries ---------- */
 
