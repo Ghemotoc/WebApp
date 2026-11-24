@@ -13,6 +13,7 @@
 import type { ReactNode } from 'react';
 
 import { designsForRow, resolveCoverChoice } from '@/components/covers/automaticCover';
+import { PlaceholderShelf } from '@/components/ui/PlaceholderShelf';
 import { Shelf } from '@/components/ui/Shelf';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 
@@ -58,7 +59,8 @@ export interface DiscoverShelfProps {
 }
 
 /**
- * Renders the shelf, or nothing while it loads or when the list is empty.
+ * Renders the shelf, grey cover shapes while it loads (after 300 ms; design books item 15), or
+ * nothing when the list is empty.
  *
  * @returns the shelf section or null
  */
@@ -73,8 +75,10 @@ export function DiscoverShelf({
 }: DiscoverShelfProps) {
   const { i18n } = useDiscoveryTranslation();
   const { shelf } = useStoryShelf(request);
-  // Step 1: nothing while the first page loads.
-  if (shelf === null) return null;
+  // Step 1: while the first page loads, the heading and grey cover shapes after 300 ms.
+  if (shelf === null) {
+    return <PlaceholderShelf eyebrow={eyebrow} title={title} toolbar={toolbar} />;
+  }
   // Step 2: an empty list hides the shelf, unless it has a note to show instead.
   if (shelf.stories.length === 0) {
     if (emptyNote === undefined) return null;

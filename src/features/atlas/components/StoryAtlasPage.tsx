@@ -9,7 +9,9 @@
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryPlan → story_plan(); useMyStories for the switcher, "Write" (lib/writeAddress.ts) and
  * Delete;
- * lib/lastPlannedStory.ts so /plan opens this story next time on this device (S1-E17-02).
+ * lib/lastPlannedStory.ts so /plan opens this story next time on this device (S1-E17-02);
+ * useResumeAtlasSection, which moves an address ending ?resume to the section the writer had open
+ * last (design books item 17).
  */
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
@@ -21,6 +23,7 @@ import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
 import type { StoryPlanPage } from '../api/storyPlans';
 import { useStoryPlan } from '../hooks/useStoryPlan';
+import { useResumeAtlasSection } from '../hooks/useLastAtlasSection';
 import { rememberPlannedStory } from '../lib/lastPlannedStory';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -66,7 +69,10 @@ export function StoryAtlasPage() {
     if (page !== undefined && page !== null) rememberPlannedStory(page.story.slug);
   }, [page]);
 
-  if (!isKnown) return null;
+  // A link from outside the Atlas (?resume) opens the section the writer had open last (item 17).
+  const isResuming = useResumeAtlasSection(storySlug);
+
+  if (!isKnown || isResuming) return null;
   return (
     <AtlasFrame
       slug={storySlug}
