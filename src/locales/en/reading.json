@@ -102,6 +102,7 @@
     "edited": "edited {{date}}",
     "untitled": "Untitled chapter",
     "endOfChapter": "End of chapter {{number}}",
+    "endOfChapterOf": "End of chapter {{number}} of {{total}}",
     "readNext": "Next: chapter {{number}}",
     "latestChapter": "That’s the latest chapter so far.",
     "endOfStory": "That’s the end of the story.",
@@ -181,6 +182,8 @@
   },
   "likes": {
     "like": "Like this chapter",
+    "likeWord": "Like",
+    "likeRest": "this chapter",
     "liked": "Liked",
     "logIn": "Get in to like",
     "count_one": "{{count}} like",
@@ -300,5 +303,13 @@
     "pageTitlePlain": "{{title}} by {{writer}}, {{site}}",
     "breadcrumbRead": "Read",
     "label": "About this story"
+  },
+  "contents": {
+    "button": "Contents",
+    "title": "Contents",
+    "close": "Close contents",
+    "youAreHere": "You are here",
+    "loading": "Loading the chapters…",
+    "row": "{{number}}. {{title}}"
   }
 }
