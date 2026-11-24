@@ -6,7 +6,7 @@
  * The main button stays pressable; pressed with nothing typed, it says what is missing beside the
  * field and puts the focus there (design books item 9).
  * Who uses it: BugReportPanel. What it calls: ChoiceChips, Textarea and Button.
- * Send stays disabled until something is written. If sending fails, the words stay in the box and
+ * If sending fails, the words stay in the box and
  * a plain line says to try again (board J31's note: a failure keeps the text).
  */
 import { useId, useState } from 'react';
