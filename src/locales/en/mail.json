@@ -35,7 +35,9 @@
     "sent": "Sent. Your reference is {{reference}}. We’ll notify you when the team answers.",
     "open": "Open the conversation",
     "suspendedNote": "You can write even while suspended. To appeal a decision formally, use \"Appeal this decision\" on the reports and decisions page.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "missingSubject": "Write a subject first.",
+    "missingBody": "Write a message first."
   },
   "thread": {
     "documentTitle": "Message {{reference}}",

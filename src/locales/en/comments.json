@@ -28,7 +28,8 @@
     "cancel": "Cancel",
     "kind": "Be kind. Every report is read by a person.",
     "posted": "Comment posted.",
-    "paragraphLabel": "Comment on this paragraph"
+    "paragraphLabel": "Comment on this paragraph",
+    "missing": "Write a comment first."
   },
   "failures": {
     "read_only": "This account can’t comment yet.",

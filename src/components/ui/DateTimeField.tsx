@@ -40,6 +40,8 @@ export interface DateTimeFieldProps {
    * note never shows.
    */
   skippedHourNote?: (runTime: string) => string;
+  /** Said under the date box when the form was sent without a date (design books item 9). */
+  dateErrorMessage?: string;
 }
 
 /**
@@ -55,6 +57,7 @@ export function DateTimeField({
   timeLabel,
   note,
   skippedHourNote,
+  dateErrorMessage,
 }: DateTimeFieldProps) {
   // Step 1: work out whether the typed time is in the hour the clocks skip, and when it runs.
   const runTime = skippedHourRunTime(value.date, value.time);
@@ -66,6 +69,7 @@ export function DateTimeField({
           id={`${id}-date`}
           type="date"
           label={dateLabel}
+          errorMessage={dateErrorMessage}
           value={value.date}
           onChange={(event) => onChange({ ...value, date: event.target.value })}
         />

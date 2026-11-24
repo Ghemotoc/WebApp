@@ -94,7 +94,7 @@ function OfferForm({ slug }: { slug: string }) {
       />
       <Button
         className="self-start"
-        disabled={offering.isRunning || handle === ''}
+        disabled={offering.isRunning}
         onClick={() => void offering.run(handle).catch(errorShownByHook)}
       >
         {t('handover.offer')}

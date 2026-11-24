@@ -109,7 +109,9 @@
     "templateName": "Template name",
     "templateSave": "Save as template",
     "templateSaved": "Template “{{name}}” saved.",
-    "manageTemplates": "Manage templates"
+    "manageTemplates": "Manage templates",
+    "templateMissing": "Pick a template first.",
+    "templateNameMissing": "Name the template first."
   },
   "scoring": {
     "documentTitle": "Results · {{name}}",

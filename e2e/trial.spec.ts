@@ -63,7 +63,12 @@ test.describe('the trial (TRIAL-FEEDBACK, TRIAL-DESKTOP)', () => {
     await page.getByRole('button', { name: 'Report a bug' }).click();
     const panel = page.getByRole('dialog', { name: 'Report a bug' });
     const send = panel.getByRole('button', { name: 'Send' });
-    await expect(send).toBeDisabled();
+    // Design books item 9: Send stays pressable; pressed with nothing written, it says what is
+    // missing and sends nothing.
+    await expect(send).toBeEnabled();
+    await send.click();
+    await expect(panel.getByText('Say what happened first.')).toBeVisible();
+    await expect(panel.getByLabel('What happened?')).toBeFocused();
     await panel.getByRole('radio', { name: 'Something looks wrong' }).click();
     await panel.getByLabel('What happened?').fill(`The shelf overlaps the footer ${stamp}`);
     await send.click();
