@@ -6,7 +6,8 @@
  * From the top: the chapter bar (ChapterBar), then a row with the chapter on the left and, from
  * 1280 px, the side column "Reading tools" on the right (ReaderSideColumn, 360 px, 48 px apart).
  * The left side holds the paper (ReadingPaper), the chapter navigation (ChapterNavigation:
- * Previous, the dots and Next), the 728 × 90 advert (position 1, never inside the text,
+ * Previous, the dots and Next), after the latest chapter What next and the More by rows (StoryEnd,
+ * BOOKS B06), the 728 × 90 advert (position 1, never inside the text,
  * S1-E4-01b), then the chapter's comments (S1-E6-01). Below 1280 px About this story and the
  * 300 × 250 advert (position 2) follow the comments, and the panels open in the bottom sheet.
  * Each advert is drawn once, in the one place it belongs at this width.
@@ -17,10 +18,13 @@
  * Who uses it: ChapterReaderPage.
  * What it calls: useReadingProgress, useRecordRead → record_chapter_read(), useReadingMinutes,
  * useSavedPlace, useReadingLook, useReaderTools, useStoryPage → get_story_page() (the chapter
- * titles for the arrows and the facts in About this story), useIsWideReader.
+ * titles for the arrows and the facts in About this story), useIsWideReader. After a change of
+ * language ("Read in", BOOKS B07) LanguageSwitchNote sits above the paper and brings back the
+ * paragraph the reader was on.
  */
 import { lazy, Suspense, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { useReadingMinutes } from '@/features/reading-habit/hooks/useReadingMinutes';
@@ -38,6 +42,7 @@ import { useReadingProgress } from '../hooks/useReadingProgress';
 import { useRecordRead } from '../hooks/useRecordRead';
 import { useSavedPlace } from '../hooks/useSavedPlace';
 import { useStoryPage } from '../hooks/useStoryPage';
+import { languageSwitchFrom } from '../lib/languageSwitchPlace';
 import { ParagraphCommentsContext } from '../lib/paragraphCommentsContext';
 import { minutesLeft } from '../lib/readingTimeLeft';
 import { toSharedChapter } from '../lib/toSharedChapter';
@@ -56,6 +61,18 @@ import { AboveText, ChapterTextBlock, ReadingPaper } from './ReadingPaper';
 const ReaderToolPlace = lazy(async () => {
   const module = await import('./ReaderToolPlace');
   return { default: module.ReaderToolPlace };
+});
+
+/** "You stay on chapter n.", fetched only after a change of language (BOOKS B07). */
+const LanguageSwitchNote = lazy(() => import('./LanguageSwitchNote'));
+
+/**
+ * What follows the latest chapter (What next and the rows, BOOKS B06), fetched only after the
+ * latest chapter, so Follow and the rows stay out of the first download (the same budget).
+ */
+const StoryEnd = lazy(async () => {
+  const module = await import('./StoryEnd');
+  return { default: module.StoryEnd };
 });
 
 /** Contents' place, fetched when Contents is first pressed (the same budget). */
@@ -161,8 +178,8 @@ function StoryFacts({ chapter, story }: { chapter: ReaderChapter; story: StoryPa
 }
 
 /**
- * What follows the paper: the chapter navigation, the copy notice, the "Share quote" watcher, the
- * 728 × 90 advert (S1-E12-01) and the comments (S1-E6-01).
+ * What follows the paper: the chapter navigation, the copy notice, the "Share quote" watcher, What
+ * next after the latest chapter (BOOKS B06), the 728 × 90 advert (S1-E12-01) and the comments (S1-E6-01).
  *
  * The copy notice and the "Share quote" watcher listen for a copy or a selection from the first
  * paint, so a reader who selects at once is never missed. The navigation, the advert and the
@@ -194,13 +211,21 @@ function UnderThePaper(props: {
 }
 
 /**
- * The 728 × 90 advert and the comments, drawn once the text has painted.
+ * After the latest chapter, What next and the rows (board B06-ReaderLast), then the 728 × 90
+ * advert and the comments, drawn once the text has painted.
  *
- * @returns the advert and the comments
+ * @returns what follows the latest chapter, the advert and the comments
  */
 function TheRestUnderThePaper({ chapter }: { chapter: ReaderChapter }) {
   return (
     <>
+      {chapter.nextCode === null && (
+        <div className="mx-auto w-full max-w-[760px]">
+          <Suspense fallback={null}>
+            <StoryEnd chapter={chapter} />
+          </Suspense>
+        </div>
+      )}
       <PageAdSlot
         pageKey="chapter"
         position={1}
@@ -227,6 +252,24 @@ function ReaderRow(props: { side: ReactNode; children: ReactNode }) {
       <div className="flex min-w-0 flex-col">{props.children}</div>
       {props.side}
     </div>
+  );
+}
+
+/**
+ * The note after a change of language, above the paper, as wide as the paper (BOOKS B07, user
+ * story 2.7): only when "Read in" opened this page and the chapter's text is on screen.
+ *
+ * @returns the note, or nothing
+ */
+function AfterLanguageSwitch(props: { chapter: ReaderChapter; look: ReadingLook }) {
+  const { chapter, look } = props;
+  const change = languageSwitchFrom(useLocation().state);
+  if (change === null || chapter.body === null) return null;
+  const style = { maxWidth: `calc(${look.columnWidth}px + 2 * var(--reading-page-pad))` };
+  return (
+    <Suspense fallback={null}>
+      <LanguageSwitchNote chapterNumber={chapter.number} block={change.block} style={style} />
+    </Suspense>
   );
 }
 
@@ -373,6 +416,7 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
       />
       <ParagraphCommentsContext.Provider value={tools.paragraphComments}>
         <ReaderRow side={side}>
+          <AfterLanguageSwitch chapter={chapter} look={look} />
           <PaperWithText chapter={chapter} spot={props.spot} look={look} track={screen.track} />
           {hasText && <UnderThePaper chapter={chapter} story={story} hasPainted={hasPainted} />}
           {screen.hasFactsBelow && (

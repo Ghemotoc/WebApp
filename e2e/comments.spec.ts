@@ -174,6 +174,21 @@ test.describe('comments on a chapter (S1-E6-01)', () => {
     await page.context().close();
   });
 
+  test('the comments can be listed oldest first (BOOKS B05)', async ({ browser }) => {
+    // teacher's first comment is an hour old; the writer adds a new one, so the orders differ.
+    runSql(`update public.comments set created_at = now() - interval '1 hour'
+      where body like 'I had to put my phone down%';`);
+    const writer = await openAs(browser, 'adult_writer');
+    await postComment(writer, 'Thank you for reading so closely.');
+    // The first comment in the list (articles inside it are replies, which follow their comment).
+    const firstComment = () =>
+      writer.locator('section[aria-labelledby="comments-heading"] > div > article').first();
+    await expect(firstComment()).toContainText('Thank you for reading so closely.');
+    await writer.getByRole('combobox', { name: 'Order of comments' }).selectOption('oldest');
+    await expect(firstComment()).toContainText('put my phone down');
+    await writer.context().close();
+  });
+
   for (const view of everyView([chapterAddress])) {
     test(`the comments pass axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       browser,

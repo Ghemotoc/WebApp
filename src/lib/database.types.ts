@@ -13433,7 +13433,12 @@ export type Database = {
       };
       chapter_code: { Args: Record<PropertyKey, never>; Returns: string };
       chapter_comments: {
-        Args: { chapter_code: string; older_than?: string; story_slug: string };
+        Args: {
+          chapter_code: string;
+          oldest_first?: boolean;
+          page_after?: string;
+          story_slug: string;
+        };
         Returns: Json;
       };
       chapter_embed_references: {
@@ -19084,7 +19089,8 @@ export type Database = {
         | 'class_competition_won'
         | 'class_competition_results'
         | 'class_readers_choice'
-        | 'comments_resumed';
+        | 'comments_resumed'
+        | 'story_completed';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -19495,6 +19501,7 @@ export const Constants = {
         'class_competition_results',
         'class_readers_choice',
         'comments_resumed',
+        'story_completed',
       ],
       picture_kind: [
         'cover',

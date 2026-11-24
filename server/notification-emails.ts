@@ -40,6 +40,7 @@ const defaultTexts: Record<'ro' | 'en', EmailTexts> = { ro: romanianEmail, en: e
 export interface EmailNotificationItem {
   kind:
     | 'new_chapter'
+    | 'story_completed'
     | 'comment_on_chapter'
     | 'comment_reply'
     | 'comment_reactions'
@@ -101,6 +102,8 @@ type ReadText = (path: string, values?: Record<string, string | number>) => stri
 /** The text group of each kind's line in email.json. */
 const lineKeys: Record<EmailNotificationItem['kind'], string> = {
   new_chapter: 'newChapter',
+  // A followed writer marked their last chapter (BOOKS B06, user story 2.6): "finished “Sarea”."
+  story_completed: 'storyCompleted',
   comment_on_chapter: 'commentOnChapter',
   comment_reply: 'commentReply',
   comment_reactions: 'commentReactions',
@@ -241,6 +244,27 @@ function dataRequestValues(item: EmailNotificationItem, language: string) {
 }
 
 /**
+ * The placeholders one notification's line fills: who, where, the story, the space, the count and
+ * a data request's details.
+ *
+ * @param item - the notification
+ * @param read - the text reader
+ * @param language - the email's language, for dates
+ * @returns the values by placeholder name
+ */
+function lineValues(item: EmailNotificationItem, read: ReadText, language: string) {
+  return {
+    who: whoDidIt(item, read),
+    where: whereOf(item, read),
+    // The story's title on its own, for a line about the whole story (story_completed, BOOKS B06).
+    story: item.story?.title ?? '',
+    space: item.space?.name ?? '',
+    count: item.actor_count,
+    ...dataRequestValues(item, language),
+  };
+}
+
+/**
  * One notification as one sentence, with the comment's first words on the next line.
  *
  * @param item - the notification
@@ -258,13 +282,7 @@ export function notificationLine(
   // A message request has its own line ("sent you a message request"), whatever the count.
   const lineKey = item.is_request === true ? 'newMessageRequest' : lineKeys[item.kind];
   const plural = isMany && item.is_request !== true ? 'Many' : '';
-  const line = read(`notificationEmails.${lineKey}${plural}`, {
-    who: whoDidIt(item, read),
-    where: whereOf(item, read),
-    space: item.space?.name ?? '',
-    count: item.actor_count,
-    ...dataRequestValues(item, language),
-  });
+  const line = read(`notificationEmails.${lineKey}${plural}`, lineValues(item, read, language));
   if (item.comment_excerpt === null || item.comment_excerpt === '') return line;
   return `${line}\n“${item.comment_excerpt}”`;
 }

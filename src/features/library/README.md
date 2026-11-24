@@ -8,7 +8,7 @@ The reader's library and their place in every chapter. Built by READ-4a: S1-E4-0
 - `components/MyStoriesShelf.tsx`: "Written by you", a list of the writer's own stories with drafts (status and visibility as a meta line), each opening its chapters in the writing tools, plus "Open Write" (bundle NAV-1; a list since CALM-7c).
 - `components/OfflineReadingNote.tsx`: "Downloaded to read offline", which says offline reading comes with the apps (CALM-7c).
 - `components/FollowingSection.tsx`: the writers and stories the reader follows, with the shared FollowButton.
-- `components/StoryReadingActions.tsx`: "Start reading" / "Continue chapter n" and the Library drop-down on the story page.
+- `components/StoryReadingActions.tsx`: the story page's "Start reading" / "Continue" / "Read again", "Add to library" / "In library" (the bookshelf sheet, with the Library drop-down on top) and "Tell the writer you finished it" (bundle 2, board B01).
 - `hooks/`, `api/library.ts`: `my_library()`, `my_follows()`, `story_library_state()`, `set_library_shelf()`, `my_place_in_chapter()`, `save_reading_position()`.
 - `lib/places.ts` (where Continue leads, "Chapter 15 is out"), `lib/deviceKind.ts` (phone, tablet or computer from the window width).
 - The reader screen's side lives in `src/features/reading/`: `hooks/useSavedPlace.ts` and `components/SavedPlaceOffer.tsx`.

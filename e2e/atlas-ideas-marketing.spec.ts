@@ -184,12 +184,16 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
       .poll(() => savedIdea('Who put the lighthouse out?'))
       .toBe('decision|Who put the lighthouse out?|The keeper did. Chapter 4.|true');
     // Delete asks first; "Keep it" keeps it, "Yes, delete it" deletes it.
+    // Each click here has its own 10 s limit: on 24 Nov 2026 one CI run spent about 25 s somewhere
+    // in these steps and only the test's 30 s limit caught it, which named none of them. A click
+    // that hangs now fails on the step that hangs (the trace records only retries).
+    const clickLimit = { timeout: 10_000 };
     const todo = page.getByTestId('atlas-idea-item').filter({ hasText: 'To-do' });
-    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click();
-    await todo.getByRole('button', { name: 'Keep it' }).click();
+    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click(clickLimit);
+    await todo.getByRole('button', { name: 'Keep it' }).click(clickLimit);
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(2);
-    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click();
-    await todo.getByRole('button', { name: 'Yes, delete it' }).click();
+    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click(clickLimit);
+    await todo.getByRole('button', { name: 'Yes, delete it' }).click(clickLimit);
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(1);
     expect(savedIdea('Check the tide tables')).toBe('');
     await page.context().close();
