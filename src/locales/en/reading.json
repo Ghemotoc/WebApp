@@ -102,6 +102,7 @@
     "edited": "edited {{date}}",
     "untitled": "Untitled chapter",
     "endOfChapter": "End of chapter {{number}}",
+    "endOfChapterOf": "End of chapter {{number}} of {{total}}",
     "readNext": "Next: chapter {{number}}",
     "latestChapter": "That’s the latest chapter so far.",
     "endOfStory": "That’s the end of the story.",
@@ -181,6 +182,8 @@
   },
   "likes": {
     "like": "Like this chapter",
+    "likeWord": "Like",
+    "likeRest": "this chapter",
     "liked": "Liked",
     "logIn": "Get in to like",
     "count_one": "{{count}} like",
@@ -194,14 +197,22 @@
     "buttonSample": "Aa",
     "title": "Reading settings",
     "close": "Close reading settings",
-    "font": "Font",
-    "fonts": {
-      "sans": "Inter",
-      "serif": "Serif",
-      "dyslexia_friendly": "Dyslexia-friendly",
-      "atkinson_hyperlegible": "Atkinson Hyperlegible"
+    "paper": "Paper",
+    "papers": {
+      "white": "White",
+      "sepia": "Sepia",
+      "grey": "Grey",
+      "black": "Black"
     },
-    "fontHint": "Fonts that work in every browser: OpenDyslexic, which many readers with dyslexia find easier, and Atkinson Hyperlegible, made so letters that look alike are easy to tell apart.",
+    "nightMode": "Night mode",
+    "nightModeHint": "Turns the whole page dark, paper included.",
+    "typeface": "Typeface",
+    "typefaces": {
+      "serif": "Literata",
+      "sans": "Inter",
+      "dyslexia_friendly": "OpenDyslexic",
+      "atkinson_hyperlegible": "Atkinson"
+    },
     "textSize": "Text size",
     "textSizeValue": "{{size}} px",
     "textSizeFromDevice": "{{size}} px, from the device",
@@ -218,25 +229,20 @@
       "medium": "Medium",
       "wide": "Wide"
     },
-    "theme": "Theme",
-    "themes": {
-      "light": "Light",
-      "sepia": "Sepia",
-      "night": "Night"
-    },
     "nightByClock": "Night by the clock",
-    "nightByClockHint": "Chapters open in Night between two times you choose, on this device’s clock.",
+    "nightByClockHint": "Chapters open on Black paper between two times you choose, on this device’s clock.",
     "nightFrom": "From",
     "nightUntil": "Until",
     "nightWaiting": "Pick both times. Nothing changes until you do.",
-    "nightNextChapter": "Chapters you open between these times show in Night. A theme you pick yourself wins until the next chapter.",
+    "nightNextChapter": "Chapters you open between these times show on Black paper. A paper you pick yourself stays until the next chapter.",
     "ruler": "Reading ruler",
     "rulerHint": "A soft band follows the line you’re reading. Move the pointer over the text, or use the Up and Down arrow keys.",
-    "saved": "Saved to your account, so they apply on all your devices. Text size starts from your device’s own setting.",
     "saveFailed": "We couldn’t save your reading settings. They still apply here; check your connection and change one again to retry.",
     "timeLeft": "Time left",
     "timeLeftBar": "In the bar",
-    "timeLeftPage": "On the page"
+    "timeLeftPage": "On the page",
+    "timeLeftHint": "Minutes left in this chapter",
+    "moreOptions": "More options"
   },
   "embed": {
     "removed": "[Removed by the moderation team]",
@@ -300,5 +306,13 @@
     "pageTitlePlain": "{{title}} by {{writer}}, {{site}}",
     "breadcrumbRead": "Read",
     "label": "About this story"
+  },
+  "contents": {
+    "button": "Contents",
+    "title": "Contents",
+    "close": "Close contents",
+    "youAreHere": "You are here",
+    "loading": "Loading the chapters…",
+    "row": "{{number}}. {{title}}"
   }
 }

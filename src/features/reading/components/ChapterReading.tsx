@@ -10,8 +10,9 @@
  * S1-E4-01b), then the chapter's comments (S1-E6-01). Below 1280 px About this story and the
  * 300 × 250 advert (position 2) follow the comments, and the panels open in the bottom sheet.
  * Each advert is drawn once, in the one place it belongs at this width.
- * Reading settings and a paragraph's comments are closed by default and never both open
- * (useReaderTools). Time left: in the chapter bar by default; "On the page" in Reading settings
+ * Contents (the chapter list, user story 2.2), Reading settings and a paragraph's comments are
+ * closed by default and only one is open at a time (useReaderTools); Contents and Reading
+ * settings open in the same place (ToolPanel). Time left: in the chapter bar by default; "On the page" in Reading settings
  * puts back the floating pill (ReadingTimeLeft) instead (handover Step 4, points 11 and 12).
  * Who uses it: ChapterReaderPage.
  * What it calls: useReadingProgress, useRecordRead → record_chapter_read(), useReadingMinutes,
@@ -42,6 +43,7 @@ import { minutesLeft } from '../lib/readingTimeLeft';
 import { toSharedChapter } from '../lib/toSharedChapter';
 
 import { ChapterBar } from './ChapterBar';
+import { chapterContentsPanelId } from './ChapterContentsControl';
 import { readingSettingsPanelId } from './ReadingSettingsControl';
 import { ChapterComments } from './ChapterComments';
 import { ChapterNavigation } from './ChapterNavigation';
@@ -55,6 +57,53 @@ const ReaderToolPlace = lazy(async () => {
   const module = await import('./ReaderToolPlace');
   return { default: module.ReaderToolPlace };
 });
+
+/** Contents' place, fetched when Contents is first pressed (the same budget). */
+const ChapterContentsPlace = lazy(async () => {
+  const module = await import('./ChapterContentsPlace');
+  return { default: module.ChapterContentsPlace };
+});
+
+/**
+ * The open bar panel, Contents or Reading settings, in its place (the side column from 1280 px,
+ * the bottom sheet below), or nothing while neither is open. While a place's file loads, an empty
+ * stand-in carries the panel's id, so the button's aria-controls never points at nothing (axe:
+ * aria-valid-attr-value).
+ *
+ * @returns the panel, or null
+ */
+function ToolPanel(props: {
+  chapter: ReaderChapter;
+  story: StoryPageData | null;
+  screen: ReturnType<typeof useChapterScreen>;
+}) {
+  const { chapter, story, screen } = props;
+  const { tools, look, isWide } = screen;
+  if (tools.isContentsOpen) {
+    return (
+      <Suspense fallback={<div id={chapterContentsPanelId} hidden />}>
+        <ChapterContentsPlace
+          isInSideColumn={isWide}
+          storySlug={chapter.story.slug}
+          currentCode={chapter.code}
+          chapters={story?.chapters ?? null}
+          onClose={tools.closeContents}
+        />
+      </Suspense>
+    );
+  }
+  if (!tools.isSettingsOpen) return null;
+  return (
+    <Suspense fallback={<div id={readingSettingsPanelId} hidden />}>
+      <ReaderToolPlace
+        isInSideColumn={isWide}
+        deviceSize={look.deviceSize}
+        chapterCode={chapter.code}
+        onClose={tools.closeSettings}
+      />
+    </Suspense>
+  );
+}
 
 /** The floating pill, fetched only for a reader who puts time left on the page (the bar is the
  * default, handover Step 4, point 11), which keeps it out of the 1,300 KB first load. */
@@ -289,18 +338,7 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
   const { t } = useTranslation('reading');
   const screen = useChapterScreen(chapter);
   const { hasText, look, isWide, tools, story, hasPainted } = screen;
-  // While the place's file loads, an empty stand-in carries the panel's id, so Aa's aria-controls
-  // never points at nothing (axe: aria-valid-attr-value).
-  const settingsPanel = tools.isSettingsOpen ? (
-    <Suspense fallback={<div id={readingSettingsPanelId} hidden />}>
-      <ReaderToolPlace
-        isInSideColumn={isWide}
-        deviceSize={look.deviceSize}
-        chapterCode={chapter.code}
-        onClose={tools.closeSettings}
-      />
-    </Suspense>
-  ) : null;
+  const settingsPanel = <ToolPanel chapter={chapter} story={story} screen={screen} />;
   const side = isWide ? (
     <ReaderSideColumn
       onThreadSlot={screen.setThreadSlot}
@@ -316,16 +354,23 @@ export function ChapterReading(props: { chapter: ReaderChapter; spot: SpotRange 
       <SideAdvert chapter={chapter} />
     </ReaderSideColumn>
   ) : null;
-  // Aa only for a signed-in reader: the settings are saved to the account (S1-E4-02).
-  const aa = look.isSignedIn
-    ? { isOpen: tools.isSettingsOpen, onToggle: tools.toggleSettings }
-    : null;
+  // Aa for everyone: a reader's settings go to the account, a visitor's stay in this browser
+  // (BOOKS B04, user story 2.4).
+  const aa = { isOpen: tools.isSettingsOpen, onToggle: tools.toggleSettings };
+  // Contents only when there is more than one chapter to list (user story 2.2).
+  const contents =
+    chapter.total > 1 ? { isOpen: tools.isContentsOpen, onToggle: tools.toggleContents } : null;
   return (
     <>
       <title>
         {t('reader.documentTitle', { chapter: chapter.title, story: chapter.story.title })}
       </title>
-      <ChapterBar chapter={chapter} minutesLeft={screen.barMinutes} settings={aa} />
+      <ChapterBar
+        chapter={chapter}
+        minutesLeft={screen.barMinutes}
+        settings={aa}
+        contents={contents}
+      />
       <ParagraphCommentsContext.Provider value={tools.paragraphComments}>
         <ReaderRow side={side}>
           <PaperWithText chapter={chapter} spot={props.spot} look={look} track={screen.track} />

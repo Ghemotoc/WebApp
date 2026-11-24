@@ -39,6 +39,10 @@ export interface SegmentedControlProps<Value extends string> {
   /** Equal columns at every width; otherwise equal columns on a phone and natural widths from
    * 640 px. */
   isFullWidth?: boolean;
+  /** A fixed number of columns at every width, the track only as wide as its segments: four
+   * choices as two lines of two, as Reading settings draws Paper and Typeface (board
+   * B04-ReaderSettings, BOOKS B04). Left out, every choice gets its own column. */
+  columns?: number;
 }
 
 /** Where the bubble sits inside the track, in pixels. */
@@ -80,6 +84,29 @@ function useBubbleBox(pickedIndex: number) {
 }
 
 /**
+ * How the track lays out its segments.
+ *
+ * @param isFullWidth - equal columns filling the width at every size
+ * @param hasFixedColumns - a set number of columns, the track as wide as its segments
+ * @returns the layout classes
+ */
+function trackLayoutClass(isFullWidth: boolean, hasFixedColumns: boolean): string {
+  if (hasFixedColumns) return 'inline-grid self-start';
+  if (isFullWidth) return 'grid';
+  return 'grid sm:inline-flex sm:self-start sm:rounded-full';
+}
+
+/**
+ * The track's columns: equal widths, as many as asked for (all options on one line by default).
+ *
+ * @param count - how many columns
+ * @returns the inline style
+ */
+function gridColumnsStyle(count: number) {
+  return { gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))` };
+}
+
+/**
  * Renders the control.
  *
  * @returns the fieldset
@@ -92,10 +119,12 @@ export function SegmentedControl<Value extends string>({
   value,
   onChange,
   isFullWidth = false,
+  columns,
 }: SegmentedControlProps<Value>) {
   const pickedIndex = options.findIndex((option) => option.value === value);
   const { trackRef, box } = useBubbleBox(pickedIndex);
-  const columns = { gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` };
+  const hasFixedColumns = columns !== undefined;
+  const gridColumns = gridColumnsStyle(columns ?? options.length);
   return (
     <fieldset className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0">
       <legend className={isLegendVisible ? 'mb-2 p-0 type-body font-semibold text-ink' : 'sr-only'}>
@@ -103,11 +132,11 @@ export function SegmentedControl<Value extends string>({
       </legend>
       <div
         ref={trackRef}
-        style={columns}
+        style={gridColumns}
         className={cn(
           // overflow-visible: the track never scrolls or shows a scrollbar (canvas v38; CALM-1b).
           'segmented-track relative gap-1 overflow-visible rounded-card p-1',
-          isFullWidth ? 'grid' : 'grid sm:inline-flex sm:self-start sm:rounded-full',
+          trackLayoutClass(isFullWidth, hasFixedColumns),
         )}
       >
         {box !== null && pickedIndex >= 0 && (
