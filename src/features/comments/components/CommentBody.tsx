@@ -1,8 +1,9 @@
 /**
  * CommentBody: what sits in a comment's place under its name (story S1-E6-01; board 3.5).
  *
- * - live: the words; a spoiler first shows "This comment is marked as a spoiler." and a "Show
- *   spoiler" button (criterion 2), which reveals the words in place (aria-expanded says which).
+ * - live: the words; a spoiler first shows a box, "Spoiler. This comment is marked as a spoiler.",
+ *   with an underlined "Show spoiler" text button (criterion 2; board B05-ReaderEnd, BOOKS B05),
+ *   which reveals the words in place (aria-expanded says which).
  * - hidden: the author's own comment that staff hid: the words and a note that only they see it.
  * - removed: "[Removed by the moderation team]" (architecture 1.8.5's marker).
  * - deleted: "Comment deleted." Both markers show only while replies keep the place.
@@ -32,14 +33,17 @@ function SpoilerBody({ text }: { text: string }) {
     );
   }
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-3 rounded-card bg-tint px-4 py-3">
-      <span className="type-body text-ink-muted">{t('comment.spoilerNote')}</span>
+    <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-field bg-tint px-4 py-3">
+      <p className="m-0 type-body text-ink">
+        <span className="font-semibold">{t('comment.spoilerLabel')}</span>{' '}
+        {t('comment.spoilerNote')}
+      </p>
       <button
         type="button"
         aria-expanded={false}
         aria-controls={wordsId}
         onClick={() => setIsShown(true)}
-        className="h-11 cursor-pointer rounded-full border border-link bg-surface px-4 type-body font-semibold text-link hover:bg-tint"
+        className="hit-target min-h-11 cursor-pointer border-0 bg-transparent p-0 type-body font-semibold text-link underline underline-offset-2"
       >
         {t('comment.showSpoiler')}
       </button>

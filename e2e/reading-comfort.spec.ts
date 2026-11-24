@@ -9,8 +9,9 @@
  * - Atkinson Hyperlegible (idea 6): picking it changes the chapter at once, and the font comes
  *   from our own site;
  * - Night by the clock (idea 7): the reader sets both times themselves (the fields start empty),
- *   a chapter opened inside them shows in Night and outside them in the usual theme, and a theme
- *   picked by hand wins until the next chapter without changing the usual theme;
+ *   a chapter opened inside them shows on Black paper and outside them on the usual paper, and a
+ *   paper picked by hand wins until the next chapter without changing the usual paper (the
+ *   Paper replaced the theme in BOOKS B04, user story 2.4; these settings sit under More options);
  * - the reading ruler (idea 8): a band follows the line under the pointer and moves with the
  *   arrow keys, and it is hidden from screen readers;
  * - axe at 390, 768 and 1440 px, light and night, ro and en, on the open panel and on the story
@@ -77,9 +78,9 @@ function savePlace() {
 
 /** Saves the reader's settings straight in the database, as the panel would. */
 function saveSettings(values: string) {
-  runSql(`insert into public.reading_settings (user_id, theme, night_by_clock, night_from, night_until)
+  runSql(`insert into public.reading_settings (user_id, paper, night_by_clock, night_from, night_until)
     values ('${readerId}', ${values})
-    on conflict (user_id) do update set theme = excluded.theme, night_by_clock = excluded.night_by_clock,
+    on conflict (user_id) do update set paper = excluded.paper, night_by_clock = excluded.night_by_clock,
       night_from = excluded.night_from, night_until = excluded.night_until;`);
 }
 
@@ -111,7 +112,7 @@ async function openAs(browser: Browser, address: string, options: { at?: string 
   return page;
 }
 
-/** The chapter's page box, which carries the theme. */
+/** The chapter's page box, which carries the paper. */
 function pageBox(page: Page) {
   return page.getByTestId('chapter-page');
 }
@@ -149,7 +150,7 @@ test.describe('reading place and comfort (IDEAS-1 part a)', () => {
       if (request.url().includes('atkinson-hyperlegible')) fontFiles.push(request.url());
     });
     await page.getByRole('button', { name: 'Reading settings' }).click();
-    await page.getByRole('radio', { name: 'Atkinson Hyperlegible' }).click();
+    await page.locator('label', { hasText: 'Atkinson' }).click();
     const text = page.locator('.tmc-chapter-text--reader');
     await expect
       .poll(() => text.evaluate((element) => getComputedStyle(element).fontFamily))
@@ -170,13 +171,14 @@ test.describe('reading place and comfort (IDEAS-1 part a)', () => {
     browser,
   }) => {
     // Saved earlier: Atkinson Hyperlegible, so the panel shows when the saved copy has arrived.
-    saveSettings(`'light', false, null, null`);
+    saveSettings(`'white', false, null, null`);
     runSql(
       `update public.reading_settings set font = 'atkinson_hyperlegible' where user_id = '${readerId}';`,
     );
     const page = await openAs(browser, firstChapter);
     await page.getByRole('button', { name: 'Reading settings' }).click();
-    await expect(page.getByRole('radio', { name: 'Atkinson Hyperlegible' })).toBeChecked();
+    await expect(page.getByRole('radio', { name: 'Atkinson', exact: true })).toBeChecked();
+    await page.getByText('More options').click();
     // click(), then wait: the box is drawn from the cached settings, which update a moment later.
     await page.getByLabel('Night by the clock').click();
     await expect(page.getByLabel('Night by the clock')).toBeChecked();
@@ -194,7 +196,7 @@ test.describe('reading place and comfort (IDEAS-1 part a)', () => {
       .toBe('true 22:30:00 06:00:00');
   });
 
-  test('inside the hours a chapter opens in Night, outside them in the usual theme', async ({
+  test('inside the hours a chapter opens on Black paper, outside them on the usual paper', async ({
     browser,
   }) => {
     saveSettings(`'sepia', true, '22:30', '06:00'`);
@@ -205,18 +207,18 @@ test.describe('reading place and comfort (IDEAS-1 part a)', () => {
     await expect(pageBox(midday)).toHaveClass(/tmc-reading-page--sepia/);
   });
 
-  test('a theme picked by hand wins until the next chapter and leaves the usual theme alone', async ({
+  test('a paper picked by hand wins until the next chapter and leaves the usual paper alone', async ({
     browser,
   }) => {
     saveSettings(`'sepia', true, '22:30', '06:00'`);
     const page = await openAs(browser, firstChapter, { at: '23:30' });
     await page.getByRole('button', { name: 'Reading settings' }).click();
-    await page.getByRole('radio', { name: 'Light', exact: true }).click();
+    await page.locator('label', { hasText: 'White' }).click();
     await expect(pageBox(page)).not.toHaveAttribute('data-theme', 'night');
     await expect(pageBox(page)).not.toHaveClass(/tmc-reading-page--sepia/);
-    // The usual theme is still Sepia.
+    // The usual paper is still Sepia.
     expect(
-      runSql(`select theme from public.reading_settings where user_id = '${readerId}';`).trim(),
+      runSql(`select paper from public.reading_settings where user_id = '${readerId}';`).trim(),
     ).toBe('sepia');
     // The next chapter opens in Night again.
     await page.keyboard.press('Escape');
@@ -231,7 +233,7 @@ test.describe('reading place and comfort (IDEAS-1 part a)', () => {
   test('the reading ruler follows the pointer and the arrow keys, and screen readers never meet it', async ({
     browser,
   }) => {
-    saveSettings(`'light', false, null, null`);
+    saveSettings(`'white', false, null, null`);
     runSql(
       `update public.reading_settings set reading_ruler = true where user_id = '${readerId}';`,
     );
@@ -263,11 +265,13 @@ test.describe('reading place and comfort (IDEAS-1 part a)', () => {
       page,
     }) => {
       runSql(`update public.profiles set locale = '${view.language}' where handle = 'editor';`);
-      saveSettings(`'light', true, '22:30', '06:00'`);
+      saveSettings(`'white', true, '22:30', '06:00'`);
       await useSessionInBrowser(page.context(), (await signInPersona('editor')).session);
       await checkScreen(page, view, async (opened) => {
         const button = view.language === 'ro' ? 'Setări de citire' : 'Reading settings';
         await opened.getByRole('button', { name: button }).click();
+        const more = view.language === 'ro' ? 'Mai multe opțiuni' : 'More options';
+        await opened.getByText(more).click();
         await expect(opened.locator('#reading-night-from')).toBeVisible();
       });
     });

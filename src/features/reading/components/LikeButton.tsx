@@ -36,8 +36,10 @@ const pillShape =
 function LikeWords({ count, isLiked }: { count: number; isLiked: boolean }) {
   const { t, i18n } = useTranslation('reading');
   const shownCount = new Intl.NumberFormat(i18n.language).format(count);
+  // One span, so the button's gap (between the heart and the words) doesn't open up "Like  · 64"
+  // (board B05: "Like · 64").
   return (
-    <>
+    <span>
       {isLiked ? t('likes.liked') : t('likes.likeWord')}
       {!isLiked && <span className="sr-only"> {t('likes.likeRest')}</span>}
       <span aria-hidden="true" className="font-normal">
@@ -45,7 +47,7 @@ function LikeWords({ count, isLiked }: { count: number; isLiked: boolean }) {
         {shownCount}
       </span>
       <span className="sr-only"> {t('likes.count', { count })}</span>
-    </>
+    </span>
   );
 }
 

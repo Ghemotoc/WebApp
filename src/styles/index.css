@@ -1562,11 +1562,13 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   line-height: var(--reading-line-height, 1.7);
   letter-spacing: var(--reading-letter-spacing, 0);
 }
-/* The reading paper (S1-E4-02 themes; liquid glass look from bundle G7d, board WebReaderV1): the
-   whole chapter, title to Like, sits on one rounded sheet of paper with a soft shadow. Light uses
-   the story paper (#FFFBF2 by day; #1A1A1C with light text when the site is at night, rulebook),
-   Night reuses the night tokens (data-theme="night" on the same box) on the same dark paper, and
-   Sepia sets its own colours, every one at least 7:1 on #F3E7D3. --reading-page-pad is the side
+/* The reading paper (S1-E4-02; liquid glass look from bundle G7d, board WebReaderV1; Paper from
+   BOOKS B04, board B04-ReaderSettings): the whole chapter, title to Like, sits on one rounded
+   sheet of paper with a soft shadow. Sepia, the default, is the story paper (#FFFBF2 by day; the
+   dark story paper with light text when the site is at night), Black reuses the night tokens
+   (data-theme="night" on the same box) on the dark paper, and White (#FFFFFF) and Grey (#EDEDED)
+   set their own sheet by day only (DESIGN, 24 Nov 2026), so Night mode and high contrast still
+   turn every paper dark or plain. --reading-page-pad is the side
    padding, which ChapterReaderPage adds to the text column's width so the line length stays the
    reader's choice. */
 /* .tmc-reading-width: a box above the paper as wide as the paper (the note after "Read in",
@@ -1602,19 +1604,17 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
     padding-bottom: 56px;
   }
 }
-.tmc-reading-page--paper {
+.tmc-reading-page--paper,
+.tmc-reading-page--sepia,
+.tmc-reading-page--white,
+.tmc-reading-page--grey {
   --paper: var(--story-paper);
 }
-.tmc-reading-page--sepia {
-  color-scheme: light;
-  --paper: #f3e7d3;
-  --ink: #3b2a1a;
-  --heading: #3b2a1a;
-  --body: #4a3826;
-  --meta: #5c4632;
-  --link: #5e2378;
-  --border: #c9b392;
-  --hairline: #e3d3b8;
+:root:not([data-theme='night']):not([data-contrast]) .tmc-reading-page--white {
+  --paper: var(--reading-paper-white);
+}
+:root:not([data-theme='night']):not([data-contrast]) .tmc-reading-page--grey {
+  --paper: var(--reading-paper-grey);
 }
 /* The reader's row (bundle CALM-5; handover Step 3; board New-Reader): the chapter on the left
    and, from 1280 px, the 360 px side column "Reading tools" 48 px away, which stays in view under

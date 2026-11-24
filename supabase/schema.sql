@@ -911,17 +911,18 @@ COMMENT ON TYPE "public"."reading_line_width" IS 'The reader''s line width: abou
 
 
 
-CREATE TYPE "public"."reading_theme" AS ENUM (
-    'light',
+CREATE TYPE "public"."reading_paper" AS ENUM (
+    'white',
     'sepia',
-    'night'
+    'grey',
+    'black'
 );
 
 
-ALTER TYPE "public"."reading_theme" OWNER TO "postgres";
+ALTER TYPE "public"."reading_paper" OWNER TO "postgres";
 
 
-COMMENT ON TYPE "public"."reading_theme" IS 'The reader''s theme for the chapter text: light (the app''s colours), sepia or night (S1-E4-02).';
+COMMENT ON TYPE "public"."reading_paper" IS 'The colour of the paper the chapter is read on: white, sepia (the story paper, the default), grey or black (BOOKS B04).';
 
 
 
@@ -16889,7 +16890,7 @@ COMMENT ON FUNCTION "public"."chapter_code"() IS 'Internal: a fresh 8-character 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone DEFAULT NULL::timestamp with time zone) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone DEFAULT NULL::timestamp with time zone, "oldest_first" boolean DEFAULT false) RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -16915,17 +16916,23 @@ begin
     select top_level.id from public.comments as top_level
     where top_level.chapter_id = chapter.id
       and top_level.parent_comment_id is null
-      and (older_than is null or top_level.created_at < older_than)
+      -- BOOKS B05: the next page starts after the last comment shown, in the order picked.
+      and (page_after is null
+           or (not oldest_first and top_level.created_at < page_after)
+           or (oldest_first and top_level.created_at > page_after))
       and (public.comment_is_shown_to_caller(top_level)
            or (public.comment_state_for_caller(top_level) in ('deleted', 'removed')
                and jsonb_array_length(public.comment_replies_json(top_level.id, story.user_id)) > 0))
-    order by top_level.created_at desc
+    -- BOOKS B05: newest first by default, oldest first when the reader picks it.
+    order by case when oldest_first then top_level.created_at end asc,
+             case when not oldest_first then top_level.created_at end desc
     limit page_size + 1
   )
   select coalesce(jsonb_agg(public.comment_json(comments, story.user_id)
            || jsonb_build_object('replies', public.comment_replies_json(comments.id, story.user_id),
                                  'paragraph', public.comment_paragraph_json(comments, chapter.published_body))
-           order by comments.created_at desc), '[]'::jsonb),
+           order by case when oldest_first then comments.created_at end asc,
+                    case when not oldest_first then comments.created_at end desc), '[]'::jsonb),
          count(*)::integer
   into page, page_count
   from listed join public.comments on comments.id = listed.id;
@@ -16946,10 +16953,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) OWNER TO "postgres";
+ALTER FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) IS 'One page of a chapter''s comments, newest first, with replies and which paragraph each is on; never a user ID (S1-E6-01, S1-E6-06).';
+COMMENT ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) IS 'One page of a chapter''s comments, newest first or oldest first, with replies and which paragraph each is on; never a user ID (S1-E6-01, S1-E6-06, BOOKS B05).';
 
 
 
@@ -44993,7 +45000,7 @@ COMMENT ON FUNCTION "public"."save_reading_position"("story_slug" "text", "chapt
 
 
 
-CREATE OR REPLACE FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean DEFAULT false, "wanted_night_from" time without time zone DEFAULT NULL::time without time zone, "wanted_night_until" time without time zone DEFAULT NULL::time without time zone, "wanted_reading_ruler" boolean DEFAULT false, "wanted_time_left" "text" DEFAULT 'bar'::"text") RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean DEFAULT false, "wanted_night_from" time without time zone DEFAULT NULL::time without time zone, "wanted_night_until" time without time zone DEFAULT NULL::time without time zone, "wanted_reading_ruler" boolean DEFAULT false, "wanted_time_left" "text" DEFAULT 'bar'::"text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -45004,19 +45011,19 @@ begin
   if caller is null then
     raise exception 'Log in to save your reading settings.' using errcode = '42501';
   end if;
-  -- Step 2: one row per reader, replaced as a whole. The column's check refuses any time_left
-  -- other than 'bar' or 'page'; a null falls back to the default 'bar'.
-  insert into public.reading_settings (user_id, font, text_size, line_spacing, line_width, theme,
+  -- Step 2: one row per reader, replaced as a whole. A null paper falls back to Sepia, the
+  -- default; the column's check refuses any time_left other than 'bar' or 'page'.
+  insert into public.reading_settings (user_id, font, text_size, line_spacing, line_width, paper,
     night_by_clock, night_from, night_until, reading_ruler, time_left)
-  values (caller, wanted_font, wanted_text_size, wanted_line_spacing, wanted_line_width, wanted_theme,
-    coalesce(wanted_night_by_clock, false), wanted_night_from, wanted_night_until,
-    coalesce(wanted_reading_ruler, false), coalesce(wanted_time_left, 'bar'))
+  values (caller, wanted_font, wanted_text_size, wanted_line_spacing, wanted_line_width,
+    coalesce(wanted_paper, 'sepia'), coalesce(wanted_night_by_clock, false), wanted_night_from,
+    wanted_night_until, coalesce(wanted_reading_ruler, false), coalesce(wanted_time_left, 'bar'))
   on conflict (user_id) do update
     set font = excluded.font,
         text_size = excluded.text_size,
         line_spacing = excluded.line_spacing,
         line_width = excluded.line_width,
-        theme = excluded.theme,
+        paper = excluded.paper,
         night_by_clock = excluded.night_by_clock,
         night_from = excluded.night_from,
         night_until = excluded.night_until,
@@ -45026,10 +45033,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") IS 'Keeps the caller''s reading settings for every device (S1-E4-02; IDEAS-1 part a; CALM-5 time_left).';
+COMMENT ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") IS 'Keeps the caller''s reading settings for every device (S1-E4-02; IDEAS-1 part a; CALM-5 time_left; BOOKS B04 paper).';
 
 
 
@@ -59134,7 +59141,6 @@ CREATE TABLE IF NOT EXISTS "public"."reading_settings" (
     "text_size" smallint,
     "line_spacing" "public"."reading_line_spacing" DEFAULT 'normal'::"public"."reading_line_spacing" NOT NULL,
     "line_width" "public"."reading_line_width" DEFAULT 'medium'::"public"."reading_line_width" NOT NULL,
-    "theme" "public"."reading_theme" DEFAULT 'light'::"public"."reading_theme" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "night_by_clock" boolean DEFAULT false NOT NULL,
@@ -59142,6 +59148,7 @@ CREATE TABLE IF NOT EXISTS "public"."reading_settings" (
     "night_until" time without time zone,
     "reading_ruler" boolean DEFAULT false NOT NULL,
     "time_left" "text" DEFAULT 'bar'::"text" NOT NULL,
+    "paper" "public"."reading_paper" DEFAULT 'sepia'::"public"."reading_paper" NOT NULL,
     CONSTRAINT "reading_settings_text_size_check" CHECK ((("text_size" >= 14) AND ("text_size" <= 28))),
     CONSTRAINT "reading_settings_time_left_choice" CHECK (("time_left" = ANY (ARRAY['bar'::"text", 'page'::"text"])))
 );
@@ -59172,6 +59179,10 @@ COMMENT ON COLUMN "public"."reading_settings"."reading_ruler" IS 'The reading ru
 
 
 COMMENT ON COLUMN "public"."reading_settings"."time_left" IS 'Where the minutes left in a chapter show: bar (the chapter bar''s meta line, the default) or page (the floating pill at the foot). CALM-5; Robert, 20 Nov 2026, 12:28 UTC.';
+
+
+
+COMMENT ON COLUMN "public"."reading_settings"."paper" IS 'The paper the reader reads on (BOOKS B04, board B04-ReaderSettings). Night mode is the site''s own setting, not this one.';
 
 
 
@@ -70796,8 +70807,8 @@ REVOKE ALL ON FUNCTION "public"."chapter_code"() FROM PUBLIC;
 
 
 
-GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) TO "anon";
-GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) TO "anon";
+GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) TO "authenticated";
 
 
 
@@ -74688,8 +74699,8 @@ GRANT ALL ON FUNCTION "public"."save_reading_position"("story_slug" "text", "cha
 
 
 
-REVOKE ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") TO "authenticated";
 
 
 

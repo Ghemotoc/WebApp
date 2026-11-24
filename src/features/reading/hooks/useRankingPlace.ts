@@ -1,7 +1,7 @@
 /**
  * useRankingPlace: a story's place in its category (story S1-E15-05, bundle ANALYTICS-1b).
  *
- * Who calls it: components/RankingPlacePill.tsx (the story page) and the staff story page.
+ * Who calls it: tags/components/RankBadges.tsx (the story page) and the staff story page.
  * What it calls: api/rankingPlace.ts. The score changes once an hour, so one read per visit is
  * enough. A failed read shows nothing: the place is extra, and the page works without it.
  */
