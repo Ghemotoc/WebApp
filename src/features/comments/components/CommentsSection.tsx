@@ -18,6 +18,7 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
+import { PlaceholderComments } from '@/components/ui/PlaceholderComments';
 import { useSession } from '@/features/auth/hooks/useSession';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import { runningPauseEnd } from '@/lib/comment-pause';
@@ -105,7 +106,20 @@ export function CommentsSection({ address }: { address: ChapterAddress }) {
   const comments = useChapterComments(address);
   if (comments.loadFailed) return <Notice tone="error">{t('section.loadFailed')}</Notice>;
   const firstPage = comments.firstPage;
-  if (firstPage === null) return null;
+  // Grey comment shapes after 300 ms while the first page loads (design books item 15).
+  if (firstPage === null) {
+    return (
+      <section aria-labelledby="comments-heading" className="mt-12 flex flex-col">
+        <h2
+          id="comments-heading"
+          className="m-0 font-heading type-heading font-bold tracking-[-0.01em] text-ink-heading"
+        >
+          {t('section.eyebrow')}
+        </h2>
+        <PlaceholderComments label={t('paragraph.loading')} />
+      </section>
+    );
+  }
   // The list was read a little while ago, so a pause that has ended since counts as none.
   const pauseEnd = runningPauseEnd(firstPage.pause.pausedUntil, new Date());
   const isPaused = pauseEnd !== null;
