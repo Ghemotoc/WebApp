@@ -230,6 +230,8 @@ select results_eq(
        ('rate_limit_events', 0::bigint),
        -- The counties are reference data for the onboarding drop-down (S1-E2-06).
        ('regions', 42::bigint),
+       -- Where someone was in a story is theirs only (design books item 17).
+       ('remembered_places', 0::bigint),
        ('removed_passages', 0::bigint),
        ('report_detail_requests', 0::bigint),
        ('report_reason_tiers', 0::bigint),

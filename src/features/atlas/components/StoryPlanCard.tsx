@@ -23,6 +23,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { PlanWordsBar } from './PlanWordsBar';
 import { WritingStatusPill } from './WritingStatusPill';
+import { atlasEntryAddress } from '../lib/atlasSections';
 
 /** The writing status and genre pills above the title. */
 function PlanPills({ story, plan }: { story: MyStory; plan: StoryPlanSummary }) {
@@ -82,7 +83,7 @@ export function StoryPlanCard({
         >
           {/* The link covers the whole card (after:inset-0), so anywhere on it opens the plan. */}
           <Link
-            to={`/plan/s/${story.slug}`}
+            to={atlasEntryAddress(story.slug)}
             className="text-ink-heading no-underline after:absolute after:inset-0 after:rounded-card hover:underline"
           >
             {story.title}

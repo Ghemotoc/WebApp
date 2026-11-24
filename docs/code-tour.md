@@ -3049,3 +3049,11 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 
 - `/write/new` is five steps, one open at a time: `NewStoryPage` → `useNewStorySteps` (which section each step holds) → `StepWizard` (`src/components/ui/`, shared with later long forms such as the waitlist, H08). "Next" checks only the open step's answers (`checkFields()` in `useNewStoryForm`); Create checks them all and opens the first step with a mistake.
 - "Set in" (up to five countries) is its own column, `stories.set_in_countries`, saved by `set_my_story_set_in_countries()` after `create_story()` (`saveNewStoryExtras()`) and from story settings (`updateMyStory()`). The migration `…_calm9_d02_set_in_countries.sql` moved existing "set in <country>" tags into it.
+
+## Coming back to the same place (design books item 17)
+
+- **One store for "where was I":** `src/lib/remembered/useRememberedPlace.ts` keeps one small place per kind and item (a story's address or a hint's name). Signed in, it lives in the account (`remembered_places`, written only through `remember_place()`; migration `20270205100434_books17_remembered_places.sql`) so every device opens it; the browser keeps a copy (`localPlaces.ts`) so a page can use it before the account answers. Signed out, the browser copy is all there is.
+- **Language edition:** `ReadInSwitch` keeps the picked language (`story_edition`); `useOpeningEdition` opens it, the account's choice first.
+- **Story Atlas section:** `AtlasFrame` keeps the open section (`atlas_section`, `hooks/useLastAtlasSection.ts`). Links into a story's Atlas from outside it use `atlasEntryAddress()` (`/plan/s/<slug>?resume`), and `StoryAtlasPage` moves `?resume` to that section; the menu's "At a glance" has no `?resume`, so it still opens At a glance.
+- **Caret in Write:** `useRememberedCaret` keeps the caret's chapter and position a second after it stops (and at once on leaving the text), and puts it back, with the focus, when the same chapter opens again.
+- Reading settings already follow the account (`reading_settings`, S1-E4-02). Visitors read only the teaser, which has no settings, so there is nothing to keep for them there.
