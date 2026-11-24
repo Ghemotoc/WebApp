@@ -89,7 +89,7 @@ test.describe('copied-work reports (S1-E10-08)', () => {
     await expect(heading).toBeVisible();
     // Select the title on the page, the way a reader drags across text, then press Report.
     await heading.selectText();
-    await page.getByRole('button', { name: `Report ${storyTitle}` }).click();
+    await page.getByRole('button', { name: 'Report this story' }).click();
 
     const dialog = page.getByRole('dialog', { name: 'Report this story' });
     await expect(dialog).toBeVisible();

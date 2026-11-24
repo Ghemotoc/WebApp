@@ -80,7 +80,11 @@
     "label": "Library",
     "none": "Not in the library",
     "saveFailed": "That didn’t save, so the shelf is back as it was. Try again.",
-    "logIn": "Get in to save it"
+    "logIn": "Get in to save it",
+    "addToLibrary": "Add to library",
+    "inLibrary": "In library",
+    "readAgain": "Read again",
+    "continueShort": "Continue"
   },
   "startReading": "Start reading",
   "continueChapter": "Continue chapter {{number}}",
