@@ -20,7 +20,7 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 /** The browser storage keys the app may write, each reviewed (src/lib and the features). */
 const reviewedStorageKeys = [
   'theme-preference',
-  // The member's theme and seasonal switch, and the look on screen, for the first paint (G2).
+  // The member's theme, and the look on screen, for the first paint (G2).
   'theme-look-choice',
   'theme-shown-look',
   'interface-language',
