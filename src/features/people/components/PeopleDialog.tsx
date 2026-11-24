@@ -41,7 +41,7 @@ export function PeopleDialog(props: PeopleDialogProps) {
       ref={dialogRef}
       onClose={props.onClose}
       aria-labelledby={titleId}
-      className="m-auto w-[min(100%-32px,520px)] rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] text-ink shadow-card backdrop:bg-ink/50"
+      className="m-auto w-[min(100%-32px,520px)] rounded-card border border-border bg-surface p-4 lg:p-8 text-ink shadow-card backdrop:bg-ink/50"
     >
       {props.isOpen && (
         <div className="flex flex-col gap-4">

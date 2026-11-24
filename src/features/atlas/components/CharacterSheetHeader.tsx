@@ -63,10 +63,7 @@ export function CharacterSheetHeader(props: CharacterSheetHeaderProps) {
   return (
     <div className="flex min-w-0 flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card md:flex-row md:p-6">
       <div className="flex min-w-0 flex-1 flex-col gap-3">
-        <h2
-          id="atlas-character-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-bold break-words text-ink-heading"
-        >
+        <h2 id="atlas-character-heading" className="m-0 type-title break-words text-ink-heading">
           {character.name}
         </h2>
         <div className="flex flex-wrap gap-2">

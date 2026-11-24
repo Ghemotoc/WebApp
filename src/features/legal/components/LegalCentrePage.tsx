@@ -79,9 +79,7 @@ export function LegalCentrePage() {
       {/* The board's header. */}
       <div className="flex flex-col gap-3">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.02em] break-words">
-          {t('heading')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display break-words">{t('heading')}</h1>
         <p className="m-0 max-w-[720px] type-long leading-[1.6] text-ink-muted">{t('lead')}</p>
       </div>
       <LegalDocumentNav />

@@ -176,9 +176,7 @@ export function NewSupportRequestPage() {
       <SupportBackLink to="/support" label={t('list.title')} />
       <header className="flex max-w-[720px] flex-col gap-4">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.025em]">
-          {t('new.title')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display">{t('new.title')}</h1>
         <p className="m-0 type-long leading-relaxed text-ink-muted">{t('new.intro')}</p>
       </header>
       {isKnown && userId === null && <SignedOutLine />}

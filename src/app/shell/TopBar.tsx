@@ -78,7 +78,7 @@ export function TopBar({
     // the 1280 px page column, with 32 px of side space at 1440 px.
     <header
       data-scrolled={isScrolled}
-      className="top-bar pointer-events-none sticky top-0 z-30 px-[clamp(16px,2.2vw,32px)]"
+      className="top-bar pointer-events-none sticky top-0 z-30 px-4 lg:px-8"
     >
       <div
         data-solid={isScrolled}

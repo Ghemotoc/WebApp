@@ -36,7 +36,7 @@ export function ErrorPage() {
       <title>{t('errorPage.documentTitle')}</title>
       <section
         aria-labelledby="error-page-heading"
-        className="flex w-full max-w-[560px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[560px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
       >
         <h1 id="error-page-heading" className="m-0 font-heading type-heading font-bold text-ink">
           {t('errorPage.heading')}

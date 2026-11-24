@@ -111,7 +111,7 @@ export function NoticeForm({ language, isSending, failure, onSend }: NoticeFormP
       noValidate
       onSubmit={handleSubmit}
       aria-labelledby="notice-form-heading"
-      className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="notice-form-heading"

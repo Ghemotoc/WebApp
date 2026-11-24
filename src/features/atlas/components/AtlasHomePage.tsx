@@ -87,9 +87,7 @@ function HomeHeader() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex max-w-[60ch] flex-col gap-2">
           <Eyebrow>{t('eyebrow')}</Eyebrow>
-          <h1 className="m-0 font-heading text-[clamp(36px,5vw,64px)] leading-[0.98] font-bold tracking-[-0.025em] text-ink-heading">
-            {t('home.heading')}
-          </h1>
+          <h1 className="m-0 type-title lg:type-display text-ink-heading">{t('home.heading')}</h1>
           <p className="m-0 type-long leading-normal text-ink-muted">{t('home.lead')}</p>
         </div>
         <Link

@@ -54,7 +54,7 @@ function ParentCard({ heading, children }: { heading: string; children: ReactNod
   return (
     <section
       aria-labelledby="data-request-parent-heading"
-      className="flex w-full max-w-[720px] flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex w-full max-w-[720px] flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <div className="flex flex-col gap-2">
         <Eyebrow>{t('parent.eyebrow')}</Eyebrow>

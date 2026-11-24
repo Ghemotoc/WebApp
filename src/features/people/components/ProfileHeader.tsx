@@ -7,7 +7,8 @@
  * "<name> isn't taking messages right now" (S1-E9-03), the same note whatever the reason, so it
  * never tells anyone an age.
  *
- * Board values: the name in Funnel Display 800 at clamp(36px, 4.4vw, 64px), the handle line 15 px in
+ * Board values: the name in the type scale's title (32 px), display (48 px) from 1024 px (the design
+ * books' look rules, Section 1, replace the board's 800 at up to 64 px), the handle line 15 px in
  * the meta colour, the bio 18 px / 1.6 up to 640 px wide. Above the name sit the glass rank
  * pill (S1-E8-09, ProfileRankChip) and, when shown, the reading level pill (G7a,
  * ReaderLevelPill). Not shown yet, as the board's later parts: Share (the share sheet comes with
@@ -104,7 +105,7 @@ function ProfileBio({ profile }: { profile: WriterProfile }) {
 export function ProfileHeader({ profile }: { profile: WriterProfile }) {
   const { t } = usePeopleTranslation();
   return (
-    <Card className="relative flex flex-col gap-6 p-[clamp(20px,4vw,40px)] md:flex-row md:items-start">
+    <Card className="relative flex flex-col gap-6 p-4 lg:p-8 md:flex-row md:items-start">
       <ProfileAvatar name={profile.displayName} handle={profile.handle} />
       <div className="flex min-w-0 flex-col gap-3 md:flex-[999_1_420px]">
         <Eyebrow>{t('profile.eyebrow')}</Eyebrow>
@@ -116,7 +117,7 @@ export function ProfileHeader({ profile }: { profile: WriterProfile }) {
             <ReaderLevelPill handle={profile.handle} />
           </div>
         )}
-        <h1 className="m-0 min-w-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em] break-words text-ink-heading">
+        <h1 className="m-0 min-w-0 type-title lg:type-display break-words text-ink-heading">
           {profile.displayName}
         </h1>
         <HandleLine profile={profile} />
