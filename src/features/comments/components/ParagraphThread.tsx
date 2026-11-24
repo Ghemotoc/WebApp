@@ -26,6 +26,7 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 
 import { Notice } from '@/components/ui/Notice';
+import { PlaceholderComments } from '@/components/ui/PlaceholderComments';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import type { ParagraphPlace } from '@/features/reading/api/paragraphComments';
 import { CommentIcon } from '@/features/reading/components/ReaderIcons';
@@ -236,8 +237,9 @@ interface ThreadBodyProps extends Pick<ParagraphThreadProps, 'address' | 'place'
 function ThreadBody({ address, place, thread, loadFailed, isPaused }: ThreadBodyProps) {
   const { t } = useCommentsTranslation();
   if (loadFailed) return <Notice tone="error">{t('section.loadFailed')}</Notice>;
+  // Grey comment shapes after 300 ms, never a spinner (design books item 15).
   if (thread === null)
-    return <p className="m-0 mt-3 type-body text-ink-muted">{t('paragraph.loading')}</p>;
+    return <PlaceholderComments label={t('paragraph.loading')} isBoxed={false} />;
   if (thread.comments.length === 0) {
     if (place === 'earlier') return null;
     return <p className="m-0 mt-3 type-body text-ink-muted">{t('paragraph.emptyTitle')}</p>;
