@@ -4,8 +4,9 @@
  * points 1 to 3; boards New-Reader and New-PhoneReader).
  *
  * Where it sits (index.css, .tmc-paragraph-marker):
- *   - from 1024 px in the paper's left margin, beside the paragraph's first line: the comment
- *     mark and the number in the accent colour, with no border;
+ *   - from 1024 px in the paper's right margin, beside the paragraph's first line (Robert,
+ *     24 Nov 2026; CALM-5 had the left): the comment mark and the number in the accent colour,
+ *     with no border;
  *   - below 1024 px at the paragraph's top right corner, as a small 28 px white pill with a soft
  *     shadow, as in the app today, with a 44 px touch area round it.
  * Open, it takes the tint (aria-expanded) and the paragraph is tinted too (a 9% wash of the
