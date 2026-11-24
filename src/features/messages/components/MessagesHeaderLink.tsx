@@ -4,9 +4,10 @@
  * handoff "App header and tab bar": header B has "a pill with bell, chats and avatar (44px each,
  * dot when something is new)"; "Apps: chats sit in the header next to the bell").
  *
- * A clear 44 px round link with the chats icon. One 8 px dot in the thread colour shows when a chat
- * has new messages, never a number badge, and the accessible name says how many ("Messages, 2
- * chats with new messages"), so it never relies on the dot.
+ * A clear 44 px round link with the chats icon. A small count, 1 to 9 then 9+, shows how many chats
+ * have new messages (CountBadge; design books item 16, Robert's pick of 24 Nov 2026, replacing the
+ * CALM-2 dot), and the accessible name says how many ("Messages, 2 chats with new messages"), so
+ * the badge is only for the eye.
  * Who shows it: PhoneHeader and AppLayout's top bar, only while signed in. Where it goes: /messages.
  * What it calls: useUnreadMessageCount (every minute and on focus).
  */
@@ -14,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 
 import { NavIcon } from '@/components/icons/NavIcon';
+import { CountBadge } from '@/components/ui/CountBadge';
 
 import { useUnreadMessageCount } from '../hooks/useUnreadMessageCount';
 
@@ -35,13 +37,7 @@ export function MessagesHeaderLink() {
       className="relative inline-flex size-11 items-center justify-center rounded-full text-ink hover:bg-ink/5"
     >
       <NavIcon name="messages" size={22} />
-      {unreadCount > 0 && (
-        <span
-          aria-hidden="true"
-          data-new-dot
-          className="absolute top-2.5 right-2.5 size-2 rounded-full bg-thread"
-        />
-      )}
+      <CountBadge count={unreadCount} />
     </NavLink>
   );
 }
