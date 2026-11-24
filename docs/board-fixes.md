@@ -311,3 +311,6 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | B08-ReaderMissing, the chapter bar (BOOKS B08, user story 2.8) | No chapter bar above the notice | Built as drawn: the notice replaces the bar and the paper, so "Read in" isn't on this screen; the two buttons lead on, and the story page keeps the switch |
 | B08-ReaderMissing, the meta line (BOOKS B08) | 8 px either side of the middot | The app's one meta line (`.meta-line`, CALM-2) keeps its 6 px, as on every other page |
 | B08-ReaderMissing, the paragraph (BOOKS B08) | The sentence wraps at 65 characters | The base rule's 66 characters (design books) |
+| B05-ReaderEnd, the comment box (BOOKS B05, user story 2.5) | "0 / 2,000" under the box and Post comment at the right | The counter says 3,000, the limit decided for a comment on the whole chapter (S1-E6-01; Robert, 2 Nov 2026), and Post sits on the left, the quiet button first (ButtonRow, design books item 8) |
+| B05-ReaderEnd, replies (BOOKS B05) | A 2 px line down the left of the replies | No left-edge bar (canvas comments, 23 Nov 2026): a reply sits 16 px in under a hairline |
+| B05-ReaderEnd, under the comments (BOOKS B05) | About this story under the comments, with no side column | The side column of B02 stays from 1280 px; About this story keeps its place there |

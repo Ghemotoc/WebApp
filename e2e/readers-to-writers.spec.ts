@@ -174,6 +174,8 @@ test.describe('readers to writers (IDEAS-1 part c)', () => {
     runSql(`update public.library_entries set shelf = 'reading' where user_id = '${readerId}'
       and story_id = (select id from public.stories where slug = '${storySlug}');`);
     const page = await openAs(browser, 'teacher', `/s/${storySlug}`);
+    // Bundle 2 (board B01): the Library drop-down sits in the sheet "In library" opens.
+    await page.getByRole('button', { name: 'In library' }).click();
     await expect(page.locator(`#library-shelf-${storySlug}`)).toHaveValue('reading');
     await expect(page.getByRole('button', { name: 'Sent' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Tell the writer you finished it' })).toHaveCount(

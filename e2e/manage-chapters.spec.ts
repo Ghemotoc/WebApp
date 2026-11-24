@@ -198,7 +198,11 @@ async function readerTitles(browser: Browser): Promise<string[]> {
   const chapters = page.getByRole('region', { name: /capitol|chapter/i });
   await expect(chapters).toBeVisible();
   // Each row's title is its heading-font line (StoryChapterList).
-  const titles = await chapters.locator('[data-chapter-title]').allTextContents();
+  // Each title carries its number ("1. Dimineața", board B01); the order is what these checks
+  // compare, so the number is taken off here and checked on its own where it matters.
+  const titles = (await chapters.locator('[data-chapter-title]').allTextContents()).map((title) =>
+    title.replace(/^\d+\. /, ''),
+  );
   await context.close();
   return titles;
 }
@@ -272,6 +276,13 @@ test.describe('Manage chapters (S1-E3-04)', () => {
     await confirmMove(page);
     await expect.poll(chapterOrder).toBe('mgpub002,mgpub001,mgdraft1,mgsched1,mgunpub1');
     expect(await readerTitles(browser)).toEqual(['Vântul de miercuri', 'Caietele bunicii']);
+    // The numbers follow the new order: the chapter moved up is now chapter 1.
+    const reader = await browser.newPage();
+    await reader.goto(`/s/${slug}`);
+    await expect(reader.locator('[data-chapter-title]').first()).toHaveText(
+      '1. Vântul de miercuri',
+    );
+    await reader.context().close();
   });
 
   test('dragging the handle with the mouse reorders chapters', async ({ browser }) => {

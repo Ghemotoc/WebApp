@@ -99,7 +99,7 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
     await expect(page.getByText('Lia Scrie').first()).toBeVisible();
     // The owner can't report their own story, so the shared Report button isn't shown to them
     // (S1-E10-01 replaced the e-mail link, architecture 1.7.11).
-    await expect(page.getByRole('button', { name: 'Report Stația meteo' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Report this story' })).toHaveCount(0);
     const labels = page.getByText('Labels from the writer').locator('..');
     await expect(labels.getByText('Completed')).toBeVisible();
     await expect(labels.getByText('Off')).toBeVisible();
