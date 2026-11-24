@@ -177,7 +177,7 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     await expect(storyTitle(page)).not.toHaveText(/Atlas test/);
     // Back on the list, the story open last comes first.
     await page.goto('/plan');
-    await expect(firstPlanLink(page)).toHaveAttribute('href', '/plan/s/statia-meteo-seed01');
+    await expect(firstPlanLink(page)).toHaveAttribute('href', '/plan/s/statia-meteo-seed01?resume');
     await page.context().close();
   });
 

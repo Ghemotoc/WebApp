@@ -7340,6 +7340,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      remembered_places: {
+        Row: {
+          created_at: string;
+          id: string;
+          item_key: string;
+          kind: Database['public']['Enums']['remembered_place_kind'];
+          place: NonNullable<Json>;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          item_key: string;
+          kind: Database['public']['Enums']['remembered_place_kind'];
+          place: NonNullable<Json>;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          item_key?: string;
+          kind?: Database['public']['Enums']['remembered_place_kind'];
+          place?: NonNullable<Json>;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'remembered_places_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       removed_passages: {
         Row: {
           case_id: string | null;
@@ -16944,6 +16983,14 @@ export type Database = {
         };
         Returns: Json;
       };
+      remember_place: {
+        Args: {
+          place_key: string;
+          place_kind: Database['public']['Enums']['remembered_place_kind'];
+          place_value: Json;
+        };
+        Returns: undefined;
+      };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
       remove_my_quote_card_picture: { Args: Record<PropertyKey, never>; Returns: Json };
@@ -19060,6 +19107,7 @@ export type Database = {
       reading_line_spacing: 'compact' | 'normal' | 'wide';
       reading_line_width: 'narrow' | 'medium' | 'wide';
       reading_theme: 'light' | 'sepia' | 'night';
+      remembered_place_kind: 'story_edition' | 'atlas_section' | 'write_caret' | 'atlas_hint';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -19471,6 +19519,7 @@ export const Constants = {
       reading_line_spacing: ['compact', 'normal', 'wide'],
       reading_line_width: ['narrow', 'medium', 'wide'],
       reading_theme: ['light', 'sepia', 'night'],
+      remembered_place_kind: ['story_edition', 'atlas_section', 'write_caret', 'atlas_hint'],
       report_reason: [
         'illegal_content',
         'harassment',
