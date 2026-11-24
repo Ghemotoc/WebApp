@@ -137,6 +137,7 @@
       "too_many": "Ai trimis multe contestații în ultima oră. Încearcă din nou peste {{minutes}} minute.",
       "not_found": "Nu am găsit această decizie în contul tău.",
       "unreachable": "Nu am putut trimite contestația. Verifică-ți conexiunea și încearcă din nou."
-    }
+    },
+    "missing": "Scrie mai întâi de ce decizia e greșită."
   }
 }

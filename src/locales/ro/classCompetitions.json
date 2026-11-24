@@ -109,7 +109,9 @@
     "templateName": "Numele șablonului",
     "templateSave": "Salvează ca șablon",
     "templateSaved": "Șablonul „{{name}}” a fost salvat.",
-    "manageTemplates": "Administrează șabloanele"
+    "manageTemplates": "Administrează șabloanele",
+    "templateMissing": "Alege mai întâi un șablon.",
+    "templateNameMissing": "Dă mai întâi un nume șablonului."
   },
   "scoring": {
     "documentTitle": "Rezultate · {{name}}",

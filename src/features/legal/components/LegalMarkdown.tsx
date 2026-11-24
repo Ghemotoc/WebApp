@@ -35,7 +35,7 @@ type MarkedProps<Tag extends 'p' | 'li'> = ComponentPropsWithoutRef<Tag> & {
 function LegalParagraph({ children, ...paragraphProps }: MarkedProps<'p'>) {
   const isAfterTheTest = paragraphProps[afterTheTestAttribute] === 'true';
   return (
-    <p className="m-0 leading-[1.6]" {...paragraphProps}>
+    <p className="m-0" {...paragraphProps}>
       {isAfterTheTest && <AfterTheTestLabel />}
       {children}
     </p>
@@ -50,7 +50,7 @@ function LegalParagraph({ children, ...paragraphProps }: MarkedProps<'p'>) {
 function LegalListItem({ children, ...itemProps }: MarkedProps<'li'>) {
   const isAfterTheTest = itemProps[afterTheTestAttribute] === 'true';
   return (
-    <li className="leading-[1.6] [&>p]:inline" {...itemProps}>
+    <li className="[&>p]:inline" {...itemProps}>
       {isAfterTheTest && <AfterTheTestLabel />}
       {children}
     </li>
@@ -89,13 +89,14 @@ const legalComponents: Components = {
 };
 
 /**
- * Renders the Markdown.
+ * Renders the Markdown, in type-long (17/28): legal text is read for more than a few lines
+ * (design books item 11, Robert, approved 23 Nov 2026).
  *
  * @returns the text as real HTML
  */
 export function LegalMarkdown({ markdown, language }: LegalMarkdownProps) {
   return (
-    <div lang={language} className="flex flex-col gap-3 text-ink-muted">
+    <div lang={language} className="flex flex-col gap-3 type-long text-ink-muted">
       <Markdown remarkPlugins={[remarkLegalMarks]} components={legalComponents}>
         {markdown}
       </Markdown>

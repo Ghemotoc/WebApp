@@ -63,10 +63,11 @@ function StoryTagLinks({ tags }: { tags: string[] }) {
     >
       {tags.map((tag) => (
         <li key={tag}>
-          {/* The 24 px minimum target (rule 9) comes from the line box and the padding. */}
+          {/* The 24 px minimum target (rule 9) comes from the line box; hit-target widens the tap to
+              44 by 32 (design books, item 10). */}
           <Link
             to={listAddress(plainList('tag', tag))}
-            className="inline-flex min-h-6 items-center type-body text-ink underline-offset-2 hover:underline"
+            className="hit-target inline-flex min-h-6 items-center type-body text-ink underline-offset-2 hover:underline"
           >
             {showTag(tag)}
           </Link>
@@ -154,7 +155,10 @@ function WriterName({ writer }: { writer: StoryPageData['writer'] }) {
     return <span className="font-semibold text-ink-heading">{writer.displayName}</span>;
   }
   return (
-    <Link to={`/u/${encodeURIComponent(writer.handle)}`} className="font-semibold text-link">
+    <Link
+      to={`/u/${encodeURIComponent(writer.handle)}`}
+      className="hit-target font-semibold text-link"
+    >
       {writer.displayName}
     </Link>
   );
@@ -225,7 +229,7 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
           <StoryTitleBlock story={story} />
           <StoryStats story={story} />
           {story.blurb !== '' && (
-            <p lang={story.languageCode} className="m-0 max-w-[62ch] type-body text-ink-muted">
+            <p lang={story.languageCode} className="m-0 max-w-[62ch] type-long text-ink-muted">
               {story.blurb}
             </p>
           )}

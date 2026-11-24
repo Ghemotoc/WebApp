@@ -47,7 +47,8 @@
     "send": "Trimite",
     "reportLabel": "mesajul de la {{name}} de la ora {{time}}",
     "noThanksReply": "{{name}} a răspuns: „Mulțumesc că mi-ai scris, dar acum aș prefera să nu vorbim.”",
-    "noThanksAgain": "Poți trimite o cerere nouă începând cu {{date}}."
+    "noThanksAgain": "Poți trimite o cerere nouă începând cu {{date}}.",
+    "missing": "Scrie mai întâi un mesaj."
   },
   "share": {
     "pick": "Alege o conversație sau începe una nouă ca să trimiți acest link.",
@@ -101,7 +102,8 @@
     "label": "Nume de utilizator",
     "hint": "Numele de după @ de pe profil.",
     "open": "Deschide conversația",
-    "close": "Închide"
+    "close": "Închide",
+    "missing": "Scrie mai întâi un nume de utilizator."
   },
   "failures": {
     "not_taking": "Această persoană nu primește mesaje acum.",

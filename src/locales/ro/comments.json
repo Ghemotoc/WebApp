@@ -28,7 +28,8 @@
     "cancel": "Renunță",
     "kind": "Fii blând. Fiecare raportare e citită de un om.",
     "posted": "Comentariu publicat.",
-    "paragraphLabel": "Comentează acest paragraf"
+    "paragraphLabel": "Comentează acest paragraf",
+    "missing": "Scrie mai întâi un comentariu."
   },
   "failures": {
     "read_only": "Contul nu poate comenta încă.",

@@ -8,6 +8,8 @@
  * decision (?decision=S-000012) the message is linked to it, so the team sees which decision it
  * is about. The thread lands in the team's one shared inbox, never with one moderator
  * (criterion 1). Once sent, the page shows the reference and a link to the thread.
+ * Send stays pressable; pressed with a field empty, it says which one beside it and puts the
+ * focus there (design books item 9). Send comes first, then Cancel (item 8).
  * Who shows it: the router. What it calls: useSendMail.
  */
 import { useState, type FormEvent } from 'react';
@@ -15,6 +17,7 @@ import { Link, useSearchParams } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -22,6 +25,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { TextInput } from '@/components/ui/TextInput';
 import { Textarea } from '@/components/ui/Textarea';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import { mailLimits } from '../api/moderatorMail';
 import { useSendMail } from '../hooks/useMyMail';
@@ -77,12 +81,16 @@ function NewMailForm({ decision }: { decision: string | null }) {
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const mail = useSendMail();
+  // Design books item 9: Send stays pressable and says what is missing beside each field.
+  const missingSubject = useMissingField(subject.trim() === '', 'mail-subject');
+  const missingBody = useMissingField(body.trim() === '', 'mail-body');
   if (mail.reference !== null) return <SentNotice reference={mail.reference} />;
 
-  /** Sends once both fields have words. */
+  /** Sends once both fields have words; otherwise says which one is missing. */
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (subject.trim() === '' || body.trim() === '') return;
+    if (!missingSubject.isReadyToSend()) return;
+    if (!missingBody.isReadyToSend()) return;
     mail.send({ subject: subject.trim(), body: body.trim(), statementReference: decision });
   }
 
@@ -97,6 +105,7 @@ function NewMailForm({ decision }: { decision: string | null }) {
         id="mail-subject"
         label={t('new.subject')}
         maxLength={mailLimits.subject}
+        errorMessage={missingSubject.isShown ? t('new.missingSubject') : undefined}
         value={subject}
         onChange={(event) => setSubject(event.target.value)}
       />
@@ -106,6 +115,7 @@ function NewMailForm({ decision }: { decision: string | null }) {
         hint={t('new.bodyHint')}
         rows={7}
         maxLength={mailLimits.body}
+        errorMessage={missingBody.isShown ? t('new.missingBody') : undefined}
         value={body}
         onChange={(event) => setBody(event.target.value)}
       />
@@ -117,19 +127,29 @@ function NewMailForm({ decision }: { decision: string | null }) {
           </Notice>
         )}
       </div>
-      <div className="flex flex-wrap gap-3">
-        <Link to="/moderator-mail" className={buttonClassName({ variant: 'secondary' })}>
-          {t('new.cancel')}
-        </Link>
-        <Button
-          type="submit"
-          disabled={mail.isSending || subject.trim() === '' || body.trim() === ''}
-        >
-          <ActionIcon name="send" size={16} />
-          {mail.isSending ? t('new.sending') : t('new.send')}
-        </Button>
-      </div>
+      <SendRow isSending={mail.isSending} />
     </form>
+  );
+}
+
+/**
+ * Send, then Cancel (design books item 8: main button first, on the left).
+ *
+ * @param props.isSending - true while the mail is on its way; Send is off only then
+ * @returns the row
+ */
+function SendRow({ isSending }: { isSending: boolean }) {
+  const { t } = useMailTranslation();
+  return (
+    <ButtonRow>
+      <Button type="submit" disabled={isSending}>
+        <ActionIcon name="send" size={16} />
+        {isSending ? t('new.sending') : t('new.send')}
+      </Button>
+      <Link to="/moderator-mail" className={buttonClassName({ variant: 'secondary' })}>
+        {t('new.cancel')}
+      </Link>
+    </ButtonRow>
   );
 }
 
