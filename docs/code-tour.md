@@ -3055,3 +3055,10 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 
 - **New chapter in the Library:** `my_library()` adds `has_new_chapter` to each shelf place (true when the story's `last_chapter_published_at` is after the place's `saved_at`; migration `20270205100433_books16_new_chapter_dot.sql`). `LibraryShelves` passes it to `StoryCard`, which draws a small dot on the cover, and adds "new chapter" to the meta line so the dot is never the only cue.
 - **Saved at a glance in the editor:** `SaveWord` (`src/features/writing/components/`) shows one word beside the chapter's name in the breadcrumb ("Saved", "Saving…", "Not saved"), read from the same `useAutosave` state as the Saving box. It is plain text; the Saving box stays the live region.
+
+## Healthy habits under 18 (design books S5)
+
+- **Daily digest by default:** `email_delivery_for()` turns a kind that is Instant by default into a Daily digest for anyone under 18 (or whose age isn't known yet); a choice saved in Settings still wins, and required emails stay required.
+- **Quiet hours for instant emails:** `queue_instant_email()` sets `send_after` from `instant_email_send_time()`, so an instant email to an under-18 made in their quiet hours (21:00 to 07:00 by default, the same hours as message emails) waits for the morning.
+- **A rest day keeps the streak:** `writing_streak()` counts days with words and lets one day without words a week pass; `my_writing_month()` reads its `streak_days` from it, so the Writers' hub streak shows it. Today never breaks it.
+- **Follow at the end:** `ChapterEnd` offers to follow the writer after the last chapter of a finished story (not to the writer); tested in `e2e/last-chapter.spec.ts`. Tests for the rest: `supabase/tests/database/401-under-18-defaults.test.sql`.
