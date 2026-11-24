@@ -47,7 +47,9 @@
     "gone": "That comment isn’t there any more.",
     "unreachable": "We couldn’t save that. Check your connection and try again.",
     "too_many_links": "New accounts can put one link in a comment for their first day. Take a link out and post again.",
-    "too_long": "A comment on a paragraph can have at most {{limit}} characters. Shorten it and post again."
+    "too_long": "A comment on a paragraph can have at most {{limit}} characters. Shorten it and post again.",
+    "quote_too_long": "Choose up to 1,000 characters to comment on.",
+    "quote_gone": "Those words have changed in the text. Choose them again."
   },
   "comment": {
     "writer": "Writer",
@@ -107,5 +109,21 @@
     "explain": "Some of these words can hurt. You can change them, or send your comment as it is.",
     "edit": "Edit",
     "sendAnyway": "Send anyway"
+  },
+  "part": {
+    "groupLabel": "Comments on: {{words}}",
+    "showWords": "Show these words in the text: {{words}}",
+    "pickLines": "Choose the lines",
+    "pickSentences": "Choose the sentences",
+    "chooseLines": "Choose lines",
+    "chooseSentences": "Choose sentences",
+    "wholeStanza": "Whole stanza instead",
+    "wholeParagraph": "Whole paragraph instead",
+    "commentingOn": "Commenting on “{{words}}”",
+    "pickHint": "Tab to a stanza's count, Enter, then Choose lines. Space ticks a line.",
+    "pickHintProse": "Tab to a paragraph's count, Enter, then Choose sentences. Space ticks a sentence.",
+    "composerLabel": "Comment on this part",
+    "linesLabel": "Comment on these lines",
+    "sentencesLabel": "Comment on these sentences"
   }
 }

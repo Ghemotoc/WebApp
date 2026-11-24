@@ -15,6 +15,11 @@
  * paragraph", so anyone can start a thread. While the writer has paused new comments (bundle
  * CALM-8), a count still opens its thread for reading, but a paragraph without comments has
  * nothing to open. Its name says the count ("3 comments on this paragraph").
+ * READER-SELECT (boards B13 and B14): the count is the total for the stanza, parts included,
+ * and opens the panel from the top. Underlined words have no count of their own; for keyboards
+ * and screen readers each is a button after the stanza ("4 comments on: the knife coming…",
+ * PartButtons), shown only while it has focus. An empty slot after the stanza is where the
+ * Comment button for a selection ending here goes, so it is the next Tab stop (SelectionComment).
  * Who uses it: ChapterText draws it beside each paragraph when the reader passes it in
  * (paragraphAddon). What it reads: ParagraphCommentsContext (the counts and which thread is
  * open). What it calls: LazyParagraphThread, with the paragraph's opening words for its head.
@@ -26,9 +31,10 @@ import { runningPauseEnd } from '@/lib/comment-pause';
 import { cn } from '@/lib/utils';
 
 import { useIsWideReader } from '../hooks/useIsWideReader';
-import { ParagraphCommentsContext } from '../lib/paragraphCommentsContext';
+import { ParagraphCommentsContext, type ParagraphComments } from '../lib/paragraphCommentsContext';
 
 import { LazyParagraphThread } from './LazyParagraphThread';
+import { PartButtons } from './PartButtons';
 import { CommentIcon } from './ReaderIcons';
 
 /** How many words of the paragraph the thread's head shows before the ellipsis. */
@@ -52,7 +58,14 @@ function PlusIcon() {
  */
 function openingWordsOf(row: Element | null): string {
   const paragraph = row?.querySelector(':scope > p') ?? null;
-  const words = (paragraph?.textContent ?? '').trim().split(/\s+/).filter(Boolean);
+  // A poem's lines have no space between them in the page's text ("chest,the knife"), so each
+  // line is read on its own and they are joined with " / ", as quotes are (READER-SELECT).
+  const lines = Array.from(paragraph?.querySelectorAll('.tmc-poem-line') ?? []);
+  const text =
+    lines.length > 0
+      ? lines.map((line) => (line.textContent ?? '').trim()).join(' / ')
+      : (paragraph?.textContent ?? '');
+  const words = text.trim().split(/\s+/).filter(Boolean);
   if (words.length <= OPENING_WORD_COUNT) return words.join(' ');
   return `${words.slice(0, OPENING_WORD_COUNT).join(' ')}…`;
 }
@@ -65,15 +78,20 @@ function openingWordsOf(row: Element | null): string {
  * @param isOpen - its thread is open
  * @returns the opening words while open
  */
-function useOpenParagraph(buttonRef: RefObject<HTMLButtonElement | null>, isOpen: boolean): string {
+function useOpenParagraph(
+  buttonRef: RefObject<HTMLButtonElement | null>,
+  isOpen: boolean,
+  isOnPart: boolean,
+): string {
   const [words, setWords] = useState('');
   useEffect(() => {
     const row = buttonRef.current?.parentElement ?? null;
     if (row === null) return;
-    row.classList.toggle('tmc-paragraph-row--open', isOpen);
+    // READER-SELECT: a panel open at some words tints those words (PartHighlights), not the stanza.
+    row.classList.toggle('tmc-paragraph-row--open', isOpen && !isOnPart);
     if (isOpen) setWords(openingWordsOf(row));
     return () => row.classList.remove('tmc-paragraph-row--open');
-  }, [buttonRef, isOpen]);
+  }, [buttonRef, isOpen, isOnPart]);
   return words;
 }
 
@@ -116,6 +134,18 @@ function MarkerButton({ buttonRef, count, isOpen, threadId, onClick }: MarkerBut
 }
 
 /**
+ * The words this paragraph's open panel is on (READER-SELECT).
+ *
+ * @param comments - the markers' facts
+ * @param isOpen - whether this paragraph's panel is open
+ * @returns the words, or null for the whole paragraph or a closed panel
+ */
+function openPanelQuote(comments: ParagraphComments | null, isOpen: boolean) {
+  if (!isOpen || comments === null) return null;
+  return comments.panelQuote;
+}
+
+/**
  * Renders the marker for one paragraph.
  *
  * @param props.block - the paragraph's number, from 1 (src/lib/chapter-blocks.ts)
@@ -126,13 +156,14 @@ export function ParagraphCommentMarker({ block }: { block: number }) {
   const comments = useContext(ParagraphCommentsContext);
   const isWide = useIsWideReader();
   const isOpen = comments !== null && comments.openPlace === block;
-  const openingWords = useOpenParagraph(buttonRef, isOpen);
+  const panelQuote = openPanelQuote(comments, isOpen);
+  const openingWords = useOpenParagraph(buttonRef, isOpen, panelQuote !== null);
   if (comments === null) return null;
   const count = comments.counts.byParagraph[block] ?? 0;
   const threadId = `paragraph-thread-${block}`;
   // CALM-8: during a pause there is nothing to open on a paragraph without comments.
   const isPaused = runningPauseEnd(comments.counts.commentsPausedUntil, new Date()) !== null;
-  if (isPaused && count === 0 && !isOpen) return null;
+  if (isPaused && count === 0 && !isOpen) return <span data-selection-slot={block} />;
 
   /** Shuts the thread and gives focus back to the marker. */
   function close() {
@@ -159,12 +190,16 @@ export function ParagraphCommentMarker({ block }: { block: number }) {
         threadId={threadId}
         onClick={toggle}
       />
+      <PartButtons block={block} />
+      {/* SelectionComment puts the Comment button for a selection ending here in this slot. */}
+      <span data-selection-slot={block} />
       {isOpen && (
         <LazyParagraphThread
           id={threadId}
           address={comments.address}
           place={block}
           openingWords={openingWords}
+          quote={panelQuote}
           onClose={close}
         />
       )}

@@ -24,6 +24,7 @@ function renderMarkers(commentsPausedUntil: string | null) {
     byParagraph: { 1: 3 },
     earlier: 0,
     commentsPausedUntil,
+    parts: [],
   };
   const context = {
     address: { storySlug: 'statia-meteo-seed01', chapterCode: 'reace001' },
@@ -32,6 +33,12 @@ function renderMarkers(commentsPausedUntil: string | null) {
     setOpenPlace: vi.fn(),
     sidePanel: null,
     isOpenedByReader: false,
+    isPoem: false,
+    language: 'ro',
+    panelQuote: null,
+    openPanel: vi.fn(),
+    hoverKey: null,
+    setHoverKey: vi.fn(),
   };
   renderWithProviders(
     <ParagraphCommentsContext.Provider value={context}>
