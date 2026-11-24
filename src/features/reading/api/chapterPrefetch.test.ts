@@ -3,7 +3,12 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { prefetchChapter, takePrefetchedChapter } from './chapterPrefetch';
+import {
+  forgetAnsweredChapter,
+  peekAnsweredChapter,
+  prefetchChapter,
+  takePrefetchedChapter,
+} from './chapterPrefetch';
 
 const fetchChapter = vi.fn();
 vi.mock('./chapter', () => ({ fetchChapter: (...args: unknown[]) => fetchChapter(...args) }));
@@ -34,6 +39,41 @@ describe('prefetchChapter', () => {
   it('a failed read waits, unhandled, for the reader, which shows "couldn’t load"', async () => {
     fetchChapter.mockRejectedValueOnce(new Error('offline'));
     prefetchChapter('statia-meteo', 'abcdefgh');
+    await expect(takePrefetchedChapter('statia-meteo', 'abcdefgh')).rejects.toThrow('offline');
+  });
+
+  it('once the answer is in, the reader can look at it as often as it draws, until it is used', async () => {
+    prefetchChapter('statia-meteo', 'abcdefgh');
+    // Still on its way: nothing to look at yet.
+    expect(peekAnsweredChapter('statia-meteo', 'abcdefgh')).toBeUndefined();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // Arrived: every draw finds the same answer.
+    expect(peekAnsweredChapter('statia-meteo', 'abcdefgh')).toEqual({
+      chapter: { code: 'abcdefgh' },
+    });
+    expect(peekAnsweredChapter('statia-meteo', 'abcdefgh')).toEqual({
+      chapter: { code: 'abcdefgh' },
+    });
+    // Used: a later visit asks the database again.
+    forgetAnsweredChapter('statia-meteo', 'abcdefgh');
+    expect(peekAnsweredChapter('statia-meteo', 'abcdefgh')).toBeUndefined();
+    expect(takePrefetchedChapter('statia-meteo', 'abcdefgh')).toBeUndefined();
+  });
+
+  it('a newer start for the same chapter replaces the older answer', async () => {
+    fetchChapter.mockResolvedValueOnce({ code: 'old' }).mockResolvedValueOnce({ code: 'new' });
+    prefetchChapter('statia-meteo', 'abcdefgh');
+    prefetchChapter('statia-meteo', 'abcdefgh');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(peekAnsweredChapter('statia-meteo', 'abcdefgh')).toEqual({ chapter: { code: 'new' } });
+    forgetAnsweredChapter('statia-meteo', 'abcdefgh');
+  });
+
+  it('a failed read leaves nothing to look at, so the reader asks and shows "couldn’t load"', async () => {
+    fetchChapter.mockRejectedValueOnce(new Error('offline'));
+    prefetchChapter('statia-meteo', 'abcdefgh');
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(peekAnsweredChapter('statia-meteo', 'abcdefgh')).toBeUndefined();
     await expect(takePrefetchedChapter('statia-meteo', 'abcdefgh')).rejects.toThrow('offline');
   });
 });
