@@ -17,11 +17,11 @@
 **In short** (proposed)
 
 - Anyone can report, with or without an account.
-- You can report anything on Ghemotoc: stories, comments, posts, pictures, profiles, spaces and messages.
+- You can report anything on ghemotoc: stories, comments, posts, pictures, profiles, spaces and messages.
 
 **Full text**
 
-Anyone can report content on Ghemotoc: readers, writers, parents, teachers, rights holders, organisations and authorities. You don’t need an account.
+Anyone can report content on ghemotoc: readers, writers, parents, teachers, rights holders, organisations and authorities. You don’t need an account.
 
 You can report any story, chapter, comment, profile, space, thread, post, picture, embedded song or video and private message.
 
@@ -174,7 +174,7 @@ Where to send orders: see our Contact and company details page.
 - The board has no tab for it yet. Suggested: a sixth tab, or a link from the Terms and from the report form. The “In short” lines in this document are proposals.
 - Section 1 (Who can report and what): DSA art. 16(1): easy, user-friendly, electronic mechanism for any individual or entity. Report reasons and one form: S1-E10-01, S1-E10-02. A read-only account can still report (S1-E10-01).
 - Section 2 (What to put in a report): DSA art. 16(2)(a) to (d) (notice elements), 16(3) (actual knowledge). Optional name and email for child sexual abuse offences: art. 16(2)(c), referring to Directive 2011/93/EU arts 3 to 7.
-- Section 2 (What to put in a report): Copied-work report fields all optional and passage attached: S1-E10-08 (16 Oct 2026). Copyright notices and Law 8/1996 art. 128^2 if Ghemotoc is an online content-sharing service provider (L19).
+- Section 2 (What to put in a report): Copied-work report fields all optional and passage attached: S1-E10-08 (16 Oct 2026). Copyright notices and Law 8/1996 art. 128^2 if ghemotoc is an online content-sharing service provider (L19).
 - Section 2 (What to put in a report): The board has no tab for this policy; the “In short” lines here are proposals.
 - Section 3 (What happens next): DSA art. 16(4) (confirmation of receipt), 16(5) (decision and redress information to the notifier), 16(6) (timely, diligent, non-arbitrary, objective; disclose use of automated means). Art. 14(4) proportionality; 1.8.5 passage removal.
 - Section 3 (What happens next): Tiers: authority order 1 hour, child abuse material or threat to a minor or self-harm risk same day, other illegal content 48 hours, the rest 7 days (S1-E10-03, following the Q62 recommendation). Only the one-hour legal duty is promised to users; publishing the other targets is a choice for the founder.
@@ -184,7 +184,7 @@ Where to send orders: see our Contact and company details page.
 - Section 5 (Asking us to look again): Appeals within six months, different moderator where possible (S1-E10-07). DSA art. 20(1) (six months, both the affected user and the notifier), 20(4) (reverse without undue delay), 20(5) (inform and mention art. 21), 20(6) (not solely automated). Art. 20 does not bind micro and small platforms (art. 19); applied as good practice.
 - Section 5 (Asking us to look again): S1-E10-07 covers the affected user only. Letting the notifier appeal follows art. 20(1); please confirm.
 - Section 6 (Other ways to challenge a decision): DSA art. 21 (out-of-court dispute settlement) is in Section 3 and does not bind micro and small platforms (art. 19); left OPEN. Art. 53: complaints to the Digital Services Coordinator; ANCOM is Romania’s (Law 50/2024).
-- Section 6 (Other ways to challenge a decision): Copyright complaint and redress: Law 8/1996 art. 128^3 (as inserted by Law 69/2022), if Ghemotoc is an online content-sharing service provider (L19).
+- Section 6 (Other ways to challenge a decision): Copyright complaint and redress: Law 8/1996 art. 128^3 (as inserted by Law 69/2022), if ghemotoc is an online content-sharing service provider (L19).
 - Section 7 (Misuse): DSA art. 23(1) to (3) as good practice (art. 19 exemption); S1-E10-06 (Q83). Immediate closure for the most serious cases is a proposed default.
 - Section 8 (Orders from authorities): Regulation (EU) 2021/784 arts 3(3), 6 and 11; DSA arts 9 and 10 (orders to act and to provide information, informing the recipient). Contact points: document 04.
 

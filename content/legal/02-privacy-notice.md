@@ -21,17 +21,17 @@
 
 **Full text**
 
-[Company name] [SRL or AB], registered at [registered office], registration number [registration number], runs Ghemotoc. We are the “controller” of your personal data. That means we decide how and why it is used, and we are responsible for looking after it.
+[Company name] [SRL or AB], registered at [registered office], registration number [registration number], runs ghemotoc. We are the “controller” of your personal data. That means we decide how and why it is used, and we are responsible for looking after it.
 
 How to reach us about your data: [privacy email], or Contact us in Settings. You can write in Romanian or English.
 
 Data protection officer: [OPEN: whether we must appoint one; if we do, their contact details go here].
 
-[OPEN: if Ghemotoc opens in the United Kingdom and the company has no office there, the name and address of our UK representative go here.]
+[OPEN: if ghemotoc opens in the United Kingdom and the company has no office there, the name and address of our UK representative go here.]
 
-Class spaces. In a class space, the school is responsible for the information the teacher provides, such as class materials, grades and feedback. Pupils own their work, and we are responsible for everything else on Ghemotoc. [Lawyer to confirm the roles of the school and of Ghemotoc]
+Class spaces. In a class space, the school is responsible for the information the teacher provides, such as class materials, grades and feedback. Pupils own their work, and we are responsible for everything else on ghemotoc. [Lawyer to confirm the roles of the school and of ghemotoc]
 
-This notice may change. If we make an important change, we tell you on Ghemotoc before it applies. Every version stays on this page with its date.
+This notice may change. If we make an important change, we tell you on ghemotoc before it applies. Every version stays on this page with its date.
 
 ## 2. What we collect
 
@@ -73,7 +73,7 @@ What we get from others:
 - Authorities: orders and requests they send us.
 - Our staff: short notes they leave on your account for each other, for example what you asked support or what a moderator checked. Notes are facts, never shown publicly, and you can ask to see them. [lawyer to check]
 
-Your user ID. Every account gets a random, permanent ID that links everything you make on Ghemotoc. Nobody else ever sees it. You’ll find it in your own data downloads.
+Your user ID. Every account gets a random, permanent ID that links everything you make on ghemotoc. Nobody else ever sees it. You’ll find it in your own data downloads.
 
 What we never collect: your legal name (unless you ask for a certificate), your full date of birth, your exact location, your contacts and any selfie or ID document.
 
@@ -89,7 +89,7 @@ What you must give us. To create an account we need your email address, a passwo
 
 *Suggested new short line, now that the full text fills the placeholder:*
 
-- We use your data because you (or, under 16, your parent or guardian) agreed, because the law requires it or to keep Ghemotoc safe. Each use and its reason is listed below.
+- We use your data because you (or, under 16, your parent or guardian) agreed, because the law requires it or to keep ghemotoc safe. Each use and its reason is listed below.
 
 **Full text**
 
@@ -103,17 +103,17 @@ Parent or guardian consent for under-16s. Asking for it, recording it and checki
 
 Suggesting writers to other readers. Showing your username or pen name, avatar and published stories in lists such as New and rising writers and Writers to follow, only while “Suggest me and my stories to other people” is on in Settings › Privacy. It starts on for adults and off for anyone under 18. If you’re under 16, your parent or guardian must also say yes, separately from the account’s consent, and can take it back at any time. Legal basis: your consent and, under 16, your parent’s or guardian’s.
 
-Keeping people safe. Reading reports, checking every picture on upload, moderating, warnings and suspensions, statements of reasons and appeals. Legal basis: our legal duties under EU platform law, and our legitimate interest in keeping Ghemotoc safe, especially for young people. [Lawyer to confirm the basis for the picture checks]
+Keeping people safe. Reading reports, checking every picture on upload, moderating, warnings and suspensions, statements of reasons and appeals. Legal basis: our legal duties under EU platform law, and our legitimate interest in keeping ghemotoc safe, especially for young people. [Lawyer to confirm the basis for the picture checks]
 
 Protecting someone in danger. If someone’s life or safety is at risk, we may share what’s needed with the police or emergency services. Legal basis: our legal duty to report threats to life or safety, and protecting someone’s vital interests.
 
 Orders from authorities. Acting on removal orders and other orders, and keeping removed content as the law requires. Legal basis: legal obligation.
 
-Security and stopping spam. Scrambled IP addresses, sign-in limits and spam limits. Legal basis: our legitimate interest in keeping accounts and Ghemotoc secure.
+Security and stopping spam. Scrambled IP addresses, sign-in limits and spam limits. Legal basis: our legitimate interest in keeping accounts and ghemotoc secure.
 
 Keeping the app working. The record of the app’s requests (above), to find and fix faults and to trace a problem you tell us about. Legal basis: our legitimate interest in an app that works. [lawyer to check]
 
-Your country. The country you live in sets the ages that apply to you: the age to join and the age below which a parent or guardian has to agree. We also use it, and your connection’s country, to open Ghemotoc only where we’re ready. Legal basis: our legal duty to apply the age rules where you live, and our legitimate interest. [lawyer to check]
+Your country. The country you live in sets the ages that apply to you: the age to join and the age below which a parent or guardian has to agree. We also use it, and your connection’s country, to open ghemotoc only where we’re ready. Legal basis: our legal duty to apply the age rules where you live, and our legitimate interest. [lawyer to check]
 
 Telling you when we open in your country. Before you have an account, you can leave your email address on the “We’re not open in your country yet” page. We send one email to confirm it and, once you’ve confirmed, one email on the day we open there. Legal basis: your consent, which you give by confirming the address and can take back at any time with the link in the email. [lawyer to check]
 
@@ -137,7 +137,7 @@ Withdrawing consent. You can withdraw your consent at any time, and it is as eas
 
 Under 16. In Romania you can agree to your own data use from 16. Below that, a parent or guardian must agree too. We email them a link; until they agree, your account stays read-only. A parent or guardian can withdraw their consent at any time. Your account then goes read-only and we tell you both what happens next. [OPEN: how we check that the person is really a parent or guardian, beyond email (L2)]
 
-Protections for under-18s. If you’re under 18, your settings start at the most private choices. Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on, and only you can do that. Nothing on Ghemotoc tells an adult how old you are. You get no marketing emails, and quiet hours apply to notifications.
+Protections for under-18s. If you’re under 18, your settings start at the most private choices. Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on, and only you can do that. Nothing on ghemotoc tells an adult how old you are. You get no marketing emails, and quiet hours apply to notifications.
 
 Automatic decisions. We don’t make decisions about you based only on automatic processing that have legal or similarly serious effects. Two things are partly automatic, and a person is always available:
 
@@ -157,11 +157,11 @@ What we never do. We don’t sell your data. We don’t use it to choose ads, fo
 
 *Suggested new short line, now that the full text fills the placeholder:*
 
-- The companies that host Ghemotoc, send our emails and run our help desk, each under a contract with us. Most are in the EU.
+- The companies that host ghemotoc, send our emails and run our help desk, each under a contract with us. Most are in the EU.
 
 **Full text**
 
-Other people on Ghemotoc. What you publish is shown under your pen name or username to the readers your settings and ratings allow. The people you message see your messages. Space and class members see what you post in that space, and your teacher sees what you share with the class. Writers see their readers only as totals; below five readers they see “fewer than 5”. Nobody else sees your email address, your age, your year of birth or your age check result.
+Other people on ghemotoc. What you publish is shown under your pen name or username to the readers your settings and ratings allow. The people you message see your messages. Space and class members see what you post in that space, and your teacher sees what you share with the class. Writers see their readers only as totals; below five readers they see “fewer than 5”. Nobody else sees your email address, your age, your year of birth or your age check result.
 
 Our staff. Only staff who need it for their job, and each look is logged. They read private messages only when the messages are part of a report or the law requires it. During a manual age check, the staff member handling it sees your year of birth.
 
@@ -284,7 +284,7 @@ Records the law makes us keep
 
 You have these rights over your data. Using them is free.
 
-- See your data and get a copy. In Settings you can download everything you’ve put on Ghemotoc, plus your account data and your user ID, in a format other apps can read. You can also download your stories as Word files, one per story or all at once.
+- See your data and get a copy. In Settings you can download everything you’ve put on ghemotoc, plus your account data and your user ID, in a format other apps can read. You can also download your stories as Word files, one per story or all at once.
 - Take your data elsewhere. The same download gives you your data in a form you can move to another service.
 - Correct it. You can change most things yourself in Settings. For anything else, ask us.
 - Delete it. You can delete your account and its data from Settings, on any device or on the website. You can also delete single stories, comments and posts at any time.
@@ -308,9 +308,9 @@ Complaints. If you think we’ve got something wrong, please tell us first. You 
 
 **Full text**
 
-We don’t use tracking cookies, and we don’t let anyone else track you through Ghemotoc.
+We don’t use tracking cookies, and we don’t let anyone else track you through ghemotoc.
 
-What we store on your device. Only what Ghemotoc needs to work, because you asked to use it:
+What we store on your device. Only what ghemotoc needs to work, because you asked to use it:
 
 - your sign-in, so you stay logged in;
 - your language choice;
@@ -320,7 +320,7 @@ What we store on your device. Only what Ghemotoc needs to work, because you aske
 
 What we don’t store. No advertising cookies, no analytics cookies and nothing that follows you across other websites. Our visitor counts are made without cookies.
 
-Because everything we store is needed for Ghemotoc to work, the law doesn’t require us to ask first. That’s why there’s no cookie banner.
+Because everything we store is needed for ghemotoc to work, the law doesn’t require us to ask first. That’s why there’s no cookie banner.
 
 Music and video. Songs and videos from other services load only when you press play. Until then, nothing loads from them. When you press play, that service may use its own cookies. For YouTube we use its privacy-enhanced player.
 
@@ -375,8 +375,8 @@ Every placeholder in the full text, in order. Each needs the founder or the lawy
 - Section 1 (Who looks after your data): [registration number]
 - Section 1 (Who looks after your data): [privacy email]
 - Section 1 (Who looks after your data): [OPEN: whether we must appoint one; if we do, their contact details go here]
-- Section 1 (Who looks after your data): [OPEN: if Ghemotoc opens in the United Kingdom and the company has no office there, the name and address of our UK representative go here.]
-- Section 1 (Who looks after your data): [Lawyer to confirm the roles of the school and of Ghemotoc]
+- Section 1 (Who looks after your data): [OPEN: if ghemotoc opens in the United Kingdom and the company has no office there, the name and address of our UK representative go here.]
+- Section 1 (Who looks after your data): [Lawyer to confirm the roles of the school and of ghemotoc]
 - Section 3 (Why we use it): [Lawyer to confirm whether explicit consent is needed for the selfie estimate]
 - Section 3 (Why we use it): [Lawyer to confirm the basis for the picture checks]
 - Section 3 (Why we use it): [Lawyer to confirm]

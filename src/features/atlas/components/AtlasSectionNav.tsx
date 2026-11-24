@@ -9,8 +9,8 @@
  * Robert, 23 Nov 2026), so it shows by shape and weight, not colour alone (WCAG 1.4.1). "Connections" is called
  * "Relationships" everywhere, the word the page itself already used.
  * Two layouts, one list: on a desktop (from 1024 px) AtlasFrame shows it as a side menu, one
- * section a line; on tablets and phones it is one line that scrolls sideways, keeping its scrollbar
- * because it has no arrows (DoD scroll rule).
+ * section a line; on tablets and phones it is one line that scrolls sideways by swipe, trackpad
+ * and keyboard, with no scrollbar showing (Robert, 23 Nov 2026: no scrollbars in any widget).
  * Real links with aria-current on the one open now, so a screen reader says where the writer is.
  * Who uses it: AtlasFrame. What it calls: ActionIcon.
  */

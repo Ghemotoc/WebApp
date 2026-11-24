@@ -1,9 +1,10 @@
 /**
- * Hero: the one glass panel at the top of a page (bundle CALM-4; handover Step 2, Hero).
+ * Hero: the one panel at the top of a page (bundle CALM-4; handover Step 2, Hero).
  *
  * The rules (the simplified design, Robert, 20 Nov 2026):
- *   - One hero per page, and only the hero is glass: surface-glass with the lg-blur, the glass
- *     rim, shadow-popover and the 24 px card corners.
+ *   - One hero per page: the solid box surface with its soft edge, shadow-popover and the card
+ *     corners. It was glass until the flat themes bundle (Robert, 23 Nov 2026, 19:26 UTC: no glass
+ *     except the nav bars).
  *   - Padding 40 px, 24 px under 900 px.
  *   - It holds the page's title and a line or two; a Meter (src/components/ui/Meter.tsx) can sit
  *     inside it when the page tracks progress.
@@ -28,7 +29,7 @@ export interface HeroProps {
  * featured carousel needs its own role description and name; CALM-7c).
  */
 export const heroClasses =
-  'flex flex-col gap-4 rounded-card border border-[var(--glass-border)] bg-[var(--surface-glass)] p-6 shadow-popover backdrop-blur-[24px] backdrop-saturate-[1.8] min-[900px]:p-8';
+  'box-surface flex flex-col gap-4 rounded-card p-6 shadow-popover min-[900px]:p-8';
 
 /**
  * Renders the hero.

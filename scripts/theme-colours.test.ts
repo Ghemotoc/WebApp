@@ -14,6 +14,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { contrastRatio } from '../src/lib/contrast';
+
 const tokensCss = readFileSync(
   fileURLToPath(new URL('../src/styles/tokens.css', import.meta.url)),
   'utf8',
@@ -146,6 +148,22 @@ describe('theme colours worked out from one button colour', () => {
         .map(([name, colour]) => `${look} night --${name}: ${written.get(name)} (rule: ${colour})`);
       expect(differing).toEqual([]);
     }
+  });
+
+  it('keeps white text readable on a card inside a deep band in every theme', () => {
+    // index.css paints .glass-band-inner as the band colour (the button colour m) at 88% with
+    // black; the design's 88% with white fell under 4.5:1 on sorbet, sea glass and pistachio.
+    const buttons = [
+      ['lilac', '#48125d'],
+      ...Object.entries(themeColours).map(([look, { button }]) => [look, button]),
+    ];
+    const failing = buttons
+      .map(([look, button]) => ({
+        look,
+        ratio: contrastRatio('#ffffff', mix(button ?? '', 0.88, '#000000')),
+      }))
+      .filter(({ ratio }) => ratio < 4.5);
+    expect(failing).toEqual([]);
   });
 
   it('mixes the way CSS does: a colour mixed with itself stays the same', () => {

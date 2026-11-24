@@ -102,7 +102,7 @@ export function WaitlistProfileSteps(props: WaitlistProfileStepsProps) {
     </ButtonRow>
   );
   return (
-    <div className="flex max-w-[860px] flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <StepWizard
         label={t('waitlist.steps.label')}
         steps={steps}

@@ -91,6 +91,12 @@ const textPairs: ContrastPair[] = [
     usedFor: 'story text',
   },
   { foreground: 'on-gold', background: 'gold', minimumRatio: 4.5, usedFor: 'count badges' },
+  {
+    foreground: 'on-note',
+    background: 'note-paper',
+    minimumRatio: 4.5,
+    usedFor: 'home page rights note',
+  },
 ];
 
 /** Text inside notices and information pills: each hue's text on its own tint. */

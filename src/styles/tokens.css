@@ -24,9 +24,9 @@
  * the link and the control edge for contrast, lifted the night warning pill's text and added the
  * pressed quiet button's night colours (--quiet-pressed-*).
  *
- * Glass: cards (bg-surface) are see-through white over the flat page. `--surface` keeps
- * the solid colour the glass looks like on the page, because the contrast test can only measure
- * solid colours; `--surface-glass` is what the card actually paints (see @theme inline below).
+ * Boxes: cards (bg-surface) paint the one solid box surface (`--surface-glass` points at
+ * `--surface-box`; no glass outside the nav bars since the flat themes bundle, 23 Nov 2026).
+ * `--surface` is the near-identical card colour the contrast test measures text on.
  *
  * How it works: the raw values are CSS variables. `data-theme="light"` or `data-theme="night"` on
  * <html> (set by public/theme-init.js before the page draws, then by src/lib/theme.ts) picks the
@@ -49,10 +49,11 @@
   /* Surfaces. The page: one flat colour, Isabelline #F4F0EC (Robert, 23 Nov 2026, 18:09 UTC: no
      gradients in any theme; design system v25). Content sits straight on it. */
   --paper: #f4f0ec;
-  /* The solid colour a glass card looks like on the page (white at 50% over --paper). */
+  /* The card colour the contrast test measures text on (the box surface below is a hair warmer). */
   --surface: #f9f7fd;
-  /* What a glass card paints: white at 50% (handoff: --glass-bg). */
-  --surface-glass: rgba(255, 255, 255, 0.5);
+  /* What bg-surface paints: the one solid box surface, never see-through (no glass outside the
+     nav bars, the flat themes bundle, Robert, 23 Nov 2026, 19:26 UTC). */
+  --surface-glass: var(--surface-box);
   --tint: #ebe3f7;
   --panel: #eee8f7;
   --panel-border: #d9cdea;
@@ -75,10 +76,16 @@
    * one hero keep their soft frosting (the design system's gh-glass); cards rest on the page with
    * the design system's soft drop shadow (--shadow-rest) and lift to --shadow-raised on hover.
    */
+  /* Only the top bar at rest still paints this see-through white: it is a nav bar, the one glass
+     left (boxes paint --surface-box since the flat themes bundle, 23 Nov 2026). */
   --lg-card-bg: linear-gradient(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.5));
   /* Floating bars and the current nav pill: near-solid white, one even fill. */
   --lg-float-bg: linear-gradient(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.9));
-  --lg-blur: blur(24px) saturate(180%);
+  /* Boxes are never blurred; only the nav bars are glass (Robert, 23 Nov 2026, 19:26 UTC). */
+  --lg-blur: none;
+  --lg-blur-narrow: none;
+  /* The frosting of the four nav bars (top bar, phone header, tab bar, focus header). */
+  --nav-blur: blur(24px) saturate(180%);
   --lg-card-shadow: 0 1px 2px rgb(20 10 30 / 0.04), 0 18px 44px -24px rgb(20 10 30 / 0.18);
   --lg-card-shadow-hover: 0 1px 2px rgb(20 10 30 / 0.05), 0 24px 56px -20px rgb(20 10 30 / 0.25);
   /* No sheen on a coloured fill (main buttons, chips that are on, deep bands): it stays flat. */
@@ -86,9 +93,6 @@
   --lg-dark-shadow: 0 1px 2px rgb(20 10 30 / 0.05), 0 24px 56px -20px rgb(20 10 30 / 0.25);
   /* Small pills and tags: no edge light and no shadow. */
   --lg-pill-shadow: 0 0 0 0 transparent;
-  /* Nothing is blurred at night (NIGHT-2): boxes are solid, which is also lighter for weak phones. */
-  --lg-blur: none;
-  --lg-blur-narrow: none;
 
   /* Text. Headings the darkest plum; eyebrows black, never gold (Robert, 7 Nov 2026, 11:48). */
   --ink: #24133a;
@@ -106,6 +110,10 @@
   --gold: #f3dc9b;
   /* Text on the honey fill (count badges, the current sign-up step): about 12:1. */
   --on-gold: #2a0e33;
+  /* The "Your rights" note on the home page's cover wall: pale yellow paper with the heading
+     colour (the flat themes bundle, Robert, 23 Nov 2026: no glass on it). */
+  --note-paper: #fff4cc;
+  --on-note: #2a0e33;
   --primary: #48125d;
   --on-primary: #fbf7ec;
   --chip-on: #48125d;
@@ -311,6 +319,8 @@
   /* Solid boxes with no shadow at night (NIGHT-2): one even fill, no bevel, no drop shadow. */
   --lg-card-bg: linear-gradient(#18181b, #18181b);
   --lg-float-bg: linear-gradient(#18181b, #18181b);
+  /* Nothing is blurred at night, the nav bars included (NIGHT-2): every bar is solid. */
+  --nav-blur: none;
   --lg-card-shadow: none;
   --lg-card-shadow-hover: none;
   --lg-dark-shadow: none;
@@ -330,6 +340,9 @@
   /* "Gold" fills (count badges, the current step, unread dots, the switch knob) are white. */
   --gold: #f5f5f5;
   --on-gold: #0e0e10;
+  /* The home page's rights note at night: one quiet box, like every box (NIGHT-2). */
+  --note-paper: #18181b;
+  --on-note: #e8e8ea;
   /* Solid fills (selected tabs and section links, carousel dots, progress and chart bars, your own
      chat bubbles) are white with near-black on them (canvas v117: "white or grey"). */
   --primary: #f2f2f3;
@@ -1084,6 +1097,7 @@
   --lg-float-bg: linear-gradient(var(--surface), var(--surface));
   --lg-blur: none;
   --lg-blur-narrow: none;
+  --nav-blur: none;
   --lg-card-shadow: 0 0 0 1px var(--border);
   --lg-card-shadow-hover: 0 0 0 2px var(--control-border);
   --lg-dark-sheen: linear-gradient(transparent, transparent);
@@ -1103,6 +1117,8 @@
   /* The theme: its deep accent, in every place the accent was. */
   --gold: #f3dc9b;
   --on-gold: #000000;
+  --note-paper: #fff4cc;
+  --on-note: #000000;
   --primary: var(--accent-deep);
   --on-primary: #ffffff;
   --chip-on: var(--accent-deep);
@@ -1226,6 +1242,7 @@
   --lg-float-bg: linear-gradient(var(--surface), var(--surface));
   --lg-blur: none;
   --lg-blur-narrow: none;
+  --nav-blur: none;
   --lg-card-shadow: 0 0 0 1px var(--border);
   --lg-card-shadow-hover: 0 0 0 2px var(--control-border);
   --lg-dark-sheen: linear-gradient(transparent, transparent);
@@ -1243,6 +1260,8 @@
 
   --gold: #ffffff;
   --on-gold: #000000;
+  --note-paper: #000000;
+  --on-note: #ffffff;
   --primary: #ffffff;
   --on-primary: #000000;
   --chip-on: #ffffff;
@@ -1484,6 +1503,8 @@
   --color-destructive: var(--destructive);
   --color-gold: var(--gold);
   --color-on-gold: var(--on-gold);
+  --color-note-paper: var(--note-paper);
+  --color-on-note: var(--on-note);
   --color-primary: var(--primary);
   --color-on-primary: var(--on-primary);
   /* The main button's gradient and its text (bundle G3: the theme accent, plum in Lilac mist). */

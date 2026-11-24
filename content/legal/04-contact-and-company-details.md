@@ -22,7 +22,7 @@
 
 **Full text**
 
-This is our contact point for everyone who uses Ghemotoc.
+This is our contact point for everyone who uses ghemotoc.
 
 Questions, problems or complaints: email hello@themagiccoffin.com. You don’t need an account.
 
@@ -119,7 +119,7 @@ These sections cover points the board has no place for. Add them to the board or
 
 **Full text**
 
-Ghemotoc is run by:
+ghemotoc is run by:
 
 - Company name: [Company name] [SRL or AB]
 - Registered office: [registered office]
@@ -131,7 +131,7 @@ Ghemotoc is run by:
 - Phone: [company phone]
 - Supervisory authority for our online services in Romania: [Autoritatea pentru Digitalizarea României, under Law 365/2002; lawyer to confirm]
 
-Ghemotoc is “An app by The Magic Coffin”.
+ghemotoc is “An app by The Magic Coffin”.
 
 ## Drafting notes for the lawyer
 
