@@ -1520,7 +1520,7 @@ ChapterReaderPage → useChapter → api/chapter.ts → get_chapter(story_slug, 
   │                    reader_visible_story(): live, not moderated away, rating_allows(), not blocked
   │                    chapter_is_readable(): published, not deleted, not moderated away
   │  ChapterReading (CALM-5): the screen once the chapter may be read
-  │  ChapterBar (Back to the story, the title, "Chapter n of N · 3 min left", Aa, Next chapter)
+  │  ChapterBar (Back to the story, the title, "Chapter n of N · 3 min left", Contents, Aa, Next chapter)
   │  ReadingPaper (the sheet of paper; full width on phones) → ChapterReaderHeader (H1 in Literata)
   │     → ChapterText (the Markdown as HTML, 20 px, 17 px on phones) → ChapterEnd
   │  ChapterNavigation (Previous, the dots, Next) → the 728 × 90 advert → ChapterComments
@@ -2135,6 +2135,7 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 
 ## Reading settings (S1-E4-02; READ-4b)
 
+- Contents in the chapter bar (user story 2.2, board B02): `ChapterContentsControl` (the list icon, shown when the story has more than one chapter) opens `ChapterContentsPlace`, the story's published chapters from `get_story_page()` with the current one marked (aria-current and "You are here") and scrolled into the middle of the list, in the same place as Reading settings (`ToolPanel` in `ChapterReading`: the side column from 1280 px, the bottom sheet below). `useReaderTools` keeps Contents, Reading settings and a paragraph's comments to one at a time.
 - On screen 3.5 a signed-in reader gets Aa, "Reading settings", in the chapter bar (`ReadingSettingsControl`). It doesn't hold the panel: `hooks/useReaderTools.ts` keeps whether it is open (closed by default, never at the same time as a paragraph's comments), and `ReaderToolPlace` opens `ReadingSettingsPanel` at the top of the side column from 1280 px or in the bottom sheet (`ReaderSheet`) below that (CALM-5). The panel: font (Inter, Serif, Dyslexia-friendly), text size (14 to 28 px), line spacing, line width, theme (Light, Sepia, Night), the comfort fields and Time left (In the bar or On the page, `reading_settings.time_left`, CALM-5).
 - How a change travels: the panel calls `change()` in `useReadingSettings`, which replaces the cached settings at once (so the text changes straight away) and saves the whole set 600 ms later → `save_reading_settings()` → `reading_settings` (one row per reader). Another device reads the row when the chapter opens.
 - How the text gets its look: `useReadingLook` joins the settings with the device's own text size (the page's root font size, read once; 20 px at the normal 16, 17 px on phones under 600 px, CALM-5) and puts CSS variables (`--reading-font-size` and so on) on the box around the text; `src/styles/index.css` reads them in `.tmc-chapter-text--reader`. Every theme puts the whole chapter on a sheet of paper, `.tmc-reading-page` (bundle G7d): Light and Night on the story paper (`.tmc-reading-page--paper`; Night with `data-theme="night"`, so it reuses the night tokens and gets the dark paper), Sepia on its own warm paper. The dyslexia-friendly font is OpenDyslexic (`--font-dyslexia`) and the serif is Literata (`--font-story`).
