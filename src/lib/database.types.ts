@@ -7262,9 +7262,9 @@ export type Database = {
           night_by_clock: boolean;
           night_from: string | null;
           night_until: string | null;
+          paper: Database['public']['Enums']['reading_paper'];
           reading_ruler: boolean;
           text_size: number | null;
-          theme: Database['public']['Enums']['reading_theme'];
           time_left: string;
           updated_at: string;
           user_id: string;
@@ -7279,9 +7279,9 @@ export type Database = {
           night_by_clock?: boolean;
           night_from?: string | null;
           night_until?: string | null;
+          paper?: Database['public']['Enums']['reading_paper'];
           reading_ruler?: boolean;
           text_size?: number | null;
-          theme?: Database['public']['Enums']['reading_theme'];
           time_left?: string;
           updated_at?: string;
           user_id: string;
@@ -7295,9 +7295,9 @@ export type Database = {
           night_by_clock?: boolean;
           night_from?: string | null;
           night_until?: string | null;
+          paper?: Database['public']['Enums']['reading_paper'];
           reading_ruler?: boolean;
           text_size?: number | null;
-          theme?: Database['public']['Enums']['reading_theme'];
           time_left?: string;
           updated_at?: string;
           user_id?: string;
@@ -17450,9 +17450,9 @@ export type Database = {
           wanted_night_by_clock?: boolean;
           wanted_night_from?: string;
           wanted_night_until?: string;
+          wanted_paper: Database['public']['Enums']['reading_paper'];
           wanted_reading_ruler?: boolean;
           wanted_text_size: number;
-          wanted_theme: Database['public']['Enums']['reading_theme'];
           wanted_time_left?: string;
         };
         Returns: undefined;
@@ -19151,7 +19151,7 @@ export type Database = {
       reading_font: 'sans' | 'serif' | 'dyslexia_friendly' | 'atkinson_hyperlegible';
       reading_line_spacing: 'compact' | 'normal' | 'wide';
       reading_line_width: 'narrow' | 'medium' | 'wide';
-      reading_theme: 'light' | 'sepia' | 'night';
+      reading_paper: 'white' | 'sepia' | 'grey' | 'black';
       remembered_place_kind: 'story_edition' | 'atlas_section' | 'write_caret' | 'atlas_hint';
       report_reason:
         | 'illegal_content'
@@ -19563,7 +19563,7 @@ export const Constants = {
       reading_font: ['sans', 'serif', 'dyslexia_friendly', 'atkinson_hyperlegible'],
       reading_line_spacing: ['compact', 'normal', 'wide'],
       reading_line_width: ['narrow', 'medium', 'wide'],
-      reading_theme: ['light', 'sepia', 'night'],
+      reading_paper: ['white', 'sepia', 'grey', 'black'],
       remembered_place_kind: ['story_edition', 'atlas_section', 'write_caret', 'atlas_hint'],
       report_reason: [
         'illegal_content',
