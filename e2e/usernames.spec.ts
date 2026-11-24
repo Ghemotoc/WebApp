@@ -62,7 +62,9 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
   }) => {
     runSql(`update public.profiles set handle = null where id = '${personaId}';`);
     expect(runSql(`select account_state('${personaId}')`)).toBe('handle_missing');
-    const page = await openAsPersona(browser, '/');
+    // Open the signed-in home directly: "/" forwards to /ro/ro and then /hub, and a click made
+    // during that chain is lost (it made this test flaky in CI, 24 Nov 2026).
+    const page = await openAsPersona(browser, '/hub');
 
     // The notice is on every page until a username is chosen.
     await expect(page.getByRole('heading', { name: 'Choose a username' })).toBeVisible();

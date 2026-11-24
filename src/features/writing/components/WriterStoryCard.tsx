@@ -32,6 +32,7 @@ import { writerStoryFacts } from '../lib/writerStoryFacts';
 import { ChapterStatsTable } from './ChapterStatsTable';
 import { NewChapterButton } from './NewChapterButton';
 import { StoryCardAtlasLine } from './StoryCardAtlasLine';
+import { atlasEntryAddress } from '@/features/atlas/lib/atlasSections';
 
 /** What the card needs: the story and the cover to draw (YourWritingPage works it out per row). */
 export interface WriterStoryCardProps {
@@ -81,7 +82,7 @@ function StoryCardLinks({ story }: { story: MyStory }) {
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <WriteChapterLink slug={slug} latestChapter={latestChapter} />
         {/* The story's side in Story Atlas, beside "Write" (S1-E17 notes). */}
-        <Link to={`/plan/s/${slug}`} className={quietLink}>
+        <Link to={atlasEntryAddress(slug)} className={quietLink}>
           <ActionIcon name="map" />
           {t('storyCard.atlas')}
         </Link>

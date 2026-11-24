@@ -911,17 +911,33 @@ COMMENT ON TYPE "public"."reading_line_width" IS 'The reader''s line width: abou
 
 
 
-CREATE TYPE "public"."reading_theme" AS ENUM (
-    'light',
+CREATE TYPE "public"."reading_paper" AS ENUM (
+    'white',
     'sepia',
-    'night'
+    'grey',
+    'black'
 );
 
 
-ALTER TYPE "public"."reading_theme" OWNER TO "postgres";
+ALTER TYPE "public"."reading_paper" OWNER TO "postgres";
 
 
-COMMENT ON TYPE "public"."reading_theme" IS 'The reader''s theme for the chapter text: light (the app''s colours), sepia or night (S1-E4-02).';
+COMMENT ON TYPE "public"."reading_paper" IS 'The colour of the paper the chapter is read on: white, sepia (the story paper, the default), grey or black (BOOKS B04).';
+
+
+
+CREATE TYPE "public"."remembered_place_kind" AS ENUM (
+    'story_edition',
+    'atlas_section',
+    'write_caret',
+    'atlas_hint'
+);
+
+
+ALTER TYPE "public"."remembered_place_kind" OWNER TO "postgres";
+
+
+COMMENT ON TYPE "public"."remembered_place_kind" IS 'What a remembered place holds: a story''s last edition, Atlas section or caret in Write, or an Atlas hint''s visits (design books item 17).';
 
 
 
@@ -1521,6 +1537,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('reading_positions', 'delete', 1, null),
     ('reading_preferences', 'delete', 1, null),
     ('reading_settings', 'delete', 1, null),
+    ('remembered_places', 'delete', 1, null),
     ('report_detail_requests', 'kept', 0, 'part of a report, kept as long as the report and its case (docs/retention.md)'),
     ('reports', 'kept', 0, 'a moderation record, kept as long as its case (docs/retention.md, OPEN)'),
     ('space_join_notes', 'delete', 1, null),
@@ -3431,7 +3448,7 @@ CASE "cover_kind"
     WHEN 'upload'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NOT NULL))
     ELSE NULL::boolean
 END),
-    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"])))),
+    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text", 'blushdots'::"text", 'skylines'::"text", 'goldgrid'::"text"])))),
     CONSTRAINT "stories_cover_style_fits_kind" CHECK (
 CASE "cover_kind"
     WHEN 'automatic'::"public"."cover_kind" THEN ("cover_style" = 'label'::"public"."cover_style")
@@ -3574,7 +3591,7 @@ COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the st
 
 
 
-COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, and G9c added arches, rings and forestwaves.';
+COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, G9c added arches, rings and forestwaves, and the design books added blushdots, skylines and goldgrid.';
 
 
 
@@ -23154,6 +23171,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('reading_positions', true, null),
     ('reading_preferences', true, null),
     ('reading_settings', true, null),
+    ('remembered_places', true, null),
     ('report_detail_requests', true, null),
     ('reports', true, null),
     ('space_join_notes', true, null),
@@ -41606,6 +41624,33 @@ COMMENT ON FUNCTION "public"."relationship_json"("link" "public"."story_characte
 
 
 
+CREATE OR REPLACE FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller uuid := (select auth.uid());
+begin
+  -- Step 1: only a signed-in person has places to keep; a visitor's stay in the browser.
+  if caller is null then
+    raise exception 'Log in to keep your place.' using errcode = '42501';
+  end if;
+  -- Step 2: one row per kind and item, created the first time and replaced after that.
+  insert into public.remembered_places (user_id, kind, item_key, place)
+  values (caller, place_kind, place_key, place_value)
+  on conflict (user_id, kind, item_key) do update
+    set place = excluded.place;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") IS 'Keeps one of the caller''s places (a story''s edition, Atlas section or caret, or a hint''s visits) for every device (design books item 17).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."removal_order_log_rows"() RETURNS SETOF "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -44949,7 +44994,7 @@ COMMENT ON FUNCTION "public"."save_reading_position"("story_slug" "text", "chapt
 
 
 
-CREATE OR REPLACE FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean DEFAULT false, "wanted_night_from" time without time zone DEFAULT NULL::time without time zone, "wanted_night_until" time without time zone DEFAULT NULL::time without time zone, "wanted_reading_ruler" boolean DEFAULT false, "wanted_time_left" "text" DEFAULT 'bar'::"text") RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean DEFAULT false, "wanted_night_from" time without time zone DEFAULT NULL::time without time zone, "wanted_night_until" time without time zone DEFAULT NULL::time without time zone, "wanted_reading_ruler" boolean DEFAULT false, "wanted_time_left" "text" DEFAULT 'bar'::"text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -44960,19 +45005,19 @@ begin
   if caller is null then
     raise exception 'Log in to save your reading settings.' using errcode = '42501';
   end if;
-  -- Step 2: one row per reader, replaced as a whole. The column's check refuses any time_left
-  -- other than 'bar' or 'page'; a null falls back to the default 'bar'.
-  insert into public.reading_settings (user_id, font, text_size, line_spacing, line_width, theme,
+  -- Step 2: one row per reader, replaced as a whole. A null paper falls back to Sepia, the
+  -- default; the column's check refuses any time_left other than 'bar' or 'page'.
+  insert into public.reading_settings (user_id, font, text_size, line_spacing, line_width, paper,
     night_by_clock, night_from, night_until, reading_ruler, time_left)
-  values (caller, wanted_font, wanted_text_size, wanted_line_spacing, wanted_line_width, wanted_theme,
-    coalesce(wanted_night_by_clock, false), wanted_night_from, wanted_night_until,
-    coalesce(wanted_reading_ruler, false), coalesce(wanted_time_left, 'bar'))
+  values (caller, wanted_font, wanted_text_size, wanted_line_spacing, wanted_line_width,
+    coalesce(wanted_paper, 'sepia'), coalesce(wanted_night_by_clock, false), wanted_night_from,
+    wanted_night_until, coalesce(wanted_reading_ruler, false), coalesce(wanted_time_left, 'bar'))
   on conflict (user_id) do update
     set font = excluded.font,
         text_size = excluded.text_size,
         line_spacing = excluded.line_spacing,
         line_width = excluded.line_width,
-        theme = excluded.theme,
+        paper = excluded.paper,
         night_by_clock = excluded.night_by_clock,
         night_from = excluded.night_from,
         night_until = excluded.night_until,
@@ -44982,10 +45027,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") IS 'Keeps the caller''s reading settings for every device (S1-E4-02; IDEAS-1 part a; CALM-5 time_left).';
+COMMENT ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") IS 'Keeps the caller''s reading settings for every device (S1-E4-02; IDEAS-1 part a; CALM-5 time_left; BOOKS B04 paper).';
 
 
 
@@ -59090,7 +59135,6 @@ CREATE TABLE IF NOT EXISTS "public"."reading_settings" (
     "text_size" smallint,
     "line_spacing" "public"."reading_line_spacing" DEFAULT 'normal'::"public"."reading_line_spacing" NOT NULL,
     "line_width" "public"."reading_line_width" DEFAULT 'medium'::"public"."reading_line_width" NOT NULL,
-    "theme" "public"."reading_theme" DEFAULT 'light'::"public"."reading_theme" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "night_by_clock" boolean DEFAULT false NOT NULL,
@@ -59098,6 +59142,7 @@ CREATE TABLE IF NOT EXISTS "public"."reading_settings" (
     "night_until" time without time zone,
     "reading_ruler" boolean DEFAULT false NOT NULL,
     "time_left" "text" DEFAULT 'bar'::"text" NOT NULL,
+    "paper" "public"."reading_paper" DEFAULT 'sepia'::"public"."reading_paper" NOT NULL,
     CONSTRAINT "reading_settings_text_size_check" CHECK ((("text_size" >= 14) AND ("text_size" <= 28))),
     CONSTRAINT "reading_settings_time_left_choice" CHECK (("time_left" = ANY (ARRAY['bar'::"text", 'page'::"text"])))
 );
@@ -59131,6 +59176,10 @@ COMMENT ON COLUMN "public"."reading_settings"."time_left" IS 'Where the minutes 
 
 
 
+COMMENT ON COLUMN "public"."reading_settings"."paper" IS 'The paper the reader reads on (BOOKS B04, board B04-ReaderSettings). Night mode is the site''s own setting, not this one.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."regions" (
     "code" "text" NOT NULL,
     "country_code" "text" NOT NULL,
@@ -59148,6 +59197,27 @@ ALTER TABLE "public"."regions" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."regions" IS 'kind: platform
 The counties a person may pick in onboarding and Settings (S1-E2-06). Reference data, seeded here.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."remembered_places" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "kind" "public"."remembered_place_kind" NOT NULL,
+    "item_key" "text" NOT NULL,
+    "place" "jsonb" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "remembered_places_item_key_check" CHECK ((("char_length"("item_key") >= 1) AND ("char_length"("item_key") <= 200))),
+    CONSTRAINT "remembered_places_place_check" CHECK (("pg_column_size"("place") <= 2048))
+);
+
+
+ALTER TABLE "public"."remembered_places" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."remembered_places" IS 'kind: user_action
+Where a person was, per story or hint, so they come back to the same place on every device (design books item 17). Private.';
 
 
 
@@ -61327,6 +61397,16 @@ ALTER TABLE ONLY "public"."reading_settings"
 
 ALTER TABLE ONLY "public"."regions"
     ADD CONSTRAINT "regions_pkey" PRIMARY KEY ("code");
+
+
+
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_user_id_kind_item_key_key" UNIQUE ("user_id", "kind", "item_key");
 
 
 
@@ -63987,6 +64067,10 @@ CREATE OR REPLACE TRIGGER "regions_set_updated_at" BEFORE UPDATE ON "public"."re
 
 
 
+CREATE OR REPLACE TRIGGER "remembered_places_set_updated_at" BEFORE UPDATE ON "public"."remembered_places" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "removed_passages_refuse_user_id_change" BEFORE UPDATE ON "public"."removed_passages" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
 
 
@@ -65854,6 +65938,11 @@ ALTER TABLE ONLY "public"."reading_preferences"
 
 ALTER TABLE ONLY "public"."reading_settings"
     ADD CONSTRAINT "reading_settings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -67923,6 +68012,13 @@ ALTER TABLE "public"."regions" ENABLE ROW LEVEL SECURITY;
 
 
 CREATE POLICY "regions_select_everyone" ON "public"."regions" FOR SELECT TO "authenticated", "anon" USING (true);
+
+
+
+ALTER TABLE "public"."remembered_places" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "remembered_places_select_own" ON "public"."remembered_places" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -74181,6 +74277,11 @@ REVOKE ALL ON FUNCTION "public"."relationship_json"("link" "public"."story_chara
 
 
 
+REVOKE ALL ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."removal_order_log_rows"() FROM PUBLIC;
 
 
@@ -74592,8 +74693,8 @@ GRANT ALL ON FUNCTION "public"."save_reading_position"("story_slug" "text", "cha
 
 
 
-REVOKE ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") TO "authenticated";
 
 
 
@@ -76714,6 +76815,11 @@ GRANT SELECT ON TABLE "public"."reading_settings" TO "authenticated";
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."regions" TO "service_role";
 GRANT SELECT ON TABLE "public"."regions" TO "anon";
 GRANT SELECT ON TABLE "public"."regions" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."remembered_places" TO "service_role";
+GRANT SELECT ON TABLE "public"."remembered_places" TO "authenticated";
 
 
 

@@ -19,31 +19,10 @@ import { Link } from 'react-router';
 import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { cn } from '@/lib/utils';
 
+import { atlasSectionPaths, type AtlasSection } from '../lib/atlasSections';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-/** The sections there are so far. */
-export type AtlasSection =
-  | 'glance'
-  | 'characters'
-  | 'connections'
-  | 'bible'
-  | 'storyline'
-  | 'ideas'
-  | 'marketing'
-  | 'readers';
-
-/** Each section's address after /plan/s/<slug>. */
-const atlasSectionPaths: Record<AtlasSection, string> = {
-  glance: '',
-  characters: '/characters',
-  connections: '/connections',
-  // The story's world (once the bible; renamed 2 Nov 2026, ADMIN-2a2).
-  bible: '/world',
-  storyline: '/storyline',
-  ideas: '/ideas',
-  marketing: '/marketing',
-  readers: '/readers',
-};
+export type { AtlasSection } from '../lib/atlasSections';
 
 /** Each section's icon, as the board draws the side menu (CALM-9a). */
 const sectionIcons: Record<AtlasSection, ActionIconName> = {

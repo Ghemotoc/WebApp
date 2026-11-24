@@ -7262,9 +7262,9 @@ export type Database = {
           night_by_clock: boolean;
           night_from: string | null;
           night_until: string | null;
+          paper: Database['public']['Enums']['reading_paper'];
           reading_ruler: boolean;
           text_size: number | null;
-          theme: Database['public']['Enums']['reading_theme'];
           time_left: string;
           updated_at: string;
           user_id: string;
@@ -7279,9 +7279,9 @@ export type Database = {
           night_by_clock?: boolean;
           night_from?: string | null;
           night_until?: string | null;
+          paper?: Database['public']['Enums']['reading_paper'];
           reading_ruler?: boolean;
           text_size?: number | null;
-          theme?: Database['public']['Enums']['reading_theme'];
           time_left?: string;
           updated_at?: string;
           user_id: string;
@@ -7295,9 +7295,9 @@ export type Database = {
           night_by_clock?: boolean;
           night_from?: string | null;
           night_until?: string | null;
+          paper?: Database['public']['Enums']['reading_paper'];
           reading_ruler?: boolean;
           text_size?: number | null;
-          theme?: Database['public']['Enums']['reading_theme'];
           time_left?: string;
           updated_at?: string;
           user_id?: string;
@@ -7339,6 +7339,45 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      remembered_places: {
+        Row: {
+          created_at: string;
+          id: string;
+          item_key: string;
+          kind: Database['public']['Enums']['remembered_place_kind'];
+          place: NonNullable<Json>;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          item_key: string;
+          kind: Database['public']['Enums']['remembered_place_kind'];
+          place: NonNullable<Json>;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          item_key?: string;
+          kind?: Database['public']['Enums']['remembered_place_kind'];
+          place?: NonNullable<Json>;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'remembered_places_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       removed_passages: {
         Row: {
@@ -16944,6 +16983,14 @@ export type Database = {
         };
         Returns: Json;
       };
+      remember_place: {
+        Args: {
+          place_key: string;
+          place_kind: Database['public']['Enums']['remembered_place_kind'];
+          place_value: Json;
+        };
+        Returns: undefined;
+      };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
       remove_my_quote_card_picture: { Args: Record<PropertyKey, never>; Returns: Json };
@@ -17361,9 +17408,9 @@ export type Database = {
           wanted_night_by_clock?: boolean;
           wanted_night_from?: string;
           wanted_night_until?: string;
+          wanted_paper: Database['public']['Enums']['reading_paper'];
           wanted_reading_ruler?: boolean;
           wanted_text_size: number;
-          wanted_theme: Database['public']['Enums']['reading_theme'];
           wanted_time_left?: string;
         };
         Returns: undefined;
@@ -19059,7 +19106,8 @@ export type Database = {
       reading_font: 'sans' | 'serif' | 'dyslexia_friendly' | 'atkinson_hyperlegible';
       reading_line_spacing: 'compact' | 'normal' | 'wide';
       reading_line_width: 'narrow' | 'medium' | 'wide';
-      reading_theme: 'light' | 'sepia' | 'night';
+      reading_paper: 'white' | 'sepia' | 'grey' | 'black';
+      remembered_place_kind: 'story_edition' | 'atlas_section' | 'write_caret' | 'atlas_hint';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -19470,7 +19518,8 @@ export const Constants = {
       reading_font: ['sans', 'serif', 'dyslexia_friendly', 'atkinson_hyperlegible'],
       reading_line_spacing: ['compact', 'normal', 'wide'],
       reading_line_width: ['narrow', 'medium', 'wide'],
-      reading_theme: ['light', 'sepia', 'night'],
+      reading_paper: ['white', 'sepia', 'grey', 'black'],
+      remembered_place_kind: ['story_edition', 'atlas_section', 'write_caret', 'atlas_hint'],
       report_reason: [
         'illegal_content',
         'harassment',

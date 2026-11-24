@@ -17,6 +17,7 @@ import { useState, type ReactNode } from 'react';
 import { designsForRow, resolveCoverChoice } from '@/components/covers/automaticCover';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { PlaceholderShelf } from '@/components/ui/PlaceholderShelf';
 import { Shelf } from '@/components/ui/Shelf';
 import { StoryCard } from '@/components/ui/StoryCard';
 import { useStoryShelf } from '@/features/discovery/hooks/useStoryShelf';
@@ -137,8 +138,15 @@ export function LibraryShelves({ overview }: { overview: LibraryOverview }) {
   const request = plainList('library', shelf);
   const { shelf: list } = useStoryShelf(request);
   const tabs = <ShelfTabs counts={overview.counts} shelf={shelf} onChange={setShelf} />;
-  // Step 1: while the shelf loads, the heading and tabs stay so the page doesn't jump.
-  if (list === null) return <ShelfWithoutRow tabs={tabs} />;
+  // Step 1: while the shelf loads, the heading and tabs stay so the page doesn't jump, and grey
+  // cover shapes show after 300 ms (design books item 15).
+  if (list === null) {
+    return (
+      <ShelfWithoutRow tabs={tabs}>
+        <PlaceholderShelf />
+      </ShelfWithoutRow>
+    );
+  }
   // Step 2: an empty shelf says how stories get there.
   if (list.stories.length === 0) {
     return (
