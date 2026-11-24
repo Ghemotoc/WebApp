@@ -105,7 +105,7 @@ test.describe('reading lists (GAPS-6)', () => {
     await expect(page.getByRole('heading', { name: 'No stories yet' })).toBeVisible();
     // Step 2: the story page's "Add to a bookshelf" sheet puts the story on it.
     await page.goto(`/s/${storySlug}`);
-    await page.getByRole('button', { name: 'Add to a bookshelf' }).click();
+    await page.getByRole('button', { name: /^(Add to|In) library$/ }).click();
     const sheet = page.getByRole('dialog', { name: 'Add to a bookshelf' });
     await expect(sheet).toBeVisible();
     await expect(sheet.getByText('0 of 10', { exact: true })).toBeVisible();
@@ -239,7 +239,7 @@ test.describe('reading lists (GAPS-6)', () => {
       390,
     );
     await page.goto(`/s/${storySlug}`);
-    await page.getByRole('button', { name: 'Add to a bookshelf' }).click();
+    await page.getByRole('button', { name: /^(Add to|In) library$/ }).click();
     await expect(page.getByRole('button', { name: `Take off ${longName}` })).toHaveAttribute(
       'aria-pressed',
       'true',

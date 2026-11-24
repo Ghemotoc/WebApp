@@ -5,12 +5,12 @@
  *
  * Who shows it: the router, at /s/:storySlug; shared links, story cards and Your writing's "See
  * story page" lead here.
- * What it shows, top to bottom: the breadcrumb "Read / category / title" (StoryBreadcrumb); the
- * page's one glass hero (StoryHeader: cover, meta lines, title, blurb, tags and the buttons); then
- * two columns from 1024 px. The main column holds the chapters (StoryChapterList), "Shared by
- * the writer" (StoryWorldLinks, S1-E17-33) and "Labels from the writer" (StoryLabels). The side
- * column, "About this story" (StorySideColumn), holds the writer, the advert (S1-E12-01; none on a
- * class-only story, Q70) and Report. Below both: "More by" and "Stories like this"
+ * What it shows, top to bottom (board B01, bundle 2, user story 2.1; 64 px apart from 1024 px,
+ * 48 on tablets, 32 on phones): the page's one hero (StoryHeader: breadcrumb, cover, meta lines,
+ * title, ranks, blurb, tags and the buttons); then two columns from 1024 px, 1.7 to 1. The main
+ * column holds the chapters (StoryChapterList), "Shared by the writer" (StoryWorldLinks,
+ * S1-E17-33) and "Labels from the writer" (StoryLabels). The side column (StorySideColumn) holds
+ * "The writer", the advert (S1-E12-01; none on a class-only story, Q70) and "Report this story". Below both: "More by" and "Stories like this"
  * (StorySuggestions, S1-E15-06). The owner sees a note while nothing is published yet.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
@@ -32,12 +32,12 @@ import { useUnavailableHere } from '@/features/country-block/hooks/useUnavailabl
 import { StorySuggestions } from '@/features/suggestions/components/StorySuggestions';
 
 import type { StoryPageData } from '../api/storyPage';
+import { publishedWordTotal } from '../lib/storyPageNumbers';
 import { useOpeningEdition } from '../hooks/useOpeningEdition';
 import { useStoryPage } from '../hooks/useStoryPage';
 import { useStoryPreview } from '../hooks/useStoryPreview';
 
 import { NoPreviewNotice } from './NoPreviewNotice';
-import { StoryBreadcrumb } from './StoryBreadcrumb';
 import { StoryChapterList, type ChapterListEdition } from './StoryChapterList';
 import { CopiedWorkNote } from './CopiedWorkNote';
 import { StoryHeader } from './StoryHeader';
@@ -112,6 +112,7 @@ function StoryChapters({ story }: { story: StoryPageData }) {
         storySlug={story.slug}
         edition={chapterListEdition(story)}
         nextChapter={story.nextChapter}
+        summary={{ words: publishedWordTotal(story), lastOutAt: story.lastChapterPublishedAt }}
       />
     </>
   );
@@ -149,21 +150,19 @@ export function StoryPage() {
   }
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-16">
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-6 pb-16 md:gap-12 lg:gap-16 lg:pt-12 lg:pb-20">
       <title>{t('storyPage.documentTitle', { title: story.title })}</title>
       {story.isOwner && !story.isPublic && (
         <Notice tone="info">{t('storyPage.notPublicYet')}</Notice>
       )}
-      {/* Discover / category / title (G7): the way back, and to the category page. */}
-      <StoryBreadcrumb title={story.title} categorySlug={story.categorySlug} />
       {/* A moderator confirmed this story copies a published work (S1-E10-08). */}
       <CopiedWorkNote storyId={story.id} />
-      {/* The page's one glass hero (board New-Story). */}
+      {/* The page's one hero (board B01), with the breadcrumb inside it. */}
       <StoryHeader story={story} />
-      {/* Two columns only from 1024 px: at 768 px a 320 px side column would squeeze the label
-          rows (140 px labels) and push the page sideways (rule 21). */}
-      <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-16">
-        <div className="flex min-w-0 flex-col gap-12">
+      {/* Two columns only from 1024 px, 1.7 to 1 as on board B01; narrower, the side column
+          moves under the main one (rule 21). */}
+      <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-16">
+        <div className="flex min-w-0 flex-col gap-12 lg:gap-16">
           <StoryChapters story={story} />
           {/* The parts of the plan the writer shares (S1-E17-33). */}
           <StoryWorldLinks storySlug={story.slug} />
