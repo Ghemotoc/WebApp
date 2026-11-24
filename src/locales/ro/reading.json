@@ -187,7 +187,7 @@
     "count_few": "{{count}} aprecieri",
     "count_other": "{{count}} de aprecieri",
     "readOnly": "Contul nu poate aprecia capitole încă.",
-    "failed": "Nu am putut salva aprecierea. Încearcă din nou."
+    "failed": "Nu am putut salva aprecierea, așa că a revenit cum era. Încearcă din nou."
   },
   "settings": {
     "button": "Setări de citire",

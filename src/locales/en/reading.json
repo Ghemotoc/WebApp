@@ -187,7 +187,7 @@
     "count_few": "{{count}} likes",
     "count_other": "{{count}} likes",
     "readOnly": "This account can’t like chapters yet.",
-    "failed": "We couldn’t save the like. Try again."
+    "failed": "We couldn’t save the like, so it’s back as it was. Try again."
   },
   "settings": {
     "button": "Reading settings",

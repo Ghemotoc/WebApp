@@ -2,13 +2,16 @@
  * useChapterLike: the Like button's state and its toggle (story S1-E6-03).
  *
  * Who calls it: LikeButton. What it calls: api/likes.ts → chapter_like_state(), then
- * like_chapter(). After a toggle the cached state is replaced with the database's answer, so the
- * count shown is always the real one.
+ * like_chapter(). The button changes at once (design books item 13: within 100 ms) through
+ * lib/query/optimistic.ts; if the database says no, it goes back as it was and LikeButton shows
+ * the failure note. After a toggle the cached state is replaced with the database's answer, so
+ * the count shown is always the real one.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { rollBack, showOptimistic } from '@/lib/query/optimistic';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import {
@@ -27,6 +30,22 @@ import {
  * @param error - what it threw
  * @returns the reason; unreachable for anything that isn't a LikeError
  */
+/**
+ * The state the person expects after pressing Like or Unlike.
+ *
+ * @param current - what the button shows now (undefined or null while loading)
+ * @param shouldLike - true to like, false to take the like back
+ * @returns the new state, or the current one when there is nothing to change yet
+ */
+export function expectedLikeState(
+  current: LikeState | null | undefined,
+  shouldLike: boolean,
+): LikeState | null | undefined {
+  if (current === null || current === undefined || current.liked === shouldLike) return current;
+  const step = shouldLike ? 1 : -1;
+  return { liked: shouldLike, likeCount: Math.max(0, current.likeCount + step) };
+}
+
 function failureOf(hasFailed: boolean, error: unknown): LikeFailure | null {
   if (!hasFailed) return null;
   return error instanceof LikeError ? error.failure : 'unreachable';
@@ -54,6 +73,14 @@ export function useChapterLike(address: ChapterAddress) {
   });
   const change = useMutation({
     mutationFn: async (shouldLike: boolean) => setLike(await requireClient(), address, shouldLike),
+    // Step 1: show the new state before the database answers.
+    onMutate: (shouldLike) =>
+      showOptimistic<LikeState | null>(queryClient, queryKey, (current) =>
+        expectedLikeState(current, shouldLike),
+      ),
+    // Step 2: the database said no, so the button goes back; LikeButton shows the note.
+    onError: (_error, _shouldLike, snapshot) => rollBack(queryClient, snapshot),
+    // Step 3: the database's answer replaces the guess, so the count is the real one.
     onSuccess: (newState) => queryClient.setQueryData(queryKey, newState),
   });
   return {

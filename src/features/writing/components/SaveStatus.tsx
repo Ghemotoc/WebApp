@@ -4,7 +4,9 @@
  *
  * Board values: a tinted box with an icon and one line; sage for saved, plum for saving,
  * gold for unsaved, offline or failed, red for the conflict. It is a role="status" region, so a screen
- * reader hears "Saved" without the writer leaving the text (WCAG 4.1.3).
+ * reader hears "Saved" without the writer leaving the text (WCAG 4.1.3). The words follow the
+ * design books' item 13: Saving, Saved, "Saved on this device" while offline and "Could not save"
+ * (EditorAside adds the Retry button under it).
  * Who uses it: EditorAside.
  */
 import type { TFunction } from 'i18next';

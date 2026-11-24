@@ -3,8 +3,10 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - offline, the Saving box says the words are kept on this device; closing the tab and coming
- *   back online, the editor opens with those words and saves them;
+ * - offline, the Saving box says "Saved on this device"; closing the tab and coming back online,
+ *   the editor opens with those words and saves them;
+ * - a refused save says "Could not save" with a Retry button that saves at once (design books
+ *   item 13, "Small moments");
  * - two devices: the second save is a conflict with "Keep this version" and "Compare versions";
  *   Compare shows both versions side by side, "Keep this one" on the other device's loads it;
  *   "Keep this version" saves this device's words over the other's;
@@ -88,9 +90,7 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
     const page = await openEditor(device, code);
     await device.setOffline(true);
     await typeAndLeave(page, ' Scris fără internet.');
-    await expect(saveStatus(page)).toHaveText(
-      /You’re offline\. Your changes are kept on this device/,
-    );
+    await expect(saveStatus(page)).toHaveText(/Saved on this device\./);
     expect(storedBody(code)).toBe('Început.');
     // Give the device copy its half second, then close the tab while still offline.
     await page.waitForTimeout(800);
@@ -103,6 +103,24 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
     );
     await expect(saveStatus(reopened)).toHaveText(/Saved at \d/);
     expect(storedBody(code)).toBe('Început. Scris fără internet.');
+    await device.close();
+  });
+
+  test('a refused save says “Could not save” and Retry saves at once', async ({ browser }) => {
+    const device = await newDevice(browser);
+    const code = makeChapter('retry001', 'Început.');
+    const page = await openEditor(device, code);
+    // Refuse every save until the route is taken away, as a server error would.
+    await page.route('**/rest/v1/rpc/save_chapter_draft', (route) =>
+      route.fulfill({ status: 500, body: '{"message":"broken on purpose"}' }),
+    );
+    await typeAndLeave(page, ' Din nou.');
+    await expect(saveStatus(page)).toHaveText(/^Could not save\./);
+    await page.unroute('**/rest/v1/rpc/save_chapter_draft');
+    await page.getByRole('button', { name: 'Retry' }).click();
+    await expect(saveStatus(page)).toHaveText(/^Saved at /);
+    await expect(page.getByRole('button', { name: 'Retry' })).toHaveCount(0);
+    expect(storedBody(code)).toBe('Început. Din nou.');
     await device.close();
   });
 

@@ -9,6 +9,8 @@
  *   proved in database test 148);
  * - a visitor sees the count and a "Get in to like" link; a read-only account is told why it
  *   can't like;
+ * - the button changes before the database answers and goes back, with a note, when the database
+ *   says no (design books item 13, "Small moments");
  * - "Report chapter" sits at the end of the same row and opens the report dialog for this
  *   chapter (S1-E10-01's shared button);
  * - the row passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
@@ -74,6 +76,25 @@ test.describe('liking a chapter (S1-E6-03)', () => {
         join public.chapters on chapters.id = chapter_likes.chapter_id where chapters.code = 'likee001'`),
     ).toBe('1');
     await liked.click();
+    await expect(page.getByRole('button', { name: 'Like this chapter 0 likes' })).toBeVisible();
+    await page.context().close();
+  });
+
+  test('the like shows at once and goes back with a note when the save fails', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'teacher', chapterAddress);
+    // Hold the save for a second, then fail it, as a dropped connection would.
+    await page.route('**/rest/v1/rpc/like_chapter', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await route.fulfill({ status: 500, body: '{"message":"broken on purpose"}' });
+    });
+    await page.getByRole('button', { name: 'Like this chapter 0 likes' }).click();
+    // Within the held second the button already says Liked (design books 13: within 100 ms).
+    await expect(page.getByRole('button', { name: 'Liked 1 like' })).toBeVisible({ timeout: 500 });
+    await expect(page.getByRole('alert')).toHaveText(
+      'We couldn’t save the like, so it’s back as it was. Try again.',
+    );
     await expect(page.getByRole('button', { name: 'Like this chapter 0 likes' })).toBeVisible();
     await page.context().close();
   });
