@@ -76,7 +76,7 @@ Cum ne găsești:
 
 - scrie la [emailul pentru accesibilitate];
 - folosește Contactează-ne din Setări, Ajutor sau subsolul paginii;
-- sau scrie la hello@themagiccoffin.com.
+- sau scrie la hello@ghemotoc.tech.
 
 Spune-ne pagina sau sarcina, ce s-a întâmplat și, dacă vrei, ce dispozitiv și ce tehnologie de asistare folosești. Un om citește fiecare mesaj. Îți răspundem în [număr] zile lucrătoare și îți spunem ce facem și când. Dacă nu putem repara repede, te ajutăm să ajungi la conținut sau să faci sarcina pe altă cale.
 
