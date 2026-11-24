@@ -62,7 +62,9 @@
     "sent": "Sent. Your request is #{{number}}. We’ll answer you here.",
     "open": "Open a request",
     "cancel": "Cancel",
-    "safetyHeading": "In danger right now?"
+    "safetyHeading": "In danger right now?",
+    "missingSubject": "Write a subject first.",
+    "missingBody": "Say what you need help with."
   },
   "ticket": {
     "documentTitle": "Support request #{{number}}",
@@ -307,5 +309,8 @@
         "unreachable": "We couldn’t reach the server. Check your connection and try again."
       }
     }
+  },
+  "reply": {
+    "missing": "Write something first."
   }
 }

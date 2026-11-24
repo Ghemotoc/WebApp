@@ -153,7 +153,8 @@
     "wrongCode": "This code is wrong or has expired. Check it, or send new codes.",
     "sendNewCodes": "Send new codes",
     "codesCheckFailed": "We couldn’t check the codes. Check your connection and try again.",
-    "changed": "Done. The email address is now {{email}}."
+    "changed": "Done. The email address is now {{email}}.",
+    "missing": "Type the new email address first."
   },
   "birthday": {
     "heading": "Birthday",

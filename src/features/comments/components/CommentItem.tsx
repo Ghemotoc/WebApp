@@ -52,7 +52,7 @@ function CommentHeader({ comment }: { comment: ChapterComment }) {
     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
       <Link
         to={`/u/${comment.author.handle}`}
-        className="type-body font-semibold text-ink no-underline hover:underline"
+        className="hit-target type-body font-semibold text-ink no-underline hover:underline"
       >
         {comment.author.displayName}
       </Link>

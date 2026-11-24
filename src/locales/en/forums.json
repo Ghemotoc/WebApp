@@ -155,7 +155,8 @@
     "preview": "Preview",
     "previewHide": "Hide preview",
     "previewHeading": "Preview",
-    "previewEmpty": "Write something to see it here."
+    "previewEmpty": "Write something to see it here.",
+    "missing": "Write a reply first."
   },
   "newThread": {
     "eyebrow": "New thread",

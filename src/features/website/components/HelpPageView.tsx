@@ -92,7 +92,7 @@ function HelpArticle({ page }: { page: ParsedEntry<HelpPageContent> }) {
         <p className="m-0 type-body text-ink-muted" lang={i18n.language}>
           {t('website.help.updatedLine', { date: updated, count: minutes })}
         </p>
-        <div className="mt-3 max-w-[720px] type-long leading-[1.7]">
+        <div className="mt-3 max-w-[720px]">
           <CmsMarkdown markdown={page.content.body} language={page.languageCode} />
         </div>
       </article>

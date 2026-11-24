@@ -17,6 +17,7 @@ import { useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/Button';
 import { DateTimeField } from '@/components/ui/DateTimeField';
 import { Notice } from '@/components/ui/Notice';
+import { useMissingField } from '@/lib/forms/useMissingField';
 import { deviceTimeZone } from '@/lib/local-time';
 
 import { DueDateError } from '../api/classThreadReplies';
@@ -50,11 +51,13 @@ export function ClassDueDateField({ threadId, dueAt }: { threadId: string; dueAt
   const saving = useSaveThreadDueDate(threadId);
   // The moment the typed date and time mean; null while the date is empty or not a real one.
   const chosenMoment = dueAtOf(fields);
+  // Design books item 9: Save stays pressable and says the date is missing beside the field.
+  const missing = useMissingField(chosenMoment === null, 'class-due-date');
 
-  /** Save: sends the chosen moment; without one it does nothing (Remove takes a date off). */
+  /** Save: sends the chosen moment, or says it is missing (Remove takes a date off). */
   const save = (event: FormEvent) => {
     event.preventDefault();
-    if (chosenMoment === null) return;
+    if (!missing.isReadyToSend() || chosenMoment === null) return;
     saving.mutate(chosenMoment);
   };
 
@@ -74,9 +77,10 @@ export function ClassDueDateField({ threadId, dueAt }: { threadId: string; dueAt
         timeLabel={t('classReplies.due.time')}
         note={t('classReplies.due.hint', { zone: deviceTimeZone() })}
         skippedHourNote={(time) => t('classReplies.due.skippedHourNote', { time })}
+        dateErrorMessage={missing.isShown ? t('classReplies.due.missing') : undefined}
       />
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={saving.isPending || chosenMoment === null}>
+        <Button type="submit" disabled={saving.isPending}>
           {t('classReplies.due.save')}
         </Button>
         {dueAt !== null && (

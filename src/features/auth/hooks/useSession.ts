@@ -13,6 +13,7 @@
 import { useEffect, useState } from 'react';
 
 import { getSupabaseClient } from '@/lib/supabase';
+import { storedSessionUserId } from '@/lib/storedSessionUser';
 
 /** What the hook answers. */
 export interface SessionState {
@@ -23,6 +24,18 @@ export interface SessionState {
 }
 
 /**
+ * The state before Supabase's first event: the stored session's user when there is one (reader
+ * speed, src/lib/storedSessionUser.ts), otherwise "not known yet". With nothing stored it still
+ * waits, because a sign-in link that has just opened the page brings its session in the address.
+ *
+ * @returns the first state
+ */
+function firstSessionGuess(): SessionState {
+  const userId = storedSessionUserId();
+  return userId === null ? { userId: null, isKnown: false } : { userId, isKnown: true };
+}
+
+/**
  * Follows the signed-in person.
  *
  * @returns the current session state
@@ -30,7 +43,7 @@ export interface SessionState {
  *   rule 12) and the app carries on as signed out.
  */
 export function useSession(): SessionState {
-  const [session, setSession] = useState<SessionState>({ userId: null, isKnown: false });
+  const [session, setSession] = useState<SessionState>(firstSessionGuess);
 
   useEffect(() => {
     let isMounted = true;

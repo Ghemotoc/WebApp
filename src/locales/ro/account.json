@@ -153,7 +153,8 @@
     "wrongCode": "Codul acesta este greșit sau a expirat. Verifică-l sau trimite coduri noi.",
     "sendNewCodes": "Trimite coduri noi",
     "codesCheckFailed": "Nu am putut verifica codurile. Verifică-ți conexiunea și încearcă din nou.",
-    "changed": "Gata. Adresa de email este acum {{email}}."
+    "changed": "Gata. Adresa de email este acum {{email}}.",
+    "missing": "Scrie mai întâi noua adresă de email."
   },
   "birthday": {
     "heading": "Ziua de naștere",

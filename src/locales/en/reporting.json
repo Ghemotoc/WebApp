@@ -121,6 +121,7 @@
     "send": "Send answer",
     "thanks": "Thank you. The moderation team has your answer.",
     "loadFailed": "We couldn’t load the questions about your reports. Try again later.",
-    "answerFailed": "We couldn’t send your answer. Check your connection and try again."
+    "answerFailed": "We couldn’t send your answer. Check your connection and try again.",
+    "missing": "Write an answer first."
   }
 }

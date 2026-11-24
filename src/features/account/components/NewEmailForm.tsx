@@ -4,6 +4,8 @@
  *
  * Pressing the button asks Supabase to send a 6-digit code to the current and the new address
  * (Robert, 25 Oct 2026, 09:15); the line under the field says it was sent or why it was refused.
+ * The button stays pressable; pressed with an empty field, it says so under the field (design
+ * books item 9).
  * Who shows it: EmailSettingsSection. What it calls: useMyEmail's change() through props.
  */
 import { type FormEvent } from 'react';
@@ -12,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import type { EmailChangeOutcome } from '../api/emailAddress';
 import type { useMyEmail } from '../hooks/useMyEmail';
@@ -67,11 +70,14 @@ export interface NewEmailFormProps {
  */
 export function NewEmailForm({ email, typedEmail, showNotice, onTyped }: NewEmailFormProps) {
   const { t } = useTranslation('account');
+  // Design books item 9: the button stays pressable and says what is missing beside the field.
+  const missing = useMissingField(typedEmail.trim() === '', 'settings-new-email');
 
-  /** Asks for the change, unless the field is empty. */
+  /** Asks for the change, or says the address is missing. */
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (typedEmail.trim() !== '') email.change(typedEmail);
+    if (!missing.isReadyToSend()) return;
+    email.change(typedEmail);
   }
 
   return (
@@ -82,6 +88,7 @@ export function NewEmailForm({ email, typedEmail, showNotice, onTyped }: NewEmai
         autoComplete="email"
         label={t('email.newLabel')}
         hint={t('email.newHint')}
+        errorMessage={missing.isShown ? t('email.missing') : undefined}
         value={typedEmail}
         onChange={(event) => {
           email.resetChange();
@@ -90,11 +97,7 @@ export function NewEmailForm({ email, typedEmail, showNotice, onTyped }: NewEmai
       />
       {showNotice && <ChangeNotice email={email} typedEmail={typedEmail} />}
       <div>
-        <Button
-          type="submit"
-          variant="secondary"
-          disabled={email.isChanging || typedEmail.trim() === ''}
-        >
+        <Button type="submit" variant="secondary" disabled={email.isChanging}>
           {email.isChanging ? t('email.sending') : t('email.change')}
         </Button>
       </div>

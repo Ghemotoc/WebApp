@@ -47,7 +47,8 @@
     "send": "Send",
     "reportLabel": "the message from {{name}} at {{time}}",
     "noThanksReply": "{{name}} replied: “Thanks for writing, but I’d rather not chat right now.”",
-    "noThanksAgain": "You can send a new request from {{date}}."
+    "noThanksAgain": "You can send a new request from {{date}}.",
+    "missing": "Write a message first."
   },
   "share": {
     "pick": "Pick a chat, or start a new one, to send this link.",
@@ -101,7 +102,8 @@
     "label": "Username",
     "hint": "The name after @ on the profile.",
     "open": "Open chat",
-    "close": "Close"
+    "close": "Close",
+    "missing": "Type a username first."
   },
   "failures": {
     "not_taking": "They aren’t taking messages right now.",
