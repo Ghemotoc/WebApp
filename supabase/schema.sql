@@ -771,7 +771,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'class_competition_won',
     'class_competition_results',
     'class_readers_choice',
-    'comments_resumed'
+    'comments_resumed',
+    'story_completed'
 );
 
 
@@ -23705,6 +23706,7 @@ CREATE OR REPLACE FUNCTION "public"."default_email_delivery"("kind" "public"."no
   select case kind
     when 'comment_reply' then 'instant'
     when 'new_chapter' then 'daily'
+    when 'story_completed' then 'daily'
     when 'comment_on_chapter' then 'daily'
     when 'new_follower' then 'daily'
     when 'comment_reactions' then 'off'
@@ -24690,7 +24692,10 @@ CREATE OR REPLACE FUNCTION "public"."email_delivery_for"("target_user_id" "uuid"
                   'account_unused_nudge', 'account_unused_closed') then 'required'
     else coalesce(
       (select settings.delivery from public.notification_email_settings as settings
-       where settings.user_id = target_user_id and settings.kind = email_delivery_for.kind),
+       where settings.user_id = target_user_id
+         and settings.kind = case when email_delivery_for.kind = 'story_completed'
+                                  then 'new_chapter'::public.notification_kind
+                                  else email_delivery_for.kind end),
       public.default_email_delivery(kind))::text
   end;
 $$;
@@ -24699,7 +24704,7 @@ $$;
 ALTER FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") IS 'Internal: one person''s email delivery for one notification kind (S1-E7-02).';
+COMMENT ON FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") IS 'Internal: one person''s email delivery for one notification kind (S1-E7-02); story_completed follows the new_chapter choice (BOOKS B06).';
 
 
 
@@ -35540,6 +35545,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'class_competition_results' then 'staff'
     when 'class_readers_choice' then 'staff'
     when 'comments_resumed' then 'stories'
+    when 'story_completed' then 'stories'
     else 'replies'
   end;
 $$;
@@ -35996,11 +36002,19 @@ CREATE OR REPLACE FUNCTION "public"."notify_chapter_published"("payload" "jsonb"
 declare
   story public.stories;
   follower_id uuid;
+  wanted_kind public.notification_kind := 'new_chapter';
 begin
   select * into story from public.stories where stories.id = (payload ->> 'story_id')::uuid;
   -- NEW-1: a private story tells nobody.
   if story.id is null or story.visibility = 'private' then
     return;
+  end if;
+  -- BOOKS B06: the chapter the writer marked as the last ends the story, so followers hear
+  -- "finished" once instead of "new chapter".
+  if exists (select 1 from public.chapters
+             where chapters.id = (payload ->> 'chapter_id')::uuid and chapters.is_last
+               and chapters.status = 'published' and chapters.deleted_at is null) then
+    wanted_kind := 'story_completed';
   end if;
   for follower_id in
     -- NEW-1: the writer's followers hear only of public stories; an unlisted story tells only
@@ -36027,7 +36041,7 @@ begin
     ) then
       continue;
     end if;
-    perform public.notify(follower_id, 'new_chapter', story.user_id,
+    perform public.notify(follower_id, wanted_kind, story.user_id,
       jsonb_build_object('story_id', story.id, 'chapter_id', payload ->> 'chapter_id'));
   end loop;
 end;
@@ -36037,7 +36051,7 @@ $$;
 ALTER FUNCTION "public"."notify_chapter_published"("payload" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."notify_chapter_published"("payload" "jsonb") IS 'Internal: a new chapter notifies the followers of its writer and of its story (S1-E7-01).';
+COMMENT ON FUNCTION "public"."notify_chapter_published"("payload" "jsonb") IS 'Internal: a new chapter notifies the followers of its writer and of its story (S1-E7-01); the chapter that ends the story sends story_completed instead (BOOKS B06).';
 
 
 

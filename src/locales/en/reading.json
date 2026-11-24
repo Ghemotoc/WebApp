@@ -106,6 +106,12 @@
     "readNext": "Next: chapter {{number}}",
     "latestChapter": "That’s the latest chapter so far.",
     "endOfStory": "That’s the end of the story.",
+    "completedChapters_one": "Completed · {{count}} chapter",
+    "completedChapters_few": "Completed · {{count}} chapters",
+    "completedChapters_other": "Completed · {{count}} chapters",
+    "moreBy": "More by {{name}}",
+    "whatNext": "What next",
+    "storyComplete": "{{story}} is complete. It moves to Finished in the Library, and readers who follow it get one last notification.",
     "nextChapterDay": "Next chapter {{day}}",
     "lastChapterDay": "Last chapter {{day}}",
     "chapterDay": {

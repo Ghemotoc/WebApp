@@ -19084,7 +19084,8 @@ export type Database = {
         | 'class_competition_won'
         | 'class_competition_results'
         | 'class_readers_choice'
-        | 'comments_resumed';
+        | 'comments_resumed'
+        | 'story_completed';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -19495,6 +19496,7 @@ export const Constants = {
         'class_competition_results',
         'class_readers_choice',
         'comments_resumed',
+        'story_completed',
       ],
       picture_kind: [
         'cover',

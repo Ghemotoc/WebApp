@@ -68,6 +68,7 @@
     "storiesExportReady": "poveștile tale sunt gata de descărcat.",
     "readingReminder": "câteva minute de citit azi?",
     "storyFinished": "a terminat {{story}} și îți mulțumește că ai scris-o.",
+    "storyCompleted": "a terminat {{story}}.",
     "spaceJoinRequest_one": "a cerut să intre în {{space}}.",
     "spaceJoinRequest_few": "au cerut să intre în {{space}}.",
     "spaceJoinRequest_other": "au cerut să intre în {{space}}.",

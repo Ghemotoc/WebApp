@@ -1675,6 +1675,8 @@ Reading applies the reader's rules again (`notification_is_shown()`): a chapter 
 
 Tests: `154-notifications.test.sql`, `lib/notificationText.test.ts`, `lib/dayGroups.test.ts`, `e2e/notifications.spec.ts`.
 
+**The end of a followed story (BOOKS B06, user story 2.6).** When the chapter a `chapter_published` job names is the writer's marked last chapter (`chapters.is_last`), `notify_chapter_published()` tells the story's and the writer's followers once with the kind `story_completed` instead of `new_chapter` ("Lia Scrie finished Stația meteo.", opening the story page). It sits under Stories, and its email follows the person's New chapters choice (`email_delivery_for()`, the `storyCompleted` line in `email.json`). Tests: `404-story-completed-notification.test.sql`, `e2e/last-chapter.spec.ts`.
+
 ## Notification emails (S1-E7-02)
 
 Each person picks Instant, Daily digest or Off per kind in Settings › Notifications; account, safety and legal emails (a moderation decision) always go. Cloudflare Pages has no scheduler, so the database wakes the sender:
