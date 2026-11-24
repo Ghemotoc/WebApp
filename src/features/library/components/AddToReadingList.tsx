@@ -10,13 +10,16 @@
  *     off one it is on.
  *   - "New bookshelf" is the last row; the free plan's limit is written once, at the bottom.
  * Nothing is read until the sheet opens, so the story page loads nothing extra.
+ * On the story page the button reads "Add to library" or, pressed, "In library", and the sheet
+ * starts with the Library drop-down (board B01, bundle 2).
  * Who uses it: StoryReadingActions, for a signed-in reader who isn't the story's writer.
  * What it calls: Sheet; useStoryListChoices → story_reading_lists(); useReadingListActions →
  * set_story_in_reading_list() and create_reading_list(); useBookshelfLimits for the limits.
  */
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
+import { NavIcon } from '@/components/icons/NavIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Sheet } from '@/components/ui/Sheet';
@@ -111,28 +114,50 @@ function ListChoices({ storySlug }: { storySlug: string }) {
   );
 }
 
+/** What the control needs. */
+export interface AddToReadingListProps {
+  storySlug: string;
+  /** The button's words; "Add to a bookshelf" when left out. */
+  buttonLabel?: string;
+  /** True once the story is in the library: the quiet button shows pressed (board B01). */
+  isPressed?: boolean;
+  /** Shown above the bookshelves in the sheet (the story page's Library drop-down). */
+  sheetTop?: ReactNode;
+}
+
 /**
  * Renders the button and, once pressed, the sheet.
  *
  * @param props.storySlug - the story's address
  * @returns the control
  */
-export function AddToReadingList({ storySlug }: { storySlug: string }) {
+export function AddToReadingList({
+  storySlug,
+  buttonLabel,
+  isPressed,
+  sheetTop = null,
+}: AddToReadingListProps) {
   const { t } = useLibraryTranslation();
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="flex min-w-0 flex-col gap-2">
+    <>
       <Button
         variant="secondary"
-        className="self-start"
         aria-haspopup="dialog"
+        aria-pressed={isPressed}
         onClick={() => setIsOpen(true)}
       >
-        {t('lists.add.button')}
+        <NavIcon name="library" size={16} />
+        {buttonLabel ?? t('lists.add.button')}
       </Button>
       <Sheet isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('lists.add.button')}>
-        {isOpen && <ListChoices storySlug={storySlug} />}
+        {isOpen && (
+          <div className="flex flex-col gap-6">
+            {sheetTop}
+            <ListChoices storySlug={storySlug} />
+          </div>
+        )}
       </Sheet>
-    </div>
+    </>
   );
 }

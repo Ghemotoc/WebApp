@@ -122,6 +122,8 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     );
     await again.goto(`/s/${storySlug}`);
     await expect(again.getByRole('link', { name: 'Continue chapter 1' })).toBeVisible();
+    // Bundle 2 (board B01): the drop-down sits in the sheet "In library" opens.
+    await again.getByRole('button', { name: 'In library' }).click();
     await expect(again.getByLabel('Library')).toHaveValue('reading');
   });
 
@@ -129,6 +131,7 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'teen_17', `/s/${storySlug}`);
+    await page.getByRole('button', { name: /^(Add to|In) library$/ }).click();
     await page.getByLabel('Library').selectOption('saved');
     await expect
       .poll(() =>
