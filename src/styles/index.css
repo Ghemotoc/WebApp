@@ -1571,8 +1571,13 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
    turn every paper dark or plain. --reading-page-pad is the side
    padding, which ChapterReaderPage adds to the text column's width so the line length stays the
    reader's choice. */
-.tmc-reading-page {
+/* .tmc-reading-width: a box above the paper as wide as the paper (the note after "Read in",
+   BOOKS B07), so it shares the paper's side padding variable at every width. */
+.tmc-reading-page,
+.tmc-reading-width {
   --reading-page-pad: 20px;
+}
+.tmc-reading-page {
   padding: 24px var(--reading-page-pad) 28px;
   border-radius: 32px;
   background: var(--paper);
@@ -1580,15 +1585,21 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   box-shadow: var(--shadow-card);
 }
 @media (min-width: 600px) {
-  .tmc-reading-page {
+  .tmc-reading-page,
+  .tmc-reading-width {
     --reading-page-pad: 40px;
+  }
+  .tmc-reading-page {
     padding-top: 40px;
     padding-bottom: 40px;
   }
 }
 @media (min-width: 1024px) {
-  .tmc-reading-page {
+  .tmc-reading-page,
+  .tmc-reading-width {
     --reading-page-pad: 64px;
+  }
+  .tmc-reading-page {
     padding-top: 56px;
     padding-bottom: 56px;
   }

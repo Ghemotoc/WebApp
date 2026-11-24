@@ -1,7 +1,7 @@
 {
   "readIn": "Citește în: {{language}}",
   "readInList": "Citește în",
-  "staysOnChapter": "Rămâi la capitolul {{number}}.",
+  "staysOnChapter": "Rămâi la capitolul {{number}}. Alegerea ta se păstrează pentru această poveste.",
   "original": "Original",
   "translatedBy": "Tradus de {{name}}",
   "shownForPage": "Afișat în {{language}} pentru că pagina este în {{language}}. Disponibil și în {{others}}. Alegerea ta se păstrează pentru această poveste.",
