@@ -99,19 +99,16 @@ describe('the app shell', () => {
 
     expect(document.documentElement.dataset.theme).toBe('night');
     expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('night');
-    expect(screen.getByRole('button', { name: 'Night mode' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
+    // At night the button names the other mode (Robert, 23 Nov 2026), and a press goes back.
+    fireEvent.click(screen.getByRole('button', { name: 'Day mode' }));
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(screen.getByRole('button', { name: 'Night mode' })).not.toHaveAttribute('aria-pressed');
   });
 
   it('follows the device by default (light in this test, whose device is not in dark mode)', () => {
     renderApp();
 
-    expect(screen.getByRole('button', { name: 'Night mode' })).toHaveAttribute(
-      'aria-pressed',
-      'false',
-    );
+    expect(screen.getByRole('button', { name: 'Night mode' })).toBeInTheDocument();
     expect(document.documentElement.dataset.theme).toBe('light');
   });
 

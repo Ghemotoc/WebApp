@@ -388,13 +388,7 @@ describe('design token contrast', () => {
     // The glass fills and rims are see-through by day, so the reader above skips them there; at
     // night they are solid greys (NIGHT-2), and the night page colour lives only at night. The
     // night block also keeps --surface-box-solid, the box's solid look-alike from CALM-1c.
-    const solidOnlyAtNight = new Set([
-      'field',
-      'glass-border',
-      'lg-rim',
-      'nav-glass',
-      'surface-glass',
-    ]);
+    const solidOnlyAtNight = new Set(['field', 'glass-border', 'lg-rim', 'nav-glass']);
     const nightKeys = [...themes.night.keys()].filter((name) => !solidOnlyAtNight.has(name));
     const lightKeys = [...themes.light.keys(), 'surface-box-solid'];
     expect(nightKeys.sort()).toEqual(lightKeys.sort());

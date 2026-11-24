@@ -18,8 +18,9 @@ export const buttonStyles = cva(
         primary: 'button-main',
         secondary: 'button-glass',
         // The text button (CALM-2, Button/README.md): ink, underlined 1 px with a 3 px offset,
-        // 2 px on hover, for tertiary actions inside bars and lists.
-        text: 'h-11 bg-transparent px-0 text-ink underline decoration-1 underline-offset-[3px] hover:decoration-2',
+        // 2 px on hover, for tertiary actions inside bars and lists. The label stays ink on hover,
+        // also when the text button is a link (flat themes bundle, part 2).
+        text: 'h-11 bg-transparent px-0 text-ink underline decoration-1 underline-offset-[3px] hover:text-ink hover:decoration-2',
         destructive: 'button-glass border-destructive text-destructive',
       },
       // Every button is 44 px tall with its label in Inter 600 15/20 (CALM-2, the simplified

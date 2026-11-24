@@ -21,7 +21,7 @@
 
 **Text complet**
 
-Aceste reguli se aplică peste tot pe Ghemotoc: povești, capitole, comentarii, forumuri, spații, profiluri, nume de utilizator, imagini și mesaje private.
+Aceste reguli se aplică peste tot pe ghemotoc: povești, capitole, comentarii, forumuri, spații, profiluri, nume de utilizator, imagini și mesaje private.
 
 Vorbește despre text, nu despre cel care l-a scris. Părerile sincere îi ajută pe scriitori să crească. Spune ce a mers și ce nu și fii concret. Nu ataca persoana.
 
@@ -31,7 +31,7 @@ Nu sunt permise:
 - amenințările de orice fel, inclusiv „glumele” care sună a amenințări;
 - ura: atacarea sau umilirea oamenilor din cauza rasei, etniei, naționalității, religiei, dizabilității, sexului, genului, orientării sexuale, vârstei sau a oricărei trăsături asemănătoare;
 - spamul: același mesaj iar și iar, reclame nedorite sau linkuri postate doar ca să trimită oamenii în altă parte;
-- numele de utilizator sau pseudonimele cu înjurături ori care se dau drept echipa noastră sau drept Ghemotoc.
+- numele de utilizator sau pseudonimele cu înjurături ori care se dau drept echipa noastră sau drept ghemotoc.
 
 Poveștile sunt altceva decât comentariile. O poveste poate arăta un bătăuș, un răufăcător sau un personaj plin de ură. Asta e ficțiune. Ce nu e permis este să folosești o poveste, un comentariu sau un mesaj ca să ataci oameni sau grupuri reale.
 
@@ -45,7 +45,7 @@ Poveștile sunt altceva decât comentariile. O poveste poate arăta un bătăuș
 
 **Text complet**
 
-Mulți oameni de pe Ghemotoc au sub 18 ani. Siguranța lor vine pe primul loc.
+Mulți oameni de pe ghemotoc au sub 18 ani. Siguranța lor vine pe primul loc.
 
 Niciodată permise și raportate autorităților acolo unde legea o cere:
 
@@ -58,7 +58,7 @@ Imagini. Poți încărca orice imagine, inclusiv fotografii cu locuri și obiect
 
 Informații private. Nu împărți adresa, numărul de telefon, emailul, școala, numele real sau fotografiile cuiva fără permisiunea lui. Asta include și datele tale dacă ai sub 18 ani: ține-le departe de profilul tău și de postările publice.
 
-Mesaje. Adulții nu pot trimite niciodată mesaje cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite dacă nu le pornești tu și doar tu le poți porni. Nimeni de pe Ghemotoc nu poate vedea câți ani ai, așa că atunci când cineva nu primește mesaje, scrie doar atât.
+Mesaje. Adulții nu pot trimite niciodată mesaje cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite dacă nu le pornești tu și doar tu le poți porni. Nimeni de pe ghemotoc nu poate vedea câți ani ai, așa că atunci când cineva nu primește mesaje, scrie doar atât.
 
 Spații. Spațiile create de cei sub 16 ani sunt doar pentru cei sub 16 ani. Spațiile create de cei de 16 ani sau peste sunt doar pentru cei de 16 ani sau peste. Spațiile de clasă sunt singura excepție: sunt pe bază de invitație, iar profesorul și elevi de orice vârstă sunt acolo împreună.
 

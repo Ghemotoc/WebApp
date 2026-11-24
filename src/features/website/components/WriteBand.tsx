@@ -46,10 +46,7 @@ export function WriteBand({ band, language }: { band: HomeBand; language: string
       {points.length > 0 && (
         <dl className="m-0 grid content-start gap-4 sm:grid-cols-2">
           {points.map((point) => (
-            <div
-              key={point.title}
-              className="glass-band-inner rounded-card border border-on-primary/25 p-4"
-            >
+            <div key={point.title} className="glass-band-inner rounded-card p-4">
               <dt className="font-heading type-long font-bold text-on-primary">
                 {withBrand(point.title)}
               </dt>

@@ -21,17 +21,17 @@
 
 **Text complet**
 
-[Numele companiei] [SRL sau AB], cu sediul la [sediul social], număr de înregistrare [numărul de înregistrare], administrează Ghemotoc. Noi suntem „operatorul” datelor tale personale. Asta înseamnă că noi decidem cum și de ce sunt folosite și că răspundem de grija lor.
+[Numele companiei] [SRL sau AB], cu sediul la [sediul social], număr de înregistrare [numărul de înregistrare], administrează ghemotoc. Noi suntem „operatorul” datelor tale personale. Asta înseamnă că noi decidem cum și de ce sunt folosite și că răspundem de grija lor.
 
 Cum ne contactezi despre datele tale: [emailul pentru confidențialitate] sau Contactează-ne din Setări. Poți scrie în română sau engleză.
 
 Responsabilul cu protecția datelor: [DESCHIS: dacă trebuie să numim unul; dacă da, datele lui de contact apar aici].
 
-[DESCHIS: dacă Ghemotoc se deschide în Regatul Unit și compania nu are un birou acolo, numele și adresa reprezentantului nostru din Regatul Unit apar aici.]
+[DESCHIS: dacă ghemotoc se deschide în Regatul Unit și compania nu are un birou acolo, numele și adresa reprezentantului nostru din Regatul Unit apar aici.]
 
-Spații de clasă. Într-un spațiu de clasă, școala răspunde pentru informațiile pe care le dă profesorul, cum ar fi materialele clasei, notele și observațiile. Elevii își dețin lucrările, iar noi răspundem pentru tot restul de pe Ghemotoc. [Avocatul confirmă rolurile școlii și ale Ghemotoc]
+Spații de clasă. Într-un spațiu de clasă, școala răspunde pentru informațiile pe care le dă profesorul, cum ar fi materialele clasei, notele și observațiile. Elevii își dețin lucrările, iar noi răspundem pentru tot restul de pe ghemotoc. [Avocatul confirmă rolurile școlii și ale ghemotoc]
 
-Această notă se poate schimba. Dacă facem o schimbare importantă, îți spunem pe Ghemotoc înainte să se aplice. Fiecare versiune rămâne pe această pagină cu data ei.
+Această notă se poate schimba. Dacă facem o schimbare importantă, îți spunem pe ghemotoc înainte să se aplice. Fiecare versiune rămâne pe această pagină cu data ei.
 
 ## 2. Ce colectăm
 
@@ -73,7 +73,7 @@ Ce primim de la alții:
 - Autorități: ordinele și cererile pe care ni le trimit.
 - Echipa noastră: notițe scurte pe care membrii echipei le lasă unii altora pe contul tău, de exemplu ce ai întrebat la asistență sau ce a verificat un moderator. Notițele sunt fapte, nu se arată nimănui public și poți cere să le vezi. [de verificat de avocat]
 
-ID-ul tău de utilizator. Fiecare cont primește un ID aleatoriu și permanent care leagă tot ce creezi pe Ghemotoc. Nimeni altcineva nu îl vede vreodată. Îl găsești în propriile descărcări ale datelor tale.
+ID-ul tău de utilizator. Fiecare cont primește un ID aleatoriu și permanent care leagă tot ce creezi pe ghemotoc. Nimeni altcineva nu îl vede vreodată. Îl găsești în propriile descărcări ale datelor tale.
 
 Ce nu colectăm niciodată: numele tău legal (doar dacă ceri un certificat), data completă a nașterii, locul exact în care te afli, contactele tale și niciun selfie sau act de identitate.
 
@@ -89,7 +89,7 @@ Ce trebuie să ne dai. Ca să creăm un cont avem nevoie de adresa ta de email, 
 
 *Rând scurt nou propus, acum că textul complet înlocuiește locul liber:*
 
-- Îți folosim datele pentru că tu (sau, sub 16 ani, părintele ori tutorele tău) ai fost de acord, pentru că legea o cere sau ca să ținem Ghemotoc în siguranță. Fiecare folosire și motivul ei sunt enumerate mai jos.
+- Îți folosim datele pentru că tu (sau, sub 16 ani, părintele ori tutorele tău) ai fost de acord, pentru că legea o cere sau ca să ținem ghemotoc în siguranță. Fiecare folosire și motivul ei sunt enumerate mai jos.
 
 **Text complet**
 
@@ -103,17 +103,17 @@ Acordul părintelui sau tutorelui pentru cei sub 16 ani. Cererea lui, înregistr
 
 Recomandarea scriitorilor altor cititori. Afișarea numelui de utilizator sau a pseudonimului, a avatarului și a poveștilor publicate în liste precum Scriitori noi în ascensiune și Scriitori de urmărit, doar cât timp opțiunea „Recomandă-mă pe mine și poveștile mele altor oameni” e pornită în Setări › Confidențialitate. E pornită pentru adulți și oprită pentru cei sub 18 ani. Dacă ai sub 16 ani, trebuie să spună da și părintele sau tutorele tău, separat de acordul pentru cont, iar acesta își poate retrage acordul oricând. Temei legal: consimțământul tău și, sub 16 ani, al părintelui sau tutorelui tău.
 
-Siguranța oamenilor. Citirea raportărilor, verificarea fiecărei imagini la încărcare, moderarea, avertismentele și suspendările, motivările și contestațiile. Temei legal: obligațiile noastre legale din legislația UE privind platformele și interesul nostru legitim de a ține Ghemotoc în siguranță, mai ales pentru tineri. [Avocatul confirmă temeiul pentru verificarea imaginilor]
+Siguranța oamenilor. Citirea raportărilor, verificarea fiecărei imagini la încărcare, moderarea, avertismentele și suspendările, motivările și contestațiile. Temei legal: obligațiile noastre legale din legislația UE privind platformele și interesul nostru legitim de a ține ghemotoc în siguranță, mai ales pentru tineri. [Avocatul confirmă temeiul pentru verificarea imaginilor]
 
 Protejarea cuiva aflat în pericol. Dacă viața sau siguranța cuiva este în pericol, putem împărtăși ce este necesar cu poliția sau serviciile de urgență. Temei legal: obligația noastră legală de a raporta amenințările la adresa vieții sau siguranței și protejarea intereselor vitale ale cuiva.
 
 Ordine ale autorităților. Respectarea ordinelor de eliminare și a altor ordine și păstrarea conținutului eliminat cum cere legea. Temei legal: obligație legală.
 
-Securitate și oprirea spamului. Adrese IP amestecate, limite la conectare și limite pentru spam. Temei legal: interesul nostru legitim de a ține conturile și Ghemotoc în siguranță.
+Securitate și oprirea spamului. Adrese IP amestecate, limite la conectare și limite pentru spam. Temei legal: interesul nostru legitim de a ține conturile și ghemotoc în siguranță.
 
 Ca aplicația să funcționeze. Evidența cererilor aplicației (mai sus), ca să găsim și să reparăm defecte și să urmărim o problemă despre care ne spui. Temei legal: interesul nostru legitim de a avea o aplicație care funcționează. [de verificat de avocat]
 
-Țara ta. Țara în care locuiești stabilește vârstele care ți se aplică: vârsta de la care te poți înscrie și vârsta sub care trebuie să fie de acord un părinte sau tutore. O folosim și pe ea, și țara conexiunii, ca să deschidem Ghemotoc doar acolo unde suntem pregătiți. Temei legal: obligația noastră legală de a aplica regulile de vârstă de acolo unde locuiești și interesul nostru legitim. [de verificat de avocat]
+Țara ta. Țara în care locuiești stabilește vârstele care ți se aplică: vârsta de la care te poți înscrie și vârsta sub care trebuie să fie de acord un părinte sau tutore. O folosim și pe ea, și țara conexiunii, ca să deschidem ghemotoc doar acolo unde suntem pregătiți. Temei legal: obligația noastră legală de a aplica regulile de vârstă de acolo unde locuiești și interesul nostru legitim. [de verificat de avocat]
 
 Să-ți spunem când deschidem în țara ta. Înainte să ai un cont, îți poți lăsa adresa de email pe pagina „Încă nu suntem deschiși în țara ta”. Îți trimitem un email ca s-o confirmi și, după ce ai confirmat-o, un email în ziua în care deschidem acolo. Temei legal: acordul tău, pe care îl dai când confirmi adresa și pe care îl poți retrage oricând cu linkul din email. [de verificat de avocat]
 
@@ -137,7 +137,7 @@ Retragerea acordului. Îți poți retrage acordul oricând și este la fel de u�
 
 Sub 16 ani. În România poți fi de acord singur cu folosirea datelor tale de la 16 ani. Sub această vârstă trebuie să fie de acord și un părinte sau tutore. Îi trimitem un link pe email; până când este de acord, contul tău poate doar să citească. Un părinte sau tutore își poate retrage acordul oricând. Contul tău poate atunci doar să citească și vă spunem amândurora ce urmează. [DESCHIS: cum verificăm că persoana este cu adevărat un părinte sau tutore, dincolo de email (L2)]
 
-Protecții pentru cei sub 18 ani. Dacă ai sub 18 ani, setările tale pornesc de la cele mai private alegeri. Adulții nu pot trimite niciodată mesaje cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite dacă nu le pornești tu și doar tu poți face asta. Nimic de pe Ghemotoc nu îi spune unui adult câți ani ai. Nu primești emailuri de marketing, iar notificările au ore de liniște.
+Protecții pentru cei sub 18 ani. Dacă ai sub 18 ani, setările tale pornesc de la cele mai private alegeri. Adulții nu pot trimite niciodată mesaje cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite dacă nu le pornești tu și doar tu poți face asta. Nimic de pe ghemotoc nu îi spune unui adult câți ani ai. Nu primești emailuri de marketing, iar notificările au ore de liniște.
 
 Decizii automate. Nu luăm despre tine decizii bazate doar pe prelucrare automată care au efecte juridice sau la fel de serioase. Două lucruri sunt parțial automate și un om este mereu disponibil:
 
@@ -157,11 +157,11 @@ Ce nu facem niciodată. Nu îți vindem datele. Nu le folosim ca să alegem recl
 
 *Rând scurt nou propus, acum că textul complet înlocuiește locul liber:*
 
-- Companiile care găzduiesc Ghemotoc, ne trimit emailurile și se ocupă de serviciul nostru de asistență, fiecare cu un contract cu noi. Cele mai multe sunt în UE.
+- Companiile care găzduiesc ghemotoc, ne trimit emailurile și se ocupă de serviciul nostru de asistență, fiecare cu un contract cu noi. Cele mai multe sunt în UE.
 
 **Text complet**
 
-Alți oameni de pe Ghemotoc. Ce publici apare sub pseudonimul sau numele tău de utilizator pentru cititorii pe care îi permit setările și clasificările tale. Oamenii cărora le trimiți mesaje îți văd mesajele. Membrii spațiilor și ai claselor văd ce postezi în acel spațiu, iar profesorul tău vede ce împarți cu clasa. Scriitorii își văd cititorii doar ca totaluri; sub cinci cititori văd „mai puțin de 5”. Nimeni altcineva nu îți vede adresa de email, vârsta, anul nașterii sau rezultatul verificării vârstei.
+Alți oameni de pe ghemotoc. Ce publici apare sub pseudonimul sau numele tău de utilizator pentru cititorii pe care îi permit setările și clasificările tale. Oamenii cărora le trimiți mesaje îți văd mesajele. Membrii spațiilor și ai claselor văd ce postezi în acel spațiu, iar profesorul tău vede ce împarți cu clasa. Scriitorii își văd cititorii doar ca totaluri; sub cinci cititori văd „mai puțin de 5”. Nimeni altcineva nu îți vede adresa de email, vârsta, anul nașterii sau rezultatul verificării vârstei.
 
 Echipa noastră. Doar cei din echipă care au nevoie pentru munca lor, iar fiecare consultare este înregistrată. Citesc mesajele private doar când mesajele fac parte dintr-o raportare sau când legea o cere. În timpul unei verificări manuale a vârstei, persoana din echipă care se ocupă de ea îți vede anul nașterii.
 
@@ -284,7 +284,7 @@ Evidențe pe care legea ne obligă să le păstrăm
 
 Ai aceste drepturi asupra datelor tale. Folosirea lor este gratuită.
 
-- Să-ți vezi datele și să primești o copie. În Setări poți descărca tot ce ai pus pe Ghemotoc, plus datele contului și ID-ul tău de utilizator, într-un format pe care alte aplicații îl pot citi. Îți poți descărca și poveștile ca fișiere Word, câte una sau toate deodată.
+- Să-ți vezi datele și să primești o copie. În Setări poți descărca tot ce ai pus pe ghemotoc, plus datele contului și ID-ul tău de utilizator, într-un format pe care alte aplicații îl pot citi. Îți poți descărca și poveștile ca fișiere Word, câte una sau toate deodată.
 - Să-ți iei datele în altă parte. Aceeași descărcare îți dă datele într-o formă pe care o poți muta la alt serviciu.
 - Să le corectezi. Cele mai multe lucruri le poți schimba singur în Setări. Pentru orice altceva, întreabă-ne.
 - Să le ștergi. Îți poți șterge contul și datele lui din Setări, de pe orice dispozitiv sau de pe site. Poți șterge oricând și povești, comentarii și postări una câte una.
@@ -308,9 +308,9 @@ Plângeri. Dacă crezi că am greșit ceva, te rugăm să ne spui mai întâi no
 
 **Text complet**
 
-Nu folosim cookie-uri de urmărire și nu lăsăm pe nimeni altcineva să te urmărească prin Ghemotoc.
+Nu folosim cookie-uri de urmărire și nu lăsăm pe nimeni altcineva să te urmărească prin ghemotoc.
 
-Ce păstrăm pe dispozitivul tău. Doar ce îi trebuie Ghemotoc ca să funcționeze, pentru că ai cerut să-l folosești:
+Ce păstrăm pe dispozitivul tău. Doar ce îi trebuie ghemotoc ca să funcționeze, pentru că ai cerut să-l folosești:
 
 - conectarea ta, ca să rămâi conectat;
 - limba pe care ai ales-o;
@@ -320,7 +320,7 @@ Ce păstrăm pe dispozitivul tău. Doar ce îi trebuie Ghemotoc ca să funcțion
 
 Ce nu păstrăm. Fără cookie-uri de publicitate, fără cookie-uri de statistică și nimic care să te urmărească pe alte site-uri. Numărăm vizitatorii fără cookie-uri.
 
-Pentru că tot ce păstrăm este necesar ca Ghemotoc să funcționeze, legea nu ne cere să te întrebăm mai întâi. De aceea nu există un banner pentru cookie-uri.
+Pentru că tot ce păstrăm este necesar ca ghemotoc să funcționeze, legea nu ne cere să te întrebăm mai întâi. De aceea nu există un banner pentru cookie-uri.
 
 Muzică și video. Melodiile și videoclipurile de la alte servicii se încarcă doar când apeși play. Până atunci nu se încarcă nimic de la ele. Când apeși play, acel serviciu poate folosi propriile cookie-uri. Pentru YouTube folosim playerul cu confidențialitate sporită.
 

@@ -9,7 +9,8 @@
  * same as Settings › Profile); the kinds of stories they like (LikesSettingsSection); and links to
  * Settings (emails, occasional news, delete the account) and to log out.
  * Board H08 (the simplified design, CALM-9e): the heading, a meta line and the Settings sections'
- * cards. No doodles beside the text.
+ * cards. No doodles beside the text. The page is one column, so it sits in the narrow, centred
+ * 760 px PageContainer (flat themes bundle, part 2).
  * Who shows it: WaitlistGate. What it calls: useMyNames for the username; the sections call their
  * own hooks.
  */
@@ -107,7 +108,7 @@ function HoldingIntro({ joinedAt, nextLine }: { joinedAt: string; nextLine: stri
     year: 'numeric',
   }).format(new Date(joinedAt));
   return (
-    <div className="flex max-w-[720px] flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <h1 className="m-0 type-title break-words lg:type-display">
         {t('waitlist.holding.heading')}
       </h1>
@@ -140,11 +141,11 @@ export function WaitlistHoldingPage(props: WaitlistHoldingPageProps) {
   const { names } = useMyNames();
   const handle = names?.handle ?? null;
   return (
-    <PageContainer className="flex flex-col gap-8 pt-12 pb-6">
+    <PageContainer narrow className="flex flex-col gap-8 pt-12 pb-6">
       <title>{t('waitlist.holding.documentTitle')}</title>
       <HoldingIntro joinedAt={joinedAt} nextLine={nextLine} />
       <WaitlistProfileSteps interest={interest} handle={handle} />
-      <div className="flex max-w-[860px] flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <Link to="/settings" className="text-link underline">
           {t('waitlist.holding.settingsLink')}
         </Link>

@@ -6,7 +6,7 @@
 
 ## Pe scurt
 
-- Acesta este acordul dintre tine și compania care administrează Ghemotoc.
+- Acesta este acordul dintre tine și compania care administrează ghemotoc.
 - Trebuie să ai cel puțin 13 ani. Yoti îți verifică vârsta și noi primim doar rezultatul. Dacă ai sub 16 ani, e nevoie și de acordul unui părinte sau tutore.
 - Ce scrii rămâne al tău. Ne dai o permisiune restrânsă și gratuită să găzduim și să arătăm textele tale, care se încheie când le ștergi.
 - Un om citește fiecare raportare. Putem ascunde, limita sau tăia o parte ilegală, dar nu îți schimbăm niciodată cuvintele și îți spunem mereu de ce.
@@ -23,11 +23,11 @@
 
 **Text complet**
 
-Acești termeni sunt acordul dintre tine și [Numele companiei] [SRL sau AB] („noi”), compania care administrează Ghemotoc, „O aplicație The Magic Coffin”. Datele companiei sunt pe pagina Contact și datele companiei. Când îți creezi un cont, ești de acord cu acești termeni. Nota de confidențialitate și Regulile comunității merg împreună cu ei, așa că te rugăm să le citești și pe acelea.
+Acești termeni sunt acordul dintre tine și [Numele companiei] [SRL sau AB] („noi”), compania care administrează ghemotoc, „O aplicație The Magic Coffin”. Datele companiei sunt pe pagina Contact și datele companiei. Când îți creezi un cont, ești de acord cu acești termeni. Nota de confidențialitate și Regulile comunității merg împreună cu ei, așa că te rugăm să le citești și pe acelea.
 
 Trebuie să ai cel puțin 13 ani. Dacă ești mai mic, nu te poți înscrie. Nu păstrăm nimic din ce ai scris și poți încerca din nou când împlinești 13 ani.
 
-Anul nașterii. Când te înscrii, te întrebăm anul nașterii. Dacă doar anul nu ne arată dacă ai sub sau peste 13 ori 16 ani, te întrebăm și luna. Nu îți cerem niciodată data completă a nașterii. Nimeni altcineva de pe Ghemotoc nu îți poate vedea vârsta, anul nașterii sau rezultatul verificării vârstei.
+Anul nașterii. Când te înscrii, te întrebăm anul nașterii. Dacă doar anul nu ne arată dacă ai sub sau peste 13 ori 16 ani, te întrebăm și luna. Nu îți cerem niciodată data completă a nașterii. Nimeni altcineva de pe ghemotoc nu îți poate vedea vârsta, anul nașterii sau rezultatul verificării vârstei.
 
 Verificarea vârstei. După ce te înscrii, Yoti îți verifică vârsta. Tu alegi cum: un selfie rapid care îți estimează vârsta sau un act de identitate. Yoti ne spune doar rezultatul (de exemplu „13 ani sau peste” ori „18 ani sau peste”), cum s-a făcut verificarea și când. Nu primim niciodată fotografia sau actul. Dacă verificarea nu merge, poți încerca din nou, poți folosi un act de identitate sau poți cere o verificare făcută de un om. Până trece o verificare, contul tău poate doar să citească: poți citi și raporta, dar nu poți publica, comenta, posta sau trimite mesaje. Dacă nicio verificare nu trece în 14 zile de la înscriere și nu ai cerut o verificare făcută de un om, ștergem contul.
 
@@ -37,7 +37,7 @@ Dacă ai sub vârsta de acord din țara ta. Locul în care trăiești stabileșt
 
 Google, Apple sau Microsoft. Te poți înscrie și conecta cu aceste conturi. Anul nașterii, verificarea vârstei și, pentru cei sub 16 ani, pasul cu părintele sau tutorele rămân valabile, pentru că aceste servicii nu ne spun câți ani ai.
 
-Unde este deschis Ghemotoc. Ghemotoc se deschide țară cu țară. Când te înscrii ne spui țara în care locuiești (îți propunem țara pe care o arată conexiunea) și ți se aplică regulile ei: unele țări cer o vârstă mai mare pentru înscriere, iar în Australia trebuie să ai cel puțin 16 ani. „Țara ta” și „Vârste pe țări”, sub acești termeni, arată regulile. Dacă Ghemotoc nu este încă deschis în țara ta, nu te poți înscrie de acolo. [de verificat de avocat]
+Unde este deschis ghemotoc. ghemotoc se deschide țară cu țară. Când te înscrii ne spui țara în care locuiești (îți propunem țara pe care o arată conexiunea) și ți se aplică regulile ei: unele țări cer o vârstă mai mare pentru înscriere, iar în Australia trebuie să ai cel puțin 16 ani. „Țara ta” și „Vârste pe țări”, sub acești termeni, arată regulile. Dacă ghemotoc nu este încă deschis în țara ta, nu te poți înscrie de acolo. [de verificat de avocat]
 
 Profesori. Adulții cu rezultatul „18 ani sau peste” pot cere o insignă de Profesor confirmând o adresă de email a școlii sau trimițând o dovadă că predau. Echipa noastră o verifică și apoi șterge dovada. Insigna de Profesor îți permite să creezi spații de clasă. Nu este o verificare a trecutului unei persoane, iar profesorii respectă aceleași reguli despre mesaje ca toți ceilalți.
 
@@ -46,7 +46,7 @@ Profesori. Adulții cu rezultatul „18 ani sau peste” pot cere o insignă de 
 **Pe scurt** (ca pe planșă)
 
 - Păstrezi drepturile pentru tot ce scrii.
-- Ca să-ți arătăm textele cititorilor, îi dai lui Ghemotoc permisiunea să le găzduiască și să le afișeze. [Ce acoperă această permisiune: de redactat de un avocat român]
+- Ca să-ți arătăm textele cititorilor, îi dai lui ghemotoc permisiunea să le găzduiască și să le afișeze. [Ce acoperă această permisiune: de redactat de un avocat român]
 - Îți poți retrage din public sau șterge textele.
 
 *Rând scurt nou propus, acum că textul complet înlocuiește locul liber:*
@@ -55,18 +55,18 @@ Profesori. Adulții cu rezultatul „18 ani sau peste” pot cere o insignă de 
 
 **Text complet**
 
-Ce scrii este al tău. Faptul că publici pe Ghemotoc nu schimbă asta. Păstrezi drepturile de autor pentru poveștile, poeziile, eseurile, comentariile, postările și imaginile tale. Îți păstrezi și drepturile de autor morale, inclusiv dreptul de a fi numit cum alegi (cu pseudonimul sau cu numele de utilizator) și dreptul ca opera ta să rămână întreagă.
+Ce scrii este al tău. Faptul că publici pe ghemotoc nu schimbă asta. Păstrezi drepturile de autor pentru poveștile, poeziile, eseurile, comentariile, postările și imaginile tale. Îți păstrezi și drepturile de autor morale, inclusiv dreptul de a fi numit cum alegi (cu pseudonimul sau cu numele de utilizator) și dreptul ca opera ta să rămână întreagă.
 
-Permisiunea pe care ne-o dai. Ca să-ți arătăm textele cititorilor, avem nevoie de permisiunea ta. Această permisiune se numește licență. Când salvezi sau publici ceva pe Ghemotoc, îi dai companiei [Numele companiei] o licență în aceste condiții:
+Permisiunea pe care ne-o dai. Ca să-ți arătăm textele cititorilor, avem nevoie de permisiunea ta. Această permisiune se numește licență. Când salvezi sau publici ceva pe ghemotoc, îi dai companiei [Numele companiei] o licență în aceste condiții:
 
-- Ce ne permite: să păstrăm textele tale; să le copiem doar cât e nevoie pentru ca Ghemotoc să funcționeze (de exemplu în baza noastră de date, în copiile de siguranță și în memoria temporară de scurtă durată); și să le facem disponibile cititorilor pe care îi permit setările tale, pe site-ul și aplicația web Ghemotoc și, când vor exista, în aplicațiile Ghemotoc.
+- Ce ne permite: să păstrăm textele tale; să le copiem doar cât e nevoie pentru ca ghemotoc să funcționeze (de exemplu în baza noastră de date, în copiile de siguranță și în memoria temporară de scurtă durată); și să le facem disponibile cititorilor pe care îi permit setările tale, pe site-ul și aplicația web ghemotoc și, când vor exista, în aplicațiile ghemotoc.
 - Versiunile tehnice de care e nevoie pentru asta: redimensionarea imaginilor; potrivirea textului pe ecrane diferite; afișarea cardului poveștii (copertă, titlu, descriere și pseudonim) pe rafturi, în liste și în previzualizările linkurilor; permisiunea ca motoarele de căutare să vadă doar titlul, descrierea și numele scriitorului; și includerea textelor tale în fișierele de export pe care le ceri tu sau părintele ori tutorele tău.
-- Ce nu ne permite: să-ți vindem textele; să le publicăm tipărit sau ca ebook; să le traducem sau să le adaptăm; să le folosim în reclamele noastre în afara Ghemotoc; sau să le dăm altcuiva ca să le folosească în scopurile lui. Dacă vom vrea vreodată să facem oricare dintre aceste lucruri, te vom întreba mai întâi, separat și în scris.
+- Ce nu ne permite: să-ți vindem textele; să le publicăm tipărit sau ca ebook; să le traducem sau să le adaptăm; să le folosim în reclamele noastre în afara ghemotoc; sau să le dăm altcuiva ca să le folosească în scopurile lui. Dacă vom vrea vreodată să facem oricare dintre aceste lucruri, te vom întreba mai întâi, separat și în scris.
 - Nu este exclusivă: îți poți publica textele oriunde altundeva, în același timp, cu oricine.
-- În toată lumea: cititorii îți pot vedea textele în orice țară în care Ghemotoc este deschis.
+- În toată lumea: cititorii îți pot vedea textele în orice țară în care ghemotoc este deschis.
 - Gratuită: nu te plătim pentru licență și nici tu nu ne plătești.
-- Companiile care ne ajută: companiile care găzduiesc și administrează Ghemotoc pentru noi (enumerate în Nota de confidențialitate) pot folosi textele tale doar ca să facă această treabă pentru noi, iar tu ești de acord să le permitem asta. Nu le pot folosi pentru nimic altceva.
-- Cât durează: pentru fiecare text, până când îl ștergi sau până când este șters împreună cu contul tău. Atunci îl scoatem imediat de pe Ghemotoc. Copiile pot rămâne puțin timp în memoria temporară (până la [număr] zile) și în copiile de siguranță (până la [număr] zile) înainte să fie suprascrise. Păstrăm o copie mai mult timp doar când legea ne obligă sau când e nevoie de ea pentru o raportare deschisă, un proces sau un ordin al unei autorități, și doar cât durează acestea.
+- Companiile care ne ajută: companiile care găzduiesc și administrează ghemotoc pentru noi (enumerate în Nota de confidențialitate) pot folosi textele tale doar ca să facă această treabă pentru noi, iar tu ești de acord să le permitem asta. Nu le pot folosi pentru nimic altceva.
+- Cât durează: pentru fiecare text, până când îl ștergi sau până când este șters împreună cu contul tău. Atunci îl scoatem imediat de pe ghemotoc. Copiile pot rămâne puțin timp în memoria temporară (până la [număr] zile) și în copiile de siguranță (până la [număr] zile) înainte să fie suprascrise. Păstrăm o copie mai mult timp doar când legea ne obligă sau când e nevoie de ea pentru o raportare deschisă, un proces sau un ordin al unei autorități, și doar cât durează acestea.
 - IA: [DESCHIS: dacă cineva are voie să-ți folosească textele pentru a antrena inteligență artificială; vezi „Scrisul cu IA”]
 
 Retragerea din public și ștergerea. Îți poți edita, retrage din public sau șterge textele oricând. Dacă retragi o poveste din public, cititorii nu o mai pot vedea, dar o păstrăm în siguranță pentru tine ca ciornă până o ștergi. Dacă îți ștergi contul, poveștile, capitolele și comentariile tale sunt șterse odată cu el.
@@ -75,7 +75,7 @@ Postările de pe forum sunt altfel. Când îți ștergi contul, postările de pe
 
 Copia ta. Îți poți descărca oricând poveștile ca fișiere Word din Setări.
 
-Cititul în browser. Până când vor exista aplicațiile Ghemotoc, cititorii conectați pot citi capitole întregi în browser. Oprim clicul dreapta și copierea pe textul capitolelor. Asta face copierea mai grea, dar nu o poate opri: capturile de ecran funcționează în continuare. Când vor apărea aplicațiile, vei putea alege și ca o poveste să poată fi citită doar în aplicație.
+Cititul în browser. Până când vor exista aplicațiile ghemotoc, cititorii conectați pot citi capitole întregi în browser. Oprim clicul dreapta și copierea pe textul capitolelor. Asta face copierea mai grea, dar nu o poate opri: capturile de ecran funcționează în continuare. Când vor apărea aplicațiile, vei putea alege și ca o poveste să poată fi citită doar în aplicație.
 
 Nu îți schimbăm niciodată cuvintele. Ce poate și ce nu poate face echipa noastră cu o poveste este explicat în „Cum funcționează moderarea”.
 
@@ -89,7 +89,7 @@ Nu îți schimbăm niciodată cuvintele. Ce poate și ce nu poate face echipa no
 
 **Text complet**
 
-Răspunzi pentru tot ce publici, postezi, comentezi, încarci sau trimiți pe Ghemotoc.
+Răspunzi pentru tot ce publici, postezi, comentezi, încarci sau trimiți pe ghemotoc.
 
 - Publică doar texte scrise de tine sau texte pe care ai dreptul să le împarți. Dacă împarți textul altcuiva, ai nevoie de permisiunea lui sau opera trebuie să fie în domeniul public (și ar trebui să spui asta).
 - Încarcă doar imagini făcute de tine sau pe care ai voie să le folosești. Când adaugi o imagine, confirmi că ai acest drept. Fiecare imagine are nevoie de un text alternativ: o descriere scurtă pentru cei care nu o pot vedea.
@@ -99,7 +99,7 @@ Răspunzi pentru tot ce publici, postezi, comentezi, încarci sau trimiți pe Gh
 - Nu publica nimic ilegal, nimic care încalcă drepturile altcuiva sau nimic din ce nu permit Regulile comunității.
 - Nu te da drept altcineva, nici drept cineva din echipa noastră.
 - Nu trimite spam și nu încerca să păcălești oamenii.
-- Nu încerca să ocolești verificările vârstei, funcțiile de siguranță sau limitele noastre și nu folosi boți sau programe care copiază ce e pe Ghemotoc.
+- Nu încerca să ocolești verificările vârstei, funcțiile de siguranță sau limitele noastre și nu folosi boți sau programe care copiază ce e pe ghemotoc.
 
 Dacă cineva ne spune că ceva publicat de tine încalcă legea sau drepturile lui, ne uităm la asta cum explicăm în „Cum funcționează moderarea” și în Politica noastră de notificare și acțiune. Ne poți spune oricând partea ta.
 
@@ -115,7 +115,7 @@ Dacă cineva ne spune că ceva publicat de tine încalcă legea sau drepturile l
 
 **Text complet**
 
-Propria noastră echipă moderează Ghemotoc, în română și engleză. Nu folosim companii externe de moderare.
+Propria noastră echipă moderează ghemotoc, în română și engleză. Nu folosim companii externe de moderare.
 
 Raportări. Oricine poate raporta o poveste, un capitol, un comentariu, un profil, un spațiu, o discuție, o postare, o imagine sau un mesaj, cu sau fără cont. Un om din echipa noastră citește fiecare raportare. Nu îți scanăm automat textele și nu oprim nimic înainte să fie publicat: acționăm pe baza raportărilor. Raportările cele mai grave, cum ar fi orice pune un copil în pericol, sunt tratate primele. Cum funcționează raportările și ce cuprinde o raportare bună sunt explicate în Politica noastră de notificare și acțiune.
 
@@ -155,7 +155,7 @@ Ordine ale autorităților. Dacă o autoritate ne trimite un ordin de eliminare 
 
 **Text complet**
 
-Descoperă este pagina principală a Ghemotoc. Amestecă mai multe rafturi, de exemplu Populare, Noi, Terminate și Noi în ascensiune, ca scriitorii noi să fie văzuți la fel ca cei populari.
+Descoperă este pagina principală a ghemotoc. Amestecă mai multe rafturi, de exemplu Populare, Noi, Terminate și Noi în ascensiune, ca scriitorii noi să fie văzuți la fel ca cei populari.
 
 Populare. Locul unei povești în listele Populare vine din ce fac cititorii cu ea: citiri, aprecieri, comentarii, distribuiri și câți cititori îi termină capitolele. Activitatea recentă contează mai mult decât cea veche. Voturile negative private nu sunt folosite niciodată la ordonare.
 
@@ -186,7 +186,7 @@ Sponsori. Elementele de la sponsorii noștri sunt mereu marcate „Sponsorizat�
 
 **Text complet**
 
-Reclamele și sponsorii ne ajută să ținem Ghemotoc în funcțiune. Iată cum funcționează.
+Reclamele și sponsorii ne ajută să ținem ghemotoc în funcțiune. Iată cum funcționează.
 
 Două etichete. Reclamele de la rețelele de publicitate sunt marcate „Reclamă” („Ad” în engleză). Elementele de la sponsorii noștri, de exemplu o librărie sau o instituție publică, sunt marcate „Sponsorizat” („Sponsored”) și numesc sponsorul.
 
@@ -219,13 +219,13 @@ Dacă o poveste nu e etichetată sincer. Cititorii pot raporta o poveste despre 
 
 [DESCHIS: regulile pentru textele scrise în mare parte sau în întregime de IA. De decis de fondator, apoi de redactat de un avocat român.]
 
-[DESCHIS: dacă noi sau altcineva avem voie să folosim textele de pe Ghemotoc pentru a antrena IA și cum pot scriitorii să spună nu. De decis de fondator, apoi de redactat de un avocat român.]
+[DESCHIS: dacă noi sau altcineva avem voie să folosim textele de pe ghemotoc pentru a antrena IA și cum pot scriitorii să spună nu. De decis de fondator, apoi de redactat de un avocat român.]
 
 ## 8. Când se schimbă acești termeni
 
 **Pe scurt** (ca pe planșă)
 
-- Dacă facem o schimbare importantă, îți spunem pe Ghemotoc.
+- Dacă facem o schimbare importantă, îți spunem pe ghemotoc.
 - Accepți noua versiune înainte să poți publica din nou.
 - Versiunile mai vechi rămân pe această pagină.
 
@@ -233,7 +233,7 @@ Dacă o poveste nu e etichetată sincer. Cititorii pot raporta o poveste despre 
 
 S-ar putea să trebuiască să schimbăm acești termeni, de exemplu când se schimbă legea sau când adăugăm o funcție nouă.
 
-Schimbări importante. Dacă facem o schimbare importantă, îți spunem pe Ghemotoc, îți spunem ce s-a schimbat și de ce și îți dăm un preaviz de [număr] zile înainte să se aplice [avocatul confirmă perioada de preaviz]. Poți citi oricând în continuare, dar accepți noua versiune înainte să poți publica din nou. Dacă nu vrei să o accepți, îți poți descărca datele și îți poți șterge contul.
+Schimbări importante. Dacă facem o schimbare importantă, îți spunem pe ghemotoc, îți spunem ce s-a schimbat și de ce și îți dăm un preaviz de [număr] zile înainte să se aplice [avocatul confirmă perioada de preaviz]. Poți citi oricând în continuare, dar accepți noua versiune înainte să poți publica din nou. Dacă nu vrei să o accepți, îți poți descărca datele și îți poți șterge contul.
 
 Schimbări mici. Dacă doar corectăm o greșeală de scriere sau facem formularea mai clară fără să schimbăm înțelesul, publicăm noua versiune cu data ei.
 
@@ -261,29 +261,29 @@ Numele de utilizator și pseudonimul. Îți alegi un nume de utilizator și poț
 
 Plecarea. Îți poți șterge contul oricând din Setări, de pe orice dispozitiv sau de pe site. Îl oprim imediat și îl ștergem definitiv după 14 zile, dacă nu te răzgândești înainte. Poveștile, capitolele și comentariile tale sunt șterse odată cu el. Postările tale de pe forum rămân și apar sub „Utilizator șters”. Înainte să pleci, îți poți descărca datele și poveștile.
 
-Conturi pe care nu le folosește nimeni. Dacă nimeni nu folosește un cont timp de 5 ani, îl închidem și apoi îl ștergem, după e-mailurile descrise în Nota de informare privind datele personale. Ca munca ta să nu se piardă, păstrăm poveștile, capitolele și Atlasul lor (nu și imaginile) într-o arhivă privată încă 5 ani. Nimeni nu citește arhiva, nici echipa noastră, și nimic din ea nu se publică. Ca să primești poveștile înapoi, deschide un cont nou cu aceeași adresă de email, confirm-o și spune anul nașterii și pseudonimul, numele de utilizator sau titlul unei povești din contul vechi; poveștile revin ca ciorne private. După 5 ani arhiva este ștearsă. Este ștearsă și dacă firma își încetează activitatea și Ghemotoc se închide. Dacă îți ștergi singur contul, nimic nu se arhivează. [de verificat de avocat]
+Conturi pe care nu le folosește nimeni. Dacă nimeni nu folosește un cont timp de 5 ani, îl închidem și apoi îl ștergem, după e-mailurile descrise în Nota de informare privind datele personale. Ca munca ta să nu se piardă, păstrăm poveștile, capitolele și Atlasul lor (nu și imaginile) într-o arhivă privată încă 5 ani. Nimeni nu citește arhiva, nici echipa noastră, și nimic din ea nu se publică. Ca să primești poveștile înapoi, deschide un cont nou cu aceeași adresă de email, confirm-o și spune anul nașterii și pseudonimul, numele de utilizator sau titlul unei povești din contul vechi; poveștile revin ca ciorne private. După 5 ani arhiva este ștearsă. Este ștearsă și dacă firma își încetează activitatea și ghemotoc se închide. Dacă îți ștergi singur contul, nimic nu se arhivează. [de verificat de avocat]
 
 Dacă îți suspendăm sau închidem contul. Putem suspenda sau închide un cont care încalcă grav sau în mod repetat acești termeni, Regulile comunității sau legea. Îți spunem de ce și cum poți contesta. Cât timp contul tău este suspendat, te poți conecta în continuare, poți citi și îți poți descărca datele, dar nu poți posta, comenta sau trimite mesaje. Dacă îți închidem contul, nu te poți înscrie din nou cu aceeași adresă de email.
 
 Închis definitiv. Dacă îți închidem contul pentru că ai încălcat regulile, rămâne închis. Nu ai voie să îți faci alt cont sau să folosești contul altcuiva. Blocăm adresa de email pe care ai folosit-o și putem închide orice cont nou despre care credem în mod rezonabil că este al tău. Îți spunem mereu de ce și cum poți contesta. [de verificat de avocat]
 
-Dacă închidem Ghemotoc. Dacă va trebui vreodată să oprim Ghemotoc, îți vom spune cu cel puțin [număr] zile înainte, ca să-ți poți descărca datele și poveștile.
+Dacă închidem ghemotoc. Dacă va trebui vreodată să oprim ghemotoc, îți vom spune cu cel puțin [număr] zile înainte, ca să-ți poți descărca datele și poveștile.
 
 ## 10. Răspunderea noastră, reclamațiile și legea
 
 **Pe scurt** (propus)
 
-- Muncim din greu să ținem Ghemotoc sigur și funcțional, dar nu putem promite că nu se va strica niciodată.
+- Muncim din greu să ținem ghemotoc sigur și funcțional, dar nu putem promite că nu se va strica niciodată.
 - Răspundem pentru răul pe care îl provocăm, cum spune legea.
 - Dacă ceva nu merge bine, spune-ne mai întâi nouă. Poți merge și la o instanță sau la o autoritate.
 
 **Text complet**
 
-Ce promitem. Muncim să ținem Ghemotoc sigur, privat și funcțional și să respectăm acești termeni. Nu putem promite că Ghemotoc va fi mereu disponibil sau fără greșeli și putem schimba sau scoate funcții. Dacă scoatem o funcție pe care te bazezi, îți spunem din timp.
+Ce promitem. Muncim să ținem ghemotoc sigur, privat și funcțional și să respectăm acești termeni. Nu putem promite că ghemotoc va fi mereu disponibil sau fără greșeli și putem schimba sau scoate funcții. Dacă scoatem o funcție pe care te bazezi, îți spunem din timp.
 
 Pentru ce răspundem. Răspundem pentru răul pe care îl provocăm încălcând acești termeni sau legea, cum spune legea. Nimic din acești termeni nu ne limitează răspunderea acolo unde legea nu permite asta, de exemplu pentru răul pe care îl provocăm intenționat sau din neglijență gravă, și nici drepturile tale de consumator. Nu răspundem pentru ce publică alți oameni, dar acționăm pe baza raportărilor cum explică acești termeni.
 
-Alte servicii. Unele lucruri de pe Ghemotoc vin de la alte servicii, cum ar fi muzica și videoclipurile pe care alegi să le pornești sau conectarea cu Google, Apple ori Microsoft. Când le folosești, se aplică propriii lor termeni și propriile lor reguli de vârstă.
+Alte servicii. Unele lucruri de pe ghemotoc vin de la alte servicii, cum ar fi muzica și videoclipurile pe care alegi să le pornești sau conectarea cu Google, Apple ori Microsoft. Când le folosești, se aplică propriii lor termeni și propriile lor reguli de vârstă.
 
 Reclamații. Dacă ceva nu merge bine, te rugăm să ne spui mai întâi prin Contactează-ne din Setări sau la hello@themagiccoffin.com. Răspundem în română sau engleză. Pentru deciziile despre conținut sau conturi poți folosi și căile de contestare din Politica noastră de notificare și acțiune. Dacă nu ești mulțumit de cum am tratat o reclamație, poți contacta [autoritatea pentru protecția consumatorilor] sau ANCOM, care supraveghează platformele online în România.
 

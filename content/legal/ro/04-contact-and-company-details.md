@@ -22,7 +22,7 @@
 
 **Text complet**
 
-Acesta este punctul nostru de contact pentru toți cei care folosesc Ghemotoc.
+Acesta este punctul nostru de contact pentru toți cei care folosesc ghemotoc.
 
 Întrebări, probleme sau reclamații: scrie la hello@themagiccoffin.com. Nu ai nevoie de cont.
 
@@ -119,7 +119,7 @@ Aceste secțiuni acoperă puncte pentru care planșa nu are loc. Adăugați-le p
 
 **Text complet**
 
-Ghemotoc este administrat de:
+ghemotoc este administrat de:
 
 - Numele companiei: [Numele companiei] [SRL sau AB]
 - Sediul social: [sediul social]
@@ -131,4 +131,4 @@ Ghemotoc este administrat de:
 - Telefon: [telefonul companiei]
 - Autoritatea de supraveghere pentru serviciile noastre online în România: [Autoritatea pentru Digitalizarea României, conform Legii 365/2002; de confirmat de avocat]
 
-Ghemotoc este „O aplicație de la The Magic Coffin”.
+ghemotoc este „O aplicație de la The Magic Coffin”.

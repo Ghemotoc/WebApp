@@ -237,7 +237,7 @@ export function RelationshipMap({
       />
       {onMap.length === 0 && <p className="m-0 text-ink-muted">{t('connections.map.none')}</p>}
       {/* Step 2: the map scrolls inside its own region; the region can be focused and scrolled
-          by keyboard (DoD: a sideways list without arrows keeps its scrollbar). */}
+          by keyboard, with no scrollbar showing (Robert, 23 Nov 2026: no scrollbars in any widget). */}
       <div
         ref={regionRef}
         role="region"

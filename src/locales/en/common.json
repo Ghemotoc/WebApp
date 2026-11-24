@@ -81,6 +81,7 @@
     "device": "Device",
     "light": "Light",
     "night": "Night",
+    "dayMode": "Day mode",
     "nightMode": "Night mode"
   },
   "language": {
