@@ -87,13 +87,13 @@ test.describe('in-app notifications (S1-E7-01)', () => {
   test.beforeAll(seedNotifications);
   test.afterAll(cleanUp);
 
-  test('in night mode the bell shows one white dot and no number; the count is in its name', async ({
+  test('in night mode the bell shows a small count in white; the full count is in its name', async ({
     browser,
   }) => {
-    // The simplified design (bundle CALM-2; TopBar/README.md): something new shows one 8 px dot
-    // in the thread colour, never a number badge. At night the thread is soft white (#e8e8ea,
-    // NIGHT-2), over 15:1 on the flat night page; the link's name ("Notifications, 3 new") carries the count, so the dot is
-    // aria-hidden and never the only cue.
+    // Design books item 16 (Robert's pick, 24 Nov 2026): something new shows a small count, 1 to 9
+    // then 9+, in place of the CALM-2 dot. At night the count badge is white (#f5f5f5) with
+    // near-black text; the link's name ("Notifications, 3 new") carries the full count, so the
+    // badge is aria-hidden and never the only cue.
     const page = await openSignedIn(browser);
     await page
       .context()
@@ -101,10 +101,13 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     await page.goto('/discover');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
     const bell = page.getByRole('link', { name: /^Notifications, \d+ new$/ });
-    const dot = bell.locator('[data-new-dot]');
-    await expect(dot).toHaveCSS('background-color', 'rgb(232, 232, 234)');
-    await expect(dot).toHaveCSS('width', '8px');
-    await expect(bell).not.toContainText(/\d/);
+    const name = (await bell.getAttribute('aria-label')) ?? '';
+    const count = Number(/(\d+) new/.exec(name)?.[1] ?? '0');
+    const badge = bell.locator('[data-count-badge]');
+    await expect(badge).toHaveText(count > 9 ? '9+' : String(count));
+    await expect(badge).toHaveAttribute('aria-hidden', 'true');
+    await expect(badge).toHaveCSS('background-color', 'rgb(245, 245, 245)');
+    await expect(badge).toHaveCSS('color', 'rgb(14, 14, 16)');
     await page.context().close();
   });
 

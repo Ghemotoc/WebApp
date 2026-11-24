@@ -23,9 +23,9 @@
  * MaintenanceGate swaps the notices and the page for the maintenance page while maintenance mode is
  * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
  * for error reports, as a pattern such as "/join/:code", never the address itself.
- * Notifications (S1-E7-01): the bell sits after "Write" and Messages while signed in, with one dot
- * when something is new and the count in its name (bundle CALM-2: search, Write, Messages, bell,
- * avatar).
+ * Notifications (S1-E7-01): the bell sits after "Write" and Messages while signed in, with a small
+ * count (1 to 9, then 9+) when something is new and the full count in its name (bundle CALM-2:
+ * search, Write, Messages, bell, avatar; the count replaced the dot in design books item 16).
  * Investor numbers (S1-E15-04): ActiveMinutesCounter says "here" once a minute while someone is
  * signed in, for the day's totals; it draws nothing.
  * Pictures (S1-E10-05): usePendingPictureRetry asks once per signed-in visit for the check of any
@@ -106,7 +106,7 @@ function WideHeader({ hasSearch }: { hasSearch: boolean }) {
           <WriteLink />
           {/* Messages as an icon button, as on phones, while signed in (S1-E9-01; CALM-2). */}
           <MessagesHeaderLink />
-          {/* The bell, with a dot when something is new, while signed in (S1-E7-01). */}
+          {/* The bell, with a small count when something is new, while signed in (S1-E7-01). */}
           <NotificationBell />
           {/* "Get in" while signed out (S1-E2-01, GETIN-1); the account bead after. */}
           <AccountLinks />
