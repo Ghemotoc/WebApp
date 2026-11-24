@@ -37,6 +37,7 @@ import { PlusIcon } from './ManageChaptersIcons';
 import { MoveChapterDialog } from './MoveChapterDialog';
 import { NewChapterButton } from './NewChapterButton';
 import { RecentlyDeletedChapters } from './RecentlyDeletedChapters';
+import { atlasEntryAddress } from '@/features/atlas/lib/atlasSections';
 
 /** A move waiting for the writer's answer, with what the question says. */
 interface PendingMove {
@@ -75,7 +76,7 @@ function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: 
         <Link to={`/write/s/${slug}/settings`} className={headerLinkClass}>
           {t('storyCard.settings')}
         </Link>
-        <Link to={`/plan/s/${slug}`} className={headerLinkClass}>
+        <Link to={atlasEntryAddress(slug)} className={headerLinkClass}>
           {t('manageChapters.chapterBoard')}
         </Link>
         <NewChapterButton

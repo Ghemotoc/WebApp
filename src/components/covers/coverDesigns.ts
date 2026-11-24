@@ -3,7 +3,9 @@
  * artwork (story S1-E3-01; decided 16 Oct 2026: "Drawn covers use the 16 approved backgrounds:
  * 9 plain colours and 7 patterns", recolourable within the palette). Bundle G9 WRITING, part c,
  * adds the liquid glass New story board's three new patterns, Arches, Rings and Forest waves,
- * after the first 16, which stay as they were.
+ * after the first 16, which stay as they were. The brand page's covers (Robert, 23 Nov 2026,
+ * 20:26 UTC; design books covers part 2) add three more, Blush dots, Sky lines and Gold grid,
+ * drawn in the writer's accent colour (Robert's decision card, 24 Nov 2026).
  *
  * Where the values come from: design/boards/NewStory.dc.html (4.2), its `designs`, `pal` and
  * `art` lists, copied, not guessed. The artwork is drawn on a 100 × 160 (5:8) canvas, sliced to the 2:3 cover (CALM-4), so tiles,
@@ -36,7 +38,7 @@ export type CoverColourKey = keyof typeof coverPalette;
 /** The palette keys in the order the swatches show them (the board's order). */
 export const coverColourKeys = Object.keys(coverPalette) as CoverColourKey[];
 
-/** The 19 design keys: 9 plain, the 7 first patterns, then the 3 added in G9c. */
+/** The 22 design keys: 9 plain, the 7 first patterns, the 3 added in G9c, then the brand page's 3. */
 export const coverDesignKeys = [
   'plum',
   'ink',
@@ -57,6 +59,9 @@ export const coverDesignKeys = [
   'arches',
   'rings',
   'forestwaves',
+  'blushdots',
+  'skylines',
+  'goldgrid',
 ] as const;
 
 /** One of the design keys. */
@@ -74,7 +79,10 @@ export type CoverDesignKind =
   | 'twotone'
   | 'arches'
   | 'rings'
-  | 'forestwaves';
+  | 'forestwaves'
+  | 'blushdots'
+  | 'skylines'
+  | 'goldgrid';
 
 /** What the app knows about one design. */
 export interface CoverDesign {
@@ -83,11 +91,14 @@ export interface CoverDesign {
   /** The default background and accent the board gives it. */
   background: CoverColourKey;
   accent: CoverColourKey;
-  /** True for the designs the G9c board marks "New", so the picker can say so. */
+  /**
+   * True for the designs added after the first 16 (G9c's three and the brand page's three), so the
+   * picker can say so; automatic covers never pick them, so existing covers keep their look.
+   */
   isNew?: boolean;
 }
 
-/** The 19 designs with their board defaults. */
+/** The 22 designs with their board defaults. */
 export const coverDesigns: readonly CoverDesign[] = [
   { key: 'plum', kind: 'plain', background: 'plum', accent: 'gold' },
   { key: 'ink', kind: 'plain', background: 'ink', accent: 'gold' },
@@ -112,6 +123,13 @@ export const coverDesigns: readonly CoverDesign[] = [
   { key: 'arches', kind: 'arches', background: 'ink', accent: 'violet', isNew: true },
   { key: 'rings', kind: 'rings', background: 'violet', accent: 'lilac', isNew: true },
   { key: 'forestwaves', kind: 'forestwaves', background: 'sage', accent: 'ink', isNew: true },
+  // The brand page (23 Nov 2026) draws these tonal, a darker shade of the background (#EBBCC8,
+  // #C0D4E6, #D4AE35), which is outside the palette and would be the same key as the
+  // background. Robert chose the writer's accent colour for patterns (24 Nov 2026), so each
+  // takes a palette accent that reads on its background (docs/board-fixes.md).
+  { key: 'blushdots', kind: 'blushdots', background: 'blush', accent: 'plum', isNew: true },
+  { key: 'skylines', kind: 'skylines', background: 'sky', accent: 'violet', isNew: true },
+  { key: 'goldgrid', kind: 'goldgrid', background: 'gold', accent: 'paper', isNew: true },
 ];
 
 /**
@@ -143,7 +161,7 @@ export interface DrawnCoverChoice {
 /**
  * Finds a design by key.
  *
- * @param key - one of the 19 keys
+ * @param key - one of the 22 keys
  * @returns the design
  * Errors: throws when the key is unknown, which only a bug can cause (the schema and the database
  *   both check the key).
@@ -359,6 +377,33 @@ function forestWavesArtwork(): CoverArtwork {
   return { fillPath: '', strokePath: path, strokeWidth: 6 };
 }
 
+/**
+ * Blush dots (brand page, 23 Nov 2026): big dots on a straight grid, one per 16 × 17 cell, as the
+ * page's radial gradient at 16% by 10.67% with a 22% dot draws them.
+ */
+function blushDotsArtwork(): CoverArtwork {
+  let path = '';
+  for (let y = 8.5; y < 164; y += 17) {
+    for (let x = 8; x < 104; x += 16) path += dot(x, y, 3.6);
+  }
+  return { fillPath: path, strokePath: '', strokeWidth: 0 };
+}
+
+/** Sky lines (brand page): flat horizontal lines every 11.2 units, 3.2 units thick (2% of 7%). */
+function skyLinesArtwork(): CoverArtwork {
+  let path = '';
+  for (let y = 1.6; y < 162; y += 11.2) path += `M0 ${round(y)}H100`;
+  return { fillPath: '', strokePath: path, strokeWidth: 3.2 };
+}
+
+/** Gold grid (brand page): a bold grid, 5 cells across and 7.5 down, lines 2 units thick. */
+function goldGridArtwork(): CoverArtwork {
+  let path = '';
+  for (let x = 1; x < 100; x += 20) path += `M${x} 0V160`;
+  for (let y = 1; y < 160; y += 21.33) path += `M0 ${round(y)}H100`;
+  return { fillPath: '', strokePath: path, strokeWidth: 2 };
+}
+
 /** No artwork at all: plain covers draw only their colour and the accent bar. */
 const noArtwork: CoverArtwork = { fillPath: '', strokePath: '', strokeWidth: 0 };
 
@@ -375,6 +420,9 @@ const artworkByKind: Record<CoverDesignKind, CoverArtwork> = {
   arches: archesArtwork(),
   rings: ringsArtwork(),
   forestwaves: forestWavesArtwork(),
+  blushdots: blushDotsArtwork(),
+  skylines: skyLinesArtwork(),
+  goldgrid: goldGridArtwork(),
 };
 
 /**
@@ -391,7 +439,8 @@ export function coverArtwork(kind: CoverDesignKind): CoverArtwork {
  * Where the title sits on a design: on the background itself (plain designs only), or on a solid
  * box that hides the pattern behind the words. Busy patterns (dots and waves) use a paper box, as
  * the board draws them; two-tone uses its accent band's colour; the other patterns (stripes,
- * grid, starry, sparkles, and G9c's arches, rings and forest waves) use the background colour.
+ * grid, starry, sparkles, G9c's arches, rings and forest waves, and the brand page's blush dots,
+ * sky lines and gold grid) use the background colour.
  * Why every pattern has a box (bundle FIXES-1b; Robert, 5 Nov 2026): on the grid design the lines
  * ran straight through the title, and when they were the title's colour the title couldn't be
  * read; on two-tone a long title grew above the band onto a background it wasn't coloured for.

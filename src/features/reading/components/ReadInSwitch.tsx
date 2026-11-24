@@ -9,7 +9,8 @@
  * in that language.
  * Robert's rule (16 Nov 2026, 12:23 UTC): it shows only when a story has more than one language.
  * For a story in one language the database sends no editions and this draws nothing.
- * The choice is remembered for the story in this browser (lib/rememberedEdition.ts).
+ * The choice is remembered for the story in this browser (lib/rememberedEdition.ts) and, for a
+ * signed-in reader, in the account, so every device opens the same language (design books item 17).
  * Accessibility: the pill is a button with aria-expanded; the list is a navigation of real links
  * (each opens a page), the current one marked with aria-current; Escape closes it and puts the
  * focus back on the pill; 44 px rows.
@@ -21,6 +22,7 @@ import { Link } from 'react-router';
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { ChevronDownIcon } from '@/components/icons/ChevronDownIcon';
 import { languageOwnName } from '@/lib/language-names';
+import { useRememberedPlace } from '@/lib/remembered/useRememberedPlace';
 
 import type { StoryEdition } from '../api/editions';
 import { saveRememberedEdition } from '../lib/rememberedEdition';
@@ -113,6 +115,23 @@ function useCloseFromOutside(isOpen: boolean, close: (refocus: boolean) => void)
 }
 
 /**
+ * Keeps the language a reader picks for a story: in this browser (lib/rememberedEdition.ts) and,
+ * signed in, in the account so every device opens it (design books item 17).
+ *
+ * @param editions - the story's editions; the first one's address names the story
+ * @returns remember(languageCode)
+ */
+function useRememberLanguage(editions: StoryEdition[]): (languageCode: string) => void {
+  const firstEditionSlug = editions[0]?.slug ?? null;
+  const { remember } = useRememberedPlace('story_edition', firstEditionSlug);
+  return (languageCode: string) => {
+    if (firstEditionSlug === null) return;
+    saveRememberedEdition(firstEditionSlug, languageCode);
+    remember({ languageCode });
+  };
+}
+
+/**
  * Renders the switch.
  *
  * @returns the pill and its list, or nothing for a story in one language
@@ -129,16 +148,16 @@ export function ReadInSwitch({ editions, chapterNumber }: ReadInSwitchProps) {
     if (refocus) buttonRef.current?.focus();
   });
 
+  const rememberLanguage = useRememberLanguage(editions);
+
   // Robert, 16 Nov 2026: no switch for a story in one language.
   if (editions.length < 2) return null;
   const current = editions.find((edition) => edition.isCurrent) ?? editions[0];
-  // The first edition's address names the story for the remembered choice.
-  const firstEditionSlug = editions[0]?.slug ?? '';
   if (current === undefined) return null;
 
   /** Remembers the language picked for this story, then lets the link open it. */
   function pick(edition: StoryEdition) {
-    saveRememberedEdition(firstEditionSlug, edition.languageCode);
+    rememberLanguage(edition.languageCode);
     setIsOpen(false);
   }
 
