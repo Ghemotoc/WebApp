@@ -33,6 +33,7 @@ import { Link } from 'react-router';
 
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Notice } from '@/components/ui/Notice';
+import { PlaceholderShelf } from '@/components/ui/PlaceholderShelf';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
@@ -143,9 +144,9 @@ function FirstShelfAd({ word }: { word: string }) {
 }
 
 /**
- * The shelves, once the first one says there is something to show.
+ * The shelves, once the first one says there is something to show; grey cover shapes before.
  *
- * @returns the shelves, the empty state or the error
+ * @returns the shelves, the waiting rows, the empty state or the error
  */
 function DiscoverShelves() {
   const { t } = useDiscoveryTranslation();
@@ -158,7 +159,15 @@ function DiscoverShelves() {
     languageCode: everyLanguage,
   });
   if (loadFailed) return <Notice tone="error">{t('discover.loadFailed')}</Notice>;
-  if (shelf === null) return null;
+  // While the first read runs, two rows of grey cover shapes after 300 ms (design books item 15).
+  if (shelf === null) {
+    return (
+      <div className="flex flex-col gap-12">
+        <PlaceholderShelf />
+        <PlaceholderShelf />
+      </div>
+    );
+  }
   if (shelf.total === 0) {
     return (
       <EmptyState

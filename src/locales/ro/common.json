@@ -292,5 +292,8 @@
     "change": "Schimbă",
     "changeStep": "Schimbă {{step}}",
     "done": ", gata"
+  },
+  "loading": {
+    "shelf": "Se încarcă poveștile…"
   }
 }

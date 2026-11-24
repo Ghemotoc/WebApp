@@ -292,5 +292,8 @@
     "change": "Change",
     "changeStep": "Change {{step}}",
     "done": ", done"
+  },
+  "loading": {
+    "shelf": "Loading the stories…"
   }
 }
