@@ -124,6 +124,12 @@
     "readNext": "Următorul: capitolul {{number}}",
     "latestChapter": "Acesta e cel mai nou capitol de până acum.",
     "endOfStory": "Acesta e sfârșitul poveștii.",
+    "completedChapters_one": "Încheiată · {{count}} capitol",
+    "completedChapters_few": "Încheiată · {{count}} capitole",
+    "completedChapters_other": "Încheiată · {{count}} de capitole",
+    "moreBy": "Mai multe de {{name}}",
+    "whatNext": "Ce urmează",
+    "storyComplete": "{{story}} e încheiată. Trece la Terminate în Bibliotecă, iar cititorii care o urmăresc primesc o ultimă notificare.",
     "nextChapterDay": "Următorul capitol {{day}}",
     "lastChapterDay": "Ultimul capitol {{day}}",
     "chapterDay": {

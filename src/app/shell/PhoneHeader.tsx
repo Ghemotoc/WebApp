@@ -2,7 +2,7 @@
  * PhoneHeader: header B, the narrow-screen header on every page where a person browses
  * (bundle G4 SHELL; handoff "App header and tab bar": "Header B (every other screen): logo pill on
  * the left; on the right a pill with bell, chats and avatar (44px each, dot when something is
- * new)"; canvas Discover board).
+ * new)"; canvas Discover board). Since design books item 16 the dot is a small count, 1 to 9 then 9+.
  *
  * Below 1024 px AppLayout draws this instead of the website top bar, together with the floating
  * TabBar at the bottom. The logo pill is the link home (the Writers' hub when signed in, G9a); the right-hand pill holds the chats

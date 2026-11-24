@@ -42,7 +42,7 @@ few minutes.
 3. Every 5 minutes, from at least two regions, and alert only after two failures in a row, so one
    slow answer doesn't wake anyone.
 4. Alerts go to the on-call phone (the rota in Staff › On-call, S1-E10-09) and to
-   `hello@themagiccoffin.com`'s team inbox. The report form checks are the urgent ones: a removal
+   `hello@ghemotoc.tech`'s team inbox. The report form checks are the urgent ones: a removal
    order has a one-hour clock (TCO Regulation art. 3(3)).
 5. After setting it up, break one check on purpose (point it at `/s/no-such-story`) and confirm
    the alert arrives, then put it back. Note the date in the table below.
