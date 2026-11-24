@@ -3050,3 +3050,8 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 
 - `/write/new` is five steps, one open at a time: `NewStoryPage` → `useNewStorySteps` (which section each step holds) → `StepWizard` (`src/components/ui/`, shared with later long forms such as the waitlist, H08). "Next" checks only the open step's answers (`checkFields()` in `useNewStoryForm`); Create checks them all and opens the first step with a mistake.
 - "Set in" (up to five countries) is its own column, `stories.set_in_countries`, saved by `set_my_story_set_in_countries()` after `create_story()` (`saveNewStoryExtras()`) and from story settings (`updateMyStory()`). The migration `…_calm9_d02_set_in_countries.sql` moved existing "set in <country>" tags into it.
+
+## Show what is inside (design books item 16)
+
+- **New chapter in the Library:** `my_library()` adds `has_new_chapter` to each shelf place (true when the story's `last_chapter_published_at` is after the place's `saved_at`; migration `20270205100433_books16_new_chapter_dot.sql`). `LibraryShelves` passes it to `StoryCard`, which draws a small dot on the cover, and adds "new chapter" to the meta line so the dot is never the only cue.
+- **Saved at a glance in the editor:** `SaveWord` (`src/features/writing/components/`) shows one word beside the chapter's name in the breadcrumb ("Saved", "Saving…", "Not saved"), read from the same `useAutosave` state as the Saving box. It is plain text; the Saving box stays the live region.
