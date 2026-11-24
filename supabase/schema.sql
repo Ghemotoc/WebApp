@@ -33653,10 +33653,13 @@ begin
   -- Step 3: "Chapter n of N" for every card.
   select coalesce(jsonb_object_agg(found.slug, jsonb_build_object('number', found.place -> 'number', 'total', found.place -> 'total',
     -- CALM-6: "of N" only while a last chapter is marked.
-    'last_chapter_number', found.place -> 'last_chapter_number')), '{}'::jsonb)
+    'last_chapter_number', found.place -> 'last_chapter_number',
+    -- Design books item 16: a chapter came out after the reader last read, so the cover shows a dot.
+    'has_new_chapter', coalesce(found.last_chapter_published_at > (found.place ->> 'saved_at')::timestamptz, false)
+    )), '{}'::jsonb)
   into places
   from (
-    select stories.slug, public.latest_place_json(stories.id) as place
+    select stories.slug, stories.last_chapter_published_at, public.latest_place_json(stories.id) as place
     from public.library_entries
     join public.stories on stories.id = library_entries.story_id
     where library_entries.user_id = caller_id

@@ -82,11 +82,14 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
       'Unsaved changes.',
     );
+    // The word beside the chapter's name says the same at a glance (design books item 16).
+    await expect(page.locator('[data-save-word]')).toHaveText('Not saved yet');
     // Leaving the text saves at once.
     await page.getByRole('textbox', { name: 'Chapter title' }).focus();
     await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
       /Saved at \d/,
     );
+    await expect(page.locator('[data-save-word]')).toHaveText('Saved');
     expect(
       runSql(
         `select draft_title || ' | ' || draft_body from public.chapters where code = '${firstChapterCode()}'`,

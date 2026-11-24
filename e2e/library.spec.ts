@@ -145,6 +145,24 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     await expect(page.getByRole('link', { name: /Raftul bibliotecii/ }).first()).toBeVisible();
   });
 
+  test('a chapter out after the story was saved puts a dot on its cover and says so', async ({
+    browser,
+  }) => {
+    // Design books item 16, "Show what is inside": the story was saved in the test above; a new
+    // chapter now comes out, after the save.
+    runSql(`update public.stories set last_chapter_published_at = now() + interval '1 minute'
+      where slug = '${storySlug}';`);
+    const page = await openAs(browser, 'teen_17', '/library');
+    await page.getByRole('group', { name: 'Shelf' }).getByText('Saved · 1').click();
+    const card = page
+      .getByRole('listitem')
+      .filter({ has: page.getByRole('link', { name: /Raftul bibliotecii/ }) })
+      .first();
+    await expect(card).toContainText('new chapter');
+    await expect(card.locator('[data-new-chapter-dot]')).toBeVisible();
+    await page.context().close();
+  });
+
   test('a visitor gets a log-in card, never a library', async ({ browser }) => {
     const page = await openAs(browser, null, '/library');
     await expect(page.getByRole('heading', { name: 'Keep a library' })).toBeVisible();

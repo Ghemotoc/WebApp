@@ -64,6 +64,8 @@ export interface CardPlace {
   number: number;
   total: number;
   lastChapterNumber: number | null;
+  /** A chapter came out after the reader's place was saved (design books item 16). */
+  hasNewChapter: boolean;
 }
 
 /** A writer the reader follows. */
@@ -119,21 +121,28 @@ export function toPlace(row: PlaceRow): StoryPlace {
   };
 }
 
+/** One card's place as my_library() sends it. */
+interface CardPlaceRow {
+  number: number;
+  total: number;
+  last_chapter_number?: number | null;
+  has_new_chapter?: boolean;
+}
+
 /**
  * The cards' places in the app's shape.
  *
  * @param rows - my_library()'s places, by the story's address
  * @returns the same, with lastChapterNumber
  */
-function toCardPlaces(
-  rows: Record<string, { number: number; total: number; last_chapter_number?: number | null }>,
-): Record<string, CardPlace> {
+function toCardPlaces(rows: Record<string, CardPlaceRow>): Record<string, CardPlace> {
   const places: Record<string, CardPlace> = {};
   for (const [slug, row] of Object.entries(rows)) {
     places[slug] = {
       number: row.number,
       total: row.total,
       lastChapterNumber: row.last_chapter_number ?? null,
+      hasNewChapter: row.has_new_chapter === true,
     };
   }
   return places;
@@ -152,7 +161,7 @@ export async function fetchLibraryOverview(client: AppSupabaseClient): Promise<L
   const answer = data as unknown as {
     counts: Record<LibraryShelf, number>;
     continue_reading: { story: ListedStoryRow; place: PlaceRow }[];
-    places: Record<string, { number: number; total: number; last_chapter_number?: number | null }>;
+    places: Record<string, CardPlaceRow>;
   };
   return {
     counts: answer.counts,

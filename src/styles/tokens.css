@@ -206,6 +206,10 @@
   /* The hairline just inside every cover's edge, so a pale cover keeps its shape on the pale page
      (the simplified design, Robert, 20 Nov 2026; the cover-edge utility in index.css). */
   --cover-edge: rgba(38, 20, 46, 0.16);
+  /* The new-chapter dot on a cover (design books item 16). Covers keep their colours at night, so
+     the dot keeps one dark fill and a white ring in every theme, readable on any pattern. */
+  --new-dot: #2a0e33;
+  --new-dot-ring: #ffffff;
 
   /* Progress bars: one flat fill in the theme accent, no gradient (Robert, 23 Nov 2026). */
   --progress-from: var(--accent);

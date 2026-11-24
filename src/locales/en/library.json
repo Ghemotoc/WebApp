@@ -61,7 +61,8 @@
       "reading": "Reading",
       "saved": "Saved",
       "finished": "Finished"
-    }
+    },
+    "newChapter": "new chapter"
   },
   "following": {
     "heading": "What you follow",
