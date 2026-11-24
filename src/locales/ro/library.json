@@ -61,7 +61,8 @@
       "reading": "Citesc acum",
       "saved": "Păstrate",
       "finished": "Terminate"
-    }
+    },
+    "newChapter": "capitol nou"
   },
   "following": {
     "heading": "Ce urmărești",
@@ -190,7 +191,8 @@
       "emptyTitle": "Nicio poveste încă",
       "emptyOwn": "Folosește „Adaugă pe un raft” din pagina unei povești.",
       "emptyOther": "Nimic de pe acest raft nu îți este deschis acum.",
-      "discover": "Caută povești"
+      "discover": "Caută povești",
+      "removedUndo": "{{title}} a fost scoasă de pe raft."
     },
     "books": "{{filled}} din {{count}} cărți",
     "full": "Plin",

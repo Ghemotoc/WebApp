@@ -284,5 +284,12 @@
     "label": "Poem mode",
     "hint": "Enter starts a new line and a second Enter a new stanza. Spaces at the start of a line stay, and readers see each line as you wrote it.",
     "failed": "We couldn’t change poem mode. Try again."
+  },
+  "saveWord": {
+    "saved": "Saved",
+    "saving": "Saving…",
+    "unsaved": "Not saved yet",
+    "onDevice": "Saved on this device",
+    "notSaved": "Not saved"
   }
 }

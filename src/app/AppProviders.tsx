@@ -6,6 +6,7 @@
  * - TanStack Query: the cache that hooks in src/features/<feature>/hooks use to load and save data
  *   from Supabase (the first ones arrive in S1-E1-02 and S1-E2-01).
  * - i18next: translations, so any component can call useTranslation().
+ * - UndoProvider: the one "Removed. Undo" note (design books item 14, src/lib/undo/).
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { i18n as I18nInstance } from 'i18next';
@@ -13,6 +14,7 @@ import { useState, type ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
 
 import { shouldRetryQuery } from '@/lib/query-retry';
+import { UndoProvider } from '@/lib/undo/UndoProvider';
 
 /** What AppProviders needs: the page to wrap and the translation instance to use. */
 interface AppProvidersProps {
@@ -37,7 +39,9 @@ export function AppProviders({ children, i18n }: AppProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
+      <I18nextProvider i18n={i18n}>
+        <UndoProvider>{children}</UndoProvider>
+      </I18nextProvider>
     </QueryClientProvider>
   );
 }

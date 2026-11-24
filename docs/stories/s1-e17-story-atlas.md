@@ -9,7 +9,7 @@ Story Atlas is the private planning side of every Ghemotoc story. It complements
 **Principles (Robert, 31 Oct 2026)**
 
 - Every change saves by itself. There is no Save button to forget.
-- Nothing is deleted without a second, confirming click.
+- Nothing is deleted without a second, confirming click. Since the design books (item 14, Robert, 23 Nov 2026) a relationship is the exception: it is deleted at once and a note offers Undo for 8 seconds, which puts it back as it was.
 - Fields are generous by default, and the writer can add their own.
 - Images are blank by default. Only the writer's own uploads appear.
 - No AI suggestions, generation or analysis anywhere in Story Atlas.
