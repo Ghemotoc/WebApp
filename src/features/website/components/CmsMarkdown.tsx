@@ -58,22 +58,23 @@ const cmsComponents: Components = {
   h3: ({ children }) => (
     <h3 className="m-0 font-heading type-long font-bold text-ink-heading">{children}</h3>
   ),
-  p: ({ children }) => <p className="m-0 leading-[1.6]">{children}</p>,
+  p: ({ children }) => <p className="m-0">{children}</p>,
   ul: ({ children }) => <ul className="m-0 flex list-disc flex-col gap-2 pl-4">{children}</ul>,
   ol: ({ children }) => <ol className="m-0 flex list-decimal flex-col gap-2 pl-4">{children}</ol>,
-  li: ({ children }) => <li className="leading-[1.6]">{children}</li>,
+  li: ({ children }) => <li>{children}</li>,
   a: ({ href, children }) => <CmsLink href={href}>{children}</CmsLink>,
   img: () => null,
 };
 
 /**
- * Renders the Markdown.
+ * Renders the Markdown, in type-long (17/28): CMS text (Help, answers, legal notes, landing
+ * pages) is read for more than a few lines (design books item 11, Robert, approved 23 Nov 2026).
  *
  * @returns the text as real HTML
  */
 export function CmsMarkdown({ markdown, language }: CmsMarkdownProps) {
   return (
-    <div lang={language} className="flex flex-col gap-3 text-ink-muted">
+    <div lang={language} className="flex flex-col gap-3 type-long text-ink-muted">
       <Markdown components={cmsComponents} skipHtml>
         {fillBrandTokens(markdown, brand)}
       </Markdown>

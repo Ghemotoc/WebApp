@@ -13,10 +13,10 @@ import { applyTheme } from './theme';
 
 /** The page colours from src/styles/tokens.css that these tests use. */
 const pageColours = {
-  lilacDay: '#f3eefb',
+  lilacDay: '#f4f0ec',
   night: '#111113',
   nightSky: '#1d244f',
-  sorbetDay: '#fff1ea',
+  sorbetDay: '#fdeee7',
   highContrastDay: '#ffffff',
   staffDay: '#f3ece0',
 };

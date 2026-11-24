@@ -35,7 +35,9 @@
     "sent": "Trimis. Referința ta este {{reference}}. Te anunțăm când îți răspunde echipa.",
     "open": "Deschide conversația",
     "suspendedNote": "Poți scrie chiar dacă ești suspendat. Ca să contești oficial o decizie, folosește „Contestă decizia” pe pagina de raportări și decizii.",
-    "cancel": "Anulează"
+    "cancel": "Anulează",
+    "missingSubject": "Scrie mai întâi un subiect.",
+    "missingBody": "Scrie mai întâi un mesaj."
   },
   "thread": {
     "documentTitle": "Mesajul {{reference}}",

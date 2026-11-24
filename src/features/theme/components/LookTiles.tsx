@@ -1,7 +1,8 @@
 /**
  * LookTiles: the six year-round themes as tiles to pick from, in Settings › Appearance (bundle
  * G2 THEMES; design/boards Settings.dc.html, "Appearance": 112 by 76 px tiles with a 16 px radius,
- * the page colour with its three blobs and an accent bar, the name underneath).
+ * the theme's flat page colour and a bar in its button colour, the name underneath; no blobs or
+ * gradients since the flat themes bundle, Robert, 23 Nov 2026).
  *
  * Each tile is a real radio button (hidden) with the tile and name as its label, so the group
  * works with arrow keys and a screen reader hears "Peach sorbet, radio button, 2 of 6". The tile
@@ -24,7 +25,7 @@ export interface LookTilesProps {
 }
 
 /**
- * The drawing on one tile: the look's page colour, its three blobs and its accent bar. Purely
+ * The drawing on one tile: the theme's flat page colour and a bar in its button colour. Purely
  * decorative; the name under it is the label.
  *
  * @returns the swatch
@@ -38,7 +39,7 @@ function LookSwatch({ look, isPicked }: { look: YearRoundLook; isPicked: boolean
         data-look-swatch={look}
         className="look-swatch absolute inset-0 overflow-hidden rounded-card"
       >
-        <span className="absolute inset-x-3 bottom-3 h-[18px] rounded-full border border-white/90 bg-accent" />
+        <span className="absolute inset-x-3 bottom-3 h-[18px] rounded-full border border-white/90 bg-plum-to" />
       </span>
       {isPicked && (
         <span className="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full bg-primary text-on-primary">

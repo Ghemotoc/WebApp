@@ -161,22 +161,6 @@ const lookTokens = new Map(
 );
 
 /**
- * Mixes a colour with white the way the page mesh does in tokens.css
- * ("color-mix(in srgb, var(--blob-1) 60%, #fff)"; the simplified design, CALM-1).
- *
- * @param hex - the blob colour, "#rrggbb"
- * @param colourShare - how much of the blob stays, from 0 to 1 (0.6 for the mesh)
- * @returns the lifted colour, "#rrggbb"
- */
-function liftedWithWhite(hex: string, colourShare: number): string {
-  const channels = [1, 3, 5].map((start) => Number.parseInt(hex.slice(start, start + 2), 16));
-  const mixed = channels.map((channel) =>
-    Math.round(channel * colourShare + 255 * (1 - colourShare)),
-  );
-  return `#${mixed.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
-}
-
-/**
  * Reads one high contrast block (bundle CONTRAST-1) over the theme and look it lies on. The block
  * sits on the same element (<html>), so its references are answered together with theirs: that
  * is how each look's own deep accent reaches buttons, links, the focus ring and the thread
@@ -230,8 +214,8 @@ describe('design token contrast', () => {
     expect(failingPairs(themes.staffNight)).toEqual([]);
   });
 
-  it('uses the Lilac mist colours of the approved design by day (bundle G1; CALM-1b, canvas v38)', () => {
-    expect(themes.light.get('paper')).toBe('#f3eefb');
+  it('uses the Lilac mist colours of the approved design by day, on the flat Isabelline page (bundle G1; CALM-1b; flat themes, 23 Nov 2026)', () => {
+    expect(themes.light.get('paper')).toBe('#f4f0ec');
     expect(themes.light.get('ink')).toBe('#24133a');
     expect(themes.light.get('heading')).toBe('#2a0e33');
     expect(themes.light.get('body')).toBe('#4a3e60');
@@ -255,15 +239,17 @@ describe('design token contrast', () => {
     expect(themes.night.get('eyebrow')).toBe('#f7f7f8');
   });
 
-  it('turns the whole interface monochrome at night, with cobalt main buttons and switches (NIGHT-1)', () => {
+  it('turns the interface black, white and grey at night, with Valentino main buttons (NIGHT-1; Robert, 23 Nov 2026)', () => {
     expect(themes.night.get('paper')).toBe('#0e0e10');
     expect(themes.night.get('ink')).toBe('#e8e8ea');
-    expect(themes.night.get('plum-to')).toBe('#0047ab');
+    expect(themes.night.get('plum-to')).toBe('#7b3a91');
+    expect(themes.night.get('accent')).toBe('#c4a6ce');
+    // No cobalt is left on the main action (the sky genre band keeps its own deep blue).
+    expect(themes.night.get('plum-hover-to')).not.toBe('#1a5bc4');
   });
 
   it('draws night as one flat page with solid grey boxes in four steps (NIGHT-2, Robert, 22 Nov 2026)', () => {
     // Page < box < raised < field, all solid: no see-through glass, no galaxy picture.
-    expect(themes.night.get('night-sky')).toBe('#0e0e10');
     expect(themes.night.get('surface')).toBe('#18181b');
     expect(themes.night.get('surface-box')).toBe('#18181b');
     expect(themes.night.get('surface-glass')).toBe('#18181b');
@@ -277,16 +263,19 @@ describe('design token contrast', () => {
     expect(contrastRatio(themes.night.get('body') ?? '', box)).toBeGreaterThanOrEqual(7);
   });
 
-  it('draws the main button in one flat colour, plum by day and cobalt at night for members (CALM-1)', () => {
+  it('draws the main button in one flat colour, plum by day and Valentino at night for members (CALM-1; 23 Nov 2026)', () => {
     // Robert, 20 Nov 2026: flat plum #48125D, replacing the 11 Nov Revolver button.
     expect(themes.light.get('plum-from')).toBe('#48125d');
     expect(themes.light.get('plum-to')).toBe('#48125d');
     expect(themes.light.get('plum-hover-from')).toBe('#672786');
     expect(themes.light.get('plum-hover-to')).toBe('#672786');
-    expect(themes.night.get('plum-from')).toBe('#0047ab');
-    expect(themes.night.get('plum-to')).toBe('#0047ab');
-    expect(themes.night.get('plum-hover-from')).toBe('#1a5bc4');
-    expect(themes.night.get('plum-hover-to')).toBe('#1a5bc4');
+    expect(themes.night.get('plum-from')).toBe('#7b3a91');
+    expect(themes.night.get('plum-to')).toBe('#7b3a91');
+    expect(themes.night.get('plum-hover-from')).toBe('#8f4fa6');
+    expect(themes.night.get('plum-hover-to')).toBe('#8f4fa6');
+    // White labels on the button and its hover (WCAG 2.2, 1.4.3).
+    expect(contrastRatio('#ffffff', '#7b3a91')).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio('#ffffff', '#8f4fa6')).toBeGreaterThanOrEqual(4.5);
   });
 
   it('draws staff at night in pure black and grey, with amber kept for warnings (staff night, Robert, 22 Nov 2026)', () => {
@@ -322,41 +311,62 @@ describe('design token contrast', () => {
     }
   });
 
-  it('lifts the page mesh to the design system colours in Lilac mist (CALM-1)', () => {
-    for (const [mesh, blob] of [
-      ['lilac', 1],
-      ['blue', 2],
-      ['peach', 3],
-    ] as const) {
-      expect(tokensCss).toContain(
-        `--mesh-${mesh}: color-mix(in srgb, var(--blob-${blob}) 60%, #fff);`,
-      );
+  it('draws every page as one flat colour, with no mesh or blobs in any theme (Robert, 23 Nov 2026)', () => {
+    // The mesh and blob tokens are gone, so nothing can paint a gradient behind the page.
+    expect(tokensCss).not.toMatch(/--(mesh|blob)-/);
+    expect(tokensCss).not.toContain('--night-sky');
+    // Every band's two ends are the same colour, by day, at night and in high contrast.
+    for (const tokens of [themes.light, themes.night]) {
+      for (const tone of ['plum', 'sage', 'gold', 'sky', 'neutral', 'blush']) {
+        expect({ tone, to: tokens.get(`band-${tone}-to`) }).toEqual({
+          tone,
+          to: tokens.get(`band-${tone}-from`),
+        });
+      }
     }
-    const lifted = ['blob-1', 'blob-2', 'blob-3'].map((blob) =>
-      liftedWithWhite(themes.light.get(blob) ?? '', 0.6),
-    );
-    expect(lifted).toEqual(['#e8e0f9', '#dfe8fa', '#fbe8e2']);
   });
 
-  it('keeps text, headings, meta lines and links readable on the paler mesh, in every look (CALM-1)', () => {
+  it('keeps text, headings, meta lines and links readable on every theme page (flat themes)', () => {
     const looksByDay = new Map([
       ['lilac', themes.light],
       ...[...lookTokens].map(
         ([look, tokens]) => [look, resolveReferences(layered(lightTokens, tokens))] as const,
       ),
     ]);
-    // Each look's three mesh colours, then every text colour on each of them. Links count too:
-    // Sorbet, Pistachio, Summer and Autumn draw them a shade darker than their accent for this.
     const failing = [...looksByDay].flatMap(([look, day]) =>
-      ['blob-1', 'blob-2', 'blob-3'].flatMap((blob) => {
-        const mesh = liftedWithWhite(day.get(blob) ?? '', 0.6);
-        return ['ink', 'heading', 'body', 'meta', 'link']
-          .map((text) => ({ text, ratio: contrastRatio(day.get(text) ?? '', mesh) }))
-          .filter(({ ratio }) => ratio < 4.5)
-          .map(({ text, ratio }) => `${look}: ${text} on ${blob}'s mesh ${ratio.toFixed(2)}`);
-      }),
+      ['ink', 'heading', 'body', 'meta', 'link', 'accent']
+        .map((text) => ({
+          text,
+          ratio: contrastRatio(day.get(text) ?? '', day.get('paper') ?? ''),
+        }))
+        .filter(({ ratio }) => ratio < 4.5)
+        .map(({ text, ratio }) => `${look}: ${text} on its page ${ratio.toFixed(2)}`),
     );
     expect(failing).toEqual([]);
+  });
+
+  it('keeps each theme colour at night, with white labels and accent text that read (Robert, 23 Nov 2026)', () => {
+    for (const look of yearRoundLooks.filter((name) => name !== 'lilac')) {
+      const night = resolveReferences(
+        layered(nightTokens, readTokenBlock(`[data-theme='night'][data-look='${look}']`)),
+      );
+      const day = resolveReferences(layered(lightTokens, lookTokens.get(look) ?? new Map()));
+      // The button is the theme's own colour, the same as by day.
+      expect({ look, button: night.get('plum-to') }).toEqual({ look, button: day.get('plum-to') });
+      // Its white label reads on the button and on its hover; the accent reads on the night box.
+      const box = night.get('surface-box') ?? '';
+      const readable = {
+        label: contrastRatio('#ffffff', night.get('plum-to') ?? '') >= 4.5,
+        hoverLabel: contrastRatio('#ffffff', night.get('plum-hover-to') ?? '') >= 4.5,
+        accent: contrastRatio(night.get('accent') ?? '', box) >= 4.5,
+        logo: contrastRatio(night.get('logo') ?? '', night.get('paper') ?? '') >= 4.5,
+      };
+      expect({ look, readable }).toEqual({
+        look,
+        readable: { label: true, hoverLabel: true, accent: true, logo: true },
+      });
+      expect({ look, failing: failingPairs(night) }).toEqual({ look, failing: [] });
+    }
   });
 
   it('keeps purple out of the staff area', () => {
@@ -383,7 +393,6 @@ describe('design token contrast', () => {
       'glass-border',
       'lg-rim',
       'nav-glass',
-      'night-sky',
       'surface-glass',
     ]);
     const nightKeys = [...themes.night.keys()].filter((name) => !solidOnlyAtNight.has(name));
@@ -431,12 +440,8 @@ describe('design token contrast', () => {
 
   it('keeps the staff area plain whatever look a member picked', () => {
     // Every token a look changes is set again by the staff block, so no look reaches staff pages.
-    // The blobs are the one exception: the staff area paints its flat beige over them (index.css).
-    const paintedOver = new Set(['blob-1', 'blob-2', 'blob-3']);
     for (const tokens of lookTokens.values()) {
-      const leaking = [...tokens.keys()].filter(
-        (name) => !staffLightTokens.has(name) && !paintedOver.has(name),
-      );
+      const leaking = [...tokens.keys()].filter((name) => !staffLightTokens.has(name));
       expect(leaking).toEqual([]);
     }
   });

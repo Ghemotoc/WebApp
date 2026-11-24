@@ -3,18 +3,19 @@
  * FORUMS-2, part a, redrawn in G8b of the liquid glass redesign; story S1-E8-06;
  * design/boards/Space.dc.html's header and SpaceSettings.dc.html's "Banner (optional)").
  *
- * The boards offer eight deep colours and six pastels, each a two-stop gradient. The space's name,
- * description and notes sit on the banner, so every colour names the text that reads on it: white
- * on the deep ones and dark plum on the pastels, each at least 4.5:1 at both ends of the gradient
- * (WCAG 2.2 AA; spaceLook.test.ts). The colours are fixed, not light and night tokens, because they are the space's
+ * The boards offer eight deep colours and six pastels, each drawn as a two-stop gradient; since the
+ * flat themes bundle (Robert, 23 Nov 2026: no gradients anywhere) a banner is one flat colour, the
+ * first stop. The space's name, description and notes sit on the banner, so every colour names
+ * the text that reads on it: white on the deep ones and dark plum on the pastels, each at least
+ * 4.5:1 on both stops (WCAG 2.2 AA; spaceLook.test.ts), so the flat colour reads too. The colours are fixed, not light and night tokens, because they are the space's
  * own choice and look the same in both modes; an uploaded banner picture gets a dark wash
  * (pictureScrim) so white text reads on any picture.
  * Who calls it: SpaceBannerBand, SpaceHeaderCard and SpaceBannerChoice.
  */
 import { deepSpaceBanners, type SpaceBanner } from '../api/spaces';
 
-/** The two stops of each banner's gradient, from the boards' swatches (spaceLook.test.ts checks
- * the text on both ends). */
+/** The two stops of each banner's colour on the boards' swatches; the flat banner uses the first
+ * (spaceLook.test.ts checks the text on both). */
 export const bannerStops: Record<SpaceBanner, [string, string]> = {
   plum: ['#672786', '#2A0E33'],
   cobalt: ['#0047AB', '#2A0E33'],
@@ -39,10 +40,10 @@ export const textOnPastelBanner = '#2A0E33';
 
 /**
  * A dark wash over an uploaded banner picture, so the white text on it reads whatever the picture.
- * It is darkest on the left, where the name and description sit.
+ * One even wash at the strength the darkest part of the old gradient had (no gradients, Robert,
+ * 23 Nov 2026), so the text reads as well everywhere on the banner.
  */
-export const pictureScrim =
-  'linear-gradient(90deg, rgba(20,8,28,0.82) 0%, rgba(20,8,28,0.66) 55%, rgba(20,8,28,0.55) 100%)';
+export const pictureScrim = 'linear-gradient(rgba(20,8,28,0.82), rgba(20,8,28,0.82))';
 
 /**
  * Is this one of the deep colours, whose text is white?
@@ -55,27 +56,26 @@ export function isDeepBanner(banner: SpaceBanner): boolean {
 }
 
 /**
- * The swatch a banner colour shows in the picker: its plain two-stop gradient.
+ * The swatch a banner colour shows in the picker: its flat colour.
  *
  * @param banner - the banner colour
  * @returns a CSS background
  */
 export function bannerSwatch(banner: SpaceBanner): string {
-  const [first, second] = bannerStops[banner];
-  return `linear-gradient(135deg, ${first} 0%, ${second} 100%)`;
+  const [first] = bannerStops[banner];
+  return first;
 }
 
 /**
- * The banner band's background: the gradient with a soft light in the top right corner, as the
- * board draws the header (a faint white light on deep colours, a brighter one on pastels).
+ * The banner band's background: its one flat colour, with no soft light and no gradient (Robert,
+ * 23 Nov 2026: no gradients anywhere).
  *
  * @param banner - the banner colour
  * @returns a CSS background
  */
 export function bannerBackground(banner: SpaceBanner): string {
-  const [first, second] = bannerStops[banner];
-  const light = isDeepBanner(banner) ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.55)';
-  return `radial-gradient(40% 80% at 88% 10%, ${light}, transparent 70%), linear-gradient(120deg, ${first} 0%, ${second} 100%)`;
+  const [first] = bannerStops[banner];
+  return first;
 }
 
 /**

@@ -7,14 +7,17 @@
  * 2,000 characters, as the database does. A refusal shows in plain words; "isn't taking
  * messages" never says why (S1-E9-03). The box empties once the message is saved. It can start
  * with words already in it: the story link a reader is sending from a share dialog (GAPS-7a).
+ * The main button stays pressable; pressed with nothing typed, it says what is missing beside the
+ * field and puts the focus there (design books item 9).
  * Who shows it: ChatPanel. What it calls: the onSend it is given.
  * Before sending, usePersonalDetailsGate asks "Post anyway?" when the words look like contact
  * details (MUST-1b; PersonalDetailsGateNote); it never blocks.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
+import { FieldProblem } from '@/components/ui/FieldProblem';
 import { Notice } from '@/components/ui/Notice';
 import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalDetailsNote';
 import { usePersonalDetailsGate } from '@/features/privacy/hooks/usePersonalDetailsCheck';
@@ -22,6 +25,7 @@ import { usePersonalDetailsGate } from '@/features/privacy/hooks/usePersonalDeta
 import { longestMessage, type MessagesFailure } from '../api/messages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 /** What the composer needs. */
 export interface MessageComposerProps {
@@ -32,6 +36,23 @@ export interface MessageComposerProps {
   onSend: (body: string) => Promise<unknown>;
   /** Words the box starts with (a story link being shared); empty when left out. */
   initialBody?: string;
+}
+
+/**
+ * A box that starts with words (a story link being shared) puts the caret after them, so words
+ * typed next follow the link instead of running into its start. Focus is left where it is.
+ *
+ * @param boxRef - the text box
+ * @param initialBody - the words the box starts with; empty does nothing
+ */
+function useCaretAfterStartingWords(
+  boxRef: RefObject<HTMLTextAreaElement | null>,
+  initialBody: string,
+) {
+  useEffect(() => {
+    if (initialBody === '') return;
+    boxRef.current?.setSelectionRange(initialBody.length, initialBody.length);
+  }, [boxRef, initialBody]);
 }
 
 /**
@@ -50,17 +71,12 @@ export function MessageComposer({
   const { t } = useMessagesTranslation();
   const [body, setBody] = useState(initialBody);
   const boxRef = useRef<HTMLTextAreaElement>(null);
-
-  // A box that starts with a link puts the caret after it, so words typed next follow the link
-  // instead of running into its start. Focus is left where it is.
-  useEffect(() => {
-    if (initialBody === '') return;
-    boxRef.current?.setSelectionRange(initialBody.length, initialBody.length);
-  }, [initialBody]);
+  useCaretAfterStartingWords(boxRef, initialBody);
+  // Design books item 9: Send stays pressable and says what is missing beside the box.
+  const missing = useMissingField(body.trim() === '', 'message-body');
 
   /** Sends the words and empties the box once saved; a failure keeps them for another try. */
   function sendNow() {
-    if (body.trim() === '') return;
     void onSend(body.trim())
       .then(() => setBody(''))
       .catch(errorShownByHook);
@@ -71,7 +87,7 @@ export function MessageComposer({
   return (
     <form
       noValidate
-      onSubmit={gate.submit}
+      onSubmit={missing.submitWhenReady(gate.submit)}
       className="flex flex-col gap-2 border-t border-border p-4"
     >
       <div className="flex items-end gap-3">
@@ -86,13 +102,18 @@ export function MessageComposer({
           value={body}
           placeholder={t('chat.composerLabel', { name: otherName })}
           onChange={(event) => gate.whileEditing(setBody)(event.target.value)}
+          aria-describedby={missing.isShown ? 'message-body-missing' : undefined}
+          aria-invalid={missing.isShown ? true : undefined}
           className="min-h-11 min-w-0 flex-1 resize-y rounded-card border border-control-border bg-surface px-4 py-3 type-body text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
         />
-        <Button type="submit" disabled={isSending || body.trim() === ''}>
+        <Button type="submit" disabled={isSending}>
           <ActionIcon name="send" size={16} />
           {t('chat.send')}
         </Button>
       </div>
+      <FieldProblem id="message-body-missing" isShown={missing.isShown}>
+        {t('chat.missing')}
+      </FieldProblem>
       <PersonalDetailsGateNote gate={gate} isSending={isSending} />
       <div aria-live="polite">
         {failure !== null && (

@@ -229,7 +229,7 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
           <StoryTitleBlock story={story} />
           <StoryStats story={story} />
           {story.blurb !== '' && (
-            <p lang={story.languageCode} className="m-0 max-w-[62ch] type-body text-ink-muted">
+            <p lang={story.languageCode} className="m-0 max-w-[62ch] type-long text-ink-muted">
               {story.blurb}
             </p>
           )}

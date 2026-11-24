@@ -62,7 +62,7 @@ export function Switch({
         data-state={isOn ? 'on' : 'off'}
         className={cn(
           'relative box-border block h-8 w-[52px] rounded-full border border-transparent transition-colors motion-reduce:transition-none',
-          // switch-track-on: cobalt with a light rim at night (index.css, NIGHT-1).
+          // switch-track-on: the theme's button colour with a light rim at night (index.css).
           isOn ? 'switch-track-on bg-primary' : 'bg-control-border',
         )}
       >

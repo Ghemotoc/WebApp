@@ -6,8 +6,8 @@
  * waiting for a moderator or was removed (CLAUDE.md rule 19); the uploader follows the check on
  * the settings page. The space's name always sits right beside it, so the picture is decoration
  * for screen readers. Sizes from the boards: 96 px with 25 px corners and a soft white ring in the
- * header (64 px on a phone), 48 px with 14 px corners on a space's card.
- * Who shows it: SpaceHeaderCard and SpaceRow. What it calls: useSpaceLogoView → the signed address.
+ * header (64 px on a phone). The Spaces page draws its own 64 px tile (SpaceTile, CALM-9 F06).
+ * Who shows it: SpaceHeaderCard. What it calls: useSpaceLogoView → the signed address.
  */
 import { cn } from '@/lib/utils';
 
@@ -18,17 +18,16 @@ import { useSpaceLogoView } from '../hooks/useSpaceLogo';
 const sizeClasses = {
   large:
     'size-16 rounded-field shadow-[0_0_0_4px_rgba(255,255,255,0.25)] md:size-24 md:rounded-card',
-  small: 'size-12 rounded-field border border-border',
 };
 
 /**
  * Renders the logo.
  *
  * @param props.space - the space
- * @param props.size - 'large' in the header, 'small' on a card
+ * @param props.size - 'large', the header's size
  * @returns the picture, or nothing when there is none to show
  */
-export function SpaceLogo({ space, size }: { space: Space; size: 'large' | 'small' }) {
+export function SpaceLogo({ space, size }: { space: Space; size: 'large' }) {
   const view = useSpaceLogoView(space).data ?? null;
   if (view === null || view.state !== 'visible' || view.url === null) return null;
   return (

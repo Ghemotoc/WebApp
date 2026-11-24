@@ -116,11 +116,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
       )}
       data-band-tone={bandTone}
     >
-      {/* The soft light in the top right corner (board DiscoverGenre); decoration only. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_70%_at_85%_20%,rgb(255_255_255/0.22),transparent_70%)]"
-      />
+      {/* No soft light in the corner: the band is one flat colour (no gradients, 23 Nov 2026). */}
       <div className="relative flex flex-col gap-4">
         <ListBreadcrumb title={heading.title} />
         <ListHeading heading={heading} total={total} />

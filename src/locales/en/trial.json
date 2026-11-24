@@ -14,7 +14,8 @@
     "cancel": "Cancel",
     "sentBody": "Thank you. We have your report and will read it. If we need more, we write to you by email.",
     "close": "Close",
-    "unsent": "We couldn’t send the report. Your text is still here. Try again in a few minutes."
+    "unsent": "We couldn’t send the report. Your text is still here. Try again in a few minutes.",
+    "missing": "Say what happened first."
   },
   "computerOnly": {
     "documentTitle": "For now, the test runs on a computer · {{productName}}",

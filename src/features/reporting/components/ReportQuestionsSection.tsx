@@ -4,6 +4,7 @@
  *
  * Shows nothing when there is no open question, so Settings stays short for almost everyone. The
  * moderator is never named ("the moderation team"). No doodles (DoD: reporting screens).
+ * Send stays pressable; pressed with an empty box, it says so under the box (design books item 9).
  * Who shows it: SettingsPage. What it calls: useMyReportQuestions.
  */
 import { useState } from 'react';
@@ -16,6 +17,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { useMyReportQuestions, type ReportQuestion } from '../hooks/useMyReportQuestions';
 import { registerReportingTranslations } from '../registerReportingTranslations';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 /** The longest answer the database keeps. */
 const longestAnswer = 4000;
@@ -35,6 +37,15 @@ function QuestionItem({
   const { t } = useTranslation('reporting');
   const [text, setText] = useState('');
   const fieldId = `report-answer-${question.reportReference}`;
+  // Design books item 9: Send stays pressable and says what is missing beside the box.
+  const missing = useMissingField(text.trim() === '', fieldId);
+
+  /** Sends the answer, or says it is missing. */
+  function send() {
+    if (!missing.isReadyToSend()) return;
+    void questions.answer(question.id, text.trim()).catch(errorShownByHook);
+  }
+
   return (
     <li className="flex flex-col gap-2 border-b border-border py-3 last:border-b-0">
       <p className="m-0 type-body text-ink-muted">
@@ -51,12 +62,10 @@ function QuestionItem({
         maxLength={longestAnswer}
         value={text}
         onChange={(event) => setText(event.target.value)}
+        errorMessage={missing.isShown ? t('questions.missing') : undefined}
       />
       <div>
-        <Button
-          disabled={questions.isAnswering || text.trim() === ''}
-          onClick={() => void questions.answer(question.id, text.trim()).catch(errorShownByHook)}
-        >
+        <Button disabled={questions.isAnswering} onClick={send}>
           {t('questions.send')}
         </Button>
       </div>

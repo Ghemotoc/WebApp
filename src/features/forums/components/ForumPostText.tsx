@@ -30,11 +30,11 @@ const components: Components = {
  * Renders the words.
  *
  * @param props.text - the post as stored
- * @returns the words as HTML, in the board's 15 px body size
+ * @returns the words as HTML, in type-long, 17/28 (design books item 11: posts are read for more than a few lines)
  */
 export function ForumPostText({ text }: { text: string }) {
   return (
-    <div className="type-body leading-[1.65] break-words text-ink">
+    <div className="type-long break-words text-ink">
       <SafeMarkdown text={text} elements={safeMarkdownElements.forumPost} components={components} />
     </div>
   );

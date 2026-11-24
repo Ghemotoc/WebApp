@@ -2,20 +2,17 @@
  * SpaceHeaderCard: the space's header, as design/boards/Space.dc.html draws it in the liquid glass
  * redesign (bundle FORUMS-2, parts a and b, redrawn in G8b; stories S1-E8-06 and S1-E8-07).
  *
- * One glass card with 40 px corners. Its top is the banner (SpaceBannerBand: the space's colour, or
- * its uploaded picture under a dark wash once the picture passed its check) and everything that
- * says what the space is sits on it: the logo when there is one, "Space · run by members", the name
- * and the description, with the join button, the moderators' tools and Report on the right. The
- * text takes the colour that reads on the banner (white on deep colours and pictures, dark plum on
- * pastels) through the shared `genre-band` utility, which points every text token at it. Under the
- * banner, a meta row: who reads, the age group, who posts, "214 members" and "Owner: inkwolf".
+ * One card. Its top is the banner, a 7 to 1 strip at every size (SpaceBannerBand: the space's
+ * colour, or its uploaded picture once the picture passed its check; CALM-9, board F08). Under it,
+ * 24 px away (16 px on a phone), everything that says what the space is: the logo when there is
+ * one, "Space · run by members", the name and the description, with the join button, the
+ * moderators' tools and Report on the right. Under that, a meta row: who reads, the age group, who posts, "214 members" and "Owner: inkwolf".
  * The owner sees "Space settings" where others see Report (nobody reports their own space; rule 6
  * for everyone else). "Share" (GAPS-10) opens the link, "Copy link" and a QR code; a class space
  * has none.
  * Who shows it: SpacePage. What it calls: SpaceBannerBand, SpaceLogo, SpaceFacts,
  * SpaceJoinActions, SpaceShareButton, SpaceToolLinks, ReportButton.
  */
-import type { CSSProperties } from 'react';
 import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
@@ -24,7 +21,6 @@ import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { Space } from '../api/spaces';
 import { useSpaceBannerView } from '../hooks/useSpaceBanner';
-import { bannerTextColour, isDeepBanner } from '../lib/spaceLook';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { SpaceBannerBand } from './SpaceBannerBand';
@@ -77,9 +73,9 @@ function SpaceReport({ space }: { space: Space }) {
 }
 
 /**
- * The logo, the name and the description, on the banner.
+ * The logo, the name and the description, under the banner.
  *
- * @returns the left part of the banner
+ * @returns the left part of the header
  */
 function SpaceTitle({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
@@ -114,23 +110,19 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
   const picture = useSpaceBannerView(space).data ?? null;
   // A picture still being checked, waiting for a person or removed shows the colour instead.
   const pictureUrl = picture !== null && picture.state === 'visible' ? picture.url : null;
-  // The text colour that reads on this banner, handed to the genre-band utility.
-  const hasPicture = pictureUrl !== null;
-  const bandText = { '--band-text': bannerTextColour(space.banner, hasPicture) };
-  // Deep colours and pictures carry white text, and their buttons change to match (index.css).
-  const tone = hasPicture || isDeepBanner(space.banner) ? 'deep' : 'pastel';
   return (
     <section
       aria-labelledby="space-title"
       className="relative overflow-hidden rounded-card border border-border bg-surface shadow-card"
     >
-      <div className="relative">
-        <SpaceBannerBand banner={space.banner} pictureUrl={pictureUrl} />
-        <div
-          data-banner-tone={tone}
-          className="genre-band relative flex flex-wrap items-center justify-between gap-x-8 gap-y-6 px-4 pt-6 pb-6 md:px-12 md:pt-12 md:pb-8"
-          style={bandText as CSSProperties}
-        >
+      {/* Board F08 (23 Nov 2026): the banner is a 7 to 1 strip at every size, the same shape the
+          new-space guide shows, with the name under it. The board draws 20 px (14 on a phone);
+          the spacing scale gives 24 (16). */}
+      <div className="flex flex-col gap-4 px-4 pt-4 md:gap-6 md:px-6 md:pt-6">
+        <div className="relative aspect-[7/1] w-full overflow-hidden rounded-card">
+          <SpaceBannerBand banner={space.banner} pictureUrl={pictureUrl} />
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-6">
           <SpaceTitle space={space} />
           <div className="flex flex-col items-start gap-3 md:items-end">
             <SpaceJoinActions space={space} />
@@ -142,7 +134,7 @@ export function SpaceHeaderCard({ space }: { space: Space }) {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-4 type-body text-ink-muted md:px-12">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-4 type-body text-ink-muted md:px-6">
         <SpaceFacts space={space} />
         <SpaceNumbers space={space} />
       </div>
