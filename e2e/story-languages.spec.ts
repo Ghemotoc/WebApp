@@ -36,9 +36,16 @@ const teacherId = '00000000-0000-4000-8000-000000000007';
 /** The English edition's address, known once the writer has added the language. */
 let editionSlug = '';
 
-/** Removes this spec's edition and chapters, and puts the teacher's language back. */
+/**
+ * Removes this spec's edition and chapters, the teacher's remembered language for the story and
+ * puts the teacher's language back. The remembered language lives on the account
+ * (remembered_places, kind story_edition), so without this a choice made in one test or run sent
+ * the next one to the Romanian original.
+ */
 function cleanUp() {
-  runSql(`delete from public.chapters where story_id in
+  runSql(`delete from public.remembered_places where user_id = '${teacherId}'
+      and kind = 'story_edition' and item_key = '${slug}';
+    delete from public.chapters where story_id in
       (select id from public.stories where edition_of_story_id = '${storyId}');
     delete from public.chapters where story_id = '${storyId}';
     delete from public.stories where edition_of_story_id = '${storyId}';
