@@ -285,6 +285,6 @@ Pentru ce răspundem. Răspundem pentru răul pe care îl provocăm încălcând
 
 Alte servicii. Unele lucruri de pe ghemotoc vin de la alte servicii, cum ar fi muzica și videoclipurile pe care alegi să le pornești sau conectarea cu Google, Apple ori Microsoft. Când le folosești, se aplică propriii lor termeni și propriile lor reguli de vârstă.
 
-Reclamații. Dacă ceva nu merge bine, te rugăm să ne spui mai întâi prin Contactează-ne din Setări sau la hello@themagiccoffin.com. Răspundem în română sau engleză. Pentru deciziile despre conținut sau conturi poți folosi și căile de contestare din Politica noastră de notificare și acțiune. Dacă nu ești mulțumit de cum am tratat o reclamație, poți contacta [autoritatea pentru protecția consumatorilor] sau ANCOM, care supraveghează platformele online în România.
+Reclamații. Dacă ceva nu merge bine, te rugăm să ne spui mai întâi prin Contactează-ne din Setări sau la hello@ghemotoc.tech. Răspundem în română sau engleză. Pentru deciziile despre conținut sau conturi poți folosi și căile de contestare din Politica noastră de notificare și acțiune. Dacă nu ești mulțumit de cum am tratat o reclamație, poți contacta [autoritatea pentru protecția consumatorilor] sau ANCOM, care supraveghează platformele online în România.
 
 Legea. Acești termeni sunt guvernați de [legea română / legea suedeză: depinde unde este înregistrată compania; confirmă avocatul]. Dacă locuiești în UE, păstrezi protecția legilor obligatorii din țara în care locuiești și poți merge în instanță acolo.
