@@ -2896,14 +2896,23 @@ export type Database = {
           paragraph_key: string | null;
           paragraph_number: number | null;
           parent_comment_id: string | null;
+          quote_end_block: number | null;
+          quote_end_key: string | null;
+          quote_end_offset: number | null;
+          quote_start_offset: number | null;
+          quote_text: string | null;
           updated_at: string;
           user_id: string;
           comment_is_shown_to_caller: boolean | null;
+          comment_quote_json: Json | null;
           comment_state_for_caller: string | null;
           open_downvote_case: undefined | null;
         };
         ComputedFields:
-          'comment_is_shown_to_caller' | 'comment_state_for_caller' | 'open_downvote_case';
+          | 'comment_is_shown_to_caller'
+          | 'comment_quote_json'
+          | 'comment_state_for_caller'
+          | 'open_downvote_case';
         Insert: {
           body: string;
           chapter_id: string;
@@ -2915,6 +2924,11 @@ export type Database = {
           paragraph_key?: string | null;
           paragraph_number?: number | null;
           parent_comment_id?: string | null;
+          quote_end_block?: number | null;
+          quote_end_key?: string | null;
+          quote_end_offset?: number | null;
+          quote_start_offset?: number | null;
+          quote_text?: string | null;
           updated_at?: string;
           user_id: string;
         };
@@ -2929,6 +2943,11 @@ export type Database = {
           paragraph_key?: string | null;
           paragraph_number?: number | null;
           parent_comment_id?: string | null;
+          quote_end_block?: number | null;
+          quote_end_key?: string | null;
+          quote_end_offset?: number | null;
+          quote_start_offset?: number | null;
+          quote_text?: string | null;
           updated_at?: string;
           user_id?: string;
         };
@@ -14144,6 +14163,15 @@ export type Database = {
         };
         Returns: Json;
       };
+      comment_quote_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
       comment_reactions_json: { Args: { target_comment_id: string }; Returns: Json };
       comment_replies_json: { Args: { parent_id: string; story_writer_id: string }; Returns: Json };
       comment_state_for_caller: {
@@ -16368,6 +16396,10 @@ export type Database = {
         Args: { chapter_code: string; story_slug: string };
         Returns: boolean;
       };
+      passage_text: {
+        Args: { body: string; first_block: number; last_block: number };
+        Returns: string;
+      };
       picture_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       picture_is_visible: { Args: { bucket: string; path: string }; Returns: boolean };
       picture_item_content: { Args: { picture_id: string }; Returns: Json };
@@ -16467,6 +16499,20 @@ export type Database = {
           body: string;
           chapter_code: string;
           is_spoiler?: boolean;
+          story_slug: string;
+        };
+        Returns: Json;
+      };
+      post_passage_comment: {
+        Args: {
+          body: string;
+          chapter_code: string;
+          end_block: number;
+          end_offset: number;
+          is_spoiler?: boolean;
+          quote: string;
+          start_block: number;
+          start_offset: number;
           story_slug: string;
         };
         Returns: Json;
@@ -16652,6 +16698,17 @@ export type Database = {
       };
       quote_card_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      quote_still_there: {
+        Args: {
+          body: string;
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      quote_words: { Args: { value: string }; Returns: string };
       raise_rating_for_picture: {
         Args: {
           new_rating: Database['public']['Enums']['story_rating'];

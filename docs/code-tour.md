@@ -2433,6 +2433,13 @@ The app draws no doodles, stickers or hand-drawn icons anywhere (Robert, 7 Nov 2
 - How a comment stays on its paragraph: it stores the paragraph's number and a fingerprint of its words (`paragraph_key_of()`). `paragraph_now()` finds the paragraph with the same fingerprint nearest that number in the chapter as published now; none means "an earlier version" (`EarlierVersionComments`).
 - The thread is drawn outside the protected text (in the side column or the sheet); `data-paragraph-thread` still tells the copy protection and the "Share quote" bar to leave it alone.
 
+## Comments on chosen words (READER-SELECT; boards B12 to B14)
+
+- A reader can comment on any words they select, in poems and prose (Robert, 24 Nov 2026). In the database it is a paragraph comment that also keeps the words: `comments.quote_text`, `quote_start_offset`, and where the words end (`quote_end_block`, `quote_end_key`, `quote_end_offset`). It belongs to the paragraph where the selection starts, so that paragraph's count includes it; a selection may cross paragraphs and holds at most 1,000 characters.
+- Posting: `post_passage_comment()` runs the same checks as `post_paragraph_comment()` and then checks the words are in those paragraphs, comparing words only (`quote_words()`: Markdown marks, punctuation and line breaks don't count). Refusals: hint `quote_too_long` or `quote_not_found` (23514).
+- Reading: `comment_json()` adds `quote` to every comment (null on a whole-paragraph one), and `paragraph_comment_counts()` adds `parts`, one per set of words still in the chapter with its count, for the underlines. `quote_still_there()` drops a part once the writer changes its words; its comments stay in the paragraph's list (or the earlier-version list) with their words shown. A reply takes its comment's words through `take_parent_paragraph()`.
+- Comments made before this have no words, so they stay comments on the whole paragraph. Tests: `supabase/tests/database/405-comment-on-chosen-words.test.sql`.
+
 ## Story Atlas: a story's plan (S1-E17-01 to S1-E17-06; ATLAS-a)
 
 - One story, two sides: New story (`create_story()`) also makes the story's plan, through the trigger `stories_make_plan`. "Plan" on each card in Your writing and "Plan this story" in the chapter editor lead to `/plan/s/:storySlug`; `/plan` (`AtlasHomePage`) lists the writer's story plans as `StoryPlanCard`s (`useMyStoryPlans` reads `my_story_plans()`; the titles and covers come from `useMyStories`), the story planned last on this device first (`src/features/atlas/lib/lastPlannedStory.ts`; G10a).
