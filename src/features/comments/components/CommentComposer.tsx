@@ -2,9 +2,11 @@
  * CommentComposer: "Add a comment" under the chapter, and the smaller reply box under a comment
  * (story S1-E6-01; board 3.5).
  *
- * Board values: a white card (24 px corners) with the label, a 3-row text box (16 px corners,
- * #FAF8F5), "Hide as a spoiler", the "0 / 3,000" counter, the solid "Post comment" button and
- * "Be kind. Every report is read by a person." The counter is linked to the box with
+ * Board values (B05-ReaderEnd, BOOKS B05): the label, a 3-row text box, "Hide as a spoiler" with
+ * the "0 / 3,000" counter at the end of its line, the quiet "Post comment" button (the chapter's
+ * one main button is Next chapter) and "Be kind. Every report is read by a person." The board
+ * draws no card round the box and puts Post at the right; the box keeps no card here either, and
+ * Post sits on the left (ButtonRow, design books item 8). The counter is linked to the box with
  * aria-describedby, so a screen reader hears it with the field. A refusal is said in plain words,
  * the limit with the minutes to wait (criterion 4), a pause of new comments with its end in
  * the viewer's own local time (bundles CALM-8 and CALM-8b: the writer paused them after the box
@@ -26,13 +28,13 @@
 import { useEffect, useId, useRef, type RefObject } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { FieldProblem } from '@/components/ui/FieldProblem';
 import { PersonalDetailsNote } from '@/features/privacy/components/PersonalDetailsNote';
 import { RulesWalkthrough } from '@/features/safety/components/RulesWalkthrough';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import { useMissingField } from '@/lib/forms/useMissingField';
 import { formatLocalDayAndTime } from '@/lib/local-time';
-import { cn } from '@/lib/utils';
 
 import type { CommentError } from '../api/comments';
 import { useCommentComposer, type CommentComposerState } from '../hooks/useCommentComposer';
@@ -138,29 +140,36 @@ function ComposerControls({
   const { t } = useCommentsTranslation();
   const count = composer.text.length;
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <label className="inline-flex min-h-11 cursor-pointer items-center gap-3 type-body text-ink">
-        <input
-          type="checkbox"
-          checked={composer.isSpoiler}
-          onChange={(event) => composer.setIsSpoiler(event.target.checked)}
-          className="m-0 size-[18px] accent-link"
-        />
-        {t('composer.spoiler')}
-      </label>
-      <span id={counterId} className="ml-auto type-meta text-ink-muted">
-        <span aria-hidden="true">{t('composer.counter', { count, limit })}</span>
-        <span className="sr-only">{t('composer.counterLabel', { count, limit })}</span>
-      </span>
-      {isReply && (
-        <Button variant="secondary" onClick={onCancel}>
-          {t('composer.cancel')}
+    <>
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="inline-flex min-h-11 cursor-pointer items-center gap-3 type-body text-ink">
+          <input
+            type="checkbox"
+            checked={composer.isSpoiler}
+            onChange={(event) => composer.setIsSpoiler(event.target.checked)}
+            className="m-0 size-[18px] accent-link"
+          />
+          {t('composer.spoiler')}
+        </label>
+        {/* Board B05-ReaderEnd: the counter sits at the end of the spoiler line. */}
+        <span id={counterId} className="ml-auto type-meta text-ink-muted">
+          <span aria-hidden="true">{t('composer.counter', { count, limit })}</span>
+          <span className="sr-only">{t('composer.counterLabel', { count, limit })}</span>
+        </span>
+      </div>
+      {/* Buttons on the left (ButtonRow rule); Post is quiet, as the chapter's main button is
+          Next chapter (one main button a screen, CALM-2; board B05-ReaderEnd). */}
+      <ButtonRow>
+        <Button type="submit" variant="secondary" disabled={composer.posting.isPosting}>
+          {t(isReply ? 'composer.postReply' : 'composer.post')}
         </Button>
-      )}
-      <Button type="submit" disabled={composer.posting.isPosting}>
-        {t(isReply ? 'composer.postReply' : 'composer.post')}
-      </Button>
-    </div>
+        {isReply && (
+          <Button variant="text" onClick={onCancel}>
+            {t('composer.cancel')}
+          </Button>
+        )}
+      </ButtonRow>
+    </>
   );
 }
 
@@ -262,15 +271,12 @@ export function CommentComposer(props: CommentComposerProps) {
   const isReply = props.replyTo !== undefined;
   // Design books item 9: Post stays pressable and says what is missing beside the box.
   const missing = useMissingField(composer.text.trim() === '', fieldId);
-  // A reply and a paragraph's comment sit inside a card already, so they get no card of their own.
+  // A reply and a paragraph's comment get the smaller box, with no placeholder or kind line.
   const isCompact = isReply || props.paragraph !== undefined;
   return (
     <form
       onSubmit={missing.submitWhenReady((event) => void composer.send(event))}
-      className={cn(
-        'flex flex-col gap-3',
-        !isCompact && 'rounded-card border border-border bg-surface px-6 py-4',
-      )}
+      className="flex flex-col gap-3"
     >
       <label htmlFor={fieldId} className="type-body font-semibold text-ink">
         {t(...labelText(props))}

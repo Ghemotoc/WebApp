@@ -16891,7 +16891,7 @@ COMMENT ON FUNCTION "public"."chapter_code"() IS 'Internal: a fresh 8-character 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone DEFAULT NULL::timestamp with time zone) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone DEFAULT NULL::timestamp with time zone, "oldest_first" boolean DEFAULT false) RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -16917,17 +16917,23 @@ begin
     select top_level.id from public.comments as top_level
     where top_level.chapter_id = chapter.id
       and top_level.parent_comment_id is null
-      and (older_than is null or top_level.created_at < older_than)
+      -- BOOKS B05: the next page starts after the last comment shown, in the order picked.
+      and (page_after is null
+           or (not oldest_first and top_level.created_at < page_after)
+           or (oldest_first and top_level.created_at > page_after))
       and (public.comment_is_shown_to_caller(top_level)
            or (public.comment_state_for_caller(top_level) in ('deleted', 'removed')
                and jsonb_array_length(public.comment_replies_json(top_level.id, story.user_id)) > 0))
-    order by top_level.created_at desc
+    -- BOOKS B05: newest first by default, oldest first when the reader picks it.
+    order by case when oldest_first then top_level.created_at end asc,
+             case when not oldest_first then top_level.created_at end desc
     limit page_size + 1
   )
   select coalesce(jsonb_agg(public.comment_json(comments, story.user_id)
            || jsonb_build_object('replies', public.comment_replies_json(comments.id, story.user_id),
                                  'paragraph', public.comment_paragraph_json(comments, chapter.published_body))
-           order by comments.created_at desc), '[]'::jsonb),
+           order by case when oldest_first then comments.created_at end asc,
+                    case when not oldest_first then comments.created_at end desc), '[]'::jsonb),
          count(*)::integer
   into page, page_count
   from listed join public.comments on comments.id = listed.id;
@@ -16948,10 +16954,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) OWNER TO "postgres";
+ALTER FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) IS 'One page of a chapter''s comments, newest first, with replies and which paragraph each is on; never a user ID (S1-E6-01, S1-E6-06).';
+COMMENT ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) IS 'One page of a chapter''s comments, newest first or oldest first, with replies and which paragraph each is on; never a user ID (S1-E6-01, S1-E6-06, BOOKS B05).';
 
 
 
@@ -70980,8 +70986,8 @@ REVOKE ALL ON FUNCTION "public"."chapter_code"() FROM PUBLIC;
 
 
 
-GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) TO "anon";
-GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) TO "anon";
+GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) TO "authenticated";
 
 
 

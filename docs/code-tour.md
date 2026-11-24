@@ -1618,8 +1618,11 @@ Comments (S1-E6-01) sit under the banner slot, in their own file, fetched when t
 
 ```
 ChapterComments (reading) ─lazy→ CommentsSection (src/features/comments/)
-  │  useChapterComments → chapter_comments(story, chapter, older_than): 20 top-level comments a page,
-  │     newest first, each with its replies; readable_chapter(), blocks, moderated_items, comments_enabled
+  │  useChapterComments → chapter_comments(story, chapter, page_after, oldest_first): 20 top-level
+  │     comments a page, newest first unless the reader picks "Oldest first" (CommentOrderSelect, BOOKS B05),
+  │     each with its replies; readable_chapter(), blocks, moderated_items, comments_enabled
+  │  CommentItem's meta line: name · Writer · "On paragraph 3" (CommentParagraphLink opens that
+  │     paragraph's thread through ParagraphCommentsContext) · date
   │  CommentComposer → usePostComment → post_comment(): the account gate, the limit (5 an hour on the
   │     first day, 60 after: wait_minutes in the error's hint), check_comment_text(), a 'comment_posted' job
   │     (lengths: comment_max_characters 3,000; paragraph_comment_max_characters 500 for a paragraph and

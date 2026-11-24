@@ -139,19 +139,19 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     );
 
     await visitor.goto(`/s/${slug}`);
-    // The story page names each chapter with its number ("1. Caietele bunicii", board B01).
-    await expect(
-      visitor.getByRole('link', { name: '1. Caietele bunicii', exact: true }),
-    ).toBeVisible();
+    // The story page's chapter list numbers each title ("1. Caietele bunicii", board B01), so the
+    // check reads the title in that list: the published title, not the saved draft's.
+    const chapterTitle = visitor
+      .getByRole('region', { name: /capitol|chapter/i })
+      .locator('[data-chapter-title]');
+    await expect(chapterTitle).toHaveText(/^\d+\. Caietele bunicii$/);
 
     await publishPanel(page).getByRole('button', { name: 'Update chapter' }).click();
     await expect
       .poll(() => runSql(`select published_title from public.chapters where code = 'publish1'`))
       .toBe('Caietele bunicii (2)');
     await visitor.reload();
-    await expect(
-      visitor.getByRole('link', { name: '1. Caietele bunicii (2)', exact: true }),
-    ).toBeVisible();
+    await expect(chapterTitle).toHaveText(/^\d+\. Caietele bunicii \(2\)$/);
     await expect(visitor.getByText(/Modificat|Edited/)).toBeVisible();
   });
 

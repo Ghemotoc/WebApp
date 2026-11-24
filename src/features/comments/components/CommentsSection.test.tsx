@@ -36,12 +36,12 @@ const pauseEnd = '2026-11-21T16:40:00Z';
  *
  * @param pausedUntil - when the writer's pause ends, or null when none runs
  */
-function commentsAnswer(pausedUntil: string | null) {
+function commentsAnswer(pausedUntil: string | null, total = 0) {
   const firstPage: CommentsPage = {
     commentsEnabled: true,
     audienceAllowsMe: true,
     pause: { pausedUntil, canResume: true },
-    total: 0,
+    total,
     hasMore: false,
     comments: [],
   };
@@ -123,5 +123,34 @@ describe('CommentsSection during a pause of new comments', () => {
     commentsAnswer(null);
     renderWithProviders(<CommentsSection address={address} />, 'en');
     expect(screen.getByRole('textbox', { name: 'Add a comment' })).not.toHaveFocus();
+  });
+});
+
+describe('CommentsSection order of comments (BOOKS B05, board B05-ReaderEnd)', () => {
+  beforeEach(() => {
+    vi.mocked(useSession).mockReturnValue({ userId: 'reader' } as ReturnType<typeof useSession>);
+    vi.mocked(useCommentComposer).mockReturnValue(emptyComposer());
+    vi.mocked(useCommentLimit).mockReturnValue(3000);
+    vi.mocked(useResumeComments).mockReturnValue({
+      resume: vi.fn(),
+      isResuming: false,
+      failure: null,
+    });
+  });
+
+  it('lists newest first, and asks for oldest first once the reader picks it', () => {
+    commentsAnswer(null, 12);
+    renderWithProviders(<CommentsSection address={address} />, 'en');
+    const order = screen.getByRole('combobox', { name: 'Order of comments' });
+    expect(order).toHaveValue('newest');
+    expect(vi.mocked(useChapterComments)).toHaveBeenLastCalledWith(address, 'newest');
+    fireEvent.change(order, { target: { value: 'oldest' } });
+    expect(vi.mocked(useChapterComments)).toHaveBeenLastCalledWith(address, 'oldest');
+  });
+
+  it('offers no order while there is only one comment', () => {
+    commentsAnswer(null, 1);
+    renderWithProviders(<CommentsSection address={address} />, 'en');
+    expect(screen.queryByRole('combobox', { name: 'Order of comments' })).toBeNull();
   });
 });
