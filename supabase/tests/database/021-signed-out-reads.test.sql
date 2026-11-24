@@ -278,6 +278,7 @@ select results_eq(
        ('story_country_scores', 0::bigint),
        ('story_events', 0::bigint),
        ('story_ideas', 0::bigint),
+       ('story_likes', 0::bigint),
        ('story_marketing', 0::bigint),
        -- Pairs of stories finished by the same readers: totals for suggestions, staff only (S1-E15-06).
        ('story_pairs', 0::bigint),

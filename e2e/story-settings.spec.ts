@@ -100,8 +100,12 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
     // The owner can't report their own story, so the shared Report button isn't shown to them
     // (S1-E10-01 replaced the e-mail link, architecture 1.7.11).
     await expect(page.getByRole('button', { name: 'Report this story' })).toHaveCount(0);
+    // Completed shows once, in bold first in the hero's facts line (board B01, bundle 2).
+    const header = page.locator('header').filter({
+      has: page.getByRole('heading', { level: 1, name: 'Stația meteo' }),
+    });
+    await expect(header.getByText('Completed', { exact: true })).toBeVisible();
     const labels = page.getByText('Labels from the writer').locator('..');
-    await expect(labels.getByText('Completed')).toBeVisible();
     await expect(labels.getByText('Off')).toBeVisible();
 
     const teenPage = await openAsPersona(browser, 'teen_17', `/s/${slug}`);

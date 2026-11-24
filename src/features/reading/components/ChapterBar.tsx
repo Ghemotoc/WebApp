@@ -20,7 +20,7 @@
  * Where it sits: sticky, under the website's top bar from 1024 px; on phones and tablets it is
  * the only bar while reading (the shell draws no header of its own, useReaderOwnsHeader), 12 px
  * from each edge and clear of the notch.
- * Who uses it: ChapterReaderPage and MissingTranslationNotice. What it calls:
+ * Who uses it: ChapterReaderPage. What it calls:
  * ChapterContentsControl, ReadingSettingsControl and ReadInSwitch; the rest are links.
  */
 import { useTranslation } from 'react-i18next';

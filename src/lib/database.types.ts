@@ -9864,6 +9864,46 @@ export type Database = {
           },
         ];
       };
+      story_likes: {
+        Row: {
+          created_at: string;
+          id: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_likes_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_likes_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       story_marketing: {
         Row: {
           back_cover_blurb: string;
@@ -15281,6 +15321,8 @@ export type Database = {
         Returns: Json;
       };
       like_state_of: { Args: { target_chapter_id: string }; Returns: Json };
+      like_story: { Args: { should_like: boolean; story_slug: string }; Returns: Json };
+      likeable_story_id: { Args: { story_slug: string }; Returns: string };
       list_default_sort: { Args: { list_kind: string }; Returns: string };
       list_holds_story: {
         Args: {
@@ -18430,6 +18472,8 @@ export type Database = {
       story_languages: { Args: { story_slug: string }; Returns: Json };
       story_last_chapter_number: { Args: { target_story_id: string }; Returns: number };
       story_library_state: { Args: { story_slug: string }; Returns: Json };
+      story_like_state: { Args: { story_slug: string }; Returns: Json };
+      story_like_state_of: { Args: { target_story_id: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };
       story_listing_allows: {
@@ -18488,6 +18532,7 @@ export type Database = {
         Args: { labels: Json };
         Returns: Database['public']['Enums']['story_rating_reason'][];
       };
+      story_read_total: { Args: { target_story_id: string }; Returns: number };
       story_reading_lists: { Args: { story_slug: string }; Returns: Json };
       story_search_document: { Args: { target_story_id: string }; Returns: unknown };
       story_search_rank: {
