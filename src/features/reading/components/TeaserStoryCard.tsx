@@ -76,7 +76,7 @@ export function TeaserStoryCard({ story, chapterNumber, lastChapterNumber }: Tea
         <h1
           id="teaser-story-title"
           lang={story.languageCode}
-          className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-bold tracking-[-0.025em] break-words"
+          className="m-0 type-title lg:type-display break-words"
         >
           {story.title}
         </h1>

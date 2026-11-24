@@ -38,10 +38,7 @@ export function BandText({ band, headingId, tone }: BandTextProps) {
   return (
     <div className="flex flex-col gap-3">
       <p className={`m-0 ${classes.eyebrow}`}>{withBrand(band.eyebrow)}</p>
-      <h2
-        id={headingId}
-        className={`m-0 font-heading text-[clamp(30px,3.6vw,48px)] leading-[1.05] font-bold tracking-[-0.02em] ${classes.heading}`}
-      >
+      <h2 id={headingId} className={`m-0 type-title lg:type-display ${classes.heading}`}>
         {withBrand(band.heading)}
       </h2>
       <p className={`m-0 max-w-[560px] type-long leading-relaxed ${classes.lede}`}>

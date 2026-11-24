@@ -39,7 +39,7 @@ export function EmailSettingsSection() {
   return (
     <section
       aria-labelledby="settings-email-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="settings-email-heading"

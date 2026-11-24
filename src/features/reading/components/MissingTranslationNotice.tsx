@@ -105,7 +105,7 @@ export function MissingTranslationNotice({ chapter, missing }: MissingTranslatio
         </Eyebrow>
         <h1
           id="missing-translation-title"
-          className="m-0 font-heading text-[clamp(26px,3.2vw,36px)] leading-tight font-bold break-words text-ink-heading"
+          className="m-0 type-heading leading-tight break-words text-ink-heading"
         >
           {title}
         </h1>

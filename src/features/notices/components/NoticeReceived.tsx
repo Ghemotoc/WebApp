@@ -63,7 +63,7 @@ export function NoticeReceived({ sent, answer, language, onAgain }: NoticeReceiv
   return (
     <section
       aria-labelledby="notice-received-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="notice-received-heading"

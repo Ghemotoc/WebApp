@@ -70,7 +70,7 @@ export function PublicPlanHero({
       <HeroCover plan={plan} />
       <div className="flex min-w-0 flex-col gap-2">
         <p className="m-0 eyebrow">{t('publicPlan.eyebrow')}</p>
-        <h1 className="m-0 text-[clamp(32px,4vw,48px)] leading-[1.02] font-bold tracking-[-0.025em] break-words">
+        <h1 className="m-0 type-title lg:type-display break-words">
           {storyAddress === null ? (
             plan.storyTitle
           ) : (

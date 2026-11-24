@@ -38,10 +38,7 @@ export function NotFoundPage() {
           <SearchIcon size={56} />
         </div>
         <Eyebrow>{t('notFound.eyebrow')}</Eyebrow>
-        <h1
-          id="not-found-heading"
-          className="m-0 font-heading text-[clamp(32px,5vw,56px)] leading-[1.05] font-bold text-ink-heading"
-        >
+        <h1 id="not-found-heading" className="m-0 type-title lg:type-display text-ink-heading">
           {t('notFound.heading')}
         </h1>
         <p className="m-0 max-w-[600px] type-long text-ink-muted">{t('notFound.body')}</p>

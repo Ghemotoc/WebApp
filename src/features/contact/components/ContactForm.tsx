@@ -236,7 +236,7 @@ export function ContactForm({ sender, language, isSending, failure, onSend }: Co
       noValidate
       onSubmit={handleSubmit}
       aria-labelledby="contact-form-heading"
-      className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="contact-form-heading"

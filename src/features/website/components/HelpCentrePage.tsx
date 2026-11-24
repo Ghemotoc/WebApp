@@ -51,7 +51,7 @@ function HelpHeader({
   return (
     <header className="flex flex-col items-center gap-3 text-center">
       <Eyebrow>{t('website.help.eyebrow')}</Eyebrow>
-      <h1 className="m-0 font-heading text-[clamp(32px,4vw,48px)] font-bold text-ink-heading">
+      <h1 className="m-0 type-title lg:type-display text-ink-heading">
         {t('website.help.heading')}
       </h1>
       <p className="m-0 max-w-[620px] text-ink-muted">{t('website.help.intro')}</p>

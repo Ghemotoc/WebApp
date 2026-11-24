@@ -305,6 +305,9 @@ describe('the design rules are the defaults', () => {
     const ownSize =
       /(^|[\s"'`:])text-(\[\d+(\.\d+)?(px|rem)\]|xs|sm|base|lg|xl|[2-9]xl)(?=[\s"'`}]|$)/m;
     expect(memberOffenders(ownSize)).toEqual([]);
+    // A size that grows with the screen (clamp) is a size of its own too (user stories Section 1).
+    const growingSize = /(^|[\s"'`:])text-\[(clamp|calc|min|max)\(/m;
+    expect(memberOffenders(growingSize)).toEqual([]);
   });
 
   it('a member screen uses Inter at 400 and 600 and Funnel Display at 700 only', () => {
@@ -321,6 +324,9 @@ describe('the design rules are the defaults', () => {
       'm',
     );
     expect(memberOffenders(offScale)).toEqual([]);
+    // Spacing that grows with the screen (clamp) lands between the steps (user stories Section 1).
+    const growingSpacing = new RegExp(`(^|[\\s"'\`:])-?${spacing}-\\[(calc\\()?clamp\\(`, 'm');
+    expect(memberOffenders(growingSpacing)).toEqual([]);
   });
 
   it('a member screen writes text in ink, ink-muted, ink-heading, link or a state colour', () => {

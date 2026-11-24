@@ -115,10 +115,7 @@ function HomeQuestions({
       {/* The heading and "Something else?" on one side, the questions on the other (board). */}
       <div className="flex flex-col gap-4">
         <Eyebrow>{t('website.questionsEyebrow')}</Eyebrow>
-        <h2
-          id="questions-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-bold text-ink-heading"
-        >
+        <h2 id="questions-heading" className="m-0 type-title text-ink-heading">
           {withBrand(page.questionsHeading)}
         </h2>
         <MoreHelpLinks />

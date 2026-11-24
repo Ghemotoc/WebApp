@@ -66,9 +66,7 @@ function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: 
         <div className="w-fit">
           <Eyebrow>{storyTitle}</Eyebrow>
         </div>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
-          {t('manageChapters.heading')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display">{t('manageChapters.heading')}</h1>
         <p className="m-0 type-long leading-relaxed text-ink-muted">{t('manageChapters.intro')}</p>
       </div>
       <div className="flex flex-wrap items-center gap-3">

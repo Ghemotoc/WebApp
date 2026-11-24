@@ -20,7 +20,7 @@ export function UnavailableHereNotice() {
   return (
     <div className="flex flex-col items-start gap-4">
       <title>{t('unavailableHere.title')}</title>
-      <h1 className="m-0 font-heading text-[clamp(32px,5vw,48px)] leading-[1.1] font-bold text-ink-heading">
+      <h1 className="m-0 type-title lg:type-display text-ink-heading">
         {t('unavailableHere.title')}
       </h1>
       <p className="m-0 type-body text-ink-muted">{t('unavailableHere.body')}</p>

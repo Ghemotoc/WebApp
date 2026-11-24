@@ -77,7 +77,7 @@ function ListHeading({ heading, total }: Pick<StoryListHeaderProps, 'heading' | 
   return (
     <div className="flex flex-col gap-3">
       <Eyebrow>{heading.eyebrow}</Eyebrow>
-      <h1 className="m-0 font-heading text-[clamp(40px,5.6vw,72px)] leading-[0.98] font-bold tracking-[-0.03em] break-words text-ink-heading">
+      <h1 className="m-0 type-title lg:type-display break-words text-ink-heading">
         {heading.title}
       </h1>
       <p aria-live="polite" className="m-0 min-h-6 type-long text-ink-muted">
@@ -111,7 +111,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
   return (
     <header
       className={cn(
-        'genre-band relative flex flex-col gap-4 overflow-hidden rounded-card px-[clamp(24px,4vw,48px)] py-[clamp(28px,4vw,48px)] shadow-card',
+        'genre-band relative flex flex-col gap-4 overflow-hidden rounded-card px-6 lg:px-12 py-6 lg:py-12 shadow-card',
         accentDeepBandClasses[bandTone],
       )}
       data-band-tone={bandTone}

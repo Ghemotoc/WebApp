@@ -32,9 +32,7 @@ function NoticeHeader() {
   return (
     <div className="flex max-w-[760px] flex-col gap-3">
       <Eyebrow>{t('eyebrow')}</Eyebrow>
-      <h1 className="m-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.02em] text-ink-heading">
-        {t('heading')}
-      </h1>
+      <h1 className="m-0 type-title lg:type-display text-ink-heading">{t('heading')}</h1>
       <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('intro')}</p>
       <p className="m-0 text-ink-muted">{t('contactPoint')}</p>
     </div>
