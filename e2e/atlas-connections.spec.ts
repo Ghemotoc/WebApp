@@ -406,7 +406,10 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.getByRole('button', { name: 'Arrange for me' }).click();
     await expect.poll(placeOfLupul).toBe('none');
     await expect(page.getByRole('button', { name: 'Arrange for me' })).toBeDisabled();
-    // Dropped on Ana's card, it opens the form with both picked; nothing is saved yet.
+    // Dropped on Ana's card, it opens the form with both picked; nothing is saved yet. The page is
+    // taller with the bigger reading size, and pressing Arrange for me scrolls it, so the map
+    // comes back into view first: both ends of the drag must be on the screen.
+    await page.getByTestId('atlas-relationship-map').scrollIntoViewIfNeeded();
     await dragBetween(
       page,
       await centreOf(page, lupul),

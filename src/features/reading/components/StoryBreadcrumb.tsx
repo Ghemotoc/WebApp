@@ -12,8 +12,9 @@ import { Link } from 'react-router';
 
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 
-/** A linked step: underlined, at least 24 px tall (CLAUDE.md rule 9). */
-const stepLink = 'inline-flex min-h-6 items-center text-link underline underline-offset-2';
+/** A linked step: underlined, at least 24 px tall (CLAUDE.md rule 9), tapped in a 44 by 32 box. */
+const stepLink =
+  'hit-target inline-flex min-h-6 items-center text-link underline underline-offset-2';
 
 /** What the breadcrumb needs from the story. */
 export interface StoryBreadcrumbProps {
