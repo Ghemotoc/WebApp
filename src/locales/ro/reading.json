@@ -85,7 +85,25 @@
     "showAllChapters_one": "Arată {{count}} capitol",
     "showAllChapters_few": "Arată toate cele {{count}} capitole",
     "showAllChapters_other": "Arată toate cele {{count}} de capitole",
-    "showFewerChapters": "Arată mai puține capitole"
+    "showFewerChapters": "Arată mai puține capitole",
+    "numberedChapter": "{{number}}. {{title}}",
+    "showChapterRange": "Arată capitolele {{from}}–{{to}}",
+    "lastChapterOut": "ultimul capitol a apărut pe {{date}}",
+    "tagLink": "#{{tag}}",
+    "getInToSave": "Intră în cont ca să urmărești, să apreciezi sau să salvezi",
+    "writerHeading": "Autorul",
+    "writesOne": "Scrie {{first}}",
+    "writesTwo": "Scrie {{first}} și {{second}}",
+    "writerFollowers_one": "{{value}} urmăritor",
+    "writerFollowers_few": "{{value}} urmăritori",
+    "writerFollowers_other": "{{value}} de urmăritori",
+    "writerReads_one": "{{value}} citire",
+    "writerReads_few": "{{value}} citiri",
+    "writerReads_other": "{{value}} de citiri",
+    "writingRankLabel": "Rang de scriitor:",
+    "reportThisStory": "Raportează povestea",
+    "readOnWebAndApps": "Pe web și în aplicații, când apar",
+    "webAndApp": "Web și aplicație"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
@@ -203,14 +221,22 @@
     "buttonSample": "Aa",
     "title": "Setări de citire",
     "close": "Închide setările de citire",
-    "font": "Font",
-    "fonts": {
-      "sans": "Inter",
-      "serif": "Serif",
-      "dyslexia_friendly": "Pentru dislexie",
-      "atkinson_hyperlegible": "Atkinson Hyperlegible"
+    "paper": "Hârtie",
+    "papers": {
+      "white": "Albă",
+      "sepia": "Sepia",
+      "grey": "Gri",
+      "black": "Neagră"
     },
-    "fontHint": "Fonturi care merg în orice browser: OpenDyslexic, pe care mulți cititori cu dislexie îl găsesc mai ușor și Atkinson Hyperlegible, făcut ca literele care seamănă între ele să se deosebească ușor.",
+    "nightMode": "Mod de noapte",
+    "nightModeHint": "Întunecă toată pagina, cu tot cu hârtie.",
+    "typeface": "Font",
+    "typefaces": {
+      "serif": "Literata",
+      "sans": "Inter",
+      "dyslexia_friendly": "OpenDyslexic",
+      "atkinson_hyperlegible": "Atkinson"
+    },
     "textSize": "Mărimea textului",
     "textSizeValue": "{{size}} px",
     "textSizeFromDevice": "{{size}} px, de pe dispozitiv",
@@ -227,25 +253,20 @@
       "medium": "Mediu",
       "wide": "Lat"
     },
-    "theme": "Temă",
-    "themes": {
-      "light": "Luminos",
-      "sepia": "Sepia",
-      "night": "Noapte"
-    },
     "nightByClock": "Noapte după ceas",
-    "nightByClockHint": "Capitolele se deschid în tema Noapte între două ore alese de tine, după ceasul acestui dispozitiv.",
+    "nightByClockHint": "Capitolele se deschid pe hârtie neagră între două ore alese de tine, după ceasul acestui dispozitiv.",
     "nightFrom": "De la",
     "nightUntil": "Până la",
     "nightWaiting": "Alege ambele ore. Nimic nu se schimbă până atunci.",
-    "nightNextChapter": "Capitolele deschise între aceste ore apar în tema Noapte. O temă pe care o alegi tu rămâne până la capitolul următor.",
+    "nightNextChapter": "Capitolele deschise între aceste ore apar pe hârtie neagră. O hârtie pe care o alegi tu rămâne până la capitolul următor.",
     "ruler": "Riglă de citire",
     "rulerHint": "O bandă discretă urmărește rândul pe care îl citești. Mișcă cursorul peste text sau folosește tastele săgeată sus și jos.",
-    "saved": "Salvate în contul tău, deci se aplică pe toate dispozitivele tale. Mărimea textului pornește de la setarea dispozitivului tău.",
     "saveFailed": "Nu am putut salva setările de citire. Se aplică în continuare aici; verifică-ți conexiunea și schimbă din nou o setare ca să încercăm iar.",
     "timeLeft": "Timp rămas",
     "timeLeftBar": "În bară",
-    "timeLeftPage": "Pe pagină"
+    "timeLeftPage": "Pe pagină",
+    "timeLeftHint": "Minute rămase din acest capitol",
+    "moreOptions": "Mai multe opțiuni"
   },
   "embed": {
     "removed": "[Scos de echipa de moderare]",

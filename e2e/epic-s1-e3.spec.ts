@@ -87,7 +87,11 @@ async function readerTitles(browser: Browser, slug: string): Promise<string[]> {
   await page.goto(`/s/${slug}`);
   const chapters = page.getByRole('region', { name: /capitol|chapter/i });
   await expect(chapters).toBeVisible();
-  const titles = await chapters.locator('[data-chapter-title]').allTextContents();
+  // Each title carries its number ("1. Dimineața", board B01); the order is what these checks
+  // compare, so the number is taken off here and checked on its own where it matters.
+  const titles = (await chapters.locator('[data-chapter-title]').allTextContents()).map((title) =>
+    title.replace(/^\d+\. /, ''),
+  );
   await context.close();
   return titles;
 }

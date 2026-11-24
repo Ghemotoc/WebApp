@@ -1,6 +1,7 @@
 -- Database tests for the reader's reading settings (story S1-E4-02).
 -- What it proves:
 -- - reading_settings is readable by its owner only (allowed and denied tests for its policy);
+-- - the paper (BOOKS B04): Sepia until the reader picks White, Grey or Black;
 -- - where the minutes left show (CALM-5): 'bar' unless the reader picks 'page', and nothing else;
 -- - a signed-out visitor can't save settings, and the table can't be written directly;
 -- - the first save creates the row, a later save replaces it, and a null size means "follow the
@@ -10,7 +11,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(12);
+select plan(13);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -33,30 +34,34 @@ grant execute on all functions in schema pg_temp to anon, authenticated;
 /* ---------- 1. Saving ---------- */
 
 select pg_temp.sign_out();
-select is(pg_temp.refusal($$ select public.save_reading_settings('serif', 20::smallint, 'wide', 'narrow', 'sepia') $$),
+select is(pg_temp.refusal($$ select public.save_reading_settings('serif', 20::smallint, 'wide', 'narrow', 'grey') $$),
   '42501', 'a signed-out visitor can''t save reading settings');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
-select lives_ok($$ select public.save_reading_settings('dyslexia_friendly', null, 'wide', 'narrow', 'sepia') $$,
+-- BOOKS B04: a reader who never chose a paper reads on Sepia, today's story paper.
+select is((select column_default from information_schema.columns
+  where table_schema = 'public' and table_name = 'reading_settings' and column_name = 'paper'),
+  '''sepia''::reading_paper', 'the paper is Sepia until the reader picks another');
+select lives_ok($$ select public.save_reading_settings('dyslexia_friendly', null, 'wide', 'narrow', 'grey') $$,
   'a reader saves their settings for the first time');
-select is((select font::text || ' ' || coalesce(text_size::text, 'device') || ' ' || theme::text from public.reading_settings),
-  'dyslexia_friendly device sepia', 'a missing size means "follow the device"');
-select lives_ok($$ select public.save_reading_settings('serif', 24::smallint, 'compact', 'wide', 'night') $$,
+select is((select font::text || ' ' || coalesce(text_size::text, 'device') || ' ' || paper::text from public.reading_settings),
+  'dyslexia_friendly device grey', 'a missing size means "follow the device"');
+select lives_ok($$ select public.save_reading_settings('serif', 24::smallint, 'compact', 'wide', 'black') $$,
   'a later save replaces the settings');
-select is((select font::text || ' ' || text_size::text || ' ' || line_spacing::text || ' ' || line_width::text || ' ' || theme::text
-  from public.reading_settings), 'serif 24 compact wide night', 'the reader reads back the settings they saved last');
-select is(pg_temp.refusal($$ select public.save_reading_settings('serif', 40::smallint, 'compact', 'wide', 'night') $$),
+select is((select font::text || ' ' || text_size::text || ' ' || line_spacing::text || ' ' || line_width::text || ' ' || paper::text
+  from public.reading_settings), 'serif 24 compact wide black', 'the reader reads back the settings they saved last');
+select is(pg_temp.refusal($$ select public.save_reading_settings('serif', 40::smallint, 'compact', 'wide', 'black') $$),
   '23514', 'a size outside 14 to 28 is refused');
 -- CALM-5: Time left sits in the chapter bar until the reader picks On the page.
 select is((select time_left from public.reading_settings), 'bar',
   'a reader who never chose where the minutes left show has them in the chapter bar');
-select lives_ok($$ select public.save_reading_settings('serif', 24::smallint, 'compact', 'wide', 'night',
+select lives_ok($$ select public.save_reading_settings('serif', 24::smallint, 'compact', 'wide', 'black',
   false, null, null, false, 'page') $$,
   'a reader moves the minutes left onto the page');
-select is(pg_temp.refusal($$ select public.save_reading_settings('serif', 24::smallint, 'compact', 'wide', 'night',
+select is(pg_temp.refusal($$ select public.save_reading_settings('serif', 24::smallint, 'compact', 'wide', 'black',
   false, null, null, false, 'corner') $$),
   '23514', 'the minutes left can only be in the bar or on the page');
-select is(pg_temp.refusal($$ update public.reading_settings set theme = 'light' $$), '42501',
+select is(pg_temp.refusal($$ update public.reading_settings set paper = 'white' $$), '42501',
   'the table can''t be written directly, only through save_reading_settings()');
 
 /* ---------- 2. Row-level security ---------- */

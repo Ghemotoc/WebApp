@@ -1,17 +1,18 @@
 /**
- * StoryReadingActions: "Start reading" or "Continue chapter 14", and the Library drop-down, on
- * the story page (story S1-E4-03; board 3.4 Story, the action row).
+ * StoryReadingActions: the reading parts of the story page's one action row (story S1-E4-03;
+ * redrawn to board B01 in bundle 2, user story 2.1).
  *
- * - The main button opens the first chapter, or, once the reader has a place in the story, the
- *   chapter to carry on with (the next one when they finished theirs).
- * - "Library" puts the story on a shelf (Reading, Saved for later, Finished) or takes it off. It
- *   is a native drop-down in the shared style (DoD drop-downs), so it works by keyboard and
- *   screen reader with no extra code; the change saves at once.
- * - "Add to a list" puts the story in the reader's own reading lists (AddToReadingList, GAPS-6).
- * - On a story on the Finished shelf, "Tell the writer you finished it" (FinishedThanksButton,
- *   IDEAS-1c), which turns into "Sent" once it went.
+ * - StoryReadButton, the main button: "Start reading" for a new reader, "Continue" once they have
+ *   a place in the story (the chapter to carry on with, the next one when they finished theirs),
+ *   and "Read again" once the story is on their Finished shelf.
+ * - StoryLibraryButton, a quiet button: "Add to library", or "In library" once the story is on a
+ *   Library shelf. It opens the "Add to a bookshelf" sheet (AddToReadingList), which also holds
+ *   the Library drop-down (Reading, Saved for later, Finished) until board C03 redraws it
+ *   (bundle 3, user story 3.3). A change saves at once.
+ * - StoryFinishedThanks: on a story on the Finished shelf, "Tell the writer you finished it"
+ *   beside the main button (FinishedThanksButton, IDEAS-1c), which turns into "Sent" once it went.
  * The story's writer sees none of them (their own story never fills their library). A signed-out
- * visitor sees "Start reading" and a "Get in to save it" link.
+ * visitor sees only the main button; StoryHeader says "Get in to follow, like or save".
  * Who uses it: StoryHeader. What it calls: useStoryLibraryState → story_library_state() and
  * set_library_shelf(), AddToReadingList and FinishedThanksButton.
  */
@@ -22,62 +23,66 @@ import { Select } from '@/components/ui/Select';
 
 import { libraryShelves, type LibraryShelf } from '../api/library';
 import { useStoryLibraryState } from '../hooks/useStoryLibraryState';
-
 import { AddToReadingList } from './AddToReadingList';
 import { FinishedThanksButton } from './FinishedThanksButton';
 import { continueAddress, continueChapterNumber } from '../lib/places';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
-/** What the row needs. */
-export interface StoryReadingActionsProps {
-  storySlug: string;
-  /** The first chapter readers can open, or null when there is none. */
-  firstChapterCode: string | null;
-  isOwner: boolean;
-}
-
 /** The value the drop-down uses for "not in your library". */
 const notInLibrary = 'none';
 
-/** The main button: start or continue. */
-function ReadButton(props: { storySlug: string; firstChapterCode: string | null }) {
+/** The main button's look: the one filled button on the page, 44 px tall. */
+const mainButtonClass =
+  'inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline';
+
+/** What the main button needs. */
+export interface StoryReadButtonProps {
+  storySlug: string;
+  /** The first chapter readers can open, or null when there is none. */
+  firstChapterCode: string | null;
+}
+
+/**
+ * The main button: start, continue or read again (user story 2.1).
+ *
+ * @returns the link, or nothing while the story has no chapter to open
+ */
+export function StoryReadButton({ storySlug, firstChapterCode }: StoryReadButtonProps) {
   const { t } = useLibraryTranslation();
-  const { state } = useStoryLibraryState(props.storySlug);
+  const { state } = useStoryLibraryState(storySlug);
   const place = state?.place ?? null;
-  if (place === null && props.firstChapterCode === null) return null;
-  const address =
-    place === null
-      ? `/s/${props.storySlug}/${props.firstChapterCode}`
-      : continueAddress(props.storySlug, place);
-  const words =
-    place === null
-      ? t('startReading')
-      : t('continueChapter', { number: continueChapterNumber(place) });
+  const hasFinished = state?.shelf === 'finished';
+  // Step 1: a new reader, or one who finished, starts from chapter 1.
+  if (place === null || hasFinished) {
+    if (firstChapterCode === null) return null;
+    return (
+      <Link to={`/s/${storySlug}/${firstChapterCode}`} className={mainButtonClass}>
+        {hasFinished ? t('button.readAgain') : t('startReading')}
+      </Link>
+    );
+  }
+  // Step 2: anyone else carries on where they stopped; the name says which chapter.
+  const number = continueChapterNumber(place);
   return (
     <Link
-      to={address}
-      className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
+      to={continueAddress(storySlug, place)}
+      aria-label={t('continueChapter', { number })}
+      className={mainButtonClass}
     >
-      {words}
+      {t('button.continueShort')}
     </Link>
   );
 }
 
-/** The Library drop-down, or the log-in link for a visitor. */
-function LibraryChoice({ storySlug }: { storySlug: string }) {
+/**
+ * The Library drop-down inside the sheet (Reading, Saved for later, Finished), with the note when
+ * a change didn't save.
+ *
+ * @returns the drop-down
+ */
+function LibraryShelfChoice({ storySlug }: { storySlug: string }) {
   const { t } = useLibraryTranslation();
   const library = useStoryLibraryState(storySlug);
-  if (!library.isSessionKnown) return null;
-  if (!library.isSignedIn) {
-    return (
-      <Link
-        to="/sign-in"
-        className="type-body font-semibold text-link underline hover:text-link-hover"
-      >
-        {t('button.logIn')}
-      </Link>
-    );
-  }
   if (library.state === null) return null;
   const options = [
     { value: notInLibrary, label: t('button.none') },
@@ -98,29 +103,37 @@ function LibraryChoice({ storySlug }: { storySlug: string }) {
         onChange={choose}
       />
       {library.saveFailed && <Notice tone="error">{t('button.saveFailed')}</Notice>}
-      {library.state.shelf === 'finished' && (
-        <FinishedThanksButton storySlug={storySlug} isSent={library.state.thanksSent} />
-      )}
-      <AddToReadingList storySlug={storySlug} />
     </div>
   );
 }
 
 /**
- * Renders the row.
+ * "Add to library" or "In library": opens the bookshelf sheet, with the Library drop-down on top.
  *
- * @returns the start or continue link and the Library drop-down, or nothing for the writer
+ * @returns the button, or nothing signed out or while the state loads
  */
-export function StoryReadingActions({
-  storySlug,
-  firstChapterCode,
-  isOwner,
-}: StoryReadingActionsProps) {
-  if (isOwner) return null;
+export function StoryLibraryButton({ storySlug }: { storySlug: string }) {
+  const { t } = useLibraryTranslation();
+  const library = useStoryLibraryState(storySlug);
+  if (!library.isSignedIn || library.state === null) return null;
+  const isInLibrary = library.state.shelf !== null;
   return (
-    <div className="flex flex-wrap items-center gap-4">
-      <ReadButton storySlug={storySlug} firstChapterCode={firstChapterCode} />
-      <LibraryChoice storySlug={storySlug} />
-    </div>
+    <AddToReadingList
+      storySlug={storySlug}
+      buttonLabel={isInLibrary ? t('button.inLibrary') : t('button.addToLibrary')}
+      isPressed={isInLibrary}
+      sheetTop={<LibraryShelfChoice storySlug={storySlug} />}
+    />
   );
+}
+
+/**
+ * "Tell the writer you finished it", once the story is on the Finished shelf.
+ *
+ * @returns the button, or nothing
+ */
+export function StoryFinishedThanks({ storySlug }: { storySlug: string }) {
+  const { state } = useStoryLibraryState(storySlug);
+  if (state === null || state.shelf !== 'finished') return null;
+  return <FinishedThanksButton storySlug={storySlug} isSent={state.thanksSent} />;
 }

@@ -5,6 +5,8 @@
     "heading_few": "{{count}} comentarii",
     "heading_other": "{{count}} de comentarii",
     "newestFirst": "Cele mai noi primele",
+    "oldestFirst": "Cele mai vechi primele",
+    "order": "Ordinea comentariilor",
     "empty": "Niciun comentariu încă. Spune primul ce ți s-a părut.",
     "off": "Scriitorul a oprit comentariile la această poveste.",
     "followersOnly": "Doar urmăritorii scriitorului pot comenta aici.",
@@ -49,7 +51,7 @@
   },
   "comment": {
     "writer": "Scriitor",
-    "spoiler": "Spoiler",
+    "spoilerLabel": "Spoiler.",
     "spoilerNote": "Comentariul acesta e marcat ca spoiler.",
     "showSpoiler": "Arată spoilerul",
     "reply": "Răspunde",
