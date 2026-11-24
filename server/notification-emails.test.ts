@@ -149,6 +149,21 @@ describe('the notification email worker', () => {
     expect(email?.text).toContain('Ilinca, Corbu și încă o persoană au început să te urmărească.');
   });
 
+  it('tells a follower once that the story is finished, naming the story (BOOKS B06)', async () => {
+    const finished: EmailNotificationItem = {
+      kind: 'story_completed',
+      actors: [{ handle: 'corbu', display_name: 'Corbu' }],
+      actor_count: 1,
+      story: { slug: 'sarea', title: 'Sarea' },
+      chapter: { code: 'abcd1234', title: 'Mina', position: 15 },
+      comment_excerpt: null,
+    };
+    const [english] = await sendOnce([claimed({ items: [finished] })]);
+    expect(english?.subject).toBe('Corbu finished “Sarea”.');
+    const [romanian] = await sendOnce([claimed({ language: 'ro', items: [finished] })]);
+    expect(romanian?.subject).toBe('Corbu a terminat „Sarea”.');
+  });
+
   it('emails a private message by who wrote it and a link to the chat, never the words (IDEAS-2)', async () => {
     const message: EmailNotificationItem = {
       kind: 'new_message',
