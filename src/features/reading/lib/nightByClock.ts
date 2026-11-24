@@ -1,17 +1,18 @@
 /**
- * Night by the clock: which theme a chapter opens in (bundle IDEAS-1, part a; idea
- * IDEA-20261031-7, Robert, 31 Oct 2026: "there is no fixed or preset hour: the reader sets both").
+ * Night by the clock: which paper a chapter opens on (bundle IDEAS-1, part a; idea
+ * IDEA-20261031-7, Robert, 31 Oct 2026: "there is no fixed or preset hour: the reader sets both";
+ * Black paper since BOOKS B04, where the Paper replaced the Night theme).
  *
  * The rule:
  * - while Night by the clock is on and both times are set, a chapter opened between them, on the
- *   device's own clock, shows in Night; a span whose end is earlier than its start runs past
+ *   device's own clock, shows on Black paper; a span whose end is earlier than its start runs past
  *   midnight (22:30 to 06:00);
- * - a theme the reader picks by hand in the open chapter wins until they open the next chapter;
- * - otherwise the reader's usual theme.
+ * - a paper the reader picks by hand in the open chapter wins until they open the next chapter;
+ * - otherwise the reader's usual paper.
  * Only the device's clock is read, and nothing about it is sent anywhere.
- * Who calls it: hooks/useChapterTheme.ts. What it calls: nothing; tested in nightByClock.test.ts.
+ * Who calls it: hooks/useChapterPaper.ts. What it calls: nothing; tested in nightByClock.test.ts.
  */
-import type { ReadingSettings, ReadingTheme } from '../api/readingSettings';
+import type { ReadingPaper, ReadingSettings } from '../api/readingSettings';
 
 /**
  * Minutes since midnight for "HH:MM".
@@ -54,11 +55,11 @@ export function isInsideNightHours(
 }
 
 /**
- * Whether Night by the clock is turning this chapter to Night.
+ * Whether Night by the clock is turning this chapter's paper to Black.
  *
  * @param settings - the reader's settings
  * @param openedAt - when the chapter was opened, on the device's clock
- * @returns true when the clock decides the theme
+ * @returns true when the clock decides the paper
  */
 export function isNightByClockNow(settings: ReadingSettings, openedAt: Date): boolean {
   if (!settings.nightByClock) return false;
@@ -66,19 +67,22 @@ export function isNightByClockNow(settings: ReadingSettings, openedAt: Date): bo
 }
 
 /**
- * The theme the open chapter shows.
+ * The paper the open chapter shows.
  *
  * @param settings - the reader's settings
  * @param openedAt - when the chapter was opened
- * @param pickedByHand - a theme picked by hand in this chapter, or null
- * @returns the theme
+ * @param pickedByHand - a paper picked by hand in this chapter, or null
+ * @returns the paper
  */
-export function chapterTheme(
+export function chapterPaper(
   settings: ReadingSettings,
   openedAt: Date,
-  pickedByHand: ReadingTheme | null,
-): ReadingTheme {
+  pickedByHand: ReadingPaper | null,
+): ReadingPaper {
+  // Step 1: a pick by hand in this chapter wins until the next chapter.
   if (pickedByHand !== null) return pickedByHand;
-  if (isNightByClockNow(settings, openedAt)) return 'night';
-  return settings.theme;
+  // Step 2: inside the reader's night hours the paper is Black.
+  if (isNightByClockNow(settings, openedAt)) return 'black';
+  // Step 3: otherwise the reader's usual paper.
+  return settings.paper;
 }

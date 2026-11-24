@@ -1,15 +1,19 @@
 /**
- * useReadingSettings: the reader's reading settings, applied at once and saved to their account
- * (story S1-E4-02, second criterion: "saved to their account and applied on every device").
+ * useReadingSettings: the reader's reading settings, applied at once and remembered (story
+ * S1-E4-02: "saved to their account and applied on every device"; BOOKS B04, user story 2.4:
+ * "remembered: in the account when signed in, in the browser when signed out").
  *
  * How:
- * - A signed-in reader's settings are read once (reading_settings, their own row). Until they
- *   arrive, and for a signed-out visitor, the defaults apply.
+ * - A signed-in reader's settings are read once (reading_settings, their own row); until they
+ *   arrive the defaults apply. A signed-out visitor's settings come from this browser
+ *   (browserReadingSettings), or the defaults when none were kept.
  * - A change shows on the page straight away (the query's cached copy is replaced), and the whole
  *   set is saved 600 ms after the last change, so dragging the size slider saves once, not at
- *   every step. Leaving the chapter saves anything still waiting.
- * Who calls it: ChapterReading (applies them) and ReadingSettingsPanel (changes them).
- * What it calls: api/readingSettings.ts → reading_settings and save_reading_settings().
+ *   every step. Leaving the chapter saves anything still waiting. A visitor's change is kept in
+ *   the browser straight away.
+ * Who calls it: useReadingLook (applies them) and ReadingSettingsPanel (changes them).
+ * What it calls: api/readingSettings.ts → reading_settings and save_reading_settings(), and
+ * lib/browserReadingSettings.ts for visitors.
  */
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -23,6 +27,10 @@ import {
   saveReadingSettings,
   type ReadingSettings,
 } from '../api/readingSettings';
+import {
+  readBrowserReadingSettings,
+  storeBrowserReadingSettings,
+} from '../lib/browserReadingSettings';
 
 /** The query's first key, shared so every chapter reads the same cached copy. */
 export const readingSettingsQueryKey = 'reading-settings';
@@ -47,7 +55,9 @@ export function useReadingSettings() {
     staleTime: Infinity,
     queryFn: async () => fetchReadingSettings(await requireClient()),
   });
-  const settings = query.data ?? defaultReadingSettings;
+  // A visitor's kept settings stand in for the account's; a reader waits on the defaults.
+  const fallback = isSignedIn ? defaultReadingSettings : readBrowserReadingSettings();
+  const settings = query.data ?? fallback;
   // Step 2: the save, waiting for the changes to stop.
   const { scheduleSave, saveFailed } = useDelayedSave();
   // Step 3: a change replaces the cached copy at once, then waits to be saved.
@@ -56,6 +66,7 @@ export function useReadingSettings() {
       const next = { ...settings, ...changes };
       queryClient.setQueryData([readingSettingsQueryKey, userId], next);
       if (isSignedIn) scheduleSave(next);
+      else storeBrowserReadingSettings(next);
     },
     [settings, queryClient, userId, isSignedIn, scheduleSave],
   );

@@ -202,6 +202,11 @@
   /* Story paper: only where story text sits (reader, editor; rulebook 3). */
   --story-paper: #fffbf2;
   --story-ink: #2b211c;
+  /* The reader's White and Grey papers (BOOKS B04, board B04-ReaderSettings; DESIGN, 24 Nov
+     2026). Sepia is --story-paper above; Black is the night story paper. Day only: index.css
+     applies them outside Night mode and high contrast. */
+  --reading-paper-white: #ffffff;
+  --reading-paper-grey: #ededed;
 
   /* The hairline just inside every cover's edge, so a pale cover keeps its shape on the pale page
      (the simplified design, Robert, 20 Nov 2026; the cover-edge utility in index.css). */
@@ -403,6 +408,9 @@
 
   /* Dark reading paper with light text (NIGHT-2). */
   --story-paper: #141416;
+  /* White and Grey paper are day papers; at night every paper is the night story paper. */
+  --reading-paper-white: #141416;
+  --reading-paper-grey: #141416;
   --story-ink: #e8e8ea;
 
   /* The cover hairline is white at night, so a dark cover keeps its shape on the night page. */
