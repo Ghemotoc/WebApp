@@ -4,7 +4,7 @@
  * 2.7; board B07).
  *
  * It also brings back the paragraph the reader was on (lib/languageSwitchPlace.ts): once the new
- * text is drawn, that paragraph is scrolled to the top of the screen, under the bars. The note is
+ * text is drawn, that paragraph is put at the top of the screen, under the bars, at once. The note is
  * an information note (role="status", the info tint), so a screen reader hears it without losing its place.
  * It is fetched only after a change of language, so its text (the editions namespace) never
  * weighs on the reader's first download (S1-E4-01b).
@@ -13,19 +13,46 @@
  */
 import { useEffect, type CSSProperties } from 'react';
 
-import { wantsLessMotion } from '@/lib/motion';
-
 import { blockAtOrBefore } from '../lib/languageSwitchPlace';
 import { useEditionsTranslation } from '../registerEditionsTranslations';
 
 /** How many animation frames to wait for the text before giving up (about two seconds). */
 const mostFramesToWait = 120;
 
+/** How many frames in a row the paragraph must stay in place before the job is done. */
+const framesToSettle = 10;
+
+/** How far, in pixels, the paragraph may sit from its place and still count as there. */
+const closeEnough = 4;
+
 /** Space left above the paragraph for the bars at the top of the screen. */
 const spaceForBars = 136;
 
 /**
- * Scrolls to the paragraph once it is drawn, one time.
+ * Works out where the page should be scrolled so the paragraph sits under the bars.
+ *
+ * @param paragraph - the paragraph to bring back
+ * @returns the page's scroll position, in pixels
+ */
+function placeFor(paragraph: HTMLElement): number {
+  const wanted = paragraph.getBoundingClientRect().top + window.scrollY - spaceForBars;
+  // Near the end of a chapter the page can't scroll that far: its last screen is the closest.
+  const furthest = document.documentElement.scrollHeight - window.innerHeight;
+  return Math.max(0, Math.min(wanted, furthest));
+}
+
+/** What a reader does to scroll the page themselves. */
+const readerScrollEvents = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const;
+
+/**
+ * Scrolls to the paragraph once it is drawn, then keeps it there while the page settles.
+ *
+ * The scroll is instant, not smooth: this puts the reader back where they were, like the
+ * browser's own back button, and a smooth scroll can be cut short by anything else that moves
+ * the page in the first moments (the rest of the chapter, the comments and the bars still
+ * drawing). For a few frames afterwards the paragraph is checked again and put back if the
+ * page moved under it (CI, 24 Nov 2026: the reader sometimes stayed at the top of the chapter).
+ * The moment the reader scrolls, taps or presses a key, the page is theirs and this stops.
  *
  * @param block - the paragraph's number, or null to stay at the top
  */
@@ -33,21 +60,42 @@ function useBackToParagraph(block: number | null) {
   useEffect(() => {
     if (block === null) return undefined;
     let framesLeft = mostFramesToWait;
+    let framesInPlace = 0;
     let frame = 0;
-    function goToParagraph() {
+    function keepParagraphInPlace() {
       if (block === null) return;
+      framesLeft -= 1;
       const paragraph = blockAtOrBefore(block);
-      if (paragraph !== null) {
-        const top = paragraph.getBoundingClientRect().top + window.scrollY - spaceForBars;
-        window.scrollTo({ top, behavior: wantsLessMotion() ? 'auto' : 'smooth' });
+      // The new text may still be drawing: wait for it.
+      if (paragraph === null) {
+        if (framesLeft > 0) frame = requestAnimationFrame(keepParagraphInPlace);
         return;
       }
-      // The new text may still be drawing; try again on the next frame, for a while.
-      framesLeft -= 1;
-      if (framesLeft > 0) frame = requestAnimationFrame(goToParagraph);
+      // Put the paragraph under the bars, unless it is already there.
+      const target = placeFor(paragraph);
+      if (Math.abs(window.scrollY - target) > closeEnough) {
+        window.scrollTo({ top: target, behavior: 'instant' });
+        framesInPlace = 0;
+      } else {
+        framesInPlace += 1;
+      }
+      // Done once it has stayed put for a few frames, or the page can't scroll that far.
+      if (framesInPlace < framesToSettle && framesLeft > 0) {
+        frame = requestAnimationFrame(keepParagraphInPlace);
+      }
     }
-    frame = requestAnimationFrame(goToParagraph);
-    return () => cancelAnimationFrame(frame);
+    // The reader takes over as soon as they move the page themselves.
+    function stop() {
+      cancelAnimationFrame(frame);
+    }
+    for (const eventName of readerScrollEvents) {
+      window.addEventListener(eventName, stop, { once: true, passive: true });
+    }
+    frame = requestAnimationFrame(keepParagraphInPlace);
+    return () => {
+      stop();
+      for (const eventName of readerScrollEvents) window.removeEventListener(eventName, stop);
+    };
   }, [block]);
 }
 

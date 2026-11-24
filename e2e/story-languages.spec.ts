@@ -156,10 +156,23 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
     await page.locator('[data-block="8"]').evaluate((paragraph) => {
       window.scrollTo({ top: paragraph.getBoundingClientRect().top + window.scrollY - 140 });
     });
+    await page.waitForFunction(() => window.scrollY > 0);
     await page.getByRole('button', { name: 'Read in: English' }).click();
     // Board B07: one line per language, the one on screen ticked.
     const list = page.getByRole('navigation', { name: 'Read in' });
     await expect(list.getByRole('link', { name: 'Română · Original' })).toBeVisible();
+    // Something else moves the page right after the place is brought back (on a slow runner the
+    // rest of the page can still be drawing): the reader must still end up on the paragraph.
+    await page.evaluate((romanianAddress) => {
+      function knockToTop() {
+        // Only once the Romanian page is scrolling down to the paragraph (the list opening may
+        // scroll the English page first, and the new page may start at the top).
+        if (window.location.pathname !== romanianAddress || window.scrollY === 0) return;
+        window.removeEventListener('scroll', knockToTop);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+      window.addEventListener('scroll', knockToTop);
+    }, `/s/${slug}/langro02`);
     await list.getByRole('link', { name: /Română/ }).click();
     await expect(page).toHaveURL(`/s/${slug}/langro02`);
     await expect(page.getByRole('heading', { level: 1, name: 'Capitolul 2' })).toBeVisible();
