@@ -3431,7 +3431,7 @@ CASE "cover_kind"
     WHEN 'upload'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NOT NULL))
     ELSE NULL::boolean
 END),
-    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"])))),
+    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text", 'blushdots'::"text", 'skylines'::"text", 'goldgrid'::"text"])))),
     CONSTRAINT "stories_cover_style_fits_kind" CHECK (
 CASE "cover_kind"
     WHEN 'automatic'::"public"."cover_kind" THEN ("cover_style" = 'label'::"public"."cover_style")
@@ -3574,7 +3574,7 @@ COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the st
 
 
 
-COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, and G9c added arches, rings and forestwaves.';
+COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, G9c added arches, rings and forestwaves, and the design books added blushdots, skylines and goldgrid.';
 
 
 

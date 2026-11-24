@@ -6,6 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { contrastRatio } from '@/lib/contrast';
 
 import {
+  coverAccentPart,
+  coverArtwork,
   coverColourKeys,
   coverDesignKeys,
   coverDesigns,
@@ -16,15 +18,15 @@ import {
 } from './coverDesigns';
 
 describe('cover designs', () => {
-  it('are the 19 approved backgrounds: 9 plain colours, 7 patterns and the 3 new ones', () => {
-    expect(coverDesigns).toHaveLength(19);
+  it('are the 22 approved backgrounds: 9 plain colours, 10 patterns and the 3 new ones', () => {
+    expect(coverDesigns).toHaveLength(22);
     expect(coverDesigns.filter((design) => design.kind === 'plain')).toHaveLength(9);
-    expect(coverDesigns.filter((design) => design.kind !== 'plain')).toHaveLength(10);
+    expect(coverDesigns.filter((design) => design.kind !== 'plain')).toHaveLength(13);
     expect(coverDesigns.map((design) => design.key)).toEqual([...coverDesignKeys]);
-    // G9c: the board marks Arches, Rings and Forest waves "New"; they come last.
+    // G9c's three and the brand page's three (23 Nov 2026) are marked "New" and come last.
     expect(
       coverDesigns.filter((design) => design.isNew === true).map((design) => design.key),
-    ).toEqual(['arches', 'rings', 'forestwaves']);
+    ).toEqual(['arches', 'rings', 'forestwaves', 'blushdots', 'skylines', 'goldgrid']);
   });
 
   it('use a 9-colour palette, and every default colour is in it', () => {
@@ -36,7 +38,7 @@ describe('cover designs', () => {
   });
 
   it('give the title at least 4.5:1 contrast for every background and accent pair', () => {
-    // Every design × background × accent: 19 × 9 × 9 = 1,539 choices.
+    // Every design × background × accent: 22 × 9 × 9 = 1,782 choices.
     const choices = coverDesigns.flatMap((design) =>
       coverColourKeys.flatMap((background) =>
         coverColourKeys.map((accent) => ({ design: design.key, background, accent })),
@@ -48,7 +50,7 @@ describe('cover designs', () => {
         return { choice, ratio: contrastRatio(surface, titleColourOn(surface)) };
       })
       .filter((pair) => pair.ratio < 4.5);
-    expect(choices).toHaveLength(1539);
+    expect(choices).toHaveLength(1782);
     expect(weakPairs).toEqual([]);
   });
 
@@ -95,5 +97,16 @@ describe('cover designs', () => {
       accent: 'violet',
     });
     expect(defaultChoiceFor('forestwaves').background).toBe('sage');
+    // The brand page's tonal shades are outside the palette, so each takes a palette accent.
+    expect(defaultChoiceFor('blushdots')).toEqual({ design: 'blushdots', background: 'blush', accent: 'plum' });
+    expect(defaultChoiceFor('skylines').background).toBe('sky');
+    expect(defaultChoiceFor('goldgrid').accent).toBe('paper');
+  });
+
+  it('draw the brand page patterns in the accent colour, as artwork on the cover', () => {
+    expect(coverArtwork('blushdots').fillPath).not.toBe('');
+    expect(coverArtwork('skylines').strokePath).not.toBe('');
+    expect(coverArtwork('goldgrid').strokePath).not.toBe('');
+    expect(coverAccentPart('goldgrid')).toBe('pattern');
   });
 });
