@@ -200,8 +200,9 @@
  * DrawnCover (src/components/covers/DrawnCover.tsx) draws three styles with these classes:
  *   cover-book        the cover's box: a size container, so every size inside it is in cqi (1% of
  *                     the cover's width) and a cover looks the same at every size
- *   cover-label       Label: the paper label near the top, 80.8% of the cover's width with 9.6%
- *                     on each side, an outline and rule in the accent
+ *   cover-label       Label: the paper label 12% from the top, 80.8% of the cover's width with
+ *                     9.6% on each side, 4 px corners and no outline or rule (the brand page's
+ *                     label; Robert, 23 Nov 2026, 20:26 UTC)
  *   cover-big         Big title: the title large at the top, a short rule, the pen name at the foot
  *   cover-initial     Initial: the title and pen name above one big letter, cropped by the edge
  * The title's size comes from --fit (src/lib/cover-title.ts: x0.85 from 19 characters, x0.72 from
@@ -236,16 +237,15 @@
   position: absolute;
   left: 9.6%;
   right: 9.6%;
-  top: 8.9%;
+  top: 12%;
   z-index: 2;
   box-sizing: border-box;
-  padding: 8.3cqi 5.8cqi 7.5cqi;
+  /* 9% and 8% of the cover's width, as the brand page's recipe (cover-label-recipe.css). */
+  padding: 9cqi 8cqi;
   text-align: center;
   background: #faf8f5;
   color: #2a0e33;
-  border-radius: 2px;
-  outline: 1px solid var(--book-accent);
-  outline-offset: -3.3cqi;
+  border-radius: 4px;
 }
 .cover-words-title {
   display: block;
@@ -259,14 +259,15 @@
   hyphens: none;
 }
 .cover-label .cover-words-title {
-  font-size: max(11px, calc(11.67cqi * var(--fit, 1)));
+  font-size: max(11px, calc(9cqi * var(--fit, 1)));
+  line-height: 1.15;
 }
-.cover-label-rule {
-  display: block;
-  width: 15cqi;
-  height: 1px;
-  margin: 5cqi auto 4.2cqi;
-  background: var(--book-accent);
+/* The pen name on the label: Inter 500 at 5.5cqi in the muted ink (the brand page's recipe). */
+.cover-label .cover-words-by {
+  margin-top: 6cqi;
+  font-size: max(11px, 5.5cqi);
+  font-weight: 500;
+  color: #4a3e60;
 }
 .cover-words-by {
   display: block;
@@ -319,13 +320,12 @@
   fill: var(--book-accent);
 }
 @container (max-width: 99px) {
-  .cover-label-rule,
   .cover-big-rule,
   .cover-words-by {
     display: none;
   }
   .cover-label .cover-words-title {
-    font-size: calc(11.67cqi * var(--fit, 1));
+    font-size: calc(9cqi * var(--fit, 1));
   }
   .cover-big .cover-words-title {
     font-size: calc(20cqi * var(--fit, 1));

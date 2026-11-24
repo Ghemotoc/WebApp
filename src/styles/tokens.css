@@ -1529,12 +1529,12 @@
    * 20 Nov 2026): three only. Fully round for buttons, chips, pills and the floating bars
    * (rounded-full, and rounded-nav, which is the same); 16 px for cards, sheets, dialogs, side
    * panels, adverts and the hero (rounded-card, rounded-ad); 12 px for text fields, menu rows and
-   * small tiles (rounded-field). Covers keep their 4 px (rounded-cover): a cover is drawn as a book,
-   * not as an interface box (CALM-4).
+   * small tiles (rounded-field). Covers have 12 px corners at every size (rounded-cover; the brand
+   * page's covers, Robert, 23 Nov 2026, 20:26 UTC, replacing the 4 px of CALM-1).
    */
   --radius-nav: 9999px;
   --radius-card: 16px;
   --radius-ad: 16px;
-  --radius-cover: 4px;
+  --radius-cover: 12px;
   --radius-field: 12px;
 }
