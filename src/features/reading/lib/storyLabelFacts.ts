@@ -3,8 +3,9 @@
  * board New-Story: "Fiction · Ongoing · No AI · 13+"; handover Step 3: StoryLabelPills become this
  * meta line).
  *
- * Order: the category, "Ongoing" in bold while the story is still being written (a finished story
- * shows no state here, Robert, 6 Nov 2026; the labels list still says it), the AI answer, the
+ * Order (board B01, bundle 2): "Ongoing" or "Completed" first, in bold (a story is Completed once
+ * its last chapter is marked, CALM-6; Robert pressed "As drawn on the canvas", 24 Nov 2026,
+ * replacing FIX-1's "no Completed pill"), then the category, the AI answer, the
  * rating, "Fan fiction" and "Parody" when ticked, "AI-written, not disclosed" in bold when staff
  * added that label (Q24), and where to read: "Web and app", or "In the app only" when that
  * applies (S1-E3-08; board B01, bundle 2).
@@ -25,8 +26,9 @@ import type { StoryPageData } from '../api/storyPage';
  */
 export function storyLabelFacts(story: StoryPageData, t: TFunction<'reading'>): MetaFact[] {
   const { labels } = story;
-  // Step 1: the category, then the state while the story is still being written.
+  // Step 1: the state in bold, Ongoing or Completed, then the category.
   const facts: MetaFact[] = [
+    { text: t(`status.${story.completionStatus}`, { ns: 'writing' }), kind: 'state' },
     {
       text: t(`categories.${story.categorySlug}`, {
         ns: 'writing',
@@ -34,9 +36,6 @@ export function storyLabelFacts(story: StoryPageData, t: TFunction<'reading'>): 
       }),
     },
   ];
-  if (story.completionStatus === 'ongoing') {
-    facts.push({ text: t('status.ongoing', { ns: 'writing' }), kind: 'state' });
-  }
   // Step 2: the AI answer (staff's label wins, Q24) and the rating.
   if (labels.aiUndisclosedLabelled) {
     facts.push({ text: t('aiDisclosure.undisclosed', { ns: 'writing' }), kind: 'state' });

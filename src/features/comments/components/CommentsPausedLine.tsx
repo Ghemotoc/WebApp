@@ -82,7 +82,7 @@ export function CommentsPausedLine({
   const when = formatLocalDayAndTime(end, i18n.language);
   return (
     <div className={cn('flex flex-wrap items-center gap-x-3 gap-y-1', className)}>
-      <p className="m-0 type-body text-ink-muted">{t('section.paused', { when })}</p>
+      <p className="m-0 type-body text-ink">{t('section.paused', { when })}</p>
       {canResume && <ResumeNow address={address} onResumed={onResumed} />}
     </div>
   );

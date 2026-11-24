@@ -8,8 +8,8 @@
  *   when the author died, with no Follow button and no profile link (the author has no account);
  * - the reader names the real author too;
  * - the card on a list names the real author;
- * - the story page shows no "Completed" pill but says Completed and the year the work was first
- *   published under "Labels from the writer", with the title beside the cover on a desktop
+ * - the story page says Completed in bold first in the facts line (board B01, bundle 2) and the
+ *   year the work was first published under "Labels from the writer", with the title beside the cover on a desktop
  *   (Robert, 6 Nov 2026);
  * - the author card passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
  * Test data: one story of its own, owned by adult_writer as a stand-in for the classics account,
@@ -80,7 +80,7 @@ test.describe('classics show their real author (S1-E5-06)', () => {
     await expect(page.getByText(new RegExp(authorName)).first()).toBeVisible();
   });
 
-  test('the story page shows Completed only in the labels, the first publication year, and the title beside the cover', async ({
+  test('the story page shows Completed in the facts line, the first publication year, and the title beside the cover', async ({
     page,
   }) => {
     await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
@@ -89,11 +89,12 @@ test.describe('classics show their real author (S1-E5-06)', () => {
     const title = page.getByRole('heading', { level: 1, name: 'Old lighthouse tales' });
     await expect(title).toBeVisible();
 
-    // No status pill for a finished story; the labels still say it, with the year.
+    // A finished story says Completed once, in bold first in the facts line (board B01); the
+    // labels give the year it was first published.
     const header = page.locator('header').filter({ has: title });
-    await expect(header.getByText('Completed', { exact: true })).toHaveCount(0);
+    await expect(header.getByText('Completed', { exact: true })).toBeVisible();
     const labels = page.getByRole('heading', { name: 'Labels from the writer' }).locator('..');
-    await expect(labels.getByText('Completed', { exact: true })).toBeVisible();
+    await expect(labels.getByText('Completed', { exact: true })).toHaveCount(0);
     await expect(labels.getByText('First published')).toBeVisible();
     await expect(labels.getByText('1888', { exact: true })).toBeVisible();
 

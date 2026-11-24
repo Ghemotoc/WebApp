@@ -96,9 +96,12 @@ test.describe('follows (S1-E6-05)', () => {
     await page.getByRole('button', { name: 'Follow story Stația meteo' }).click();
     const following = page.getByRole('button', { name: 'Following story Stația meteo' });
     await expect(following).toHaveAttribute('aria-pressed', 'true');
-    expect(
-      runSql(`select count(*) from public.follows_stories where user_id = '${teacherId}'`),
-    ).toBe('1');
+    // The button turns pressed as soon as it is clicked, before the save lands, so wait for it.
+    await expect
+      .poll(() =>
+        runSql(`select count(*) from public.follows_stories where user_id = '${teacherId}'`),
+      )
+      .toBe('1');
     await following.click();
     await expect(page.getByRole('button', { name: 'Follow story Stația meteo' })).toBeVisible();
     await page.context().close();

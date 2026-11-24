@@ -1555,6 +1555,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('story_characters', 'delete', 2, null),
     ('story_events', 'delete', 1, null),
     ('story_ideas', 'delete', 1, null),
+    ('story_likes', 'delete', 1, null),
     ('story_marketing', 'delete', 1, null),
     ('story_plan_acts', 'delete', 2, null),
     ('story_plans', 'delete', 3, null),
@@ -23195,6 +23196,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('story_characters', true, null),
     ('story_events', true, null),
     ('story_ideas', true, null),
+    ('story_likes', true, null),
     ('story_marketing', true, null),
     ('story_plan_acts', true, null),
     ('story_plans', true, null),
@@ -28162,6 +28164,9 @@ begin
     -- GAPS-15: the "In the app only" notice (S1-E3-08), only once the apps exist.
     'app_only', public.story_app_only_applies(story.is_app_only),
     'stats', jsonb_build_object(
+      -- BOOKS-B2 (board B01, Robert's "As drawn on the canvas", 24 Nov 2026): the reads total is
+      -- public, and the likes are the story's own Likes (story_likes), not its chapters'.
+      'reads', public.story_read_total(story.id),
       'likes', public.story_like_total(story.id),
       'comments', public.story_comment_total(story.id))
   );
@@ -30936,6 +30941,67 @@ ALTER FUNCTION "public"."like_state_of"("target_chapter_id" "uuid") OWNER TO "po
 
 
 COMMENT ON FUNCTION "public"."like_state_of"("target_chapter_id" "uuid") IS 'Internal: liked and like_count for the caller (S1-E6-03).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target_story_id uuid;
+begin
+  -- Step 1: signed in, and the story is one this reader may see.
+  if caller_id is null then
+    raise exception 'Log in to like stories.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.likeable_story_id(story_slug);
+  if target_story_id is null then
+    raise exception 'There is no such story.' using errcode = 'no_data_found';
+  end if;
+  -- Step 2: taking a like back is always allowed, even for a read-only account.
+  if not should_like then
+    delete from public.story_likes
+    where story_likes.user_id = caller_id and story_likes.story_id = target_story_id;
+    return public.story_like_state_of(target_story_id);
+  end if;
+  -- Step 3: liking is a write, so the account gate applies; and not one's own story.
+  if not public.is_active_member() then
+    raise exception 'Your account can''t like stories right now.' using errcode = 'insufficient_privilege';
+  end if;
+  if exists (select 1 from public.stories where stories.id = target_story_id and stories.user_id = caller_id) then
+    raise exception 'Writers don''t like their own story.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 4: like; twice changes nothing.
+  insert into public.story_likes (user_id, story_id) values (caller_id, target_story_id)
+  on conflict on constraint story_likes_one_per_pair do nothing;
+  return public.story_like_state_of(target_story_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) IS 'Likes or unlikes a story by its address, through the account gate (bundle 2, board B01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."likeable_story_id"("story_slug" "text") RETURNS "uuid"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(story.edition_of_story_id, story.id)
+  from public.reader_visible_story(story_slug) as story
+  where public.story_has_readable_chapter(story.id);
+$$;
+
+
+ALTER FUNCTION "public"."likeable_story_id"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."likeable_story_id"("story_slug" "text") IS 'Internal: the first edition of the story behind an address, when the caller may see its page (bundle 2).';
 
 
 
@@ -52145,16 +52211,54 @@ COMMENT ON FUNCTION "public"."story_library_state"("story_slug" "text") IS 'A st
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_like_state"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid := public.likeable_story_id(story_slug);
+begin
+  if target_story_id is null then
+    return null;
+  end if;
+  return public.story_like_state_of(target_story_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."story_like_state"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_like_state"("story_slug" "text") IS 'A story''s public like count and whether the caller likes it (bundle 2, board B01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_like_state_of"("target_story_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'liked', exists (select 1 from public.story_likes
+      where story_likes.story_id = target_story_id and story_likes.user_id = (select auth.uid())),
+    'like_count', public.story_like_total(target_story_id));
+$$;
+
+
+ALTER FUNCTION "public"."story_like_state_of"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_like_state_of"("target_story_id" "uuid") IS 'Internal: liked and like_count for the caller, on a story (bundle 2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_like_total"("target_story_id" "uuid") RETURNS integer
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
   select count(*)::integer
-  from public.chapter_likes
-  join public.chapters on chapters.id = chapter_likes.chapter_id
-  join public.profiles on profiles.id = chapter_likes.user_id
-  where chapters.story_id in (select public.story_family_ids(target_story_id))
-    and public.chapter_is_readable(chapters.id)
+  from public.story_likes
+  join public.profiles on profiles.id = story_likes.user_id
+  where story_likes.story_id in (select public.story_family_ids(target_story_id))
     and profiles.deleted_at is null;
 $$;
 
@@ -52162,7 +52266,7 @@ $$;
 ALTER FUNCTION "public"."story_like_total"("target_story_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_like_total"("target_story_id" "uuid") IS 'Internal: a story''s public like total (S1-E6-03).';
+COMMENT ON FUNCTION "public"."story_like_total"("target_story_id" "uuid") IS 'Internal: a story''s public like total, its own Likes over every edition (bundle 2; S1-E6-03 counted chapter likes).';
 
 
 
@@ -52749,6 +52853,25 @@ ALTER FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") OWNER TO "
 
 
 COMMENT ON FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") IS 'Internal: the rating reasons in a story''s labels, empty below 16+ (SPONSORS-f).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_read_total"("target_story_id" "uuid") RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(sum(chapter_reads.total), 0)::integer
+  from public.chapter_reads
+  join public.chapters on chapters.id = chapter_reads.chapter_id
+  where chapters.story_id in (select public.story_family_ids(target_story_id))
+    and public.chapter_is_readable(chapters.id);
+$$;
+
+
+ALTER FUNCTION "public"."story_read_total"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_read_total"("target_story_id" "uuid") IS 'Internal: a story''s public reads total over its readable chapters, every edition (bundle 2, board B01).';
 
 
 
@@ -59834,6 +59957,23 @@ COMMENT ON TABLE "public"."story_country_scores" IS 'kind: platform. Each story'
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."story_likes" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "story_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."story_likes" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."story_likes" IS 'kind: user_action
+Who likes which story (bundle 2, board B01). The count is public; who liked is nobody else''s business.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."story_marketing" (
     "story_id" "uuid" NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -61735,6 +61875,16 @@ ALTER TABLE ONLY "public"."story_ideas"
 
 
 
+ALTER TABLE ONLY "public"."story_likes"
+    ADD CONSTRAINT "story_likes_one_per_pair" UNIQUE ("user_id", "story_id");
+
+
+
+ALTER TABLE ONLY "public"."story_likes"
+    ADD CONSTRAINT "story_likes_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."story_marketing"
     ADD CONSTRAINT "story_marketing_pkey" PRIMARY KEY ("story_id");
 
@@ -63167,6 +63317,10 @@ CREATE INDEX "story_ideas_user_id_fk_idx" ON "public"."story_ideas" USING "btree
 
 
 
+CREATE INDEX "story_likes_story_id" ON "public"."story_likes" USING "btree" ("story_id");
+
+
+
 CREATE INDEX "story_marketing_user_id_fk_idx" ON "public"."story_marketing" USING "btree" ("user_id");
 
 
@@ -64376,6 +64530,14 @@ CREATE OR REPLACE TRIGGER "story_ideas_refuse_user_id_change" BEFORE UPDATE ON "
 
 
 CREATE OR REPLACE TRIGGER "story_ideas_set_updated_at" BEFORE UPDATE ON "public"."story_ideas" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "story_likes_refuse_user_id_change" BEFORE UPDATE ON "public"."story_likes" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "story_likes_set_updated_at" BEFORE UPDATE ON "public"."story_likes" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -66413,6 +66575,16 @@ ALTER TABLE ONLY "public"."story_ideas"
 
 ALTER TABLE ONLY "public"."story_ideas"
     ADD CONSTRAINT "story_ideas_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."story_likes"
+    ADD CONSTRAINT "story_likes_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."story_likes"
+    ADD CONSTRAINT "story_likes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -68505,6 +68677,13 @@ CREATE POLICY "story_ideas_select_own" ON "public"."story_ideas" FOR SELECT TO "
 
 
 COMMENT ON POLICY "story_ideas_select_own" ON "public"."story_ideas" IS 'Allows a writer to read the questions and ideas of their own stories, and nobody else (S1-E17-27).';
+
+
+
+ALTER TABLE "public"."story_likes" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "story_likes_select_own" ON "public"."story_likes" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -72743,6 +72922,15 @@ REVOKE ALL ON FUNCTION "public"."like_state_of"("target_chapter_id" "uuid") FROM
 
 
 
+REVOKE ALL ON FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."likeable_story_id"("story_slug" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."list_default_sort"("list_kind" "text") FROM PUBLIC;
 
 
@@ -75683,6 +75871,15 @@ GRANT ALL ON FUNCTION "public"."story_library_state"("story_slug" "text") TO "au
 
 
 
+GRANT ALL ON FUNCTION "public"."story_like_state"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."story_like_state"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_like_state_of"("target_story_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_like_total"("target_story_id" "uuid") FROM PUBLIC;
 
 
@@ -75752,6 +75949,10 @@ REVOKE ALL ON FUNCTION "public"."story_rating_reasons_fit_rating"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_read_total"("target_story_id" "uuid") FROM PUBLIC;
 
 
 
@@ -76987,6 +77188,11 @@ GRANT SELECT ON TABLE "public"."story_character_fields" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_country_scores" TO "service_role";
 GRANT SELECT ON TABLE "public"."story_country_scores" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_likes" TO "service_role";
+GRANT SELECT ON TABLE "public"."story_likes" TO "authenticated";
 
 
 
