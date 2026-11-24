@@ -6,6 +6,8 @@
  * What it proves:
  * - the board shows the chapters as cards in act columns with their label, title, point of view,
  *   status, "Published", words and in-world date, and a card opens the writing view (S1-E17-19);
+ * - a move shows on the board before it is saved and goes back, with a note, when the save fails
+ *   (design books item 13);
  * - the move buttons move a card within and between acts, and a drag does the same; a move that
  *   renumbers published chapters asks first, and "Keep the order" changes nothing;
  * - "Add chapter" adds a draft at the end of its act;
@@ -257,6 +259,26 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect.poll(() => columnTitles(page, 'Act II')).toEqual(['Calmul']);
     expect(bookOrder()).toBe('Furtuna,Calmul,Zorii');
     await expectMoveUnavailable(page, 'Zorii', 'Next act');
+    await page.context().close();
+  });
+
+  test('a move shows at once and goes back with a note when the save fails', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', storylineAddress);
+    // Hold the save for a second, then fail it, as a dropped connection would.
+    await page.route('**/rest/v1/rpc/place_chapter_on_board', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await route.fulfill({ status: 500, body: '{"message":"broken on purpose"}' });
+    });
+    await moveByMenu(page, 'Calmul', 'Previous act');
+    // Within the held second the card already sits in Act I (design books 13).
+    await expect
+      .poll(() => columnTitles(page, 'Act I'), { timeout: 500 })
+      .toEqual(['Furtuna', 'Calmul']);
+    await expect(page.getByText('We couldn’t move the chapter, so the board shows')).toBeVisible();
+    await expect.poll(() => columnTitles(page, 'Act II')).toContain('Calmul');
+    expect(bookOrder()).toBe('Furtuna,Calmul,Zorii');
     await page.context().close();
   });
 

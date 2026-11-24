@@ -2,7 +2,7 @@
  * ChapterBoard: the chapters as cards in act columns (story S1-E17-19).
  *
  * One column per act, then "No act"; on a phone the columns stack. A move (a drag, or a card's
- * "…" menu) saves at once and the chapter numbers follow; a move that would renumber published
+ * "…" menu) shows at once and saves, and the chapter numbers follow (a failed save puts it back); a move that would renumber published
  * chapters asks first (BoardMoveDialog). After a move, focus goes back to the moved card, so a
  * keyboard user can keep moving it. While a card is dragged (CALM-9, board E28), a lifted copy
  * follows the pointer and a polite live region says where it would land ("Becomes chapter 4").
@@ -75,9 +75,16 @@ function LiftedCard(props: { slug: string; storyline: Storyline; code: string | 
  *
  * @returns the columns, the failure message, the dragged card's copy and the question dialog
  */
-export function ChapterBoard({ slug, storyline, refresh, addChapter }: ChapterBoardProps) {
+export function ChapterBoard({
+  slug,
+  storyline: savedStoryline,
+  refresh,
+  addChapter,
+}: ChapterBoardProps) {
   const { t } = useAtlasTranslation();
-  const moves = useBoardMoves(storyline, refresh);
+  const moves = useBoardMoves(savedStoryline, refresh);
+  // The board draws a move as soon as it is made, before the database answers (design books 13).
+  const storyline = moves.shownStoryline;
   const [movedCode, setMovedCode] = useState<string | null>(null);
   const columns = boardColumns(storyline.chapters, storyline.acts);
   const labelOf = useChapterLabels(storyline.chapters);
