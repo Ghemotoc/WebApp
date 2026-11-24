@@ -37,11 +37,7 @@ export function PageContainer({ className, narrow = false, ...divProps }: PageCo
     <div
       // Lets the layout test find the column and measure it against the bar (GLASS-4).
       data-page-column
-      className={cn(
-        'mx-auto box-content px-6 md:px-8 lg:px-16',
-        widthClass,
-        className,
-      )}
+      className={cn('mx-auto box-content px-6 md:px-8 lg:px-16', widthClass, className)}
       {...divProps}
     />
   );
