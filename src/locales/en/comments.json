@@ -5,6 +5,8 @@
     "heading_few": "{{count}} comments",
     "heading_other": "{{count}} comments",
     "newestFirst": "Newest first",
+    "oldestFirst": "Oldest first",
+    "order": "Order of comments",
     "empty": "No comments yet. Be the first to say what you thought.",
     "off": "The writer has turned comments off for this story.",
     "followersOnly": "Only the writer’s followers can comment here.",
@@ -49,7 +51,7 @@
   },
   "comment": {
     "writer": "Writer",
-    "spoiler": "Spoiler",
+    "spoilerLabel": "Spoiler.",
     "spoilerNote": "This comment is marked as a spoiler.",
     "showSpoiler": "Show spoiler",
     "reply": "Reply",
