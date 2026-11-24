@@ -2,28 +2,31 @@
  * CommentActions: the row under a comment: Reply, Delete and Report (story S1-E6-01; board 3.5).
  *
  * - Reply (top-level comments only: replies go one level deep) opens the reply box.
- * - Delete, for the author and for the story's writer (criterion 3), asks "Delete this comment?"
- *   in place before it deletes.
+ * - Delete, for the author and for the story's writer (criterion 3), deletes at once and offers
+ *   "Comment deleted. Undo" for 8 seconds (design books item 14; it asked "Delete this comment?"
+ *   before).
  * - Report is the shared ReportButton (S1-E10-01; CLAUDE.md rule 6, DSA art. 16), on everyone
  *   else's comments, pushed to the right as on the board.
  * - Downvote (S1-E6-04), private, on everyone else's live comments for a signed-in reader, with
  *   the board's line under the row once it is on.
  * The reactions (S1-E6-02, CommentReactions) come first in the row, through the `before` slot.
- * Who uses it: CommentItem. What it calls: useDeleteComment → delete_comment(); ReportButton.
+ * Who uses it: CommentItem. What it calls: useDeleteComment → delete_comment() (and
+ * restore_comment() from the Undo note, useUndo); ReportButton.
  */
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { useSession } from '@/features/auth/hooks/useSession';
 import type { ChapterAddress } from '@/features/reading/api/likes';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
+import { errorShownByHook } from '@/lib/errorShownByHook';
+import { useUndo } from '@/lib/undo/useUndo';
 
 import type { ChapterComment } from '../api/comments';
 import { useDeleteComment } from '../hooks/useCommentActions';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
 
 import { DownvoteButton } from './DownvoteButton';
-import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** What the row needs. */
 export interface CommentActionsProps {
@@ -36,54 +39,34 @@ export interface CommentActionsProps {
 }
 
 /**
- * "Delete this comment?" with the two answers, in place of the row.
- *
- * @returns the question
- */
-function DeleteQuestion(props: { onDelete: () => void; onKeep: () => void; isBusy: boolean }) {
-  const { t } = useCommentsTranslation();
-  return (
-    <div
-      role="group"
-      aria-label={t('comment.deleteConfirm')}
-      className="flex flex-wrap items-center gap-2"
-    >
-      <span className="type-body font-semibold text-ink">{t('comment.deleteConfirm')}</span>
-      <Button variant="destructive" disabled={props.isBusy} onClick={props.onDelete}>
-        {t('comment.deleteYes')}
-      </Button>
-      <Button variant="secondary" onClick={props.onKeep}>
-        {t('comment.keep')}
-      </Button>
-    </div>
-  );
-}
-
-/**
- * Delete, then "Delete this comment?" in its place, and a failure beside it.
+ * Delete, which deletes at once and offers "Comment deleted. Undo" for 8 seconds (design books
+ * item 14: no question first), and a failure beside it.
  *
  * @returns the delete control for the author or the story's writer
  */
 function DeleteControl({ address, comment }: { address: ChapterAddress; comment: ChapterComment }) {
   const { t } = useCommentsTranslation();
-  const [isAsking, setIsAsking] = useState(false);
   const deleting = useDeleteComment(address);
+  const { offerUndo } = useUndo();
   const name = comment.author.displayName;
+
+  /** Deletes, then offers Undo; a refusal shows beside the button instead. */
+  async function deleteNow() {
+    await deleting.remove(comment.id);
+    offerUndo({ message: t('comment.deletedUndo'), undo: () => deleting.restore(comment.id) });
+  }
+
   return (
     <>
-      {!isAsking && (
-        <Button variant="text" className="px-3 text-ink-muted" onClick={() => setIsAsking(true)}>
-          {t('comment.delete')}
-          <span className="sr-only"> {t('comment.reportLabel', { name })}</span>
-        </Button>
-      )}
-      {isAsking && (
-        <DeleteQuestion
-          isBusy={deleting.isDeleting}
-          onKeep={() => setIsAsking(false)}
-          onDelete={() => void deleting.remove(comment.id).catch(errorShownByHook)}
-        />
-      )}
+      <Button
+        variant="text"
+        className="px-3 text-ink-muted"
+        disabled={deleting.isDeleting}
+        onClick={() => void deleteNow().catch(errorShownByHook)}
+      >
+        {t('comment.delete')}
+        <span className="sr-only"> {t('comment.reportLabel', { name })}</span>
+      </Button>
       {deleting.failure !== null && (
         <span role="alert" className="type-body text-destructive">
           {t(`failures.${deleting.failure.failure}`)}

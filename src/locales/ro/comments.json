@@ -54,16 +54,14 @@
     "showSpoiler": "Arată spoilerul",
     "reply": "Răspunde",
     "delete": "Șterge",
-    "deleteConfirm": "Ștergi comentariul?",
-    "deleteYes": "Da, șterge-l",
-    "keep": "Păstrează-l",
     "deleted": "Comentariu șters.",
     "removed": "[Eliminat de echipa de moderare]",
     "hiddenNote": "Ascuns de echipa de moderare. Doar tu îl vezi.",
     "reportLabel": "comentariul lui {{name}}",
     "replies": "Răspunsuri pentru {{name}}",
     "onParagraph": "La paragraful {{number}}",
-    "onEarlierVersion": "La o versiune mai veche"
+    "onEarlierVersion": "La o versiune mai veche",
+    "deletedUndo": "Comentariu șters."
   },
   "reactions": {
     "add": "Adaugă o reacție",

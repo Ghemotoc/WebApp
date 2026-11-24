@@ -67,6 +67,9 @@ function LibraryStoryCard(props: {
       ? (place.number / place.total) * 100
       : undefined;
   const progress = cardPlaceText(t, place);
+  // Design books item 16: the dot on the cover, and the same in words after the place.
+  const hasNewChapter = place?.hasNewChapter === true;
+  const newChapter = hasNewChapter ? ` · ${t('shelves.newChapter')}` : '';
   // "Fiction · chapter 14 of 15": the story's category, then the reader's place (board).
   const category = t(`categories.${story.categorySlug}`, {
     ns: 'writing',
@@ -75,11 +78,12 @@ function LibraryStoryCard(props: {
   return (
     <StoryCard
       title={story.title}
-      metaLine={`${category} · ${progress}`}
+      metaLine={`${category} · ${progress}${newChapter}`}
       cover={cover}
       href={`/s/${story.slug}`}
       wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
       progressPercent={progressPercent}
+      hasNewChapter={hasNewChapter}
     />
   );
 }

@@ -292,5 +292,9 @@
     "change": "Change",
     "changeStep": "Change {{step}}",
     "done": ", done"
+  },
+  "undo": {
+    "undo": "Undo",
+    "failed": "That couldn’t be undone. Try again from the page."
   }
 }

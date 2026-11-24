@@ -5,6 +5,7 @@
  * one. Inside a column the chapters keep their book order. A move puts a chapter at a place in a
  * column and works out the whole book's new order, leaving every other chapter where it was, so
  * only the chapters the writer moved change places (place_chapter_on_board() saves it).
+ * chaptersAfterMove() draws a move before it is saved, so the card lands at once.
  * Who calls it: hooks/useBoardMoves.ts and components/ChapterBoard.tsx. What it calls: nothing.
  */
 import type { StorylineAct, StorylineChapter } from '../api/storyline';
@@ -107,4 +108,29 @@ export function chapterNumbers(chapters: { code: string; kind: string }[]): Map<
     if (chapter.kind === 'chapter') numbers.set(chapter.code, numbers.size + 1);
   }
   return numbers;
+}
+
+/**
+ * The chapters as they look once a move is saved, so the board can show the card in its new
+ * place before the database answers (design books item 13: a drag answers within 100 ms).
+ *
+ * @param chapters - the story's chapters in book order
+ * @param move - the moved chapter, its new act and every chapter's code in the new order
+ * @returns the chapters in the new order, the moved one in its new act, numbered again from 1
+ */
+export function chaptersAfterMove(
+  chapters: StorylineChapter[],
+  move: { chapterCode: string; actId: string | null; order: string[] },
+): StorylineChapter[] {
+  // Step 1: look each chapter up by its code.
+  const byCode = new Map(chapters.map((chapter) => [chapter.code, chapter]));
+  const moved: StorylineChapter[] = [];
+  // Step 2: walk the new order; the moved chapter takes its new act; places count from 1.
+  for (const code of move.order) {
+    const chapter = byCode.get(code);
+    if (chapter === undefined) continue;
+    const actId = code === move.chapterCode ? move.actId : chapter.actId;
+    moved.push({ ...chapter, actId, position: moved.length + 1 });
+  }
+  return moved;
 }

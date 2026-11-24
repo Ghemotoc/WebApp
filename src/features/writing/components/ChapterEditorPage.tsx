@@ -42,7 +42,7 @@ import type { ChapterStatus, MyChapter } from '../api/chapters';
 import type { MyStory } from '../api/stories';
 import { useOnlineStatus } from '@/features/offline/hooks/useOnlineStatus';
 
-import { useAutosave } from '../hooks/useAutosave';
+import { useAutosave, type SaveState } from '../hooks/useAutosave';
 import { useChapterDraft } from '../hooks/useChapterDraft';
 import { useChapterEditor } from '../hooks/useChapterEditor';
 import { usePoemMode } from '../hooks/usePoemMode';
@@ -56,6 +56,7 @@ import type { DeviceDraft } from '../lib/draftStore';
 import { ChapterPreviewDialog } from './ChapterPreviewDialog';
 import { CompareVersionsDialog } from './CompareVersionsDialog';
 import { EditorAside } from './EditorAside';
+import { SaveWord } from './SaveWord';
 import { EditorToolbar } from './EditorToolbar';
 import { PoemModeSwitch } from './PoemModeSwitch';
 import { LinkDialog } from './LinkDialog';
@@ -67,7 +68,15 @@ import { useEditorTranslation } from '../registerEditorTranslations';
 const stateTone = { draft: 'neutral', scheduled: 'gold', published: 'sage' } as const;
 
 /** The breadcrumb: Writer dashboard › the story (its Manage chapters page, S1-E3-04) › Chapter n, then the state pill. */
-function EditorBreadcrumb({ chapter, status }: { chapter: MyChapter; status: ChapterStatus }) {
+function EditorBreadcrumb({
+  chapter,
+  status,
+  saveState,
+}: {
+  chapter: MyChapter;
+  status: ChapterStatus;
+  saveState: SaveState;
+}) {
   const { t } = useEditorTranslation();
   return (
     <nav
@@ -92,6 +101,8 @@ function EditorBreadcrumb({ chapter, status }: { chapter: MyChapter; status: Cha
         {t('chapterNumber', { number: chapter.position })}
       </span>
       <InfoPill tone={stateTone[status]}>{t(`state.${status}`)}</InfoPill>
+      {/* "Saved" beside the chapter's name (design books item 16). */}
+      <SaveWord state={saveState} />
     </nav>
   );
 }
@@ -387,7 +398,11 @@ function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorSta
     <>
       {/* The toggle follows the breadcrumb, clear of the Saving panel's desk lamp on the right. */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-        <EditorBreadcrumb chapter={chapter} status={publishing.state.status} />
+        <EditorBreadcrumb
+          chapter={chapter}
+          status={publishing.state.status}
+          saveState={loaded.autosave.state}
+        />
         <FocusModeToggle isOn={isFocusMode} onChange={setFocusMode} />
       </div>
       <div className="flex flex-col gap-6 lg:flex-row lg:flex-wrap lg:items-start">

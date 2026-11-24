@@ -364,9 +364,7 @@
       "sheetHeading": "Relationships",
       "none": "No relationships yet.",
       "delete": "Delete",
-      "confirm": "Delete “{{sentence}}”?",
-      "yes": "Yes, delete",
-      "keep": "Keep it",
+      "deletedUndo": "Deleted “{{sentence}}”.",
       "failed": "The relationship wasn’t deleted. Check your connection and try again."
     },
     "map": {

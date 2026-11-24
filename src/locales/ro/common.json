@@ -292,5 +292,9 @@
     "change": "Schimbă",
     "changeStep": "Schimbă {{step}}",
     "done": ", gata"
+  },
+  "undo": {
+    "undo": "Anulează",
+    "failed": "Nu s-a putut anula. Încearcă din nou din pagină."
   }
 }

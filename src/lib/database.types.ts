@@ -17194,6 +17194,8 @@ export type Database = {
       };
       restore_archived_story: { Args: { document: Json; new_user_id: string }; Returns: undefined };
       restore_chapter: { Args: { chapter_code: string }; Returns: Json };
+      restore_character_relationship: { Args: { removed: Json }; Returns: Json };
+      restore_comment: { Args: { comment_id: string }; Returns: boolean };
       restore_my_story: { Args: { story_slug: string }; Returns: Json };
       restore_story_archives_of: {
         Args: { archive_email_hash: string; closed_user_id: string; new_user_id: string };
