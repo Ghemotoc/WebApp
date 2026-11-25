@@ -13863,6 +13863,129 @@ COMMENT ON FUNCTION "public"."is_interface_language"("code" "text") IS 'True whe
 
 
 
+CREATE OR REPLACE FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  writer public.profiles;
+begin
+  -- Step 1: the live profile behind the username, shown to this caller.
+  select * into writer from public.profile_for_handle(wanted_handle);
+  if not found or not public.profile_is_shown_to_caller(writer) then
+    return null;
+  end if;
+  -- Step 2: the numbers and lines, each limited to what the caller may see.
+  return jsonb_build_object(
+    'following', (select count(*) from public.follows_users
+      join public.profiles as followed on followed.id = follows_users.followed_user_id
+      where follows_users.user_id = writer.id and followed.deleted_at is null),
+    'public_bookshelves', (select count(*) from public.reading_lists
+      where reading_lists.user_id = writer.id and reading_lists.is_public
+        and public.reading_list_is_visible(reading_lists)),
+    'post_count', (select count(*) from public.forum_posts
+      join public.forum_threads on forum_threads.id = forum_posts.thread_id
+      where forum_posts.user_id = writer.id
+        and public.forum_thread_is_shown(forum_threads)
+        and public.forum_post_state_for_caller(forum_posts) = 'live'),
+    'recent_posts', public.profile_recent_posts_json(writer.id, wanted_language, 3),
+    'spaces', (select coalesce(jsonb_agg(jsonb_build_object('name', spaces.name, 'slug', spaces.slug)
+        order by spaces.name), '[]'::jsonb)
+      from public.spaces
+      where spaces.user_id = writer.id and spaces.kind = 'open' and spaces.archived_at is null
+        and public.space_card_visible(spaces)));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") IS 'A profile''s following count, public bookshelves, readable forum posts and open spaces; never the user ID (board C04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  writer public.profiles;
+begin
+  -- Step 1: the live profile behind the username, shown to this caller.
+  select * into writer from public.profile_for_handle(wanted_handle);
+  if not found or not public.profile_is_shown_to_caller(writer) then
+    return null;
+  end if;
+  -- Step 2: the public bookshelves the caller may see.
+  return (
+    select coalesce(jsonb_agg(public.reading_list_json(reading_lists)
+      order by reading_lists.updated_at desc, reading_lists.id), '[]'::jsonb)
+    from public.reading_lists
+    where reading_lists.user_id = writer.id and reading_lists.is_public
+      and public.reading_list_is_visible(reading_lists));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") IS 'A person''s public bookshelves for their profile, in the my_reading_lists() shape (board C06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select writer.id is not null
+    and (writer.id = (select auth.uid()) or not public.is_moderated_away('profile', writer.id))
+    and not public.is_blocked_with(writer.id)
+    and public.profile_is_open_to(writer, (select auth.uid()));
+$$;
+
+
+ALTER FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") IS 'Internal: a profile''s extra parts (activity, bookshelves) show only where the profile itself shows (board C04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(recent.item order by recent.posted_at desc), '[]'::jsonb)
+  from (
+    select forum_posts.created_at as posted_at,
+      jsonb_build_object(
+        'thread_title', forum_threads.title,
+        'forum_slug', forums.slug,
+        'forum_name', (select names.name from public.forum_name_in(forums.id, wanted_language) as names),
+        'thread_number', forum_threads.thread_number,
+        'post_number', forum_posts.post_number,
+        'posted_at', forum_posts.created_at) as item
+    from public.forum_posts
+    join public.forum_threads on forum_threads.id = forum_posts.thread_id
+    join public.forums on forums.id = forum_threads.forum_id
+    where forum_posts.user_id = writer_id
+      and public.forum_thread_is_shown(forum_threads)
+      and public.forum_post_state_for_caller(forum_posts) = 'live'
+    order by forum_posts.created_at desc
+    limit how_many
+  ) as recent;
+$$;
+
+
+ALTER FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) IS 'Internal: a person''s latest forum posts that the caller may read (board C04, Recent posts in Together).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."random_initials_colour"() RETURNS "text"
     LANGUAGE "sql"
     SET "search_path" TO ''
@@ -71212,6 +71335,26 @@ REVOKE ALL ON FUNCTION "public"."initials_colour_names"() FROM PUBLIC;
 
 GRANT ALL ON FUNCTION "public"."is_interface_language"("code" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."is_interface_language"("code" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) FROM PUBLIC;
 
 
 

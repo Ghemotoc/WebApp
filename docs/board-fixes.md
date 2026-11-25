@@ -373,3 +373,9 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | A10-Landing, the hero box (user story 1.10) | One plain box | The plum theme is the plain box; the gold, sage and sky themes tint it, so the four themes of S1-E11-14 stay |
 | A10-Landing, the shelf (user story 1.10) | Cards with the title and pen name only | The cards are the shared story cards of Read (status, rank, chapters), as on every shelf |
 | A10-Landing, the questions (user story 1.10) | All open, a line between | Built as drawn: the questions on a landing page no longer open and close (G5b's disclosures stay on the website's Help) |
+| C04-Profile, the "…" menu beside Share (user story 3.4) | A more menu | Not drawn: Report and Block already sit in the profile's safety card, so a second place for them would say the same thing twice |
+| C04-Profile, the numbers (user story 3.4) | Chapters, reads, followers and following, two by two | As drawn; the Stories number left the grid because "Stories by <name>" lists them just below |
+| C04-Profile, the story rows (user story 3.4) | Reads on each row | The row shows the status, genre and chapters; a story's reads aren't public on the profile yet. The rows are a list of up to five, not a shelf, so rule 20's one scrolling line doesn't apply; "See every story" opens the full list |
+| C04-Profile, under the name (user story 3.4) | A tagline and a website | Not yet: profiles hold no tagline or website; each is a new profile field |
+| C04-Profile, the adverts (user story 3.4) | One box in the side column | The wide banner under the stories stays (position 1) and the side box is a new slot, `profile_side` (position 2), editable from Staff › Sponsors like every slot |
+| C06-Bookshelves (user story 3.6) | Dashed "+" places on each bookshelf | Left out: nobody can add a book to someone else's bookshelf. Private bookshelves never show here, even on one's own: this is the public view |
