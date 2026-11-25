@@ -14,22 +14,34 @@ export interface NavigationItem {
   labelKey: string;
   /** Shown only to a signed-in member (TRIAL-WALL: Library and Together leave a visitor's bar). */
   isForMembers?: boolean;
+  /** Where the link goes for a signed-in member, when that differs (Home becomes Hub). */
+  memberHref?: string;
+  /** The link's text for a signed-in member, when that differs. */
+  memberLabelKey?: string;
 }
 
 /**
- * The links a signed-out visitor sees: every link but those for members (Robert, 23 Nov 2026:
- * "library and together should disappear fully from the navbar when they are signed out").
+ * The links for whoever is looking: a visitor sees every link but those for members (Robert,
+ * 23 Nov 2026: "library and together should disappear fully from the navbar when they are signed
+ * out"); a member sees every link, each with its member address and text where it has one
+ * (Robert, 25 Nov 2026: signed in, Home is renamed Hub and opens the Writers' hub).
  *
  * @param items - the full list
  * @param isSignedIn - whether someone is signed in
- * @returns the list as is for a member, without the members' links for a visitor
+ * @returns the member's version of the list, or the visitor's without the members' links
  */
-export function linksFor<Item extends { isForMembers?: boolean }>(
+export function linksFor<Item extends NavigationItem>(
   items: readonly Item[],
   isSignedIn: boolean,
 ): Item[] {
-  if (isSignedIn) return [...items];
-  return items.filter((item) => item.isForMembers !== true);
+  // Step 1: a visitor never sees the members' links, and keeps each link's own address and text.
+  if (!isSignedIn) return items.filter((item) => item.isForMembers !== true);
+  // Step 2: a member gets the member address and text wherever a link has them.
+  return items.map((item) => ({
+    ...item,
+    href: item.memberHref ?? item.href,
+    labelKey: item.memberLabelKey ?? item.labelKey,
+  }));
 }
 
 /**
@@ -41,14 +53,20 @@ export const homeNavigationPlaceholder = '#home';
 
 /**
  * Top bar links, in the simplified design's order (bundle CALM-2; the DESIGN handover, Step 2,
- * "Top bar"): Home, Read, Library and Together. Read is the page at /discover (S1-E5-01) and
+ * "Top bar"): Home, Read, Library and Together. Signed in, Home reads "Hub" and opens the Writers'
+ * hub at /hub (Robert, 25 Nov 2026); the logo still opens the member's Home at "/". Read is the page at /discover (S1-E5-01) and
  * Together the page at /forums (FORUMS-1a, S1-E8-01): only the words changed, the addresses stay
  * (a new address is on hold). Library is S1-E4-03. Library and Together show only to members
  * (TRIAL-WALL, Robert, 23 Nov 2026). Messages
  * (S1-E9-01) is not in the track any more: it is an icon button beside the bell (MessagesHeaderLink).
  */
 export const primaryNavigation: NavigationItem[] = [
-  { href: homeNavigationPlaceholder, labelKey: 'nav.home' },
+  {
+    href: homeNavigationPlaceholder,
+    labelKey: 'nav.home',
+    memberHref: '/hub',
+    memberLabelKey: 'nav.hub',
+  },
   { href: '/discover', labelKey: 'nav.read' },
   { href: '/library', labelKey: 'nav.library', isForMembers: true },
   { href: '/forums', labelKey: 'nav.together', isForMembers: true },

@@ -8,9 +8,9 @@
  * again whenever the track changes size (a longer translation, Messages appearing at sign-in), and
  * slides in 280 ms; reduce motion makes it jump (index.css). On a page outside the track, such as a
  * story, there is no bubble.
- * Home (bundle CALM-2) is the first link: the list carries a placeholder that this component swaps
- * for useHomeAddress's answer ("/" since user story 1.1, where the member's Home or the public home
- * page shows).
+ * Home (bundle CALM-2) is the first link: for a visitor the list carries a placeholder that this
+ * component swaps for useHomeAddress's answer ("/" since user story 1.1, the public home page);
+ * for a member linksFor() has already made it Hub at /hub (Robert, 25 Nov 2026).
  * Who uses it: TopBar. What it calls: React Router's NavLink and useHomeAddress.
  */
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';

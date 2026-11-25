@@ -77,6 +77,12 @@ export const landingFieldRules: Record<
   hero: [
     { field: 'title', longest: 80, isRequired: true },
     { field: 'intro', longest: 300, isRequired: false },
+    // BOOKS-A10 (board A10): the kicker above the title, the title's second line in violet and
+    // the two buttons, for visitors ("Join for free") and for members ("Join writing month").
+    { field: 'kicker', longest: 80, isRequired: false },
+    { field: 'title_accent', longest: 80, isRequired: false },
+    { field: 'button_label', longest: 40, isRequired: false },
+    { field: 'member_button_label', longest: 40, isRequired: false },
   ],
   text: [
     { field: 'heading', longest: 80, isRequired: true },
@@ -151,8 +157,11 @@ export function safeLandingLink(link: string | undefined): string {
   return landingLinkPattern.test(trimmed) ? trimmed : '#';
 }
 
-/** The blocks that link somewhere: one of our pages or an https address. */
-export const landingLinkKinds: readonly LandingBlockKind[] = ['rules', 'call_to_action'];
+/**
+ * The blocks that link somewhere: one of our pages or an https address. The hero's link is where
+ * its buttons go, needed only when it has one (BOOKS-A10).
+ */
+export const landingLinkKinds: readonly LandingBlockKind[] = ['rules', 'call_to_action', 'hero'];
 
 /** The blocks made of a list of entries (a title and a few words each), and how many each holds. */
 export const landingEntryCounts = {
@@ -223,6 +232,8 @@ export const landingBlockSchema = z.object({
   mode: z.enum(landingFeaturedModes).optional(),
   story_slugs: z.array(z.string()).optional(),
   tag: z.string().optional(),
+  /** hero only: show the words every writer wrote this month (BOOKS-A10, board A10). */
+  live_count: z.boolean().optional(),
 });
 export type LandingBlock = z.infer<typeof landingBlockSchema>;
 

@@ -42,7 +42,8 @@
   "ended": {
     "contest": "This contest has ended.",
     "campaign": "This campaign has ended.",
-    "information": "This page is no longer up to date."
+    "information": "This page is no longer up to date.",
+    "on": "Ended on {{date}}."
   },
   "list": {
     "intro": "Landing pages live at their own address and are built from blocks in Romanian and English. The owner, admins, moderators and anyone whose role includes Landing pages can make and publish them.",
@@ -141,7 +142,10 @@
       "source": "Who said it",
       "button_label": "Button text",
       "entries": "Cards and steps",
-      "search": "Search and sharing"
+      "search": "Search and sharing",
+      "kicker": "Line above the title",
+      "title_accent": "Title, second line (violet)",
+      "member_button_label": "Button text for members"
     },
     "problems": {
       "empty": "fill this in",
@@ -247,7 +251,8 @@
       "description": "Search description",
       "hidden": "Hide this page from search engines",
       "hiddenHint": "Visitors can still open it from a link."
-    }
+    },
+    "liveCount": "Show the live count of words written this month"
   },
   "picture": {
     "states": {
@@ -436,5 +441,10 @@
   },
   "steps": {
     "label": "Step {{number}}"
+  },
+  "hero": {
+    "howItWorks": "How it works",
+    "liveCount": "Live count",
+    "wordsSoFar": "words written so far this month"
   }
 }

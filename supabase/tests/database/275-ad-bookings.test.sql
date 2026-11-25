@@ -144,8 +144,11 @@ select pg_temp.as_admin();
 select is((select string_agg(slot ->> 'slot_key' || '=' || (slot #>> '{weeks,0,state}') || '/' || (slot #>> '{weeks,5,state}'), ', '
            order by slot ->> 'slot_key')
            from jsonb_array_elements(public.admin_ad_placements() -> 'slots') as slot
-           where slot ->> 'slot_key' in ('discover_wide', 'discover_card', 'search_wide')),
-  'discover_card=free/free, discover_wide=booked/network, search_wide=network/network',
+           where slot ->> 'slot_key' in ('discover_wide', 'search_portrait', 'search_wide')),
+  -- search_portrait is a tall box, not a wide one, so the network never fills it. (Read's
+  -- discover_card became a wide banner in user story 1.4, board A04, and the See all lists'
+  -- see_all_card in user stories 1.5 to 1.9, so the network fills both like the other wide slots.)
+  'discover_wide=booked/network, search_portrait=free/free, search_wide=network/network',
   'Placements shows this week''s booking, the network on wide slots once it is on and Free elsewhere, six weeks ahead');
 select lives_ok(format($$ select public.admin_change_ad_booking(%L, jsonb_build_object('starts_on', public.romania_today(),
     'ends_on', public.romania_today() + 3));
