@@ -62,6 +62,7 @@ export function LandingPageScreen() {
         content={published.content}
         language={language}
         hasEnded={published.state === 'ended'}
+        takeDownOn={published.take_down_on}
         pageType={published.type}
         extras={extras}
       />

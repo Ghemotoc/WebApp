@@ -15287,6 +15287,10 @@ export type Database = {
         Args: { block: Json; block_path: string };
         Returns: string[];
       };
+      landing_block_extra_problems_before_hero: {
+        Args: { block: Json; block_path: string };
+        Returns: string[];
+      };
       landing_block_field_rules: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -15345,6 +15349,7 @@ export type Database = {
         };
         Returns: string;
       };
+      landing_words_this_month: { Args: Record<PropertyKey, never>; Returns: number };
       landing_youngest_ratings: {
         Args: { content: Json };
         Returns: Database['public']['Enums']['story_rating'][];
