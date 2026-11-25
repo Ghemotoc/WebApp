@@ -191,6 +191,8 @@ select results_eq(
        ('library_entries', 0::bigint),
        -- Genre and tag page backgrounds: staff choices read through list_page_background() (G12b).
        ('list_page_backgrounds', 0::bigint),
+       -- The line under a genre or tag page's title: website staff only; visitors read list_page_line() (BOOKS-A06).
+       ('list_page_lines', 0::bigint),
        -- Live sessions: staff content read through a function; a member's own reminders (GAPS-12h).
        ('live_session_reminders', 0::bigint),
        ('live_sessions', 0::bigint),
