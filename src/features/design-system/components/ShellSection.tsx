@@ -27,8 +27,6 @@ export function ShellSection() {
         <TopBar
           navigationItems={boardPrimaryNavigation}
           navigationLabel={t('shell.topBarSpecimen')}
-          // One search region per page: the real top bar already has it.
-          hasSearch={false}
         />
       </div>
       <p className="m-0 max-w-[720px] text-ink-muted">{t('shell.staffBarNote')}</p>

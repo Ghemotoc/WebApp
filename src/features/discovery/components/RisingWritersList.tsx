@@ -97,6 +97,8 @@ export interface RisingWritersListProps {
   tone?: RisingWritersTone;
   /** The heading's id, unique on the page. */
   headingId?: string;
+  /** Another heading, such as Search's "Writers to try" (board A07); the list's own otherwise. */
+  title?: string;
 }
 
 /**
@@ -104,11 +106,13 @@ export interface RisingWritersListProps {
  *
  * @param props.tone - plain or band
  * @param props.headingId - the heading's id
+ * @param props.title - a heading of the caller's own, if any
  * @returns the section or null
  */
 export function RisingWritersList({
   tone = 'plain',
   headingId = 'read-writers-heading',
+  title,
 }: RisingWritersListProps) {
   const { t } = useDiscoveryTranslation();
   const { writers } = useRisingWriters();
@@ -119,7 +123,7 @@ export function RisingWritersList({
   return (
     <section aria-labelledby={headingId} data-writers-tone={tone} className="flex flex-col">
       <h2 id={headingId} className={cn('m-0 mb-1', toneClasses[tone].heading)}>
-        {t(titleKey)}
+        {title ?? t(titleKey)}
       </h2>
       <ul className="m-0 list-none p-0">
         {writers.slice(0, writersShown).map((writer) => (

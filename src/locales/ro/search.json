@@ -6,17 +6,17 @@
     "count_one": "Un rezultat printre povești, scriitori și etichete.",
     "count_few": "{{count}} rezultate printre povești, scriitori și etichete.",
     "count_other": "{{count}} de rezultate printre povești, scriitori și etichete.",
-    "start": "Găsește o poveste după titlu, după o etichetă sau după numele scriitorului.",
     "tooShort": "Scrie cel puțin 2 litere ca să cauți.",
-    "loadFailed": "Căutarea nu merge acum. Încearcă din nou peste puțin timp."
+    "loadFailed": "Căutarea nu merge acum. Încearcă din nou peste puțin timp.",
+    "writersToTry": "Scriitori de încercat",
+    "sideLabel": "Scriitori de încercat",
+    "start": "Găsește o poveste după titlu, după o etichetă sau după numele scriitorului."
   },
   "form": {
     "label": "Caută povești, scriitori și etichete",
-    "placeholder": "Caută povești, scriitori și etichete",
+    "placeholder": "Titluri, pseudonime, etichete",
     "submit": "Caută",
     "clear": "Șterge",
-    "hintLead": "Nu e nevoie de diacritice.",
-    "hint": "„povesti” găsește și „povești”. Se potrivesc și terminațiile cuvintelor în română și engleză, așa că „poveste” și „povestea” contează ca același cuvânt.",
     "clearLabel": "Golește căutarea"
   },
   "groups": {
@@ -63,5 +63,10 @@
   },
   "rows": {
     "seeAll": "Vezi {{title}}"
+  },
+  "recent": {
+    "heading": "Căutări recente",
+    "clear": "Șterge",
+    "remove": "Scoate „{{term}}” din căutările recente"
   }
 }
