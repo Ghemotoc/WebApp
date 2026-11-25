@@ -1002,6 +1002,26 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   backdrop-filter: none;
 }
 
+/*
+ * Settings panels are flat (bundle 10, 25 Nov 2026: the J boards of the full canvas draw every
+ * Settings panel as a part of the page under a fine line, never as a box). The id outweighs the box
+ * rules above, so a panel written as a card still draws flat here and keeps its card look anywhere
+ * else it is shown. Boxes inside a panel (a notice, a tinted note) keep their looks.
+ * Who sets it: SettingsPage, on the group's panel (#settings-panel).
+ */
+#settings-panel.settings-flat > section {
+  border-width: 1px 0 0;
+  border-style: solid;
+  border-color: var(--hairline);
+  border-radius: 0;
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  padding: 2.5rem 0 2.5rem;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
 /* The box keeps its colour when a card link is hovered; only the shadow lifts (rule below). */
 .box-surface:not([data-area='staff'] *) {
   border-width: 1px;

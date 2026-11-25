@@ -18,6 +18,7 @@ import type { AppealDecision, StaffAppeal } from '../api/appeals';
 
 import { AppealDecisionForm } from './AppealDecisionForm';
 import { AppealOwnerReview } from './AppealOwnerReview';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** What the card needs. */
 export interface AppealCardProps {
@@ -35,7 +36,7 @@ export interface AppealCardProps {
  */
 function useAppealRows(appeal: StaffAppeal) {
   const { t, i18n } = useTranslation('moderation');
-  const sent = new Intl.DateTimeFormat(i18n.language, {
+  const sent = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(appeal.createdAt));

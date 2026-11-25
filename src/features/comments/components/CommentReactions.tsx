@@ -28,6 +28,7 @@ import { useReactToComment } from '../hooks/useReactToComment';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
 
 import { ReactionIcon } from './ReactionIcon';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The chip's shape: 36 px tall, its ::after layer making the touch target 44 px (DoD). */
 const chipShape =
@@ -51,7 +52,7 @@ function ReactionChip(props: {
 }) {
   const { t, i18n } = useCommentsTranslation();
   const name = t(`reactions.names.${props.kind}`);
-  const count = props.count.toLocaleString(i18n.language);
+  const count = props.count.toLocaleString(dateLocaleFor(i18n.language));
   const label = props.isMine
     ? t('reactions.chipMine', { name, count })
     : t('reactions.chip', { name, count });

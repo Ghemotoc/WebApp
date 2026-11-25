@@ -14,6 +14,7 @@ import { LabelRows } from '@/components/ui/LabelRows';
 import type { InvestorLatest } from '../../api/investorNumbers';
 
 import { MetricsCard } from './MetricsCard';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /**
  * Renders the card.
@@ -31,11 +32,15 @@ export function InvestorLatestCard({
 }) {
   const { t, i18n } = useTranslation('staff');
   const count = (value: number | null) =>
-    value === null ? t('metrics.investor.notCounted') : value.toLocaleString(i18n.language);
+    value === null
+      ? t('metrics.investor.notCounted')
+      : value.toLocaleString(dateLocaleFor(i18n.language));
   const share = (value: number | null) =>
     value === null
       ? t('metrics.investor.tooFew')
-      : t('metrics.investor.percent', { value: value.toLocaleString(i18n.language) });
+      : t('metrics.investor.percent', {
+          value: value.toLocaleString(dateLocaleFor(i18n.language)),
+        });
   return (
     <MetricsCard
       headingId="metrics-investor-latest"

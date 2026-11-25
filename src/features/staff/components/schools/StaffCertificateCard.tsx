@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import type { StaffCertificate } from '@/features/certificates/api/classCertificates';
 import { useRevokeCertificate } from '@/features/certificates/hooks/useClassCertificates';
 import { useCertificatesTranslation } from '@/features/certificates/registerCertificatesTranslations';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /**
  * The reason field and "Revoke".
@@ -75,9 +76,9 @@ function RevokeForm({ code }: { code: string }) {
 export function StaffCertificateCard({ certificate }: { certificate: StaffCertificate }) {
   const { t, i18n } = useTranslation('staff');
   const certificates = useCertificatesTranslation();
-  const signedOn = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
-    new Date(certificate.signedAt),
-  );
+  const signedOn = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    dateStyle: 'long',
+  }).format(new Date(certificate.signedAt));
   const rows = [
     {
       label: t('staffCertificates.status'),

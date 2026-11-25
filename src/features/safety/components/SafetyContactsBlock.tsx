@@ -24,6 +24,7 @@ import { countryName } from '../lib/countries';
 
 import { CountryPicker } from './CountryPicker';
 import { SafetyContactRow } from './SafetyContactRow';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The list for the country, the fallback, or a short wait.
@@ -77,9 +78,9 @@ function InternationalDirectories() {
   const firstContact = contacts[0];
   if (firstContact === undefined) return null;
   // The check date comes from the rows themselves, so it stays right when they are re-checked.
-  const checkedOn = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
-    new Date(`${firstContact.lastCheckedOn}T12:00:00`),
-  );
+  const checkedOn = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    dateStyle: 'long',
+  }).format(new Date(`${firstContact.lastCheckedOn}T12:00:00`));
   return (
     <>
       <p className="m-0 mt-3 type-body text-ink-muted">

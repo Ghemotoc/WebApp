@@ -14,6 +14,7 @@ import type { MailThreadSummary } from '../api/moderatorMail';
 import { useMailTranslation } from '../registerMailTranslations';
 
 import { MailStatusPill } from './MailStatusPill';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The reference, and the decision when the thread is about one ("M-000231 · linked to S-000418").
@@ -37,9 +38,9 @@ function useReferenceLine(thread: MailThreadSummary): string {
 function ThreadRow({ thread }: { thread: MailThreadSummary }) {
   const { i18n } = useMailTranslation();
   const referenceLine = useReferenceLine(thread);
-  const when = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
-    new Date(thread.lastMessageAt),
-  );
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    dateStyle: 'medium',
+  }).format(new Date(thread.lastMessageAt));
   return (
     <tr className="flex flex-col gap-2 border-b border-hairline px-4 py-4 last:border-b-0 md:table-row md:px-0 md:py-0">
       <td className="md:py-4 md:pr-4 md:pl-6">

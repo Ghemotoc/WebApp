@@ -174,14 +174,16 @@ function MessageField({
   onChange: (message: string) => void;
   problem: Problem;
 }) {
-  const { t } = useTranslation('contact');
+  const { t, i18n } = useTranslation('contact');
   const hasProblem = problem === 'message_missing' || problem === 'message_too_long';
+  // Locale-aware number, so English reads "4,000" and Romanian "4.000" (DoD: numbers).
+  const longestMessage = new Intl.NumberFormat(i18n.language).format(contactMessageMaxLength);
   return (
     <>
       <Textarea
         id="contact-message"
         label={t('form.message')}
-        hint={t('form.messageHint', { max: contactMessageMaxLength })}
+        hint={t('form.messageHint', { max: longestMessage })}
         rows={6}
         value={message}
         aria-invalid={hasProblem ? true : undefined}
