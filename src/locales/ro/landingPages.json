@@ -42,7 +42,8 @@
   "ended": {
     "contest": "Concursul s-a încheiat.",
     "campaign": "Campania s-a încheiat.",
-    "information": "Pagina nu mai este actuală."
+    "information": "Pagina nu mai este actuală.",
+    "on": "S-a încheiat pe {{date}}."
   },
   "list": {
     "intro": "Paginile de prezentare au adresa lor și se construiesc din blocuri, în română și în engleză. Proprietarul, administratorii, moderatorii și oricine are în rol Pagini de prezentare le pot crea și publica.",
@@ -141,7 +142,10 @@
       "source": "Cine a spus-o",
       "button_label": "Textul butonului",
       "entries": "Carduri și pași",
-      "search": "Căutare și distribuire"
+      "search": "Căutare și distribuire",
+      "kicker": "Rândul de deasupra titlului",
+      "title_accent": "Titlul, al doilea rând (violet)",
+      "member_button_label": "Textul butonului pentru membri"
     },
     "problems": {
       "empty": "completează câmpul",
@@ -247,7 +251,8 @@
       "description": "Descriere pentru căutare",
       "hidden": "Ascunde pagina de motoarele de căutare",
       "hiddenHint": "Vizitatorii o pot deschide în continuare dintr-un link."
-    }
+    },
+    "liveCount": "Arată în direct cuvintele scrise luna aceasta"
   },
   "picture": {
     "states": {
@@ -436,5 +441,10 @@
   },
   "steps": {
     "label": "Pasul {{number}}"
+  },
+  "hero": {
+    "howItWorks": "Cum funcționează",
+    "liveCount": "În direct",
+    "wordsSoFar": "cuvinte scrise luna aceasta până acum"
   }
 }

@@ -30177,6 +30177,44 @@ CREATE OR REPLACE FUNCTION "public"."landing_block_extra_problems"("block" "json
     SET "search_path" TO ''
     AS $_$
 declare
+  problems text[] := public.landing_block_extra_problems_before_hero(block, block_path);
+  hero_link text := btrim(coalesce(block ->> 'link', ''));
+  has_button boolean;
+begin
+  if block ->> 'kind' <> 'hero' then
+    return problems;
+  end if;
+  -- Step 1: a hero needs a link only when either language shows a button.
+  has_button := btrim(coalesce(block #>> '{ro,button_label}', '')) <> ''
+    or btrim(coalesce(block #>> '{en,button_label}', '')) <> ''
+    or btrim(coalesce(block #>> '{ro,member_button_label}', '')) <> ''
+    or btrim(coalesce(block #>> '{en,member_button_label}', '')) <> '';
+  if not has_button then
+    return problems;
+  end if;
+  -- Step 2: the same rule as a call to action: one of our pages or an https address, never "//".
+  if hero_link = '' then
+    problems := problems || (block_path || '.link:empty');
+  elsif hero_link !~ '^(/([a-z0-9_-][a-z0-9/_-]*)?|https://[^\s]+)$' then
+    problems := problems || (block_path || '.link:bad_link');
+  end if;
+  return problems;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") IS 'Internal: a landing page block''s problems beyond its text fields, a hero''s button link included (S1-E11-14, BOOKS-A10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."landing_block_extra_problems_before_hero"("block" "jsonb", "block_path" "text") RETURNS "text"[]
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $_$
+declare
   problems text[] := '{}';
   open_on date;
   close_on date;
@@ -30261,10 +30299,10 @@ end;
 $_$;
 
 
-ALTER FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."landing_block_extra_problems_before_hero"("block" "jsonb", "block_path" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") IS 'Internal: a landing page block''s problems beyond its text fields (S1-E11-14).';
+COMMENT ON FUNCTION "public"."landing_block_extra_problems_before_hero"("block" "jsonb", "block_path" "text") IS 'Internal: a landing page block''s problems beyond its text fields, before the hero''s buttons (S1-E11-14 to S1-E11-34).';
 
 
 
@@ -30274,6 +30312,9 @@ CREATE OR REPLACE FUNCTION "public"."landing_block_field_rules"() RETURNS TABLE(
     AS $$
   values
     ('hero', 'title', 80, true), ('hero', 'intro', 300, false),
+    -- BOOKS-A10: the kicker, the violet second line and the two buttons, all optional.
+    ('hero', 'kicker', 80, false), ('hero', 'title_accent', 80, false),
+    ('hero', 'button_label', 40, false), ('hero', 'member_button_label', 40, false),
     ('text', 'heading', 80, true), ('text', 'body', 4000, true),
     ('key_dates', 'heading', 80, true), ('key_dates', 'note', 300, false),
     ('who_can_enter', 'heading', 80, true), ('who_can_enter', 'body', 1000, true),
@@ -30283,7 +30324,6 @@ CREATE OR REPLACE FUNCTION "public"."landing_block_field_rules"() RETURNS TABLE(
     ('questions', 'heading', 80, true),
     ('featured', 'heading', 80, true), ('featured', 'intro', 300, false),
     ('remind_me', 'heading', 80, true), ('remind_me', 'intro', 300, false),
-    -- S1-E11-34: the page builder's new blocks.
     ('picture_text', 'heading', 80, true), ('picture_text', 'body', 2000, true),
     ('cards', 'heading', 80, true),
     ('steps', 'heading', 80, true),
@@ -30775,6 +30815,24 @@ ALTER FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" 
 
 
 COMMENT ON FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" "text", "field_name" "text", "field_path" "text", "longest" integer, "is_required" boolean) IS 'Internal: one landing page text field''s problem, or null; text only (S1-E11-14, S1-E11-34).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."landing_words_this_month"() RETURNS bigint
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select case when count(distinct writing_days.user_id) < 5 then null
+              else coalesce(sum(writing_days.words), 0)::bigint end
+  from public.writing_days
+  where writing_days.day >= date_trunc('month', public.romania_today())::date;
+$$;
+
+
+ALTER FUNCTION "public"."landing_words_this_month"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."landing_words_this_month"() IS 'The words every writer wrote this month, for a landing page''s live count; null under five writers (BOOKS-A10).';
 
 
 
@@ -73344,6 +73402,10 @@ REVOKE ALL ON FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", 
 
 
 
+REVOKE ALL ON FUNCTION "public"."landing_block_extra_problems_before_hero"("block" "jsonb", "block_path" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."landing_block_field_rules"() FROM PUBLIC;
 
 
@@ -73422,6 +73484,12 @@ REVOKE ALL ON FUNCTION "public"."landing_search_problems"("search" "jsonb") FROM
 
 
 REVOKE ALL ON FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" "text", "field_name" "text", "field_path" "text", "longest" integer, "is_required" boolean) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."landing_words_this_month"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."landing_words_this_month"() TO "anon";
+GRANT ALL ON FUNCTION "public"."landing_words_this_month"() TO "authenticated";
 
 
 
