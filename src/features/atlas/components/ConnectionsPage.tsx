@@ -6,7 +6,7 @@
  * The Story Atlas top bar, the heading, then Map and Family tree, two views of the same
  * relationships (user stories bundle 6, story 6.6, board E25). The Map view holds the map, the
  * list of relationships in words and the "Add a relationship" form at its foot
- * (ConnectionsMapView); the family tree has "Add to this tree" (GAPS-3). The old List view
+ * (ConnectionsMapView); the family tree has its own "Add a relationship" (story 6.7, board E26). The old List view
  * (?view=list) opens the map, whose list is under it. "Add a relationship" in the top bar comes
  * here with ?add=1, which brings the form into view and puts the focus on its first picker. With
  * fewer than two characters the page points to the Characters page instead. Only the writer sees
@@ -116,13 +116,9 @@ function ConnectionsBody({ slug, cast }: { slug: string; cast: StoryCast }) {
       {view === 'map' && (
         <ConnectionsMapView slug={slug} cast={cast} words={words} addressOf={sheetAddress} />
       )}
+      {/* The tree sits straight on the page, as board E26 draws it. */}
       {view === 'tree' && (
-        <section
-          aria-label={t('connections.tree.heading')}
-          className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-4 shadow-card sm:px-6 sm:py-6"
-        >
-          <FamilyTreeView addressOf={sheetAddress} cast={cast} words={words} onAdd={relate} />
-        </section>
+        <FamilyTreeView addressOf={sheetAddress} cast={cast} words={words} onAdd={relate} />
       )}
     </div>
   );

@@ -47,7 +47,11 @@ function RelationshipsSection({
     (relationship) => !hiddenCategories.includes(categoryOf(relationship.kind)),
   );
   return (
-    <section aria-labelledby="atlas-relationships-heading" className="flex min-w-0 flex-col gap-2">
+    // Each section opens with a hairline and 24 px above its heading (board E25's .fgroup).
+    <section
+      aria-labelledby="atlas-relationships-heading"
+      className="flex min-w-0 flex-col gap-2 border-t border-hairline pt-6"
+    >
       <h2
         id="atlas-relationships-heading"
         className="m-0 font-heading type-heading font-bold text-ink-heading"
@@ -85,7 +89,7 @@ function AddRelationshipSection({ slug, cast }: { slug: string; cast: StoryCast 
     <section
       id="atlas-add-relationship"
       aria-labelledby="atlas-add-relationship-heading"
-      className="flex min-w-0 flex-col gap-4"
+      className="flex min-w-0 flex-col gap-4 border-t border-hairline pt-6"
     >
       <h2
         id="atlas-add-relationship-heading"

@@ -15,14 +15,15 @@
  *   dropped on another opens Add a relationship with both picked (G10b2);
  * - "Add a relationship" in the top bar of another Atlas page opens this page with the form open,
  *   and the page is called Relationships (CALM-9a);
- * - the family tree puts generations top to bottom with partners side by side, "Include turned
- *   or made" counts makers, "Whose tree" shows one family and a note says how many characters
- *   are left off (S1-E17-16, G10b2); the key says how the tree is drawn, and on a phone the tree
- *   scrolls sideways inside its box, opened on the chosen character (CALM-9, board E26);
+ * - the family tree opens on a character with a family and puts generations top to bottom with
+ *   partners side by side, "Include turned or made" counts makers, "Whose tree" picks any
+ *   character, the characters with no family links are named, and Generations says it in words
+ *   (S1-E17-16; story 6.7, board E26); on a phone the tree scrolls sideways inside its box,
+ *   opened on the chosen character, with the swipe line once;
  * - a character's gender picks the family word (mother, son), told from the child on the child's
- *   own sheet, and "Add to this tree" adds a relative from the tree itself, once: a double click
- *   saves once, the same relationship again is refused, and a long name stays in its box
- *   (GAPS-3 and its break test, 10 Nov 2026);
+ *   own sheet, and the tree's "Add a relationship" opens the same dialog as a sheet: a double
+ *   click saves once, the same relationship again is refused, and a long name stays in its box
+ *   (GAPS-3 and its break test, 10 Nov 2026; story 6.7);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer's seed story "Stația meteo" gets five characters (deleted at the end);
@@ -411,48 +412,37 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('the family tree lays out generations and counts who is left off', async ({ browser }) => {
+  test('the family tree lays out generations and names who is left off', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections?view=tree`);
-    const treeCard = page.getByRole('region', { name: 'Family tree', exact: true });
-    const generations = treeCard.getByRole('list', { name: 'Generations' });
-    await expect(generations.getByRole('listitem')).toHaveText([
-      'Generation 1: Ana, Ion',
-      'Generation 2: Vali',
-    ]);
+    const generations = page
+      .getByRole('region', { name: 'Generations', exact: true })
+      .getByRole('listitem');
+    // It opens on the first character with a family, Ana (story 6.7: any character can have one).
+    await expect(page.getByLabel('Whose tree', { exact: true })).toHaveValue(cast.ana);
+    await expect(generations).toHaveText(['Generation 1: Ana, Ion', 'Generation 2: Vali']);
     await expect(
-      treeCard.getByText('2 characters with no family links are left off.'),
+      page.getByText('2 characters with no family links are left off: Lupul and Mara.'),
     ).toBeVisible();
-    // A maker counts as lineage once the switch is on (S1-E17-16).
-    await addOnConnections(page, {
-      from: 'Mara',
-      kind: 'Turned or made',
-      to: 'Lupul',
-    });
+    // The key says what the tree is built from, in words (board E26).
     await expect(
-      treeCard.getByText('2 characters with no family links are left off.'),
-    ).toBeVisible();
-    await treeCard.getByRole('button', { name: 'Include turned or made' }).click();
-    await expect(generations.getByRole('listitem')).toHaveText([
-      'Generation 1: Ana, Ion, Mara',
-      'Generation 2: Lupul, Vali',
-    ]);
-    await expect(treeCard.getByText(/left off/)).toHaveCount(0);
-    // Whose tree: only Mara's family (G10b2, board AtlasFamilyTree).
-    await treeCard.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Mara' });
-    await expect(generations.getByRole('listitem')).toHaveText([
-      'Generation 1: Mara',
-      'Generation 2: Lupul',
-    ]);
-    // The key says how the tree is drawn, in words (CALM-9, board E26).
-    await expect(
-      treeCard.getByText(
-        'Built from “Parent of”, “Partner or spouse of” and “Sibling of”. Partners sit side by side, children hang from their line, and brothers and sisters share a bracket.',
+      page.getByText(
+        'Built from “Parent of”, “Partner or spouse of” and “Sibling of”. Older generations at the top.',
       ),
     ).toBeVisible();
-    // Each card opens the sheet; the chosen character's card is ringed.
+    // A maker counts as lineage once the box is ticked (S1-E17-16).
+    await addOnConnections(page, { from: 'Mara', kind: 'Turned or made', to: 'Lupul' });
+    await expect(page.getByText(/2 characters with no family links are left off/)).toBeVisible();
+    await page.getByLabel('Include turned or made').check();
+    await expect(page.getByText(/left off/)).toHaveCount(0);
+    // Whose tree: Mara's family, with her card ringed and opening her sheet.
+    await page.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Mara' });
+    await expect(generations).toHaveText(['Generation 1: Mara', 'Generation 2: Lupul']);
     const maraCard = page.getByTestId('atlas-family-tree').getByRole('link', { name: /^Mara\b/ });
     await expect(maraCard).toHaveAttribute('href', `${planAddress}/characters/${cast.mara}`);
-    await expect(maraCard).toHaveClass(/var\(--thread\)/);
+    await expect(maraCard).toHaveClass(/ring-thread/);
+    // Without makers Mara has no family, and the page says so instead of drawing nothing.
+    await page.getByLabel('Include turned or made').uncheck();
+    await expect(page.getByText('Mara has no family links yet.')).toBeVisible();
     await page.context().close();
   });
 
@@ -461,9 +451,9 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
   }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections?view=tree`);
     await page.setViewportSize({ width: 390, height: 844 });
-    const treeCard = page.getByRole('region', { name: 'Family tree', exact: true });
-    await treeCard.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Vali' });
-    await expect(treeCard.getByText('Swipe sideways to see the whole tree.')).toBeVisible();
+    await page.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Vali' });
+    const swipe = page.getByText('Swipe sideways to see the whole tree.');
+    await expect(swipe).toBeVisible();
     // The chosen character's card sits inside the scrolling box's visible width.
     const drawing = page.getByTestId('atlas-family-tree');
     const valiCard = drawing.getByRole('link', { name: /^Vali\b/ });
@@ -480,6 +470,10 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
     );
     expect(pageScrolls).toBe(false);
+    // The swipe line shows once: the next visit leaves it out (story 6.7).
+    await page.reload();
+    await expect(drawing).toBeVisible();
+    await expect(swipe).toHaveCount(0);
     await page.context().close();
   });
 
@@ -542,10 +536,10 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
       .fill('goddaughter of');
     await form.getByRole('button', { name: 'Add relationship' }).click();
     await expect(list.getByText('Ana: godmother of Mara', { exact: true }).first()).toBeVisible();
-    // In the tree, the younger cousin sits a generation below Mara; Mara joins the top row.
+    // In Ana's tree, the younger cousin sits a generation below Mara; Mara joins the top row.
     await showView(page, 'Family tree');
     await expect(
-      page.getByRole('list', { name: 'Generations' }).getByRole('listitem').first(),
+      page.getByRole('region', { name: 'Generations', exact: true }).getByRole('listitem').first(),
     ).toHaveText('Generation 1: Ana, Ion, Mara');
     // Mara's sheet tells it from her side.
     await page.goto(`${planAddress}/characters/${cast.mara}`);
@@ -589,7 +583,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('a gender picks mother and son, and "Add to this tree" adds a child', async ({
+  test('a gender picks mother and son, and the tree’s Add a relationship adds a child', async ({
     browser,
   }) => {
     // Ana is Vali's parent. With a gender she is his mother (GAPS-3, board
@@ -617,61 +611,59 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
         .getByText('Vali is the son of Ana', { exact: true })
         .first(),
     ).toBeVisible();
-    // The tree adds to itself (board AtlasFamilyTree: "Add to Mara's tree"). Reduced motion, as
-    // checkScreen does, so axe measures the settled page and not one still fading in.
+    // The tree's one main button opens the same dialog as a sheet (story 6.7, board E26). Reduced
+    // motion, as checkScreen does, so axe measures the settled page and not one still fading in.
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(`${planAddress}/connections?view=tree`);
-    const treeCard = page.getByRole('region', { name: 'Family tree', exact: true });
-    await treeCard.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Mara' });
-    await treeCard.getByRole('button', { name: 'Add to this tree' }).click();
-    const form = treeCard.getByRole('form', { name: 'Add to Mara’s tree' });
-    await expect(form.getByLabel('How they’re related to Mara').locator('option')).toHaveText([
-      'Parent',
-      'Child',
-      'Sibling',
-      'Partner or spouse',
-      'Cousin',
-    ]);
-    // Both characters are needed.
-    await form.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(form.getByText('Pick both characters.')).toBeVisible();
+    await page.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Mara' });
+    await page.getByRole('button', { name: 'Add a relationship' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Add a relationship' });
+    // Both characters are picked here: the tree fixes neither.
+    await dialog.getByRole('button', { name: 'Add relationship' }).click();
+    await expect(dialog.getByText('Pick both characters.')).toBeVisible();
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();
     expect(results.violations).toEqual([]);
-    await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Lupul' });
-    await form.getByLabel('How they’re related to Mara').selectOption({ label: 'Child' });
+    /** Picks Mara as Lupul's parent and sends it. */
+    async function addMaraAsParent(click: 'click' | 'dblclick') {
+      await dialog.getByLabel('Character', { exact: true }).selectOption({ label: 'Mara' });
+      await dialog.getByLabel('Relationship', { exact: true }).selectOption({ label: 'Parent of' });
+      await dialog.getByLabel('Other character', { exact: true }).selectOption({ label: 'Lupul' });
+      await dialog.getByRole('button', { name: 'Add relationship' })[click]();
+    }
     // A double click saves once (break test, 10 Nov 2026); the count below proves it.
-    await form.getByRole('button', { name: 'Add', exact: true }).dblclick();
-    await expect(form.getByText('Relationship added.')).toBeVisible();
-    // Lupul now sits a generation under Mara, and the relationship runs from parent to child.
-    await expect(
-      treeCard.getByRole('list', { name: 'Generations' }).getByRole('listitem').filter({
-        hasText: 'Lupul',
-      }),
-    ).toHaveCount(1);
+    await addMaraAsParent('dblclick');
+    await expect(dialog.getByText('Relationship added.')).toBeVisible();
     expect(
       runSql(`select count(*) from public.story_character_relationships
         where from_character_id = '${cast.mara}' and to_character_id = '${cast.lupul}' and kind = 'parent_of'`),
     ).toBe('1');
     // The same relationship a second time is refused in plain words, and nothing is added.
-    await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Lupul' });
-    await form.getByLabel('How they’re related to Mara').selectOption({ label: 'Child' });
-    await form.getByRole('button', { name: 'Add', exact: true }).click();
-    await expect(form.getByText('That relationship is already there.')).toBeVisible();
+    await addMaraAsParent('click');
+    await expect(dialog.getByText('That relationship is already there.')).toBeVisible();
     expect(
       runSql(`select count(*) from public.story_character_relationships
         where from_character_id = '${cast.mara}' and to_character_id = '${cast.lupul}' and kind = 'parent_of'`),
     ).toBe('1');
-    // Cancel closes the form.
-    await form.getByRole('button', { name: 'Cancel' }).click();
-    await expect(form).toHaveCount(0);
+    // Close shuts the dialog, and Lupul joins Mara's tree.
+    await dialog.getByRole('button', { name: 'Close' }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(
+      page
+        .getByRole('region', { name: 'Generations', exact: true })
+        .getByRole('listitem')
+        .filter({ hasText: 'Lupul' }),
+    ).toHaveCount(1);
     // A very long name with no spaces stays inside its box on the tree.
     const longName = 'Pneumonoultramicroscopicsilicovolcanoconiosis'.repeat(2).slice(0, 80);
     runSql(`update public.story_characters set name = '${longName}' where id = '${cast.lupul}'`);
     await page.reload();
-    // The card's name is the character's name, then their role.
-    const longBox = treeCard.getByRole('link', { name: new RegExp(`^${longName}\\b`) });
+    await page.getByLabel('Whose tree', { exact: true }).selectOption({ label: 'Mara' });
+    // The card's name is the character's name, then their line.
+    const longBox = page
+      .getByTestId('atlas-family-tree')
+      .getByRole('link', { name: new RegExp(`^${longName}\\b`) });
     await expect(longBox).toBeVisible();
     expect(await longBox.evaluate((box) => box.scrollWidth <= box.clientWidth + 1)).toBe(true);
     runSql(`update public.story_characters set name = 'Lupul' where id = '${cast.lupul}'`);

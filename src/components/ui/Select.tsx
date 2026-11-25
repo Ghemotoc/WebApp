@@ -37,8 +37,13 @@ export interface SelectGroup {
  * @param isLabelAbove - whether it sits above the drop-down
  * @returns the class list
  */
-function labelClassName(isLabelVisible: boolean, isLabelAbove: boolean): string {
+function labelClassName(
+  isLabelVisible: boolean,
+  isLabelAbove: boolean,
+  isLabelStrong: boolean,
+): string {
   if (isLabelAbove) return 'type-body font-semibold wrap-anywhere text-ink';
+  if (isLabelVisible && isLabelStrong) return 'type-label font-semibold text-ink-heading';
   if (isLabelVisible) return 'type-meta font-semibold text-ink-muted';
   return 'sr-only';
 }
@@ -55,6 +60,11 @@ export interface SelectProps {
    * (board E21, Story details); beside it in the small meta style when left out.
    */
   isLabelAbove?: boolean;
+  /**
+   * A visible label beside the drop-down in the label style (15 px, semibold, the heading colour)
+   * instead of the small meta style, as board E26 draws "Whose tree".
+   */
+  isLabelStrong?: boolean;
   options: SelectOption[];
   /** When given, the choices are drawn in these named groups instead of `options`. */
   groups?: SelectGroup[];
@@ -89,6 +99,7 @@ export function Select({
   label,
   isLabelVisible = false,
   isLabelAbove = false,
+  isLabelStrong = false,
   options,
   groups,
   value,
@@ -110,7 +121,7 @@ export function Select({
         isLabelAbove ? 'flex-col items-start' : 'flex-wrap items-center',
       )}
     >
-      <label htmlFor={id} className={labelClassName(isLabelVisible, isLabelAbove)}>
+      <label htmlFor={id} className={labelClassName(isLabelVisible, isLabelAbove, isLabelStrong)}>
         {label}
       </label>
       <span className="tmc-sel relative inline-flex w-fit max-w-full items-center align-middle">

@@ -8,7 +8,7 @@
  * Ana). Everything else can sit side by side: partners who are also rivals, a friend who killed.
  * The check runs on the relationships the form already has, so it needs nothing from the
  * database. isAlreadyThere() spots the same relationship a second time, which is recorded once
- * (GAPS-3 break test, 10 Nov 2026). Who calls it: AddRelationshipForm and AddToTreeForm
+ * (GAPS-3 break test, 10 Nov 2026). Who calls it: AddRelationshipForm
  * (findClash) and useRelationshipAdd (isAlreadyThere). What it calls: nothing.
  */
 import type { CharacterRelationship, RelationshipKind } from '../api/characters';
