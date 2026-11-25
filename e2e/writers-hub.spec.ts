@@ -132,14 +132,13 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
     await expect(
       page.getByRole('heading', { level: 2, name: 'Open for entries now' }),
     ).toBeVisible();
-    // Step 4: the guides come three at a time; Previous is off at the start, Next moves on.
+    // Step 4: four rows in the Tools band (board A01, 25 Nov 2026): the guides first, each with
+    // its kind and reading time, and the next live session last when one is coming up.
     const guides = page.getByRole('region', { name: 'How-to guides' });
-    await expect(guides.getByRole('link')).toHaveCount(3);
-    const previous = guides.getByRole('button', { name: 'Previous guides' });
-    await expect(previous).toBeDisabled();
-    await guides.getByRole('button', { name: 'Next guides' }).click();
-    await expect(previous).toBeEnabled();
-    await expect(guides.getByText('Guides 4 to 6 of 15')).toBeAttached();
+    await expect(guides.getByRole('listitem')).toHaveCount(4);
+    const firstGuide = guides.getByRole('link').first();
+    await expect(firstGuide).toHaveAttribute('href', /^\/help\/how-to-/);
+    await expect(firstGuide).toContainText(/Guide · \d+ min/);
     // Step 5: the tools live on the Writers' hub at /hub (board A03), not on Home.
     await page.goto('/hub');
     await expect(page.getByRole('link', { name: /Story Atlas/ })).toHaveAttribute('href', '/plan');

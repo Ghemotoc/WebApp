@@ -5,8 +5,9 @@
  * panel in Settings (bundle FIX-3). Both share the one translation instance, so changing one
  * changes the other at once.
  * What it calls, in this order, when the person picks a language:
- *   1. i18next, so the whole screen switches straight away;
- *   2. src/lib/language-preference.ts, so this browser opens in it next time;
+ *   1. src/lib/language-preference.ts, so this browser opens in it next time (first, so nothing
+ *      that runs while the screen switches can mistake the visitor for one with no choice);
+ *   2. i18next, so the whole screen switches straight away;
  *   3. when someone is signed in, api/profileLocale.ts, so every device they use opens in it.
  */
 import { useCallback, useState } from 'react';
@@ -66,9 +67,12 @@ export function useInterfaceLanguage() {
       // it back while this one is being saved (profileLocale.ts).
       const finishChoice = startLanguageChoice();
       try {
-        // Steps 1 and 2: switch the screen and remember the choice in this browser.
-        await i18n.changeLanguage(nextLanguage);
+        // Step 1: remember the choice in this browser first. Switching can take a moment (English
+        // loads before it shows), and in that moment a page arriving at a Romanian address would
+        // otherwise see "no choice yet" and take its language back (LocalisedWebsiteLayout).
         saveDeviceLanguage(nextLanguage);
+        // Step 2: switch the screen.
+        await i18n.changeLanguage(nextLanguage);
         // The analytics event carries the new language only (docs/analytics-events.md).
         trackEvent('language_changed', { language: nextLanguage });
         // Step 3: when someone is signed in, save it to the account.

@@ -1,7 +1,7 @@
 /**
- * StoryResultRow: one story a search found, as a row on phones (bundle CALM-7c; board
- * simplified/New-PhoneSearch): a small cover, the title, then two meta lines, the writer and the
- * chapters, and the category, the rating and "Ongoing" in bold while it is being written.
+ * StoryResultRow: one story a search found, as a row (bundle CALM-7c; user story 1.8, board
+ * A08-SearchResults): a small cover, the title, one meta line (the pen name, the chapters, the
+ * category and "Ongoing" in bold while it is being written, else "Completed"), then the blurb.
  *
  * The whole row is one link to the story page, so it is one stop for the keyboard. The cover is
  * decorative because the title sits right beside it as text (DoD covers).
@@ -20,19 +20,24 @@ import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { useSearchTranslation } from '../registerSearchTranslations';
 
 /**
- * The second meta line: the category, the rating, then "Ongoing" in bold (handover Step 3).
+ * The meta line: the pen name, the chapters, the category, then the state, "Ongoing" in bold
+ * (handover Step 3; board A08).
  *
  * @param story - the story
- * @param tWriting - the writing namespace, where the category, rating and state words live
+ * @param chapters - "15 chapters", already worded
+ * @param tWriting - the writing namespace, where the category and state words live
  * @returns the facts, in reading order
  */
-function storyFacts(story: ListedStory, tWriting: TFunction<'writing'>) {
+function storyFacts(story: ListedStory, chapters: string, tWriting: TFunction<'writing'>) {
   const facts: MetaFact[] = [
+    { text: story.writer.displayName },
+    { text: chapters },
     { text: tWriting(`categories.${story.categorySlug}`, { defaultValue: story.categorySlug }) },
-    { text: tWriting(`rating.${story.rating}`) },
   ];
   if (story.completionStatus === 'ongoing') {
     facts.push({ text: tWriting('status.ongoing'), kind: 'state' });
+  } else {
+    facts.push({ text: tWriting('status.completed') });
   }
   return facts;
 }
@@ -51,18 +56,18 @@ export function StoryResultRow({ story, cover }: { story: ListedStory; cover: Dr
     <li className="border-t border-hairline first:border-t-0">
       <Link
         to={`/s/${story.slug}`}
-        className="flex min-h-11 items-center gap-4 py-3 text-ink-muted no-underline hover:bg-tint"
+        className="flex min-h-11 items-start gap-4 py-3 text-ink-muted no-underline hover:bg-tint"
       >
         <StoryCoverArt
           story={story}
-          className="w-10 shrink-0"
+          className="w-12 shrink-0"
           drawn={
             <DrawnCover
               title={story.title}
               choice={cover}
               size="tile"
               isDecorative
-              className="w-10 shrink-0"
+              className="w-12 shrink-0"
             />
           }
         />
@@ -71,12 +76,15 @@ export function StoryResultRow({ story, cover }: { story: ListedStory; cover: Dr
             {story.title}
           </span>
           <MetaLine
-            facts={[
-              { text: story.writer.displayName },
-              { text: t('results.chapters', { count: story.chapterCount }) },
-            ]}
+            facts={storyFacts(
+              story,
+              t('results.chapters', { count: story.chapterCount }),
+              tWriting,
+            )}
           />
-          <MetaLine facts={storyFacts(story, tWriting)} />
+          {story.blurb !== '' && (
+            <span className="line-clamp-2 type-body break-words text-ink">{story.blurb}</span>
+          )}
         </span>
       </Link>
     </li>

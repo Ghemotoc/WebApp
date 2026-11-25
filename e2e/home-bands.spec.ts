@@ -96,7 +96,7 @@ test.describe('home page bands, forums and footer (LOOK-3)', () => {
   test('a genre chip narrows Trending and keeps the row on the page', async ({ browser }) => {
     const page = await openHome(browser);
     const chips = page.getByRole('radiogroup', { name: 'Show trending stories by genre' });
-    await expect(chips.getByRole('radio', { name: 'All' })).toBeChecked();
+    await expect(chips.getByRole('radio', { name: 'Every genre' })).toBeChecked();
     await chips.getByRole('radio', { name: 'Poetry' }).click();
     await expect(chips.getByRole('radio', { name: 'Poetry' })).toBeChecked();
     await expect(page.getByRole('heading', { level: 2, name: 'Trending this week' })).toBeVisible();
