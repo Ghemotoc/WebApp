@@ -7,6 +7,8 @@
  * member types. Search (or the Enter key) does the same at once, adds a history entry so Back
  * works, and keeps the term in Recent searches on this device (lib/recentSearches.ts).
  * "Clear" empties the field and puts the focus back in it.
+ * Both keep the results tab in use (the scope chips before a search, the tabs after it), so the
+ * search opens where the member asked (user story 1.7, board A07).
  * Look (board A07): one bordered field the width of the page, with a quiet Search button beside
  * it; Clear is a round × named "Clear the search", shown once there is text. On a phone the
  * keyboard's search key sends the form, so the button only shows from 768 px (bundle CALM-7c).
@@ -30,6 +32,8 @@ const TYPING_PAUSE_MS = 300;
 export interface SearchFormProps {
   /** The term in the address now. */
   initialTerm?: string;
+  /** The results tab the search opens on (the address's "in"); Stories when left out. */
+  scope?: string;
 }
 
 /**
@@ -38,18 +42,19 @@ export interface SearchFormProps {
  *
  * @param term - what the field holds
  * @param addressTerm - what the address holds
+ * @param scope - the results tab to keep
  */
-function useSearchAsYouType(term: string, addressTerm: string) {
+function useSearchAsYouType(term: string, addressTerm: string, scope: string) {
   const navigate = useNavigate();
   useEffect(() => {
     const trimmed = term.trim();
     // Nothing to do until two letters are typed, or when the address already has this term.
     if (!isSearchable(trimmed) || trimmed === addressTerm) return;
     const timer = window.setTimeout(() => {
-      void navigate(searchAddress(trimmed), { replace: true });
+      void navigate(searchAddress(trimmed, scope), { replace: true });
     }, TYPING_PAUSE_MS);
     return () => window.clearTimeout(timer);
-  }, [term, addressTerm, navigate]);
+  }, [term, addressTerm, scope, navigate]);
 }
 
 /**
@@ -57,7 +62,7 @@ function useSearchAsYouType(term: string, addressTerm: string) {
  *
  * @returns the search form
  */
-export function SearchForm({ initialTerm = '' }: SearchFormProps) {
+export function SearchForm({ initialTerm = '', scope = 'stories' }: SearchFormProps) {
   const { t } = useSearchTranslation();
   const navigate = useNavigate();
   const id = useId();
@@ -70,13 +75,13 @@ export function SearchForm({ initialTerm = '' }: SearchFormProps) {
     setLastAddressTerm(initialTerm);
     if (initialTerm.trim() !== term.trim()) setTerm(initialTerm);
   }
-  useSearchAsYouType(term, initialTerm);
+  useSearchAsYouType(term, initialTerm, scope);
 
   /** Opens the search page for what was typed, and remembers it on this device. */
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (isSearchable(term.trim())) addRecentSearch(term);
-    void navigate(searchAddress(term));
+    void navigate(searchAddress(term, scope));
   }
 
   return (

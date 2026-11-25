@@ -95,5 +95,8 @@
     "tipSpelling": "Verifică scrierea.",
     "tipFewer": "Folosește mai puține cuvinte sau mai scurte.",
     "tipTag": "Caută o etichetă, de exemplu „fantasy”."
+  },
+  "scope": {
+    "label": "Caută în"
   }
 }
