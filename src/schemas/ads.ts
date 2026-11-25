@@ -24,6 +24,7 @@ export const adPageKeys = [
   'profile',
   'library',
   'home',
+  'hub',
 ] as const;
 
 /** One public page with ad slots. */

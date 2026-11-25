@@ -335,7 +335,7 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | B14, notifications and share links (READER-SELECT-2) | Opening at the part's group | Follow-up: they open the stanza's panel, not the group |
 | A03-WritersHub, the title (user story 1.3) | "Everything for your next chapter." | "Everything for the next chapter.": no possessive pronoun in interface copy (COPY-1) |
 | A03-WritersHub, corners (user story 1.3) | The hero box at 32 px | 16 px, `rounded-card`: member screens use 16 and 12 px corners only (design books, 23 Nov 2026) |
-| A03-WritersHub, adverts (user story 1.3) | A 728 × 90 slot in the main column and a box in the side column | Left out: no ad page key for the hub yet (S1-E12-04), so no slot is drawn |
+| A03-WritersHub, adverts (user story 1.3) | A 728 × 90 slot in the main column and a box in the side column | Since 25 Nov 2026 the side box is built (slot `hub_side`, page `hub`; desktop from 1200 px, as every side box); staff turn it off or book it in Sponsors › Placements. The main-column banner is not built yet; it would be the hub's second slot (position 2; at most two a page, decided 17 Oct 2026) |
 | A03-WritersHub, the prompt's meta line (user story 1.3) | "the best three go on Read" | Left out: no such feature exists; the line keeps the writers who tried it and the days left |
 | A03-WritersHub, Tools (user story 1.3) | Story Atlas, Cover in Canva, Word goals and more | The tools that exist today: Story Atlas, Writing, Download stories and the Help centre |
 | A03-WritersHub, the learning path (user story 1.3) | Seven day columns, no count line | As drawn; the next day carries `aria-current="step"` and each day says done, next or not started to screen readers |

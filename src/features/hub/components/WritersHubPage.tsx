@@ -6,17 +6,18 @@
  * columns from 900 px. Left, the wider one: the lead contest, the prompt of the week (GAPS-12c),
  * the writing guides, the seven-day learning path (GAPS-12g), the live sessions (GAPS-12h), more
  * contests and the calls for submissions (GAPS-12d). Right: the writer of the week (GAPS-12e), the
- * tools, this week's numbers (GAPS-12b) and the badges (GAPS-12f). Below 900 px the right column
+ * advert (slot hub_side, a side box from 1200 px; 25 Nov 2026), the tools, this week's numbers (GAPS-12b) and the badges (GAPS-12f). Below 900 px the right column
  * follows the left.
  * Left out: the board's two adverts (728 × 90 and the column box), which need an ad slot of their
  * own (S1-E12-04; docs/board-fixes.md).
  * Signed out, it says to log in, as Notifications does.
- * Who shows it: the router, at /hub. What it calls: the Hub* sections below and useSession.
+ * Who shows it: the router, at /hub. What it calls: the Hub* sections below, PageAdSlot and useSession.
  */
 import { Link } from 'react-router';
 
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { useSession } from '@/features/auth/hooks/useSession';
 
 import { useHubTranslation } from '../registerHubTranslations';
@@ -58,6 +59,9 @@ function HubBody() {
         </div>
         <div className="flex min-w-0 flex-col gap-12">
           <HubSpotlight />
+          {/* Board A03: the hub's one advert, a side box under the writer of the week (slot
+              hub_side; staff turn it off or book it in Sponsors › Placements). */}
+          <PageAdSlot pageKey="hub" position={1} isSpaceReserved={false} />
           <HubTools />
           <HubWeek />
           <HubMonth />
