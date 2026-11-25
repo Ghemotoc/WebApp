@@ -230,7 +230,7 @@ function ConnectionsBody({ slug, cast }: { slug: string; cast: StoryCast }) {
   /** A card dropped on another: the form opens with both picked and scrolls into view. */
   const onConnect = (fromId: string, toId: string) => {
     setPanel({ isOpen: true, pair: { fromId, toId }, opening: panel.opening + 1 });
-    requestAnimationFrame(() => document.getElementById('atlas-relationship-group')?.focus());
+    requestAnimationFrame(() => document.getElementById('atlas-relationship-kind')?.focus());
   };
   return (
     <div className="flex min-w-0 flex-col gap-6">

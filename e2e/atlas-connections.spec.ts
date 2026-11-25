@@ -126,6 +126,15 @@ async function openRelationshipsCard(page: Page) {
   if ((await button.getAttribute('aria-expanded')) === 'false') await button.click();
 }
 
+/** Opens "Add a relationship" over a character's sheet (story 6.5) and returns the dialog. */
+async function openAddDialog(page: Page) {
+  const section = page.getByRole('region', { name: 'Relationships', exact: true });
+  await section.getByRole('button', { name: 'Add a relationship' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Add a relationship' });
+  await expect(dialog).toBeVisible();
+  return dialog;
+}
+
 async function openAddForm(page: Page) {
   const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
   const opener = page.getByRole('button', { name: 'Add a relationship' });
@@ -181,19 +190,17 @@ async function centreOf(page: Page, selector: string) {
   throw new Error(`${selector} kept moving on the screen`);
 }
 
-/** One relationship to add: from whom, which kind, which relationship, to whom. */
+/** One relationship to add: from whom, which relationship, to whom. */
 interface NewLink {
   from: string;
-  group: string;
   kind: string;
   to: string;
 }
 
 /** Fills in and sends one "Add a relationship" form on the Connections page. */
-async function addOnConnections(page: Page, { from, group, kind, to }: NewLink) {
+async function addOnConnections(page: Page, { from, kind, to }: NewLink) {
   const form = await openAddForm(page);
   await form.getByLabel('Character', { exact: true }).selectOption({ label: from });
-  await form.getByLabel('Kind', { exact: true }).selectOption({ label: group });
   await form.getByLabel('Relationship', { exact: true }).selectOption({ label: kind });
   await form.getByLabel('Other character', { exact: true }).selectOption({ label: to });
   await form.getByRole('button', { name: 'Add relationship' }).click();
@@ -214,40 +221,59 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await openRelationshipsCard(page);
     const section = page.getByRole('region', { name: 'Relationships', exact: true });
     await expect(section.getByText('No relationships yet.')).toBeVisible();
-    // Kind first, then the relationships of that kind (S1-E17-14; G10b, handoff A4).
-    const groups = section.getByLabel('Kind', { exact: true });
-    await expect(groups.locator('option')).toHaveText([
-      'Family',
-      'Love',
-      'Allies',
-      'Conflict',
-      'Other',
+    // Add a relationship opens a dialog over the sheet (story 6.5, board E24).
+    const dialog = await openAddDialog(page);
+    // The first character is the sheet's own, alone in its drop-down.
+    await expect(dialog.getByLabel('Character', { exact: true }).locator('option')).toHaveText([
+      'Ana',
     ]);
-    const kinds = section.getByLabel('Relationship', { exact: true });
+    // One Relationship drop-down: the twelve kinds, Cousin of and Custom.
+    const kinds = dialog.getByLabel('Relationship', { exact: true });
     await expect(kinds.locator('option')).toHaveText([
       'Parent of',
       'Sibling of',
       'Partner or spouse of',
       'Cousin of',
+      'Loves',
       'Turned or made',
+      'Friend of',
+      'Ally of',
+      'Mentors',
+      'Works for',
+      'Enemy of',
+      'Resents',
+      'Killed',
+      'Custom (your own label)',
     ]);
-    // "Other" asks for the writer's own words, and needs them.
-    await groups.selectOption({ label: 'Other' });
-    await expect(kinds).toHaveCount(0);
-    await section.getByLabel('Other character', { exact: true }).selectOption({ label: 'Lupul' });
-    await expect(section.getByRole('textbox', { name: 'What is Ana to Lupul?' })).toBeVisible();
-    await section.getByRole('button', { name: 'Add relationship' }).click();
-    await expect(section.getByText('Write a label for this relationship.')).toBeVisible();
-    await groups.selectOption({ label: 'Family' });
-    // A parent with a note.
+    // Nothing picked yet: the button says what is missing.
+    await dialog.getByRole('button', { name: 'Add relationship' }).click();
+    await expect(dialog.getByText('Pick both characters.')).toBeVisible();
+    // Custom asks for the writer's own label, and needs it.
+    await kinds.selectOption({ label: 'Custom (your own label)' });
+    await dialog.getByLabel('Other character', { exact: true }).selectOption({ label: 'Lupul' });
+    await expect(dialog.getByRole('textbox', { name: 'What is Ana to Lupul?' })).toBeVisible();
+    await dialog.getByRole('button', { name: 'Add relationship' }).click();
+    await expect(dialog.getByText('Write your label for this relationship.')).toBeVisible();
+    // A parent with a note; no clash, so no warning and the button stays Add relationship.
     await kinds.selectOption('parent_of');
-    await section.getByLabel('Other character', { exact: true }).selectOption({ label: 'Vali' });
-    await section.getByRole('textbox', { name: 'Note (optional)' }).fill('Raised him alone.');
-    await section.getByRole('button', { name: 'Add relationship' }).click();
+    await dialog.getByLabel('Other character', { exact: true }).selectOption({ label: 'Vali' });
+    await dialog.getByRole('textbox', { name: 'Note (optional)' }).fill('Raised him alone.');
+    await dialog.getByRole('button', { name: 'Add relationship' }).click();
+    await expect(dialog.getByText('Relationship added.')).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Save anyway' })).toHaveCount(0);
+    // Go back closes the dialog; the sheet lists the new relationship.
+    await dialog.getByRole('button', { name: 'Go back' }).click();
+    await expect(dialog).toBeHidden();
     await expect(
       section.getByText('Ana is the parent of Vali', { exact: true }).first(),
     ).toBeVisible();
     await expect(section.getByText('Raised him alone.')).toBeVisible();
+    // The top bar's Add a relationship opens the same dialog here; Esc closes it.
+    await page.getByRole('link', { name: 'Add a relationship' }).click();
+    await expect(page.getByRole('dialog', { name: 'Add a relationship' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog', { name: 'Add a relationship' })).toBeHidden();
+    await expect(page).not.toHaveURL(/add=relationship/);
     // Listed on Vali's sheet too.
     await page.goto(`${planAddress}/characters/${cast.vali}`);
     // Listed on Vali's sheet too, told from his side (GAPS-3).
@@ -284,11 +310,10 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     );
     await addOnConnections(page, {
       from: 'Ion',
-      group: 'Family',
       kind: 'Partner or spouse of',
       to: 'Ana',
     });
-    await addOnConnections(page, { from: 'Ion', group: 'Conflict', kind: 'Killed', to: 'Lupul' });
+    await addOnConnections(page, { from: 'Ion', kind: 'Killed', to: 'Lupul' });
     const map = page.getByTestId('atlas-relationship-map');
     await expect(map.locator('[data-category]')).toHaveCount(3);
     await expect(map.locator('[data-category="conflict"]')).toHaveCount(1);
@@ -423,7 +448,7 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
     await expect(form.getByLabel('Character', { exact: true })).toHaveValue(cast.lupul);
     await expect(form.getByLabel('Other character', { exact: true })).toHaveValue(cast.ana);
-    await expect(form.getByLabel('Kind', { exact: true })).toBeFocused();
+    await expect(form.getByLabel('Relationship', { exact: true })).toBeFocused();
     expect(placeOfLupul()).toBe('none');
     // Focus on fades everyone not linked to the chosen character.
     await page.getByLabel('Focus on', { exact: true }).selectOption({ label: 'Lupul' });
@@ -446,7 +471,6 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     // A maker counts as lineage once the switch is on (S1-E17-16).
     await addOnConnections(page, {
       from: 'Mara',
-      group: 'Family',
       kind: 'Turned or made',
       to: 'Lupul',
     });
@@ -552,9 +576,11 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await expect(
       list.getByText('Mara is the second cousin once removed of Vali', { exact: true }).first(),
     ).toBeVisible();
-    // "Other" in the writer's own words, both ways.
+    // Custom: the writer's own label, both ways.
     await form.getByLabel('Character', { exact: true }).selectOption({ label: 'Ana' });
-    await form.getByLabel('Kind', { exact: true }).selectOption({ label: 'Other' });
+    await form
+      .getByLabel('Relationship', { exact: true })
+      .selectOption({ label: 'Custom (your own label)' });
     await form.getByLabel('Other character', { exact: true }).selectOption({ label: 'Mara' });
     await form.getByRole('textbox', { name: 'What is Ana to Mara?' }).fill('godmother of');
     await form
@@ -583,22 +609,25 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/characters/${cast.vali}`);
     await openRelationshipsCard(page);
     const section = page.getByRole('region', { name: 'Relationships', exact: true });
-    // Ana is Vali's parent; making them siblings too is a clash (G10b, handoff A5).
-    await section.getByLabel('Relationship', { exact: true }).selectOption({ label: 'Sibling of' });
-    await section.getByLabel('Other character', { exact: true }).selectOption({ label: 'Ana' });
-    await section.getByRole('button', { name: 'Add relationship' }).click();
-    await expect(section.getByText('This clashes with a relationship already here.')).toBeVisible();
-    await expect(section.getByText(/Already here: “Ana is the parent of Vali”/)).toBeVisible();
+    const dialog = await openAddDialog(page);
+    // Ana is Vali's parent; making them siblings too is a clash (G10b, handoff A5; story 6.5).
+    await dialog.getByLabel('Relationship', { exact: true }).selectOption({ label: 'Sibling of' });
+    await dialog.getByLabel('Other character', { exact: true }).selectOption({ label: 'Ana' });
+    await dialog.getByRole('button', { name: 'Add relationship' }).click();
+    await expect(dialog.getByText('This clashes with a relationship already here')).toBeVisible();
+    await expect(dialog.getByText(/Already here: “Ana is the parent of Vali”/)).toBeVisible();
     // Go back closes the warning and saves nothing.
-    await section.getByRole('button', { name: 'Go back' }).click();
-    await expect(section.getByLabel('Kind', { exact: true })).toBeFocused();
+    await dialog.getByRole('button', { name: 'Go back' }).click();
+    await expect(dialog.getByLabel('Relationship', { exact: true })).toBeFocused();
     await expect(section.getByText('Vali is the sibling of Ana', { exact: true })).toHaveCount(0);
     // Never a block: Save anyway keeps it, with the note on how both are true.
-    await section.getByRole('button', { name: 'Add relationship' }).click();
-    await section
+    await dialog.getByRole('button', { name: 'Add relationship' }).click();
+    await dialog
       .getByRole('textbox', { name: 'How both are true (optional)' })
       .fill('A spell swapped their ages.');
-    await section.getByRole('button', { name: 'Save anyway' }).click();
+    await dialog.getByRole('button', { name: 'Save anyway' }).click();
+    await expect(dialog.getByText('Relationship added.')).toBeVisible();
+    await dialog.getByRole('button', { name: 'Close' }).click();
     await expect(
       section.getByText('Vali is the sibling of Ana', { exact: true }).first(),
     ).toBeVisible();

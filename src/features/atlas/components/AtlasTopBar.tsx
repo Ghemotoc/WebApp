@@ -18,7 +18,7 @@
  * StorySwitcher, AtlasSearchBox, AtlasNewCharacter and lib/addHintVisits.ts.
  */
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useParams } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
@@ -98,6 +98,19 @@ function AtlasBreadcrumb({ slug }: { slug: string }) {
   );
 }
 
+/**
+ * Where the bar's Add a relationship goes: over an open character's sheet it opens the dialog
+ * there (?add=relationship, user stories bundle 6, story 6.5, board E24); elsewhere the
+ * Relationships page opens with its add form (?add=1).
+ */
+function useAddRelationshipAddress(slug: string, section: AtlasSection | null): string {
+  const { characterId } = useParams();
+  if (section === 'characters' && characterId !== undefined) {
+    return `/plan/s/${slug}/characters/${characterId}?add=relationship`;
+  }
+  return `/plan/s/${slug}/connections?add=1`;
+}
+
 /** New character and Add a relationship unless the page already has that button, then search. */
 function AtlasTopActions({ slug, section }: { slug: string; section: AtlasSection | null }) {
   const { t } = useAtlasTranslation();
@@ -105,6 +118,7 @@ function AtlasTopActions({ slug, section }: { slug: string; section: AtlasSectio
   // icons (story 6.2). Counted once per page load; later pages of the session don't count.
   const [visits] = useState(countAtlasVisit);
   const isCompact = !showsAddHints(visits);
+  const addRelationshipAddress = useAddRelationshipAddress(slug, section);
   return (
     <div className="flex min-w-0 flex-auto flex-wrap items-start justify-end gap-3">
       <div className="flex flex-wrap items-start gap-2">
@@ -112,9 +126,8 @@ function AtlasTopActions({ slug, section }: { slug: string; section: AtlasSectio
           <AtlasNewCharacter slug={slug} isMain={section === 'glance'} isCompact={isCompact} />
         )}
         {section !== 'connections' && (
-          // ?add=1 opens the Relationships page with its add form already open.
           <Link
-            to={`/plan/s/${slug}/connections?add=1`}
+            to={addRelationshipAddress}
             className={cn(buttonClassName({ variant: 'secondary' }), isCompact && 'w-11 px-0')}
           >
             <ActionIcon name="link" />

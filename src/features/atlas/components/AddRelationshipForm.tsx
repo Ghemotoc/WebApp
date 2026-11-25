@@ -3,12 +3,13 @@
  * (story S1-E17-14: "when I pick another character, a relationship type and an optional note,
  * then the relationship is saved"; bundle G10 ATLAS, part b, handoff A4 and A5).
  *
- * On a sheet the first character is the sheet's own, so only the other one is picked; on the
- * Connections page both are. The writer picks a kind (Family, Love, Allies, Conflict or Other),
- * then the relationship, then the other character. A cousin also says which cousin; "Other"
- * asks for the writer's own words both ways. When the new relationship clashes with one already
- * there, a warning explains it and offers a note on how both are true, with Go back and Save
- * anyway: it is advice, never a block. A relationship is saved once: a double click saves once,
+ * On a sheet the first character is the sheet's own, shown alone in its drop-down; on the
+ * Connections page both are picked. Character, Relationship (the twelve kinds, Cousin of and
+ * Custom) and Other character stand one under the other (user stories bundle 6, story 6.5, board
+ * E24). A cousin also says which cousin; Custom asks for the writer's own label both ways. When
+ * the new relationship clashes with one already there, a warning explains it and offers a note on
+ * how both are true, and the button turns to Save anyway: it is advice, never a block. In the
+ * dialog, Go back closes it (onCancel). A relationship is saved once: a double click saves once,
  * and one that is already there is refused in plain words (GAPS-3 break test, 10 Nov 2026). Who
  * uses it: CharacterRelationshipsSection and ConnectionsPage. What it calls: useRelationshipAdd
  * (which calls the onAdd prop, useRelationshipChangers' relate), findClash and
@@ -17,6 +18,7 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
@@ -29,7 +31,7 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { CousinPickers } from './CousinPickers';
 import { RelationshipClashPanel } from './RelationshipClashPanel';
-import { RelationshipKindPickers } from './RelationshipKindPickers';
+import { RelationshipKindPicker } from './RelationshipKindPicker';
 import { RelationshipOwnWords } from './RelationshipOwnWords';
 
 /** What the form needs. */
@@ -43,6 +45,8 @@ export interface AddRelationshipFormProps {
   initialPair?: { fromId: string; toId: string };
   /** Saves the relationship; throws when it can't. */
   onAdd: (relationship: NewRelationship) => Promise<void>;
+  /** In the dialog: Go back, beside Add relationship, closes it (story 6.5). */
+  onCancel?: () => void;
 }
 
 /** A blank form: a first cousin, not removed, is ready in case the writer picks "Cousin of". */
@@ -95,7 +99,7 @@ interface RelationshipPickersProps {
   change: (part: Partial<NewRelationship>) => void;
 }
 
-/** The first character (Connections page only), the kind, the relationship and the other one. */
+/** The first character, the relationship and the other one, one under the other (board E24). */
 function RelationshipPickers({
   idPrefix,
   cast,
@@ -105,23 +109,29 @@ function RelationshipPickers({
 }: RelationshipPickersProps) {
   const { t } = useAtlasTranslation();
   const pickLabel = t('connections.add.pickCharacter');
+  // On a sheet the first character is fixed: its drop-down holds the sheet's character alone.
+  const fromOptions = isFromPicked
+    ? characterOptions(cast, draft.toId, pickLabel)
+    : cast.characters
+        .filter((character) => character.id === draft.fromId)
+        .map((character) => ({ value: character.id, label: character.name }));
   return (
-    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-      {isFromPicked && (
-        <Select
-          id={`${idPrefix}-from`}
-          label={t('connections.add.from')}
-          isLabelVisible
-          options={characterOptions(cast, draft.toId, pickLabel)}
-          value={draft.fromId}
-          onChange={(fromId) => change({ fromId })}
-        />
-      )}
-      <RelationshipKindPickers idPrefix={idPrefix} kind={draft.kind} change={change} />
+    <div className="flex flex-col items-start gap-4">
+      <Select
+        id={`${idPrefix}-from`}
+        label={t('connections.add.from')}
+        isLabelVisible
+        isLabelAbove
+        options={fromOptions}
+        value={draft.fromId}
+        onChange={(fromId) => change({ fromId })}
+      />
+      <RelationshipKindPicker idPrefix={idPrefix} kind={draft.kind} change={change} />
       <Select
         id={`${idPrefix}-to`}
         label={t('connections.add.to')}
         isLabelVisible
+        isLabelAbove
         options={characterOptions(cast, draft.fromId, pickLabel)}
         value={draft.toId}
         onChange={(toId) => change({ toId })}
@@ -175,11 +185,13 @@ interface NoteOrClashProps extends KindDetailsProps {
   isBusy: boolean;
   onBack: () => void;
   onSave: () => void;
+  /** In the dialog: Go back beside Add relationship closes it. */
+  onCancel?: () => void;
 }
 
 /** The note and Add relationship, or, on a clash, the warning with its own note and buttons. */
 function NoteOrClash(props: NoteOrClashProps) {
-  const { idPrefix, cast, draft, clash, isBusy, change, onBack, onSave } = props;
+  const { idPrefix, cast, draft, clash, isBusy, change, onBack, onSave, onCancel } = props;
   const { t } = useAtlasTranslation();
   const words = useRelationshipWords(cast);
   if (clash !== null) {
@@ -191,9 +203,9 @@ function NoteOrClash(props: NoteOrClashProps) {
         note={draft.note}
         onNote={(note) => change({ note })}
         onBack={() => {
-          // Back to the pickers: the kind drop-down takes the focus once the warning closes.
+          // Back to the pickers: the Relationship drop-down takes the focus once the warning closes.
           onBack();
-          requestAnimationFrame(() => document.getElementById(`${idPrefix}-group`)?.focus());
+          requestAnimationFrame(() => document.getElementById(`${idPrefix}-kind`)?.focus());
         }}
         onSave={onSave}
       />
@@ -208,9 +220,17 @@ function NoteOrClash(props: NoteOrClashProps) {
         value={draft.note}
         onChange={(event) => change({ note: event.target.value })}
       />
-      <Button type="submit" variant="secondary" className="self-start" disabled={isBusy}>
-        {t('connections.add.button')}
-      </Button>
+      {/* The main button first, then Go back in the dialog (ButtonRow; design books item 8). */}
+      <ButtonRow>
+        <Button type="submit" disabled={isBusy}>
+          {t('connections.add.button')}
+        </Button>
+        {onCancel !== undefined && (
+          <Button type="button" variant="secondary" onClick={onCancel}>
+            {t('connections.clash.back')}
+          </Button>
+        )}
+      </ButtonRow>
     </>
   );
 }
@@ -249,6 +269,7 @@ export function AddRelationshipForm({
   fixedFromId,
   initialPair,
   onAdd,
+  onCancel,
 }: AddRelationshipFormProps) {
   const { t } = useAtlasTranslation();
   const { draft, change, reset, message, setMessage, clash, setClash } = useRelationshipDraft(
@@ -257,6 +278,8 @@ export function AddRelationshipForm({
   );
 
   const { isBusy, addOnce } = useRelationshipAdd(cast.relationships, onAdd);
+  // What every part of the form shares.
+  const shared = { idPrefix, cast, draft, change };
 
   /** Saves the relationship once and starts a fresh form, or says why not. */
   async function save() {
@@ -286,24 +309,16 @@ export function AddRelationshipForm({
         void add();
       }}
     >
-      <p className="m-0 type-body text-ink-muted">{t('connections.add.hint')}</p>
-      <RelationshipPickers
-        idPrefix={idPrefix}
-        cast={cast}
-        draft={draft}
-        isFromPicked={fixedFromId === undefined}
-        change={change}
-      />
-      <KindDetails idPrefix={idPrefix} cast={cast} draft={draft} change={change} />
+      <p className="m-0 type-meta">{t('connections.add.hint')}</p>
+      <RelationshipPickers {...shared} isFromPicked={fixedFromId === undefined} />
+      <KindDetails {...shared} />
       <NoteOrClash
-        idPrefix={idPrefix}
-        cast={cast}
-        draft={draft}
+        {...shared}
         clash={clash}
         isBusy={isBusy}
-        change={change}
         onBack={() => setClash(null)}
         onSave={() => void save()}
+        onCancel={onCancel}
       />
       <div aria-live="polite">
         {message !== null && <Notice tone={message.tone}>{message.text}</Notice>}
