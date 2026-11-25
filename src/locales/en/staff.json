@@ -1609,6 +1609,28 @@
       "unreachable": "We couldn’t reach the database. Try again in a moment."
     },
     "total_few": "{{count}} stories in this view.",
+    "writers": {
+      "heading": "To follow this week on Read",
+      "intro": "The first list in the Writers box on the Read page. Pick up to 3 writers in order. With none picked, readers see the writers who gained the most followers this week. Only writers who can be suggested show: active accounts with suggestions on, 16 or over.",
+      "loading": "Loading the writers…",
+      "automatic": "None picked: readers see the writers who gained the most followers this week.",
+      "currentLabel": "Writers picked now",
+      "cannotShow": "Hidden from readers",
+      "handles": "Usernames, in order",
+      "handlesHint": "Up to 3, separated by commas, such as @corbu, @sofia.k. Leave empty for the automatic list.",
+      "reason": "Why are you changing the writers to follow?",
+      "save": "Save writers",
+      "saved": "Saved. The Read page shows the new list.",
+      "failures": {
+        "not_allowed": "Only admins and the owner can pick these writers.",
+        "reason_missing": "Say why you are changing the writers.",
+        "too_many": "Pick at most 3 writers.",
+        "unknown_writer": "One of the usernames doesn’t match an account. Check the spelling.",
+        "duplicate": "A writer is in the list twice.",
+        "may_not_show": "One of the writers can’t be suggested: the account isn’t active, suggestions are off, or the writer is under 16.",
+        "unreachable": "That didn’t save. Check your connection and try again."
+      }
+    },
     "homeComment": {
       "heading": "Reader comment on the home page",
       "intro": "Invite a reader to have one comment shown on the home page’s cover wall. The reader gets a notification and an invitation on the hub, and visitors see the comment only after the reader agrees. The newest agreement is the one shown. Listed below: comments from the last 90 days, up to 200 characters, by adults, on public stories rated All ages or 13+, never spoilers.",
