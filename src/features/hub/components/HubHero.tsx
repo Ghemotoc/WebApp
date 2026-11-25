@@ -2,21 +2,20 @@
  * HubHero: the top of the Home page, the Writers' hub (bundle G9 WRITING, part a; since CALM-7c
  * the simplified board New-Home: the page's one frosted hero).
  *
- * Left: "Friday 7 November · Writing month, day 7", "Welcome back," with "Lia." on its own line
- * in the accent colour (board A01), one line on what waits
- * (the latest draft's chapter, the contests closing this month) and two actions: "Keep writing
- * chapter 8" (the page's one main button) and "Start a new story" (quiet). With no draft, "Start
- * a new story" is the main button. Right, from 900 px: the story read last (HubHeroContinue) beside
- * the writing month (HubMonthSummary), each on its own paper.
+ * Left (board A01): "Friday 20 November" in the accent colour, "Welcome back," with "Lia." on its
+ * own line in the accent colour, one line on what waits (the latest draft's chapter, the contests
+ * closing this month), two actions ("Keep writing chapter 8", the page's one main button, and
+ * "Start a new story", quiet; with no draft, "Start a new story" is the main button) and this
+ * week's lines (HubHeroActivity). Right, from 900 px: the story read last (HubHeroContinue) beside
+ * the writing month (HubMonthSummary), two cards of one height, centred on the greeting.
  * Who shows it: MemberHomePage. What it calls: useMyNames (the pen name, else the username),
  * useDiscoverCards (the latest draft, my_discover_cards()), useHubContests, lib/hubDates.ts,
- * lib/monthPace.ts, HubHeroContinue and HubMonthSummary.
+ * HubHeroContinue, HubMonthSummary and HubHeroActivity.
  */
 import { Link } from 'react-router';
 
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Hero } from '@/components/ui/Hero';
-import { MetaLine } from '@/components/ui/MetaLine';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
 import type { DraftCardData } from '@/features/discovery/api/discoverCards';
@@ -25,9 +24,9 @@ import { romaniaNowFields } from '@/lib/romania-time';
 
 import { useHubContests } from '../hooks/useHubContests';
 import { formatHubDay } from '../lib/hubDates';
-import { writingMonthDay } from '../lib/monthPace';
 import { useHubTranslation } from '../registerHubTranslations';
 
+import { HubHeroActivity } from './HubHeroActivity';
 import { HubHeroContinue } from './HubHeroContinue';
 import { HubMonthSummary } from './HubMonthSummary';
 
@@ -68,7 +67,7 @@ function WaitingLine({
   if (closingCount > 0) parts.push(t('hub.home.contestsClosing', { count: closingCount }));
   // Step 2: nothing waits, so the line invites a first piece instead.
   if (parts.length === 0) parts.push(t('hub.home.fresh'));
-  return <p className="m-0 max-w-[52ch] text-ink-muted">{parts.join(' ')}</p>;
+  return <p className="m-0 max-w-[48ch] type-long text-ink">{parts.join(' ')}</p>;
 }
 
 /**
@@ -114,15 +113,13 @@ export function HubHero({ now }: { now: Date }) {
   return (
     <Hero
       labelledBy="hub-heading"
-      className="min-[900px]:grid min-[900px]:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] min-[900px]:items-center min-[900px]:gap-12"
+      className="min-[900px]:grid min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,32rem)] min-[900px]:items-center min-[900px]:gap-12"
     >
-      <div className="flex flex-col gap-3">
-        <MetaLine
-          facts={[
-            { text: formatHubDay(now, i18n.language) },
-            { text: t('hub.home.dayLine', { day: writingMonthDay(now) }) },
-          ]}
-        />
+      <div className="flex flex-col gap-4">
+        {/* Board A01: the date alone, small and in the accent colour; the month's day is on the card. */}
+        <p className="m-0 type-meta font-semibold text-accent">
+          {formatHubDay(now, i18n.language)}
+        </p>
         <h1 id="hub-heading" className="m-0 break-words type-display">
           {/* Board A01: "Welcome back," then the name on its own line in the accent colour. */}
           {name === null && t('hub.home.welcomeNoName')}
@@ -134,12 +131,13 @@ export function HubHero({ now }: { now: Date }) {
           )}
         </h1>
         <WaitingLine draft={draft} closingCount={closingCount} />
-        <div className="mt-3">
+        <div className="mt-2">
           <HeroActions draft={draft} />
         </div>
+        <HubHeroActivity now={now} />
       </div>
-      {/* Board A01: the Continue reading card beside the writing month card, each on its paper. */}
-      <div className="mt-6 grid items-start gap-4 sm:grid-cols-2 min-[900px]:mt-0 [&>*:only-child]:col-span-full">
+      {/* Board A01: the Continue reading card beside the writing month card, one height each. */}
+      <div className="mt-8 grid items-stretch gap-4 sm:grid-cols-2 min-[900px]:mt-0 [&>*:only-child]:col-span-full">
         <HubHeroContinue />
         <div className="box-surface rounded-card p-4">
           <HubMonthSummary now={now} />

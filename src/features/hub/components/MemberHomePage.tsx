@@ -11,12 +11,14 @@
  * shelves, HomeShelves) and Talk about stories (a tinted band). The Writers' hub's own parts
  * (learning path, live sessions, badges, this week's numbers, calls for submissions) live at /hub
  * (board A03, WritersHubPage).
- * Left out: the board's 970 × 90 advert, which needs an ad slot of its own (S1-E12-04).
+ * After the contests sits the page's one wide advert (slot home_wide, Robert's review of 25 Nov
+ * 2026), filled by the server like every other slot (PageAdSlot).
  * Who shows it: WebsiteHomePage, at /, when someone is signed in (the logo links to /).
- * What it calls: the Hub* sections below and HomeShelves.
+ * What it calls: the Hub* sections below, PageAdSlot and HomeShelves.
  */
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { HomeShelves } from '@/features/website/components/HomeShelves';
 
 import { useHubTranslation } from '../registerHubTranslations';
@@ -50,6 +52,9 @@ export function MemberHomePage() {
         <HubContinueReading />
         <HubDrafts />
         <HubContests now={now} />
+        {/* Board A01: the page's one wide advert, after the contests (slot home_wide; staff turn
+            it off or book it in Sponsors › Placements). */}
+        <PageAdSlot pageKey="home" position={1} className="mx-auto w-full max-w-[970px]" />
         <HubFollowingRow />
         <HubToolsSection now={now} />
         <HomeShelves />

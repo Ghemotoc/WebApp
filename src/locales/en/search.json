@@ -2,10 +2,6 @@
   "page": {
     "documentTitle": "Search · {{productName}}",
     "heading": "Search",
-    "resultsFor": "Results for “{{term}}”",
-    "count_one": "{{count}} result across stories, writers and tags.",
-    "count_few": "{{count}} results across stories, writers and tags.",
-    "count_other": "{{count}} results across stories, writers and tags.",
     "tooShort": "Type at least 2 letters to search.",
     "loadFailed": "Search isn’t working right now. Try again in a moment.",
     "writersToTry": "Writers to try",
@@ -13,26 +9,13 @@
     "start": "Find a story by its title, a tag or its writer’s name."
   },
   "form": {
-    "label": "Search stories, writers and tags",
+    "label": "Search stories, writers and Together",
     "placeholder": "Titles, pen names, tags",
     "submit": "Search",
     "clear": "Clear",
     "clearLabel": "Clear the search"
   },
   "groups": {
-    "label": "Show",
-    "stories": "Stories",
-    "writers": "Writers",
-    "tags": "Tags",
-    "storiesTitle_one": "{{count}} story",
-    "storiesTitle_few": "{{count}} stories",
-    "storiesTitle_other": "{{count}} stories",
-    "writersTitle_one": "{{count}} writer",
-    "writersTitle_few": "{{count}} writers",
-    "writersTitle_other": "{{count}} writers",
-    "tagsTitle_one": "{{count}} tag",
-    "tagsTitle_few": "{{count}} tags",
-    "tagsTitle_other": "{{count}} tags",
     "safetyNote": "Search never shows a story rated 13+, 16+ or 18+ to anyone younger. It also hides people you blocked and anything moderators removed."
   },
   "results": {
@@ -42,13 +25,7 @@
     "chapters_one": "{{count}} chapter",
     "chapters_few": "{{count}} chapters",
     "chapters_other": "{{count}} chapters",
-    "writerHandle": "@{{handle}}",
-    "tagLink": "#{{tag}}"
-  },
-  "empty": {
-    "title": "No results for “{{term}}”",
-    "description": "Check the spelling, use fewer words or search for a tag such as “fantasy”.",
-    "browse": "Browse Read"
+    "writerHandle": "@{{handle}}"
   },
   "seeAll": {
     "writersEyebrow": "Search",
@@ -61,12 +38,47 @@
     "none": "Nothing found.",
     "count": "Results: {{count}}"
   },
-  "rows": {
-    "seeAll": "See {{title}}"
-  },
   "recent": {
     "heading": "Recent searches",
     "clear": "Clear",
     "remove": "Remove “{{term}}” from recent searches"
+  },
+  "tabs": {
+    "label": "Results",
+    "stories": "Stories",
+    "writers": "Writers",
+    "together": "Together",
+    "noneWriters": "No writers match “{{term}}”.",
+    "noneTogether": "No threads or posts match “{{term}}”."
+  },
+  "filters": {
+    "title": "Filter and sort",
+    "titleWithCount": "Filter and sort · {{count}}",
+    "sortBy": "Sort by",
+    "sort": {
+      "relevance": "Best match",
+      "popular": "Most read",
+      "updated": "Newest chapter"
+    },
+    "status": "Status",
+    "language": "Language",
+    "languages": {
+      "en": "English",
+      "ro": "Romanian"
+    },
+    "both": "Both",
+    "clear": "Clear filters",
+    "done": "Done"
+  },
+  "stories": {
+    "heading_one": "{{count}} story for “{{term}}”",
+    "heading_few": "{{count}} stories for “{{term}}”",
+    "heading_other": "{{count}} stories for “{{term}}”",
+    "sortedBy": "Sorted by {{sort}}",
+    "showMore": "Show more results",
+    "none": "No stories match “{{term}}”",
+    "tipSpelling": "Check the spelling.",
+    "tipFewer": "Use fewer or shorter words.",
+    "tipTag": "Search for a tag, such as “fantasy”."
   }
 }
