@@ -8,7 +8,7 @@
  * Who uses it: SearchStoriesTab, in the left column from 1024 px and in a sheet below.
  * What it calls: nothing outside the page; the parent applies the new request.
  */
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
@@ -39,6 +39,16 @@ interface FilterRadiosProps {
  */
 function FilterRadios({ legend, choices, value, onChoose }: FilterRadiosProps) {
   const name = useId();
+  // Step 1: the dot follows the click at once. The address changes inside a React transition
+  // (React Router), so without this a controlled radio snaps back to the old choice until the
+  // new address arrives, and on a slow device the dot visibly jumps back for a moment.
+  const [shownValue, setShownValue] = useState(value);
+  const [lastValue, setLastValue] = useState(value);
+  // Step 2: a new value from outside (Clear filters, Back, the sheet) replaces the shown one.
+  if (value !== lastValue) {
+    setLastValue(value);
+    setShownValue(value);
+  }
   return (
     <fieldset className="m-0 flex flex-col gap-1 border-0 p-0">
       <legend className="mb-2 p-0 type-label font-semibold text-ink-heading">{legend}</legend>
@@ -51,8 +61,11 @@ function FilterRadios({ legend, choices, value, onChoose }: FilterRadiosProps) {
             type="radio"
             name={name}
             value={choice.value}
-            checked={choice.value === value}
-            onChange={() => onChoose(choice.value)}
+            checked={choice.value === shownValue}
+            onChange={() => {
+              setShownValue(choice.value);
+              onChoose(choice.value);
+            }}
             className="size-5 shrink-0 accent-primary"
           />
           {choice.label}
