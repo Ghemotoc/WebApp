@@ -71,7 +71,11 @@
     "logIn": "Get in to follow",
     "readOnly": "This account can’t follow anyone yet.",
     "failed": "We couldn’t save that, so it’s back as it was. Try again.",
-    "unfollowed": "You no longer follow {{name}}."
+    "unfollowed": "You no longer follow {{name}}.",
+    "followNamed": "Follow {{name}}",
+    "followingNamed": "Following {{name}}",
+    "followTag": "Follow this tag",
+    "followingTag": "Following this tag"
   },
   "followers": {
     "eyebrow": "Only you see this",
