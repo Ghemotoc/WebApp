@@ -45,6 +45,36 @@ export interface SelectProps {
   placement?: 'bar' | 'form';
   /** The id of a hint under the drop-down, read with it by screen readers (S1-E2-06). */
   descriptionId?: string;
+  /**
+   * True in a form whose other fields have their label above them (bundle 10, board J20): the
+   * label sits above the drop-down in the same type as a text field's label. Left out, the label
+   * sits beside it, small, as in a filter bar.
+   */
+  isLabelAbove?: boolean;
+  /** True while the choice is missing or wrong after a send, so screen readers say so. */
+  isInvalid?: boolean;
+}
+
+/**
+ * The classes of the wrapper and the label: side by side and small, or stacked like a text
+ * field's label.
+ *
+ * @returns the two class strings
+ */
+function labelLayout(isLabelVisible: boolean, isLabelAbove: boolean) {
+  if (!isLabelVisible) {
+    return { wrapper: 'inline-flex flex-wrap items-center gap-2', label: 'sr-only' };
+  }
+  if (isLabelAbove) {
+    return {
+      wrapper: 'flex flex-col items-start gap-2',
+      label: 'type-body font-semibold wrap-anywhere text-ink',
+    };
+  }
+  return {
+    wrapper: 'inline-flex flex-wrap items-center gap-2',
+    label: 'type-meta font-semibold text-ink-muted',
+  };
 }
 
 /**
@@ -63,7 +93,7 @@ function SelectOptions({ options }: { options: SelectOption[] }) {
 /**
  * Renders a labelled drop-down.
  *
- * @returns the label and the drop-down, side by side
+ * @returns the label and the drop-down, side by side (or the label above, with isLabelAbove)
  */
 export function Select({
   id,
@@ -75,7 +105,10 @@ export function Select({
   onChange,
   placement = 'form',
   descriptionId,
+  isLabelAbove = false,
+  isInvalid = false,
 }: SelectProps) {
+  const layout = labelLayout(isLabelVisible, isLabelAbove);
   /** Passes the chosen value up; the parent keeps the state. */
   function handleChange(event: ChangeEvent<HTMLSelectElement>) {
     onChange(event.target.value);
@@ -84,11 +117,8 @@ export function Select({
   return (
     // max-w-full and min-w-0: a very long option (a story title without spaces) shortens with an
     // ellipsis inside the row, and never pushes the page sideways (rule 21; G10c4 break test).
-    <span className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-2">
-      <label
-        htmlFor={id}
-        className={isLabelVisible ? 'type-meta font-semibold text-ink-muted' : 'sr-only'}
-      >
+    <span className={`max-w-full min-w-0 ${layout.wrapper}`}>
+      <label htmlFor={id} className={layout.label}>
         {label}
       </label>
       <span className="tmc-sel relative inline-flex w-fit max-w-full items-center align-middle">
@@ -96,6 +126,7 @@ export function Select({
           id={id}
           value={value}
           aria-describedby={descriptionId}
+          aria-invalid={isInvalid || undefined}
           onChange={handleChange}
           className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
         >

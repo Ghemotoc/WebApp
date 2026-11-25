@@ -1,6 +1,5 @@
 {
   "documentTitle": "Report illegal content · {{productName}}",
-  "eyebrow": "Report without an account",
   "heading": "Report illegal content",
   "intro": "Anyone can use this form, with or without an account. Tell us where the content is and why you think it breaks the law. A person on our team reads every report.",
   "contactPoint": "This form is our contact point for authorities, including for removal orders under Regulation (EU) 2021/784. We accept reports and orders in English and Romanian, and we act on removal orders within one hour.",
@@ -32,7 +31,8 @@
       "email_invalid": "Write an email address we can reply to, like name@example.com.",
       "good_faith_missing": "Tick the good-faith statement to send the report.",
       "authority_missing": "Write the name of the authority sending the order."
-    }
+    },
+    "kindPlaceholder": "Pick one"
   },
   "order": {
     "heading": "Removal order",

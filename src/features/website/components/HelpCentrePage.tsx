@@ -2,8 +2,9 @@
  * HelpCentrePage: /help, the help pages by section and the questions marked for Help (story
  * S1-E11-12 criteria 2, 8 and 9; the glass look in G5b, board Help).
  *
- * Top to bottom, as on the board: a centred heading with a search field, the sections as glass
- * tiles, then Popular questions beside "Still stuck?". The search narrows the tiles and the
+ * Top to bottom, as on the board: the centred heading and search field in one box (bundle 10,
+ * board J25: no eyebrow), the sections as tiles, then Popular questions beside "Still stuck?",
+ * both set straight on the page with fine lines between rows. The search narrows the tiles and the
  * questions in the browser as the visitor types (helpSearch); a line read by screen readers says
  * how many match. The pages and questions are the published CMS content for the visitor's market
  * and language; the page's own title, labels and the "Still stuck?" links are interface text. One
@@ -15,7 +16,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { SearchInput } from '@/components/ui/SearchInput';
@@ -34,7 +34,7 @@ import { QuestionList } from './QuestionList';
 import { QuestionsStructuredData } from './QuestionsStructuredData';
 
 /**
- * The centred heading and the search field.
+ * The centred heading and the search field, in one box as on board J25.
  *
  * @param props.query - what is typed in the field
  * @param props.onQueryChange - called with the new words as the visitor types
@@ -49,17 +49,16 @@ function HelpHeader({
 }) {
   const { t } = useTranslation();
   return (
-    <header className="flex flex-col items-center gap-3 text-center">
-      <Eyebrow>{t('website.help.eyebrow')}</Eyebrow>
+    <header className="flex flex-col items-center gap-3 rounded-card border border-border bg-surface px-6 py-8 text-center shadow-card lg:px-12">
       <h1 className="m-0 type-title lg:type-display text-ink-heading">
         {t('website.help.heading')}
       </h1>
-      <p className="m-0 max-w-[620px] text-ink-muted">{t('website.help.intro')}</p>
+      <p className="m-0 max-w-[620px] type-body text-ink-muted">{t('website.help.intro')}</p>
       {/* role="search" names the landmark; the results change as the visitor types, so the form
           is never sent anywhere. */}
       <form
         role="search"
-        className="mt-3 w-full max-w-[720px] text-left"
+        className="mt-3 w-full max-w-[560px] text-left"
         onSubmit={(event) => event.preventDefault()}
       >
         <SearchInput
@@ -75,7 +74,8 @@ function HelpHeader({
 }
 
 /**
- * Popular questions, in one glass card, with their FAQPage data.
+ * Popular questions, set straight on the page with a fine line between them (board J25), with
+ * their FAQPage data.
  *
  * @param props.questions - the questions left after the search
  * @returns the section, or nothing when no question is left
@@ -88,9 +88,7 @@ function PopularQuestions({ questions }: { questions: ParsedEntry<QuestionConten
       <h2 id="help-questions" className="m-0 font-heading type-heading font-bold text-ink-heading">
         {t('website.help.questions')}
       </h2>
-      <div className="rounded-card border border-border bg-surface px-4 shadow-card [&_li:last-child]:border-b-0">
-        <QuestionList questions={questions} groupName="help-questions" />
-      </div>
+      <QuestionList questions={questions} groupName="help-questions" />
       <QuestionsStructuredData questions={questions} />
     </section>
   );

@@ -6,11 +6,13 @@
  * person's own, the team's tinted, an internal note dashed). The member's page names "You" and
  * "The support team" only; the staff page names usernames and marks notes. Plain text, kept as
  * written (line breaks shown), never HTML. The staff page adds a short detail after the time: how a
- * message came in or whether an answer was emailed (part h2). The member's page draws them as a
- * chat (bundle G11c, the canvas's SupportRequest board): the person's own messages as plum bubbles
- * on the right, the team's as glass bubbles on the left, each with who wrote it and when under it.
+ * message came in or whether an answer was emailed (part h2). The member's page draws them as
+ * blocks straight on the page (user stories bundle 10, board J21; it replaces the chat bubbles of
+ * bundle G11c): who wrote it and when on top, the words under it, the team's blocks tinted.
  * Who shows it: MySupportTicketPage and StaffSupportTicketPage.
  */
+import { dayAndTime } from '@/lib/dayAndTime';
+
 import { useSupportTranslation } from '../registerSupportTranslations';
 import { dateLocaleFor } from '../../../lib/romania-time';
 
@@ -32,34 +34,24 @@ const toneClasses: Record<TicketMessageItem['tone'], string> = {
 };
 
 /**
- * One message as a chat bubble (the member's page): the person's own on the right in plum, the
- * team's on the left in glass. Who wrote it is in words under the bubble, never colour alone.
+ * One message as a block (the member's page, user stories bundle 10, board J21): who wrote it and
+ * when on top, then the words. The team's blocks are tinted, the person's plain, and who wrote it
+ * is always in words, never colour alone.
  *
  * @returns a list item
  */
-function ChatBubbleItem({ message }: { message: TicketMessageItem }) {
+function MessageBlockItem({ message }: { message: TicketMessageItem }) {
   const { i18n } = useSupportTranslation();
-  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(message.at));
-  // Step 1: the side and the bubble's look follow who wrote it.
-  const isOwn = message.tone === 'person';
-  const sideStyle = isOwn ? 'items-end self-end' : 'items-start self-start';
-  const bubbleStyle = isOwn
-    ? 'rounded-card rounded-br-field bg-primary text-on-primary'
-    : 'rounded-card rounded-bl-field border border-border bg-surface text-ink shadow-card';
+  // Step 1: the team's messages get the tint, the person's own the plain box.
+  const blockStyle = message.tone === 'team' ? 'bg-tint' : 'bg-surface';
   return (
-    <li className={`flex max-w-[min(560px,88%)] flex-col gap-1 ${sideStyle}`}>
-      <p
-        className={`m-0 px-4 py-4 type-body leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
-      >
-        {message.body}
-      </p>
+    <li className={`flex flex-col gap-1 rounded-card px-4 py-4 ${blockStyle}`}>
+      {/* Step 2: who and when, as a meta line, the name in bold. */}
       <p className="m-0 type-meta text-ink-muted">
-        {/* The name in its own span, so it reads (and can be found) as one piece. */}
-        <span>{message.author}</span> · <time dateTime={message.at}>{when}</time>
+        <span className="font-semibold text-ink-heading">{message.author}</span> ·{' '}
+        <time dateTime={message.at}>{dayAndTime(message.at, i18n.language)}</time>
       </p>
+      <p className="m-0 type-body break-words whitespace-pre-line text-ink">{message.body}</p>
     </li>
   );
 }
@@ -93,7 +85,7 @@ function MessageItem({ message }: { message: TicketMessageItem }) {
  *
  * @param props.messages - the messages, oldest first
  * @param props.label - the list's accessible name
- * @param props.layout - "cards" (staff, the default) or "chat" (the member's page, G11c)
+ * @param props.layout - "cards" (staff, the default) or "blocks" (the member's page, bundle 10)
  * @returns the list of messages
  */
 export function TicketMessageList({
@@ -103,18 +95,13 @@ export function TicketMessageList({
 }: {
   messages: TicketMessageItem[];
   label: string;
-  layout?: 'cards' | 'chat';
+  layout?: 'cards' | 'blocks';
 }) {
-  // The chat sits in one glass card, as on the board; the staff cards stand on their own.
-  const listStyle =
-    layout === 'chat'
-      ? 'gap-4 rounded-card border border-border bg-surface p-4 shadow-card sm:p-6'
-      : 'gap-3';
   return (
-    <ol className={`m-0 flex list-none flex-col p-0 ${listStyle}`} aria-label={label}>
+    <ol className="m-0 flex list-none flex-col gap-3 p-0" aria-label={label}>
       {messages.map((message, index) =>
-        layout === 'chat' ? (
-          <ChatBubbleItem key={`${message.at}-${index}`} message={message} />
+        layout === 'blocks' ? (
+          <MessageBlockItem key={`${message.at}-${index}`} message={message} />
         ) : (
           <MessageItem key={`${message.at}-${index}`} message={message} />
         ),

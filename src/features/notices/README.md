@@ -16,3 +16,5 @@ content, and authorities send removal orders here (story S1-E10-02; DSA art. 16;
 
 The texts are the `notices` namespace, registered when the page opens
 (`registerNoticeTranslations.ts`).
+
+Bundle 10 (board J11): the kind of content is a drop-down (`NoticeKindPicker`, the shared `Select`), and the side column (`NoticeSideColumn`) opens with the compact helplines, then what happens next, the account route and your details.
