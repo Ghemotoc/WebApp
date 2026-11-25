@@ -101,6 +101,8 @@ test.describe('search (S1-E5-04)', () => {
     await expect(page).toHaveURL(new RegExp(`/search/stories\\?q=${foldedWord}`));
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(`Stories for “${foldedWord}”`);
     await expect(page.getByText('21 stories')).toBeVisible();
+    // The sort lives in the "Filter and sort" panel (user story 1.5, board A05).
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await expect(page.getByRole('combobox', { name: /Sort/ })).toHaveValue('relevance');
   });
 
