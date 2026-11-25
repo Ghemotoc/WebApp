@@ -47,7 +47,9 @@
     "gone": "Comentariul acela nu mai există.",
     "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou.",
     "too_many_links": "Conturile noi pot pune un singur link într-un comentariu în prima zi. Scoate un link și publică din nou.",
-    "too_long": "Un comentariu la un paragraf poate avea cel mult {{limit}} de caractere. Scurtează-l și publică din nou."
+    "too_long": "Un comentariu la un paragraf poate avea cel mult {{limit}} de caractere. Scurtează-l și publică din nou.",
+    "quote_too_long": "Alege cel mult 1.000 de caractere ca să comentezi.",
+    "quote_gone": "Cuvintele acestea s-au schimbat în text. Alege-le din nou."
   },
   "comment": {
     "writer": "Scriitor",
@@ -107,5 +109,21 @@
     "explain": "Unele dintre aceste cuvinte pot răni. Le poți schimba sau poți trimite comentariul așa cum e.",
     "edit": "Modifică",
     "sendAnyway": "Trimite oricum"
+  },
+  "part": {
+    "groupLabel": "Comentarii la: {{words}}",
+    "showWords": "Arată aceste cuvinte în text: {{words}}",
+    "pickLines": "Alege versurile",
+    "pickSentences": "Alege propozițiile",
+    "chooseLines": "Alege versuri",
+    "chooseSentences": "Alege propoziții",
+    "wholeStanza": "Toată strofa",
+    "wholeParagraph": "Tot paragraful",
+    "commentingOn": "Comentezi la „{{words}}”",
+    "pickHint": "Tab până la numărul strofei, Enter, apoi Alege versuri. Spațiu bifează un vers.",
+    "pickHintProse": "Tab până la numărul paragrafului, Enter, apoi Alege propoziții. Spațiu bifează o propoziție.",
+    "composerLabel": "Comentează această parte",
+    "linesLabel": "Comentează aceste versuri",
+    "sentencesLabel": "Comentează aceste propoziții"
   }
 }

@@ -16,6 +16,22 @@ import type { ChapterAddress } from './likes';
 export type ParagraphPlace = number | 'earlier';
 
 /** The counts beside the text. */
+/**
+ * Words readers chose and commented on that are still in the chapter (READER-SELECT, board B13):
+ * where they are today and how many comments and replies are on them. The text underlines them.
+ */
+export interface CommentPart {
+  /** The paragraph they start in today, from 1; their comments are in its panel. */
+  block: number;
+  /** The paragraph they end in today. */
+  endBlock: number;
+  startOffset: number;
+  endOffset: number;
+  /** The words, as the reader chose them. */
+  quote: string;
+  count: number;
+}
+
 export interface ParagraphCounts {
   /** False when the writer has turned comments off: no markers at all. */
   commentsEnabled: boolean;
@@ -29,6 +45,18 @@ export interface ParagraphCounts {
    * still opens its thread for reading.
    */
   commentsPausedUntil: string | null;
+  /** The chosen words still in the text, in text order (READER-SELECT); empty when none. */
+  parts: CommentPart[];
+}
+
+/** One set of chosen words as paragraph_comment_counts() sends it. */
+interface CommentPartRow {
+  block: number;
+  end_block: number;
+  start_offset: number;
+  end_offset: number;
+  quote: string;
+  count: number;
 }
 
 /** The JSON paragraph_comment_counts() answers; comments_paused_until only while a pause runs. */
@@ -37,6 +65,24 @@ interface ParagraphCountsRow {
   paragraphs: { block: number; count: number }[];
   earlier: number;
   comments_paused_until?: string | null;
+  parts?: CommentPartRow[];
+}
+
+/**
+ * Turns one set of chosen words' JSON into a CommentPart.
+ *
+ * @param row - the words as the database sends them
+ * @returns the part
+ */
+function partFrom(row: CommentPartRow): CommentPart {
+  return {
+    block: row.block,
+    endBlock: row.end_block,
+    startOffset: row.start_offset,
+    endOffset: row.end_offset,
+    quote: row.quote,
+    count: row.count,
+  };
 }
 
 /**
@@ -79,5 +125,6 @@ export async function fetchParagraphCounts(
     byParagraph,
     earlier: row.earlier,
     commentsPausedUntil: row.comments_paused_until ?? null,
+    parts: (row.parts ?? []).map(partFrom),
   };
 }

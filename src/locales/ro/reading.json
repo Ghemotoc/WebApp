@@ -182,6 +182,15 @@
       "words_one": "cuvânt până acum",
       "words_few": "cuvinte până acum",
       "words_other": "de cuvinte până acum"
+    },
+    "partComments": {
+      "button_one": "{{count}} comentariu la: {{words}}",
+      "button_few": "{{count}} comentarii la: {{words}}",
+      "button_other": "{{count}} de comentarii la: {{words}}",
+      "comment": "Comentează",
+      "tooLong": "Alege mai puțin ca să comentezi",
+      "tooLongHint": "Cel mult {{limit}} de caractere. Cuvintele alese au {{count}}.",
+      "barLabel": "Comentează cuvintele alese"
     }
   },
   "teaser": {

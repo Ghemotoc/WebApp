@@ -323,3 +323,10 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | B09-StoryLanguages, the Read in control (BOOKS B09, user story 2.9) | A native select | It looks like the board's drop-down but stays a button that opens a list of links: picking a language opens another page, and a select that navigates when its value changes breaks WCAG 3.2.2 (On input). Its name is "Read in: English" |
 | B09-StoryLanguages, the order under the title (BOOKS B09) | Title, by, Translated by, Read in, then the blurb | The story numbers (StoryStats, B01) and rank links stay between Read in and the blurb, where B01 put them |
 | B09-StoryLanguages, the side column (BOOKS B09) | A classic: About this edition first, no writer | A member's story keeps "The writer" (B01) above About this edition; a classic keeps its author section. "Translated by" shows only on classics (Robert, 16 Nov 2026) |
+| B12-ReaderSelect, the pill's type (READER-SELECT-2) | Comment in Inter 600 at 14 px | Inter 600 at 15/20 px, the design books' label size (no 14 px style) |
+| B12-ReaderSelect, Choose lines (READER-SELECT-2) | Tick boxes beside the lines in the text | The tick boxes sit in the panel, one per line or sentence, so the writer's text stays untouched and the copy protection holds |
+| B12-ReaderSelect, the bar on phones (READER-SELECT-2) | The bar alone at the foot | While the bar shows, the share bar for a quote moves up 88 px so both stay pressable |
+| B13-ReaderParts, a group's heading (READER-SELECT-2) | "Show these words in the poem" | "Show these words in the text", the same for prose and poems |
+| B12-ReaderSelect, signed-out readers (READER-SELECT-2) | Not drawn | No pill or bar: commenting needs an account, as everywhere else |
+| B13-ReaderParts, a poem's opening words (READER-SELECT-2) | The first line only | A poem's opening words join its lines with " / ", as a quote does |
+| B14, notifications and share links (READER-SELECT-2) | Opening at the part's group | Follow-up: they open the stanza's panel, not the group |

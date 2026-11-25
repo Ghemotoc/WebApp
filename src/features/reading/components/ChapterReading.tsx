@@ -52,6 +52,7 @@ import { chapterContentsPanelId } from './ChapterContentsControl';
 import { readingSettingsPanelId } from './ReadingSettingsControl';
 import { ChapterComments } from './ChapterComments';
 import { ChapterNavigation } from './ChapterNavigation';
+import { CommentSelectionWatcher } from './CommentSelectionWatcher';
 import { CopyNotice } from './CopyNotice';
 import { AboutThisStory } from './AboutThisStory';
 import { ReaderSideColumn } from './ReaderSideColumn';
@@ -178,7 +179,8 @@ function StoryFacts({ chapter, story }: { chapter: ReaderChapter; story: StoryPa
 }
 
 /**
- * What follows the paper: the chapter navigation, the copy notice, the "Share quote" watcher, What
+ * What follows the paper: the chapter navigation, the copy notice, the "Share quote" watcher, the
+ * selection's Comment watcher (READER-SELECT), What
  * next after the latest chapter (BOOKS B06), the 728 × 90 advert (S1-E12-01) and the comments (S1-E6-01).
  *
  * The copy notice and the "Share quote" watcher listen for a copy or a selection from the first
@@ -205,6 +207,7 @@ function UnderThePaper(props: {
       )}
       <CopyNotice penName={chapter.story.writer.displayName} />
       <QuoteShareWatcher chapter={sharedChapter} />
+      <CommentSelectionWatcher />
       {hasPainted && <TheRestUnderThePaper chapter={chapter} />}
     </>
   );

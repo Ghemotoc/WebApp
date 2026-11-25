@@ -30,6 +30,7 @@ import { CommentActions } from './CommentActions';
 import { CommentBody } from './CommentBody';
 import { CommentComposer } from './CommentComposer';
 import { CommentParagraphLink } from './CommentParagraphLink';
+import { CommentQuoteLine } from './CommentQuoteLine';
 import { CommentReactions } from './CommentReactions';
 
 /** What one comment needs. */
@@ -41,6 +42,11 @@ export interface CommentItemProps {
   isInParagraphThread?: boolean;
   /** True while the writer has paused new comments (CALM-8): no Reply and no reply box. */
   isPaused?: boolean;
+  /**
+   * False inside a part's group in a stanza's panel, whose heading already shows the words
+   * (READER-SELECT, board B13); everywhere else a comment on chosen words shows them above its text.
+   */
+  isQuoteShown?: boolean;
 }
 
 /**
@@ -121,6 +127,20 @@ function CommentReplies(props: CommentRepliesProps) {
 }
 
 /**
+ * The chosen words to show above a comment: a top-level comment's, unless its group's heading
+ * already shows them (READER-SELECT, board B13).
+ *
+ * @param comment - the comment
+ * @param isReply - replies never show words
+ * @param isQuoteShown - false inside a part's group
+ * @returns the words, or null
+ */
+function shownQuote(comment: ChapterComment, isReply: boolean, isQuoteShown: boolean) {
+  if (isReply || !isQuoteShown) return null;
+  return comment.quote;
+}
+
+/**
  * Renders the comment and, for a top-level one, its replies and the reply box.
  *
  * @returns the comment
@@ -131,6 +151,7 @@ export function CommentItem({
   isReply = false,
   isInParagraphThread = false,
   isPaused = false,
+  isQuoteShown = true,
 }: CommentItemProps) {
   const [isReplying, setIsReplying] = useState(false);
   const name = comment.author.displayName;
@@ -146,6 +167,7 @@ export function CommentItem({
       <PersonAvatar name={name} handle={comment.author.handle} size="small" />
       <div className="min-w-0 flex-1">
         <CommentHeader comment={comment} isReply={isReply} />
+        <CommentQuoteLine quote={shownQuote(comment, isReply, isQuoteShown)} />
         <CommentBody comment={comment} />
         <CommentActions
           address={address}

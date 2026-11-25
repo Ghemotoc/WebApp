@@ -43,6 +43,7 @@ const comment: ChapterComment = {
   isDownvotedByMe: false,
   replies: [],
   paragraph: null,
+  quote: null,
 };
 
 /**

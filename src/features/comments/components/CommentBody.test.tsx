@@ -27,6 +27,7 @@ function commentWith(changes: Partial<ChapterComment>): ChapterComment {
     isDownvotedByMe: false,
     replies: [],
     paragraph: null,
+    quote: null,
     ...changes,
   };
 }
