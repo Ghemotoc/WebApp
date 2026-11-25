@@ -23,7 +23,7 @@
     "completed": "Încheiate",
     "completedEyebrow": "Citește până la capăt",
     "categoryEyebrow": "Categorie",
-    "tag": "Etichetate „{{tag}}”",
+    "tag": "#{{tag}}",
     "tagEyebrow": "Etichetă",
     "writer": "Povești de {{name}}",
     "writerEyebrow": "Scriitor",
@@ -90,7 +90,9 @@
     "ratingShort": "Clasificările peste vârsta ta nu apar",
     "nothingMatches": "Nimic nu se potrivește acestor filtre.",
     "mostReadIn": "Cele mai citite în {{genre}}",
-    "genreStories": "Povești din {{genre}}"
+    "genreStories": "Povești din {{genre}}",
+    "tagEmpty": "Încă nicio poveste nu folosește #{{tag}}",
+    "backToRead": "Înapoi la Citește"
   },
   "sort": {
     "relevance": "Cele mai potrivite",
@@ -162,6 +164,11 @@
     "title": "Scriitori noi și în ascensiune",
     "bandTitle": "Inspiră-te de la scriitori noi și în ascensiune",
     "writes": "Scrie {{category}}"
+  },
+  "writersBox": {
+    "title": "Scriitori",
+    "toFollow": "De urmărit săptămâna asta",
+    "rising": "Noi și în ascensiune"
   },
   "popularIn": {
     "label": "Populare în",
