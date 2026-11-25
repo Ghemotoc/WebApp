@@ -24948,10 +24948,16 @@ CREATE OR REPLACE FUNCTION "public"."email_delivery_for"("target_user_id" "uuid"
     else coalesce(
       (select settings.delivery from public.notification_email_settings as settings
        where settings.user_id = target_user_id
+         -- BOOKS B06: "story finished" follows the reader's choice for new chapters.
          and settings.kind = case when email_delivery_for.kind = 'story_completed'
                                   then 'new_chapter'::public.notification_kind
-                                  else email_delivery_for.kind end),
-      public.default_email_delivery(kind))::text
+                                  else email_delivery_for.kind end)::text,
+      -- Design books S5: no instant email by default for a teenager; one digest a day instead.
+      case
+        when public.default_email_delivery(kind) = 'instant'
+             and public.is_under_18_or_unknown(target_user_id) then 'daily'
+        else public.default_email_delivery(kind)::text
+      end)
   end;
 $$;
 
@@ -24959,7 +24965,7 @@ $$;
 ALTER FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") IS 'Internal: one person''s email delivery for one notification kind (S1-E7-02); story_completed follows the new_chapter choice (BOOKS B06).';
+COMMENT ON FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") IS 'Internal: one person''s email delivery for one notification kind; under 18, Instant defaults become a Daily digest (S1-E7-02; design books S5).';
 
 
 
@@ -29149,6 +29155,43 @@ ALTER FUNCTION "public"."insert_class_space"("owner_id" "uuid", "name" "text", "
 
 
 COMMENT ON FUNCTION "public"."insert_class_space"("owner_id" "uuid", "name" "text", "description" "text", "rules" "text", "banner" "public"."space_banner", "school" "text") IS 'Internal: makes a class space row, its forum and owner membership (S1-E8-11, CLASSES-d).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."instant_email_send_time"("person_id" "uuid", "made_at" timestamp with time zone) RETURNS timestamp with time zone
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  person public.profiles;
+  choices jsonb;
+  quiet_end timestamp;
+begin
+  -- Step 1: adults get their instant emails at once.
+  if not public.is_under_18_or_unknown(person_id) then
+    return made_at;
+  end if;
+  -- Step 2: the same quiet hours as message emails (always on under 18, Q50).
+  select * into person from public.profiles where profiles.id = person_id;
+  if person.id is null then
+    return made_at;
+  end if;
+  choices := public.message_email_choices(person);
+  quiet_end := public.quiet_hours_end_after(made_at at time zone 'Europe/Bucharest',
+    (choices ->> 'quiet_from')::time, (choices ->> 'quiet_until')::time);
+  -- Step 3: inside quiet hours, the email waits for their end.
+  if quiet_end is null then
+    return made_at;
+  end if;
+  return quiet_end at time zone 'Europe/Bucharest';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."instant_email_send_time"("person_id" "uuid", "made_at" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."instant_email_send_time"("person_id" "uuid", "made_at" timestamp with time zone) IS 'Internal: when an instant email may go; under 18, after quiet hours (design books S5; Q50).';
 
 
 
@@ -35269,18 +35312,9 @@ begin
   select least(coalesce(sum(writing_days.words), 0), 2000000000)::integer into month_words
   from public.writing_days
   where writing_days.user_id = caller_id and writing_days.day >= month_start;
-  -- Step 2: the streak still running: days in a row with words, ending today or yesterday (so a
-  -- streak isn't lost before the writer has had today's chance). Days in a row share the same
-  -- "day minus its place in line".
-  with written as (
-    select writing_days.day,
-           writing_days.day - (row_number() over (order by writing_days.day))::integer as run
-    from public.writing_days
-    where writing_days.user_id = caller_id and writing_days.words > 0
-  ), runs as (
-    select max(written.day) as last_day, count(*)::integer as length from written group by written.run
-  )
-  select coalesce(max(runs.length), 0) into current_streak from runs where runs.last_day >= today - 1;
+  -- Step 2: the streak still running, ending today or yesterday (today is still open), where one
+  -- rest day a week doesn't break it (design books S5).
+  current_streak := public.writing_streak(caller_id, today);
   -- Step 3: the longest run inside this month, for the 5-day badge (it stays earned after a gap).
   with written as (
     select writing_days.day,
@@ -35311,6 +35345,7 @@ begin
       'comments_10', comment_count >= 10,
       'contest_entry', entered_contest,
       'words_15000', month_words >= 15000));
+
 end;
 $$;
 
@@ -35318,7 +35353,7 @@ $$;
 ALTER FUNCTION "public"."my_writing_month"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_writing_month"() IS 'The caller''s writing month: words against a goal of 15,000, the running streak and five badges, from their own activity only (GAPS-12f).';
+COMMENT ON FUNCTION "public"."my_writing_month"() IS 'The caller''s writing month: words against a goal of 15,000, the running streak (one rest day a week allowed) and five badges, from their own activity only (GAPS-12f; design books S5).';
 
 
 
@@ -39816,9 +39851,12 @@ CREATE OR REPLACE FUNCTION "public"."queue_instant_email"() RETURNS "trigger"
 declare
   delivery text := public.email_delivery_for(new.user_id, new.kind);
 begin
-  if delivery in ('instant', 'required') then
+  if delivery = 'required' then
     insert into public.email_outbox (user_id, delivery, notification_ids)
     values (new.user_id, delivery, array[new.id]);
+  elsif delivery = 'instant' then
+    insert into public.email_outbox (user_id, delivery, notification_ids, send_after)
+    values (new.user_id, delivery, array[new.id], public.instant_email_send_time(new.user_id, now()));
   end if;
   return new;
 end;
@@ -39828,7 +39866,7 @@ $$;
 ALTER FUNCTION "public"."queue_instant_email"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."queue_instant_email"() IS 'Internal trigger: queues an instant or required email for a new notification (S1-E7-02).';
+COMMENT ON FUNCTION "public"."queue_instant_email"() IS 'Internal trigger: queues an instant or required email for a new notification; under 18, an instant one waits for quiet hours to end (S1-E7-02; design books S5).';
 
 
 
@@ -57717,6 +57755,51 @@ COMMENT ON FUNCTION "public"."writers_to_follow_now"() IS '"To follow this week"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."writing_streak"("writer_id" "uuid", "today" "date") RETURNS integer
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  written date[];
+  day_in_question date := today;
+  streak integer := 0;
+  last_rest date;
+begin
+  -- Step 1: the days with words in the last 400 days (a longer streak still shows as 400-odd).
+  select coalesce(array_agg(writing_days.day), '{}') into written
+  from public.writing_days
+  where writing_days.user_id = writer_id and writing_days.words > 0
+    and writing_days.day between today - 400 and today;
+  -- Step 2: today is still open, so a day without words yet starts the count at yesterday.
+  if not (today = any (written)) then
+    day_in_question := today - 1;
+  end if;
+  -- Step 3: walk back, counting days with words and allowing one rest day in any 7.
+  loop
+    if day_in_question = any (written) then
+      streak := streak + 1;
+    -- A day without words is a rest day when the day before it has words and no other rest
+    -- day falls in the same 7 days; the streak carries on past it, but the day itself isn't counted.
+    elsif (day_in_question - 1) = any (written)
+      and (last_rest is null or last_rest - day_in_question >= 7) then
+      last_rest := day_in_question;
+    else
+      exit;
+    end if;
+    day_in_question := day_in_question - 1;
+  end loop;
+  return streak;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."writing_streak"("writer_id" "uuid", "today" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writing_streak"("writer_id" "uuid", "today" "date") IS 'Internal: the running writing streak, where one rest day a week doesn''t break it (GAPS-12f; design books S5).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."written_language_for"("code" "text") RETURNS "text"
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -73564,6 +73647,10 @@ REVOKE ALL ON FUNCTION "public"."insert_class_space"("owner_id" "uuid", "name" "
 
 
 
+REVOKE ALL ON FUNCTION "public"."instant_email_send_time"("person_id" "uuid", "made_at" timestamp with time zone) FROM PUBLIC;
+
+
+
 GRANT ALL ON FUNCTION "public"."interface_language_codes"() TO "anon";
 GRANT ALL ON FUNCTION "public"."interface_language_codes"() TO "authenticated";
 
@@ -77509,6 +77596,10 @@ REVOKE ALL ON FUNCTION "public"."writers_published_by_market"("for_day" "date") 
 REVOKE ALL ON FUNCTION "public"."writers_to_follow_now"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_to_follow_now"() TO "anon";
 GRANT ALL ON FUNCTION "public"."writers_to_follow_now"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writing_streak"("writer_id" "uuid", "today" "date") FROM PUBLIC;
 
 
 
