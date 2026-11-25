@@ -71,7 +71,11 @@
     "logIn": "Intră ca să urmărești",
     "readOnly": "Contul nu poate urmări pe nimeni deocamdată.",
     "failed": "Nu am putut salva, așa că a revenit cum era. Încearcă din nou.",
-    "unfollowed": "Nu mai urmărești {{name}}."
+    "unfollowed": "Nu mai urmărești {{name}}.",
+    "followNamed": "Urmărește {{name}}",
+    "followingNamed": "Urmărești {{name}}",
+    "followTag": "Urmărește eticheta",
+    "followingTag": "Urmărești eticheta"
   },
   "followers": {
     "eyebrow": "Doar tu vezi asta",
