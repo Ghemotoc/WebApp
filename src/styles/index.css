@@ -1448,7 +1448,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
    paragraph's edge, so the text keeps the whole column and never moves when the counts arrive:
    below 1024 px a small 28 px white pill at the paragraph's top right corner with a 44 px touch
    area (::after), from 1024 px the comment mark and the number in the accent colour in the
-   paper's left margin, beside the first line. A paragraph without comments keeps a quiet plus in
+   paper's right margin, beside the first line (Robert, 24 Nov 2026; CALM-5 had the left). A paragraph without comments keeps a quiet plus in
    the same place. The open paragraph is tinted with a 9% wash of the thread colour. On a narrow
    screen the paragraph scrolls to just under the chapter bar before its sheet opens
    (scroll-margin-top). */
@@ -1511,8 +1511,8 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 @media (min-width: 1024px) {
   .tmc-paragraph-marker {
     top: calc((var(--reading-line-height, 1.7) * var(--reading-font-size, 20px) - 32px) / 2);
-    right: auto;
-    left: -60px;
+    /* Robert, 24 Nov 2026: in the right margin, not the left. */
+    right: -60px;
     height: 32px;
     min-width: 44px;
     padding: 0 8px;

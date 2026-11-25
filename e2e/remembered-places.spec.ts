@@ -135,7 +135,10 @@ test.describe('coming back to the same place (design books item 17)', () => {
     // Put the caret at the end of the second line, then leave the text (that keeps it at once).
     // The editor can still be settling its first content when the click lands, which puts the
     // caret back at the start; so the steps are tried again until the kept place is past the
-    // first line (positions count from the text's start). The check itself is unchanged.
+    // first line (positions count from the text's start). The check reads this story's place
+    // only: an editor page an earlier spec left open in the same browser can still keep a caret
+    // for another story of the same writer, and two rows never read as one 't' (CI, 25 Nov 2026:
+    // it failed only in a worker that had run other specs first, never on the retry).
     await expect(async () => {
       await chapterText(page).getByText('Al doilea rând.').click();
       await page.keyboard.press('End');
@@ -145,7 +148,8 @@ test.describe('coming back to the same place (design books item 17)', () => {
           () =>
             runSql(
               `select (place ->> 'position')::integer > 20 from public.remembered_places
-               where user_id = '${writerId}' and kind = 'write_caret';`,
+               where user_id = '${writerId}' and kind = 'write_caret'
+                 and item_key = '${romanianSlug}';`,
             ).trim(),
           { timeout: 3000 },
         )
