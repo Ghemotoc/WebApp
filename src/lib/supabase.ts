@@ -22,6 +22,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { AUTH_SESSION_STORAGE_KEY } from './auth-session-key';
 import type { Database } from './database.types';
+import { requestAddress, waitForReaderTurn } from './readerFirst';
 import { fetchWithViewerCountry, startViewerCountry } from './viewerCountry';
 import { fetchWithVisitorAdult } from './visitorAdult';
 
@@ -81,7 +82,8 @@ async function makeClient(): Promise<AppSupabaseClient | null> {
 }
 
 /**
- * Sends a request with the page's language in its Accept-Language header (TRANSLATE-1b).
+ * Sends a request with the page's language in its Accept-Language header (TRANSLATE-1b), once
+ * the chapter reader's first paragraph has gone first (src/lib/readerFirst.ts).
  *
  * Why: a story in several languages opens in the language of the page (Robert, 16 Nov 2026), and
  * the database picks the edition from this header (page_language() in
@@ -93,14 +95,17 @@ async function makeClient(): Promise<AppSupabaseClient | null> {
  * @returns the response
  * Errors: rejects as fetch does when the network fails; each api/ file handles that.
  */
-export function fetchWithPageLanguage(
+export async function fetchWithPageLanguage(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<Response> {
-  // Step 1: the language the page is drawn in (src/lib/i18n.ts keeps <html lang> in step).
+  // Step 1: while a chapter's first paragraph is on its way, other requests let it go first
+  // (src/lib/readerFirst.ts; the reader speed check, 25 Nov 2026).
+  await waitForReaderTurn(requestAddress(input));
+  // Step 2: the language the page is drawn in (src/lib/i18n.ts keeps <html lang> in step).
   const pageLanguage = typeof document === 'undefined' ? '' : document.documentElement.lang;
   if (pageLanguage === '') return fetch(input, init);
-  // Step 2: the same request with that one header added.
+  // Step 3: the same request with that one header added.
   const headers = new Headers(init?.headers);
   headers.set('Accept-Language', pageLanguage);
   return fetch(input, { ...init, headers });
