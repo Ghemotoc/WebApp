@@ -53,13 +53,13 @@ select is(public.my_follows() -> 'tags', '["Topicfollowok"]'::jsonb, 'my_follows
 /* ---------- 3. Who reads the rows ---------- */
 
 select is((select count(*)::integer from public.topic_follows), 2,
-  'topic_follows_select_own: the member reads their own rows');
+  'allowed: topic_follows_select_own: the member reads their own rows');
 select throws_ok($$ insert into public.topic_follows (user_id, category_id)
   select '00000000-0000-4000-8000-000000000001', id from public.categories where slug = 'poetry' $$,
   '42501', null, 'nobody writes topic_follows directly');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
 select is((select count(*)::integer from public.topic_follows), 0,
-  'topic_follows_select_own: another member reads none of them');
+  'denied: topic_follows_select_own: another member reads none of them');
 select is(public.topic_follow_state('category', 'fiction'), false, 'and doesn''t follow the genre');
 
 /* ---------- 4. Read-only accounts and visitors ---------- */
