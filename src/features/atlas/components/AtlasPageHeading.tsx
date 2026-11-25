@@ -1,8 +1,8 @@
 /**
- * AtlasPageHeading: the line under the Story Atlas top bar, with the page's name as its heading on
- * the left and "Only you can see this plan." with a lock on the right (bundle G10 ATLAS, part a;
- * boards AtlasStory and AtlasCharacters). The story's title already shows in the top bar's story
- * switcher, so the heading names the section, not the story.
+ * AtlasPageHeading: the page's name as its display heading, with "Only you can see this plan."
+ * and a lock under it (bundle G10 ATLAS, part a; redrawn as boards E21 to E34 in user stories
+ * bundle 6). The story's title already shows in the top bar's breadcrumb and story picker, so the
+ * heading names the section, not the story.
  *
  * Who uses it: the Story Atlas pages (StoryAtlasPage's AtAGlance, CharactersPage, ConnectionsPage,
  * BiblePage, StorylinePage, IdeasPage, MarketingPage and AtlasSearchPage).
@@ -21,9 +21,9 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
 export function AtlasPageHeading({ title }: { title: string }) {
   const { t } = useAtlasTranslation();
   return (
-    <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-      <h1 className="m-0 type-title break-words text-ink-heading">{title}</h1>
-      <p className="m-0 inline-flex items-center gap-2 type-body text-ink-muted">
+    <header className="flex flex-col gap-3">
+      <h1 className="m-0 type-title break-words text-ink-heading lg:type-display">{title}</h1>
+      <p className="m-0 inline-flex items-center gap-2 type-meta">
         <ActionIcon name="lock" size={14} />
         {t('privateNote')}
       </p>

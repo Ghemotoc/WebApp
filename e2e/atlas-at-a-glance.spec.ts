@@ -104,7 +104,7 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     await expect(page).toHaveURL(/\/plan\/s\/[a-z0-9-]+$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('At a glance');
     await expect(storyTitle(page)).toHaveText('Atlas test: harta');
-    await expect(page.getByText('0 of 90,000 words')).toBeVisible();
+    await expect(page.getByText('0 of 90,000', { exact: true })).toBeVisible();
     await expect(page.getByText('No chapters yet.')).toBeVisible();
 
     // The plan's own fields save by themselves (S1-E17-03).
@@ -132,7 +132,7 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     const summary = page.getByRole('region', { name: 'The story' });
     await expect(summary).toContainText('A map that changes at night.');
     await expect(summary).toContainText('Drafting');
-    await expect(page.getByText('0 of 60,000 words')).toBeVisible();
+    await expect(page.getByText('0 of 60,000', { exact: true })).toBeVisible();
     await expect(storyTitle(page)).toHaveText('Atlas test: harta nopții');
     await page.context().close();
   });

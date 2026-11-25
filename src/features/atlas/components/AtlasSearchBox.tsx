@@ -3,9 +3,11 @@
  * Atlas page, when I look at the top bar, then the search box is there").
  *
  * A small form: what the writer types goes to the search page, /plan/s/<slug>/search?q=…, which
- * shows the results grouped by type. On the search page itself it is the wide bar under the
- * heading, with a "Search" button and the query already in it (board AtlasSearch, G10c4); the top
- * bar leaves its small box out there, so a page never has two search fields with one name.
+ * shows the results grouped by type. In the top bar it is the box with a quiet "Search" button
+ * beside it, up to 420 px wide (board E21, user stories bundle 6). On the search page itself it is
+ * the wide bar under the heading, with the main "Search" button and the query already in it
+ * (board AtlasSearch, G10c4); the top bar leaves its box out there, so a page never has two
+ * search fields with one name.
  * Who uses it: AtlasTopBar and AtlasSearchPage. What it calls: React Router's navigate.
  */
 import { useState } from 'react';
@@ -30,9 +32,12 @@ export function AtlasSearchBox({ slug, isPageBar = false }: { slug: string; isPa
   const [searchParams] = useSearchParams();
   const [typed, setTyped] = useState(searchParams.get('q') ?? '');
   return (
-    <div role="search" className={cn('w-full min-w-0', !isPageBar && 'sm:w-60')}>
+    <div
+      role="search"
+      className={cn('w-full min-w-0', !isPageBar && 'max-w-[420px] flex-1 basis-64')}
+    >
       <form
-        className={cn(isPageBar && 'flex flex-wrap items-center gap-2')}
+        className="flex flex-wrap items-center gap-2"
         onSubmit={(submitted) => {
           submitted.preventDefault();
           // An empty box opens nothing.
@@ -40,7 +45,7 @@ export function AtlasSearchBox({ slug, isPageBar = false }: { slug: string; isPa
           void navigate(`/plan/s/${slug}/search?q=${encodeURIComponent(typed.trim())}`);
         }}
       >
-        <div className={cn('min-w-0', isPageBar && 'flex-1 basis-56')}>
+        <div className="min-w-0 flex-1 basis-40">
           <SearchInput
             id="atlas-search"
             label={t('search.label')}
@@ -50,7 +55,10 @@ export function AtlasSearchBox({ slug, isPageBar = false }: { slug: string; isPa
             onChange={(changed) => setTyped(changed.target.value)}
           />
         </div>
-        {isPageBar && <Button type="submit">{t('search.button')}</Button>}
+        {/* The page's own bar has the main button; the top bar's is the quiet one (board E21). */}
+        <Button type="submit" variant={isPageBar ? 'primary' : 'secondary'}>
+          {t('search.button')}
+        </Button>
       </form>
     </div>
   );

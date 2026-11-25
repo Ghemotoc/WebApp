@@ -3,7 +3,7 @@
   "documentTitle": "{{title}}: Atlasul poveștii",
   "eyebrow": "Atlasul poveștii",
   "atAGlance": "Pe scurt",
-  "glanceAside": "Modificări recente și câmpuri proprii",
+  "glanceAside": "Modificate recent",
   "switcher": {
     "label": "Povestea",
     "newStory": "Poveste nouă",
@@ -85,7 +85,8 @@
   "words": {
     "heading": "Cuvinte",
     "count": "{{written}} din {{target}} de cuvinte",
-    "percent": "{{percent}}% din ținta de cuvinte"
+    "percent": "{{percent}}% din ținta de cuvinte",
+    "numbers": "{{written}} din {{target}}"
   },
   "chapters": {
     "heading": "Capitole",
@@ -101,8 +102,14 @@
     "line": {
       "published": "Publicat {{date}}",
       "scheduled": "Programat pentru {{date}}",
-      "draft": "Ciornă"
-    }
+      "draft": "Ciornă",
+      "publishedToday": "Publicat azi",
+      "publishedNoDate": "Publicat",
+      "saved": "salvat {{when}}"
+    },
+    "drafts_one": "{{count}} ciornă",
+    "drafts_few": "{{count}} ciorne",
+    "drafts_other": "{{count}} de ciorne"
   },
   "linked": {
     "heading": "Proiect legat",
@@ -1008,5 +1015,8 @@
   },
   "breadcrumb": {
     "label": "Unde ești"
+  },
+  "glance": {
+    "editedRecently": "Modificate recent"
   }
 }

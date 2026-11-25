@@ -18,9 +18,19 @@ import { useAtlasTranslation } from '../registerAtlasTranslations';
  * Renders the button and, after a failure, the message under it.
  *
  * @param props.onCreate - makes a character and opens its sheet; throws when it can't
+ * @param props.isMain - true where it is the page's main action (At a glance's top bar, board E21)
+ * @param props.isCompact - true to show the icon alone, its name kept for screen readers
  * @returns the button with a polite live area for the error
  */
-export function NewCharacterButton({ onCreate }: { onCreate: () => Promise<void> }) {
+export function NewCharacterButton({
+  onCreate,
+  isMain = false,
+  isCompact = false,
+}: {
+  onCreate: () => Promise<void>;
+  isMain?: boolean;
+  isCompact?: boolean;
+}) {
   const { t } = useAtlasTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -35,9 +45,15 @@ export function NewCharacterButton({ onCreate }: { onCreate: () => Promise<void>
 
   return (
     <div className="flex flex-col items-end gap-2">
-      <Button variant="secondary" disabled={isCreating} onClick={() => void create()}>
+      <Button
+        variant={isMain ? 'primary' : 'secondary'}
+        disabled={isCreating}
+        onClick={() => void create()}
+        className={isCompact ? 'w-11 px-0' : undefined}
+      >
         <ActionIcon name="personPlus" />
-        {t('characters.newCharacter')}
+        {/* Folded to the icon after the first visits (story 6.2): the name stays for screen readers. */}
+        <span className={isCompact ? 'sr-only' : undefined}>{t('characters.newCharacter')}</span>
       </Button>
       <div aria-live="polite">
         {failed && <Notice tone="error">{t('characters.createFailed')}</Notice>}

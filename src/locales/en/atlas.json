@@ -3,7 +3,7 @@
   "documentTitle": "{{title}}: Story Atlas",
   "eyebrow": "Story Atlas",
   "atAGlance": "At a glance",
-  "glanceAside": "Recent changes and own fields",
+  "glanceAside": "Edited recently",
   "switcher": {
     "label": "Story",
     "newStory": "New story",
@@ -85,7 +85,8 @@
   "words": {
     "heading": "Words",
     "count": "{{written}} of {{target}} words",
-    "percent": "{{percent}}% of the word target"
+    "percent": "{{percent}}% of the word target",
+    "numbers": "{{written}} of {{target}}"
   },
   "chapters": {
     "heading": "Chapters",
@@ -101,8 +102,14 @@
     "line": {
       "published": "Published {{date}}",
       "scheduled": "Scheduled for {{date}}",
-      "draft": "Draft"
-    }
+      "draft": "Draft",
+      "publishedToday": "Published today",
+      "publishedNoDate": "Published",
+      "saved": "saved {{when}}"
+    },
+    "drafts_one": "{{count}} draft",
+    "drafts_few": "{{count}} drafts",
+    "drafts_other": "{{count}} drafts"
   },
   "linked": {
     "heading": "Linked project",
@@ -1008,5 +1015,8 @@
   },
   "breadcrumb": {
     "label": "Where you are"
+  },
+  "glance": {
+    "editedRecently": "Edited recently"
   }
 }

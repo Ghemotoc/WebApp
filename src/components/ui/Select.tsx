@@ -29,6 +29,20 @@ export interface SelectGroup {
   options: SelectOption[];
 }
 
+/**
+ * The label's classes: hidden, beside the drop-down (small and muted) or above it (as a text
+ * field's label).
+ *
+ * @param isLabelVisible - whether the label shows on screen
+ * @param isLabelAbove - whether it sits above the drop-down
+ * @returns the class list
+ */
+function labelClassName(isLabelVisible: boolean, isLabelAbove: boolean): string {
+  if (isLabelAbove) return 'type-body font-semibold wrap-anywhere text-ink';
+  if (isLabelVisible) return 'type-meta font-semibold text-ink-muted';
+  return 'sr-only';
+}
+
 /** What a Select needs. */
 export interface SelectProps {
   /** Unique id; the label points at it. */
@@ -36,6 +50,11 @@ export interface SelectProps {
   /** The label. Always present for screen readers; shown on screen when isLabelVisible. */
   label: string;
   isLabelVisible?: boolean;
+  /**
+   * A visible label above the drop-down, in the text fields' label style, as a form draws it
+   * (board E21, Story details); beside it in the small meta style when left out.
+   */
+  isLabelAbove?: boolean;
   options: SelectOption[];
   /** When given, the choices are drawn in these named groups instead of `options`. */
   groups?: SelectGroup[];
@@ -69,6 +88,7 @@ export function Select({
   id,
   label,
   isLabelVisible = false,
+  isLabelAbove = false,
   options,
   groups,
   value,
@@ -84,11 +104,13 @@ export function Select({
   return (
     // max-w-full and min-w-0: a very long option (a story title without spaces) shortens with an
     // ellipsis inside the row, and never pushes the page sideways (rule 21; G10c4 break test).
-    <span className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-2">
-      <label
-        htmlFor={id}
-        className={isLabelVisible ? 'type-meta font-semibold text-ink-muted' : 'sr-only'}
-      >
+    <span
+      className={cn(
+        'inline-flex max-w-full min-w-0 gap-2',
+        isLabelAbove ? 'flex-col items-start' : 'flex-wrap items-center',
+      )}
+    >
+      <label htmlFor={id} className={labelClassName(isLabelVisible, isLabelAbove)}>
         {label}
       </label>
       <span className="tmc-sel relative inline-flex w-fit max-w-full items-center align-middle">
