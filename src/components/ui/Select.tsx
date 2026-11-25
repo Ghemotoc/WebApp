@@ -47,8 +47,8 @@ export interface SelectProps {
   descriptionId?: string;
   /**
    * True in a form whose other fields have their label above them (bundle 10, board J20): the
-   * label sits above the drop-down in the same type as a text field's label. Left out, the label
-   * sits beside it, small, as in a filter bar.
+   * label is shown above the drop-down in the same type as a text field's label, whatever
+   * isLabelVisible says. Left out, the label sits beside it, small, as in a filter bar.
    */
   isLabelAbove?: boolean;
   /** True while the choice is missing or wrong after a send, so screen readers say so. */
@@ -62,14 +62,16 @@ export interface SelectProps {
  * @returns the two class strings
  */
 function labelLayout(isLabelVisible: boolean, isLabelAbove: boolean) {
-  if (!isLabelVisible) {
-    return { wrapper: 'inline-flex flex-wrap items-center gap-2', label: 'sr-only' };
-  }
+  // A label above the drop-down is always shown: a form field's label is never hidden
+  // (WCAG 3.3.2; bundle 10, boards J11 and J20), so isLabelAbove alone is enough.
   if (isLabelAbove) {
     return {
       wrapper: 'flex flex-col items-start gap-2',
       label: 'type-body font-semibold wrap-anywhere text-ink',
     };
+  }
+  if (!isLabelVisible) {
+    return { wrapper: 'inline-flex flex-wrap items-center gap-2', label: 'sr-only' };
   }
   return {
     wrapper: 'inline-flex flex-wrap items-center gap-2',
