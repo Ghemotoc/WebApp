@@ -100,10 +100,10 @@ test.describe('reader comment on the home page (GAPS-13)', () => {
     await page.context().close();
   });
 
-  test('the reader follows the notification and agrees on their hub', async ({ browser }) => {
+  test('the reader follows the notification and agrees on their Home', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', '/notifications');
     await page.getByRole('link', { name: 'Vezi invitația' }).first().click();
-    await expect(page).toHaveURL(/\/hub#home-comment-invitation$/);
+    await expect(page).toHaveURL(/\/[a-z]{2}\/[a-z]{2}#home-comment-invitation$/);
     const invitation = page.locator('#home-comment-invitation');
     await expect(invitation.getByText(comment)).toBeVisible();
     await expect(invitation.getByText('Nimic nu apare până nu accepți.')).toBeVisible();
@@ -144,7 +144,7 @@ test.describe('reader comment on the home page (GAPS-13)', () => {
   for (const view of [
     { persona: null, address: '/', width: 390, theme: 'night' },
     { persona: null, address: '/', width: 1440, theme: 'light' },
-    { persona: 'teacher', address: '/hub', width: 390, theme: 'light' },
+    { persona: 'teacher', address: '/', width: 390, theme: 'light' },
     { persona: 'admin', address: '/staff/featured', width: 390, theme: 'night' },
     { persona: 'admin', address: '/staff/featured', width: 1440, theme: 'light' },
   ] as const) {
@@ -162,7 +162,7 @@ test.describe('reader comment on the home page (GAPS-13)', () => {
   }
 
   test('the reader takes the comment down and it goes for everyone', async ({ browser }) => {
-    const readerPage = await openAs(browser, 'teacher', '/hub');
+    const readerPage = await openAs(browser, 'teacher', '/');
     const invitation = readerPage.locator('#home-comment-invitation');
     await invitation.getByRole('button', { name: 'Scoate comentariul' }).click();
     await expect(invitation.getByText('Ai refuzat. Nimic nu apare.')).toBeVisible();

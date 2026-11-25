@@ -3,7 +3,7 @@
  * story S1-E5-13; board Website-Home, the reader comment card).
  *
  * A reader gets this one row when staff pick one of their comments. It comes from the team, not
- * from a person, and leads to the invitation on the reader's own hub, where they agree or
+ * from a person, and leads to the invitation on the reader's Home ("/", user story 1.1), where they agree or
  * decline; nothing shows on the home page until they agree.
  * Who calls it: notificationText.ts, through its table of kinds with words of their own.
  */
@@ -24,6 +24,6 @@ export function homeCommentInvitedText(t: TFunction): NotificationText {
     quote: null,
     grouped: null,
     actionLabel: t('actions.seeHomeCommentInvitation'),
-    href: '/hub#home-comment-invitation',
+    href: '/#home-comment-invitation',
   };
 }

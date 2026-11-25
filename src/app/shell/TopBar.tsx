@@ -19,7 +19,7 @@
  * easy to read over any row (usePageScrolled, data-solid; index.css).
  * Who uses it: AppLayout, and the /design page with the full board links.
  * What it calls: NavTrack, HeaderSearch, BrandMark, usePageScrolled, and useHomeAddress for where
- * the logo goes (the Writers' hub when signed in, G9a).
+ * the logo goes ("/", Home, since user story 1.1).
  */
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +61,7 @@ export function TopBar({
   hasSearch = true,
 }: TopBarProps) {
   const { t } = useTranslation();
-  // Signed in, the logo opens the Writers' hub; signed out, the public home page (G9a).
+  // The logo opens Home at "/": the member's Home signed in, the public home page signed out (1.1).
   const homeAddress = useHomeAddress();
   // A visitor sees no members' links (Library, Together) and no search (TRIAL-WALL).
   const { userId } = useSession();

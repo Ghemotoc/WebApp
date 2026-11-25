@@ -54,3 +54,17 @@ export function guidesOnPage<Guide>(
   const start = safeIndex * guidesPerPage;
   return { shown: guides.slice(start, start + guidesPerPage), pageIndex: safeIndex };
 }
+
+/** Words a reader gets through in a minute, for "6 min read" (a common reading pace). */
+const wordsPerMinute = 200;
+
+/**
+ * How long a guide takes to read, in whole minutes and never less than one.
+ *
+ * @param body - the guide's text
+ * @returns the minutes
+ */
+export function guideReadingMinutes(body: string): number {
+  const words = body.split(/\s+/).filter((word) => word !== '').length;
+  return Math.max(1, Math.round(words / wordsPerMinute));
+}

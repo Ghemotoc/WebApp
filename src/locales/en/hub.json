@@ -21,7 +21,11 @@
       "openLabel": "See the contest: {{name}}",
       "none": "No contest is open for entries right now. New contests show here.",
       "loadFailed": "We couldn’t load the contests. Check the connection and try again.",
-      "heading": "Open for entries now"
+      "heading": "Open for entries now",
+      "enter": "Enter the contest",
+      "enterLabel": "Enter the contest: {{name}}",
+      "rules": "Rules and prizes",
+      "more": "More contests"
     },
     "prompt": {
       "eyebrow": "Prompt of the week",
@@ -44,7 +48,11 @@
       "next": "Next guides",
       "position": "Guides {{first}} to {{last}} of {{total}}",
       "none": "The guides are on their way. Meanwhile, the Help centre has the answers.",
-      "kind": "Guide"
+      "kind": "Guide",
+      "heading": "Writing guides",
+      "minutes_one": "{{count}} min read",
+      "minutes_few": "{{count}} min read",
+      "minutes_other": "{{count}} min read"
     },
     "tools": {
       "eyebrow": "Tools",
@@ -68,7 +76,8 @@
       "paid": "Paid",
       "openLabel": "{{title}} (opens the organiser’s page in a new tab)",
       "outsideNote": "These calls come from other organisers. Read their rules before sending work.",
-      "loadFailed": "We couldn’t load the calls for submissions. Check the connection and try again."
+      "loadFailed": "We couldn’t load the calls for submissions. Check the connection and try again.",
+      "intro": "Magazines and anthologies looking for writers."
     },
     "week": {
       "eyebrow": "This week",
@@ -131,7 +140,9 @@
       "pace_other": "{{formatted}} words a day keep you on track",
       "goalReached": "Goal reached this month",
       "seeBadges": "See the badges",
-      "barLabel": "{{percent}}% of the writing month goal"
+      "barLabel": "{{percent}}% of the writing month goal",
+      "wordsOfGoal": "{{words}} of {{goal}} words",
+      "percentOfGoal": "{{percent}}% of the goal"
     },
     "path": {
       "eyebrow": "Learning path",
@@ -143,8 +154,9 @@
       "start": "Start day 1",
       "continue": "Continue day {{day}}",
       "readAgain": "Read the path again",
-      "progress": "{{done}} of {{total}} days done",
-      "loadFailed": "We couldn’t load the learning path. Check the connection and try again."
+      "loadFailed": "We couldn’t load the learning path. Check the connection and try again.",
+      "next": "next",
+      "notStarted": "not started"
     },
     "sessions": {
       "eyebrow": "Live sessions",
@@ -224,6 +236,14 @@
       "newPosts_other": "{{count}} new posts",
       "empty": "Nothing new in Together since the last visit.",
       "loadFailed": "We couldn’t load Together. Check the connection and try again."
+    },
+    "homeDocumentTitle": "Home · {{productName}}",
+    "writersHub": {
+      "place": "Writers’ hub",
+      "titleFirst": "Everything for the",
+      "titleSecond": "next chapter.",
+      "intro": "Open contests, this week’s prompt, guides and live sessions.",
+      "startWriting": "Start writing"
     }
   },
   "hubStaff": {

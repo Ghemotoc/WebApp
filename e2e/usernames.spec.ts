@@ -16,7 +16,7 @@ import { expect, test, type Browser } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { memberHomeAddressPattern } from './support/homeAddress';
+import { forwardedHomeAddressPattern, memberHomeAddressPattern } from './support/homeAddress';
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
 /** The persona these tests change; no other test file uses it. */
@@ -62,8 +62,8 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
   }) => {
     runSql(`update public.profiles set handle = null where id = '${personaId}';`);
     expect(runSql(`select account_state('${personaId}')`)).toBe('handle_missing');
-    // Open the signed-in home directly: "/" forwards to /ro/ro and then /hub, and a click made
-    // during that chain is lost (it made this test flaky in CI, 24 Nov 2026).
+    // Open a signed-in page that stays put: "/" forwards to /ro/ro, and a click made during
+    // that forward is lost (it made this test flaky in CI, 24 Nov 2026).
     const page = await openAsPersona(browser, '/hub');
 
     // The notice is on every page until a username is chosen.
@@ -101,10 +101,10 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
 
   test('Settings changes the username once, then asks to wait 30 days', async ({ browser }) => {
     const page = await openAsPersona(browser, '/');
-    // "/" forwards a signed-in member to their home; a click made before that redirect lands is
-    // overtaken by it (the same race as the setup test above, 24 Nov 2026), so wait for it.
-    // (memberHomeAddressPattern also matches "/" itself, so it can't tell the redirect has landed.)
-    await expect(page).toHaveURL(/\/hub$/);
+    // "/" forwards a signed-in member to their Home at "/ro/ro"; a click made before that
+    // forward lands is overtaken by it (the same race as the setup test above, 24 Nov 2026), so
+    // wait for it. (memberHomeAddressPattern also matches "/" itself, so it can't tell.)
+    await expect(page).toHaveURL(forwardedHomeAddressPattern);
     await page.getByRole('button', { name: 'Account' }).click();
     await page.getByRole('link', { name: 'Settings' }).click();
     await expect(page.getByText('Signed in as Doamna Popescu · @ms.popescu')).toBeVisible();

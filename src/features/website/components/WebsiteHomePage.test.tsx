@@ -1,8 +1,8 @@
 /**
- * Tests for who sees the website home page (TRIAL-WALL; Robert, 23 Nov 2026).
- * Proves: a signed-in member who opens the site's address is sent to their own home, the Writers'
- * hub, and a visitor stays on the website home page. The page's content is stubbed: only the
- * redirect is under test here (the page itself is covered by e2e/home.spec.ts).
+ * Tests for who sees what at "/" (TRIAL-WALL, Robert, 23 Nov 2026; user story 1.1, 25 Nov 2026).
+ * Proves: a signed-in member who opens the site's address sees their own Home there (board A01),
+ * without being sent anywhere else, and a visitor sees the website home page. Both pages are
+ * stubbed: only the choice is under test here (the pages themselves are covered by e2e specs).
  */
 import { screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
@@ -18,32 +18,31 @@ vi.mock('../hooks/useWebsiteContent', () => ({
   useWebsiteContent: () => ({ entries: [], readFailed: false }),
 }));
 vi.mock('./HomeShelves', () => ({ HomeShelves: () => null }));
+vi.mock('@/features/hub/components/MemberHomePage', () => ({
+  MemberHomePage: () => <p>The member's Home</p>,
+}));
 
-/** Opens "/" with the home page there and a stand-in for the Writers' hub. */
+/** Opens "/" with the home page there. */
 function openHome() {
-  const router = createMemoryRouter(
-    [
-      { path: '/', element: <WebsiteHomePage /> },
-      { path: '/hub', element: <p>The Writers' hub</p> },
-    ],
-    { initialEntries: ['/'] },
-  );
+  const router = createMemoryRouter([{ path: '/', element: <WebsiteHomePage /> }], {
+    initialEntries: ['/'],
+  });
   renderWithProviders(<RouterProvider router={router} />, 'en');
   return router;
 }
 
 describe('WebsiteHomePage', () => {
-  it('sends a signed-in member to their own home, the Writers’ hub', () => {
+  it('shows a signed-in member their own Home at the same address', async () => {
     vi.mocked(useSession).mockReturnValue({ userId: 'member-1', isKnown: true });
     const router = openHome();
-    expect(router.state.location.pathname).toBe('/hub');
-    expect(screen.getByText("The Writers' hub")).toBeTruthy();
+    expect(await screen.findByText("The member's Home")).toBeTruthy();
+    expect(router.state.location.pathname).toBe('/');
   });
 
-  it('keeps a visitor on the website home page', () => {
+  it('shows a visitor the website home page', () => {
     vi.mocked(useSession).mockReturnValue({ userId: null, isKnown: true });
     const router = openHome();
     expect(router.state.location.pathname).toBe('/');
-    expect(screen.queryByText("The Writers' hub")).toBeNull();
+    expect(screen.queryByText("The member's Home")).toBeNull();
   });
 });

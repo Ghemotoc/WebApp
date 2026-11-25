@@ -21,7 +21,11 @@
       "openLabel": "Vezi concursul: {{name}}",
       "none": "Niciun concurs nu primește înscrieri acum. Concursurile noi apar aici.",
       "loadFailed": "Nu am putut încărca concursurile. Verifică conexiunea și încearcă din nou.",
-      "heading": "Deschise acum pentru înscrieri"
+      "heading": "Deschise acum pentru înscrieri",
+      "enter": "Intră în concurs",
+      "enterLabel": "Intră în concurs: {{name}}",
+      "rules": "Reguli și premii",
+      "more": "Mai multe concursuri"
     },
     "prompt": {
       "eyebrow": "Tema săptămânii",
@@ -44,7 +48,11 @@
       "next": "Ghidurile următoare",
       "position": "Ghidurile de la {{first}} la {{last}} din {{total}}",
       "none": "Ghidurile sunt pe drum. Până atunci, Centrul de ajutor are răspunsurile.",
-      "kind": "Ghid"
+      "kind": "Ghid",
+      "heading": "Ghiduri de scris",
+      "minutes_one": "{{count}} minut de citit",
+      "minutes_few": "{{count}} minute de citit",
+      "minutes_other": "{{count}} de minute de citit"
     },
     "tools": {
       "eyebrow": "Instrumente",
@@ -68,7 +76,8 @@
       "paid": "Plătit",
       "openLabel": "{{title}} (deschide pagina organizatorului într-o filă nouă)",
       "outsideNote": "Apelurile vin de la alți organizatori. Citește regulile lor înainte să trimiți texte.",
-      "loadFailed": "Nu am putut încărca apelurile de texte. Verifică conexiunea și încearcă din nou."
+      "loadFailed": "Nu am putut încărca apelurile de texte. Verifică conexiunea și încearcă din nou.",
+      "intro": "Reviste și antologii care caută scriitori."
     },
     "week": {
       "eyebrow": "Săptămâna aceasta",
@@ -131,7 +140,9 @@
       "pace_other": "{{formatted}} de cuvinte pe zi te țin în ritm",
       "goalReached": "Ținta lunii e atinsă",
       "seeBadges": "Vezi insignele",
-      "barLabel": "{{percent}}% din ținta lunii de scris"
+      "barLabel": "{{percent}}% din ținta lunii de scris",
+      "wordsOfGoal": "{{words}} din {{goal}} de cuvinte",
+      "percentOfGoal": "{{percent}}% din obiectiv"
     },
     "path": {
       "eyebrow": "Traseu de învățare",
@@ -143,8 +154,9 @@
       "start": "Începe ziua 1",
       "continue": "Continuă ziua {{day}}",
       "readAgain": "Citește din nou traseul",
-      "progress": "{{done}} din {{total}} zile gata",
-      "loadFailed": "Nu am putut încărca traseul de învățare. Verifică conexiunea și încearcă din nou."
+      "loadFailed": "Nu am putut încărca traseul de învățare. Verifică conexiunea și încearcă din nou.",
+      "next": "următoarea",
+      "notStarted": "neînceput"
     },
     "sessions": {
       "eyebrow": "Sesiuni live",
@@ -224,6 +236,14 @@
       "newPosts_other": "{{count}} de mesaje noi",
       "empty": "Nimic nou în Împreună de la ultima vizită.",
       "loadFailed": "Nu am putut încărca Împreună. Verifică conexiunea și încearcă din nou."
+    },
+    "homeDocumentTitle": "Acasă · {{productName}}",
+    "writersHub": {
+      "place": "Spațiul scriitorilor",
+      "titleFirst": "Totul pentru",
+      "titleSecond": "capitolul următor.",
+      "intro": "Concursuri deschise, tema săptămânii, ghiduri și sesiuni live.",
+      "startWriting": "Începe să scrii"
     }
   },
   "hubStaff": {
