@@ -3,8 +3,8 @@
  * (user story 1.8, board A08-SearchResults).
  *
  * The address keeps everything, so a search can be shared and Back works: ?q= the term, ?in= the
- * tab (stories when missing), and for stories ?sort=, ?status= and ?language= as the See all page
- * uses them (listAddresses.ts). Kept apart from the components so a component file exports only
+ * tab (stories when missing), and for stories ?sort=, ?status=, ?language=, ?rating= and ?length=
+ * as the See all page uses them (listAddresses.ts). Kept apart from the components so a component file exports only
  * components.
  * Who uses it: SearchResults, SearchStoriesTab and SearchFilterFields.
  * What it calls: requestFromAddress() and listAddress() for the story list's own address rules.
@@ -60,13 +60,18 @@ export function sortInUse(request: ListRequest): SortOrder {
  * How many filters are on, for "Filter and sort · 1" (the sort is not a filter).
  *
  * @param request - the search list
- * @returns 0, 1 or 2
+ * @returns 0 to 4
  */
 export function filtersOn(request: ListRequest): number {
-  let count = 0;
-  if (request.completion !== null) count += 1;
-  if (request.languageCode !== null) count += 1;
-  return count;
+  // Status, Language, Rating and Length each count once when set (an unset one is null or
+  // missing); the sort is an order, not a filter.
+  const filters = [
+    request.completion,
+    request.languageCode,
+    request.storyRating,
+    request.storyLength,
+  ];
+  return filters.filter((filter) => filter !== null && filter !== undefined).length;
 }
 
 /**
@@ -77,7 +82,8 @@ export function filtersOn(request: ListRequest): number {
  * @returns the query string to put in the address
  */
 export function paramsFor(next: ListRequest, tab: SearchTab): URLSearchParams {
-  // Step 1: the See all address already writes q, sort, status and language by its own rules.
+  // Step 1: the See all address already writes q, sort, status, language, rating and length by
+  // its own rules.
   // Only the part after "?" is wanted, so no host is needed to read it.
   const address = listAddress(next);
   const queryStart = address.indexOf('?');

@@ -9,6 +9,8 @@
  * - a 16+ story never appears for a visitor (criterion 3);
  * - more than 20 stories show 20 rows and "Show more results", sorted by best match, and a sort
  *   or filter applies at once and stays in the address (criterion 4; board A08);
+ * - Rating and Length narrow the list in the database, and a visitor asking for 16+ gets nothing
+ *   (board A08; CLAUDE.md rule 18);
  * - the Writers tab finds a writer by username and opens their profile;
  * - on a phone "Filter and sort" opens a sheet and counts the filters on, and writer rows have
  *   Follow (board A08);
@@ -114,6 +116,40 @@ test.describe('search (S1-E5-04)', () => {
     await page.getByRole('radio', { name: 'Most read' }).check();
     await expect(page).toHaveURL(/sort=popular/);
     await expect(page.getByText('Sorted by Most read')).toBeVisible();
+  });
+
+  test('Rating and Length narrow the list, and a visitor asking for 16+ gets nothing', async ({
+    page,
+  }) => {
+    // Board A08: Rating and Length apply at once, in the database, and stay in the address.
+    await page.goto(`/search?q=${foldedWord}`);
+    await page.getByRole('radio', { name: '16+' }).check();
+    await expect(page).toHaveURL(/rating=16_plus/);
+    // Rule 18: a rating above the reader's age never shows, whatever the filter asks for.
+    await expect(
+      page.getByRole('heading', { name: `No stories match “${foldedWord}”` }),
+    ).toBeVisible();
+    await page.getByRole('radio', { name: 'All ages' }).check();
+    await page.getByRole('radio', { name: 'Under 10 chapters' }).check();
+    await expect(page).toHaveURL(/length=short/);
+    await expect(
+      page.getByRole('heading', { name: `21 stories for “${foldedWord}”` }),
+    ).toBeVisible();
+    // Every story here has one chapter, so none is 10 chapters or more.
+    await page.getByRole('radio', { name: '10 chapters or more' }).check();
+    await expect(
+      page.getByRole('heading', { name: `No stories match “${foldedWord}”` }),
+    ).toBeVisible();
+    // The empty list has a Clear filters of its own; this is the one in the filter column.
+    await page
+      .getByRole('complementary', { name: 'Filter and sort' })
+      .getByRole('button', { name: 'Clear filters' })
+      .click();
+    await expect(page).not.toHaveURL(/rating=|length=/);
+    await expect(page.getByRole('radio', { name: 'Any rating' })).toBeChecked();
+    await expect(
+      page.getByRole('heading', { name: `21 stories for “${foldedWord}”` }),
+    ).toBeVisible();
   });
 
   test('the Writers tab finds a writer by username and opens their profile', async ({ page }) => {

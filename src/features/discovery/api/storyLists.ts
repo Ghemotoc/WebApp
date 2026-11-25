@@ -63,6 +63,15 @@ export type SortOrder =
 /** Ongoing or completed: the status filter. */
 export type CompletionStatus = 'ongoing' | 'completed';
 
+/**
+ * The Length filter of the search results (user story 1.8, board A08): under 10 readable chapters
+ * or 10 and more; the database counts them (story_matches_list_filters()).
+ */
+export const storyLengths = ['short', 'long'] as const;
+
+/** One answer of the Length filter. */
+export type StoryLength = (typeof storyLengths)[number];
+
 /** Which list to read, with its filters. */
 export interface ListRequest {
   kind: ListKind;
@@ -83,6 +92,10 @@ export interface ListRequest {
    * picked yet (it then starts on the reader's own country, usePopularIn).
    */
   popularIn?: string | null;
+  /** The Rating filter (user story 1.8): one rating, or null/absent for any. */
+  storyRating?: StoryRating | null;
+  /** The Length filter (user story 1.8): short, long, or null/absent for any. */
+  storyLength?: StoryLength | null;
 }
 
 /** "Popular in › Everywhere": the overall ranking (MARKETS-2d). */
@@ -282,6 +295,23 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
 }
 
 /**
+ * The Rating and Length filters as the database's inputs, only those that are set (user story
+ * 1.8, board A08).
+ *
+ * @param request - the list and its filters
+ * @returns story_rating and story_length when set, else nothing
+ */
+function rangeFilterArguments(request: ListRequest): {
+  story_rating?: StoryRating;
+  story_length?: StoryLength;
+} {
+  const inputs: { story_rating?: StoryRating; story_length?: StoryLength } = {};
+  if (request.storyRating != null) inputs.story_rating = request.storyRating;
+  if (request.storyLength != null) inputs.story_length = request.storyLength;
+  return inputs;
+}
+
+/**
  * Reads one page of a list.
  *
  * @param client - the shared Supabase client
@@ -307,6 +337,7 @@ export async function fetchStoryList(
     ...(language === null ? {} : { language }),
     ...(request.sortOrder === null ? {} : { sort_order: request.sortOrder }),
     ...(popularIn === null ? {} : { popular_in: popularIn }),
+    ...rangeFilterArguments(request),
     page_size: page.pageSize,
     page_offset: page.offset,
   });

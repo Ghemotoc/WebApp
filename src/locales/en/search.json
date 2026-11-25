@@ -67,6 +67,15 @@
       "ro": "Romanian"
     },
     "both": "Both",
+    "rating": "Rating",
+    "anyRating": "Any rating",
+    "ratingHint": "Ratings above your age never show.",
+    "length": "Length",
+    "anyLength": "Any length",
+    "lengths": {
+      "short": "Under 10 chapters",
+      "long": "10 chapters or more"
+    },
     "clear": "Clear filters",
     "done": "Done"
   },

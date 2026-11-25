@@ -13316,6 +13316,8 @@ export type Database = {
           page_size?: number;
           popular_in?: string;
           sort_order?: string;
+          story_length?: string;
+          story_rating?: Database['public']['Enums']['story_rating'];
         };
         Returns: Json;
       };
@@ -18595,6 +18597,15 @@ export type Database = {
         Returns: boolean;
       };
       story_marketing: { Args: { story_slug: string }; Returns: Json };
+      story_matches_list_filters: {
+        Args: {
+          story_row_id: string;
+          story_row_rating: Database['public']['Enums']['story_rating'];
+          wanted_length: string;
+          wanted_rating: Database['public']['Enums']['story_rating'];
+        };
+        Returns: boolean;
+      };
       story_matches_search: {
         Args: {
           target: Omit<

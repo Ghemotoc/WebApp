@@ -67,6 +67,15 @@
       "ro": "Română"
     },
     "both": "Ambele",
+    "rating": "Clasificare",
+    "anyRating": "Orice clasificare",
+    "ratingHint": "Clasificările peste vârsta ta nu apar.",
+    "length": "Lungime",
+    "anyLength": "Orice lungime",
+    "lengths": {
+      "short": "Sub 10 capitole",
+      "long": "10 capitole sau mai multe"
+    },
     "clear": "Șterge filtrele",
     "done": "Gata"
   },
