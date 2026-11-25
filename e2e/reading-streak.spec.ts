@@ -67,13 +67,23 @@ function editorStreak(): string {
 /**
  * Opens an address as a persona, in English, on a device in Romania.
  *
+ * @param withFakeClock - true to put the page on Playwright's clock before it loads, so every
+ *   timer the page starts (the reading minute's interval) is one the test can move on
  * @returns the page
  */
-async function openAs(browser: Browser, persona: SignInPersonaName, address: string) {
+async function openAs(
+  browser: Browser,
+  persona: SignInPersonaName,
+  address: string,
+  withFakeClock = false,
+) {
   const context = await browser.newContext({ timezoneId: 'Europe/Bucharest' });
   await useSessionInBrowser(context, (await signInPersona(persona)).session);
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   const page = await context.newPage();
+  // The clock goes in before the page loads: installed after, a timer the chapter started while
+  // loading would run on real time and never fire when the test moves the clock on.
+  if (withFakeClock) await page.clock.install();
   await page.goto(address);
   return page;
 }
@@ -105,8 +115,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
       note.getByText('No reading counted yet this week.', { exact: false }),
     ).toBeVisible();
     // Step 2: a minute of active reading in a chapter (the page's clock is moved on a minute).
-    const chapter = await openAs(browser, 'editor', `/s/${storySlug}/nisipun1`);
-    await chapter.clock.install();
+    const chapter = await openAs(browser, 'editor', `/s/${storySlug}/nisipun1`, true);
     await expect(chapter.getByRole('heading', { level: 1, name: 'Primul minut' })).toBeVisible();
     await chapter.mouse.wheel(0, 300);
     const counted = chapter.waitForResponse((response) =>
