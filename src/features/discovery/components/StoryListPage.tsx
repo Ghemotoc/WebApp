@@ -4,9 +4,9 @@
  *
  * Who shows it: the router, at /discover/all/:listKind (a Discover shelf's "View more"),
  * /discover/c/:categorySlug (a category page), /discover/t/:tag (a tag on the story page; titled
- * "#tag", user story 1.9, board A09) and
- * /u/:handle/stories (a writer's profile) and /search/stories?q= (every story a search finds,
- * S1-E5-04). The address decides the list (listFromParams()).
+ * "#tag", user story 1.9, board A09), someone's library and /search/stories?q= (every story a
+ * search finds, S1-E5-04). The address decides the list (listFromParams()). A writer's every
+ * story, /u/:handle/stories, is ProfileStoriesPage (board C05).
  * What it shows: StoryListHeader (with the rating line under the title), the "Filter and sort"
  * button and its panel, then the stories as a grid with "Show 20 more" (StoryGrid), with the
  * list's banner across the grid after every two rows (bundle G7e; Robert, 20 Nov 2026; user

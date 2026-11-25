@@ -1612,9 +1612,12 @@ WriterProfilePage
         following, public bookshelves, posts the caller may read (forum_post_state_for_caller())
 /u/<username>/bookshelves → ProfileBookshelvesPage → useProfileBookshelves → profile_bookshelves()
         public bookshelves only, never a private one, as rows of covers (Shelf) with Open
+/u/<username>/stories → ProfileStoriesPage (board C05): ProfileHeader, then Ongoing, Completed
+        and Both (SegmentedControl, kept in ?status=) over ProfileStoryRow rows, 20 at a time
+        → useStoryList → browse_stories('writer', handle, completion)
 ```
 
-Tests: `414-profile-activity.test.sql`, `lib/profileShareLink.test.ts`, `e2e/profile-activity.spec.ts`.
+Tests: `414-profile-activity.test.sql`, `lib/profileShareLink.test.ts`, `e2e/profile-activity.spec.ts`, `e2e/profile-stories.spec.ts`.
 
 ## Likes, comments, reactions and downvotes on a chapter (S1-E6-03, S1-E6-01, S1-E6-02, S1-E6-04)
 

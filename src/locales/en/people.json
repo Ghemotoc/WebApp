@@ -158,5 +158,17 @@
     "openLabel": "Open the bookshelf {{name}}",
     "none": "{{name}} has no public bookshelf yet.",
     "loadFailed": "We couldn’t load the bookshelves. Check your connection and try again."
+  },
+  "stories": {
+    "documentTitle": "Stories by {{name}} · {{productName}}",
+    "statusLegend": "Which stories",
+    "ongoing": "Ongoing",
+    "completed": "Completed",
+    "both": "Both",
+    "noneOngoing": "{{name}} has no ongoing story.",
+    "noneCompleted": "{{name}} has no completed story yet.",
+    "loadMore": "Show {{count}} more",
+    "loadingMore": "Loading…",
+    "loadFailed": "We couldn’t load the stories. Check your connection and try again."
   }
 }

@@ -126,8 +126,7 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
     await expect(page).toHaveURL(/\/u\/adult_writer$/);
     await expect(card(page, 'Quiet orchard')).toBeVisible();
     await expect(card(page, 'Loud fairground')).toHaveCount(0);
-    // The profile's "View more" appears only past 20 stories (rule 20), so the address it would
-    // open is visited directly.
+    // "See every story" (board C05) opens the writer's every story; visited directly here.
     await page.goto('/u/adult_writer/stories');
     await expect(card(page, 'Quiet orchard')).toBeVisible();
     // A visitor never gets the 16+ story, on any list (CLAUDE.md rule 18).
