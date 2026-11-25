@@ -1017,7 +1017,8 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   background-color: transparent;
   background-image: none;
   box-shadow: none;
-  padding: 2.5rem 0 2.5rem;
+  /* 32 px above and below: a step of the design books spacing scale (look-rules). */
+  padding: 2rem 0;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
