@@ -15553,7 +15553,7 @@ export type Database = {
       };
       list_page_line: {
         Args: { list_key: string; list_kind: string; page_language: string };
-        Returns: string;
+        Returns: Json;
       };
       list_page_target: {
         Args: { list_key: string; list_kind: string };

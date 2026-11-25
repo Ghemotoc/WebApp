@@ -31449,12 +31449,12 @@ COMMENT ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_ke
 
 
 
-CREATE OR REPLACE FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") RETURNS "text"
+CREATE OR REPLACE FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
   -- The page's own language first, then English (LOCALISE-1: English is the main language).
-  select lines.line
+  select jsonb_build_object('line', lines.line, 'language', lines.language)
   from public.list_page_target(list_kind, list_key) as target
   join public.list_page_lines as lines
     on lines.category_id is not distinct from target.category_id
