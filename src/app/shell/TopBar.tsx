@@ -5,7 +5,8 @@
  * canvas Discover.web board).
  *
  * From left to right (the simplified design, bundle CALM-2): the logo and wordmark (BrandMark), one
- * link named "<brand name>, Home"; Home, Read, Library and Together in a recessed track with the
+ * link named "<brand name>, Home"; Home (Hub at /hub when signed in, Robert, 25 Nov 2026), Read,
+ * Library and Together in a recessed track with the
  * white bubble under the page on screen (NavTrack); then the end
  * slot: the quiet Write button, the round search link (HeaderSearch, user story 1.7), Messages and Notifications as icon buttons and the account avatar,
  * or the one "Get in" button for a visitor (GETIN-1). The pill wraps onto a second row when a window is only just wide
