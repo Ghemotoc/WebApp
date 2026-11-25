@@ -1716,9 +1716,9 @@ DiscoverPage
   │  (Continue, Draft, New story; the writers' box joins it when nothing is featured)
   ▼  DiscoverShelf × (the order of the setting discover_shelves) → useStoryShelf (21 rows)
 StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
-  │  StoryListHeader (breadcrumb, eyebrow, title, "n stories"; a deep genre band on a category)
-  │  StoryListFilters (category chips, status segments, language, sort)
-  ▼  StoryGrid ("Load more", 24 a page) → useStoryList
+  │  StoryListHeader (breadcrumb, title, one line: what the list is · "n stories" · ratings; a deep genre band on a category)
+  │  StoryListFilters ("Filter and sort" and a summary line; a Sheet with sort, status, language, category)
+  ▼  StoryGrid ("Show 20 more", 20 a page) → useStoryList
 both → api/storyLists.ts → browse_stories(list_kind, list_key, filters, sort_order, page_size, page_offset)
          listed_stories(): published, readable chapter, not moderated, rating_allows(), not is_blocked_with()
          list_holds_story(): which list; story_card_json(): one card, never a user ID

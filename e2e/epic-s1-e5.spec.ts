@@ -111,9 +111,12 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
       .getByRole('link', { name: 'Fiction' })
       .click();
     await expect(page).toHaveURL(/\/discover\/c\/fiction$/);
+    // The sort lives in the "Filter and sort" panel (user story 1.5); Done closes it.
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await expect(page.getByLabel('Sort by')).toHaveValue('popular');
     await page.getByLabel('Sort by').selectOption({ label: 'Title, A to Z' });
     await expect(page).toHaveURL(/sort=title_az/);
+    await page.getByRole('button', { name: 'Done' }).click();
     await card(page, 'Quiet orchard').click();
     await expect(page.getByRole('heading', { level: 1, name: 'Quiet orchard' })).toBeVisible();
     await expect(page.getByRole('list', { name: 'Story numbers' })).toContainText('1 chapter');

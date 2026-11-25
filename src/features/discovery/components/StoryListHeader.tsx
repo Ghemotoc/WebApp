@@ -1,22 +1,21 @@
 /**
- * StoryListHeader: the top of a story list page: breadcrumb, eyebrow, title and "24 stories"
- * (story S1-E5-09; board 3.10; liquid glass look from bundle G7c, boards DiscoverGenre,
- * DiscoverTag and DiscoverAll).
+ * StoryListHeader: the top of a story list page: breadcrumb, title and one line naming the list
+ * with "24 stories" (story S1-E5-09; board 3.10; user story 1.5, board A05-ReadList, which drops
+ * the eyebrow above the title).
  *
  * A category page opens with a deep band in its category's colour (categoryAccents.ts) with a
- * soft light glow in the top right; the breadcrumb, eyebrow, title and count sit inside it in
+ * soft light glow in the top right; the breadcrumb, title and line sit inside it in
  * white (the genre-band utility in index.css). An admin can choose another band colour for a
  * genre, and a band for a tag page, in Staff › Website › Genre and tag pages (bundle G12b;
  * useListPageBackground). Every other list (a tag with no band, Trending, a writer's stories, a
- * search) has no band: the breadcrumb, eyebrow and a large title sit on the page, as the
- * DiscoverTag and DiscoverAll boards draw them. The count is announced politely when a
+ * search) has no band: the breadcrumb and a large title sit on the page, as board A05 draws
+ * them. The count is announced politely when a
  * filter changes it. A sponsored category says "Sponsored by" under its heading (bundle
  * SPONSORS-b3; S1-E12-02 criterion 3); the list itself is the same with or without a sponsor.
  * Who uses it: StoryListPage. What it calls: useListPageBackground and SponsoredByLine.
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { SponsoredByLine } from '@/features/ads/components/SponsoredByLine';
 import { cn } from '@/lib/utils';
 
@@ -66,22 +65,28 @@ function ListBreadcrumb({ title }: { title: string }) {
 }
 
 /**
- * The eyebrow, the title and the count, the same inside the band and on the page.
+ * The title and the line under it, the same inside the band and on the page (board A05: a
+ * display title, then one muted line naming the list). The line is the list's description (its
+ * old eyebrow), the count and "Ratings above your age never show", joined by middots; the count
+ * is announced politely when a filter changes it.
  *
- * @param props.heading - the list's eyebrow and title
+ * @param props.heading - the list's description and title
  * @param props.total - how many stories, or null while loading
  * @returns the heading block
  */
 function ListHeading({ heading, total }: Pick<StoryListHeaderProps, 'heading' | 'total'>) {
   const { t } = useDiscoveryTranslation();
   return (
-    <div className="flex flex-col gap-3">
-      <Eyebrow>{heading.eyebrow}</Eyebrow>
+    <div className="flex flex-col gap-2">
       <h1 className="m-0 type-title lg:type-display break-words text-ink-heading">
         {heading.title}
       </h1>
-      <p aria-live="polite" className="m-0 min-h-6 type-long text-ink-muted">
-        {total === null ? '' : t('seeAll.count', { count: total })}
+      <p className="m-0 type-body text-ink-muted">
+        {heading.eyebrow}
+        {' · '}
+        <span aria-live="polite">{total === null ? '' : t('seeAll.count', { count: total })}</span>
+        {total === null ? '' : ' · '}
+        {t('seeAll.ratingShort')}
       </p>
     </div>
   );
@@ -99,7 +104,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
   const isCategory = request.kind === 'category';
   if (!isCategory && chosenTone === null) {
     return (
-      <header className="flex flex-col gap-4">
+      <header className="flex flex-col gap-3">
         <ListBreadcrumb title={heading.title} />
         <ListHeading heading={heading} total={total} />
       </header>

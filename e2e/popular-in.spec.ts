@@ -133,6 +133,8 @@ test.describe('"Popular in" a country (MARKETS-2d)', () => {
     browser,
   }) => {
     const page = await openAsVisitorFrom(browser, 'SE', '/discover/all/popular');
+    // The filters live in the "Filter and sort" panel (user story 1.5).
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     const filters = page.getByRole('group', { name: 'Filters' });
     await expect(filters.getByRole('combobox', { name: 'Popular in' })).toHaveValue('SE');
     expect(await specTitlesInOrder(page)).toEqual([
@@ -159,6 +161,7 @@ test.describe('"Popular in" a country (MARKETS-2d)', () => {
     await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
     const page = await context.newPage();
     await page.goto('/discover/all/popular');
+    await page.getByRole('button', { name: /Filter and sort|Filtrează și ordonează/ }).click();
     await expect(
       page
         .getByRole('group', { name: /Filters|Filtre/ })

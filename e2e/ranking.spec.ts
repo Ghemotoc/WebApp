@@ -129,6 +129,8 @@ test.describe('popularity ranking (S1-E5-03)', () => {
     const cards = page.getByRole('link', { name: /Liked lighthouse|Quiet harbour/ });
     await expect(cards).toHaveCount(2);
     await expect(cards.first()).toHaveAccessibleName(/Liked lighthouse/);
+    // The sort lives in the "Filter and sort" panel (user story 1.5).
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await expect(page.getByLabel('Sort by')).toHaveValue('popular');
     // Newest first puts the quieter, newer story on top instead.
     await page.getByLabel('Sort by').selectOption({ label: 'Newest' });

@@ -6,8 +6,10 @@
  * /discover/c/:categorySlug (a category page), /discover/t/:tag (a tag on the story page) and
  * /u/:handle/stories (a writer's profile) and /search/stories?q= (every story a search finds,
  * S1-E5-04). The address decides the list (listFromParams()).
- * What it shows: StoryListHeader, the filters, the rating note, then the stories as a grid with
- * "Load more" (StoryGrid), with the list's ad high up and after every 10 stories (bundle G7e). Filters and the sort live in the address, so a list can be shared;
+ * What it shows: StoryListHeader (with the rating line under the title), the "Filter and sort"
+ * button and its panel, then the stories as a grid with "Show 20 more" (StoryGrid), with the
+ * list's ad high up and after every 10 stories (bundle G7e; user story 1.5, board A05). Filters
+ * and the sort live in the address, so a list can be shared;
  * the sort is also kept for the rest of the visit (S1-E5-02).
  * Nothing on the page depends on what the reader has read (S1-E5-09's legal note); the database
  * leaves out what this reader may not see (ratings, blocks, drafts, moderation).
@@ -117,13 +119,8 @@ function ListResults({
         {t('seeAll.clearFilters')}
       </Button>
     );
-    return (
-      <EmptyState
-        title={t('seeAll.empty')}
-        description={t('seeAll.emptyFiltered')}
-        action={clear}
-      />
-    );
+    // User story 1.5: "Nothing matches these filters", with Clear filters.
+    return <EmptyState title={t('seeAll.nothingMatches')} action={clear} />;
   }
   return <EmptyState title={t('seeAll.empty')} description={t('discover.empty')} />;
 }
@@ -219,7 +216,6 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
         <>
           <StoryListFilters request={request} sortOrder={sortOrder} onChange={changeRequest} />
           <PopularInNote request={request} rankedCountry={list.popularIn} />
-          <p className="m-0 type-body text-ink-muted">{t('seeAll.ratingNote')}</p>
           {/* The classics list's wide banner sits high, above the stories (G7e). */}
           {request.kind === 'classics' && listAdSlot(request)}
           <ListResults
