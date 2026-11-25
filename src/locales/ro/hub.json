@@ -44,15 +44,15 @@
     },
     "guides": {
       "eyebrow": "Ghiduri pas cu pas",
-      "previous": "Ghidurile de dinainte",
-      "next": "Ghidurile următoare",
-      "position": "Ghidurile de la {{first}} la {{last}} din {{total}}",
       "none": "Ghidurile sunt pe drum. Până atunci, Centrul de ajutor are răspunsurile.",
       "kind": "Ghid",
       "heading": "Ghiduri de scris",
       "minutes_one": "{{count}} minut de citit",
       "minutes_few": "{{count}} minute de citit",
-      "minutes_other": "{{count}} de minute de citit"
+      "minutes_other": "{{count}} de minute de citit",
+      "minutesShort_one": "{{count}} min",
+      "minutesShort_few": "{{count}} min",
+      "minutesShort_other": "{{count}} de min"
     },
     "tools": {
       "eyebrow": "Instrumente",
@@ -139,10 +139,11 @@
       "pace_few": "{{formatted}} cuvinte pe zi te țin în ritm",
       "pace_other": "{{formatted}} de cuvinte pe zi te țin în ritm",
       "goalReached": "Ținta lunii e atinsă",
-      "seeBadges": "Vezi insignele",
       "barLabel": "{{percent}}% din ținta lunii de scris",
       "wordsOfGoal": "{{words}} din {{goal}} de cuvinte",
-      "percentOfGoal": "{{percent}}% din obiectiv"
+      "percentOfGoal": "{{percent}}% din obiectiv",
+      "heading": "Luna de scris · ziua {{day}}",
+      "seeBoard": "Vezi panoul lunii de scris"
     },
     "path": {
       "eyebrow": "Traseu de învățare",
@@ -177,7 +178,9 @@
         "18_plus": "18+"
       },
       "remindFailed": "Nu am putut schimba mementoul. Poate că sesiunea a început. Încearcă din nou.",
-      "loadFailed": "Nu am putut încărca sesiunile live. Verifică conexiunea și încearcă din nou."
+      "loadFailed": "Nu am putut încărca sesiunile live. Verifică conexiunea și încearcă din nou.",
+      "kind": "Sesiune",
+      "liveTitle": "În direct: {{title}}"
     },
     "homeComment": {
       "heading": "Echipa ar vrea să arate acest comentariu pe pagina principală",
@@ -191,7 +194,6 @@
       "withdraw": "Scoate comentariul"
     },
     "home": {
-      "dayLine": "Luna de scris, ziua {{day}}",
       "welcomeLead": "Bine ai revenit,",
       "welcomeName": "{{name}}.",
       "welcomeNoName": "Bine ai revenit.",
@@ -201,7 +203,17 @@
       "contestsClosing_other": "{{count}} de concursuri se încheie luna aceasta.",
       "fresh": "O poveste, o poezie sau un eseu. Nimeni nu le vede până nu le publici.",
       "keepWriting": "Scrie mai departe capitolul {{number}}",
-      "newStory": "Începe o poveste nouă"
+      "newStory": "Începe o poveste nouă",
+      "activity": {
+        "label": "Săptămâna aceasta",
+        "comments_one": "{{count}} comentariu nou la capitole",
+        "comments_few": "{{count}} comentarii noi la capitole",
+        "comments_other": "{{count}} de comentarii noi la capitole",
+        "followers_one": "{{count}} urmăritor nou săptămâna aceasta",
+        "followers_few": "{{count}} urmăritori noi săptămâna aceasta",
+        "followers_other": "{{count}} de urmăritori noi săptămâna aceasta",
+        "newChapter": "{{name}} a publicat un capitol nou"
+      }
     },
     "continue": {
       "heading": "Continuă lectura",
