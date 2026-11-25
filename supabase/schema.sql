@@ -34919,22 +34919,35 @@ begin
     raise exception 'Sign in to see your plans.' using errcode = 'insufficient_privilege';
   end if;
 
-  -- Step 2: the caller's live stories and their plans; the words come from the chapters' own
-  -- counts, the same sum the at-a-glance page shows (story_plan_chapters()).
+  -- Step 2: the caller's live stories and their plans. The words come from the chapters' own
+  -- counts, the same sum the at-a-glance page shows (story_plan_chapters()); a chapter counts as
+  -- out once it is published; the edit time is the newest of the plan, the story and its chapters.
   return coalesce((
     select jsonb_agg(jsonb_build_object(
-             'slug', stories.slug,
-             'logline', plans.logline,
-             'writing_status', plans.writing_status,
-             'word_target', plans.word_target,
-             'words_written', coalesce((
-               select sum(chapters.word_count) from public.chapters
-               where chapters.story_id = stories.id and chapters.deleted_at is null
-             ), 0))
-           order by greatest(plans.updated_at, stories.updated_at) desc)
-    from public.stories
-    join public.story_plans as plans on plans.story_id = stories.id
-    where stories.user_id = caller_id and stories.deleted_at is null
+             'slug', listed.slug,
+             'logline', listed.logline,
+             'writing_status', listed.writing_status,
+             'word_target', listed.word_target,
+             'words_written', listed.words_written,
+             'published_chapters', listed.published_chapters,
+             'edited_at', listed.edited_at)
+           order by listed.edited_at desc)
+    from (
+      select stories.slug, plans.logline, plans.writing_status, plans.word_target,
+        coalesce(chapter_totals.words_written, 0) as words_written,
+        coalesce(chapter_totals.published_chapters, 0) as published_chapters,
+        greatest(plans.updated_at, stories.updated_at, chapter_totals.last_chapter_edit) as edited_at
+      from public.stories
+      join public.story_plans as plans on plans.story_id = stories.id
+      left join lateral (
+        select sum(chapters.word_count) as words_written,
+          count(*) filter (where chapters.status = 'published') as published_chapters,
+          max(chapters.updated_at) as last_chapter_edit
+        from public.chapters
+        where chapters.story_id = stories.id and chapters.deleted_at is null
+      ) as chapter_totals on true
+      where stories.user_id = caller_id and stories.deleted_at is null
+    ) as listed
   ), '[]'::jsonb);
 end;
 $$;
@@ -34943,7 +34956,7 @@ $$;
 ALTER FUNCTION "public"."my_story_plans"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_story_plans"() IS 'The caller''s story plans for the /plan list: slug, logline, writing status, word target and words written (G10a).';
+COMMENT ON FUNCTION "public"."my_story_plans"() IS 'The caller''s story plans for the /plan list, newest edit first: slug, logline, writing status, word target, words written, published chapters and the last edit (G10a; bundle 6, board E20).';
 
 
 

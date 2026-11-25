@@ -123,7 +123,6 @@ const infoPillUsers = new Set([
   '/src/features/atlas/components/PublicCharacter.tsx',
   '/src/features/atlas/components/PublicWorld.tsx',
   '/src/features/atlas/components/PublicWorldEntry.tsx',
-  '/src/features/atlas/components/StoryPlanCard.tsx',
   '/src/features/atlas/components/StorySummary.tsx',
   '/src/features/atlas/components/TimelineEventItem.tsx',
   '/src/features/atlas/components/TimelineView.tsx',

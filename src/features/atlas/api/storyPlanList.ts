@@ -1,6 +1,6 @@
 /**
- * Reads the list of the writer's story plans for /plan (bundle G10 ATLAS, part a; board AtlasHome:
- * "Your story plans").
+ * Reads the list of the writer's story plans for /plan (bundle G10 ATLAS, part a; redrawn as the
+ * list of board E20, user stories bundle 6, story 6.1).
  *
  * Who calls it: hooks/useMyStoryPlans.ts.
  * What it calls next: Supabase, my_story_plans() (supabase/migrations/…_g10a_atlas_glance.sql),
@@ -11,13 +11,17 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 
 import type { WritingStatus } from './storyPlans';
 
-/** One story's plan, as a card on /plan shows it. */
+/** One story's plan, as a row on /plan shows it. */
 export interface StoryPlanSummary {
   slug: string;
   logline: string;
   writingStatus: WritingStatus;
   wordTarget: number;
   wordsWritten: number;
+  /** How many of its chapters are published ("6 chapters out"; board E20). */
+  publishedChapters: number;
+  /** When the plan, the story or a chapter was last edited ("edited 10 min ago"). */
+  editedAt: string;
 }
 
 /** One row as my_story_plans() answers it. */
@@ -27,13 +31,15 @@ interface StoryPlanSummaryRow {
   writing_status: WritingStatus;
   word_target: number;
   words_written: number;
+  published_chapters: number;
+  edited_at: string;
 }
 
 /** The cache key of the writer's list of plans. */
 export const myStoryPlansQueryKey = (userId: string | null) => ['my-story-plans', userId];
 
 /**
- * Reads the writer's story plans, the one changed last first.
+ * Reads the writer's story plans, the newest edit first (board E20).
  *
  * @param client - the shared Supabase client
  * @returns one summary per live story; empty for a writer with no stories
@@ -52,5 +58,7 @@ export async function fetchMyStoryPlans(client: AppSupabaseClient): Promise<Stor
     writingStatus: row.writing_status,
     wordTarget: row.word_target,
     wordsWritten: row.words_written,
+    publishedChapters: row.published_chapters,
+    editedAt: row.edited_at,
   }));
 }
