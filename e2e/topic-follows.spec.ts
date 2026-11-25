@@ -11,7 +11,10 @@
  * - Library's "What you follow" lists the genre and the tag, and unfollowing there takes them
  *   away (user story 1.6: "Library's What you follow lists them");
  * - a visitor is offered the log-in link instead of the button.
- * Test data: teacher's genre and tag follows; removed after. The seeded classics give the tags.
+ * Test data: one published chapter on the seed story Stația meteo (fiction, tagged Grandparents,
+ * Family and Set in Romania), so the genre and tag pages have a story to count tags over without
+ * leaning on what an earlier spec in the same shard published; and teacher's genre and tag
+ * follows. Both are removed after.
  */
 import { expect, test, type Browser } from '@playwright/test';
 
@@ -21,10 +24,22 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 
 const teacherId = '00000000-0000-4000-8000-000000000007';
 
-/** Removes teacher's genre and tag follows and puts the seed language back. */
+/** Removes this spec's chapter and teacher's follows, and puts the seed language back. */
 function cleanUp() {
-  runSql(`delete from public.topic_follows where user_id = '${teacherId}';
+  runSql(`delete from public.chapters where code = 'topice01';
+    delete from public.topic_follows where user_id = '${teacherId}';
     update public.profiles set locale = 'ro' where handle = 'teacher';`);
+}
+
+/**
+ * Publishes one chapter on Stația meteo, so the fiction genre lists a story with tags. The seed
+ * itself publishes nothing, and topic_tags() counts only stories a reader can open.
+ */
+function publishSeedChapter() {
+  runSql(`insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body,
+      word_count, status, published_title, published_body, published_word_count, first_published_at)
+    values ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-000000000001',
+      'topice01', 1, 'Unu', 'x', 1, 'published', 'Unu', 'Text.', 800, now());`);
 }
 
 /**
@@ -54,7 +69,10 @@ async function openAs(browser: Browser, isTeacher: boolean, path: string) {
 
 test.describe('genre and tag follows (BOOKS-A06, BOOKS-A09)', () => {
   test.describe.configure({ mode: 'serial' });
-  test.beforeAll(cleanUp);
+  test.beforeAll(() => {
+    cleanUp();
+    publishSeedChapter();
+  });
   test.afterAll(cleanUp);
 
   test('teacher follows a genre from its page, under its tags', async ({ browser }) => {
