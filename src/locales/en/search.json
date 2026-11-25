@@ -80,5 +80,9 @@
     "tipSpelling": "Check the spelling.",
     "tipFewer": "Use fewer or shorter words.",
     "tipTag": "Search for a tag, such as “fantasy”."
+  },
+  "trending": {
+    "heading": "Trending tags",
+    "tag": "#{{tag}}"
   }
 }

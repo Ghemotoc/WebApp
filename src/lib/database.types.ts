@@ -18847,6 +18847,7 @@ export type Database = {
         Args: { target_tier: Database['public']['Enums']['case_tier'] };
         Returns: number;
       };
+      trending_tags: { Args: { how_many?: number }; Returns: Json };
       undo_decision_for_appeal: {
         Args: {
           appeal_reference: string;
