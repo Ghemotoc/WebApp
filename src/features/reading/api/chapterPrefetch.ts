@@ -13,8 +13,13 @@
  * Who calls it: the reader route's loader (prefetchChapter) and hooks/useChapter.ts
  * (peekAnsweredChapter, forgetAnsweredChapter, takePrefetchedChapter).
  * What it calls: api/chapter.ts → get_chapter(), through the shared Supabase client, which reads
- * the stored session itself, so the answer is the one the signed-in reader would get.
+ * the stored session itself, so the answer is the one the signed-in reader would get; and
+ * prepareShortDateFormat() (src/lib/local-time.ts), so the date in the chapter's meta line is
+ * ready before the chapter arrives, and holdForReader() (src/lib/readerFirst.ts), so the app's
+ * other requests wait until the first paragraph is painted (the reader speed check, 25 Nov 2026).
  */
+import { prepareShortDateFormat } from '@/lib/local-time';
+import { holdForReader } from '@/lib/readerFirst';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchChapter, type ReaderChapter } from './chapter';
@@ -38,6 +43,13 @@ function addressKey(storySlug: string, chapterCode: string): string {
  * @param chapterCode - the chapter's code
  */
 export function prefetchChapter(storySlug: string, chapterCode: string): void {
+  // Step 1: the app's other requests wait until the first paragraph is painted, so the chapter
+  // is drawn first (src/lib/readerFirst.ts).
+  holdForReader();
+  // Step 2: while the network works, make the meta line's date format (the page's language is
+  // set before the router starts, in main.tsx).
+  prepareShortDateFormat(document.documentElement.lang || 'ro');
+  // Step 3: start the read itself.
   const read = (async () => {
     const client = await getSupabaseClient();
     if (client === null) throw new Error('The app is not connected to its database.');
