@@ -78,7 +78,8 @@ function editorStreak(): string {
  * Opens an address as a persona, in English, on a device in Romania.
  *
  * @param withFakeClock - true to put the page on Playwright's clock before it loads, so every
- *   timer the page starts (the reading minute's interval) is one the test can move on
+ *   timer the page starts (the reading minute's interval) is one the test can move on; it then
+ *   returns only once the streak has loaded, so the minute's timer is running
  * @returns the page
  */
 async function openAs(
@@ -93,8 +94,21 @@ async function openAs(
   const page = await context.newPage();
   // The clock goes in before the page loads: installed after, a timer the chapter started while
   // loading would run on real time and never fire when the test moves the clock on.
-  if (withFakeClock) await page.clock.install();
+  if (!withFakeClock) {
+    await page.goto(address);
+    return page;
+  }
+  await page.clock.install();
+  // The reader holds the app's other requests until its first paragraph is painted, and on the
+  // fake clock that paint and the hold's own 1.5 s limit wait for the clock (src/lib/readerFirst.ts).
+  // The minute's timer starts only once the streak (my_reading_habit) has answered, so the page
+  // moves on past the hold and waits for that answer; a minute moved on before it never counted.
+  const streakLoaded = page.waitForResponse((response) =>
+    response.url().includes('my_reading_habit'),
+  );
   await page.goto(address);
+  await page.clock.runFor(1_600);
+  await streakLoaded;
   return page;
 }
 
