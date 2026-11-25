@@ -21,13 +21,14 @@
  * What it calls: useChapter, ChapterReading, ChapterMissing (loaded only when needed) and the
  * notices above.
  */
-import { lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { parseSpot, type SpotRange } from '@/lib/chapter-blocks';
+import { releaseForReader } from '@/lib/readerFirst';
 
 import type { ReaderChapter } from '../api/chapter';
 import { useChapter } from '../hooks/useChapter';
@@ -129,6 +130,32 @@ function ChapterShown(props: {
  *
  * @returns the reader, the teaser, a wait, a plain message, or "not available"
  */
+/**
+ * Whether the reader shows the chapter's text (ChapterReading) rather than a notice or a teaser.
+ *
+ * @param chapter - the answer, or null when there is no chapter for this reader
+ * @returns true when ChapterReading draws the text
+ */
+function showsText(chapter: ReaderChapter | null): boolean {
+  if (chapter === null || chapter.body === null) return false;
+  if (chapter.missingTranslation !== null || chapter.appOnly) return false;
+  return !chapter.needsAdultAnswer && !chapter.isTeaser;
+}
+
+/**
+ * Lets the app's other requests go (src/lib/readerFirst.ts) when there is no text to paint
+ * first, and when the reader is left. ChapterReading lets them go itself once the text is painted.
+ *
+ * @param chapter - the answer, or null
+ * @param isSettled - true once the answer is in or the read failed
+ */
+function useReleaseWithoutText(chapter: ReaderChapter | null, isSettled: boolean): void {
+  useEffect(() => {
+    if (isSettled && !showsText(chapter)) releaseForReader();
+  }, [chapter, isSettled]);
+  useEffect(() => releaseForReader, []);
+}
+
 export function ChapterReaderPage() {
   const { t } = useTranslation('reading');
   const { storySlug = '', chapterCode = '', spot } = useParams();
@@ -138,6 +165,7 @@ export function ChapterReaderPage() {
   // CALM-9s: the footer under the reader says what the story is, as on the story page, but only
   // when this reader may see the chapter (a rating or a missing chapter keeps it out).
   useStoryStatement(storySlug, isLoaded && chapter !== null);
+  useReleaseWithoutText(chapter, isLoaded || loadFailed);
 
   if (loadFailed) {
     return (
