@@ -123,8 +123,13 @@ test.describe('search (S1-E5-04)', () => {
       .getByText(/^Writers/)
       .click();
     await expect(page).toHaveURL(/in=writers/);
+    // The row's link carries the writer's name; the username sits in the meta line under it.
     await page
-      .getByRole('link', { name: /@teacher/ })
+      .getByRole('list', { name: 'Writers' })
+      .getByRole('listitem')
+      .filter({ hasText: '@teacher' })
+      .first()
+      .getByRole('link')
       .first()
       .click();
     await expect(page).toHaveURL(/\/u\/teacher$/);
