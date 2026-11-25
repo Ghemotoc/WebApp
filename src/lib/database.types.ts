@@ -10950,6 +10950,56 @@ export type Database = {
           },
         ];
       };
+      topic_follows: {
+        Row: {
+          category_id: string | null;
+          created_at: string;
+          id: string;
+          tag_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'topic_follows_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'topic_follows_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'topic_follows_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       username_approvals: {
         Row: {
           approved_by_user_id: string;
@@ -17726,6 +17776,10 @@ export type Database = {
         Args: { new_note?: string; new_points?: number; target_id: string; target_kind: string };
         Returns: Json;
       };
+      set_topic_follow: {
+        Args: { should_follow: boolean; topic_key: string; topic_kind: string };
+        Returns: boolean;
+      };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
       share_options: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
@@ -18796,6 +18850,18 @@ export type Database = {
       tier_rank: {
         Args: { target_tier: Database['public']['Enums']['case_tier'] };
         Returns: number;
+      };
+      topic_follow_state: { Args: { topic_key: string; topic_kind: string }; Returns: boolean };
+      topic_ids_of: {
+        Args: { topic_key: string; topic_kind: string };
+        Returns: {
+          category_id: string;
+          tag_id: string;
+        }[];
+      };
+      topic_tags: {
+        Args: { how_many?: number; topic_key: string; topic_kind: string };
+        Returns: Json;
       };
       undo_decision_for_appeal: {
         Args: {

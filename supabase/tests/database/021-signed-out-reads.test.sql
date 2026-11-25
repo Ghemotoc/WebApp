@@ -303,6 +303,8 @@ select results_eq(
        ('tag_names', (select count(*) from public.tag_names)),
        ('tags', (select count(*) from public.tags where status = 'approved')),
        ('teacher_checks', 0::bigint),
+       -- Followed genres and tags: the member's own (BOOKS-A06).
+       ('topic_follows', 0::bigint),
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint),
        -- The waiting list: each person's own entry and owner and admin (WAITLIST-1).

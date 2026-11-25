@@ -8,9 +8,11 @@
  * can still choose a band colour for a genre or a tag page in Staff › Website › Genre and tag
  * pages (bundle G12b; useListPageBackground); the breadcrumb, title and line then sit inside it
  * in white (the genre-band utility in index.css). The count is announced politely when a filter
- * changes it. A sponsored category says "Sponsored by" under its heading (bundle SPONSORS-b3;
+ * changes it. On a genre or tag page the Follow button and the tag links follow (TopicFollowBar;
+ * BOOKS-A06, BOOKS-A09). A sponsored category says "Sponsored by" under its heading (bundle SPONSORS-b3;
  * S1-E12-02 criterion 3), with or without a band.
- * Who uses it: StoryListPage. What it calls: useListPageBackground and SponsoredByLine.
+ * Who uses it: StoryListPage. What it calls: useListPageBackground, TopicFollowBar and
+ * SponsoredByLine.
  */
 import { Link } from 'react-router';
 
@@ -21,6 +23,7 @@ import type { ListRequest } from '../api/storyLists';
 import { useListPageBackground } from '../hooks/useListPageBackground';
 import type { ListTitle } from '../hooks/useListTitle';
 import { accentDeepBandClasses } from '../lib/categoryAccents';
+import { TopicFollowBar } from './TopicFollowBar';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 /** What the header needs. */
@@ -91,6 +94,18 @@ function ListHeading({ heading, total }: Pick<StoryListHeaderProps, 'heading' | 
 }
 
 /**
+ * The Follow button and tag links, on a genre or tag page only (boards A06 and A09).
+ *
+ * @param props.request - the list
+ * @param props.title - the page's title
+ * @returns the bar, or null on any other list
+ */
+function TopicBar({ request, title }: { request: ListRequest; title: string }) {
+  if (request.kind !== 'category' && request.kind !== 'tag') return null;
+  return <TopicFollowBar topicKind={request.kind} topicKey={request.key ?? ''} title={title} />;
+}
+
+/**
  * Renders the header: the deep band on a category page, the plain heading on any other list.
  *
  * @returns the header
@@ -107,6 +122,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
         <ListBreadcrumb title={heading.title} />
         <ListHeading heading={heading} total={total} />
         {isCategory && <SponsoredByLine kind="category" slug={request.key ?? ''} />}
+        <TopicBar request={request} title={heading.title} />
       </header>
     );
   }
@@ -126,6 +142,7 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
         <ListBreadcrumb title={heading.title} />
         <ListHeading heading={heading} total={total} />
         {isCategory && <SponsoredByLine kind="category" slug={listKey} />}
+        <TopicBar request={request} title={heading.title} />
       </div>
     </header>
   );

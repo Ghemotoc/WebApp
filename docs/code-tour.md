@@ -1597,6 +1597,8 @@ WriterProfilePage → useWriterProfile → api/writerProfile.ts → get_writer_p
 
 Blocks: `blocks` (the blocker's own rows only) and `is_blocked_with()`, which replaced Lane A's stub, so `get_chapter()`, `record_chapter_read()`, `get_story_page()`, the profile and the follow functions all respect a block in both directions. A block ends follows both ways; the blocked person sees "This profile isn't available", never "you are blocked". Follows: `follows_users` and `follows_stories`, written only through `follow_writer()` and `follow_story()` (account gate; a blocked pair silently stays "not following"); the count is public, the list is the writer's only (Q50). The story page shows `FollowButton` twice: on the writer card and as "Follow story" under the title. Settings › "About you" saves the bio with `set_my_bio()`; "Blocked accounts" lists `my_blocked_accounts()` with Unblock.
 
+Genre and tag follows (BOOKS-A06, BOOKS-A09): a genre or tag page shows `TopicFollowBar` under its title (`src/features/discovery/components/`): the shared `FollowButton` ("Follow Fiction", "Follow this tag") writes `topic_follows` only through `set_topic_follow()` (a slug or tag name, never an ID; account gate; only approved tags), and the "#tag" links come from `topic_tags()`, counted only over stories `listed_stories()` lets the reader see. Library's "What you follow" lists them from `my_follows()` (`FollowingSection`). Tests: `407-topic-follows` and `e2e/topic-follows.spec.ts`.
+
 Tests: `143-writer-profile-and-blocks.test.sql`, `144-follows.test.sql`, `lib/formatting.test.ts`, `e2e/writer-profile.spec.ts`, `e2e/follows.spec.ts`.
 
 ## Likes, comments, reactions and downvotes on a chapter (S1-E6-03, S1-E6-01, S1-E6-02, S1-E6-04)
@@ -1915,7 +1917,7 @@ What the comments, reactions and follows epic left in place. The epic report, `d
 | Kind | Where | Story |
 | --- | --- | --- |
 | Screens | the like button and the comments under the chapter (`src/features/reading/components/LikeButton.tsx`, `src/features/comments/`), Follow on the writer's profile and the story page (`src/features/people/components/FollowButton.tsx`) | 6-03, 6-01, 6-02, 6-04, 6-05 |
-| Tables | `chapter_likes`, `story_likes`, `comments`, `comment_reactions`, `comment_downvotes`, `follows_users`, `follows_stories` | each story |
+| Tables | `chapter_likes`, `story_likes`, `comments`, `comment_reactions`, `comment_downvotes`, `follows_users`, `follows_stories`, `topic_follows` | each story |
 | Functions | `like_chapter()`, `chapter_comments()`, `post_comment()`, `delete_comment()`, `react_to_comment()`, `downvote_comment()` (with `open_downvote_case()`), `follow_writer()`, `follow_story()`; every one asks `readable_chapter()` or the profile's rules first | each story |
 | Jobs | `purge-deleted-comments` nightly; `post_comment()` queues `comment_posted` for notifications | 6-01 |
 | Tests | `148`, `149`, `150`, `153`, `144` and `096` (the epic); `e2e/epic-s1-e6.spec.ts` and each story's spec | each story, S1-E6-QA |

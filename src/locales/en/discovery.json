@@ -178,5 +178,9 @@
     "whyMoreBy": "Other stories by the writer of this one that you can read.",
     "whyLikeThis": "At least 5 readers who finished this story also finished these. Only totals are counted, never who.",
     "whyBecause": "You finished {{title}}, and at least 5 readers who finished it also finished these. Turn this off in Settings › Privacy, under Suggestions from reading."
+  },
+  "topicTags": {
+    "top": "Tags in this genre",
+    "related": "Related"
   }
 }

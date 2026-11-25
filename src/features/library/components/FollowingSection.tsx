@@ -1,6 +1,9 @@
 /**
- * FollowingSection: "What you follow", the writers and stories the reader follows, each with its
- * Following button (story S1-E4-03; board New-Library, bundle CALM-7c; follows from S1-E6-05).
+ * FollowingSection: "What you follow", the writers, stories, genres and tags the reader follows,
+ * each with its Following button (story S1-E4-03; board New-Library, bundle CALM-7c; follows from
+ * S1-E6-05; genres and tags since BOOKS-A06, user story 1.6: "Library's What you follow lists
+ * them"). The genres and tags group shows only once something is in it, so a reader who follows
+ * none sees the board's two groups.
  *
  * Board values: the heading with "Notification settings" at the top right (Settings at its
  * notifications part, GAPS-6), the line "A notification comes when they publish something new.",
@@ -20,6 +23,8 @@ import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import type { ListedStory } from '@/features/discovery/api/storyLists';
 import { FollowButton } from '@/features/people/components/FollowButton';
+
+import type { FollowTarget } from '@/features/people/api/follows';
 
 import type { FollowedWriter } from '../api/library';
 import { useMyFollows } from '../hooks/useLibraryOverview';
@@ -104,6 +109,56 @@ function StoryRow({ story }: { story: ListedStory }) {
   );
 }
 
+/**
+ * One genre or tag row: its page's name as a link, then the shared Following button.
+ *
+ * @param props.target - the genre or the tag
+ * @param props.label - "Fiction" or "#mystery"
+ * @param props.address - the genre's or the tag's page
+ * @returns the row
+ */
+function TopicRow(props: { target: FollowTarget; label: string; address: string }) {
+  return (
+    <li className="flex items-center gap-4 border-t border-(--hairline) py-3">
+      <Link
+        to={props.address}
+        className="min-w-0 flex-1 font-semibold break-words text-ink-heading no-underline hover:underline"
+      >
+        {props.label}
+      </Link>
+      <FollowButton target={props.target} targetLabel={props.label} />
+    </li>
+  );
+}
+
+/**
+ * The genres, then the tags, as rows.
+ *
+ * @param props.genres - the genres' slugs
+ * @param props.tags - the tags' names
+ * @returns the rows
+ */
+function useTopicRows(genres: string[], tags: string[]): ReactNode[] {
+  const { t } = useLibraryTranslation();
+  const genreRows = genres.map((slug) => (
+    <TopicRow
+      key={`genre-${slug}`}
+      target={{ kind: 'genre', slug }}
+      label={t(`categories.${slug}`, { ns: 'writing' })}
+      address={`/discover/c/${encodeURIComponent(slug)}`}
+    />
+  ));
+  const tagRows = tags.map((name) => (
+    <TopicRow
+      key={`tag-${name}`}
+      target={{ kind: 'tag', name }}
+      label={`#${name}`}
+      address={`/discover/t/${encodeURIComponent(name)}`}
+    />
+  ));
+  return [...genreRows, ...tagRows];
+}
+
 /** A subheading and its rows, or the line that says how to fill them. */
 function FollowGroup(props: { heading: string; emptyText: string; children: ReactNode[] }) {
   return (
@@ -147,6 +202,7 @@ function FollowingHeading() {
 export function FollowingSection() {
   const { t } = useLibraryTranslation();
   const { follows } = useMyFollows();
+  const topicRows = useTopicRows(follows?.genres ?? [], follows?.tags ?? []);
   if (follows === null) return null;
   return (
     <section aria-labelledby="library-following-heading" className="flex min-w-0 flex-col gap-6">
@@ -167,6 +223,11 @@ export function FollowingSection() {
           <StoryRow key={story.slug} story={story} />
         ))}
       </FollowGroup>
+      {topicRows.length > 0 && (
+        <FollowGroup heading={t('following.topics', { count: topicRows.length })} emptyText="">
+          {topicRows}
+        </FollowGroup>
+      )}
     </section>
   );
 }

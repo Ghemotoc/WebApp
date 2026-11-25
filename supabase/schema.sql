@@ -1561,6 +1561,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('story_plans', 'delete', 3, null),
     ('story_tags', 'own_step', 0, 'deleted with their story, unless the story is kept for a case'),
     ('teacher_checks', 'delete', 1, null),
+    ('topic_follows', 'delete', 1, null),
     ('username_approvals', 'delete', 1, null),
     ('waitlist_entries', 'delete', 1, null),
     ('writer_ranks', 'delete', 1, null),
@@ -23252,6 +23253,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('story_plans', true, null),
     ('story_tags', true, null),
     ('teacher_checks', true, null),
+    ('topic_follows', true, null),
     ('username_approvals', false, 'a moderator''s note that a name was refused by mistake; the name itself is in the profile'),
     ('waitlist_entries', true, null),
     ('writer_spotlights', true, null),
@@ -33708,6 +33710,8 @@ declare
   caller_id uuid := (select auth.uid());
   writers jsonb;
   followed_stories jsonb;
+  genres jsonb;
+  followed_tags jsonb;
 begin
   if caller_id is null then
     raise exception 'Log in to see who you follow.' using errcode = 'insufficient_privilege';
@@ -33733,7 +33737,20 @@ begin
   join public.stories on stories.id = follows_stories.story_id
   where follows_stories.user_id = caller_id
     and exists (select 1 from public.reader_visible_story(stories.slug));
-  return jsonb_build_object('writers', writers, 'stories', followed_stories);
+  -- Step 3: the genres, in the order the app lists them.
+  select coalesce(jsonb_agg(categories.slug order by categories.position), '[]'::jsonb)
+  into genres
+  from public.topic_follows
+  join public.categories on categories.id = topic_follows.category_id
+  where topic_follows.user_id = caller_id;
+  -- Step 4: the tags, still approved, by name.
+  select coalesce(jsonb_agg(tags.name order by tags.name), '[]'::jsonb)
+  into followed_tags
+  from public.topic_follows
+  join public.tags on tags.id = topic_follows.tag_id
+  where topic_follows.user_id = caller_id and tags.status = 'approved';
+  return jsonb_build_object('writers', writers, 'stories', followed_stories,
+    'genres', genres, 'tags', followed_tags);
 end;
 $$;
 
@@ -33741,7 +33758,7 @@ $$;
 ALTER FUNCTION "public"."my_follows"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_follows"() IS 'The writers and stories the caller follows, for the Library (S1-E4-03).';
+COMMENT ON FUNCTION "public"."my_follows"() IS 'The writers, stories, genres and tags the caller follows, for the Library (S1-E4-03, BOOKS-A06).';
 
 
 
@@ -48525,6 +48542,48 @@ COMMENT ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  topic record;
+begin
+  -- Step 1: who and what.
+  if caller_id is null then
+    raise exception 'Log in to follow a genre or a tag.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into topic from public.topic_ids_of(topic_kind, topic_key);
+  if not found then
+    raise exception 'There is no such genre or tag.' using errcode = 'no_data_found';
+  end if;
+  -- Step 2: unfollowing is always allowed, even for a read-only account.
+  if not should_follow then
+    delete from public.topic_follows where topic_follows.user_id = caller_id
+      and (topic_follows.category_id = topic.category_id or topic_follows.tag_id = topic.tag_id);
+    return false;
+  end if;
+  -- Step 3: following is a write, so the account gate applies (architecture 1.7.8).
+  if not public.is_active_member() then
+    raise exception 'Your account can''t follow anything right now.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 4: follow; doing it twice changes nothing.
+  insert into public.topic_follows (user_id, category_id, tag_id)
+  values (caller_id, topic.category_id, topic.tag_id)
+  on conflict do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) IS 'Follows or unfollows a genre or an approved tag (BOOKS-A06, BOOKS-A09).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     SET "search_path" TO ''
@@ -54718,6 +54777,90 @@ COMMENT ON FUNCTION "public"."tier_rank"("target_tier" "public"."case_tier") IS 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.topic_ids_of(topic_kind, topic_key) as topic
+    join public.topic_follows on topic_follows.user_id = (select auth.uid())
+      and (topic_follows.category_id = topic.category_id or topic_follows.tag_id = topic.tag_id));
+$$;
+
+
+ALTER FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") IS 'Whether the caller follows a genre or a tag (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") RETURNS TABLE("category_id" "uuid", "tag_id" "uuid")
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: a genre, by its slug.
+  if topic_kind = 'category' then
+    return query select categories.id, null::uuid from public.categories where categories.slug = topic_key;
+    return;
+  end if;
+  -- Step 2: a tag, by any look-alike of its name, and only once staff approved it (CMS-1e).
+  if topic_kind = 'tag' then
+    return query select null::uuid, tags.id from public.tags
+      where tags.normalised_name = public.normalise_tag(topic_key) and tags.status = 'approved';
+    return;
+  end if;
+  raise exception 'Only a genre or a tag can be followed.' using errcode = 'invalid_parameter_value';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") IS 'Internal: the genre or approved tag a page names (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer DEFAULT 8) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  wanted integer := least(greatest(coalesce(how_many, 8), 1), 20);
+  own_tag text := case when topic_kind = 'tag' then public.normalise_tag(topic_key) end;
+  found_tags jsonb;
+begin
+  if topic_kind is null or topic_kind not in ('category', 'tag') then
+    raise exception 'Only a genre or a tag has tags.' using errcode = 'invalid_parameter_value';
+  end if;
+  -- Step 1: the stories of this list the reader may see, then the approved tags on them.
+  select coalesce(jsonb_agg(counted.name order by counted.story_count desc, counted.name), '[]'::jsonb)
+  into found_tags
+  from (
+    select tags.name, count(*) as story_count
+    from public.listed_stories(topic_kind, topic_key, null, null, null) as story
+    join public.story_tags on story_tags.story_id = story.id
+    join public.tags on tags.id = story_tags.tag_id
+    where tags.status = 'approved'
+      and tags.normalised_name is distinct from own_tag
+    group by tags.id, tags.name
+    order by story_count desc, tags.name
+    limit wanted
+  ) as counted;
+  return found_tags;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) IS 'A genre''s most used tags, or the tags related to a tag, over stories the reader may see (BOOKS-A06, BOOKS-A09).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."undo_decision_for_appeal"("statement" "public"."statements_of_reasons", "appeal_reference" "text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -60644,6 +60787,25 @@ COMMENT ON COLUMN "public"."teacher_checks"."user_id" IS 'The person asking; nev
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."topic_follows" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "category_id" "uuid",
+    "tag_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "topic_follows_one_topic" CHECK (("num_nonnulls"("category_id", "tag_id") = 1))
+);
+
+
+ALTER TABLE "public"."topic_follows" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."topic_follows" IS 'kind: user_action
+Which genres and tags a member follows (BOOKS-A06, BOOKS-A09). Private to the member.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."username_approvals" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -62272,6 +62434,21 @@ ALTER TABLE ONLY "public"."teacher_checks"
 
 
 
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_one_per_genre" UNIQUE ("user_id", "category_id");
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_one_per_tag" UNIQUE ("user_id", "tag_id");
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."username_approvals"
     ADD CONSTRAINT "username_approvals_pkey" PRIMARY KEY ("id");
 
@@ -63710,6 +63887,14 @@ CREATE INDEX "teacher_checks_waiting" ON "public"."teacher_checks" USING "btree"
 
 
 
+CREATE INDEX "topic_follows_category_id" ON "public"."topic_follows" USING "btree" ("category_id");
+
+
+
+CREATE INDEX "topic_follows_tag_id" ON "public"."topic_follows" USING "btree" ("tag_id");
+
+
+
 CREATE INDEX "username_approvals_user_id_idx" ON "public"."username_approvals" USING "btree" ("user_id");
 
 
@@ -64923,6 +65108,14 @@ CREATE OR REPLACE TRIGGER "teacher_checks_refuse_user_id_change" BEFORE UPDATE O
 
 
 CREATE OR REPLACE TRIGGER "teacher_checks_set_updated_at" BEFORE UPDATE ON "public"."teacher_checks" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "topic_follows_keep_user_id" BEFORE UPDATE ON "public"."topic_follows" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "topic_follows_set_updated_at" BEFORE UPDATE ON "public"."topic_follows" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -67042,6 +67235,21 @@ ALTER TABLE ONLY "public"."tags"
 
 ALTER TABLE ONLY "public"."teacher_checks"
     ADD CONSTRAINT "teacher_checks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_tag_id_fkey" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -69170,6 +69378,13 @@ CREATE POLICY "teacher_checks_select_own" ON "public"."teacher_checks" FOR SELEC
 
 
 COMMENT ON POLICY "teacher_checks_select_own" ON "public"."teacher_checks" IS 'Allows a person to read their own Teacher badge requests and outcomes (S1-E2-11).';
+
+
+
+ALTER TABLE "public"."topic_follows" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "topic_follows_select_own" ON "public"."topic_follows" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -75573,6 +75788,11 @@ GRANT ALL ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "targe
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_updated_at"() FROM PUBLIC;
 
 
@@ -76455,6 +76675,22 @@ REVOKE ALL ON FUNCTION "public"."tier_hours"("target_tier" "public"."case_tier")
 
 
 REVOKE ALL ON FUNCTION "public"."tier_rank"("target_tier" "public"."case_tier") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "authenticated";
 
 
 
@@ -77547,6 +77783,11 @@ GRANT SELECT ON TABLE "public"."tags" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."teacher_checks" TO "service_role";
 GRANT SELECT ON TABLE "public"."teacher_checks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."topic_follows" TO "service_role";
+GRANT SELECT ON TABLE "public"."topic_follows" TO "authenticated";
 
 
 
