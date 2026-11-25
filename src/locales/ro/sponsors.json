@@ -266,7 +266,8 @@
       "thread_side": "Casetă laterală în discuție",
       "space_wide": "Banner lat în spațiu",
       "profile_wide": "Banner lat pe profil",
-      "library_wide": "Banner lat în Bibliotecă"
+      "library_wide": "Banner lat în Bibliotecă",
+      "home_wide": "Banner lat pe Acasă"
     },
     "formats": {
       "wide": "banner lat",

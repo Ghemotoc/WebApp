@@ -7,7 +7,7 @@
  * the covers arrive. The shapes are hidden from screen readers; one short "Loading…" line says it
  * instead, inside an aria-busy section. Never a whole-page spinner.
  * Who uses it: DiscoverShelf (Home and Discover rows) and LibraryShelves.
- * What it calls: useShowAfter, Eyebrow and shelfRowStyles.
+ * What it calls: useShowAfter, Eyebrow, ShelfToolbar and shelfRowStyles.
  */
 import { useId, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +16,7 @@ import { useShowAfter } from '@/lib/loading/useShowAfter';
 
 import { Eyebrow } from './Eyebrow';
 import { perPageClasses, rowGridClasses } from './shelfRowStyles';
+import { ShelfToolbar, type ShelfToolbarPlacement } from './ShelfToolbar';
 
 /** Enough shapes to fill the widest row (5 covers) with the edge of a sixth. */
 const SHAPE_COUNT = 6;
@@ -27,6 +28,11 @@ export interface PlaceholderShelfProps {
   eyebrow?: string;
   /** Anything the caller keeps above the row while it loads, such as the Library's tabs. */
   toolbar?: ReactNode;
+  /**
+   * Where the toolbar sits: above the row (the default) or under it, as the Home page's genre
+   * chips do on board A01 (Robert's review of 25 Nov 2026).
+   */
+  toolbarPlacement?: ShelfToolbarPlacement;
   coversInColumn?: 3 | 4;
 }
 
@@ -39,6 +45,7 @@ export function PlaceholderShelf({
   title,
   eyebrow,
   toolbar,
+  toolbarPlacement = 'above',
   coversInColumn,
 }: PlaceholderShelfProps) {
   const { t } = useTranslation();
@@ -59,7 +66,7 @@ export function PlaceholderShelf({
           </h2>
         </div>
       )}
-      {toolbar !== undefined && <div className="mb-4">{toolbar}</div>}
+      <ShelfToolbar toolbar={toolbar} placement={toolbarPlacement} spot="above" />
       <p className="sr-only">{t('loading.shelf')}</p>
       {/* The shapes take the real row's places; overflow hides the sixth's far edge. */}
       <div aria-hidden="true" className="overflow-hidden">
@@ -72,6 +79,7 @@ export function PlaceholderShelf({
           ))}
         </ul>
       </div>
+      <ShelfToolbar toolbar={toolbar} placement={toolbarPlacement} spot="below" />
     </section>
   );
 }
