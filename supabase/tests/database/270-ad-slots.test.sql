@@ -10,6 +10,7 @@
 --   same ads, and "Why this ad?" echoes only category, tag and language;
 -- - the reader has its two slots, the 728 × 90 banner and the 300 × 250 side box, and the side box
 --   never carries the ad network (CALM-5);
+-- - Read (page key discover) has two wide banners (board A04, user story 1.4);
 -- - a class space, a class-only story (its page and its chapters) and an unknown page get no slot
 --   (Q70).
 -- Personas: adult_writer (…01), teen_17 (…02), teacher (…07).
@@ -103,6 +104,13 @@ select is(
 select ok(
   (select coalesce(words -> 1 -> 'ad' ->> 'kind', '') <> 'network' from kept where label = 'chapter'),
   'the reader''s side box never carries the ad network');
+
+-- Board A04 (user story 1.4): Read's second slot is a banner between two rows, not a card.
+select is(
+  (select string_agg((slot ->> 'slot_key') || ':' || (slot ->> 'format'), ' ' order by (slot ->> 'position')::integer)
+   from kept, jsonb_array_elements(words) as slot where label = 'anon'),
+  'discover_wide:wide discover_card:wide',
+  'Read has two wide banners: one after the first row and one lower down');
 
 /* ---------- 3. Only the page's context (criterion 2) ---------- */
 

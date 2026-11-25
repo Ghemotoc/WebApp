@@ -19,7 +19,8 @@
  * (MARKETS-2b, S1-E11-32), and goes to /not-open only while the list is off.
  */
 import { useTranslation } from 'react-i18next';
-import { Link, Navigate, useParams } from 'react-router';
+import { useEffect } from 'react';
+import { Link, Navigate, useParams, useSearchParams } from 'react-router';
 
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
@@ -31,6 +32,7 @@ import { useAgeRules } from '../hooks/useAgeRules';
 import { useInviteCheck } from '../hooks/useInviteCheck';
 import { useSignUpForm } from '../hooks/useSignUpForm';
 import { useSignUpMarket, type SignUpMarket } from '../hooks/useSignUpMarket';
+import { rememberPathAfterSignUp } from '../lib/pathAfterSignUp';
 
 import type { InviteGateReason } from './InviteGate';
 import { SignUpCardFlow } from './SignUpCardFlow';
@@ -154,6 +156,16 @@ function SignUpHeading(props: { joinsWaitlist: boolean; waitsForMarket: boolean 
 }
 
 /**
+ * Remembers the page named by `?next=` (a landing page's "Join for free" sends /sign-up?next=/hub),
+ * so the new member lands there once setup is done (BOOKS-A10, user story 1.10).
+ */
+function useRememberNextPath() {
+  const [searchParams] = useSearchParams();
+  const next = searchParams.get('next');
+  useEffect(() => rememberPathAfterSignUp(next), [next]);
+}
+
+/**
  * Renders the page.
  *
  * @returns the sign-up screen
@@ -161,6 +173,7 @@ function SignUpHeading(props: { joinsWaitlist: boolean; waitsForMarket: boolean 
 export function SignUpPage() {
   const { t } = useTranslation('auth');
   const { code } = useParams();
+  useRememberNextPath();
   const flags = useFeatureFlags();
   const isInviteOnly = flags.isOn('invite_only', true);
   // The waiting list (WAITLIST-1): while on, a code skips the queue and nobody needs one.

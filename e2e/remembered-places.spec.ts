@@ -73,6 +73,57 @@ async function openOnNewDevice(browser: Browser, persona: SignInPersonaName, add
   return page;
 }
 
+/**
+ * Records every caret place the page sends to the account, with the answer's status, so a failed
+ * caret test can say whether the place was sent, what it was and whether the account took it.
+ *
+ * @param page - the editor page
+ * @returns the list, filled as the page sends
+ */
+function recordSentCaretPlaces(page: Page): string[] {
+  const sent: string[] = [];
+  page.on('requestfinished', (request) => {
+    if (!request.url().includes('/rpc/remember_place')) return;
+    void request.response().then((response) => {
+      sent.push(`${request.postData() ?? ''} -> ${response?.status() ?? 'no answer'}`);
+    });
+  });
+  page.on('requestfailed', (request) => {
+    if (request.url().includes('/rpc/remember_place'))
+      sent.push(`failed: ${request.failure()?.errorText}`);
+  });
+  return sent;
+}
+
+/**
+ * The caret test's failure message: the assertion's own words, then what the page sent, the
+ * kept row and where the editor's caret is, so the cause shows in the CI log itself.
+ *
+ * @param page - the editor page
+ * @param sentPlaces - from recordSentCaretPlaces
+ * @param error - what the check threw
+ * @returns the message
+ */
+async function describeCaretFailure(page: Page, sentPlaces: string[], error: unknown) {
+  const caret = await page
+    .evaluate(() => {
+      const selection = window.getSelection();
+      const active = document.activeElement;
+      return `focus on ${active?.getAttribute('aria-label') ?? active?.tagName ?? 'nothing'}, caret in "${selection?.anchorNode?.textContent ?? ''}" at ${selection?.anchorOffset ?? -1}`;
+    })
+    .catch((reason: unknown) => `page not readable: ${String(reason)}`);
+  const row = runSql(
+    `select place::text from public.remembered_places
+     where user_id = '${writerId}' and kind = 'write_caret' and item_key = '${romanianSlug}';`,
+  ).trim();
+  return [
+    error instanceof Error ? error.message : String(error),
+    `Sent: ${sentPlaces.length === 0 ? 'nothing' : sentPlaces.join('; ')}`,
+    `Kept: ${row === '' ? 'no row' : row}`,
+    `Editor: ${caret}`,
+  ].join('\n');
+}
+
 /** Waits until the account holds a place of this kind for the persona. */
 async function expectKeptInAccount(userId: string, kind: string) {
   await expect
@@ -146,23 +197,30 @@ test.describe('coming back to the same place (design books item 17)', () => {
     // first line (positions count from the text's start). The check reads this story's place
     // only: an editor page an earlier spec left open in the same browser can still keep a caret
     // for another story of the same writer, and two rows never read as one 't' (CI, 25 Nov 2026:
-    // it failed only in a worker that had run other specs first, never on the retry).
-    await expect(async () => {
-      await chapterText(page).getByText('Al doilea rând.').click();
-      await page.keyboard.press('End');
-      await page.getByRole('textbox', { name: 'Chapter title' }).focus();
-      await expect
-        .poll(
-          () =>
-            runSql(
-              `select (place ->> 'position')::integer > 20 from public.remembered_places
-               where user_id = '${writerId}' and kind = 'write_caret'
-                 and item_key = '${romanianSlug}';`,
-            ).trim(),
-          { timeout: 3000 },
-        )
-        .toBe('t');
-    }).toPass({ timeout: 15000 });
+    // it failed only in a worker that had run other specs first, never on the retry). It came
+    // back on 25 Nov 2026 with one row of this story still 'f', so a failure now also says what
+    // the page sent and where its caret was (see describeCaretFailure).
+    const sentPlaces = recordSentCaretPlaces(page);
+    try {
+      await expect(async () => {
+        await chapterText(page).getByText('Al doilea rând.').click();
+        await page.keyboard.press('End');
+        await page.getByRole('textbox', { name: 'Chapter title' }).focus();
+        await expect
+          .poll(
+            () =>
+              runSql(
+                `select (place ->> 'position')::integer > 20 from public.remembered_places
+                 where user_id = '${writerId}' and kind = 'write_caret'
+                   and item_key = '${romanianSlug}';`,
+              ).trim(),
+            { timeout: 3000 },
+          )
+          .toBe('t');
+      }).toPass({ timeout: 15000 });
+    } catch (error) {
+      throw new Error(await describeCaretFailure(page, sentPlaces, error));
+    }
     await page.context().close();
     // Another device: the text has the focus, and typing lands at the end.
     const again = await openOnNewDevice(browser, 'adult_writer', address);

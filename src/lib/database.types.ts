@@ -15179,6 +15179,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      instant_email_send_time: { Args: { made_at: string; person_id: string }; Returns: string };
       interface_language_codes: { Args: Record<PropertyKey, never>; Returns: string[] };
       interface_text_live: {
         Args: { wanted_locale: string };
@@ -15286,6 +15287,10 @@ export type Database = {
         Args: { block: Json; block_path: string };
         Returns: string[];
       };
+      landing_block_extra_problems_before_hero: {
+        Args: { block: Json; block_path: string };
+        Returns: string[];
+      };
       landing_block_field_rules: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -15344,6 +15349,7 @@ export type Database = {
         };
         Returns: string;
       };
+      landing_words_this_month: { Args: Record<PropertyKey, never>; Returns: number };
       landing_youngest_ratings: {
         Args: { content: Json };
         Returns: Database['public']['Enums']['story_rating'][];
@@ -19129,6 +19135,7 @@ export type Database = {
         }[];
       };
       writers_to_follow_now: { Args: Record<PropertyKey, never>; Returns: Json };
+      writing_streak: { Args: { today: string; writer_id: string }; Returns: number };
       written_language_for: { Args: { code: string }; Returns: string };
       youngest_age: {
         Args: { birth_month: number; birth_year: number; on_date: string };

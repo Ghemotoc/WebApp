@@ -1,7 +1,8 @@
 /**
  * BuilderBlocks: the page builder's five blocks as visitors see them (story S1-E11-34; bundle
  * CMS-2b): picture and text, cards, steps, a quote and a call to action. Since CALM-9 (board A10)
- * each step opens with a round icon tile and "Step 1".
+ * each step opens with a round icon tile and "Step 1"; since BOOKS-A10 steps sit on the page
+ * with no box, and the Steps block carries the id the hero's "How it works" jumps to.
  *
  * Every block is real HTML with an h2, like the other blocks (one heading order). Long text is the
  * CMS's safe Markdown subset (CmsMarkdown); card and step words are plain text. A call to action
@@ -16,6 +17,7 @@ import { safeLandingLink } from '@/schemas/landingPages';
 
 import type { LandingExtras } from '../api/landingPages';
 import { wordsOf } from '../lib/blocks';
+import { landingBlockAnchor } from '../lib/anchors';
 import { entriesOf } from '../lib/entries';
 
 import { useLandingPageTranslation } from '../registerLandingPageTranslations';
@@ -98,7 +100,7 @@ function StepTop({ position, language }: { position: number; language: LandingLa
         <ActionIcon name={stepIconFor(position)} size={24} />
       </span>
       {/* "Step 1" in the page's language, so a Romanian page never says "Step". */}
-      <span className="type-meta font-semibold">
+      <span className="type-meta text-ink-muted">
         {t('steps.label', { number: position + 1, lng: language })}
       </span>
     </>
@@ -115,23 +117,28 @@ function Entries(props: BuilderBlockProps) {
   const entries = entriesOf(block, language);
   // Steps have an order, so they are a numbered list; cards sit side by side. Both share the
   // row: steps three across from 1024 px, as the board draws them.
+  // Board A10 draws steps on the page itself, with no box around each; cards keep their box.
   const isSteps = block.kind === 'steps';
   const ListTag = isSteps ? 'ol' : 'ul';
+  const itemBox = isSteps ? '' : 'rounded-card border border-border bg-surface p-4 shadow-card';
   return (
-    <section className="flex flex-col gap-4">
+    <section
+      id={isSteps ? landingBlockAnchor(block) : undefined}
+      className="flex scroll-mt-24 flex-col gap-4"
+    >
       <BlockHeading {...props} />
-      <ListTag className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
+      <ListTag className="m-0 grid list-none gap-8 p-0 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
         {entries.map((entry, position) => (
           <li
             key={`${String(position)}-${entry.title}`}
-            className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface p-4 shadow-card"
+            className={`flex min-w-0 flex-col gap-3 ${itemBox}`}
           >
             {isSteps && <StepTop position={position} language={language} />}
             <div className="flex min-w-0 flex-col gap-1">
-              <h3 className="m-0 type-long font-bold text-ink [overflow-wrap:anywhere]">
+              <h3 className="m-0 type-subheading font-bold text-ink-heading [overflow-wrap:anywhere]">
                 {entry.title}
               </h3>
-              <p className="m-0 text-ink-muted [overflow-wrap:anywhere]">{entry.body}</p>
+              <p className="m-0 type-body text-ink-muted [overflow-wrap:anywhere]">{entry.body}</p>
             </div>
           </li>
         ))}
