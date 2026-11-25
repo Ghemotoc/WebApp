@@ -1,7 +1,7 @@
 /**
  * HubHeroContinue: the small "Continue reading" card on the right of Home's hero (user story 1.1,
- * board A01: a small cover, the title, "inkwolf · chapter 14 of 15", the thread line and a quiet
- * "Continue" button, beside the writing month card).
+ * board A01: the small cover on the left; on its right "Continue reading", the title, "inkwolf ·
+ * chapter 14 of 15", the thread line and a quiet "Continue" button, beside the writing month card).
  *
  * It shows the story the reader had open last, the first one the Library lists, and opens the
  * reader at the place (the next chapter once the last one was finished). Hidden while nothing is
@@ -67,33 +67,32 @@ export function HubHeroContinue() {
       choice={resolveCoverChoice(item.story)}
       size="tile"
       isDecorative
-      className="w-14"
+      className="w-16"
     />
   );
   return (
     <section
       aria-labelledby="hub-hero-continue"
-      className="box-surface flex min-w-0 flex-col gap-3 rounded-card p-4"
+      className="box-surface flex h-full min-w-0 items-center gap-3 rounded-card p-4"
     >
-      <h2 id="hub-hero-continue" className="m-0 type-label">
-        {t('hub.continue.heading')}
-      </h2>
-      <div className="flex items-start gap-3">
-        <StoryCoverArt story={item.story} drawn={drawn} className="w-14 shrink-0" />
-        <div className="flex min-w-0 flex-col gap-1">
-          <p className="m-0 font-semibold break-words text-ink-heading">{item.story.title}</p>
-          <p className="m-0 type-meta text-ink-muted">{line}</p>
-        </div>
+      <StoryCoverArt story={item.story} drawn={drawn} className="w-16 shrink-0" />
+      {/* Everything but the cover stacks in one column beside it (board A01). */}
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <h2 id="hub-hero-continue" className="m-0 type-label">
+          {t('hub.continue.heading')}
+        </h2>
+        <p className="m-0 font-semibold break-words text-ink-heading">{item.story.title}</p>
+        <p className="m-0 type-meta text-ink-muted">{line}</p>
+        {/* Step 3: the thread line for the place, with the same words for screen readers. */}
+        <Meter label={item.story.title} value={item.place.percent} valueText={line} />
+        <Link
+          to={continueAddress(item.story.slug, item.place)}
+          aria-label={t('hub.continue.continueLabel', { title: item.story.title })}
+          className={buttonClassName({ variant: 'secondary' }, 'self-stretch')}
+        >
+          {t('hub.continue.continue')}
+        </Link>
       </div>
-      {/* Step 3: the thread line for the place, with the same words for screen readers. */}
-      <Meter label={item.story.title} value={item.place.percent} valueText={line} />
-      <Link
-        to={continueAddress(item.story.slug, item.place)}
-        aria-label={t('hub.continue.continueLabel', { title: item.story.title })}
-        className={buttonClassName({ variant: 'secondary' }, 'self-start')}
-      >
-        {t('hub.continue.continue')}
-      </Link>
     </section>
   );
 }

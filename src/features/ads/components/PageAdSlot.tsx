@@ -4,7 +4,7 @@
  *
  * A page places one PageAdSlot for each of its slots (at most two, decided 17 Oct 2026, 11:53)
  * with its page key, the slot's position and what the page is about; a long story grid places
- * the same slot again after every 10 stories (bundle G7e). Only a signed-in reader sees an ad:
+ * the same slot again across a row after every two rows of cards (bundle G7e; user story 1.9). Only a signed-in reader sees an ad:
  * for a visitor usePageAds() answers with no slot and nothing is drawn (G7e).
  * While the ad loads, a wide slot keeps its height so the page doesn't jump (criterion 9). In a
  * class space or on a class-only story the server answers with no slot and nothing is drawn
