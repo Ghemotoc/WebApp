@@ -140,7 +140,8 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
     await guides.getByRole('button', { name: 'Next guides' }).click();
     await expect(previous).toBeEnabled();
     await expect(guides.getByText('Guides 4 to 6 of 15')).toBeAttached();
-    // Step 5: the tools.
+    // Step 5: the tools live on the Writers' hub at /hub (board A03), not on Home.
+    await page.goto('/hub');
     await expect(page.getByRole('link', { name: /Story Atlas/ })).toHaveAttribute('href', '/plan');
     await expectNoDoodles(page);
     await page.context().close();
@@ -153,7 +154,8 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
       await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
       const page = await context.newPage();
       await page.setViewportSize({ width: 390, height: 900 });
-      await page.goto('/hub');
+      // The contest cards with their pictures are in Home's contests band (board A01, story 1.1).
+      await page.goto('/');
       const card = page.getByRole('article', { name: 'Winter stories' });
       await expect(card).toBeVisible();
       // The picture is the landing page's, with the alt text the admin wrote, and it loads.
