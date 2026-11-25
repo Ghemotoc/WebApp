@@ -9,7 +9,7 @@
  */
 
 /** The localStorage key. */
-export const RECENT_SEARCHES_KEY = 'ghemotoc.recentSearches';
+export const RECENT_SEARCHES_KEY = 'recent-searches';
 
 /** How many terms are kept: the board shows three, and a few more cost nothing. */
 export const MAX_RECENT_SEARCHES = 5;
