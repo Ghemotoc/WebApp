@@ -137,6 +137,13 @@ interface ChapterTextBlockProps {
 }
 
 /**
+ * How many blocks of the chapter the reader's first draw holds: more than a tall phone or a
+ * laptop shows above the fold, so the rest arrives below the edge (the reader speed check,
+ * 25 Nov 2026).
+ */
+const FIRST_DRAW_BLOCKS = 12;
+
+/**
  * The chapter's text in the reader's look. The comment marker is always passed in, so the
  * paragraphs keep the same elements when the counts arrive (a shared passage keeps its focus);
  * it draws nothing until then, or at all with comments off.
@@ -168,6 +175,9 @@ export function ChapterTextBlock(props: ChapterTextBlockProps) {
           spot={spot}
           pictureShare={PictureShareButton}
           paragraphAddon={ParagraphCommentMarker}
+          // The first screenful first, the rest a frame later (the reader speed check, 25 Nov
+          // 2026); a shared spot draws whole at once, as the spot may sit further down.
+          firstDrawBlocks={spot === null ? FIRST_DRAW_BLOCKS : undefined}
         />
         <EarlierVersionComments />
       </div>

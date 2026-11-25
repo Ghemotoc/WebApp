@@ -206,9 +206,12 @@ test.describe('comments on chosen words (READER-SELECT)', () => {
     await expect(
       page.getByText("Tab to a stanza's count, Enter, then Choose lines. Space ticks a line."),
     ).toBeVisible();
-    const field = page.getByRole('textbox', { name: 'Comment on these lines' });
+    // The stanza's panel holds this form; the chapter's own comment box can be on the page too (a
+    // short chapter's comments load at once), so the click stays inside the panel.
+    const panel = page.locator('[data-paragraph-thread]');
+    const field = panel.getByRole('textbox', { name: 'Comment on these lines' });
     await field.fill('The radio talking to itself is perfect.');
-    await page.getByRole('button', { name: 'Post comment' }).click();
+    await panel.getByRole('button', { name: 'Post comment' }).click();
     await expect(
       page.getByRole('group', { name: 'Comments on: and lets the radio talk to itself' }),
     ).toContainText('The radio talking to itself is perfect.');
