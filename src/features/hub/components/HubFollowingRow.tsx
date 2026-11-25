@@ -1,11 +1,11 @@
 /**
  * HubFollowingRow: "New from writers you follow" on the Home page (bundle CALM-7c; board New-Home:
- * a row of four covers beside "Talk about stories", with "Read" at the top right).
+ * a row of covers, the full width since board A01 (story 1.1), with "Read" at the top right).
  *
  * The same list as the Read page's following row: stories by the writers and stories the member
  * follows, the most recently updated first. Hidden while it is empty, so a new member isn't shown
  * an empty row.
- * Who shows it: WritersHubPage. What it calls: useStoryShelf (the following list), Shelf and
+ * Who shows it: MemberHomePage. What it calls: useStoryShelf (the following list), Shelf and
  * ListedStoryCard.
  */
 import { Link } from 'react-router';
@@ -38,7 +38,6 @@ export function HubFollowingRow() {
       title={t('hub.following.heading')}
       seeAllHref={listAddress(followingList)}
       totalCount={page.total}
-      coversInColumn={4}
       items={page.stories.map((story, index) => ({
         key: story.slug,
         content: (

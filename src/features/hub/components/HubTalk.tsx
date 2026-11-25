@@ -1,10 +1,11 @@
 /**
- * HubTalk: "Talk about stories" on the Home page (bundle CALM-7c; board New-Home: rows of thread
- * titles, each with the forum and a count as a meta line, and "Together" at the top right).
+ * HubTalk: "Talk about stories" on the Home page (bundle CALM-7c; since user story 1.1 board A01:
+ * a tinted band with the thread titles two by two, each with the forum and a count as a meta
+ * line, and "Together" at the top right).
  *
  * The threads with posts new to the member, as Together's "New for you" lists them, at most four;
  * each opens the thread at the first new post. With nothing new it says so in one line.
- * Who shows it: WritersHubPage. What it calls: useNewForYou → forum_new_for_you() and
+ * Who shows it: MemberHomePage. What it calls: useNewForYou → forum_new_for_you() and
  * postAddress.
  */
 import { Link } from 'react-router';
@@ -31,9 +32,13 @@ export function HubTalk() {
   if (threads === null && !loadFailed) return null;
   const shown = (threads ?? []).slice(0, threadLimit);
   return (
-    <section aria-labelledby="hub-talk" className="flex flex-col">
-      <div className="mb-2 flex items-center justify-between gap-4">
-        <h2 id="hub-talk" className="m-0 type-heading">
+    <section
+      aria-labelledby="hub-talk"
+      className="box-surface flex flex-col gap-6 rounded-card p-4 sm:p-8 lg:p-12"
+    >
+      {/* Board A01: a tinted band under a page-sized heading, the threads two by two. */}
+      <div className="flex items-center justify-between gap-4">
+        <h2 id="hub-talk" className="m-0 type-title">
           {t('hub.talk.heading')}
         </h2>
         <Link to="/forums" className={buttonClassName({ variant: 'text' })}>
@@ -44,11 +49,11 @@ export function HubTalk() {
       {!loadFailed && shown.length === 0 && (
         <p className="m-0 text-ink-muted">{t('hub.talk.empty')}</p>
       )}
-      <ul className="m-0 list-none p-0">
+      <ul className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2">
         {shown.map((thread) => (
           <li
             key={`${thread.forumSlug}-${thread.number}`}
-            className="flex flex-col gap-1 border-b border-hairline py-3 last:border-b-0"
+            className="flex min-w-0 flex-col gap-1 rounded-field border border-hairline p-4"
           >
             <Link
               to={postAddress(thread.forumSlug, thread.number, thread.firstUnreadPost)}

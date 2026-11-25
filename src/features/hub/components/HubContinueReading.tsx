@@ -1,12 +1,12 @@
 /**
- * HubContinueReading: "Continue reading" on the Home page (bundle CALM-7c; board New-Home: a row
- * of three covers beside the drafts, each with the thread line and "inkwolf · chapter 14 of 15",
- * and "Open library" at the top right).
+ * HubContinueReading: "Continue reading" on the Home page (bundle CALM-7c; since user story 1.1
+ * board A01: a row of covers the full width, each with the thread line and "inkwolf · chapter 14
+ * of 15", and "Open library" at the top right).
  *
  * The stories the reader has a place in, newest place first, as the Library lists them. Each
  * cover opens the reader at the place (the next chapter once the last one was finished).
  * Hidden while nothing is being read.
- * Who shows it: WritersHubPage. What it calls: useLibraryOverview (my_library()), Shelf and
+ * Who shows it: MemberHomePage. What it calls: useLibraryOverview (my_library()), Shelf and
  * StoryCard.
  */
 import { Link } from 'react-router';
@@ -75,7 +75,6 @@ export function HubContinueReading() {
     <Shelf
       title={t('hub.continue.heading')}
       items={items}
-      coversInColumn={3}
       headerAction={
         <Link to="/library" className={buttonClassName({ variant: 'text' })}>
           {t('hub.continue.openLibrary')}

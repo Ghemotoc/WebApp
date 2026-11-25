@@ -2,13 +2,15 @@
  * HubHero: the top of the Home page, the Writers' hub (bundle G9 WRITING, part a; since CALM-7c
  * the simplified board New-Home: the page's one frosted hero).
  *
- * Left: "Friday 7 November · Writing month, day 7", "Welcome back, Lia.", one line on what waits
+ * Left: "Friday 7 November · Writing month, day 7", "Welcome back," with "Lia." on its own line
+ * in the accent colour (board A01), one line on what waits
  * (the latest draft's chapter, the contests closing this month) and two actions: "Keep writing
  * chapter 8" (the page's one main button) and "Start a new story" (quiet). With no draft, "Start
- * a new story" is the main button. Right, from 900 px: the writing month (HubMonthSummary).
- * Who shows it: WritersHubPage. What it calls: useMyNames (the pen name, else the username),
+ * a new story" is the main button. Right, from 900 px: the story read last (HubHeroContinue) beside
+ * the writing month (HubMonthSummary), each on its own paper.
+ * Who shows it: MemberHomePage. What it calls: useMyNames (the pen name, else the username),
  * useDiscoverCards (the latest draft, my_discover_cards()), useHubContests, lib/hubDates.ts,
- * lib/monthPace.ts and HubMonthSummary.
+ * lib/monthPace.ts, HubHeroContinue and HubMonthSummary.
  */
 import { Link } from 'react-router';
 
@@ -26,6 +28,7 @@ import { formatHubDay } from '../lib/hubDates';
 import { writingMonthDay } from '../lib/monthPace';
 import { useHubTranslation } from '../registerHubTranslations';
 
+import { HubHeroContinue } from './HubHeroContinue';
 import { HubMonthSummary } from './HubMonthSummary';
 
 /**
@@ -111,7 +114,7 @@ export function HubHero({ now }: { now: Date }) {
   return (
     <Hero
       labelledBy="hub-heading"
-      className="min-[900px]:grid min-[900px]:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] min-[900px]:items-center min-[900px]:gap-12"
+      className="min-[900px]:grid min-[900px]:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] min-[900px]:items-center min-[900px]:gap-12"
     >
       <div className="flex flex-col gap-3">
         <MetaLine
@@ -121,15 +124,26 @@ export function HubHero({ now }: { now: Date }) {
           ]}
         />
         <h1 id="hub-heading" className="m-0 break-words type-display">
-          {name === null ? t('hub.home.welcomeNoName') : t('hub.home.welcome', { name })}
+          {/* Board A01: "Welcome back," then the name on its own line in the accent colour. */}
+          {name === null && t('hub.home.welcomeNoName')}
+          {name !== null && (
+            <>
+              {t('hub.home.welcomeLead')}{' '}
+              <span className="block text-accent">{t('hub.home.welcomeName', { name })}</span>
+            </>
+          )}
         </h1>
         <WaitingLine draft={draft} closingCount={closingCount} />
         <div className="mt-3">
           <HeroActions draft={draft} />
         </div>
       </div>
-      <div className="mt-6 min-[900px]:mt-0">
-        <HubMonthSummary now={now} />
+      {/* Board A01: the Continue reading card beside the writing month card, each on its paper. */}
+      <div className="mt-6 grid items-start gap-4 sm:grid-cols-2 min-[900px]:mt-0 [&>*:only-child]:col-span-full">
+        <HubHeroContinue />
+        <div className="box-surface rounded-card p-4">
+          <HubMonthSummary now={now} />
+        </div>
       </div>
     </Hero>
   );

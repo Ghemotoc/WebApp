@@ -192,7 +192,8 @@
     },
     "home": {
       "dayLine": "Luna de scris, ziua {{day}}",
-      "welcome": "Bine ai revenit, {{name}}.",
+      "welcomeLead": "Bine ai revenit,",
+      "welcomeName": "{{name}}.",
       "welcomeNoName": "Bine ai revenit.",
       "waiting": "Capitolul {{number}} din {{story}} te așteaptă.",
       "contestsClosing_one": "{{count}} concurs se încheie luna aceasta.",
@@ -206,6 +207,8 @@
       "heading": "Continuă lectura",
       "openLibrary": "Deschide biblioteca",
       "place": "{{writer}} · capitolul {{number}} din {{total}}",
+      "continue": "Continuă",
+      "continueLabel": "Continuă să citești {{title}}",
       "placeNumberOnly": "{{writer}} · capitolul {{number}}"
     },
     "drafts": {

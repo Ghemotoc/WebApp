@@ -2,19 +2,22 @@
  * MemberHomePage: Home for someone signed in, at / (user story 1.1, board A01-Home; until 25 Nov
  * 2026 this was the top of /hub, bundle G9 WRITING and CALM-7c).
  *
- * Top to bottom, as on the board: the hero with what changed and the writing month; the writer's
- * own invitations (writer of the week, GAPS-12e; a home-page comment, GAPS-13) when there are any;
- * Continue reading beside Drafts; Open for entries now (the contests); Tools for the next chapter
- * (the prompt of the week, GAPS-12c, and the guides); New from writers you follow beside Talk
- * about stories. The Writers' hub's own parts (learning path, live sessions, badges, this week's
- * numbers, calls for submissions) live at /hub (board A03, WritersHubPage).
- * Each pair sits in two columns from 900 px and stacks below that.
+ * Top to bottom, as on the board: the hero (the greeting, what waits, the story read last and the
+ * writing month); the writer's own invitations (writer of the week, GAPS-12e; a home-page
+ * comment, GAPS-13) when there are any; then full-width rows and bands: Continue reading, Drafts,
+ * Open for entries now (the contests, in a tinted band), New from writers you follow, Tools for
+ * the next chapter (the dark band: the prompt of the week, GAPS-12c, rising writers and the
+ * guides), Trending this week with its genre chips, Completed stories (the website home page's
+ * shelves, HomeShelves) and Talk about stories (a tinted band). The Writers' hub's own parts
+ * (learning path, live sessions, badges, this week's numbers, calls for submissions) live at /hub
+ * (board A03, WritersHubPage).
  * Left out: the board's 970 × 90 advert, which needs an ad slot of its own (S1-E12-04).
  * Who shows it: WebsiteHomePage, at /, when someone is signed in (the logo links to /).
- * What it calls: the Hub* sections below.
+ * What it calls: the Hub* sections below and HomeShelves.
  */
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
+import { HomeShelves } from '@/features/website/components/HomeShelves';
 
 import { useHubTranslation } from '../registerHubTranslations';
 
@@ -27,13 +30,6 @@ import { HubHomeCommentInvitations } from './HubHomeCommentInvitations';
 import { HubSpotlightInvitations } from './HubSpotlightInvitations';
 import { HubTalk } from './HubTalk';
 import { HubToolsSection } from './HubToolsSection';
-
-/**
- * Two parts side by side from 900 px (board A01: the wider one first), stacked below it; a part
- * that has nothing to show leaves the other the whole width.
- */
-const twoColumnClasses =
-  'grid items-start gap-12 min-[900px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] [&>*:only-child]:col-span-full';
 
 /**
  * Renders Home for a signed-in member.
@@ -51,16 +47,13 @@ export function MemberHomePage() {
         <HubHero now={now} />
         <HubSpotlightInvitations />
         <HubHomeCommentInvitations />
-        <div className={twoColumnClasses}>
-          <HubContinueReading />
-          <HubDrafts />
-        </div>
+        <HubContinueReading />
+        <HubDrafts />
         <HubContests now={now} />
+        <HubFollowingRow />
         <HubToolsSection now={now} />
-        <div className={twoColumnClasses}>
-          <HubFollowingRow />
-          <HubTalk />
-        </div>
+        <HomeShelves />
+        <HubTalk />
       </div>
     </PageContainer>
   );
