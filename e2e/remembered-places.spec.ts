@@ -112,6 +112,9 @@ async function describeCaretFailure(page: Page, sentPlaces: string[], error: unk
       return `focus on ${active?.getAttribute('aria-label') ?? active?.tagName ?? 'nothing'}, caret in "${selection?.anchorNode?.textContent ?? ''}" at ${selection?.anchorOffset ?? -1}`;
     })
     .catch((reason: unknown) => `page not readable: ${String(reason)}`);
+  const editorCaret = await editorCaretPosition(page).catch(
+    (reason: unknown) => `not readable: ${String(reason)}`,
+  );
   const row = runSql(
     `select place::text from public.remembered_places
      where user_id = '${writerId}' and kind = 'write_caret' and item_key = '${romanianSlug}';`,
@@ -121,6 +124,7 @@ async function describeCaretFailure(page: Page, sentPlaces: string[], error: unk
     `Sent: ${sentPlaces.length === 0 ? 'nothing' : sentPlaces.join('; ')}`,
     `Kept: ${row === '' ? 'no row' : row}`,
     `Editor: ${caret}`,
+    `The editor's own caret: ${editorCaret}`,
   ].join('\n');
 }
 
@@ -138,6 +142,23 @@ async function expectKeptInAccount(userId: string, kind: string) {
 /** The chapter editor's text box. */
 function chapterText(page: Page) {
   return page.getByRole('textbox', { name: 'Chapter text' });
+}
+
+/**
+ * Where the chapter editor itself thinks the caret is: TipTap puts its editor on the text's
+ * element, and its selection is what the page keeps. The browser's caret can be somewhere else
+ * for a moment, until the editor has read the browser's selection change.
+ *
+ * @param page - the editor page
+ * @returns the caret's position in the text, or -1 when there is no editor on the page
+ */
+async function editorCaretPosition(page: Page): Promise<number> {
+  return chapterText(page).evaluate((element) => {
+    const editor = (
+      element as HTMLElement & { editor?: { state: { selection: { head: number } } } }
+    ).editor;
+    return editor === undefined ? -1 : editor.state.selection.head;
+  });
 }
 
 test.describe('coming back to the same place (design books item 17)', () => {
@@ -205,6 +226,11 @@ test.describe('coming back to the same place (design books item 17)', () => {
       await expect(async () => {
         await chapterText(page).getByText('Al doilea rând.').click();
         await page.keyboard.press('End');
+        // The editor reads the browser's caret when the browser says the selection changed. If
+        // the focus leaves first, the editor drops that change and keeps its old caret, the
+        // text's start (CI, 25 Nov 2026: every try sent position 1). A writer's hand is never
+        // that quick, so wait until the editor holds the caret before leaving the text.
+        await expect.poll(() => editorCaretPosition(page), { timeout: 3000 }).toBeGreaterThan(20);
         await page.getByRole('textbox', { name: 'Chapter title' }).focus();
         await expect
           .poll(
