@@ -309,6 +309,8 @@ select results_eq(
        ('username_word_lists', 0::bigint),
        -- The waiting list: each person's own entry and owner and admin (WAITLIST-1).
        ('waitlist_entries', 0::bigint),
+       -- To follow this week: staff with the Featured area only; visitors read writers_to_follow_now() (user story 1.4).
+       ('writer_follow_picks', 0::bigint),
        ('writer_ranks', 0::bigint),
        -- Writer of the week: the picked writer and contest staff only, members through writers_hub_spotlight() (GAPS-12e).
        ('writer_spotlights', 0::bigint),

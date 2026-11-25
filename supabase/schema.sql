@@ -12239,6 +12239,83 @@ COMMENT ON FUNCTION "public"."admin_set_story_visibility"("target_story_id" "uui
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_set_writer_follow_picks"("handles" "text"[], "reason" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  wanted text[] := coalesce(handles, '{}');
+  writer_ids uuid[];
+  before_list text[];
+  missing text;
+  refused text;
+  pick_position integer;
+begin
+  -- Step 1: admins and the owner only, in a staff session, with a reason.
+  if not public.staff_may('featured', 'act') then
+    raise exception 'Only admins can change the writers to follow.' using errcode = 'insufficient_privilege';
+  end if;
+  if reason is null or btrim(reason) = '' then
+    raise exception 'Say why you are changing the writers to follow.'
+      using errcode = 'check_violation', hint = 'reason_missing';
+  end if;
+  -- Step 2: at most three, the number the board draws in the box.
+  if cardinality(wanted) > 3 then
+    raise exception 'To follow this week holds at most 3 writers.' using errcode = 'check_violation', hint = 'too_many';
+  end if;
+  -- Step 3: every username must be a live account; "@" and look-alike letters are fine, as on
+  -- every other username search (profile_for_handle(), S1-E5-05).
+  select handle into missing from unnest(wanted) as handle
+  where not exists (select 1 from public.profile_for_handle(handle))
+  limit 1;
+  if missing is not null then
+    raise exception 'There is no writer called @%.', btrim(missing, ' @')
+      using errcode = 'check_violation', hint = 'unknown_writer';
+  end if;
+  select coalesce(array_agg(found.id order by wanted_handles.ordinality), '{}') into writer_ids
+  from unnest(wanted) with ordinality as wanted_handles (handle, ordinality)
+  cross join lateral public.profile_for_handle(wanted_handles.handle) as found;
+  -- Nobody twice, however the username was typed.
+  if cardinality(writer_ids) <> (select count(distinct writer_id) from unnest(writer_ids) as writer_id) then
+    raise exception 'A writer is in the list twice.' using errcode = 'check_violation', hint = 'duplicate';
+  end if;
+  -- Step 4: every writer must be one we may suggest to strangers (S1-E5-11: active, their switch
+  -- on, 16 or over or the parent's separate yes).
+  select profiles.handle into refused from unnest(writer_ids) as writer_id
+  join public.profiles on profiles.id = writer_id
+  where not public.may_spotlight_writer(writer_id)
+  limit 1;
+  if refused is not null then
+    raise exception '@% can''t be suggested: the account isn''t active, the writer turned suggestions off, or they are under 16.',
+      refused using errcode = 'check_violation', hint = 'may_not_show';
+  end if;
+  -- Step 5: take the old list out (kept as a record) and put the new one in, in order.
+  select coalesce(array_agg(profiles.handle order by writer_follow_picks.position), '{}') into before_list
+  from public.writer_follow_picks
+  join public.profiles on profiles.id = writer_follow_picks.writer_user_id
+  where writer_follow_picks.removed_at is null;
+  update public.writer_follow_picks set removed_at = now(), updated_at = now() where removed_at is null;
+  for pick_position in 1 .. cardinality(writer_ids) loop
+    insert into public.writer_follow_picks (writer_user_id, position, user_id)
+    values (writer_ids[pick_position], pick_position, (select auth.uid()));
+  end loop;
+  -- Step 6: the audit row with both lists, in the same transaction.
+  perform public.log_staff_action('featured.writers_set', 'writer_follow_picks', null, null, reason,
+    jsonb_build_object('handles', to_jsonb(before_list)),
+    jsonb_build_object('handles', to_jsonb((select coalesce(array_agg(profiles.handle order by ids.ordinality), '{}')
+                                            from unnest(writer_ids) with ordinality as ids (id, ordinality)
+                                            join public.profiles on profiles.id = ids.id))));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_writer_follow_picks"("handles" "text"[], "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_writer_follow_picks"("handles" "text"[], "reason" "text") IS 'Admins and the owner: replace "To follow this week" by username, logged with before and after (user story 1.4).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_sign_out_everywhere"("target_user_id" "uuid", "reason_given" "text") RETURNS integer
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -13488,6 +13565,37 @@ ALTER FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uui
 
 
 COMMENT ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") IS 'Staff with the Users area withdraw a parent''s yes to suggestions, logged (S1-E2-03b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_writer_follow_picks"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: admins and the owner, in a staff session.
+  if not public.staff_may('featured', 'view') then
+    raise exception 'Only admins can see the writers to follow.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the current picks, in order, with whether each may show today.
+  return (
+    select coalesce(jsonb_agg(jsonb_build_object(
+        'handle', profiles.handle,
+        'display_name', coalesce(nullif(profiles.pen_name, ''), profiles.handle),
+        'may_show', public.may_spotlight_writer(profiles.id))
+      order by writer_follow_picks.position), '[]'::jsonb)
+    from public.writer_follow_picks
+    join public.profiles on profiles.id = writer_follow_picks.writer_user_id
+    where writer_follow_picks.removed_at is null
+  );
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_writer_follow_picks"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_writer_follow_picks"() IS 'Admins and the owner: the current "To follow this week" picks with whether each may show (user story 1.4).';
 
 
 
@@ -23144,14 +23252,15 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     ('staff_permissions', true, null),
     ('staff_roles', true, null),
     ('story_restrictions', true, null),
-    ('story_revisions', true, null);
+    ('story_revisions', true, null),
+    ('writer_follow_picks', false, 'user_id is the admin who put a writer in To follow this week, not data about their account; the writer''s place in the list is shown publicly on the Read page');
 $$;
 
 
 ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33; GDPR art. 15).';
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33, user story 1.4; GDPR art. 15).';
 
 
 
@@ -54090,6 +54199,45 @@ COMMENT ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") IS 'Put
 
 
 
+CREATE OR REPLACE FUNCTION "public"."suggested_writer_card"("person_id" "uuid", "followers_gained" bigint) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with open_stories as (
+    -- The writer's stories anyone may find, the same test rising_writers() uses.
+    select stories.* from public.stories
+    where stories.user_id = person_id
+      and stories.deleted_at is null and stories.visibility = 'public' and not stories.class_only
+      and public.story_has_readable_chapter(stories.id)
+      and not public.is_moderated_away('story', stories.id)
+      and not exists (select 1 from public.story_restrictions
+                      where story_restrictions.story_id = stories.id and story_restrictions.lifted_at is null)
+  )
+  select jsonb_build_object(
+      'handle', profiles.handle,
+      'display_name', coalesce(nullif(profiles.pen_name, ''), profiles.handle),
+      'category_slug', (select categories.slug from open_stories
+                        join public.categories on categories.id = open_stories.category_id
+                        group by categories.slug order by count(*) desc, categories.slug limit 1),
+      'latest_story', (select public.story_card_json(open_stories.id) from open_stories
+                       where public.rating_allows(open_stories.rating)
+                       order by open_stories.last_chapter_published_at desc nulls last limit 1),
+      'followers_this_week', case when followers_gained >= 5 then followers_gained end,
+      'is_following', exists (select 1 from public.follows_users
+                              where follows_users.user_id = (select auth.uid())
+                                and follows_users.followed_user_id = person_id))
+  from public.profiles
+  where profiles.id = person_id and profiles.deleted_at is null and profiles.handle is not null;
+$$;
+
+
+ALTER FUNCTION "public"."suggested_writer_card"("person_id" "uuid", "followers_gained" bigint) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."suggested_writer_card"("person_id" "uuid", "followers_gained" bigint) IS 'Internal: one suggested writer''s card for this reader, the rising_writers() shape; never a user ID (user story 1.4).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."suggestion_row_size"() RETURNS integer
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -57396,6 +57544,67 @@ ALTER FUNCTION "public"."writers_published_by_market"("for_day" "date") OWNER TO
 
 
 COMMENT ON FUNCTION "public"."writers_published_by_market"("for_day" "date") IS 'Internal: writers with a readable chapter by the end of a day, in total and by market (S1-E15-02).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writers_to_follow_now"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  reader_id uuid := (select auth.uid());
+  picked jsonb;
+begin
+  -- Step 1: the staff picks this reader may see, in staff order.
+  select coalesce(jsonb_agg(card order by position), '[]'::jsonb) into picked
+  from (
+    select writer_follow_picks.position,
+      public.suggested_writer_card(writer_follow_picks.writer_user_id,
+        (select count(*) from public.follows_users
+         where follows_users.followed_user_id = writer_follow_picks.writer_user_id
+           and follows_users.created_at > now() - interval '7 days')) as card
+    from public.writer_follow_picks
+    where writer_follow_picks.removed_at is null
+      and writer_follow_picks.writer_user_id is distinct from reader_id
+      and not public.is_blocked_with(writer_follow_picks.writer_user_id)
+      and public.may_spotlight_writer(writer_follow_picks.writer_user_id)
+  ) as picks
+  where card is not null;
+  if jsonb_array_length(picked) > 0 then
+    return jsonb_build_object('source', 'picked', 'writers', picked);
+  end if;
+  -- Step 2: no pick may show, so the writers who gained the most followers this week.
+  return jsonb_build_object('source', 'automatic', 'writers', (
+    select coalesce(jsonb_agg(public.suggested_writer_card(gainers.followed_user_id, gainers.gained)
+                              order by gainers.gained desc, gainers.handle), '[]'::jsonb)
+    from (
+      select follows_users.followed_user_id, count(*) as gained, profiles.handle
+      from public.follows_users
+      join public.profiles on profiles.id = follows_users.followed_user_id
+        and profiles.deleted_at is null and profiles.handle is not null
+      where follows_users.created_at > now() - interval '7 days'
+        and follows_users.followed_user_id is distinct from reader_id
+        and not public.is_blocked_with(follows_users.followed_user_id)
+        and public.may_spotlight_writer(follows_users.followed_user_id)
+        -- A writer, not only a reader: at least one story anyone may find.
+        and exists (select 1 from public.stories
+                    where stories.user_id = follows_users.followed_user_id
+                      and stories.deleted_at is null and stories.visibility = 'public' and not stories.class_only
+                      and public.story_has_readable_chapter(stories.id)
+                      and not public.is_moderated_away('story', stories.id))
+      group by follows_users.followed_user_id, profiles.handle
+      order by gained desc, profiles.handle
+      limit 3
+    ) as gainers
+  ));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."writers_to_follow_now"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writers_to_follow_now"() IS '"To follow this week" for this reader: staff picks, else the week''s biggest follower gains; never a user ID (user story 1.4).';
 
 
 
@@ -60878,6 +61087,34 @@ COMMENT ON COLUMN "public"."waitlist_entries"."staff_alert_sent_at" IS 'When the
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."writer_follow_picks" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "writer_user_id" "uuid" NOT NULL,
+    "position" integer NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "removed_at" timestamp with time zone,
+    CONSTRAINT "writer_follow_picks_position_range" CHECK ((("position" >= 1) AND ("position" <= 3)))
+);
+
+
+ALTER TABLE "public"."writer_follow_picks" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."writer_follow_picks" IS 'kind: staff
+The writers staff put in "To follow this week" on the Read page, in order. A save replaces the list: old rows get removed_at, new rows are added (user story 1.4, board A04).';
+
+
+
+COMMENT ON COLUMN "public"."writer_follow_picks"."writer_user_id" IS 'The writer shown in the list.';
+
+
+
+COMMENT ON COLUMN "public"."writer_follow_picks"."user_id" IS 'The staff member who picked the writer.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."writer_ranks" (
     "user_id" "uuid" NOT NULL,
     "rank" "public"."writer_rank" NOT NULL,
@@ -62474,6 +62711,11 @@ ALTER TABLE ONLY "public"."waitlist_entries"
 
 
 
+ALTER TABLE ONLY "public"."writer_follow_picks"
+    ADD CONSTRAINT "writer_follow_picks_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."writer_ranks"
     ADD CONSTRAINT "writer_ranks_pkey" PRIMARY KEY ("user_id");
 
@@ -63900,6 +64142,18 @@ CREATE INDEX "username_approvals_user_id_idx" ON "public"."username_approvals" U
 
 
 CREATE INDEX "waitlist_entries_waiting" ON "public"."waitlist_entries" USING "btree" ("joined_at") WHERE ("admitted_at" IS NULL);
+
+
+
+CREATE UNIQUE INDEX "writer_follow_picks_current_position_idx" ON "public"."writer_follow_picks" USING "btree" ("position") WHERE ("removed_at" IS NULL);
+
+
+
+CREATE UNIQUE INDEX "writer_follow_picks_current_writer_idx" ON "public"."writer_follow_picks" USING "btree" ("writer_user_id") WHERE ("removed_at" IS NULL);
+
+
+
+CREATE INDEX "writer_follow_picks_user_idx" ON "public"."writer_follow_picks" USING "btree" ("user_id");
 
 
 
@@ -67268,6 +67522,16 @@ ALTER TABLE ONLY "public"."waitlist_entries"
 
 
 
+ALTER TABLE ONLY "public"."writer_follow_picks"
+    ADD CONSTRAINT "writer_follow_picks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."writer_follow_picks"
+    ADD CONSTRAINT "writer_follow_picks_writer_user_id_fkey" FOREIGN KEY ("writer_user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."writer_ranks"
     ADD CONSTRAINT "writer_ranks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
@@ -69429,6 +69693,17 @@ COMMENT ON POLICY "waitlist_entries_select_staff" ON "public"."waitlist_entries"
 
 
 
+ALTER TABLE "public"."writer_follow_picks" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "writer_follow_picks_select_featured_staff" ON "public"."writer_follow_picks" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('featured'::"text", 'view'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "writer_follow_picks_select_featured_staff" ON "public"."writer_follow_picks" IS 'Allows staff with the Featured area (owner, admin) to read the writer picks (user story 1.4).';
+
+
+
 ALTER TABLE "public"."writer_ranks" ENABLE ROW LEVEL SECURITY;
 
 
@@ -70855,6 +71130,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_story_visibility"("target_story_id" "u
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_set_writer_follow_picks"("handles" "text"[], "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_writer_follow_picks"("handles" "text"[], "reason" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_sign_out_everywhere"("target_user_id" "uuid", "reason_given" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_sign_out_everywhere"("target_user_id" "uuid", "reason_given" "text") TO "authenticated";
 
@@ -71024,6 +71304,11 @@ GRANT ALL ON FUNCTION "public"."admin_withdraw_parental_consent"("target_user_id
 
 REVOKE ALL ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_withdraw_spotlight_consent"("target_user_id" "uuid", "reason_given" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_writer_follow_picks"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_writer_follow_picks"() TO "authenticated";
 
 
 
@@ -76572,6 +76857,10 @@ GRANT ALL ON FUNCTION "public"."submit_teacher_proof"("proof_path" "text") TO "a
 
 
 
+REVOKE ALL ON FUNCTION "public"."suggested_writer_card"("person_id" "uuid", "followers_gained" bigint) FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."suggestion_row_size"() FROM PUBLIC;
 
 
@@ -77011,6 +77300,12 @@ GRANT ALL ON FUNCTION "public"."writers_hub_spotlight"() TO "authenticated";
 
 
 REVOKE ALL ON FUNCTION "public"."writers_published_by_market"("for_day" "date") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."writers_to_follow_now"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."writers_to_follow_now"() TO "anon";
+GRANT ALL ON FUNCTION "public"."writers_to_follow_now"() TO "authenticated";
 
 
 
@@ -77803,6 +78098,11 @@ GRANT SELECT ON TABLE "public"."username_word_lists" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."waitlist_entries" TO "service_role";
 GRANT SELECT ON TABLE "public"."waitlist_entries" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."writer_follow_picks" TO "service_role";
+GRANT SELECT ON TABLE "public"."writer_follow_picks" TO "authenticated";
 
 
 

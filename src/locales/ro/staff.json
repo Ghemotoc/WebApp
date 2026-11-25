@@ -1609,6 +1609,28 @@
       "refused": "Nu se poate salva. Poate o poveste nu mai e permisă sau lista e prea lungă. Verifică lista și încearcă din nou.",
       "unreachable": "Nu am putut ajunge la baza de date. Încearcă din nou peste puțin timp."
     },
+    "writers": {
+      "heading": "De urmărit săptămâna asta, pe Citește",
+      "intro": "Prima listă din caseta Scriitori a paginii Citește. Alege până la 3 scriitori, în ordine. Fără alegeri, cititorii văd scriitorii care au câștigat cei mai mulți urmăritori săptămâna asta. Apar doar scriitorii care pot fi sugerați: conturi active, cu sugestiile pornite, de 16 ani sau mai mult.",
+      "loading": "Se încarcă scriitorii…",
+      "automatic": "Nicio alegere: cititorii văd scriitorii care au câștigat cei mai mulți urmăritori săptămâna asta.",
+      "currentLabel": "Scriitori aleși acum",
+      "cannotShow": "Ascuns cititorilor",
+      "handles": "Nume de utilizator, în ordine",
+      "handlesHint": "Până la 3, despărțite prin virgulă, de exemplu @corbu, @sofia.k. Lasă gol pentru lista automată.",
+      "reason": "De ce schimbi scriitorii de urmărit?",
+      "save": "Salvează scriitorii",
+      "saved": "Salvat. Pagina Citește arată lista nouă.",
+      "failures": {
+        "not_allowed": "Doar administratorii și proprietarul pot alege acești scriitori.",
+        "reason_missing": "Spune de ce schimbi scriitorii.",
+        "too_many": "Alege cel mult 3 scriitori.",
+        "unknown_writer": "Unul dintre numele de utilizator nu se potrivește cu niciun cont. Verifică ortografia.",
+        "duplicate": "Un scriitor apare de două ori în listă.",
+        "may_not_show": "Unul dintre scriitori nu poate fi sugerat: contul nu e activ, sugestiile sunt oprite sau scriitorul are sub 16 ani.",
+        "unreachable": "Nu s-a salvat. Verifică conexiunea și încearcă din nou."
+      }
+    },
     "homeComment": {
       "heading": "Comentariul unui cititor pe pagina principală",
       "intro": "Invită un cititor să aibă un comentariu arătat pe peretele de coperți al paginii principale. Cititorul primește o notificare și o invitație în Spațiul scriitorilor, iar vizitatorii văd comentariul doar după ce cititorul acceptă. Se arată cel mai recent acord. Mai jos: comentarii din ultimele 90 de zile, de cel mult 200 de caractere, scrise de adulți, la povești publice cu ratingul Toate vârstele sau 13+, niciodată spoilere.",
