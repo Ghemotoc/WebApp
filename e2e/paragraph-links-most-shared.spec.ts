@@ -169,6 +169,8 @@ test.describe('paragraph links and "Most shared this week" (IDEAS-1 part e)', ()
     await expect(
       page.getByRole('heading', { level: 1, name: 'Most shared this week' }),
     ).toBeVisible();
+    // The sort lives in the "Filter and sort" panel (user story 1.5, board A05).
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await expect(page.getByRole('combobox', { name: /Sort/ })).toHaveValue('shared');
     await expect(page.getByRole('link', { name: /Lumina din turn/ })).toBeVisible();
     await page.context().close();

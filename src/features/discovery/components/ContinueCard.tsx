@@ -1,5 +1,5 @@
 /**
- * ContinueCard: "Continue reading" in the Read page's side column, the reader's latest unfinished
+ * ContinueCard: "Continue reading" in the Read page's row of cards, the reader's latest unfinished
  * story (story S1-E5-12, bundle LOOK-4b; since CALM-7c the simplified board New-Read).
  *
  * Board values: no card around it (Step 3: no cards around sections). The heading, then a row
@@ -9,7 +9,7 @@
  * marked a last chapter, CALM-6), the 2 px thread line for how far into the chapter, and a quiet
  * Continue (the page's one main button is the hero's "Read the story"). The thread line is drawn
  * for sighted readers and its words sit in hidden text beside it.
- * Who shows it: ReadSideColumn. What it calls: the Library's continueAddress (where Continue
+ * Who shows it: ReadSideColumn (the Read page's row of cards). What it calls: the Library's continueAddress (where Continue
  * leads) and MetaLine.
  */
 import { Link } from 'react-router';

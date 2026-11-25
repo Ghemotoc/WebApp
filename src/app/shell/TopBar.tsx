@@ -6,8 +6,8 @@
  *
  * From left to right (the simplified design, bundle CALM-2): the logo and wordmark (BrandMark), one
  * link named "<brand name>, Home"; Home, Read, Library and Together in a recessed track with the
- * white bubble under the page on screen (NavTrack); the search field (HeaderSearch); then the end
- * slot: the quiet Write button, Messages and Notifications as icon buttons and the account avatar,
+ * white bubble under the page on screen (NavTrack); then the end
+ * slot: the quiet Write button, the round search link (HeaderSearch, user story 1.7), Messages and Notifications as icon buttons and the account avatar,
  * or the one "Get in" button for a visitor (GETIN-1). The pill wraps onto a second row when a window is only just wide
  * enough, so nothing is cut off. Day and night, and the language, live in the footer and in
  * Settings, never here (handoff; Robert, 9 Nov 2026, 12:20 UTC, bundle FIX-3). Below 1024 px AppLayout draws PhoneHeader or FocusHeader instead.
@@ -18,7 +18,7 @@
  * the page scrolls more than 12 px it moves up, tightens and turns nearly solid, so its links stay
  * easy to read over any row (usePageScrolled, data-solid; index.css).
  * Who uses it: AppLayout, and the /design page with the full board links.
- * What it calls: NavTrack, HeaderSearch, BrandMark, usePageScrolled, and useHomeAddress for where
+ * What it calls: NavTrack, BrandMark, usePageScrolled, and useHomeAddress for where
  * the logo goes ("/", Home, since user story 1.1).
  */
 import type { ReactNode } from 'react';
@@ -31,7 +31,6 @@ import { BrandMark } from '@/features/branding/components/BrandMark';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useHomeAddress } from '@/features/hub/hooks/useHomeAddress';
 
-import { HeaderSearch } from './HeaderSearch';
 import { NavTrack } from './NavTrack';
 import { usePageScrolled } from './usePageScrolled';
 
@@ -44,8 +43,6 @@ export interface TopBarProps {
   navigationLabel?: string;
   /** Links after the list that decide themselves whether to show (the /design specimen's extras). */
   navigationEnd?: ReactNode;
-  /** The search pill; the /design specimen leaves it out so the page has one search region. */
-  hasSearch?: boolean;
 }
 
 /**
@@ -58,12 +55,11 @@ export function TopBar({
   endSlot,
   navigationLabel,
   navigationEnd,
-  hasSearch = true,
 }: TopBarProps) {
   const { t } = useTranslation();
   // The logo opens Home at "/": the member's Home signed in, the public home page signed out (1.1).
   const homeAddress = useHomeAddress();
-  // A visitor sees no members' links (Library, Together) and no search (TRIAL-WALL).
+  // A visitor sees no members' links (Library, Together) (TRIAL-WALL).
   const { userId } = useSession();
   const isSignedIn = userId !== null;
   const visibleItems = linksFor(navigationItems, isSignedIn);
@@ -96,7 +92,6 @@ export function TopBar({
             <NavTrack items={visibleItems} end={navigationEnd} />
           </nav>
         )}
-        {hasSearch && isSignedIn && <HeaderSearch />}
         {/* Wraps when the window is only just wide enough, so the end slot never
             pushes the page sideways (S1-E2-05; CLAUDE.md rule 21). */}
         <div className="ml-auto flex flex-wrap items-center justify-end gap-2">{endSlot}</div>

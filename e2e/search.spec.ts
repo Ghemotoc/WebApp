@@ -1,17 +1,18 @@
 /**
- * Search stories, writers and tags in a real browser (story S1-E5-04; board Search 3.2).
+ * Search stories, writers and Together in a real browser (story S1-E5-04; user stories 1.7 and
+ * 1.8, boards A07-Search and A08-SearchResults).
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
  * - from Discover, a member searches without diacritics and finds the stories (criteria 1 and 2;
  *   the top bar's search is for members only since TRIAL-WALL);
  * - a 16+ story never appears for a visitor (criterion 3);
- * - more than 20 stories make one line of 20 with "View more", which opens every story found,
- *   sorted by best match (criterion 4);
- * - the Writers group finds a writer by username and opens their profile;
- * - on a phone the results are rows of at most 20 with See all, and writer rows have Follow
- *   (bundle CALM-7c);
- * - a search that finds nothing says so and offers Discover;
+ * - more than 20 stories show 20 rows and "Show more results", sorted by best match, and a sort
+ *   or filter applies at once and stays in the address (criterion 4; board A08);
+ * - the Writers tab finds a writer by username and opens their profile;
+ * - on a phone "Filter and sort" opens a sheet and counts the filters on, and writer rows have
+ *   Follow (board A08);
+ * - a search that finds nothing says so, with suggestions;
  * - the search pages pass axe at 390, 768 and 1440 px, light and night, ro and en.
  * Test data: 22 stories of the spec's own by teacher (one of them 16+), removed afterwards.
  */
@@ -68,19 +69,23 @@ test.describe('search (S1-E5-04)', () => {
     // The top bar's search shows only to a signed-in member (TRIAL-WALL, Robert, 23 Nov 2026).
     await useSessionInBrowser(page.context(), (await signInPersona('adult_writer')).session);
     await page.goto('/discover');
-    // The top bar's search pill (bundle G4 SHELL): Enter opens the Search page. The member's own
-    // account language takes over from the English set above once the profile loads, which
-    // redraws the bar, so the search box is found by its role alone and typed into until the
-    // word stays put.
-    const topBarSearch = page.getByRole('banner').getByRole('searchbox');
+    // The top bar's round search button opens the Search page (user story 1.7, board A07). The
+    // member's own account language takes over from the English set above once the profile loads,
+    // which redraws the bar, so the field is typed into until the word stays put.
+    await page
+      .getByRole('banner')
+      .getByRole('link', { name: /Search|Caută/ })
+      .click();
+    await expect(page).toHaveURL(/\/search$/);
+    const searchField = page.getByRole('search').getByRole('searchbox');
     await expect(async () => {
-      await topBarSearch.fill(foldedWord);
-      await expect(topBarSearch).toHaveValue(foldedWord, { timeout: 1000 });
+      await searchField.fill(foldedWord);
+      await expect(searchField).toHaveValue(foldedWord, { timeout: 1000 });
     }).toPass();
-    await topBarSearch.press('Enter');
+    await searchField.press('Enter');
     await expect(page).toHaveURL(new RegExp(`/search\\?q=${foldedWord}$`));
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(foldedWord);
     // An adult member also sees the 16+ story, so all 22 are found (a visitor's 21 are below).
+    // The member's account language may be Romanian, so the heading is matched by its number.
     await expect(page.getByRole('heading', { name: /^22 / })).toBeVisible();
     await expect(
       page.getByRole('link', { name: new RegExp(`${word} 1\\b`) }).first(),
@@ -89,55 +94,69 @@ test.describe('search (S1-E5-04)', () => {
 
   test('a 16+ story never shows for a visitor', async ({ page }) => {
     await page.goto(`/search?q=${foldedWord}`);
-    await expect(page.getByRole('heading', { name: '21 stories' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: `21 stories for “${foldedWord}”` }),
+    ).toBeVisible();
     await expect(page.getByText(`${word} de noapte`)).toHaveCount(0);
   });
 
-  test('more than 20 stories end with View more, which lists them all by best match', async ({
+  test('more than 20 stories show 20 rows and Show more results, and a sort applies at once', async ({
     page,
   }) => {
     await page.goto(`/search?q=${foldedWord}`);
-    await page.getByRole('link', { name: /View more/ }).click();
-    await expect(page).toHaveURL(new RegExp(`/search/stories\\?q=${foldedWord}`));
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(`Stories for “${foldedWord}”`);
-    await expect(page.getByText('21 stories')).toBeVisible();
-    await expect(page.getByRole('combobox', { name: /Sort/ })).toHaveValue('relevance');
+    const stories = page.getByRole('list', { name: `21 stories for “${foldedWord}”` });
+    // Only the rows themselves: each row's meta line is a list too.
+    await expect(stories.locator(':scope > li')).toHaveCount(20);
+    await expect(page.getByRole('radio', { name: 'Best match' })).toBeChecked();
+    await page.getByRole('button', { name: 'Show more results' }).click();
+    await expect(stories.locator(':scope > li')).toHaveCount(21);
+    // Board A08: the filters apply at once, and the address keeps them.
+    await page.getByRole('radio', { name: 'Most read' }).check();
+    await expect(page).toHaveURL(/sort=popular/);
+    await expect(page.getByText('Sorted by Most read')).toBeVisible();
   });
 
-  test('the Writers group finds a writer by username and opens their profile', async ({ page }) => {
+  test('the Writers tab finds a writer by username and opens their profile', async ({ page }) => {
     await page.goto('/search?q=teacher');
-    await page.getByRole('group', { name: 'Show' }).getByText('Writers', { exact: true }).click();
     await page
-      .getByRole('link', { name: /@teacher/ })
+      .getByRole('group', { name: 'Results' })
+      .getByText(/^Writers/)
+      .click();
+    await expect(page).toHaveURL(/in=writers/);
+    // The row's link carries the writer's name; the username sits in the meta line under it.
+    await page
+      .getByRole('list', { name: 'Writers' })
+      .getByRole('listitem')
+      .filter({ hasText: '@teacher' })
+      .first()
+      .getByRole('link')
       .first()
       .click();
     await expect(page).toHaveURL(/\/u\/teacher$/);
   });
 
-  test('on a phone the results are rows with See all, and writers have Follow', async ({
+  test('on a phone Filter and sort opens a sheet and counts the filters, and writers have Follow', async ({
     page,
   }) => {
-    // Handover Step 3, "Search on phones" (CALM-7c): rows under 768 px, at most 20, then See all.
+    // Board A08: under 1024 px the filters sit in a sheet, with the number of filters on.
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`/search?q=${foldedWord}`);
-    const stories = page.getByRole('list', { name: '21 stories' });
-    // Only the rows themselves: each row's meta lines are lists too.
-    await expect(stories.locator(':scope > li')).toHaveCount(20);
-    await page.getByRole('link', { name: 'See 21 stories' }).click();
-    await expect(page).toHaveURL(new RegExp(`/search/stories\\?q=${foldedWord}`));
-    await page.goto('/search?q=teacher');
-    await page.getByRole('group', { name: 'Show' }).getByText('Writers', { exact: true }).click();
-    const writers = page.getByRole('list', { name: /writer/ });
-    await expect(writers.getByRole('link', { name: /follow/i }).first()).toBeVisible();
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
+    await page.getByRole('dialog').getByRole('radio', { name: 'Ongoing' }).check();
+    await page.getByRole('dialog').getByRole('button', { name: 'Done' }).click();
+    await expect(page).toHaveURL(/status=ongoing/);
+    await expect(page.getByRole('button', { name: 'Filter and sort · 1' })).toBeVisible();
+    await page.goto('/search?q=teacher&in=writers');
+    const writers = page.getByRole('list', { name: 'Writers' });
+    await expect(writers.getByText(/follow/i).first()).toBeVisible();
   });
 
-  test('a search that finds nothing says so and offers Discover', async ({ page }) => {
+  test('a search that finds nothing says so, with suggestions', async ({ page }) => {
     await page.goto(`/search?q=${missingWord}`);
     await expect(
-      page.getByRole('heading', { name: `No results for “${missingWord}”` }),
+      page.getByRole('heading', { name: `No stories match “${missingWord}”` }),
     ).toBeVisible();
-    await page.getByRole('link', { name: 'Browse Read' }).click();
-    await expect(page).toHaveURL(/\/discover$/);
+    await expect(page.getByText('Check the spelling.')).toBeVisible();
   });
 
   for (const view of everyView([`/search?q=${foldedWord}`, '/search/writers?q=teacher'])) {

@@ -2,37 +2,20 @@
   "page": {
     "documentTitle": "Căutare · {{productName}}",
     "heading": "Căutare",
-    "resultsFor": "Rezultate pentru „{{term}}”",
-    "count_one": "Un rezultat printre povești, scriitori și etichete.",
-    "count_few": "{{count}} rezultate printre povești, scriitori și etichete.",
-    "count_other": "{{count}} de rezultate printre povești, scriitori și etichete.",
-    "start": "Găsește o poveste după titlu, după o etichetă sau după numele scriitorului.",
     "tooShort": "Scrie cel puțin 2 litere ca să cauți.",
-    "loadFailed": "Căutarea nu merge acum. Încearcă din nou peste puțin timp."
+    "loadFailed": "Căutarea nu merge acum. Încearcă din nou peste puțin timp.",
+    "writersToTry": "Scriitori de încercat",
+    "sideLabel": "Scriitori de încercat",
+    "start": "Găsește o poveste după titlu, după o etichetă sau după numele scriitorului."
   },
   "form": {
-    "label": "Caută povești, scriitori și etichete",
-    "placeholder": "Caută povești, scriitori și etichete",
+    "label": "Caută povești, scriitori și în Împreună",
+    "placeholder": "Titluri, pseudonime, etichete",
     "submit": "Caută",
     "clear": "Șterge",
-    "hintLead": "Nu e nevoie de diacritice.",
-    "hint": "„povesti” găsește și „povești”. Se potrivesc și terminațiile cuvintelor în română și engleză, așa că „poveste” și „povestea” contează ca același cuvânt.",
     "clearLabel": "Golește căutarea"
   },
   "groups": {
-    "label": "Arată",
-    "stories": "Povești",
-    "writers": "Scriitori",
-    "tags": "Etichete",
-    "storiesTitle_one": "O poveste",
-    "storiesTitle_few": "{{count}} povești",
-    "storiesTitle_other": "{{count}} de povești",
-    "writersTitle_one": "Un scriitor",
-    "writersTitle_few": "{{count}} scriitori",
-    "writersTitle_other": "{{count}} de scriitori",
-    "tagsTitle_one": "O etichetă",
-    "tagsTitle_few": "{{count}} etichete",
-    "tagsTitle_other": "{{count}} de etichete",
     "safetyNote": "Căutarea nu arată niciodată o poveste pentru 13+, 16+ sau 18+ cuiva mai tânăr. Ascunde și persoanele pe care le-ai blocat și tot ce au eliminat moderatorii."
   },
   "results": {
@@ -42,13 +25,7 @@
     "chapters_one": "{{count}} capitol",
     "chapters_few": "{{count}} capitole",
     "chapters_other": "{{count}} de capitole",
-    "writerHandle": "@{{handle}}",
-    "tagLink": "#{{tag}}"
-  },
-  "empty": {
-    "title": "Niciun rezultat pentru „{{term}}”",
-    "description": "Verifică ortografia, folosește mai puține cuvinte sau caută o etichetă, de exemplu „fantezie”.",
-    "browse": "Mergi la Citește"
+    "writerHandle": "@{{handle}}"
   },
   "seeAll": {
     "writersEyebrow": "Căutare",
@@ -61,7 +38,47 @@
     "none": "Nu s-a găsit nimic.",
     "count": "Rezultate: {{count}}"
   },
-  "rows": {
-    "seeAll": "Vezi {{title}}"
+  "recent": {
+    "heading": "Căutări recente",
+    "clear": "Șterge",
+    "remove": "Scoate „{{term}}” din căutările recente"
+  },
+  "tabs": {
+    "label": "Rezultate",
+    "stories": "Povești",
+    "writers": "Scriitori",
+    "together": "Împreună",
+    "noneWriters": "Niciun scriitor nu se potrivește cu „{{term}}”.",
+    "noneTogether": "Nicio discuție sau postare nu se potrivește cu „{{term}}”."
+  },
+  "filters": {
+    "title": "Filtrează și ordonează",
+    "titleWithCount": "Filtrează și ordonează · {{count}}",
+    "sortBy": "Ordonează după",
+    "sort": {
+      "relevance": "Cea mai bună potrivire",
+      "popular": "Cele mai citite",
+      "updated": "Cel mai nou capitol"
+    },
+    "status": "Stadiu",
+    "language": "Limbă",
+    "languages": {
+      "en": "Engleză",
+      "ro": "Română"
+    },
+    "both": "Ambele",
+    "clear": "Șterge filtrele",
+    "done": "Gata"
+  },
+  "stories": {
+    "heading_one": "{{count}} poveste pentru „{{term}}”",
+    "heading_few": "{{count}} povești pentru „{{term}}”",
+    "heading_other": "{{count}} de povești pentru „{{term}}”",
+    "sortedBy": "Ordonate după: {{sort}}",
+    "showMore": "Arată mai multe rezultate",
+    "none": "Nicio poveste nu se potrivește cu „{{term}}”",
+    "tipSpelling": "Verifică scrierea.",
+    "tipFewer": "Folosește mai puține cuvinte sau mai scurte.",
+    "tipTag": "Caută o etichetă, de exemplu „fantasy”."
   }
 }

@@ -130,11 +130,16 @@ describe('the app shell', () => {
 });
 
 describe('the shell on a wide window (bundle G4 SHELL)', () => {
-  it('has the website top bar with the search pill and no language menu', () => {
+  it('has the website top bar with a search button and no language menu', () => {
     signIn();
     renderApp('/discover');
 
-    expect(screen.getByRole('search', { name: 'Search' })).toBeInTheDocument();
+    // User story 1.7, boards A01 to A07: a round link to the Search page, after Write.
+    expect(
+      within(screen.getByRole('banner')).getByRole('link', {
+        name: 'Search stories, writers and Together',
+      }),
+    ).toHaveAttribute('href', '/search');
     // The language menu sits only in the footer and in Settings (bundle FIX-3).
     expect(
       within(screen.getByRole('banner')).queryByRole('combobox', { name: 'Language' }),

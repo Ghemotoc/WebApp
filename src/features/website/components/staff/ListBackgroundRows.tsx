@@ -3,7 +3,7 @@
  * pages (bundle G12b; the StaffWebsite board's "Genre page backgrounds" and "Tag page
  * backgrounds").
  *
- * Each row names the page, its colour in the chosen market ("Sky", or "Default: Plum") and who set
+ * Each row names the page, its colour in the chosen market ("Sky", or "Default: plain heading") and who set
  * it, with Edit. The tag list shows only tags with a band, and "Add a tag background" takes any
  * approved tag's name; the database refuses a name that isn't one.
  * Who shows them: ListBackgroundsTab. What they call: useStoryFormOptions (the genres).
@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
-import { categoryAccent } from '@/features/discovery/lib/categoryAccents';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 import type { ListBackground } from '../../api/staff/listPageBackgrounds';
@@ -87,11 +86,10 @@ export function GenreBackgroundRows({ backgrounds, onEdit }: RowsProps) {
           const chosen = backgrounds.find(
             (row) => row.kind === 'category' && row.key === category.slug,
           );
+          // Without a choice a genre page has the plain heading, no band (user story 1.6).
           const colour =
             chosen === undefined
-              ? t('listBackgrounds.defaultColour', {
-                  colour: t(`listBackgrounds.palettes.${categoryAccent(category.slug)}`),
-                })
+              ? t('listBackgrounds.plainDefault')
               : t(`listBackgrounds.palettes.${chosen.palette}`);
           return (
             <BackgroundRow

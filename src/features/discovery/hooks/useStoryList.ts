@@ -1,7 +1,8 @@
 /**
- * useStoryList: every story of a list, 24 at a time, for a See all page (story S1-E5-09).
+ * useStoryList: every story of a list, 20 at a time (user story 1.5: "Show 20 more"), for a See
+ * all page (story S1-E5-09).
  *
- * Who calls it: StoryListPage. What it calls: api/storyLists.ts → browse_stories(). "Load more"
+ * Who calls it: StoryListPage. What it calls: api/storyLists.ts → browse_stories(). "Show 20 more"
  * asks for the next 24 after the ones shown; the database keeps the same order on every page, so
  * pages never overlap (S1-E5-09, third criterion).
  */
@@ -22,7 +23,7 @@ import {
 import { storyListQueryKey } from './useStoryShelf';
 
 /** Stories per page: four rows of six on a wide screen (board 3.10). */
-export const storiesPerPage = 24;
+export const storiesPerPage = 20;
 
 /**
  * Where the next page starts.

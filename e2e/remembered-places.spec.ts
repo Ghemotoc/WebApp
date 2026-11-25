@@ -5,7 +5,8 @@
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves (each "another device" is a fresh browser with empty storage, so only the
  * account can know):
- * - a reader who picked English for a story in two languages gets English on another device;
+ * - a reader who picked Romanian for a story in two languages gets Romanian on another device,
+ *   although an English page would open the English edition by itself;
  * - a link into a story's Atlas opens the section the writer had open last, on another device too,
  *   while the Atlas menu's "At a glance" still opens At a glance;
  * - Write puts the caret back where the writer left it in the chapter, on another device too.
@@ -94,17 +95,24 @@ test.describe('coming back to the same place (design books item 17)', () => {
   test.afterAll(cleanUp);
 
   test('the language a reader picked opens on another device', async ({ browser }) => {
+    // The page is in English, so with nothing remembered the story moves to its English edition
+    // by itself, a moment after it opens (story_opening_edition()). The test waits for that move
+    // first and then picks Romanian, the edition a fresh English page would never open alone:
+    // only the account can bring it back on another device. (Picking English, as this test did
+    // before, raced that move: it passed only when the Romanian heading was caught before it,
+    // and the second device proved nothing, since English opened there anyway; CI, 25 Nov 2026.)
     const page = await openOnNewDevice(browser, 'teen_17', `/s/${romanianSlug}`);
-    await expect(page.getByRole('heading', { level: 1, name: 'Locul păstrat' })).toBeVisible();
-    await page.getByRole('button', { name: /^Read in:/ }).click();
-    await page.getByRole('link', { name: /English/ }).click();
     await expect(page).toHaveURL(new RegExp(`/s/${englishSlug}$`));
+    await expect(page.getByRole('heading', { level: 1, name: 'The kept place' })).toBeVisible();
+    await page.getByRole('button', { name: /^Read in:/ }).click();
+    await page.getByRole('link', { name: /^Română ·/ }).click();
+    await expect(page).toHaveURL(new RegExp(`/s/${romanianSlug}$`));
     await expectKeptInAccount(readerId, 'story_edition');
     await page.context().close();
-    // Another device: the Romanian address opens the English edition.
-    const again = await openOnNewDevice(browser, 'teen_17', `/s/${romanianSlug}`);
-    await expect(again).toHaveURL(new RegExp(`/s/${englishSlug}$`));
-    await expect(again.getByRole('heading', { level: 1, name: 'The kept place' })).toBeVisible();
+    // Another device, from the English address: the account's Romanian wins.
+    const again = await openOnNewDevice(browser, 'teen_17', `/s/${englishSlug}`);
+    await expect(again).toHaveURL(new RegExp(`/s/${romanianSlug}$`));
+    await expect(again.getByRole('heading', { level: 1, name: 'Locul păstrat' })).toBeVisible();
     await again.context().close();
   });
 
