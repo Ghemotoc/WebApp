@@ -6648,6 +6648,7 @@ export type Database = {
           message_audience_of: Database['public']['Enums']['message_audience'] | null;
           message_email_choices: Json | null;
           profile_audience_of: Database['public']['Enums']['profile_audience'] | null;
+          profile_is_shown_to_caller: boolean | null;
           teacher_check_can_ask: boolean | null;
         };
         ComputedFields:
@@ -6660,6 +6661,7 @@ export type Database = {
           | 'message_audience_of'
           | 'message_email_choices'
           | 'profile_audience_of'
+          | 'profile_is_shown_to_caller'
           | 'teacher_check_can_ask';
         Insert: {
           adults_may_message?: boolean;
