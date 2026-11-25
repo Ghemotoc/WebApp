@@ -23,7 +23,7 @@
     "completed": "Completed",
     "completedEyebrow": "Read to the end",
     "categoryEyebrow": "Category",
-    "tag": "Tagged “{{tag}}”",
+    "tag": "#{{tag}}",
     "tagEyebrow": "Tag",
     "writer": "Stories by {{name}}",
     "writerEyebrow": "Writer",
@@ -90,7 +90,9 @@
     "ratingShort": "Ratings above your age never show",
     "nothingMatches": "Nothing matches these filters.",
     "mostReadIn": "Most read in {{genre}}",
-    "genreStories": "{{genre}} stories"
+    "genreStories": "{{genre}} stories",
+    "tagEmpty": "No stories use #{{tag}} yet",
+    "backToRead": "Back to Read"
   },
   "sort": {
     "relevance": "Best match",
