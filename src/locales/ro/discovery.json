@@ -88,7 +88,9 @@
     "sortedBy": "Ordonate după: {{sort}}",
     "done": "Gata",
     "ratingShort": "Clasificările peste vârsta ta nu apar",
-    "nothingMatches": "Nimic nu se potrivește acestor filtre."
+    "nothingMatches": "Nimic nu se potrivește acestor filtre.",
+    "mostReadIn": "Cele mai citite în {{genre}}",
+    "genreStories": "Povești din {{genre}}"
   },
   "sort": {
     "relevance": "Cele mai potrivite",

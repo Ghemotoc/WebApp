@@ -88,7 +88,9 @@
     "sortedBy": "Sorted by: {{sort}}",
     "done": "Done",
     "ratingShort": "Ratings above your age never show",
-    "nothingMatches": "Nothing matches these filters."
+    "nothingMatches": "Nothing matches these filters.",
+    "mostReadIn": "Most read in {{genre}}",
+    "genreStories": "{{genre}} stories"
   },
   "sort": {
     "relevance": "Best match",

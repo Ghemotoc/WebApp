@@ -39,6 +39,7 @@ import {
 import { rememberedSort, rememberSort } from '../lib/sortMemory';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
+import { DiscoverShelf } from './DiscoverShelf';
 import { StoryGrid, type StoryGridAd } from './StoryGrid';
 import { PopularInNote } from './PopularInNote';
 import { StoryListFilters } from './StoryListFilters';
@@ -173,6 +174,77 @@ function gridAdFor(request: ListRequest): StoryGridAd {
 }
 
 /**
+ * A genre page's top (user story 1.6, board A06): "Most read in Fiction" as a row with arrows,
+ * then the heading "Fiction stories" over the filtered list. The row ignores the filters below
+ * it: it is always the genre's most read, in the reader's languages.
+ *
+ * @param props.request - the genre's list
+ * @param props.genreName - the genre's name, as the title shows it
+ * @returns the row and the list's heading
+ */
+function GenreTop({ request, genreName }: { request: ListRequest; genreName: string }) {
+  const { t } = useDiscoveryTranslation();
+  const mostRead: ListRequest = {
+    kind: 'category',
+    key: request.key,
+    categorySlug: null,
+    completion: null,
+    languageCode: null,
+    sortOrder: 'popular',
+  };
+  return (
+    <>
+      <DiscoverShelf title={t('seeAll.mostReadIn', { genre: genreName })} request={mostRead} />
+      <h2 className="m-0 type-heading text-ink-heading">
+        {t('seeAll.genreStories', { genre: genreName })}
+      </h2>
+    </>
+  );
+}
+
+/**
+ * Everything under the header once the list can show: a genre's top, the filter bar, the
+ * "Popular in" note, the classics banner and the stories.
+ *
+ * @param props.request - the list with its filters
+ * @param props.sortOrder - the sort in use
+ * @param props.list - what useStoryList() answered
+ * @param props.genreName - the list's title, used on a genre page
+ * @param props.onChange - applies a new set of filters
+ * @returns the list's body
+ */
+function ListBody({
+  request,
+  sortOrder,
+  list,
+  genreName,
+  onChange,
+}: {
+  request: ListRequest;
+  sortOrder: SortOrder;
+  list: ReturnType<typeof useStoryList>;
+  genreName: string;
+  onChange: (next: ListRequest) => void;
+}) {
+  return (
+    <>
+      {request.kind === 'category' && <GenreTop request={request} genreName={genreName} />}
+      <StoryListFilters request={request} sortOrder={sortOrder} onChange={onChange} />
+      <PopularInNote request={request} rankedCountry={list.popularIn} />
+      {/* The classics list's wide banner sits high, above the stories (G7e). */}
+      {request.kind === 'classics' && listAdSlot(request)}
+      <ListResults
+        request={request}
+        list={list}
+        onClearFilters={() =>
+          onChange({ ...request, categorySlug: null, completion: null, languageCode: null })
+        }
+      />
+    </>
+  );
+}
+
+/**
  * The page for one list, once the address names a real one.
  *
  * @param kind - the list
@@ -213,24 +285,13 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
           <Link to="/sign-in">{t('seeAll.logIn')}</Link>
         </Notice>
       ) : (
-        <>
-          <StoryListFilters request={request} sortOrder={sortOrder} onChange={changeRequest} />
-          <PopularInNote request={request} rankedCountry={list.popularIn} />
-          {/* The classics list's wide banner sits high, above the stories (G7e). */}
-          {request.kind === 'classics' && listAdSlot(request)}
-          <ListResults
-            request={request}
-            list={list}
-            onClearFilters={() =>
-              changeRequest({
-                ...request,
-                categorySlug: null,
-                completion: null,
-                languageCode: null,
-              })
-            }
-          />
-        </>
+        <ListBody
+          request={request}
+          sortOrder={sortOrder}
+          list={list}
+          genreName={heading.title}
+          onChange={changeRequest}
+        />
       )}
     </>
   );

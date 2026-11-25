@@ -1717,6 +1717,7 @@ DiscoverPage
   ▼  DiscoverShelf × (the order of the setting discover_shelves) → useStoryShelf (21 rows)
 StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
   │  StoryListHeader (breadcrumb, title, one line: what the list is · "n stories" · ratings; a deep genre band on a category)
+  │  on a genre: "Most read in …" (DiscoverShelf) and the "… stories" heading
   │  StoryListFilters ("Filter and sort" and a summary line; a Sheet with sort, status, language, category)
   ▼  StoryGrid ("Show 20 more", 20 a page) → useStoryList
 both → api/storyLists.ts → browse_stories(list_kind, list_key, filters, sort_order, page_size, page_offset)

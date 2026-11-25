@@ -308,7 +308,8 @@
       "no_list": "Nu există o etichetă aprobată cu acest nume. Verifică ortografia.",
       "no_market": "Piața aceasta nu mai există. Reîncarcă pagina.",
       "unreachable": "Nu am putut ajunge la baza de date. Verifică conexiunea și încearcă din nou."
-    }
+    },
+    "plainDefault": "Implicit: titlu simplu"
   },
   "search": {
     "legend": "Căutare și distribuire",
