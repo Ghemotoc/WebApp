@@ -152,41 +152,32 @@ function Rules({ block, language }: BlockProps) {
 }
 
 /**
- * Questions and answers, each question a disclosure, in one glass card. They share the block's
- * id as their `name`, so only one is open at a time, and the "+" turns into a "×" while open, as
- * on the website's questions (G5b, board Landing "Before you start").
+ * Questions and answers as board A10 draws them ("Before you start"): each question in bold with
+ * its answer under it, a hairline between them, all open, so a visitor reads them at a glance
+ * (BOOKS-A10; replaces the closed disclosures of G5b).
  *
  * @returns the section
  */
 function Questions({ block, language }: BlockProps) {
   const items = block[language].items ?? [];
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col gap-4">
       <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
         {wordsOf(block, language, 'heading')}
       </h2>
-      <div className="flex flex-col rounded-card border border-border bg-surface px-4 shadow-card">
+      <dl className="m-0 flex flex-col border-t border-hairline">
         {items.map((item, position) => (
-          <details
+          <div
             key={`${String(position)}-${item.question}`}
-            name={`landing-questions-${block.id}`}
-            className="group border-b border-hairline py-3 last:border-b-0"
+            className="flex flex-col gap-1 border-b border-hairline py-4 last:border-b-0"
           >
-            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink">
-              {item.question}
-              <span
-                aria-hidden="true"
-                className="type-heading leading-none transition-transform group-open:rotate-45 motion-reduce:transition-none"
-              >
-                +
-              </span>
-            </summary>
-            <div className="pt-2">
+            <dt className="type-label font-semibold text-ink-heading">{item.question}</dt>
+            <dd className="m-0 text-ink-muted">
               <CmsMarkdown markdown={item.answer} language={language} />
-            </div>
-          </details>
+            </dd>
+          </div>
         ))}
-      </div>
+      </dl>
     </section>
   );
 }

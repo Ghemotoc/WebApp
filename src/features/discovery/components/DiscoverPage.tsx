@@ -24,7 +24,9 @@
  * feed in Stage 1; S1-E5-09's legal note); the cards show only the member's own places and
  * drafts. Popular ranks by totals only (reads, likes, comments; never downvotes), the same for
  * everyone. The wide ad slot sits after the first row (S1-E12-01; board), then, for a member with
- * "Suggestions from reading" on, "Because you read" (BecauseYouReadShelf, S1-E15-06).
+ * "Suggestions from reading" on, "Because you read" (BecauseYouReadShelf, S1-E15-06). A second
+ * wide banner sits lower down between two rows: between the first two genre rows, or after the
+ * third row (board A04; lib/secondAdPlace.ts). Staff book and switch both in Sponsors › Placements.
  * What it calls: ReadHeader, FeaturedBand, ReadWritersBox, ReadSideColumn, DiscoverShelf (useStoryShelf →
  * browse_stories()), PopularShelf and RisingWritersShelf.
  */
@@ -46,6 +48,7 @@ import { everyLanguage, type ListKind } from '../api/storyLists';
 import { useFeaturedStories } from '../hooks/useFeaturedStories';
 import { useStoryShelf } from '../hooks/useStoryShelf';
 import { discoverListKinds, plainList } from '../lib/listAddresses';
+import { secondAdPlace } from '../lib/secondAdPlace';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 import { DiscoverShelf } from './DiscoverShelf';
@@ -92,25 +95,60 @@ function shelfCanShow(word: string, isSignedIn: boolean): boolean {
 }
 
 /**
+ * One shelf per category, in the categories table's order; with hasAdBetween, the page's second
+ * banner sits between the first two (board A04: between Mystery and Poetry).
+ *
+ * @param props.hasAdBetween - whether the second banner goes after the first genre row
+ * @returns the genre rows
+ */
+function GenreShelves({ hasAdBetween }: { hasAdBetween: boolean }) {
+  const { t } = useDiscoveryTranslation();
+  const { categories } = useStoryFormOptions();
+  return categories.map((category, index) => (
+    <Fragment key={category.slug}>
+      <DiscoverShelf
+        title={t(`categories.${category.slug}`, { ns: 'writing' })}
+        request={plainList('category', category.slug)}
+      />
+      {hasAdBetween && index === 0 && categories.length > 1 && (
+        <GenreRowAd categorySlug={category.slug} />
+      )}
+    </Fragment>
+  ));
+}
+
+/**
+ * The second banner after the first genre row, drawn only once that row has stories.
+ *
+ * @param props.categorySlug - the first genre
+ * @returns the slot, or nothing while the row loads or when it is empty
+ */
+function GenreRowAd({ categorySlug }: { categorySlug: string }) {
+  const { shelf } = useStoryShelf(plainList('category', categorySlug));
+  if (shelf === null || shelf.stories.length === 0) return null;
+  return <PageAdSlot pageKey="discover" position={2} />;
+}
+
+/**
  * One shelf of the setting: a list, or one shelf per category.
  *
  * @param props.word - one word of discover_shelves
  * @param props.isSignedIn - the follows shelf is only for someone signed in
+ * @param props.hasAdBetweenGenres - whether the second banner goes between the genre rows
  * @returns the shelf or shelves, or nothing
  */
-function ShelfFromSetting({ word, isSignedIn }: { word: string; isSignedIn: boolean }) {
+function ShelfFromSetting({
+  word,
+  isSignedIn,
+  hasAdBetweenGenres = false,
+}: {
+  word: string;
+  isSignedIn: boolean;
+  hasAdBetweenGenres?: boolean;
+}) {
   const { t } = useDiscoveryTranslation();
-  const { categories } = useStoryFormOptions();
-  // Step 1: "categories" is one shelf per category, in the categories table's order.
-  if (word === 'categories') {
-    return categories.map((category) => (
-      <DiscoverShelf
-        key={category.slug}
-        title={t(`categories.${category.slug}`, { ns: 'writing' })}
-        request={plainList('category', category.slug)}
-      />
-    ));
-  }
+  // Step 1: "categories" is one shelf per category.
+  if (word === 'categories') return <GenreShelves hasAdBetween={hasAdBetweenGenres} />;
   // Step 2: "writers" is Writers to follow this week (S1-E5-11), a shelf of people, not stories.
   if (word === 'writers') return <RisingWritersShelf />;
   // Step 3: any other word is a list; an unknown word (a typo in the setting) shows nothing.
@@ -143,6 +181,21 @@ function FirstShelfAd({ word }: { word: string }) {
   const { shelf } = useStoryShelf(plainList(shelfKindFrom(word) ?? 'updated'));
   if (shelf === null) return null;
   return <PageAdSlot pageKey="discover" position={1} />;
+}
+
+/**
+ * The second wide banner, after a row lower down (board A04; lib/secondAdPlace.ts), drawn only
+ * once that row has stories, so the two banners never end up next to each other above empty rows.
+ * It reads the same cached list as the row (Popular without its country), so it asks for nothing
+ * new.
+ *
+ * @param props.word - the word of discover_shelves the banner follows
+ * @returns the slot, or nothing while the row loads or when it is empty
+ */
+function LowerRowAd({ word }: { word: string }) {
+  const { shelf } = useStoryShelf(plainList(shelfKindFrom(word) ?? 'updated'));
+  if (shelf === null || shelf.stories.length === 0) return null;
+  return <PageAdSlot pageKey="discover" position={2} />;
 }
 
 /**
@@ -185,15 +238,33 @@ function DiscoverShelves() {
   const words = [...new Set(wordsOf('discover_shelves', defaultShelfOrder))].filter((word) =>
     shelfCanShow(word, isSignedIn),
   );
+  return <ShelfRows words={words} isSignedIn={isSignedIn} />;
+}
+
+/**
+ * The rows in order, with the page's two wide banners among them.
+ *
+ * @param props.words - the words of discover_shelves this reader can get, in order
+ * @param props.isSignedIn - whether someone is signed in
+ * @returns the rows
+ */
+function ShelfRows({ words, isSignedIn }: { words: string[]; isSignedIn: boolean }) {
+  // Board A04: the second banner sits lower down, between two rows (lib/secondAdPlace.ts).
+  const secondAd = secondAdPlace(words);
   return (
     <div className="flex flex-col gap-12">
       {words.map((word, index) => (
         <Fragment key={word}>
-          <ShelfFromSetting word={word} isSignedIn={isSignedIn} />
+          <ShelfFromSetting
+            word={word}
+            isSignedIn={isSignedIn}
+            hasAdBetweenGenres={secondAd.kind === 'betweenGenres'}
+          />
           {/* The wide ad slot comes after the first shelf, so the reader meets stories first. */}
           {index === 0 && <FirstShelfAd word={word} />}
           {/* "Because you read" (S1-E15-06): a member's own row, after the first shelf. */}
           {index === 0 && <BecauseYouReadShelf />}
+          {secondAd.kind === 'afterRow' && secondAd.index === index && <LowerRowAd word={word} />}
         </Fragment>
       ))}
     </div>
