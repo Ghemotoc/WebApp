@@ -22,6 +22,10 @@ in 13a2a; Remind me in 13a2b; the link preview (`server/landing-preview.ts`) and
   `lib/builderKinds.ts`: the easier page builder and its five blocks (story S1-E11-34, CMS-2b).
 - `lib/layouts.ts`, `components/staff/NewLandingPageForm.tsx` and `CopyPageForm.tsx`: ready-made
   layouts with starter words from the locale files, Copy block and Copy page (story S1-E11-35, CMS-2c).
+- `components/LandingHero.tsx`, `hooks/useLandingWordsThisMonth.ts` and `lib/anchors.ts`: the hero
+  of board A10, with its kicker, violet second line, Join buttons (a visitor's opens Sign up with
+  the hero's link remembered, `features/auth/lib/pathAfterSignUp.ts`), "How it works" and the live
+  count from `landing_words_this_month()` (BOOKS-A10, user story 1.10).
 - `lib/blocks.ts`: adding, moving and changing blocks without a server; `lib/problemLabels.ts`:
   names the fields the server says to fix.
 

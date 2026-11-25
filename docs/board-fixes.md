@@ -365,3 +365,8 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | A09-ReadTag, under the title (user story 1.9) | A staff-written line, Follow this tag and Related tags | Not yet: each needs new data (tag follows, related tags from stories that share the tag, a line per tag); built with the genre follows and top tags (story 1.6, part b) |
 | A09-ReadTag, the adverts (user story 1.9) | A wide banner after every two rows | Not yet: the list keeps its card-sized advert; a wide slot for tag pages is a new ad slot in the database, added with story 1.6 part b |
 | A09-ReadTag, the line under the title (user story 1.9) | The staff line, then "1,206 stories." | The line reads "Tag · 1,206 stories · Ratings above your age never show", as on every list page (A05) |
+| A10-Landing, the hero (user story 1.10) | "Join 3,400 writers" in the introduction | The introduction is the staff's own words; no count of members is worked out for it |
+| A10-Landing, the live count (user story 1.10) | "21.6M" always | The count shows only once five writers wrote this month, so it never stands for one writer's words (the "fewer than 5" rule of the writer's numbers) |
+| A10-Landing, the hero box (user story 1.10) | One plain box | The plum theme is the plain box; the gold, sage and sky themes tint it, so the four themes of S1-E11-14 stay |
+| A10-Landing, the shelf (user story 1.10) | Cards with the title and pen name only | The cards are the shared story cards of Read (status, rank, chapters), as on every shelf |
+| A10-Landing, the questions (user story 1.10) | All open, a line between | Built as drawn: the questions on a landing page no longer open and close (G5b's disclosures stay on the website's Help) |
