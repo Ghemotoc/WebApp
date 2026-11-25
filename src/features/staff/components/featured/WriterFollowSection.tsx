@@ -14,7 +14,6 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
-import { InfoPill } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 import { Textarea } from '@/components/ui/Textarea';
@@ -41,7 +40,10 @@ function CurrentPicks({ picks }: { picks: WriterFollowPick[] }) {
           <span className="w-6 text-meta">{index + 1}.</span>
           <span className="font-semibold break-words text-heading">{pick.displayName}</span>
           <span className="text-meta">@{pick.handle}</span>
-          {!pick.mayShow && <InfoPill tone="gold">{t('featured.writers.cannotShow')}</InfoPill>}
+          {/* Plain words, not a pill: no new file uses InfoPill (design rules guard). */}
+          {!pick.mayShow && (
+            <span className="font-semibold text-meta">{t('featured.writers.cannotShow')}</span>
+          )}
         </li>
       ))}
     </ol>

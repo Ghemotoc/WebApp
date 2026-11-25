@@ -37,7 +37,7 @@ function WriterList({ title, writers }: { title: string; writers: RisingWriter[]
   if (writers.length === 0) return null;
   return (
     <>
-      <h3 id={headingId} className="m-0 type-label text-heading">
+      <h3 id={headingId} className="m-0 type-label text-ink-heading">
         {title}
       </h3>
       {/* The list takes its name from the heading above, so a screen reader announces it. */}
