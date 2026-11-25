@@ -165,6 +165,11 @@
     "bandTitle": "Inspiră-te de la scriitori noi și în ascensiune",
     "writes": "Scrie {{category}}"
   },
+  "writersBox": {
+    "title": "Scriitori",
+    "toFollow": "De urmărit săptămâna asta",
+    "rising": "Noi și în ascensiune"
+  },
   "popularIn": {
     "label": "Populare în",
     "everywhere": "Peste tot",

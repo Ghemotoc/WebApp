@@ -11134,6 +11134,52 @@ export type Database = {
           },
         ];
       };
+      writer_follow_picks: {
+        Row: {
+          created_at: string;
+          id: string;
+          position: number;
+          removed_at: string | null;
+          updated_at: string;
+          user_id: string;
+          writer_user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          position: number;
+          removed_at?: string | null;
+          updated_at?: string;
+          user_id: string;
+          writer_user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          position?: number;
+          removed_at?: string | null;
+          updated_at?: string;
+          user_id?: string;
+          writer_user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'writer_follow_picks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'writer_follow_picks_writer_user_id_fkey';
+            columns: ['writer_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       writer_ranks: {
         Row: {
           chapter_count: number;
@@ -12734,6 +12780,10 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_set_writer_follow_picks: {
+        Args: { handles: string[]; reason: string };
+        Returns: undefined;
+      };
       admin_sign_out_everywhere: {
         Args: { reason_given: string; target_user_id: string };
         Returns: number;
@@ -13004,6 +13054,7 @@ export type Database = {
         Args: { reason_given: string; target_user_id: string };
         Returns: boolean;
       };
+      admin_writer_follow_picks: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_writer_spotlights: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -18735,6 +18786,10 @@ export type Database = {
         }[];
       };
       submit_teacher_proof: { Args: { proof_path: string }; Returns: Json };
+      suggested_writer_card: {
+        Args: { followers_gained: number; person_id: string };
+        Returns: Json;
+      };
       suggestion_row_size: { Args: Record<PropertyKey, never>; Returns: number };
       suggests_from_reading_of: { Args: { person_id: string }; Returns: boolean };
       suggests_me: { Args: { person_id: string }; Returns: boolean };
@@ -19144,6 +19199,7 @@ export type Database = {
           writer_count: number;
         }[];
       };
+      writers_to_follow_now: { Args: Record<PropertyKey, never>; Returns: Json };
       written_language_for: { Args: { code: string }; Returns: string };
       youngest_age: {
         Args: { birth_month: number; birth_year: number; on_date: string };
