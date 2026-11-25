@@ -4,7 +4,7 @@
  * Who reads it: `npm run dev` and `npm run build` (Vite), `npm test` (Vitest) and Cloudflare Pages,
  * which runs `npm run build` and publishes the `dist` folder (decided 17 Oct 2026, 12:57).
  * What it does next: compiles src/main.tsx and everything it imports into dist/, fills the page
- * title in index.html from src/config/brand.ts, writes dist/_headers (server/security-headers.ts,
+ * title in index.html from src/config/brand.ts, adds a preload link for the Supabase library, writes dist/_headers (server/security-headers.ts,
  * QA-1c), shrinks dist/theme-init.js (CONTRAST-1), and serves our Cloudflare Pages Functions
  * (functions/) during development and preview (server/pages-functions-plugin.ts, S1-E2-01).
  */
@@ -43,6 +43,48 @@ function brandTitlePlugin(productName: string): Plugin {
   return {
     name: 'brand-title',
     transformIndexHtml: (html) => html.replaceAll('%BRAND_PRODUCT_NAME%', productName),
+  };
+}
+
+/**
+ * A small Vite plugin that starts downloading the Supabase library with the first scripts (the
+ * reader speed fix, 24 Nov 2026). src/lib/supabase.ts imports the library on demand so it never
+ * holds up the first paint, but nearly every page (the chapter reader first) asks the database for
+ * something straight away, so the import happened about 700 ms into a throttled phone load, and
+ * every request waited for the 209 KB file after that. A `modulepreload` link downloads the file
+ * alongside the first scripts without running it; it still runs only when the import asks for it.
+ * Who uses it: `npm run build` (not the dev server, which has no bundle to point at).
+ *
+ * @returns the plugin for Vite's plugin list
+ */
+function preloadSupabasePlugin(): Plugin {
+  return {
+    name: 'preload-supabase',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler: (html, context) => {
+        // Step 1: find the file the build put the Supabase library in.
+        const files = Object.values(context.bundle ?? {});
+        const supabaseFile = files.find(
+          (file) =>
+            file.type === 'chunk' &&
+            Object.keys(file.modules).some((moduleId) =>
+              moduleId.includes('/node_modules/@supabase/supabase-js/'),
+            ),
+        );
+        // Step 2: no such file (the library was inlined or dropped): leave the page as it is.
+        if (supabaseFile === undefined) return html;
+        // Step 3: a preload link in the head, so it downloads in parallel with the app's own files.
+        return [
+          {
+            tag: 'link',
+            attrs: { rel: 'modulepreload', crossorigin: true, href: `/${supabaseFile.fileName}` },
+            injectTo: 'head',
+          },
+        ];
+      },
+    },
   };
 }
 
@@ -124,6 +166,8 @@ export default defineConfig(({ mode }) => {
       react(),
       tailwindcss(),
       brandTitlePlugin(brand.productName),
+      // Starts the Supabase library's download with the first scripts (the reader speed fix).
+      preloadSupabasePlugin(),
       // Before the functions plugin, so its answers (the /s/ link previews) get the headers too.
       securityHeadersPlugin(environment.VITE_SUPABASE_URL ?? ''),
       pagesFunctionsPlugin(),

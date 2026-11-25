@@ -13,8 +13,10 @@
  * Optional on purpose: when the two variables are missing (a Cloudflare preview before they are
  * set, or a unit test), getSupabaseClient() returns null and the app keeps working with
  * device-only settings, such as the language choice kept in this browser.
- * Loaded on demand: the Supabase library is about a third of the app's code, so it is fetched as
- * its own file after the page first draws, keeping the first paint fast on phones.
+ * Loaded on demand: the Supabase library is about a third of the app's code, so it is its own file
+ * and runs only once the first call here asks for it, keeping the first paint fast on phones. The
+ * build's preload link (preloadSupabasePlugin in vite.config.ts) downloads it alongside the first
+ * scripts, so that first call doesn't wait for the download (the reader speed fix, 24 Nov 2026).
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
 
