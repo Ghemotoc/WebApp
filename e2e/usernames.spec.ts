@@ -101,6 +101,10 @@ test.describe('usernames and pen names (S1-E2-04)', () => {
 
   test('Settings changes the username once, then asks to wait 30 days', async ({ browser }) => {
     const page = await openAsPersona(browser, '/');
+    // "/" forwards a signed-in member to their home; a click made before that redirect lands is
+    // overtaken by it (the same race as the setup test above, 24 Nov 2026), so wait for it.
+    // (memberHomeAddressPattern also matches "/" itself, so it can't tell the redirect has landed.)
+    await expect(page).toHaveURL(/\/hub$/);
     await page.getByRole('button', { name: 'Account' }).click();
     await page.getByRole('link', { name: 'Settings' }).click();
     await expect(page.getByText('Signed in as Doamna Popescu · @ms.popescu')).toBeVisible();
