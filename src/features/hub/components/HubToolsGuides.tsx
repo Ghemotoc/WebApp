@@ -40,7 +40,7 @@ interface ToolRow {
 
 /** A quiet tinted row on the dark band, its edge a little lighter than its fill. */
 const rowClasses =
-  'flex flex-col gap-1 rounded-[16px] border border-[color-mix(in_srgb,var(--on-primary)_16%,transparent)] bg-[color-mix(in_srgb,var(--on-primary)_8%,transparent)] px-4 py-3 text-on-primary no-underline hover:underline';
+  'flex flex-col gap-1 rounded-card border border-on-primary/16 bg-on-primary/8 px-4 py-3 text-on-primary no-underline hover:underline';
 
 /**
  * The guides as rows: title, then "Guide · N min · summary".
