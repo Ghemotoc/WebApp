@@ -22,7 +22,7 @@
  * language ("Read in", BOOKS B07) LanguageSwitchNote sits above the paper and brings back the
  * paragraph the reader was on.
  */
-import { lazy, Suspense, useMemo, useRef, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 
@@ -31,6 +31,7 @@ import { useReadingMinutes } from '@/features/reading-habit/hooks/useReadingMinu
 import { QuoteShareWatcher } from '@/features/sharing/components/QuoteShareWatcher';
 import { SharedChapterContext } from '@/features/sharing/lib/sharedChapterContext';
 import type { SpotRange } from '@/lib/chapter-blocks';
+import { releaseForReader } from '@/lib/readerFirst';
 
 import type { ReaderChapter } from '../api/chapter';
 import type { StoryPageData } from '../api/storyPage';
@@ -358,6 +359,10 @@ function useChapterScreen(chapter: ReaderChapter) {
   // Most parts under the paper wait one frame, so the first paragraph paints sooner on a slow
   // phone (useAfterFirstPaint; the S1-E4-01b budget).
   const hasPainted = useAfterFirstPaint();
+  // The first paragraph is painted: the app's other requests may go now (src/lib/readerFirst.ts).
+  useEffect(() => {
+    if (hasPainted) releaseForReader();
+  }, [hasPainted]);
   // Below 1280 px, About this story and its advert follow the comments, once the text has painted.
   const hasFactsBelow = hasText && hasPainted && !isWide;
   return {
