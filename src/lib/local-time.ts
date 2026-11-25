@@ -204,13 +204,52 @@ export function formatLocalDate(instant: Date, language: string, timeZone?: stri
  * @returns the text
  */
 export function formatLocalShortDate(instant: Date, language: string, timeZone?: string): string {
-  const text = new Intl.DateTimeFormat(dateLocaleFor(language), {
-    timeZone,
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(instant);
-  return withShortSeptember(text);
+  return withShortSeptember(shortDateFormat(language, timeZone).format(instant));
+}
+
+/**
+ * The short-date formats made so far, by locale and zone. Making a format is the slow part: the
+ * first one in a language loads the browser's calendar data, which took about 80 ms on a phone
+ * with the CPU four times slower, in front of the reader's first paragraph (the reader speed
+ * check, 25 Nov 2026). Each is made once and used again.
+ */
+const shortDateFormats = new Map<string, Intl.DateTimeFormat>();
+
+/**
+ * The short-date format for a language and zone, made on first use and kept.
+ *
+ * @param language - the interface language
+ * @param timeZone - an IANA zone for tests; left out, the browser's own zone is used
+ * @returns the format
+ */
+function shortDateFormat(language: string, timeZone?: string): Intl.DateTimeFormat {
+  const key = `${dateLocaleFor(language)}|${timeZone ?? ''}`;
+  let format = shortDateFormats.get(key);
+  if (format === undefined) {
+    format = new Intl.DateTimeFormat(dateLocaleFor(language), {
+      timeZone,
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+    shortDateFormats.set(key, format);
+  }
+  return format;
+}
+
+/**
+ * Makes the short-date format for a language ahead of time, while the page waits for the network,
+ * so the chapter reader's date line costs nothing when the chapter arrives (the reader speed
+ * check, 25 Nov 2026). It runs on its own turn, never holding up what called it.
+ *
+ * Who calls it: the chapter reader's route loader (src/app/router.tsx).
+ *
+ * @param language - the interface language (the page's lang attribute)
+ */
+export function prepareShortDateFormat(language: string): void {
+  setTimeout(() => {
+    shortDateFormat(language);
+  }, 0);
 }
 
 /**
