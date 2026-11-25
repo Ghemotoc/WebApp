@@ -171,6 +171,10 @@ test.describe('onboarding (S1-E2-06)', () => {
     browser,
   }) => {
     const page = await openAs(browser, accounts.adult, '/');
+    // A signed-in member who opens the site's address is sent on to the Writers' hub
+    // (TRIAL-WALL). Wait for that first: a click on the notice while the redirect is still
+    // pending is overtaken by it, and the page stays on the hub instead of opening /setup.
+    await expect(page).toHaveURL(/\/hub$/);
 
     // The notice is on every page until setup is finished.
     await expect(

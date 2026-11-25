@@ -47,6 +47,9 @@ async function logInWithScreen(page: Page, email: string, password: string) {
   await page.locator('#sign-in-email').fill(email);
   await page.locator('#sign-in-password').fill(password);
   await page.locator('form button[type="submit"]').click();
+  // Signing in goes to "/", which forwards a member on to the Writers' hub. Wait for the hub: a
+  // click made while that redirect is pending is overtaken by it (24 Nov 2026).
+  await expect(page).toHaveURL(/\/hub$/);
   await expect(page.getByRole('button', { name: accountButton })).toBeVisible();
 }
 
