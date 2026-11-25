@@ -152,7 +152,7 @@ describe('the shell on a wide window (bundle G4 SHELL)', () => {
     expect(screen.queryByRole('link', { name: 'Search' })).not.toBeInTheDocument();
   });
 
-  it('lists Home, Read, Library and Together in the top bar, Home first (bundle CALM-2)', () => {
+  it('lists Hub, Read, Library and Together for a member, Hub first and opening the hub (Robert, 25 Nov 2026)', () => {
     signIn();
     renderApp('/discover');
 
@@ -160,9 +160,9 @@ describe('the shell on a wide window (bundle G4 SHELL)', () => {
     const names = within(topBar)
       .getAllByRole('link')
       .map((link) => link.textContent);
-    expect(names).toEqual(['Home', 'Read', 'Library', 'Together']);
-    // A member's Home is their own home page at "/" (CALM-1; user story 1.1).
-    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    expect(names).toEqual(['Hub', 'Read', 'Library', 'Together']);
+    // Signed in, the first link is the Writers' hub; the logo still opens the member's Home at "/".
+    expect(within(topBar).getByRole('link', { name: 'Hub' })).toHaveAttribute('href', '/hub');
     expect(within(topBar).getByRole('link', { name: 'Read' })).toHaveAttribute(
       'aria-current',
       'page',
