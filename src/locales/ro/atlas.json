@@ -148,6 +148,8 @@
     "filterHint": "După nume sau după cum mai sunt cunoscute.",
     "none": "Încă nu ai personaje. Adaugă-l pe primul cu Personaj nou.",
     "noMatch": "Niciun personaj nu se potrivește cu „{{filter}}”.",
+    "choose": "Alege un personaj ca să-i deschizi fișa.",
+    "backToCast": "Personaje",
     "sideColumn": "Relații, capitole și cititori",
     "notFound": "Personajul acesta nu mai este în poveste.",
     "createFailed": "Personajul nu a fost adăugat. Verifică-ți conexiunea și încearcă din nou.",

@@ -6,7 +6,7 @@
  *
  * The label is a heading (h2 by default, h3 inside a section), so the list is easy to find with
  * a screen reader's headings list, and the <ul> is named by it.
- * Who uses it: CastAtAGlance, RecentChaptersList and CastList. What it calls: nothing; the rows
+ * Who uses it: TimelineView. What it calls: nothing; the rows
  * are GlassListRow.
  */
 import type { ReactNode } from 'react';

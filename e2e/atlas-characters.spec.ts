@@ -4,8 +4,9 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - "New character" makes a character and opens its sheet; with no character open the cast shows
- *   as cards, and beside an open sheet the list groups it by role; typing filters both; the sheet
+ * - "New character" makes a character and opens its sheet; the cast is one list in role order with
+ *   initials (board E22, story 6.3), "Choose a character…" beside it until one is open; typing
+ *   filters it; on a phone an open sheet stands alone with "Characters" to go back; the sheet
  *   sits beside the list on a laptop and below it on a phone (S1-E17-08, G10a);
  * - every sheet field saves by itself and is still there after a reload, the first appearance is
  *   picked from the chapters, and long boxes grow with the text (S1-E17-09);
@@ -82,9 +83,9 @@ async function openAs(
   return page;
 }
 
-/** The cast list by role, beside an open sheet. */
+/** The cast list in role order (board E22). */
 function castList(page: Page) {
-  return page.getByRole('navigation', { name: 'Characters', exact: true });
+  return page.getByRole('list', { name: 'Characters', exact: true });
 }
 
 /** Makes a character with "New character" and gives it a name. */
@@ -143,44 +144,53 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await page.getByRole('button', { name: /^In the story/ }).click();
     await expect(wants).toHaveValue(/who put the lighthouse out/);
     await expect(page.getByLabel('First appearance')).toHaveValue('e2ecast1');
-    await expect(page.getByRole('list', { name: 'Protagonist (1)' })).toContainText('Ana Mureșan');
+    await expect(castList(page)).toContainText('Ana Mureșan');
+    await expect(castList(page)).toContainText('Protagonist');
     await page.context().close();
   });
 
-  test('the list groups by role and filters by typing; the sheet sits beside it, or below on a phone', async ({
+  test('the list is in role order and filters by typing; the sheet sits beside it, or alone on a phone', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', castAddress);
+    // Board E22: with no character open, the place beside the list says what to do.
+    await expect(page.getByText('Choose a character to open their sheet.')).toBeVisible();
     await newCharacter(page, 'Ștefan the Keeper');
     await page.getByLabel('Role').selectOption('antagonist');
     await expect(page.locator('#atlas-character-role-save')).toHaveText('Saved');
-    await expect(page.getByRole('list', { name: 'Antagonist (1)' })).toContainText('Ștefan');
-    // Filtering ignores accents and case.
-    await page.getByRole('searchbox', { name: 'Filter characters' }).fill('stef');
-    await expect(page.getByRole('list', { name: 'Protagonist (1)' })).toHaveCount(0);
-    await page.getByRole('searchbox', { name: 'Filter characters' }).fill('zzz');
-    await expect(page.getByText('No one matches “zzz”.')).toBeVisible();
-
-    // Beside the list on a laptop.
-    const list = await castList(page).boundingBox();
+    // Role order: the protagonist before the antagonist, each with a circle of initials.
+    const rows = castList(page).locator(':scope > li');
+    await expect(rows.nth(0)).toContainText('Ana Mureșan');
+    await expect(rows.nth(1)).toContainText('Ștefan the Keeper');
+    await expect(rows.nth(1)).toContainText('Antagonist');
+    await expect(rows.nth(1)).toContainText('ȘT');
+    // Beside an open sheet the list has no filter (board E23); with none open it has (E22).
+    await expect(page.getByRole('searchbox', { name: 'Filter characters' })).toHaveCount(0);
     const sheet = await page
       .getByRole('heading', { level: 2, name: 'Ștefan the Keeper' })
       .boundingBox();
-    expect(sheet?.x ?? 0).toBeGreaterThan((list?.x ?? 0) + 200);
+    expect(sheet?.x ?? 0).toBeGreaterThan(((await castList(page).boundingBox())?.x ?? 0) + 200);
+    await page.goto(castAddress);
+    // Filtering ignores accents and case.
+    await page.getByRole('searchbox', { name: 'Filter characters' }).fill('stef');
+    await expect(castList(page)).not.toContainText('Ana Mureșan');
+    await page.getByRole('searchbox', { name: 'Filter characters' }).fill('zzz');
+    await expect(page.getByText('No one matches “zzz”.')).toBeVisible();
     await page.context().close();
 
-    // Below it on a phone. With no character open, the cast shows as cards (G10a).
+    // On a phone the list stands alone; an open sheet is its own page with "Characters" to go
+    // back (stories 6.3 and 6.4).
     const phone = await openAs(browser, 'adult_writer', castAddress, 390);
-    await expect(phone.getByRole('heading', { name: '2 characters' })).toBeVisible();
+    await expect(phone.getByText('2 characters', { exact: true })).toBeVisible();
     await phone.getByRole('link', { name: 'Ștefan the Keeper' }).click();
-    const phoneList = await castList(phone).boundingBox();
-    const phoneSheet = await phone
-      .getByRole('heading', { level: 2, name: 'Ștefan the Keeper' })
-      .boundingBox();
-    expect(phoneSheet?.y ?? 0).toBeGreaterThan(phoneList?.y ?? 0);
+    await expect(phone.getByRole('heading', { level: 2, name: 'Ștefan the Keeper' })).toBeVisible();
+    await expect(castList(phone)).toBeHidden();
     expect(await phone.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       390,
     );
+    await phone.getByRole('link', { name: 'Characters', exact: true }).last().click();
+    await expect(phone).toHaveURL(/\/characters$/);
+    await expect(castList(phone)).toBeVisible();
     await phone.context().close();
   });
 
@@ -362,7 +372,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await deleteSection.getByRole('button', { name: 'Yes, delete' }).click();
     await expect(page).toHaveURL(/\/characters$/);
     await expect(page.getByRole('link', { name: 'Ștefan the Keeper' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: '1 character', exact: true })).toBeVisible();
+    await expect(page.getByText('1 character', { exact: true })).toBeVisible();
     await page.context().close();
   });
 

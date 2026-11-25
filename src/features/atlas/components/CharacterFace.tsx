@@ -6,7 +6,7 @@
  *
  * The circle's colour comes from the character's ID, so it stays the same everywhere. The name is
  * always written beside it, so the face is hidden from screen readers.
- * Who uses it: CastAtAGlance. What it calls: initialsOf, beadStyleFor and lib/characterPicture.ts.
+ * Who uses it: CastAtAGlance and CastList. What it calls: initialsOf, beadStyleFor and lib/characterPicture.ts.
  */
 import { beadStyleFor } from '@/features/avatars/lib/beadColours';
 import { initialsOf } from '@/features/people/lib/formatting';

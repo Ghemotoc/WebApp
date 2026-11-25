@@ -5,7 +5,7 @@
  *
  * The open row (aria-current) sits on the soft tint and its name is bold, so it shows by shape,
  * not colour alone (WCAG 1.4.1).
- * Who uses it: CastAtAGlance, RecentChaptersList and CastList. What it calls: React Router's Link.
+ * Who uses it: TimelineView. What it calls: React Router's Link.
  */
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
