@@ -48,8 +48,10 @@
     "stories": "Stories",
     "writers": "Writers",
     "together": "Together",
+    "spaces": "Spaces",
     "noneWriters": "No writers match “{{term}}”.",
-    "noneTogether": "No threads or posts match “{{term}}”."
+    "noneTogether": "No threads or posts match “{{term}}”.",
+    "noneSpaces": "No spaces match “{{term}}”."
   },
   "filters": {
     "title": "Filter and sort",

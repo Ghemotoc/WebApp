@@ -1,16 +1,19 @@
 /**
  * How a space's answers and refusals become what the screen shows (bundle FORUMS-2, part a;
  * S1-E8-06): spaceFrom(), rulesFrom(), spaceErrorFrom(), spaceFailureText(),
- * and the forums' space refusals and addresses.
+ * and the forums' space refusals and addresses; fetchFoundSpaces(), the search's Spaces tab (user
+ * story 1.8).
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { forumWriteErrorFrom } from '@/features/forums/api/forumWrites';
 import { spaceSlugOfForum } from '@/features/forums/lib/spaceForums';
 
 import { spaceFailureText } from '../lib/spaceFailures';
 
-import { joinNoteFrom, rulesFrom, spaceErrorFrom, spaceFrom } from './spaces';
+import type { AppSupabaseClient } from '@/lib/supabase';
+
+import { fetchFoundSpaces, joinNoteFrom, rulesFrom, spaceErrorFrom, spaceFrom } from './spaces';
 
 /** A space as space_json() gives it, for a member of a 16+ space. */
 const memberAnswer = {
@@ -148,5 +151,28 @@ describe('the forums in a space', () => {
   it('finds the space a forum address belongs to', () => {
     expect(spaceSlugOfForum('space-young-poets')).toBe('young-poets');
     expect(spaceSlugOfForum('first-chapters')).toBeNull();
+  });
+});
+
+describe('fetchFoundSpaces (user story 1.8)', () => {
+  it('asks search_spaces() for the term and one page, and reads its answer as a page', async () => {
+    const rpc = vi.fn().mockResolvedValue({
+      data: { spaces: [memberAnswer], total: 3, has_more: true },
+      error: null,
+    });
+    const client = { rpc } as unknown as AppSupabaseClient;
+    const page = await fetchFoundSpaces(client, 'fantasy', { skip: 0, howMany: 1 });
+    expect(rpc).toHaveBeenCalledWith('search_spaces', { term: 'fantasy', skip: 0, how_many: 1 });
+    expect(page.total).toBe(3);
+    expect(page.hasMore).toBe(true);
+    expect(page.spaces[0]?.slug).toBe('fantasy-writers-circle');
+  });
+
+  it('says in plain words when the database can’t be reached', async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: null, error: { message: 'offline' } });
+    const client = { rpc } as unknown as AppSupabaseClient;
+    await expect(fetchFoundSpaces(client, 'fantasy', { skip: 0, howMany: 20 })).rejects.toThrow(
+      'Could not search the spaces',
+    );
   });
 });

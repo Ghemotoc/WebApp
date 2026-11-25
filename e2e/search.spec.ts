@@ -11,6 +11,8 @@
  *   or filter applies at once and stays in the address (criterion 4; board A08);
  * - Rating and Length narrow the list in the database, and a visitor asking for 16+ gets nothing
  *   (board A08; CLAUDE.md rule 18);
+ * - the Spaces tab finds a seeded 16+ space by a word of its description, and never the seeded
+ *   under-16 space for a visitor (board A08);
  * - the Writers tab finds a writer by username and opens their profile;
  * - on a phone "Filter and sort" opens a sheet and counts the filters on, and writer rows have
  *   Follow (board A08);
@@ -150,6 +152,22 @@ test.describe('search (S1-E5-04)', () => {
     await expect(
       page.getByRole('heading', { name: `21 stories for “${foldedWord}”` }),
     ).toBeVisible();
+  });
+
+  test('the Spaces tab finds a space by its description, never an under-16 space for a visitor', async ({
+    page,
+  }) => {
+    // Board A08: the fourth tab. The seed's "Fantasy writers’ circle" mentions folklore.
+    await page.goto('/search?q=folklore&in=spaces');
+    await expect(page.getByRole('radio', { name: /^Spaces 1$/ })).toBeChecked();
+    await page
+      .getByRole('list', { name: 'Spaces' })
+      .getByRole('link', { name: 'Fantasy writers’ circle' })
+      .click();
+    await expect(page).toHaveURL(/\/spaces\/fantasy-writers-circle$/);
+    // The seed's "Young poets" is an under-16 space, so a visitor never finds it.
+    await page.goto('/search?q=young%20poets&in=spaces');
+    await expect(page.getByText('No spaces match “young poets”.')).toBeVisible();
   });
 
   test('the Writers tab finds a writer by username and opens their profile', async ({ page }) => {

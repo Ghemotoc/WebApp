@@ -13316,8 +13316,6 @@ export type Database = {
           page_size?: number;
           popular_in?: string;
           sort_order?: string;
-          story_length?: string;
-          story_rating?: Database['public']['Enums']['story_rating'];
         };
         Returns: Json;
       };
@@ -15288,6 +15286,10 @@ export type Database = {
         Args: { block: Json; block_path: string };
         Returns: string[];
       };
+      landing_block_extra_problems_before_hero: {
+        Args: { block: Json; block_path: string };
+        Returns: string[];
+      };
       landing_block_field_rules: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -15346,6 +15348,7 @@ export type Database = {
         };
         Returns: string;
       };
+      landing_words_this_month: { Args: Record<PropertyKey, never>; Returns: number };
       landing_youngest_ratings: {
         Args: { content: Json };
         Returns: Database['public']['Enums']['story_rating'][];
@@ -17592,6 +17595,7 @@ export type Database = {
       };
       search_like_pattern: { Args: { term: string }; Returns: string };
       search_query: { Args: { term: string }; Returns: unknown };
+      search_spaces: { Args: { how_many?: number; skip?: number; term: string }; Returns: Json };
       search_story: { Args: { query: string; story_slug: string }; Returns: Json };
       search_tags: {
         Args: { page_offset?: number; page_size?: number; term: string };
@@ -18597,15 +18601,6 @@ export type Database = {
         Returns: boolean;
       };
       story_marketing: { Args: { story_slug: string }; Returns: Json };
-      story_matches_list_filters: {
-        Args: {
-          story_row_id: string;
-          story_row_rating: Database['public']['Enums']['story_rating'];
-          wanted_length: string;
-          wanted_rating: Database['public']['Enums']['story_rating'];
-        };
-        Returns: boolean;
-      };
       story_matches_search: {
         Args: {
           target: Omit<

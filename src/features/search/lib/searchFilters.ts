@@ -12,8 +12,8 @@
 import type { ListRequest, SortOrder } from '@/features/discovery/api/storyLists';
 import { listAddress, requestFromAddress } from '@/features/discovery/lib/listAddresses';
 
-/** The results tabs, in the order board A08 draws them (Spaces comes with its search). */
-export const searchTabs = ['stories', 'writers', 'together'] as const;
+/** The results tabs, in the order board A08 draws them. */
+export const searchTabs = ['stories', 'writers', 'together', 'spaces'] as const;
 
 /** One results tab. */
 export type SearchTab = (typeof searchTabs)[number];

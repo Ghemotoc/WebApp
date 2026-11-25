@@ -48,8 +48,10 @@
     "stories": "Povești",
     "writers": "Scriitori",
     "together": "Împreună",
+    "spaces": "Spații",
     "noneWriters": "Niciun scriitor nu se potrivește cu „{{term}}”.",
-    "noneTogether": "Nicio discuție sau postare nu se potrivește cu „{{term}}”."
+    "noneTogether": "Nicio discuție sau postare nu se potrivește cu „{{term}}”.",
+    "noneSpaces": "Niciun spațiu nu se potrivește cu „{{term}}”."
   },
   "filters": {
     "title": "Filtrează și ordonează",
