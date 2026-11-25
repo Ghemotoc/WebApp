@@ -6,22 +6,26 @@
  * NIGHT-2). Its heading and "Guides" (which opens Resources with every guide) sit at the top in
  * the band's text colour. The prompt of the week sits on its reading paper on the left, with
  * "Draw inspiration from new and rising writers" under it in the same column (A01: the writers
- * moved here from a row of their own); the guides sit on paper on the right. Under 900 px the
+ * moved here from a row of their own); the guides (and the next live session) sit on the right as quiet rows on the band itself
+ * (HubToolsGuides; board A01, Robert's review of 25 Nov 2026). Under 900 px the
  * parts stack. Without a prompt or writers the guides take the whole width.
- * Who shows it: MemberHomePage. What it calls: HubPrompt, HubGuides and RisingWritersList.
+ * Who shows it: MemberHomePage. What it calls: HubPrompt, HubToolsGuides, RisingWritersList and their
+ * hooks (useHubPrompts, useRisingWriters), only to know whether the left column has anything.
  */
 import { Link } from 'react-router';
 
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { RisingWritersList } from '@/features/discovery/components/RisingWritersList';
+import { useRisingWriters } from '@/features/discovery/hooks/useRisingWriters';
 import { cn } from '@/lib/utils';
 
+import { useHubPrompts } from '../hooks/useHubPrompts';
 import { useHubTranslation } from '../registerHubTranslations';
 
-import { HubGuides } from './HubGuides';
+import { HubToolsGuides } from './HubToolsGuides';
 import { HubPrompt } from './HubPrompt';
 
-/** The reading paper the prompt and the guides sit on inside the band. */
+/** The reading paper the prompt sits on inside the band. */
 const paperClasses = 'box-surface rounded-card p-4 sm:p-6';
 
 /**
@@ -32,6 +36,12 @@ const paperClasses = 'box-surface rounded-card p-4 sm:p-6';
  */
 export function HubToolsSection({ now }: { now: Date }) {
   const { t } = useHubTranslation();
+  // The left column shows only with a prompt (or its load error) or writers to suggest; without
+  // them the guides take the whole width instead of sitting beside an empty column (Robert's
+  // review of 25 Nov 2026). The hooks share their cache with the parts, so nothing loads twice.
+  const { prompts, loadFailed } = useHubPrompts();
+  const { writers } = useRisingWriters();
+  const hasLeftColumn = prompts.length > 0 || loadFailed || writers.length > 0;
   return (
     <section
       aria-labelledby="hub-tools-heading"
@@ -39,7 +49,7 @@ export function HubToolsSection({ now }: { now: Date }) {
     >
       {/* Step 1: the heading and the Guides link, in the band's own text colour. */}
       <div className="flex items-center justify-between gap-4">
-        <h2 id="hub-tools-heading" className="m-0 type-title text-on-primary">
+        <h2 id="hub-tools-heading" className="m-0 max-w-[20ch] type-display text-on-primary">
           {t('hub.tools.heading')}
         </h2>
         <Link
@@ -49,17 +59,22 @@ export function HubToolsSection({ now }: { now: Date }) {
           {t('hub.tools.guidesLink')}
         </Link>
       </div>
-      {/* Step 2: the prompt on paper with the writers under it, and the guides on paper. */}
-      <div className="grid items-start gap-8 min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] min-[900px]:gap-8">
-        <div className="flex flex-col gap-8 empty:hidden">
-          <div className={cn(paperClasses, 'empty:hidden')}>
-            <HubPrompt now={now} />
+      {/* Step 2: the prompt on paper with the writers under it, and the guides as rows. */}
+      <div
+        className={cn(
+          'grid items-start gap-8',
+          hasLeftColumn && 'min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]',
+        )}
+      >
+        {hasLeftColumn && (
+          <div className="flex flex-col gap-8">
+            <div className={cn(paperClasses, 'empty:hidden')}>
+              <HubPrompt now={now} />
+            </div>
+            <RisingWritersList tone="band" headingId="hub-writers-heading" />
           </div>
-          <RisingWritersList tone="band" headingId="hub-writers-heading" />
-        </div>
-        <div className={paperClasses}>
-          <HubGuides />
-        </div>
+        )}
+        <HubToolsGuides />
       </div>
     </section>
   );
