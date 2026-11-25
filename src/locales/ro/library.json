@@ -74,7 +74,8 @@
     "noWriters": "Încă nu urmărești niciun scriitor. Folosește „Urmărește” pe profilul unui scriitor.",
     "noStories": "Încă nu urmărești nicio poveste. Folosește „Urmărește povestea” pe pagina unei povești.",
     "new": "Nou",
-    "notificationSettings": "Setări pentru notificări"
+    "notificationSettings": "Setări pentru notificări",
+    "topics": "Genuri și etichete · {{count}}"
   },
   "button": {
     "label": "Bibliotecă",
