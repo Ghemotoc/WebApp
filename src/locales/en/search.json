@@ -6,17 +6,17 @@
     "count_one": "{{count}} result across stories, writers and tags.",
     "count_few": "{{count}} results across stories, writers and tags.",
     "count_other": "{{count}} results across stories, writers and tags.",
-    "start": "Find a story by its title, a tag or its writer’s name.",
     "tooShort": "Type at least 2 letters to search.",
-    "loadFailed": "Search isn’t working right now. Try again in a moment."
+    "loadFailed": "Search isn’t working right now. Try again in a moment.",
+    "writersToTry": "Writers to try",
+    "sideLabel": "Writers to try",
+    "start": "Find a story by its title, a tag or its writer’s name."
   },
   "form": {
     "label": "Search stories, writers and tags",
-    "placeholder": "Search stories, writers and tags",
+    "placeholder": "Titles, pen names, tags",
     "submit": "Search",
     "clear": "Clear",
-    "hintLead": "No need for diacritics.",
-    "hint": "“povesti” also finds “povești”. Romanian and English word endings match too, so “poveste” and “povestea” count as the same word.",
     "clearLabel": "Clear the search"
   },
   "groups": {
@@ -63,5 +63,10 @@
   },
   "rows": {
     "seeAll": "See {{title}}"
+  },
+  "recent": {
+    "heading": "Recent searches",
+    "clear": "Clear",
+    "remove": "Remove “{{term}}” from recent searches"
   }
 }

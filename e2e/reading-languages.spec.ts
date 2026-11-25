@@ -106,7 +106,9 @@ test.describe('Languages I read (MARKETS-2c)', () => {
     const page = await context.newPage();
     await page.goto(`/discover/t/${tag}`);
     expect(await titlesShown(page)).toEqual(['Summer Lights']);
-    // The filter starts on "Languages I read"; "Any language" turns it off.
+    // The filter starts on "Languages I read"; "Any language" turns it off. It lives in the
+    // "Filter and sort" panel (user story 1.5).
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     const language = page
       .getByRole('group', { name: 'Filters' })
       .getByRole('combobox', { name: 'Language' });

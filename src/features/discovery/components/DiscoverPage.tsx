@@ -14,18 +14,18 @@
  *   writers you follow (signed in), Popular, New and rising, Public-domain classics and Writers to
  *   follow this week (S1-E5-11). The other words (picked, shared, new, completed, updated,
  *   categories) still work if staff put them back. Rows have a plain heading, no eyebrow (CALM-7c);
- * - for a member, the side column "For Lia" (ReadSideColumn): Continue reading, the latest draft,
- *   "Start a new story" and New and rising writers. From 1024 px it sits beside the hero and the
- *   rows; narrower, it comes after the rows (board). For a member the writers move from the rows
- *   into the side column, so they show once.
+ * - for a member (user story 1.4, board A04): the writers' box beside the featured story
+ *   (ReadWritersBox, New and rising writers), then the row of cards "For Lia" (ReadSideColumn:
+ *   Continue reading, the latest draft and "Start a new story"), then the rows the full width.
+ *   For a member the writers move from the rows into the box, so they show once.
  * Every row is one line of at most 20 with "View" (CLAUDE.md rule 20), and the database leaves out
  * what this reader may not see: ratings above their age (rule 18), writers either side of a block,
  * drafts and moderated stories. Nothing is chosen from what the reader has read (no personalised
- * feed in Stage 1; S1-E5-09's legal note); the side column shows only the member's own places and
+ * feed in Stage 1; S1-E5-09's legal note); the cards show only the member's own places and
  * drafts. Popular ranks by totals only (reads, likes, comments; never downvotes), the same for
  * everyone. The wide ad slot sits after the first row (S1-E12-01; board), then, for a member with
  * "Suggestions from reading" on, "Because you read" (BecauseYouReadShelf, S1-E15-06).
- * What it calls: ReadHeader, FeaturedBand, ReadSideColumn, DiscoverShelf (useStoryShelf →
+ * What it calls: ReadHeader, FeaturedBand, ReadWritersBox, ReadSideColumn, DiscoverShelf (useStoryShelf →
  * browse_stories()), PopularShelf and RisingWritersShelf.
  */
 import { Fragment } from 'react';
@@ -43,6 +43,7 @@ import { BecauseYouReadShelf } from '@/features/suggestions/components/BecauseYo
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 import { everyLanguage, type ListKind } from '../api/storyLists';
+import { useFeaturedStories } from '../hooks/useFeaturedStories';
 import { useStoryShelf } from '../hooks/useStoryShelf';
 import { discoverListKinds, plainList } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
@@ -52,6 +53,7 @@ import { FeaturedBand } from './FeaturedBand';
 import { PopularShelf } from './PopularShelf';
 import { ReadHeader } from './ReadHeader';
 import { ReadSideColumn } from './ReadSideColumn';
+import { ReadWritersBox } from './ReadWritersBox';
 import { RisingWritersShelf } from './RisingWritersShelf';
 
 /**
@@ -73,7 +75,7 @@ function shelfKindFrom(word: string): ListKind | null {
 /**
  * Whether a word of the setting can draw anything for this reader: "categories" and known lists
  * can; the follows shelf and "Picked for you" only for someone signed in; "writers" only for a
- * visitor (a member has them in the side column); an unknown word never. Used so the ad slot follows the first shelf the reader can actually get, not an
+ * visitor (a member has them in the writers' box); an unknown word never. Used so the ad slot follows the first shelf the reader can actually get, not an
  * empty place (a visitor's ad sat straight under the heading before).
  *
  * @param word - from discover_shelves
@@ -82,7 +84,7 @@ function shelfKindFrom(word: string): ListKind | null {
  */
 function shelfCanShow(word: string, isSignedIn: boolean): boolean {
   if (word === 'categories') return true;
-  // CALM-7c: a member meets these writers in the side column, so the row is for visitors only.
+  // CALM-7c: a member meets these writers in the writers' box beside the featured story, so the row is for visitors only.
   if (word === 'writers') return !isSignedIn;
   const kind = shelfKindFrom(word);
   if (kind === null) return false;
@@ -206,25 +208,26 @@ function DiscoverShelves() {
 export function DiscoverPage() {
   const { t } = useDiscoveryTranslation();
   const { userId } = useSession();
+  // The same cached list FeaturedBand reads, so asking here costs no second request.
+  const hasFeatured = useFeaturedStories().stories.length > 0;
   return (
     <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-16">
       <title>{t('discover.documentTitle', { productName: brand.productName })}</title>
       <ReadHeader />
       {/* No search field of its own (bundle G4 SHELL: the top bar and the tab bar open Search)
           and no genre chips (Robert, 20 Nov 2026: Read has no genre chip bar). */}
-      {/* From 1024 px the side column starts level with the hero and spans the rows too; the 1fr
-          second row takes its extra height, so the rows follow the hero straight away. It comes
-          last in the page's order, so narrower it sits under the rows (board). Without a side
-          column the main column takes the whole width. */}
-      <div className="grid grid-cols-1 items-start gap-8 lg:has-[>[data-discover-side]]:grid-cols-[minmax(0,1fr)_300px] lg:has-[>[data-discover-side]]:grid-rows-[auto_1fr]">
-        {/* Featured this week, picked by staff (S1-E5-10); not drawn when nothing is picked. */}
-        <FeaturedBand />
-        <div className="min-w-0 lg:col-start-1">
-          <DiscoverShelves />
+      {/* Board A04: the featured story with the writers' box beside it from 1024 px. Without a
+          featured story the box joins the row of cards instead, so it never stretches alone. */}
+      {hasFeatured && (
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] [&>*:only-child]:col-span-full">
+          {/* Featured this week, picked by staff (S1-E5-10). */}
+          <FeaturedBand />
+          {userId !== null && <ReadWritersBox />}
         </div>
-        {/* For a member: Continue reading, the draft, Start a new story and the writers. */}
-        {userId !== null && <ReadSideColumn />}
-      </div>
+      )}
+      {/* For a member: Continue reading, the draft and Start a new story, side by side. */}
+      {userId !== null && <ReadSideColumn withWriters={!hasFeatured} />}
+      <DiscoverShelves />
     </PageContainer>
   );
 }

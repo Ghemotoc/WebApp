@@ -119,7 +119,9 @@ test.describe('Ad slots', () => {
 
   /** Each public page of part a2, with the slot shapes it shows at 1440 px. */
   const pagesAndShapes: [string, string[]][] = [
-    ['/search?q=meteo', ['wide', 'portrait']],
+    // Search shows no banner between results, only its one side box (user story 1.8; Robert,
+    // 20 Nov 2026, 17:43).
+    ['/search?q=meteo', ['portrait']],
     ['/forums', ['wide', 'side_box']],
     ['/spaces/fantasy-writers-circle', ['wide']],
     ['/u/adult_writer', ['wide']],

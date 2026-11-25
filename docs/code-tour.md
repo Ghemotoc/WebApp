@@ -1711,13 +1711,15 @@ Tests: `183-notification-emails.test.sql`, `server/notification-emails.test.ts`,
 
 ```
 DiscoverPage
-  │  ReadHeader ("Read", the date, GreetingFact, FollowedUpdatesFact) · FeaturedBand and, for a
-  │  member, ReadSideColumn beside it from 1024 px (Continue, Draft, New story, rising writers)
+  │  ReadHeader ("Read", the date, GreetingFact, FollowedUpdatesFact) · FeaturedBand with, for a
+  │  member, ReadWritersBox beside it from 1024 px (board A04) · ReadSideColumn, a row of cards
+  │  (Continue, Draft, New story; the writers' box joins it when nothing is featured)
   ▼  DiscoverShelf × (the order of the setting discover_shelves) → useStoryShelf (21 rows)
 StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
-  │  StoryListHeader (breadcrumb, eyebrow, title, "n stories"; a deep genre band on a category)
-  │  StoryListFilters (category chips, status segments, language, sort)
-  ▼  StoryGrid ("Load more", 24 a page) → useStoryList
+  │  StoryListHeader (breadcrumb, title, one line: what the list is · "n stories" · ratings; a deep genre band on a category)
+  │  on a genre: "Most read in …" (DiscoverShelf) and the "… stories" heading
+  │  StoryListFilters ("Filter and sort" and a summary line; a Sheet with sort, status, language, category)
+  ▼  StoryGrid ("Show 20 more", 20 a page) → useStoryList
 both → api/storyLists.ts → browse_stories(list_kind, list_key, filters, sort_order, page_size, page_offset)
          listed_stories(): published, readable chapter, not moderated, rating_allows(), not is_blocked_with()
          list_holds_story(): which list; story_card_json(): one card, never a user ID
@@ -2131,8 +2133,9 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - **Stored search rows (QA-2):** `story_search_text()` is no longer worked out for every story on every search. Each story's folded text and word index live in `story_search_documents` (one row per story, GIN indexes for words and for "contains"), kept up to date by triggers on `stories`, `profiles`, `story_tags`, `tags`, `tag_names` and `classic_authors` (`refresh_story_search_document()`). Only staff read the table directly; members search through `browse_stories()`. `rebuild_story_search_documents()` rebuilds every row and is safe to run again.
 - **How fast the lists are (QA-2):** `scripts/volume/run-volume-check.sh` copies the local schema into a scratch database, seeds 50,000 accounts and 20,000 stories (`seed-volume.sql`) and times Discover, See all pages, search, the story page, a chapter and notifications against their budgets (`time-read-paths.sql`). Run it after any change to `listed_stories()`, `browse_stories()` or `story_card_json()`.
 - **How the results show (CALM-7c):** a segmented control named "Show" picks Stories, Writers or Tags. From 768 px the chosen group is a shelf (`SearchGroupShelf`); under 768 px `useIsPhoneScreen()` swaps it for rows (`SearchGroupRows`: `StoryResultRow`, `WriterResultRow` with Follow, `TagResultLinks`), at most 20, then "See 21 stories" to the See all page.
+- **The page before a search (user story 1.7, board A07):** the top bar's `HeaderSearch` is a round link after Write; `/search` itself shows the field, `RecentSearches` and, on the right, Writers to try (`RisingWritersList`) with the one advert. `SearchForm` searches as the member types: 300 ms after the last key a term of two letters or more replaces the address (`navigate(..., { replace: true })`); Search or Enter adds a history entry and keeps the term in `lib/recentSearches.ts`, the last five terms in this browser's localStorage only, never sent to the server (CLAUDE.md rule 12).
 - **Writers and tags:** `search_writers()` lists only writers with a story this reader may see, so a search never turns up a minor's account, and never answers a user ID. `search_tags()` finds approved tags by any of their names. Their See all pages are `/search/writers` and `/search/tags` (`SearchGroupPage`).
-- **Tests:** `supabase/tests/database/177-search.test.sql`, `e2e/search.spec.ts`, `src/features/search/lib/searchAddresses.test.ts`, `src/features/discovery/lib/listAddresses.test.ts`.
+- **Tests:** `supabase/tests/database/177-search.test.sql`, `e2e/search.spec.ts`, `src/features/search/lib/searchAddresses.test.ts`, `src/features/search/lib/recentSearches.test.ts`, `src/features/discovery/lib/listAddresses.test.ts`.
 
 ## The library and the reader's place (S1-E4-03; READ-4a)
 

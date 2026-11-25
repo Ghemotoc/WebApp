@@ -111,10 +111,15 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
       .getByRole('link', { name: 'Fiction' })
       .click();
     await expect(page).toHaveURL(/\/discover\/c\/fiction$/);
+    // The sort lives in the "Filter and sort" panel (user story 1.5); Done closes it.
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await expect(page.getByLabel('Sort by')).toHaveValue('popular');
     await page.getByLabel('Sort by').selectOption({ label: 'Title, A to Z' });
     await expect(page).toHaveURL(/sort=title_az/);
-    await card(page, 'Quiet orchard').click();
+    await page.getByRole('button', { name: 'Done' }).click();
+    // A genre page opens with its "Most read in Fiction" row (user story 1.6, board A06), so the
+    // story shows twice: the list's card is the last one.
+    await card(page, 'Quiet orchard').last().click();
     await expect(page.getByRole('heading', { level: 1, name: 'Quiet orchard' })).toBeVisible();
     await expect(page.getByRole('list', { name: 'Story numbers' })).toContainText('1 chapter');
     await page.getByRole('link', { name: 'See profile' }).click();

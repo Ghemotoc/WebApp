@@ -78,6 +78,7 @@ import { WriteLink } from '@/features/writing/components/WriteLink';
 
 import { PageGates } from './PageGates';
 import { FocusHeader } from './FocusHeader';
+import { HeaderSearch } from './HeaderSearch';
 import { PageHeaderContext } from './pageHeaderContext';
 import { Footer } from './Footer';
 import { FooterAboutContext } from './footerAboutContext';
@@ -88,22 +89,23 @@ import { useIsNarrowScreen } from './useIsNarrowScreen';
 import { useServerHeadReset } from './useServerHeadReset';
 
 /**
- * The website top bar, for windows from 1024 px: Home, Read, Library and Together, search, then
- * Write, Messages, Notifications and the account (the simplified design, bundle CALM-2). The Search page has its
- * own, bigger field with the filters, so the top bar leaves its search pill out there and the page
- * keeps one search region.
+ * The website top bar, for windows from 1024 px: Home, Read, Library and Together, then Write,
+ * the round search link, Messages, Notifications and the account (the simplified design, bundle
+ * CALM-2; user story 1.7 and boards A01 to A07 put search after Write as a button, so the Search
+ * page's own field is the only search field).
  *
- * @param props.hasSearch - false on the Search page
  * @returns the top bar
  */
-function WideHeader({ hasSearch }: { hasSearch: boolean }) {
+function WideHeader() {
+  const { userId } = useSession();
   return (
     <TopBar
-      hasSearch={hasSearch}
       endSlot={
         <>
           {/* "Write", a quiet button, while signed in (S1-E3-01; CALM-2). */}
           <WriteLink />
+          {/* Search, a round link to the Search page, while signed in (user story 1.7). */}
+          {userId !== null && <HeaderSearch />}
           {/* Messages as an icon button, as on phones, while signed in (S1-E9-01; CALM-2). */}
           <MessagesHeaderLink />
           {/* The bell, with a small count when something is new, while signed in (S1-E7-01). */}
@@ -126,8 +128,7 @@ function useShellHeader(isOwnedByPage: boolean) {
   const isNarrow = useIsNarrowScreen();
   const { pathname } = useLocation();
   if (!isNarrow) {
-    const isSearchPage = pathname === '/search' || pathname.startsWith('/search/');
-    return { header: <WideHeader hasSearch={!isSearchPage} />, hasTabBar: false };
+    return { header: <WideHeader />, hasTabBar: false };
   }
   const screen = shellScreenFor(pathname);
   if (screen.kind === 'focus') {

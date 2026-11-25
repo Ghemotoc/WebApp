@@ -1,5 +1,5 @@
 /**
- * DraftCard: the member's latest draft in the Read page's side column (story S1-E5-12, bundle
+ * DraftCard: the member's latest draft in the Read page's row of cards (story S1-E5-12, bundle
  * LOOK-4b; since CALM-7c the simplified board New-Read).
  *
  * Board values: no card around it. The heading "Draft", the draft's title as a link to the

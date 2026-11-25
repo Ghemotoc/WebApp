@@ -70,7 +70,8 @@ test.describe('Staff › Website › Genre and tag pages (G12b)', () => {
   }) => {
     const page = await openAs(browser, 'admin', '/staff/website/list-pages');
     const genres = page.getByRole('region', { name: 'Genre page backgrounds' });
-    await expect(genres.getByText('Default: Gold')).toBeVisible();
+    // A genre without a choice has the plain heading since user story 1.6 (board A06).
+    await expect(genres.getByText('Default: plain heading').first()).toBeVisible();
 
     // Step 1: Poetry gets Sky everywhere, and a visitor's Poetry page shows it.
     await genres.getByRole('button', { name: 'Edit the background of Poetry' }).click();
@@ -109,7 +110,7 @@ test.describe('Staff › Website › Genre and tag pages (G12b)', () => {
       .poll(() => bandToneAt(browser, '/discover/t/Fantasy'), { timeout: 15_000 })
       .toBe('sage');
 
-    // Step 4: "Use the default" takes Poetry back to its own gold.
+    // Step 4: "Use the default" takes Poetry back to the plain heading (user story 1.6).
     await genres.getByRole('button', { name: 'Edit the background of Poetry' }).click();
     await page
       .getByRole('region', { name: 'Editing Poetry' })
@@ -118,7 +119,7 @@ test.describe('Staff › Website › Genre and tag pages (G12b)', () => {
     await expect(page.getByText('The page is back to its default background.')).toBeVisible();
     await expect
       .poll(() => bandToneAt(browser, '/discover/c/poetry'), { timeout: 15_000 })
-      .toBe('gold');
+      .toBeNull();
     await page.context().close();
   });
 
