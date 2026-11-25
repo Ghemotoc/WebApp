@@ -25,13 +25,29 @@ export interface RisingWriter {
   followersThisWeek: number | null;
 }
 
-/** One card as rising_writers() writes it. */
-interface RisingWriterRow {
+/** One card as rising_writers() and writers_to_follow_now() write it. */
+export interface RisingWriterRow {
   handle: string;
   display_name: string;
   category_slug: string | null;
   latest_story: ListedStoryRow | null;
   followers_this_week: number | null;
+}
+
+/**
+ * Turns one card from the database into the screen's shape.
+ *
+ * @param row - a card from rising_writers() or writers_to_follow_now()
+ * @returns the writer as the rows draw it
+ */
+export function toRisingWriter(row: RisingWriterRow): RisingWriter {
+  return {
+    handle: row.handle,
+    displayName: row.display_name,
+    categorySlug: row.category_slug,
+    latestStory: row.latest_story === null ? null : toListedStory(row.latest_story),
+    followersThisWeek: row.followers_this_week,
+  };
 }
 
 /**
@@ -47,11 +63,5 @@ export async function fetchRisingWriters(client: AppSupabaseClient): Promise<Ris
   if (error !== null) throw new Error(error.message);
   // Step 2: turn each card into the screen's shape.
   const rows = (data ?? []) as unknown as RisingWriterRow[];
-  return rows.map((row) => ({
-    handle: row.handle,
-    displayName: row.display_name,
-    categorySlug: row.category_slug,
-    latestStory: row.latest_story === null ? null : toListedStory(row.latest_story),
-    followersThisWeek: row.followers_this_week,
-  }));
+  return rows.map(toRisingWriter);
 }
