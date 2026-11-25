@@ -150,7 +150,6 @@
     "noMatch": "Niciun personaj nu se potrivește cu „{{filter}}”.",
     "choose": "Alege un personaj ca să-i deschizi fișa.",
     "backToCast": "Personaje",
-    "sideColumn": "Relații, capitole și cititori",
     "notFound": "Personajul acesta nu mai este în poveste.",
     "createFailed": "Personajul nu a fost adăugat. Verifică-ți conexiunea și încearcă din nou.",
     "name": "Nume",
@@ -209,14 +208,14 @@
     },
     "firstAppearance": "Prima apariție",
     "firstAppearanceNone": "Încă nealeasă",
-    "firstAppearancePill": "Apare prima dată: capitolul {{number}}",
-    "povPill_one": "Punct de vedere în {{count}} capitol",
-    "povPill_few": "Punct de vedere în {{count}} capitole",
-    "povPill_other": "Punct de vedere în {{count}} de capitole",
+    "povFact_one": "punct de vedere în {{count}} capitol",
+    "povFact_few": "punct de vedere în {{count}} capitole",
+    "povFact_other": "punct de vedere în {{count}} de capitole",
+    "firstAppearsFact": "apare prima dată în capitolul {{number}}",
     "custom": {
-      "heading": "Câmpuri proprii",
+      "heading": "Câmpuri pentru personaje",
       "none": "Încă nu ai câmpuri proprii.",
-      "manage": "Scoate sau adu înapoi câmpuri pe pagina Pe scurt"
+      "manage": "Adaugă sau scoate câmpuri pe pagina Pe scurt"
     },
     "details": {
       "add": "Adaugă un detaliu",
@@ -243,9 +242,8 @@
     },
     "picture": {
       "heading": "Imagine",
-      "none": "Încă nu are imagine.",
       "upload": "Alege o imagine",
-      "hint": "JPEG, PNG sau WebP, până la 5 MB. O verificăm înainte să apară și doar tu o vezi.",
+      "hint": "Un desen, niciodată fotografia unei persoane reale. JPEG, PNG sau WebP, până la 5 MB. O verificăm înainte să apară.",
       "alt": "Descrie imaginea",
       "altHint": "Pentru cine nu o poate vedea.",
       "remove": "Scoate imaginea",

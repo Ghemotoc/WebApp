@@ -210,8 +210,8 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     );
 
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
-    // A field of the writer's own sits in the Custom fields card, folded shut (CALM-9, E23).
-    await page.getByRole('button', { name: /^Custom fields/ }).click();
+    // A field of the writer's own sits in the Character fields section, folded shut (story 6.4).
+    await page.getByRole('button', { name: /^Character fields/ }).click();
     await page.getByRole('textbox', { name: 'Turned by' }).fill('Nobody yet');
     await expect(page.locator('[id$="-save"]').filter({ hasText: 'Saved' }).first()).toBeVisible();
     await page.getByRole('textbox', { name: 'Turned by' }).blur();
@@ -225,7 +225,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await fields.getByRole('button', { name: 'Bring back Turned by' }).click();
     await expect(fields.getByRole('button', { name: 'Remove Turned by' })).toBeVisible();
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
-    await page.getByRole('button', { name: /^Custom fields/ }).click();
+    await page.getByRole('button', { name: /^Character fields/ }).click();
     await expect(page.getByRole('textbox', { name: 'Turned by' })).toHaveValue('Nobody yet');
     await page.context().close();
   });
@@ -241,10 +241,10 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
       on conflict (chapter_id) do update set pov_character_id = excluded.pov_character_id;`);
     const page = await openAs(browser, 'adult_writer', castAddress);
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
-    await expect(page.getByText('Point of view in 1 chapter', { exact: true })).toBeVisible();
+    await expect(page.getByText('point of view in 1 chapter', { exact: true })).toBeVisible();
 
     // A detail under a built-in group.
-    const basics = page.getByRole('group', { name: 'Basics' });
+    const basics = page.getByRole('region', { name: 'Basics' });
     await basics.getByRole('button', { name: 'Add detail to Basics' }).click();
     await expect(basics.getByRole('textbox', { name: 'Detail name' })).toBeFocused();
     await basics.getByRole('button', { name: 'Add', exact: true }).click();
@@ -254,7 +254,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await expect(basics.getByRole('textbox', { name: 'Blood type' })).toBeVisible();
     await expect(
       page
-        .getByRole('group', { name: 'Custom fields' })
+        .getByRole('region', { name: 'Character fields' })
         .getByRole('textbox', { name: 'Blood type' }),
     ).toHaveCount(0);
 
@@ -307,7 +307,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     // The other character's sheet has the same detail and group, empty, and no point-of-view pill.
     await castList(page).getByRole('link', { name: 'Ștefan the Keeper' }).click();
     await expect(
-      page.getByRole('group', { name: 'Basics' }).getByRole('textbox', { name: 'Blood type' }),
+      page.getByRole('region', { name: 'Basics' }).getByRole('textbox', { name: 'Blood type' }),
     ).toHaveValue('');
     // Wait for Ștefan's own sheet before opening his card.
     await expect(page.getByRole('textbox', { name: 'Name', exact: true })).toHaveValue(
@@ -317,7 +317,7 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     await expect(
       page.getByRole('region', { name: 'Spellwork' }).getByRole('textbox', { name: 'Wand' }),
     ).toHaveValue('');
-    await expect(page.getByText(/Point of view in/)).toHaveCount(0);
+    await expect(page.getByText(/point of view in/)).toHaveCount(0);
     await expectNoDoodles(page);
     await page.context().close();
   });
@@ -333,7 +333,8 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
     const page = await openAs(browser, 'adult_writer', castAddress);
     await page.getByRole('link', { name: 'Ana Mureșan' }).click();
     const pictureCard = page.getByRole('group', { name: 'Picture' });
-    await expect(pictureCard.getByText('No picture yet.')).toBeVisible();
+    // No picture yet: the header shows the initials, which screen readers skip (story 6.4).
+    await expect(page.getByRole('img', { name: 'Ana on the cliff' })).toHaveCount(0);
     await pictureCard.getByLabel('Choose a picture').setInputFiles({
       name: 'ana.png',
       mimeType: 'image/png',
@@ -346,11 +347,11 @@ test.describe('Story Atlas characters (S1-E17-08 to S1-E17-13)', () => {
       .getByRole('textbox', { name: 'Describe the picture' })
       .fill('Ana on the cliff');
     await expect(page.locator('#atlas-character-picture-alt-save')).toHaveText('Saved');
-    await expect(pictureCard.getByRole('img', { name: 'Ana on the cliff' })).toBeVisible();
+    // Once it passed, the face in the header is the picture, described by the writer's words.
+    await expect(page.getByRole('img', { name: 'Ana on the cliff' })).toBeVisible();
 
     await pictureCard.getByRole('button', { name: 'Remove picture' }).click();
-    await expect(pictureCard.getByText('No picture yet.')).toBeVisible();
-    await expect(pictureCard.getByRole('img')).toHaveCount(0);
+    await expect(page.getByRole('img', { name: 'Ana on the cliff' })).toHaveCount(0);
     // The file is gone from Storage too (S1-E17-11: "removing it deletes the file").
     expect(runSql(`select count(*) from storage.objects where bucket_id = 'atlas-images'`)).toBe(
       '0',

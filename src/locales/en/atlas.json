@@ -150,7 +150,6 @@
     "noMatch": "No one matches “{{filter}}”.",
     "choose": "Choose a character to open their sheet.",
     "backToCast": "Characters",
-    "sideColumn": "Relationships, chapters and readers",
     "notFound": "That character isn’t in this story any more.",
     "createFailed": "The character wasn’t added. Check your connection and try again.",
     "name": "Name",
@@ -209,14 +208,14 @@
     },
     "firstAppearance": "First appearance",
     "firstAppearanceNone": "Not picked yet",
-    "firstAppearancePill": "First appearance: Chapter {{number}}",
-    "povPill_one": "Point of view in {{count}} chapter",
-    "povPill_few": "Point of view in {{count}} chapters",
-    "povPill_other": "Point of view in {{count}} chapters",
+    "povFact_one": "point of view in {{count}} chapter",
+    "povFact_few": "point of view in {{count}} chapters",
+    "povFact_other": "point of view in {{count}} chapters",
+    "firstAppearsFact": "first appears in chapter {{number}}",
     "custom": {
-      "heading": "Custom fields",
+      "heading": "Character fields",
       "none": "No custom fields yet.",
-      "manage": "Remove or bring back fields on the at-a-glance page"
+      "manage": "Add or remove fields on At a glance"
     },
     "details": {
       "add": "Add detail",
@@ -243,9 +242,8 @@
     },
     "picture": {
       "heading": "Picture",
-      "none": "No picture yet.",
       "upload": "Choose a picture",
-      "hint": "JPEG, PNG or WebP, up to 5 MB. It’s checked before it shows, and only you see it.",
+      "hint": "A drawing, never a photo of a real person. JPEG, PNG or WebP, up to 5 MB. It’s checked before it shows.",
       "alt": "Describe the picture",
       "altHint": "For anyone who can’t see it.",
       "remove": "Remove picture",

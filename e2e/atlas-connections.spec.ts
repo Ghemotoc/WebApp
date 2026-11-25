@@ -52,10 +52,14 @@ const cast = {
   lupul: 'e2e17140-0000-4000-8000-000000000005',
 };
 
-/** Removes this spec's characters (their relationships go with them) and story. */
+/** Removes this spec's characters (their relationships go with them) and story, and puts the category colours back. */
 function cleanUp() {
   runSql(`
     delete from public.story_characters where story_id = '${writerStoryId}';
+    -- The colour test picks colours for the categories; back to the defaults, so a second run
+    -- starts from orange again.
+    update public.story_plans set relationship_colours = '{}'::jsonb
+      where story_id = '${writerStoryId}';
     delete from public.stories where slug = 'atlas-links-seed01';
     update public.profiles set locale = 'ro' where handle in ('adult_writer', 'suspended_user');`);
 }
