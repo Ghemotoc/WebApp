@@ -25,7 +25,11 @@
     "chapters_one": "{{count}} capitol",
     "chapters_few": "{{count}} capitole",
     "chapters_other": "{{count}} de capitole",
-    "writerHandle": "@{{handle}}"
+    "writerHandle": "@{{handle}}",
+    "reads_one": "{{value}} citire",
+    "reads_few": "{{value}} citiri",
+    "reads_other": "{{value}} de citiri",
+    "updated": "actualizată {{when}}"
   },
   "seeAll": {
     "writersEyebrow": "Căutare",

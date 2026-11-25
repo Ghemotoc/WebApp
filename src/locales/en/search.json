@@ -25,7 +25,11 @@
     "chapters_one": "{{count}} chapter",
     "chapters_few": "{{count}} chapters",
     "chapters_other": "{{count}} chapters",
-    "writerHandle": "@{{handle}}"
+    "writerHandle": "@{{handle}}",
+    "reads_one": "{{value}} read",
+    "reads_few": "{{value}} reads",
+    "reads_other": "{{value}} reads",
+    "updated": "updated {{when}}"
   },
   "seeAll": {
     "writersEyebrow": "Search",

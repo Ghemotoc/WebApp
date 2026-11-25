@@ -18587,6 +18587,10 @@ export type Database = {
       story_like_state_of: { Args: { target_story_id: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };
+      story_list_row_extras: {
+        Args: { list_kind: string; target_story_id: string };
+        Returns: Json;
+      };
       story_listing_allows: {
         Args: {
           list_kind: string;

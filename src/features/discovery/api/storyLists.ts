@@ -185,6 +185,11 @@ export interface ListedStory {
   titleFont?: string | null;
   chapterCount: number;
   lastChapterPublishedAt: string | null;
+  /**
+   * The story's public reads total, on a search's rows only (story_list_row_extras(); user story
+   * 1.8, board A08); null on other lists.
+   */
+  reads?: number | null;
   /** The writer chose "In the app only" and it applies now: the card's label (GAPS-15, Q4). */
   appOnly: boolean;
   /**
@@ -236,6 +241,8 @@ export interface ListedStoryRow {
   };
   chapter_count: number;
   last_chapter_published_at: string | null;
+  /** A search's rows only: the story's public reads total (user story 1.8, board A08). */
+  reads?: number;
   /** GAPS-15 (story_card_json()); missing from functions that build their own cards. */
   app_only?: boolean;
   /** TRANSLATE-1a (story_card_json()); missing from functions that build their own cards. */
@@ -285,6 +292,7 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
     titleFont: row.cover.title_font ?? null,
     chapterCount: row.chapter_count,
     lastChapterPublishedAt: row.last_chapter_published_at,
+    reads: row.reads ?? null,
     appOnly: row.app_only === true,
     languages: (row.languages ?? []).map((language) => ({
       code: language.language_code,

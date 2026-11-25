@@ -16115,7 +16115,12 @@ begin
     order by numbered.position
     limit wanted_rows offset coalesce(page_offset, 0)
   )
-  select coalesce(jsonb_agg(public.story_card_json(page_rows.id) order by page_rows.position), '[]'::jsonb),
+  -- User story 1.8 (board A08): a search row also says how many reads the story has, the same
+  -- public total its story page shows (story_read_total(), BOOKS-B2); other lists don't need it,
+  -- so they don't pay for it.
+  select coalesce(jsonb_agg(public.story_card_json(page_rows.id)
+                            || public.story_list_row_extras(list_kind, page_rows.id)
+                            order by page_rows.position), '[]'::jsonb),
          max(page_rows.list_total)
     into page, total
   from page_rows;
@@ -52672,6 +52677,24 @@ COMMENT ON FUNCTION "public"."story_link_targets"("story_slug" "text") IS 'What 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_list_row_extras"("list_kind" "text", "target_story_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when list_kind = 'search' then jsonb_build_object('reads', public.story_read_total(target_story_id))
+    else '{}'::jsonb
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."story_list_row_extras"("list_kind" "text", "target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_list_row_extras"("list_kind" "text", "target_story_id" "uuid") IS 'Internal: the fields a story list adds to its cards; the reads for a search (user story 1.8).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_listing_allows"("target" "public"."stories", "list_kind" "text") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -76469,6 +76492,10 @@ REVOKE ALL ON FUNCTION "public"."story_like_total"("target_story_id" "uuid") FRO
 
 REVOKE ALL ON FUNCTION "public"."story_link_targets"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_link_targets"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_list_row_extras"("list_kind" "text", "target_story_id" "uuid") FROM PUBLIC;
 
 
 
