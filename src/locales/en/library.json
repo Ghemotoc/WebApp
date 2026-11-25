@@ -76,7 +76,8 @@
     "noStories": "You don’t follow any stories yet. Use “Follow story” on a story’s page.",
     "new": "New",
     "notificationSettings": "Notification settings",
-    "empty": "Follow writers and stories to hear when something new is out."
+    "empty": "Follow writers and stories to hear when something new is out.",
+    "topics": "Genres and tags · {{count}}"
   },
   "button": {
     "label": "Library",

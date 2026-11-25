@@ -76,7 +76,8 @@
     "noStories": "Încă nu urmărești nicio poveste. Folosește „Urmărește povestea” pe pagina unei povești.",
     "new": "Nou",
     "notificationSettings": "Setări pentru notificări",
-    "empty": "Urmărește scriitori și povești ca să afli când apare ceva nou."
+    "empty": "Urmărește scriitori și povești ca să afli când apare ceva nou.",
+    "topics": "Genuri și etichete · {{count}}"
   },
   "button": {
     "label": "Bibliotecă",

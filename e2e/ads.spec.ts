@@ -6,8 +6,8 @@
  * What it proves:
  * - a visitor who isn't signed in sees no ad on any page, and the page never asks for one
  *   (Robert's design rules, 7 Nov 2026, "Content rules"; G7e);
- * - a signed-in reader sees one of our own ads, labelled "From us", on the story page and on
- *   Discover, and "Why this ad?" opens by keyboard and says nothing about the reader was used;
+ * - a signed-in reader sees one of our own ads, labelled "From us", on the story page and two
+ *   wide banners on Read (board A04), and "Why this ad?" opens by keyboard and says nothing about the reader was used;
  * - a story shared only with a class shows no ad at all (Q70);
  * - every other public page has its slots at 1440 px: Search (wide and portrait), Forums (wide
  *   and side box), a public space, a writer profile, the teaser, the classics list (wide) and a
@@ -29,17 +29,23 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 /** The seed story's public page. */
 const storyAddress = '/s/statia-meteo-seed01';
 
-/** Removes the chapter this spec made and puts the story back as it was. */
+/** Removes the chapter this spec made and puts the story back as it was (the seed has no date). */
 const cleanUpSql = `
   delete from public.chapters where code = 'adse2e01';
-  update public.stories set class_only = false where slug = 'statia-meteo-seed01';`;
+  update public.stories set class_only = false, first_published_at = null
+  where slug = 'statia-meteo-seed01';`;
 
-/** One published chapter, so the seed story is public and Discover has something to show. */
+/**
+ * One published chapter, so the seed story is public and Discover has something to show. The
+ * story gets the date publishing gives it, which also makes its writer new and rising, so Read's
+ * third row (New and rising) has a story and its second banner shows (board A04).
+ */
 const setUpSql = `
   insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body, word_count,
     status, published_title, published_body, published_word_count, first_published_at)
   values ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-000000000001', 'adse2e01',
-    1, 'Unu', 'x', 1, 'published', 'Unu', 'Text.', 800, now());`;
+    1, 'Unu', 'x', 1, 'published', 'Unu', 'Text.', 800, now());
+  update public.stories set first_published_at = now() where slug = 'statia-meteo-seed01';`;
 
 /** Opens an address in English, signed out. */
 async function openInEnglish(page: Page, address: string): Promise<void> {
@@ -99,10 +105,20 @@ test.describe('Ad slots', () => {
     await expect(ad.getByText(/Ads are never personalised, for anyone\./)).toBeVisible();
   });
 
-  test('Discover shows one wide ad after the first shelf', async ({ page }) => {
-    await signInReader(page);
+  test('Read shows a wide banner after the first row and a second one lower down', async ({
+    page,
+  }) => {
+    // Board A04 (user story 1.4): the second banner sits between two rows, after the third row of
+    // the default four (following, popular, rising, classics) once that row has stories, so it is
+    // never next to the first. The rows follow the reader's languages (MARKETS-2c) and the seed
+    // story is Romanian, so this reader reads Romanian (the interface stays English).
+    await signInReader(page, 'ro');
     await openInEnglish(page, '/discover');
-    await expect(page.locator('[data-ad="wide"]')).toHaveCount(1);
+    const banners = page.locator('[data-ad="wide"]');
+    await expect(banners).toHaveCount(2);
+    const firstTop = await banners.nth(0).evaluate((ad) => ad.getBoundingClientRect().top);
+    const secondTop = await banners.nth(1).evaluate((ad) => ad.getBoundingClientRect().top);
+    expect(secondTop - firstTop).toBeGreaterThan(400);
   });
 
   test('a story shared only with a class shows no ad', async ({ page }) => {
