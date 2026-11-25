@@ -24,7 +24,8 @@
  * email_delivery_for: one person's email delivery for one notification kind (S1-E7-02).
  * Inputs: the person and the kind. Returns: 'required', 'instant', 'daily' or 'off'.
  * Under 18 (or age unknown), a kind whose default is Instant defaults to Daily digest instead
- * (design books S5); a saved choice still wins.
+ * (design books S5); a saved choice still wins. Keeps BOOKS B06's rule (migration
+ * 20270205100441): "story finished" reads the reader's choice for new chapters.
  * Flow: queue_instant_email() and queue_daily_digests() → this function; Settings shows it.
  */
 create or replace function public.email_delivery_for(target_user_id uuid, kind public.notification_kind)
@@ -42,7 +43,11 @@ as $$
                   'account_unused_nudge', 'account_unused_closed') then 'required'
     else coalesce(
       (select settings.delivery from public.notification_email_settings as settings
-       where settings.user_id = target_user_id and settings.kind = email_delivery_for.kind)::text,
+       where settings.user_id = target_user_id
+         -- BOOKS B06: "story finished" follows the reader's choice for new chapters.
+         and settings.kind = case when email_delivery_for.kind = 'story_completed'
+                                  then 'new_chapter'::public.notification_kind
+                                  else email_delivery_for.kind end)::text,
       -- Design books S5: no instant email by default for a teenager; one digest a day instead.
       case
         when public.default_email_delivery(kind) = 'instant'

@@ -24751,7 +24751,11 @@ CREATE OR REPLACE FUNCTION "public"."email_delivery_for"("target_user_id" "uuid"
                   'account_unused_nudge', 'account_unused_closed') then 'required'
     else coalesce(
       (select settings.delivery from public.notification_email_settings as settings
-       where settings.user_id = target_user_id and settings.kind = email_delivery_for.kind)::text,
+       where settings.user_id = target_user_id
+         -- BOOKS B06: "story finished" follows the reader's choice for new chapters.
+         and settings.kind = case when email_delivery_for.kind = 'story_completed'
+                                  then 'new_chapter'::public.notification_kind
+                                  else email_delivery_for.kind end)::text,
       -- Design books S5: no instant email by default for a teenager; one digest a day instead.
       case
         when public.default_email_delivery(kind) = 'instant'
