@@ -208,7 +208,8 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     expect(sixteenHtml).toMatch(
       /<meta property="og:description" content="de Lia Scrie · [^"·]+ · Bunica mea/,
     );
-    expect(sixteenHtml).not.toContain('16+');
+    // The rating as a word on its own: a time stamp's "…816+00:00" in the page's data isn't one.
+    expect(sixteenHtml).not.toMatch(/(?<!\d)16\+/);
     expect(sixteenHtml).not.toContain('Vântul bate');
     // An 18+ story: the same, with "For mature readers" and still no rating. Its story page
     // describes it with the story statement (CALM-9s): the sentence, then the mature note.
@@ -217,7 +218,8 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     expect(eighteenHtml).toMatch(
       /<meta property="og:description" content="Stația meteo [^"]+ de Lia Scrie\. Pentru cititori maturi\. Bunica mea/,
     );
-    expect(eighteenHtml).not.toContain('18+');
+    // As above: "dateModified" can end in "…18+00:00", which is a time, not the rating.
+    expect(eighteenHtml).not.toMatch(/(?<!\d)18\+/);
   });
 
   test('axe in all 12 views of the teaser and the notice; no doodle drawn', async ({ browser }) => {

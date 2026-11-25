@@ -11,9 +11,8 @@
  * - a story shared only with a class shows no ad at all (Q70);
  * - every other public page has its slots at 1440 px: Search (wide and portrait), Forums (wide
  *   and side box), a public space, a writer profile, the teaser, the classics list (wide) and a
- *   See all list (a card), never more than two kinds on one page (SPONSORS-a2);
- * - on a long list the first ad sits high: the classics banner above the stories and the See all
- *   card after the 4th story, then one after every 10 stories (G7e);
+ *   See all list (wide), never more than two kinds on one page (SPONSORS-a2);
+ * - where a See all list's banner sits among the stories is proven in list-banner.spec.ts;
  * - the story page with its ad passes axe and doesn't scroll sideways at 390, 768 and 1440 px, in
  *   light and night mode and in both languages (CLAUDE.md rule 21).
  * Test data: seed personas and the seed story statia-meteo-seed01, with one published chapter
@@ -128,8 +127,9 @@ test.describe('Ad slots', () => {
     ['/s/statia-meteo-seed01/adse2e01', ['wide']],
     ['/discover/all/classics', ['wide']],
     // Every language: the list otherwise follows the reader's languages (MARKETS-2c), and the
-    // seeded new stories are Romanian while this reader reads English.
-    ['/discover/all/new?language=any', ['list_card']],
+    // seeded new stories are Romanian while this reader reads English. The list's ad is a banner
+    // across the grid since user stories 1.5 and 1.9 (boards A05 and A09).
+    ['/discover/all/new?language=any', ['wide']],
   ];
   for (const [address, shapes] of pagesAndShapes) {
     test(`${address} shows ${shapes.join(' and ')} at 1440 px`, async ({ page }) => {
