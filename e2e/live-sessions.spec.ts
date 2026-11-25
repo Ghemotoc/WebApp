@@ -88,9 +88,12 @@ test.describe('live sessions (GAPS-12h)', () => {
     await expect(rows).toHaveCount(3);
     // Soonest first, with the language and the age group on each row.
     await expect(rows.nth(0)).toContainText(everyone.ro);
-    await expect(rows.nth(0)).toContainText('· Română · 13+');
+    // Board A03 joins the facts with middots drawn by MetaLine, so each fact is checked alone.
+    await expect(rows.nth(0)).toContainText('Română');
+    await expect(rows.nth(0)).toContainText('13+');
     await expect(rows.nth(0)).toContainText('Camera vocală a forumului');
-    await expect(rows.nth(1)).toContainText('· Engleză · 18+');
+    await expect(rows.nth(1)).toContainText('Engleză');
+    await expect(rows.nth(1)).toContainText('18+');
     // The link staff added opens in a new tab and vouches for nothing.
     const link = rows.nth(1).getByRole('link', { name: /Deschide sesiunea/ });
     await expect(link).toHaveAttribute('href', 'https://example.org/dark-themes');

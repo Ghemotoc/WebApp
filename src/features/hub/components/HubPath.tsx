@@ -103,10 +103,11 @@ export function HubPath() {
         {t('hub.path.heading')}
       </h2>
       <p className="m-0 text-ink-muted">{t('hub.path.intro')}</p>
-      {/* Seven columns from 640 px; below that the days swipe sideways (story 1.3). */}
+      {/* Seven columns from 640 px; below that the days swipe sideways (story 1.3). "relative"
+          keeps each day's screen-reader text inside the scrolling list, so it can't widen the page. */}
       <ol
         aria-label={t('hub.path.listLabel')}
-        className="m-0 flex list-none snap-x snap-mandatory gap-2 overflow-x-auto p-0 sm:grid sm:grid-cols-7 sm:overflow-visible"
+        className="relative m-0 flex list-none snap-x snap-mandatory gap-2 overflow-x-auto p-0 sm:grid sm:grid-cols-7 sm:overflow-visible"
       >
         {steps.map((step) => (
           <DayColumn key={step.day} step={step} isNext={step.day === nextDay} />

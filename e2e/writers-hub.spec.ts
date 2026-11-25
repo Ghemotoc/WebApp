@@ -25,6 +25,7 @@ import { randomUUID } from 'node:crypto';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView } from './support/accessibility';
+import { memberHomeAddressPattern } from './support/homeAddress';
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
 import { makeTestClient, signInPersona, useSessionInBrowser } from './support/personas';
@@ -117,9 +118,9 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
     const page = await openSignedIn(browser);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/discover');
-    // Step 1: the logo in the top bar leads to the signed-in home.
+    // Step 1: the logo in the top bar leads to the member's own Home at "/" (user story 1.1).
     await page.getByRole('banner').getByRole('link').first().click();
-    await expect(page).toHaveURL(/\/hub$/);
+    await expect(page).toHaveURL(memberHomeAddressPattern);
     // CALM-7c: the hero greets the writer by name.
     await expect(page.getByRole('heading', { level: 1, name: /^Welcome back/ })).toBeVisible();
     // Step 2: a new writer has no draft, so "Start a new story" is the hero's main button.

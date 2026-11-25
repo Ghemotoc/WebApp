@@ -46,7 +46,7 @@ function HubBody() {
   return (
     <div className="flex flex-col gap-12 pt-8 pb-16">
       <HubWritersHero now={now} />
-      <div className="grid items-start gap-12 min-[900px]:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] min-[900px]:gap-16">
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-12 min-[900px]:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] min-[900px]:gap-16">
         <div className="flex min-w-0 flex-col gap-12">
           <HubLeadContest now={now} />
           <HubPrompt now={now} />
