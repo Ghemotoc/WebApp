@@ -5,9 +5,11 @@
  *
  * The writer's own words this calendar month against the goal, the streak and the words a day
  * that would still reach the goal. Private: only the writer sees it, and nobody is ranked. The
- * badges sit lower on the page (HubMonth), so the link jumps there.
+ * badges are on the Writers' hub (HubMonth, board A03), so the link opens /hub at them.
  * Who shows it: HubHero. What it calls: useHubMonth and lib/monthPace.ts.
  */
+import { Link } from 'react-router';
+
 import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { dateLocaleFor } from '@/lib/romania-time';
@@ -84,12 +86,13 @@ export function HubMonthSummary({ now }: { now: Date }) {
         <div className="h-full rounded-full bg-thread" style={{ width: `${percent}%` }} />
       </div>
       <MetaLine facts={monthFacts(month, now, t, numbers)} />
-      <a
-        href={`#${monthBadgesAnchor}`}
+      {/* The badges live on the Writers' hub (board A03) since Home moved to "/" (story 1.1). */}
+      <Link
+        to={`/hub#${monthBadgesAnchor}`}
         className="inline-flex min-h-11 items-center self-start font-semibold text-link underline"
       >
         {t('hub.month.seeBadges')}
-      </a>
+      </Link>
     </section>
   );
 }

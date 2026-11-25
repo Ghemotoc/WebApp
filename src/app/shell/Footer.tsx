@@ -82,7 +82,7 @@ function FooterLinkColumn({ column }: { column: FooterColumn }) {
  */
 export function Footer({ about, endSlot }: FooterProps) {
   const { t } = useTranslation();
-  // The brand link goes where the top bar's does: the Writers' hub signed in, Home signed out.
+  // The brand link goes where the top bar's does: Home, at "/" (user story 1.1).
   const homeAddress = useHomeAddress();
 
   return (

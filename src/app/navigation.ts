@@ -33,9 +33,9 @@ export function linksFor<Item extends { isForMembers?: boolean }>(
 }
 
 /**
- * The address that stands for "Home" in the list. Home is not one fixed page: it is the Writers'
- * hub when signed in and the public home page when not (useHomeAddress, G9a), so NavTrack swaps
- * this placeholder for the real address when it draws the link.
+ * The address that stands for "Home" in the list. NavTrack swaps this placeholder for the real
+ * address from useHomeAddress (G9a) when it draws the link; since user story 1.1 that is "/" for
+ * everyone, where WebsiteHomePage shows the member's Home or the public home page.
  */
 export const homeNavigationPlaceholder = '#home';
 

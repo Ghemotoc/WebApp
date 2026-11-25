@@ -24,7 +24,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { memberHomeAddressPattern } from './support/homeAddress';
+import { forwardedHomeAddressPattern, memberHomeAddressPattern } from './support/homeAddress';
 import { appPathFromEmail, waitForEmail } from './support/mailpit';
 
 /** Turns the waiting list on or off (WAITLIST-1; on from its migration). */
@@ -47,9 +47,9 @@ async function logInWithScreen(page: Page, email: string, password: string) {
   await page.locator('#sign-in-email').fill(email);
   await page.locator('#sign-in-password').fill(password);
   await page.locator('form button[type="submit"]').click();
-  // Signing in goes to "/", which forwards a member on to the Writers' hub. Wait for the hub: a
-  // click made while that redirect is pending is overtaken by it (24 Nov 2026).
-  await expect(page).toHaveURL(/\/hub$/);
+  // Signing in goes to "/", which forwards to the member's Home at their place ("/ro/ro"). Wait
+  // for it: a click made while that forward is pending is overtaken by it (24 Nov 2026).
+  await expect(page).toHaveURL(forwardedHomeAddressPattern);
   await expect(page.getByRole('button', { name: accountButton })).toBeVisible();
 }
 

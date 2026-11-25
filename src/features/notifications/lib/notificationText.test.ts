@@ -625,7 +625,7 @@ describe('notificationText', () => {
     const text = notificationText(englishT(), invitedRow, null);
     expect(text.who).toBe('The team:');
     expect(text.what).toContain('home page');
-    expect(text.href).toBe('/hub#home-comment-invitation');
+    expect(text.href).toBe('/#home-comment-invitation');
     expect(text.actionLabel).toBe('See the invitation');
   });
 

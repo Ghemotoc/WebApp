@@ -1,8 +1,9 @@
 # Writers' hub and Resources
 
-The signed-in home at `/hub` and the Resources page at `/resources`, built by bundle G9 WRITING, part a (Robert, 9 Nov 2026, 12:09 and 12:11 UTC).
+The signed-in Home at `/` (`MemberHomePage`, shown by WebsiteHomePage), the Writers' hub at `/hub` and the Resources page at `/resources`, built by bundle G9 WRITING, part a (Robert, 9 Nov 2026, 12:09 and 12:11 UTC).
 
-- `components/WritersHubPage.tsx`: the page, the Home of the simplified design (CALM-7c, board New-Home). Signed out it shows a log-in line; signed in, top to bottom: the hero, the invitations, Continue reading beside Drafts, the contests, Tools for the next chapter, From writers you follow beside Talk about stories, then the other blocks below in two columns.
+- `components/MemberHomePage.tsx` (user story 1.1, board A01): Home for a signed-in member at `/`: the hero, the invitations, Continue reading beside Drafts, the contests, Tools for the next chapter, From writers you follow beside Talk about stories.
+- `components/WritersHubPage.tsx` (user story 1.3, board A03): the Writers' hub at `/hub`. Signed out it shows a log-in line; signed in: `HubWritersHero` (title, Start writing, `HubWordsThisMonth`), then two columns: `HubLeadContest`, the prompt, `HubGuideRows`, the path, the sessions, `HubMoreContests` and the calls on the left; the writer of the week, the tools, this week and the badges on the right. Most lists are `HubRows` (a title link, a meta line, an optional button, under hairlines).
 - `components/HubHero.tsx`: the page's one frosted hero: the day and the writing month's day, "Welcome back, Lia.", one line on what waits (the latest draft, the contests closing this month), "Keep writing chapter N" (main) and "Start a new story" (quiet; main when there is no draft), and from 900 px `HubMonthSummary` on the right.
 - `components/HubMonthSummary.tsx` (CALM-7c): the writing month in the hero: the words against the goal, the thread bar, the streak and the words a day still needed (`lib/monthPace.ts`), and a link down to the badges.
 - `components/HubContinueReading.tsx` (CALM-7c): the stories the reader has a place in, three covers to a row with the thread line, from `my_library()`.

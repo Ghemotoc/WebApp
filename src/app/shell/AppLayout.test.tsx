@@ -156,8 +156,8 @@ describe('the shell on a wide window (bundle G4 SHELL)', () => {
       .getAllByRole('link')
       .map((link) => link.textContent);
     expect(names).toEqual(['Home', 'Read', 'Library', 'Together']);
-    // A member's Home is their own home page (CALM-1).
-    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/hub');
+    // A member's Home is their own home page at "/" (CALM-1; user story 1.1).
+    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     expect(within(topBar).getByRole('link', { name: 'Read' })).toHaveAttribute(
       'aria-current',
       'page',
@@ -183,10 +183,10 @@ describe('the shell on a narrow window (bundle G4 SHELL)', () => {
     useNarrowWindow();
     renderApp('/discover');
 
-    // The header's brand link and the footer's both open the Writers' hub when signed in.
+    // The header's brand link and the footer's both open Home at "/" (user story 1.1).
     const brandLinks = screen.getAllByRole('link', { name: `${brand.productName}, Home` });
     expect(brandLinks.length).toBeGreaterThan(0);
-    for (const brandLink of brandLinks) expect(brandLink).toHaveAttribute('href', '/hub');
+    for (const brandLink of brandLinks) expect(brandLink).toHaveAttribute('href', '/');
     const tabBar = screen.getByRole('navigation', { name: 'Main' });
     const readTab = within(tabBar).getByRole('link', { name: 'Read' });
     expect(readTab).toHaveAttribute('aria-current', 'page');

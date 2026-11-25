@@ -139,8 +139,6 @@ const infoPillUsers = new Set([
   '/src/features/discovery/lib/categoryAccents.ts',
   '/src/features/errors/components/ErrorPage.tsx',
   '/src/features/forums/components/staff/ForumAdminRow.tsx',
-  '/src/features/hub/components/HubCalls.tsx',
-  '/src/features/hub/components/HubSpotlight.tsx',
   '/src/features/hub/components/staff/CallItem.tsx',
   '/src/features/hub/components/staff/SessionItem.tsx',
   '/src/features/hub/components/staff/SpotlightItem.tsx',

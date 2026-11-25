@@ -46,10 +46,10 @@ test.describe('the writing month (GAPS-12f)', () => {
 
   test('a month with no words starts at 0% with no badge', async ({ browser }) => {
     const page = await openHubAs(browser, 'adult_writer', 1440);
-    // CALM-7c: the words, the bar and the streak sit in the hero; the badges lower down. CALM-9
+    // Board A03 (user story 1.3): the words, the meter and the streak, then the badges. CALM-9
     // (board A10) names the card "Words written this month".
     const card = page.getByRole('region', { name: 'Cuvinte scrise luna aceasta' });
-    await expect(card.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0');
+    await expect(card.getByRole('meter')).toHaveAttribute('aria-valuenow', '0');
     await expect(card.getByText('din 15.000 de cuvinte')).toBeVisible();
     await expect(card.getByText('Nicio serie încă')).toBeVisible();
     const badges = page.getByRole('list', { name: 'Insigne luna aceasta' });
@@ -66,8 +66,8 @@ test.describe('the writing month (GAPS-12f)', () => {
       select '${writerId}', public.romania_today() - back, 1260 from generate_series(0, 4) as back;`);
     const page = await openHubAs(browser, 'adult_writer', 390);
     const card = page.getByRole('region', { name: 'Cuvinte scrise luna aceasta' });
-    await expect(card.getByText('5 zile la rând')).toBeVisible();
-    const bar = card.getByRole('progressbar');
+    await expect(card.getByText('Serie de 5 zile')).toBeVisible();
+    const bar = card.getByRole('meter');
     // Early in a month some of the five days fall in the month before, so the share is lower.
     const monthWords = Number(
       runSql(`select sum(words) from public.writing_days where user_id = '${writerId}'
@@ -92,7 +92,7 @@ test.describe('the writing month (GAPS-12f)', () => {
   test('another member sees only their own month', async ({ browser }) => {
     const page = await openHubAs(browser, 'teacher', 1440);
     const card = page.getByRole('region', { name: 'Cuvinte scrise luna aceasta' });
-    await expect(card.getByText('5 zile la rând')).toHaveCount(0);
+    await expect(card.getByText('Serie de 5 zile')).toHaveCount(0);
     await expect(card.getByText('6.300')).toHaveCount(0);
     await page.context().close();
   });

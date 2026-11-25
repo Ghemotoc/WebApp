@@ -25,6 +25,7 @@ import { randomUUID } from 'node:crypto';
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView } from './support/accessibility';
+import { memberHomeAddressPattern } from './support/homeAddress';
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
 import { makeTestClient, signInPersona, useSessionInBrowser } from './support/personas';
@@ -117,9 +118,9 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
     const page = await openSignedIn(browser);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/discover');
-    // Step 1: the logo in the top bar leads to the signed-in home.
+    // Step 1: the logo in the top bar leads to the member's own Home at "/" (user story 1.1).
     await page.getByRole('banner').getByRole('link').first().click();
-    await expect(page).toHaveURL(/\/hub$/);
+    await expect(page).toHaveURL(memberHomeAddressPattern);
     // CALM-7c: the hero greets the writer by name.
     await expect(page.getByRole('heading', { level: 1, name: /^Welcome back/ })).toBeVisible();
     // Step 2: a new writer has no draft, so "Start a new story" is the hero's main button.
@@ -139,7 +140,8 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
     await guides.getByRole('button', { name: 'Next guides' }).click();
     await expect(previous).toBeEnabled();
     await expect(guides.getByText('Guides 4 to 6 of 15')).toBeAttached();
-    // Step 5: the tools.
+    // Step 5: the tools live on the Writers' hub at /hub (board A03), not on Home.
+    await page.goto('/hub');
     await expect(page.getByRole('link', { name: /Story Atlas/ })).toHaveAttribute('href', '/plan');
     await expectNoDoodles(page);
     await page.context().close();
@@ -152,7 +154,8 @@ test.describe('the Writers’ hub and Resources (G9a)', () => {
       await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
       const page = await context.newPage();
       await page.setViewportSize({ width: 390, height: 900 });
-      await page.goto('/hub');
+      // The contest cards with their pictures are in Home's contests band (board A01, story 1.1).
+      await page.goto('/');
       const card = page.getByRole('article', { name: 'Winter stories' });
       await expect(card).toBeVisible();
       // The picture is the landing page's, with the alt text the admin wrote, and it loads.

@@ -14,15 +14,20 @@
 export const homeAddressPattern = /\/$|\/[a-z]{2}\/[a-z]{2}$/;
 
 /**
- * Where a signed-in member lands from the home page: the same addresses, or the hub, because a
- * member skips the website home (TRIAL-WALL, Robert, 23 Nov 2026). Which one a journey sees
- * depends on whether the forward has happened yet.
+ * Where a signed-in member lands from the home page: the same addresses, because a member's own
+ * Home is drawn there (user story 1.1, 25 Nov 2026; until then a member was sent on to /hub,
+ * TRIAL-WALL). Which one a journey sees depends on whether the forward has happened yet.
  */
-export const memberHomeAddressPattern = /\/$|\/[a-z]{2}\/[a-z]{2}$|\/hub$/;
+export const memberHomeAddressPattern = /\/$|\/[a-z]{2}\/[a-z]{2}$/;
 
 /**
- * The whole home page address on this website and no other, or the hub a signed-in member is
- * sent on to (TRIAL-WALL): used where a journey must prove it stayed on our own site (the log-in
- * page never follows `next` to another website).
+ * The home page's address once the forward from "/" has happened ("/ro/ro"). A journey that
+ * signs in waits for it before clicking: a click made while the forward is pending is overtaken.
  */
-export const ownHomeAddressPattern = /^http:\/\/[^/]+\/([a-z]{2}\/[a-z]{2}|hub)?$/;
+export const forwardedHomeAddressPattern = /\/[a-z]{2}\/[a-z]{2}$/;
+
+/**
+ * The whole home page address on this website and no other: used where a journey must prove it
+ * stayed on our own site (the log-in page never follows `next` to another website).
+ */
+export const ownHomeAddressPattern = /^http:\/\/[^/]+\/([a-z]{2}\/[a-z]{2})?$/;

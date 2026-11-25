@@ -21,6 +21,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { forwardedHomeAddressPattern } from './support/homeAddress';
 import { makeTestClient, useSessionInBrowser } from './support/personas';
 import { createTestAccount } from './support/testAccounts';
 
@@ -171,10 +172,10 @@ test.describe('onboarding (S1-E2-06)', () => {
     browser,
   }) => {
     const page = await openAs(browser, accounts.adult, '/');
-    // A signed-in member who opens the site's address is sent on to the Writers' hub
-    // (TRIAL-WALL). Wait for that first: a click on the notice while the redirect is still
-    // pending is overtaken by it, and the page stays on the hub instead of opening /setup.
-    await expect(page).toHaveURL(/\/hub$/);
+    // "/" forwards to the member's Home at their place ("/ro/ro"). Wait for that first: a click
+    // on the notice while the forward is still pending is overtaken by it, and the page stays on
+    // Home instead of opening /setup.
+    await expect(page).toHaveURL(forwardedHomeAddressPattern);
 
     // The notice is on every page until setup is finished.
     await expect(

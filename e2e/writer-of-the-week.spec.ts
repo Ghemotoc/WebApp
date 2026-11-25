@@ -74,8 +74,9 @@ test.describe('writer of the week (GAPS-12e)', () => {
     await page.context().close();
   });
 
-  test('the writer agrees on their own hub', async ({ browser }) => {
-    const page = await openAs(browser, 'adult_writer', '/hub');
+  test('the writer agrees on their Home, then sees the card on the hub', async ({ browser }) => {
+    // The invitation waits on the writer's Home (user story 1.1); the card shows on /hub (1.3).
+    const page = await openAs(browser, 'adult_writer', '/');
     await page.setViewportSize({ width: 390, height: 900 });
     const invitation = page.getByRole('region', { name: 'Invitație' });
     await expect(invitation.getByText(reason.ro)).toBeVisible();
@@ -85,6 +86,7 @@ test.describe('writer of the week (GAPS-12e)', () => {
       invitation.getByText('Ai acceptat. Membrii văd cardul în zilele acelea.'),
     ).toBeVisible();
     // The writer's own hub shows the card too, without Follow.
+    await page.goto('/hub');
     const ownCard = page.getByRole('region', { name: 'Scriitorul săptămânii' });
     await expect(ownCard.getByRole('link', { name: 'Lia Scrie' })).toBeVisible();
     // Nobody follows themselves.
@@ -127,10 +129,12 @@ test.describe('writer of the week (GAPS-12e)', () => {
   }
 
   test('the writer takes the card down and it goes for everyone', async ({ browser }) => {
-    const writerPage = await openAs(browser, 'adult_writer', '/hub');
+    const writerPage = await openAs(browser, 'adult_writer', '/');
     const invitation = writerPage.getByRole('region', { name: 'Invitație' });
     await invitation.getByRole('button', { name: 'Scoate cardul' }).click();
     await expect(invitation.getByText('Ai refuzat. Nimic nu apare.')).toBeVisible();
+    await writerPage.goto('/hub');
+    await expect(writerPage.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(writerPage.getByRole('region', { name: 'Scriitorul săptămânii' })).toHaveCount(0);
     await writerPage.context().close();
     const memberPage = await openAs(browser, 'teacher', '/hub');
