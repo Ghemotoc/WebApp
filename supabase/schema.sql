@@ -50625,7 +50625,7 @@ CREATE OR REPLACE FUNCTION "public"."sponsor_placement_slots"("placement" "publi
     AS $$
   select case placement
     when 'chapter_banner' then array['chapter_end']
-    when 'list_banner' then array['discover_card', 'see_all_card', 'classics_wide', 'search_wide', 'library_wide']
+    when 'list_banner' then array['discover_card', 'see_all_card', 'classics_wide', 'search_wide', 'library_wide', 'library_lower_wide']
     when 'discover_banner' then array['discover_wide']
     else '{}'::text[]
   end;
@@ -50635,7 +50635,7 @@ $$;
 ALTER FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") IS 'Internal: which ad slots each banner placement fills (S1-E12-02).';
+COMMENT ON FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") IS 'Internal: which ad slots each banner placement fills (S1-E12-02; library_lower_wide for board C01).';
 
 
 

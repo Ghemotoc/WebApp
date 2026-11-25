@@ -8,6 +8,9 @@
  * row: the avatar, the name and when they last published. A story row: a 48 px cover, the title,
  * a meta line with "New" in bold for a story updated in the last 7 days, the writer and the last
  * update. Each row ends with the shared FollowButton (which unfollows in place). No cards.
+ * Writers and stories sit side by side from 900 px, one above the other on narrower screens;
+ * when the reader follows nothing at all, one line under the heading says how to start (board
+ * C01 and C08; Robert, 25 Nov 2026, 09:50 UTC).
  * Who uses it: LibraryPage. What it calls: useMyFollows → my_follows().
  */
 import type { ReactNode } from 'react';
@@ -139,6 +142,31 @@ function FollowingHeading() {
   );
 }
 
+/** Writers and stories, side by side from 900 px. */
+function FollowGroups({ writers, stories }: { writers: FollowedWriter[]; stories: ListedStory[] }) {
+  const { t } = useLibraryTranslation();
+  return (
+    <div className="grid grid-cols-1 gap-x-8 gap-y-6 min-[900px]:grid-cols-2">
+      <FollowGroup
+        heading={t('following.writers', { count: writers.length })}
+        emptyText={t('following.noWriters')}
+      >
+        {writers.map((writer) => (
+          <WriterRow key={writer.handle} writer={writer} />
+        ))}
+      </FollowGroup>
+      <FollowGroup
+        heading={t('following.stories', { count: stories.length })}
+        emptyText={t('following.noStories')}
+      >
+        {stories.map((story) => (
+          <StoryRow key={story.slug} story={story} />
+        ))}
+      </FollowGroup>
+    </div>
+  );
+}
+
 /**
  * Renders the section, or nothing while it loads.
  *
@@ -148,25 +176,16 @@ export function FollowingSection() {
   const { t } = useLibraryTranslation();
   const { follows } = useMyFollows();
   if (follows === null) return null;
+  // Step 1: following nothing at all gets one line instead of two empty groups.
+  const followsNothing = follows.writers.length === 0 && follows.stories.length === 0;
   return (
     <section aria-labelledby="library-following-heading" className="flex min-w-0 flex-col gap-6">
       <FollowingHeading />
-      <FollowGroup
-        heading={t('following.writers', { count: follows.writers.length })}
-        emptyText={t('following.noWriters')}
-      >
-        {follows.writers.map((writer) => (
-          <WriterRow key={writer.handle} writer={writer} />
-        ))}
-      </FollowGroup>
-      <FollowGroup
-        heading={t('following.stories', { count: follows.stories.length })}
-        emptyText={t('following.noStories')}
-      >
-        {follows.stories.map((story) => (
-          <StoryRow key={story.slug} story={story} />
-        ))}
-      </FollowGroup>
+      {followsNothing ? (
+        <p className="m-0 type-body text-ink-muted">{t('following.empty')}</p>
+      ) : (
+        <FollowGroups writers={follows.writers} stories={follows.stories} />
+      )}
     </section>
   );
 }

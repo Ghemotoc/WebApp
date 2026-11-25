@@ -143,7 +143,6 @@ const infoPillUsers = new Set([
   '/src/features/hub/components/staff/SessionItem.tsx',
   '/src/features/hub/components/staff/SpotlightItem.tsx',
   '/src/features/landing-pages/components/staff/BlockListRow.tsx',
-  '/src/features/library/components/ReadingListPage.tsx',
   '/src/features/moderation/components/AccountSanctions.tsx',
   '/src/features/moderation/components/AppealCard.tsx',
   '/src/features/moderation/components/AppealOwnerReview.tsx',

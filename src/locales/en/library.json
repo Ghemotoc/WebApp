@@ -29,7 +29,8 @@
     "completed": "Completed story",
     "button": "Continue",
     "buttonLabel": "Continue {{title}}",
-    "empty": "Stories you start reading show here, with your place in them."
+    "empty": "Stories you start reading show here, with your place in them.",
+    "findStory": "Find a story"
   },
   "shelves": {
     "eyebrow": "Shelves",
@@ -74,7 +75,8 @@
     "noWriters": "You don’t follow any writers yet. Use “Follow” on a writer’s profile.",
     "noStories": "You don’t follow any stories yet. Use “Follow story” on a story’s page.",
     "new": "New",
-    "notificationSettings": "Notification settings"
+    "notificationSettings": "Notification settings",
+    "empty": "Follow writers and stories to hear when something new is out."
   },
   "button": {
     "label": "Library",
@@ -179,13 +181,11 @@
       "backToLibrary": "Back to the Library",
       "madeBy": "A bookshelf by",
       "reportLabel": "the bookshelf “{{name}}”",
-      "toolsHeading": "Manage bookshelf",
       "nameLabel": "Bookshelf name",
       "saveName": "Save name",
       "saved": "Saved",
       "audienceLabel": "Who sees it",
       "audienceHint": "A public bookshelf shows its name, the stories on it and the username of whoever made it.",
-      "entriesHeading": "Stories on this bookshelf",
       "remove": "Remove",
       "removeLabel": "Remove {{title}} from this bookshelf",
       "delete": "Delete bookshelf",
@@ -193,10 +193,10 @@
       "deleteYes": "Yes, delete",
       "deleteKeep": "Keep",
       "emptyTitle": "No stories yet",
-      "emptyOwn": "Use “Add to a bookshelf” on a story’s page.",
       "emptyOther": "Nothing on this bookshelf is open to you right now.",
       "discover": "Find stories",
-      "removedUndo": "{{title}} is off the bookshelf."
+      "removedUndo": "{{title}} is off the bookshelf.",
+      "rename": "Rename"
     },
     "books": "{{filled}} of {{count}} books",
     "full": "Full",

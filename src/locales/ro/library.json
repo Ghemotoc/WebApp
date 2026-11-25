@@ -29,7 +29,8 @@
     "completed": "Poveste încheiată",
     "button": "Continuă",
     "buttonLabel": "Continuă {{title}}",
-    "empty": "Poveștile pe care începi să le citești apar aici, cu locul unde ai rămas."
+    "empty": "Poveștile pe care începi să le citești apar aici, cu locul unde ai rămas.",
+    "findStory": "Găsește o poveste"
   },
   "shelves": {
     "eyebrow": "Rafturi",
@@ -74,7 +75,8 @@
     "noWriters": "Încă nu urmărești niciun scriitor. Folosește „Urmărește” pe profilul unui scriitor.",
     "noStories": "Încă nu urmărești nicio poveste. Folosește „Urmărește povestea” pe pagina unei povești.",
     "new": "Nou",
-    "notificationSettings": "Setări pentru notificări"
+    "notificationSettings": "Setări pentru notificări",
+    "empty": "Urmărește scriitori și povești ca să afli când apare ceva nou."
   },
   "button": {
     "label": "Bibliotecă",
@@ -179,13 +181,11 @@
       "backToLibrary": "Înapoi la Bibliotecă",
       "madeBy": "Un raft de la",
       "reportLabel": "raftul „{{name}}”",
-      "toolsHeading": "Administrează raftul",
       "nameLabel": "Numele raftului",
       "saveName": "Salvează numele",
       "saved": "Salvat",
       "audienceLabel": "Cine îl vede",
       "audienceHint": "Un raft public își arată numele, poveștile de pe el și numele de utilizator al celui care l-a făcut.",
-      "entriesHeading": "Poveștile de pe acest raft",
       "remove": "Scoate",
       "removeLabel": "Scoate {{title}} de pe acest raft",
       "delete": "Șterge raftul",
@@ -193,10 +193,10 @@
       "deleteYes": "Da, șterge",
       "deleteKeep": "Păstrează",
       "emptyTitle": "Nicio poveste încă",
-      "emptyOwn": "Folosește „Adaugă pe un raft” din pagina unei povești.",
       "emptyOther": "Nimic de pe acest raft nu îți este deschis acum.",
       "discover": "Caută povești",
-      "removedUndo": "Ai scos „{{title}}” de pe raft."
+      "removedUndo": "Ai scos „{{title}}” de pe raft.",
+      "rename": "Redenumește"
     },
     "books": "{{filled}} din {{count}} cărți",
     "full": "Plin",
