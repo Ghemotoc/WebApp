@@ -38,12 +38,18 @@ function cleanUp() {
   runSql(`delete from public.reading_minutes where user_id in ('${editorId}', '${teenId}');
     delete from public.reading_habits where user_id in ('${editorId}', '${teenId}');
     delete from public.notifications where kind = 'reading_reminder' and user_id = '${editorId}';
+    delete from public.follows_stories
+      where story_id in (select id from public.stories where slug = '${storySlug}');
     delete from public.chapters where code = 'nisipun1';
     delete from public.stories where slug = '${storySlug}';
     update public.profiles set locale = 'ro' where handle = 'editor';`);
 }
 
-/** The story with one published chapter. */
+/**
+ * The story with one published chapter, followed by both readers: a Library with nothing in it
+ * shows only its first three parts (board C08, a new reader), and the streak's note is not one
+ * of them.
+ */
 function seedStory() {
   cleanUp();
   runSql(`insert into public.stories (user_id, slug, title, blurb, language_code, category_id,
@@ -53,7 +59,11 @@ function seedStory() {
     insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body,
       word_count, status, published_title, published_body, published_word_count, first_published_at)
     select id, user_id, 'nisipun1', 1, 'Capitol', 'x', 300, 'published', 'Primul minut', E'${longText}', 300, now()
-    from public.stories where slug = '${storySlug}';`);
+    from public.stories where slug = '${storySlug}';
+    insert into public.follows_stories (user_id, story_id)
+    select reader.id, story.id from public.stories as story
+    cross join (values ('${editorId}'::uuid), ('${teenId}'::uuid)) as reader (id)
+    where story.slug = '${storySlug}';`);
 }
 
 /** The editor's streak, as a SQL answer: "target reminders time minutes". */
