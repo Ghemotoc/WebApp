@@ -25,6 +25,7 @@ import { perPageClasses, rowGridClasses } from './shelfRowStyles';
 import { ShelfArrows } from './ShelfArrows';
 import { useShelfScroll } from './useShelfScroll';
 import { ViewMoreCard } from './ViewMoreCard';
+import { ShelfToolbar, type ShelfToolbarPlacement } from './ShelfToolbar';
 
 /** A row never shows more than this many items (CLAUDE.md rule 20). */
 export const MAXIMUM_SHELF_ITEMS = 20;
@@ -46,6 +47,11 @@ export interface ShelfProps {
   totalCount?: number;
   /** Controls between the heading and the row, such as the home page's genre chips (LOOK-3). */
   toolbar?: ReactNode;
+  /**
+   * Where the toolbar sits: above the row (the default) or under it, as the Home page's genre
+   * chips do on board A01 (Robert's review of 25 Nov 2026).
+   */
+  toolbarPlacement?: ShelfToolbarPlacement;
   /** The section's id, for links to it from elsewhere on the page ("#trending"). */
   anchorId?: string;
   /**
@@ -133,6 +139,7 @@ export function Shelf({
   seeAllHref,
   totalCount,
   toolbar,
+  toolbarPlacement = 'above',
   anchorId,
   headerAction,
   coversInColumn,
@@ -168,7 +175,7 @@ export function Shelf({
           )}
         </div>
       </div>
-      {toolbar !== undefined && <div className="mb-4">{toolbar}</div>}
+      <ShelfToolbar toolbar={toolbar} placement={toolbarPlacement} spot="above" />
       <ShelfRow
         rowRef={rowRef}
         title={title}
@@ -180,6 +187,7 @@ export function Shelf({
           ) : undefined
         }
       />
+      <ShelfToolbar toolbar={toolbar} placement={toolbarPlacement} spot="below" />
     </section>
   );
 }
