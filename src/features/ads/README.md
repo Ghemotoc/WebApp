@@ -13,7 +13,7 @@ non-personalised ad network.
 - `hooks/usePageAds.ts`: one page's slots, kept for five minutes; for a visitor who isn't signed in
   it asks nothing and answers with no slot (G7e).
 - `components/PageAdSlot.tsx`: what a page places, one per slot (at most two per page); a long
-  story grid places its slot again after every 10 stories (`StoryGrid`, G7e).
+  story grid places its slot again as a banner across a row after every two rows, never closer than 10 stories (`StoryGrid`, G7e; user stories 1.5 and 1.9).
   `AdBox.tsx` draws the slot with its label and "Why this ad?"; `HouseAdCreative.tsx` draws our
   own ads (a landing page, Start writing, the classics, the forums); `SponsorAdCreative.tsx` draws
   a sponsor's ad (the checked picture, its line, the link marked `rel="sponsored"` and an optional
