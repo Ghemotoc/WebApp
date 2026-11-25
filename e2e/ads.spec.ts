@@ -12,6 +12,7 @@
  * - every other public page has its slots at 1440 px: Search (wide and portrait), Forums (wide
  *   and side box), a public space, a writer profile, the teaser, the classics list (wide) and a
  *   See all list (wide), never more than two kinds on one page (SPONSORS-a2);
+ * - the Writers' hub shows its side box from 1200 px and a wide banner below 1200 px (board A03);
  * - where a See all list's banner sits among the stories is proven in list-banner.spec.ts;
  * - the story page with its ad passes axe and doesn't scroll sideways at 390, 768 and 1440 px, in
  *   light and night mode and in both languages (CLAUDE.md rule 21).
@@ -114,6 +115,23 @@ test.describe('Ad slots', () => {
     await page.waitForTimeout(800);
     await expect(page.locator('[data-ad]')).toHaveCount(0);
     runSql(`update public.stories set class_only = false where slug = 'statia-meteo-seed01';`);
+  });
+
+  test('the Writers’ hub shows its side box from 1200 px and a wide banner below that', async ({
+    page,
+  }) => {
+    // Board A03 (user story 1.3): one advert on the hub, drawn where the board draws it. From
+    // 1200 px it is the side box under the writer of the week (slot hub_side); below 1200 px side
+    // boxes are not drawn, so a banner sits between the guides and the learning path instead
+    // (slot hub_wide). A member sees one of the two, never both.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await signInReader(page);
+    await openInEnglish(page, '/hub');
+    await expect(page.locator('[data-ad="side_box"]')).toBeVisible();
+    await expect(page.locator('[data-ad="wide"]')).toBeHidden();
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await expect(page.locator('[data-ad="wide"]')).toBeVisible();
+    await expect(page.locator('[data-ad="side_box"]')).toBeHidden();
   });
 
   /** Each public page of part a2, with the slot shapes it shows at 1440 px. */
