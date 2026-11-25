@@ -36,7 +36,7 @@ import type { ChapterAddress } from '@/features/reading/api/likes';
 import { useMissingField } from '@/lib/forms/useMissingField';
 import { formatLocalDayAndTime } from '@/lib/local-time';
 
-import type { CommentError } from '../api/comments';
+import type { CommentError, CommentQuote } from '../api/comments';
 import { useCommentComposer, type CommentComposerState } from '../hooks/useCommentComposer';
 import { useCommentLimit } from '../hooks/useCommentLimit';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
@@ -54,6 +54,13 @@ export interface CommentComposerProps {
   paragraph?: number;
   /** For a reply: true when the comment answered is on a paragraph, so the shorter limit applies. */
   isOnParagraph?: boolean;
+  /** For a comment on chosen words (READER-SELECT): the words and where they are. */
+  quote?: CommentQuote;
+  /**
+   * The label above the box when it isn't the usual one: "Comment on this part" or "Comment on
+   * these lines" (READER-SELECT, boards B13 and B14).
+   */
+  label?: string;
   /**
    * True to put the focus in the text box when it appears: after "Resume now" the box comes back
    * where the button was (CALM-8).
@@ -261,6 +268,7 @@ export function CommentComposer(props: CommentComposerProps) {
     address: props.address,
     replyToId: props.replyTo?.commentId,
     paragraph: props.paragraph,
+    quote: props.quote,
     onDone: props.onDone,
   });
   useFocusWhenAsked(textBoxRef, props.focusOnMount === true);
@@ -279,7 +287,7 @@ export function CommentComposer(props: CommentComposerProps) {
       className="flex flex-col gap-3"
     >
       <label htmlFor={fieldId} className="type-body font-semibold text-ink">
-        {t(...labelText(props))}
+        {props.label ?? t(...labelText(props))}
       </label>
       <textarea
         id={fieldId}

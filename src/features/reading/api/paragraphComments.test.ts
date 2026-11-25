@@ -41,6 +41,7 @@ describe('fetchParagraphCounts', () => {
       byParagraph: { 2: 3, 5: 1 },
       earlier: 2,
       commentsPausedUntil: null,
+      parts: [],
     });
   });
 

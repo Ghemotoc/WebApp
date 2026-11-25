@@ -182,6 +182,15 @@
       "words_one": "word so far",
       "words_few": "words so far",
       "words_other": "words so far"
+    },
+    "partComments": {
+      "button_one": "{{count}} comment on: {{words}}",
+      "button_few": "{{count}} comments on: {{words}}",
+      "button_other": "{{count}} comments on: {{words}}",
+      "comment": "Comment",
+      "tooLong": "Select less to comment",
+      "tooLongHint": "Up to {{limit}} characters. These words have {{count}}.",
+      "barLabel": "Comment on the chosen words"
     }
   },
   "teaser": {
