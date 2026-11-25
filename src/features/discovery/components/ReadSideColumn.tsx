@@ -1,47 +1,43 @@
 /**
- * ReadSideColumn: the Read page's side column for a signed-in member, "For Lia" (story S1-E5-12,
- * bundle LOOK-4b; since CALM-7c the simplified board New-Read).
+ * ReadSideColumn: the Read page's row of cards for a signed-in member, "For Lia" (story S1-E5-12,
+ * bundle LOOK-4b; since user story 1.4 board A04, a row under the featured story instead of a
+ * side column).
  *
- * Board values: from 1024 px a 300 px column beside the hero and the rows, starting level with the
- * hero (design rulebook: a side column starts level with the first block of the main column);
- * narrower, it moves under the rows. No cards: sections one under another. In order: Continue
- * reading (the latest unfinished story), the latest draft, "Start a new story" (today's page has
- * it, the board doesn't, so it stays as one line) and New and rising writers. Each part shows only
- * when it has something real to show (DoD: never draw a feature that doesn't exist); with nothing
- * at all, nothing is drawn and the main column takes the whole width.
- * The board's 300 × 250 advert isn't here yet: Discover's second ad slot is a list card in the
- * database (sponsors a1), so a box there needs a change to the slots first (pull request
- * follow-up).
+ * Board values (A04): three cards side by side from 900 px, each on the box surface: Continue
+ * reading (the latest unfinished story), the latest draft and "Start a new story"; under 900 px
+ * they stack. Each card shows only when it has something real to show (DoD: never draw a feature
+ * that doesn't exist); with nothing at all, nothing is drawn. The name stays "For Lia", so the
+ * row is still one labelled landmark. New and rising writers moved to the box beside the
+ * featured story (ReadWritersBox); when no story is featured the box joins this row instead.
  * Who shows it: DiscoverPage, only for someone signed in. What it calls: useDiscoverCards →
- * my_discover_cards(), useMyNames (the name in its label), useRisingWriters (whether the writers'
- * list has anyone), ContinueCard, DraftCard, NewStoryCard and RisingWritersList.
+ * my_discover_cards(), useMyNames (the name in its label), ContinueCard, DraftCard,
+ * NewStoryCard and ReadWritersBox.
  */
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { displayName } from '@/features/account/lib/nameRules';
 
 import { useDiscoverCards } from '../hooks/useDiscoverCards';
-import { useRisingWriters } from '../hooks/useRisingWriters';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 import { ContinueCard } from './ContinueCard';
 import { DraftCard } from './DraftCard';
 import { NewStoryCard } from './NewStoryCard';
-import { RisingWritersList } from './RisingWritersList';
+import { ReadWritersBox } from './ReadWritersBox';
+
+/** Each card's paper: the one box surface (CALM-1c), 24 px inside. */
+const cardClasses = 'box-surface min-w-0 rounded-card p-6';
 
 /**
  * What each part of the column has to show (the cards are null for a visitor and while loading).
  *
- * @returns the latest unfinished story, the latest draft, whether the member may write, and
- *   whether any writer is suggested
+ * @returns the latest unfinished story, the latest draft and whether the member may write
  */
 function useColumnParts() {
   const { cards } = useDiscoverCards();
-  const { writers } = useRisingWriters();
   return {
     continueReading: cards?.continueReading ?? null,
     draft: cards?.draft ?? null,
     mayWrite: cards?.mayWrite ?? false,
-    hasWriters: writers.length > 0,
   };
 }
 
@@ -59,25 +55,37 @@ function useColumnLabel(): string {
 }
 
 /**
- * Renders the column, or nothing.
+ * Renders the row, or nothing.
  *
- * @returns the side column or null
+ * @param props.withWriters - true when no story is featured, so the writers' box joins the row
+ * @returns the row of cards or null
  */
-export function ReadSideColumn() {
-  const { continueReading, draft, mayWrite, hasWriters } = useColumnParts();
+export function ReadSideColumn({ withWriters }: { withWriters: boolean }) {
+  const { continueReading, draft, mayWrite } = useColumnParts();
   const label = useColumnLabel();
   // Nothing at all when no part has anything to show.
-  if (continueReading === null && draft === null && !mayWrite && !hasWriters) return null;
+  if (continueReading === null && draft === null && !mayWrite && !withWriters) return null;
   return (
     <aside
       aria-label={label}
-      data-discover-side=""
-      className="flex min-w-0 flex-col gap-8 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+      className="grid min-w-0 items-start gap-4 min-[900px]:grid-cols-3 min-[900px]:gap-6"
     >
-      {continueReading !== null && <ContinueCard item={continueReading} />}
-      {draft !== null && <DraftCard draft={draft} />}
-      {mayWrite && <NewStoryCard />}
-      <RisingWritersList />
+      {continueReading !== null && (
+        <div className={cardClasses}>
+          <ContinueCard item={continueReading} />
+        </div>
+      )}
+      {draft !== null && (
+        <div className={cardClasses}>
+          <DraftCard draft={draft} />
+        </div>
+      )}
+      {mayWrite && (
+        <div className={cardClasses}>
+          <NewStoryCard />
+        </div>
+      )}
+      {withWriters && <ReadWritersBox />}
     </aside>
   );
 }

@@ -1711,8 +1711,9 @@ Tests: `183-notification-emails.test.sql`, `server/notification-emails.test.ts`,
 
 ```
 DiscoverPage
-  │  ReadHeader ("Read", the date, GreetingFact, FollowedUpdatesFact) · FeaturedBand and, for a
-  │  member, ReadSideColumn beside it from 1024 px (Continue, Draft, New story, rising writers)
+  │  ReadHeader ("Read", the date, GreetingFact, FollowedUpdatesFact) · FeaturedBand with, for a
+  │  member, ReadWritersBox beside it from 1024 px (board A04) · ReadSideColumn, a row of cards
+  │  (Continue, Draft, New story; the writers' box joins it when nothing is featured)
   ▼  DiscoverShelf × (the order of the setting discover_shelves) → useStoryShelf (21 rows)
 StoryListPage (listFromParams() picks the list from the address; requestFromAddress() the filters)
   │  StoryListHeader (breadcrumb, eyebrow, title, "n stories"; a deep genre band on a category)

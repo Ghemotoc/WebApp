@@ -105,7 +105,8 @@ export function FeaturedSlide({ story, position, count }: FeaturedSlideProps) {
       <SlideCover story={story} />
       <div className="flex min-w-0 flex-1 flex-col items-start gap-3">
         <MetaLine facts={stateFacts} />
-        <h2 className="m-0 type-display break-words">{story.title}</h2>
+        {/* Board A04: the title at 32 px, so the writers' box beside it keeps its share. */}
+        <h2 className="m-0 type-title break-words">{story.title}</h2>
         <p className="m-0 type-body text-ink-muted">
           {t('featured.by')}{' '}
           <Link

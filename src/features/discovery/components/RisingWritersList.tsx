@@ -8,13 +8,13 @@
  * shows the first five writers rising_writers() suggests, with the same rules as the shelf (only
  * writers who agreed to be suggested, never across a block).
  * Two tones:
- * - plain: the Read page's side column and the home page's card for visitors (board A02);
+ * - plain: the Read page's writers' box and the home page's card for visitors (board A02);
  * - band: inside the dark writers' band on a member's home page (board A01, 23 Nov 2026): the
  *   heading "Draw inspiration from new and rising writers" in the display font at 20/28, names in
  *   the band's text colour, meta at 72 %, row lines at 14 % and a clear Follow with a 42 % edge
  *   (the `band-writers` rules in src/styles/index.css). At night the band's text colour is the
  *   page's ink, so the same classes read on the night box too (NIGHT-2).
- * Who shows it: ReadSideColumn, WriteBand (members) and FirstStoryBand (visitors). What it calls:
+ * Who shows it: ReadWritersBox, WriteBand (members) and FirstStoryBand (visitors). What it calls:
  * useRisingWriters → rising_writers(), PersonAvatar and FollowButton (follow_writer()).
  */
 import { Link } from 'react-router';
