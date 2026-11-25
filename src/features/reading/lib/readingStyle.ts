@@ -118,7 +118,7 @@ export function readingTextStyle(
 
 /**
  * How wide the chapter column may grow: the text width alone. Since CALM-5 a paragraph's comment
- * count sits in the paper's left margin (wide screens) or on the paragraph's corner (phones), so
+ * count sits in the paper's right margin (wide screens) or on the paragraph's corner (phones), so
  * no column is kept free beside the text any more.
  *
  * @param lineWidth - the reader's line width

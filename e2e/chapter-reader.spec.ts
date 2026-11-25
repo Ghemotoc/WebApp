@@ -8,6 +8,8 @@
  *   "Next: chapter 2" at the chapter's end, the chapter navigation's Previous (named for its
  *   chapter) and the chapter bar's Back move between chapters and back to the story (CALM-5); a
  *   draft between them is skipped; the last chapter ends with "That's the latest chapter so far.";
+ * - Contents in the chapter bar lists the published chapters with this one marked, takes turns
+ *   with Aa and gives focus back on Escape (user story 2.2, board B02);
  * - one read is counted per chapter per tab (a reload doesn't add one), never the writer's own;
  * - a signed-out visitor gets the teaser page instead of the reader (S1-E4-04; the teaser itself
  *   is tested in teaser.spec.ts);
@@ -128,6 +130,40 @@ test.describe('chapter reader (S1-E4-01a)', () => {
       .getByRole('link', { name: /^Back to / })
       .click();
     await expect(page).toHaveURL(`/s/${slug}`);
+  });
+
+  test('Contents in the chapter bar lists the chapters, marks this one and closes like Aa', async ({
+    browser,
+  }) => {
+    // User story 2.2, board B02: "Contents in the bar (the chapter list in a panel, the current
+    // chapter marked)", one panel open at a time, Escape gives focus back.
+    const page = await openAsPersona(browser, 'teacher', `/s/${slug}/readerc3`);
+    const contents = chapterBar(page).getByRole('button', { name: 'Contents' });
+    await expect(contents).toHaveAttribute('aria-expanded', 'false');
+    await contents.click();
+    const panel = page.getByRole('region', { name: 'Contents' });
+    await expect(panel).toBeVisible();
+    await expect(contents).toHaveAttribute('aria-expanded', 'true');
+    // The two published chapters, not the draft between them; this one is marked in words.
+    await expect(panel.getByRole('link')).toHaveCount(2);
+    const current = panel.getByRole('link', { name: /2\. Vântul de miercuri/ });
+    await expect(current).toHaveAttribute('aria-current', 'page');
+    await expect(current).toContainText('You are here');
+    // Aa takes its place: one panel at a time.
+    await chapterBar(page).getByRole('button', { name: 'Reading settings' }).click();
+    await expect(panel).toHaveCount(0);
+    await chapterBar(page).getByRole('button', { name: 'Reading settings' }).click();
+    // Escape closes Contents and gives focus back to it.
+    await contents.click();
+    await expect(panel).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(panel).toHaveCount(0);
+    await expect(contents).toBeFocused();
+    // A chapter in the list opens it.
+    await contents.click();
+    await panel.getByRole('link', { name: /1\. Caietele bunicii/ }).click();
+    await expect(page).toHaveURL(`/s/${slug}/readera1`);
+    await page.context().close();
   });
 
   test('a read is counted once per chapter per tab, never the writer’s own', async ({

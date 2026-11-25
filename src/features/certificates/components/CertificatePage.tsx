@@ -107,9 +107,7 @@ export function CertificatePage() {
           {t('page.back')}
         </Link>
       </nav>
-      <h1 className="m-0 font-heading text-[clamp(28px,4vw,40px)] leading-[1.05] font-bold text-ink-heading">
-        {heading}
-      </h1>
+      <h1 className="m-0 type-title text-ink-heading">{heading}</h1>
       <CertificateBody read={read} certificate={certificate} />
     </PageContainer>
   );

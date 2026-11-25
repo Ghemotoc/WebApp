@@ -4,7 +4,7 @@
  *
  * One scrolling line of at most 20 writer cards, with the shared Shelf's arrows (CLAUDE.md rule
  * 20). On the Read page it is for visitors only and has no eyebrow (CALM-7c): a member meets the
- * same writers in the side column (RisingWritersList). No See all page: the list never holds more than 20. Hidden while it loads,
+ * same writers in the box beside the featured story (ReadWritersBox). No See all page: the list never holds more than 20. Hidden while it loads,
  * when it fails and when nobody may be suggested, so Discover never shows an empty shelf.
  * Who shows it: DiscoverPage (ShelfFromSetting); the home page lists the same writers as rows in
  * its bands since CALM-9 (RisingWritersList). What it calls: useRisingWriters.

@@ -18,7 +18,7 @@
  * A picture readers may share gets the Share button the reader passes in (pictureShare).
  * Paragraph comments (S1-E6-06): when the reader passes paragraphAddon, each top-level paragraph
  * sits in a row (.tmc-paragraph-row) with the addon (the comment marker) placed over its edge
- * (CALM-5: in the left margin from 1024 px, at the top right corner below that).
+ * (in the right margin from 1024 px since Robert, 24 Nov 2026, at the top right corner below that).
  * Poems (MUST-2): with isPoem, lib/poemStanzas.ts draws stanzas and lines, styled by `.tmc-poem`.
  * Look: the shared `.tmc-chapter-text` styles (src/styles/index.css), board 4.3 and 3.5.
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.
@@ -288,8 +288,14 @@ export function ChapterText({
   const elements = isPoem
     ? [...safeMarkdownElements.chapter, 'h1', 'span']
     : [...safeMarkdownElements.chapter, 'h1'];
+  // data-story-text marks the reader's own text size (Aa), which the look check leaves out
+  // (e2e/support/lookCheck.ts; design books look rules, Section 1).
   return (
-    <div lang={language} className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}>
+    <div
+      lang={language}
+      data-story-text=""
+      className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}
+    >
       <ChapterMediaContext.Provider value={media}>
         <SafeMarkdown
           text={markdown}

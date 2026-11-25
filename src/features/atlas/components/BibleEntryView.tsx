@@ -132,7 +132,7 @@ export function BibleEntryView({ bible, entry, startsEditing, save, remove }: Bi
       />
       <h2
         id="atlas-bible-entry-heading"
-        className="m-0 min-w-0 font-heading text-[clamp(26px,3vw,36px)] leading-[1.1] font-bold break-words text-ink-heading"
+        className="m-0 min-w-0 type-heading break-words text-ink-heading"
       >
         {entry.title}
       </h2>

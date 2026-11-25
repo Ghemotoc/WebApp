@@ -59,8 +59,8 @@ select results_eq(
        ('ad_bookings', 0::bigint),
        -- The ad slot catalogue: which slots exist, no personal data (SPONSORS-a1, S1-E12-01).
        ('ad_blocked_categories', (select count(*) from public.ad_blocked_categories)),
-       -- 17 since CALM-5 added the reader's side box (chapter_side).
-       ('ad_slots', 17::bigint),
+       -- 19: CALM-5 added the reader's side box (chapter_side), BOOKS-A01 the home and hub slots.
+       ('ad_slots', 19::bigint),
        ('age_check_attempts', 0::bigint),
        ('age_check_sessions', 0::bigint),
        ('appeals', 0::bigint),
@@ -230,6 +230,8 @@ select results_eq(
        ('rate_limit_events', 0::bigint),
        -- The counties are reference data for the onboarding drop-down (S1-E2-06).
        ('regions', 42::bigint),
+       -- Where someone was in a story is theirs only (design books item 17).
+       ('remembered_places', 0::bigint),
        ('removed_passages', 0::bigint),
        ('report_detail_requests', 0::bigint),
        ('report_reason_tiers', 0::bigint),
@@ -276,6 +278,7 @@ select results_eq(
        ('story_country_scores', 0::bigint),
        ('story_events', 0::bigint),
        ('story_ideas', 0::bigint),
+       ('story_likes', 0::bigint),
        ('story_marketing', 0::bigint),
        -- Pairs of stories finished by the same readers: totals for suggestions, staff only (S1-E15-06).
        ('story_pairs', 0::bigint),

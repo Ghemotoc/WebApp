@@ -79,8 +79,8 @@ function languageStepAt(
   }
   // Step 2: a signed-out visitor with no language chosen, arriving: the interface takes the
   // address's language, when the language menu offers it (a closed language has no interface
-  // text to show yet). This happens on arrival only: the menu saves a choice a moment after it
-  // switches the screen, and must not be switched back in between.
+  // text to show yet). This happens on arrival only, and the menu saves a choice before it
+  // switches the screen, so a choice made while the page arrives is never switched back.
   if (isArrival && visitor.hasNoChoice && visitor.openLanguages.includes(place.language)) {
     notes.adoptingAt = placeKey;
     return 'adopt';

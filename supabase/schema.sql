@@ -771,7 +771,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'class_competition_won',
     'class_competition_results',
     'class_readers_choice',
-    'comments_resumed'
+    'comments_resumed',
+    'story_completed'
 );
 
 
@@ -911,17 +912,33 @@ COMMENT ON TYPE "public"."reading_line_width" IS 'The reader''s line width: abou
 
 
 
-CREATE TYPE "public"."reading_theme" AS ENUM (
-    'light',
+CREATE TYPE "public"."reading_paper" AS ENUM (
+    'white',
     'sepia',
-    'night'
+    'grey',
+    'black'
 );
 
 
-ALTER TYPE "public"."reading_theme" OWNER TO "postgres";
+ALTER TYPE "public"."reading_paper" OWNER TO "postgres";
 
 
-COMMENT ON TYPE "public"."reading_theme" IS 'The reader''s theme for the chapter text: light (the app''s colours), sepia or night (S1-E4-02).';
+COMMENT ON TYPE "public"."reading_paper" IS 'The colour of the paper the chapter is read on: white, sepia (the story paper, the default), grey or black (BOOKS B04).';
+
+
+
+CREATE TYPE "public"."remembered_place_kind" AS ENUM (
+    'story_edition',
+    'atlas_section',
+    'write_caret',
+    'atlas_hint'
+);
+
+
+ALTER TYPE "public"."remembered_place_kind" OWNER TO "postgres";
+
+
+COMMENT ON TYPE "public"."remembered_place_kind" IS 'What a remembered place holds: a story''s last edition, Atlas section or caret in Write, or an Atlas hint''s visits (design books item 17).';
 
 
 
@@ -1521,6 +1538,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('reading_positions', 'delete', 1, null),
     ('reading_preferences', 'delete', 1, null),
     ('reading_settings', 'delete', 1, null),
+    ('remembered_places', 'delete', 1, null),
     ('report_detail_requests', 'kept', 0, 'part of a report, kept as long as the report and its case (docs/retention.md)'),
     ('reports', 'kept', 0, 'a moderation record, kept as long as its case (docs/retention.md, OPEN)'),
     ('space_join_notes', 'delete', 1, null),
@@ -1537,6 +1555,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('story_characters', 'delete', 2, null),
     ('story_events', 'delete', 1, null),
     ('story_ideas', 'delete', 1, null),
+    ('story_likes', 'delete', 1, null),
     ('story_marketing', 'delete', 1, null),
     ('story_plan_acts', 'delete', 2, null),
     ('story_plans', 'delete', 3, null),
@@ -3431,7 +3450,7 @@ CASE "cover_kind"
     WHEN 'upload'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NOT NULL))
     ELSE NULL::boolean
 END),
-    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text"])))),
+    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text", 'blushdots'::"text", 'skylines'::"text", 'goldgrid'::"text"])))),
     CONSTRAINT "stories_cover_style_fits_kind" CHECK (
 CASE "cover_kind"
     WHEN 'automatic'::"public"."cover_kind" THEN ("cover_style" = 'label'::"public"."cover_style")
@@ -3574,7 +3593,7 @@ COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the st
 
 
 
-COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, and G9c added arches, rings and forestwaves.';
+COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, G9c added arches, rings and forestwaves, and the design books added blushdots, skylines and goldgrid.';
 
 
 
@@ -16873,7 +16892,7 @@ COMMENT ON FUNCTION "public"."chapter_code"() IS 'Internal: a fresh 8-character 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone DEFAULT NULL::timestamp with time zone) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone DEFAULT NULL::timestamp with time zone, "oldest_first" boolean DEFAULT false) RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -16899,17 +16918,23 @@ begin
     select top_level.id from public.comments as top_level
     where top_level.chapter_id = chapter.id
       and top_level.parent_comment_id is null
-      and (older_than is null or top_level.created_at < older_than)
+      -- BOOKS B05: the next page starts after the last comment shown, in the order picked.
+      and (page_after is null
+           or (not oldest_first and top_level.created_at < page_after)
+           or (oldest_first and top_level.created_at > page_after))
       and (public.comment_is_shown_to_caller(top_level)
            or (public.comment_state_for_caller(top_level) in ('deleted', 'removed')
                and jsonb_array_length(public.comment_replies_json(top_level.id, story.user_id)) > 0))
-    order by top_level.created_at desc
+    -- BOOKS B05: newest first by default, oldest first when the reader picks it.
+    order by case when oldest_first then top_level.created_at end asc,
+             case when not oldest_first then top_level.created_at end desc
     limit page_size + 1
   )
   select coalesce(jsonb_agg(public.comment_json(comments, story.user_id)
            || jsonb_build_object('replies', public.comment_replies_json(comments.id, story.user_id),
                                  'paragraph', public.comment_paragraph_json(comments, chapter.published_body))
-           order by comments.created_at desc), '[]'::jsonb),
+           order by case when oldest_first then comments.created_at end asc,
+                    case when not oldest_first then comments.created_at end desc), '[]'::jsonb),
          count(*)::integer
   into page, page_count
   from listed join public.comments on comments.id = listed.id;
@@ -16930,10 +16955,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) OWNER TO "postgres";
+ALTER FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) IS 'One page of a chapter''s comments, newest first, with replies and which paragraph each is on; never a user ID (S1-E6-01, S1-E6-06).';
+COMMENT ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) IS 'One page of a chapter''s comments, newest first or oldest first, with replies and which paragraph each is on; never a user ID (S1-E6-01, S1-E6-06, BOOKS B05).';
 
 
 
@@ -21098,10 +21123,19 @@ CREATE TABLE IF NOT EXISTS "public"."comments" (
     "deleted_by" "public"."comment_deleted_by",
     "paragraph_key" "text",
     "paragraph_number" integer,
+    "quote_text" "text",
+    "quote_start_offset" integer,
+    "quote_end_block" integer,
+    "quote_end_key" "text",
+    "quote_end_offset" integer,
     CONSTRAINT "comments_body_is_written" CHECK (((("btrim"("body") <> ''::"text") OR ("deleted_at" IS NOT NULL)) AND ("char_length"("body") <= 10000))),
     CONSTRAINT "comments_deletion_fields_go_together" CHECK ((("deleted_at" IS NULL) = ("deleted_by" IS NULL))),
     CONSTRAINT "comments_paragraph_fields_go_together" CHECK ((("paragraph_key" IS NULL) = ("paragraph_number" IS NULL))),
-    CONSTRAINT "comments_paragraph_number_counts_from_one" CHECK ((("paragraph_number" IS NULL) OR ("paragraph_number" >= 1)))
+    CONSTRAINT "comments_paragraph_number_counts_from_one" CHECK ((("paragraph_number" IS NULL) OR ("paragraph_number" >= 1))),
+    CONSTRAINT "comments_quote_fields_go_together" CHECK (((("quote_text" IS NULL) AND ("quote_start_offset" IS NULL) AND ("quote_end_block" IS NULL) AND ("quote_end_key" IS NULL) AND ("quote_end_offset" IS NULL)) OR (("quote_text" IS NOT NULL) AND ("quote_start_offset" IS NOT NULL) AND ("quote_end_block" IS NOT NULL) AND ("quote_end_key" IS NOT NULL) AND ("quote_end_offset" IS NOT NULL)))),
+    CONSTRAINT "comments_quote_is_on_a_paragraph" CHECK ((("quote_text" IS NULL) OR ("paragraph_key" IS NOT NULL))),
+    CONSTRAINT "comments_quote_length" CHECK ((("quote_text" IS NULL) OR (("char_length"("quote_text") >= 1) AND ("char_length"("quote_text") <= 1000)))),
+    CONSTRAINT "comments_quote_runs_forwards" CHECK ((("quote_text" IS NULL) OR (("quote_start_offset" >= 0) AND ("quote_end_offset" >= 0) AND ("quote_end_block" >= "paragraph_number") AND (("quote_end_block" > "paragraph_number") OR ("quote_end_offset" > "quote_start_offset")))))
 );
 
 
@@ -21118,6 +21152,26 @@ COMMENT ON COLUMN "public"."comments"."paragraph_key" IS 'A fingerprint of the p
 
 
 COMMENT ON COLUMN "public"."comments"."paragraph_number" IS 'The block the comment was left on, counted from 1 (chapter_blocks()), or null (S1-E6-06).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_text" IS 'The writer''s words a reader chose to comment on, or null for the whole paragraph (READER-SELECT, board B12).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_start_offset" IS 'Where the chosen words start in the first paragraph''s text as the reader draws it (READER-SELECT).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_end_block" IS 'The paragraph the chosen words end in, counted from 1 like paragraph_number (READER-SELECT, board B14).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_end_key" IS 'A fingerprint of that last paragraph''s words, like paragraph_key (READER-SELECT).';
+
+
+
+COMMENT ON COLUMN "public"."comments"."quote_end_offset" IS 'Where the chosen words end in the last paragraph''s text (READER-SELECT).';
 
 
 
@@ -21169,7 +21223,8 @@ begin
       else jsonb_build_object('counts', '{}'::jsonb, 'mine', null) end,
     'downvoted_by_me', caller_id is not null and exists (
       select 1 from public.comment_downvotes
-      where comment_downvotes.comment_id = target.id and comment_downvotes.user_id = caller_id));
+      where comment_downvotes.comment_id = target.id and comment_downvotes.user_id = caller_id),
+    'quote', public.comment_quote_json(target));
 end;
 $$;
 
@@ -21177,7 +21232,7 @@ $$;
 ALTER FUNCTION "public"."comment_json"("target" "public"."comments", "story_writer_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."comment_json"("target" "public"."comments", "story_writer_id" "uuid") IS 'Internal: one comment as the comments area draws it, with its reactions and the caller''s own downvote, never a user ID or a downvote count (S1-E6-01, S1-E6-02, S1-E6-04).';
+COMMENT ON FUNCTION "public"."comment_json"("target" "public"."comments", "story_writer_id" "uuid") IS 'Internal: one comment as the comments area draws it, with its reactions, the caller''s own downvote and its chosen words, never a user ID or a downvote count (S1-E6-01, S1-E6-02, S1-E6-04, READER-SELECT).';
 
 
 
@@ -21269,6 +21324,26 @@ ALTER FUNCTION "public"."comment_pause_json"("story" "public"."stories") OWNER T
 
 
 COMMENT ON FUNCTION "public"."comment_pause_json"("story" "public"."stories") IS 'Internal: the pause''s end and whether the caller may end it, for the comment lists, while a pause runs (CALM-8).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."comment_quote_json"("target" "public"."comments") RETURNS "jsonb"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case when target.quote_text is null then null else jsonb_build_object(
+    'text', target.quote_text,
+    'start_block', target.paragraph_number,
+    'start_offset', target.quote_start_offset,
+    'end_block', target.quote_end_block,
+    'end_offset', target.quote_end_offset) end;
+$$;
+
+
+ALTER FUNCTION "public"."comment_quote_json"("target" "public"."comments") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."comment_quote_json"("target" "public"."comments") IS 'Internal: a comment''s chosen words for the comment lists, or null (READER-SELECT, board B13).';
 
 
 
@@ -23154,6 +23229,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('reading_positions', true, null),
     ('reading_preferences', true, null),
     ('reading_settings', true, null),
+    ('remembered_places', true, null),
     ('report_detail_requests', true, null),
     ('reports', true, null),
     ('space_join_notes', true, null),
@@ -23170,6 +23246,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('story_characters', true, null),
     ('story_events', true, null),
     ('story_ideas', true, null),
+    ('story_likes', true, null),
     ('story_marketing', true, null),
     ('story_plan_acts', true, null),
     ('story_plans', true, null),
@@ -23688,6 +23765,7 @@ CREATE OR REPLACE FUNCTION "public"."default_email_delivery"("kind" "public"."no
   select case kind
     when 'comment_reply' then 'instant'
     when 'new_chapter' then 'daily'
+    when 'story_completed' then 'daily'
     when 'comment_on_chapter' then 'daily'
     when 'new_follower' then 'daily'
     when 'comment_reactions' then 'off'
@@ -28138,6 +28216,9 @@ begin
     -- GAPS-15: the "In the app only" notice (S1-E3-08), only once the apps exist.
     'app_only', public.story_app_only_applies(story.is_app_only),
     'stats', jsonb_build_object(
+      -- BOOKS-B2 (board B01, Robert's "As drawn on the canvas", 24 Nov 2026): the reads total is
+      -- public, and the likes are the story's own Likes (story_likes), not its chapters'.
+      'reads', public.story_read_total(story.id),
       'likes', public.story_like_total(story.id),
       'comments', public.story_comment_total(story.id))
   );
@@ -30949,6 +31030,67 @@ ALTER FUNCTION "public"."like_state_of"("target_chapter_id" "uuid") OWNER TO "po
 
 
 COMMENT ON FUNCTION "public"."like_state_of"("target_chapter_id" "uuid") IS 'Internal: liked and like_count for the caller (S1-E6-03).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  target_story_id uuid;
+begin
+  -- Step 1: signed in, and the story is one this reader may see.
+  if caller_id is null then
+    raise exception 'Log in to like stories.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.likeable_story_id(story_slug);
+  if target_story_id is null then
+    raise exception 'There is no such story.' using errcode = 'no_data_found';
+  end if;
+  -- Step 2: taking a like back is always allowed, even for a read-only account.
+  if not should_like then
+    delete from public.story_likes
+    where story_likes.user_id = caller_id and story_likes.story_id = target_story_id;
+    return public.story_like_state_of(target_story_id);
+  end if;
+  -- Step 3: liking is a write, so the account gate applies; and not one's own story.
+  if not public.is_active_member() then
+    raise exception 'Your account can''t like stories right now.' using errcode = 'insufficient_privilege';
+  end if;
+  if exists (select 1 from public.stories where stories.id = target_story_id and stories.user_id = caller_id) then
+    raise exception 'Writers don''t like their own story.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 4: like; twice changes nothing.
+  insert into public.story_likes (user_id, story_id) values (caller_id, target_story_id)
+  on conflict on constraint story_likes_one_per_pair do nothing;
+  return public.story_like_state_of(target_story_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) IS 'Likes or unlikes a story by its address, through the account gate (bundle 2, board B01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."likeable_story_id"("story_slug" "text") RETURNS "uuid"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(story.edition_of_story_id, story.id)
+  from public.reader_visible_story(story_slug) as story
+  where public.story_has_readable_chapter(story.id);
+$$;
+
+
+ALTER FUNCTION "public"."likeable_story_id"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."likeable_story_id"("story_slug" "text") IS 'Internal: the first edition of the story behind an address, when the caller may see its page (bundle 2).';
 
 
 
@@ -35557,6 +35699,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'class_competition_results' then 'staff'
     when 'class_readers_choice' then 'staff'
     when 'comments_resumed' then 'stories'
+    when 'story_completed' then 'stories'
     else 'replies'
   end;
 $$;
@@ -36013,11 +36156,19 @@ CREATE OR REPLACE FUNCTION "public"."notify_chapter_published"("payload" "jsonb"
 declare
   story public.stories;
   follower_id uuid;
+  wanted_kind public.notification_kind := 'new_chapter';
 begin
   select * into story from public.stories where stories.id = (payload ->> 'story_id')::uuid;
   -- NEW-1: a private story tells nobody.
   if story.id is null or story.visibility = 'private' then
     return;
+  end if;
+  -- BOOKS B06: the chapter the writer marked as the last ends the story, so followers hear
+  -- "finished" once instead of "new chapter".
+  if exists (select 1 from public.chapters
+             where chapters.id = (payload ->> 'chapter_id')::uuid and chapters.is_last
+               and chapters.status = 'published' and chapters.deleted_at is null) then
+    wanted_kind := 'story_completed';
   end if;
   for follower_id in
     -- NEW-1: the writer's followers hear only of public stories; an unlisted story tells only
@@ -36044,7 +36195,7 @@ begin
     ) then
       continue;
     end if;
-    perform public.notify(follower_id, 'new_chapter', story.user_id,
+    perform public.notify(follower_id, wanted_kind, story.user_id,
       jsonb_build_object('story_id', story.id, 'chapter_id', payload ->> 'chapter_id'));
   end loop;
 end;
@@ -36054,7 +36205,7 @@ $$;
 ALTER FUNCTION "public"."notify_chapter_published"("payload" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."notify_chapter_published"("payload" "jsonb") IS 'Internal: a new chapter notifies the followers of its writer and of its story (S1-E7-01).';
+COMMENT ON FUNCTION "public"."notify_chapter_published"("payload" "jsonb") IS 'Internal: a new chapter notifies the followers of its writer and of its story (S1-E7-01); the chapter that ends the story sends story_completed instead (BOOKS B06).';
 
 
 
@@ -36843,25 +36994,46 @@ begin
   end if;
   select * into story from public.stories where stories.id = chapter.story_id;
   if not story.comments_enabled then
-    return jsonb_build_object('comments_enabled', false, 'paragraphs', '[]'::jsonb, 'earlier', 0);
+    return jsonb_build_object('comments_enabled', false, 'paragraphs', '[]'::jsonb, 'earlier', 0,
+      'parts', '[]'::jsonb);
   end if;
   -- Step 2: each comment the caller may read, placed on the paragraph it shows on today.
-  with placed as (
-    select public.paragraph_now(chapter.published_body, comments.paragraph_key, comments.paragraph_number) as block
+  with shown as (
+    select comments.*
     from public.comments
     where comments.chapter_id = chapter.id
       and comments.paragraph_key is not null
       and public.comment_is_shown_to_caller(comments)
   ),
+  placed as (
+    select public.paragraph_now(chapter.published_body, shown.paragraph_key, shown.paragraph_number) as block
+    from shown
+  ),
   counted as (
     select placed.block, count(*)::integer as total from placed where placed.block is not null group by placed.block
+  ),
+  -- Step 3: the chosen words still in the text, each set counted once with its replies.
+  parts as (
+    select public.paragraph_now(chapter.published_body, shown.paragraph_key, shown.paragraph_number) as block,
+           public.paragraph_now(chapter.published_body, shown.quote_end_key, shown.quote_end_block) as end_block,
+           shown.quote_start_offset as start_offset, shown.quote_end_offset as end_offset,
+           shown.quote_text as quote, count(*)::integer as total
+    from shown
+    where shown.quote_text is not null and public.quote_still_there(chapter.published_body, shown)
+    group by 1, 2, 3, 4, 5
   )
-  -- Step 3: the counts by paragraph, the earlier-version ones and, during a pause (CALM-8), its end.
+  -- Step 4: the counts by paragraph, the earlier-version ones, the parts and, during a pause
+  -- (CALM-8), its end.
   select jsonb_build_object(
     'comments_enabled', true,
     'paragraphs', coalesce((select jsonb_agg(jsonb_build_object('block', counted.block, 'count', counted.total)
                               order by counted.block) from counted), '[]'::jsonb),
-    'earlier', (select count(*)::integer from placed where placed.block is null))
+    'earlier', (select count(*)::integer from placed where placed.block is null),
+    'parts', coalesce((select jsonb_agg(jsonb_build_object('block', parts.block, 'end_block', parts.end_block,
+                         'start_offset', parts.start_offset, 'end_offset', parts.end_offset,
+                         'quote', parts.quote, 'count', parts.total)
+                         order by parts.block, parts.start_offset, parts.end_block, parts.end_offset)
+                       from parts), '[]'::jsonb))
     || public.comment_pause_json(story)
   into answer;
   return answer;
@@ -36872,7 +37044,7 @@ $$;
 ALTER FUNCTION "public"."paragraph_comment_counts"("story_slug" "text", "chapter_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."paragraph_comment_counts"("story_slug" "text", "chapter_code" "text") IS 'How many comments each paragraph has, and how many are on an earlier version; never a user ID (S1-E6-06).';
+COMMENT ON FUNCTION "public"."paragraph_comment_counts"("story_slug" "text", "chapter_code" "text") IS 'How many comments each paragraph has, how many are on an earlier version, and the chosen words with their counts; never a user ID (S1-E6-06, READER-SELECT).';
 
 
 
@@ -37162,6 +37334,27 @@ ALTER FUNCTION "public"."passage_discussion_allowed"("story_slug" "text", "chapt
 
 
 COMMENT ON FUNCTION "public"."passage_discussion_allowed"("story_slug" "text", "chapter_code" "text") IS 'Whether the reader may start a forum thread quoting a passage of a public chapter (IDEA-20261102-10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."passage_text"("body" "text", "first_block" integer, "last_block" integer) RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  -- A missing number, or a run that goes backwards, has no text; between() finds the rest.
+  select case
+    when first_block is null or last_block is null or last_block < first_block then null
+    else (select string_agg(blocks.block_text, E'\n\n' order by blocks.block_number)
+          from public.chapter_blocks(body) as blocks
+          where blocks.block_number between first_block and last_block)
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."passage_text"("body" "text", "first_block" integer, "last_block" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."passage_text"("body" "text", "first_block" integer, "last_block" integer) IS 'Internal: a run of a chapter''s paragraphs as one text, or null when one is missing (READER-SELECT).';
 
 
 
@@ -37714,6 +37907,76 @@ ALTER FUNCTION "public"."post_paragraph_comment"("story_slug" "text", "chapter_c
 
 
 COMMENT ON FUNCTION "public"."post_paragraph_comment"("story_slug" "text", "chapter_code" "text", "block_number" integer, "body" "text", "is_spoiler" boolean) IS 'Posts a comment on one paragraph of a chapter, through the account gate and the limit (S1-E6-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean DEFAULT false) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  chapter public.chapters;
+  story public.stories;
+  chosen_words text := btrim(coalesce(quote, ''), E' \t\n');
+  first_text text;
+  last_text text;
+  new_comment_id uuid;
+begin
+  -- Step 1: signed in, and the chapter is one this reader may open.
+  if caller_id is null then
+    raise exception 'Log in to comment.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into chapter from public.readable_chapter(story_slug, chapter_code);
+  if chapter.id is null then
+    raise exception 'There is no such chapter.' using errcode = 'no_data_found';
+  end if;
+  select * into story from public.stories where stories.id = chapter.story_id;
+  -- Step 2: comments on and not paused, the account gate and the limit (as post_comment()).
+  perform public.require_comment_allowed(caller_id, story);
+  -- Step 3: the words: some, at most 1,000 characters (board B14, 8), running forwards.
+  if public.quote_words(chosen_words) = '  ' then
+    raise exception 'Choose some words to comment on.' using errcode = 'check_violation', hint = 'quote_not_found';
+  end if;
+  if char_length(chosen_words) > 1000 then
+    raise exception 'Select less to comment.' using errcode = 'check_violation', hint = 'quote_too_long';
+  end if;
+  if start_offset is null or end_offset is null or start_offset < 0 or end_offset < 0
+     or end_block < start_block or (end_block = start_block and end_offset <= start_offset) then
+    raise exception 'Those words aren''t in the chapter.' using errcode = 'check_violation', hint = 'quote_not_found';
+  end if;
+  -- Step 4: both paragraphs are there, and the words are in them, as the chapter is published now.
+  select blocks.block_text into first_text from public.chapter_blocks(chapter.published_body) as blocks
+  where blocks.block_number = post_passage_comment.start_block;
+  select blocks.block_text into last_text from public.chapter_blocks(chapter.published_body) as blocks
+  where blocks.block_number = post_passage_comment.end_block;
+  if first_text is null or last_text is null then
+    raise exception 'That paragraph isn''t there any more.' using errcode = 'no_data_found';
+  end if;
+  if position(public.quote_words(chosen_words)
+              in public.quote_words(public.passage_text(chapter.published_body, start_block, end_block))) = 0 then
+    raise exception 'Those words aren''t in the chapter.' using errcode = 'check_violation', hint = 'quote_not_found';
+  end if;
+  -- Step 5: save it on the first paragraph, with the words and where they end, and queue the
+  -- notification job (the same job as any comment).
+  insert into public.comments (user_id, chapter_id, body, is_spoiler, paragraph_key, paragraph_number,
+    quote_text, quote_start_offset, quote_end_block, quote_end_key, quote_end_offset)
+  values (caller_id, chapter.id, public.check_comment_text(body), coalesce(is_spoiler, false),
+          public.paragraph_key_of(first_text), start_block,
+          chosen_words, start_offset, end_block, public.paragraph_key_of(last_text), end_offset)
+  returning id into new_comment_id;
+  insert into public.jobs (kind, payload)
+  values ('comment_posted', jsonb_build_object('comment_id', new_comment_id, 'chapter_id', chapter.id,
+    'parent_comment_id', null));
+  return jsonb_build_object('id', new_comment_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean) IS 'Posts a comment on words a reader chose in a chapter, through the account gate and the limit (READER-SELECT, board B12).';
 
 
 
@@ -39467,6 +39730,41 @@ ALTER FUNCTION "public"."quote_card_state"("story_slug" "text", "chapter_code" "
 
 
 COMMENT ON FUNCTION "public"."quote_card_state"("story_slug" "text", "chapter_code" "text") IS 'Whether the caller may make a quote card from a chapter, and whether they already did (S1-E4-07).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."quote_still_there"("body" "text", "target" "public"."comments") RETURNS boolean
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    target.quote_text is not null
+    and position(public.quote_words(target.quote_text) in public.quote_words(public.passage_text(body,
+      public.paragraph_now(body, target.paragraph_key, target.paragraph_number),
+      public.paragraph_now(body, target.quote_end_key, target.quote_end_block)))) > 0,
+    false);
+$$;
+
+
+ALTER FUNCTION "public"."quote_still_there"("body" "text", "target" "public"."comments") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."quote_still_there"("body" "text", "target" "public"."comments") IS 'Internal: whether a comment''s chosen words are still in the chapter where they were (READER-SELECT, board B13).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."quote_words"("value" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select ' ' || btrim(regexp_replace(lower(coalesce(value, '')), '[^[:alnum:]]+', ' ', 'g')) || ' ';
+$$;
+
+
+ALTER FUNCTION "public"."quote_words"("value" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."quote_words"("value" "text") IS 'Internal: a text''s words only, for matching chosen words against a chapter (READER-SELECT).';
 
 
 
@@ -41640,6 +41938,33 @@ ALTER FUNCTION "public"."relationship_json"("link" "public"."story_character_rel
 
 
 COMMENT ON FUNCTION "public"."relationship_json"("link" "public"."story_character_relationships", "with_note" boolean) IS 'Internal: one relationship as JSON, with the writer''s note only when asked (G10b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller uuid := (select auth.uid());
+begin
+  -- Step 1: only a signed-in person has places to keep; a visitor's stay in the browser.
+  if caller is null then
+    raise exception 'Log in to keep your place.' using errcode = '42501';
+  end if;
+  -- Step 2: one row per kind and item, created the first time and replaced after that.
+  insert into public.remembered_places (user_id, kind, item_key, place)
+  values (caller, place_kind, place_key, place_value)
+  on conflict (user_id, kind, item_key) do update
+    set place = excluded.place;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") IS 'Keeps one of the caller''s places (a story''s edition, Atlas section or caret, or a hint''s visits) for every device (design books item 17).';
 
 
 
@@ -44986,7 +45311,7 @@ COMMENT ON FUNCTION "public"."save_reading_position"("story_slug" "text", "chapt
 
 
 
-CREATE OR REPLACE FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean DEFAULT false, "wanted_night_from" time without time zone DEFAULT NULL::time without time zone, "wanted_night_until" time without time zone DEFAULT NULL::time without time zone, "wanted_reading_ruler" boolean DEFAULT false, "wanted_time_left" "text" DEFAULT 'bar'::"text") RETURNS "void"
+CREATE OR REPLACE FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean DEFAULT false, "wanted_night_from" time without time zone DEFAULT NULL::time without time zone, "wanted_night_until" time without time zone DEFAULT NULL::time without time zone, "wanted_reading_ruler" boolean DEFAULT false, "wanted_time_left" "text" DEFAULT 'bar'::"text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -44997,19 +45322,19 @@ begin
   if caller is null then
     raise exception 'Log in to save your reading settings.' using errcode = '42501';
   end if;
-  -- Step 2: one row per reader, replaced as a whole. The column's check refuses any time_left
-  -- other than 'bar' or 'page'; a null falls back to the default 'bar'.
-  insert into public.reading_settings (user_id, font, text_size, line_spacing, line_width, theme,
+  -- Step 2: one row per reader, replaced as a whole. A null paper falls back to Sepia, the
+  -- default; the column's check refuses any time_left other than 'bar' or 'page'.
+  insert into public.reading_settings (user_id, font, text_size, line_spacing, line_width, paper,
     night_by_clock, night_from, night_until, reading_ruler, time_left)
-  values (caller, wanted_font, wanted_text_size, wanted_line_spacing, wanted_line_width, wanted_theme,
-    coalesce(wanted_night_by_clock, false), wanted_night_from, wanted_night_until,
-    coalesce(wanted_reading_ruler, false), coalesce(wanted_time_left, 'bar'))
+  values (caller, wanted_font, wanted_text_size, wanted_line_spacing, wanted_line_width,
+    coalesce(wanted_paper, 'sepia'), coalesce(wanted_night_by_clock, false), wanted_night_from,
+    wanted_night_until, coalesce(wanted_reading_ruler, false), coalesce(wanted_time_left, 'bar'))
   on conflict (user_id) do update
     set font = excluded.font,
         text_size = excluded.text_size,
         line_spacing = excluded.line_spacing,
         line_width = excluded.line_width,
-        theme = excluded.theme,
+        paper = excluded.paper,
         night_by_clock = excluded.night_by_clock,
         night_from = excluded.night_from,
         night_until = excluded.night_until,
@@ -45019,10 +45344,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") IS 'Keeps the caller''s reading settings for every device (S1-E4-02; IDEAS-1 part a; CALM-5 time_left).';
+COMMENT ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") IS 'Keeps the caller''s reading settings for every device (S1-E4-02; IDEAS-1 part a; CALM-5 time_left; BOOKS B04 paper).';
 
 
 
@@ -52117,16 +52442,54 @@ COMMENT ON FUNCTION "public"."story_library_state"("story_slug" "text") IS 'A st
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_like_state"("story_slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid := public.likeable_story_id(story_slug);
+begin
+  if target_story_id is null then
+    return null;
+  end if;
+  return public.story_like_state_of(target_story_id);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."story_like_state"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_like_state"("story_slug" "text") IS 'A story''s public like count and whether the caller likes it (bundle 2, board B01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_like_state_of"("target_story_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object(
+    'liked', exists (select 1 from public.story_likes
+      where story_likes.story_id = target_story_id and story_likes.user_id = (select auth.uid())),
+    'like_count', public.story_like_total(target_story_id));
+$$;
+
+
+ALTER FUNCTION "public"."story_like_state_of"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_like_state_of"("target_story_id" "uuid") IS 'Internal: liked and like_count for the caller, on a story (bundle 2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_like_total"("target_story_id" "uuid") RETURNS integer
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
   select count(*)::integer
-  from public.chapter_likes
-  join public.chapters on chapters.id = chapter_likes.chapter_id
-  join public.profiles on profiles.id = chapter_likes.user_id
-  where chapters.story_id in (select public.story_family_ids(target_story_id))
-    and public.chapter_is_readable(chapters.id)
+  from public.story_likes
+  join public.profiles on profiles.id = story_likes.user_id
+  where story_likes.story_id in (select public.story_family_ids(target_story_id))
     and profiles.deleted_at is null;
 $$;
 
@@ -52134,7 +52497,7 @@ $$;
 ALTER FUNCTION "public"."story_like_total"("target_story_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_like_total"("target_story_id" "uuid") IS 'Internal: a story''s public like total (S1-E6-03).';
+COMMENT ON FUNCTION "public"."story_like_total"("target_story_id" "uuid") IS 'Internal: a story''s public like total, its own Likes over every edition (bundle 2; S1-E6-03 counted chapter likes).';
 
 
 
@@ -52721,6 +53084,25 @@ ALTER FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") OWNER TO "
 
 
 COMMENT ON FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") IS 'Internal: the rating reasons in a story''s labels, empty below 16+ (SPONSORS-f).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_read_total"("target_story_id" "uuid") RETURNS integer
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(sum(chapter_reads.total), 0)::integer
+  from public.chapter_reads
+  join public.chapters on chapters.id = chapter_reads.chapter_id
+  where chapters.story_id in (select public.story_family_ids(target_story_id))
+    and public.chapter_is_readable(chapters.id);
+$$;
+
+
+ALTER FUNCTION "public"."story_read_total"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_read_total"("target_story_id" "uuid") IS 'Internal: a story''s public reads total over its readable chapters, every edition (bundle 2, board B01).';
 
 
 
@@ -54056,8 +54438,10 @@ CREATE OR REPLACE FUNCTION "public"."take_parent_paragraph"() RETURNS "trigger"
     AS $$
 begin
   if new.parent_comment_id is not null then
-    select comments.paragraph_key, comments.paragraph_number
-      into new.paragraph_key, new.paragraph_number
+    select comments.paragraph_key, comments.paragraph_number, comments.quote_text, comments.quote_start_offset,
+           comments.quote_end_block, comments.quote_end_key, comments.quote_end_offset
+      into new.paragraph_key, new.paragraph_number, new.quote_text, new.quote_start_offset,
+           new.quote_end_block, new.quote_end_key, new.quote_end_offset
     from public.comments where comments.id = new.parent_comment_id;
   end if;
   return new;
@@ -54068,7 +54452,7 @@ $$;
 ALTER FUNCTION "public"."take_parent_paragraph"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."take_parent_paragraph"() IS 'Trigger: a reply takes its comment''s paragraph (S1-E6-06).';
+COMMENT ON FUNCTION "public"."take_parent_paragraph"() IS 'Trigger: a reply takes its comment''s paragraph and chosen words (S1-E6-06, READER-SELECT).';
 
 
 
@@ -59172,7 +59556,6 @@ CREATE TABLE IF NOT EXISTS "public"."reading_settings" (
     "text_size" smallint,
     "line_spacing" "public"."reading_line_spacing" DEFAULT 'normal'::"public"."reading_line_spacing" NOT NULL,
     "line_width" "public"."reading_line_width" DEFAULT 'medium'::"public"."reading_line_width" NOT NULL,
-    "theme" "public"."reading_theme" DEFAULT 'light'::"public"."reading_theme" NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "night_by_clock" boolean DEFAULT false NOT NULL,
@@ -59180,6 +59563,7 @@ CREATE TABLE IF NOT EXISTS "public"."reading_settings" (
     "night_until" time without time zone,
     "reading_ruler" boolean DEFAULT false NOT NULL,
     "time_left" "text" DEFAULT 'bar'::"text" NOT NULL,
+    "paper" "public"."reading_paper" DEFAULT 'sepia'::"public"."reading_paper" NOT NULL,
     CONSTRAINT "reading_settings_text_size_check" CHECK ((("text_size" >= 14) AND ("text_size" <= 28))),
     CONSTRAINT "reading_settings_time_left_choice" CHECK (("time_left" = ANY (ARRAY['bar'::"text", 'page'::"text"])))
 );
@@ -59213,6 +59597,10 @@ COMMENT ON COLUMN "public"."reading_settings"."time_left" IS 'Where the minutes 
 
 
 
+COMMENT ON COLUMN "public"."reading_settings"."paper" IS 'The paper the reader reads on (BOOKS B04, board B04-ReaderSettings). Night mode is the site''s own setting, not this one.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."regions" (
     "code" "text" NOT NULL,
     "country_code" "text" NOT NULL,
@@ -59230,6 +59618,27 @@ ALTER TABLE "public"."regions" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."regions" IS 'kind: platform
 The counties a person may pick in onboarding and Settings (S1-E2-06). Reference data, seeded here.';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."remembered_places" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "kind" "public"."remembered_place_kind" NOT NULL,
+    "item_key" "text" NOT NULL,
+    "place" "jsonb" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "remembered_places_item_key_check" CHECK ((("char_length"("item_key") >= 1) AND ("char_length"("item_key") <= 200))),
+    CONSTRAINT "remembered_places_place_check" CHECK (("pg_column_size"("place") <= 2048))
+);
+
+
+ALTER TABLE "public"."remembered_places" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."remembered_places" IS 'kind: user_action
+Where a person was, per story or hint, so they come back to the same place on every device (design books item 17). Private.';
 
 
 
@@ -59823,6 +60232,23 @@ ALTER TABLE "public"."story_country_scores" OWNER TO "postgres";
 
 
 COMMENT ON TABLE "public"."story_country_scores" IS 'kind: platform. Each story''s popularity score in each country, from the hourly job; only stories with at least 5 reads there; readers see only the order (MARKETS-2d).';
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."story_likes" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "story_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."story_likes" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."story_likes" IS 'kind: user_action
+Who likes which story (bundle 2, board B01). The count is public; who liked is nobody else''s business.';
 
 
 
@@ -61412,6 +61838,16 @@ ALTER TABLE ONLY "public"."regions"
 
 
 
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_user_id_kind_item_key_key" UNIQUE ("user_id", "kind", "item_key");
+
+
+
 ALTER TABLE ONLY "public"."removed_passages"
     ADD CONSTRAINT "removed_passages_pkey" PRIMARY KEY ("id");
 
@@ -61714,6 +62150,16 @@ ALTER TABLE ONLY "public"."story_events"
 
 ALTER TABLE ONLY "public"."story_ideas"
     ADD CONSTRAINT "story_ideas_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."story_likes"
+    ADD CONSTRAINT "story_likes_one_per_pair" UNIQUE ("user_id", "story_id");
+
+
+
+ALTER TABLE ONLY "public"."story_likes"
+    ADD CONSTRAINT "story_likes_pkey" PRIMARY KEY ("id");
 
 
 
@@ -63149,6 +63595,10 @@ CREATE INDEX "story_ideas_user_id_fk_idx" ON "public"."story_ideas" USING "btree
 
 
 
+CREATE INDEX "story_likes_story_id" ON "public"."story_likes" USING "btree" ("story_id");
+
+
+
 CREATE INDEX "story_marketing_user_id_fk_idx" ON "public"."story_marketing" USING "btree" ("user_id");
 
 
@@ -64069,6 +64519,10 @@ CREATE OR REPLACE TRIGGER "regions_set_updated_at" BEFORE UPDATE ON "public"."re
 
 
 
+CREATE OR REPLACE TRIGGER "remembered_places_set_updated_at" BEFORE UPDATE ON "public"."remembered_places" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "removed_passages_refuse_user_id_change" BEFORE UPDATE ON "public"."removed_passages" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
 
 
@@ -64354,6 +64808,14 @@ CREATE OR REPLACE TRIGGER "story_ideas_refuse_user_id_change" BEFORE UPDATE ON "
 
 
 CREATE OR REPLACE TRIGGER "story_ideas_set_updated_at" BEFORE UPDATE ON "public"."story_ideas" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "story_likes_refuse_user_id_change" BEFORE UPDATE ON "public"."story_likes" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "story_likes_set_updated_at" BEFORE UPDATE ON "public"."story_likes" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -65939,6 +66401,11 @@ ALTER TABLE ONLY "public"."reading_settings"
 
 
 
+ALTER TABLE ONLY "public"."remembered_places"
+    ADD CONSTRAINT "remembered_places_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."removed_passages"
     ADD CONSTRAINT "removed_passages_case_id_fkey" FOREIGN KEY ("case_id") REFERENCES "public"."cases"("id") ON DELETE SET NULL;
 
@@ -66386,6 +66853,16 @@ ALTER TABLE ONLY "public"."story_ideas"
 
 ALTER TABLE ONLY "public"."story_ideas"
     ADD CONSTRAINT "story_ideas_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."story_likes"
+    ADD CONSTRAINT "story_likes_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "public"."stories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."story_likes"
+    ADD CONSTRAINT "story_likes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -68008,6 +68485,13 @@ CREATE POLICY "regions_select_everyone" ON "public"."regions" FOR SELECT TO "aut
 
 
 
+ALTER TABLE "public"."remembered_places" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "remembered_places_select_own" ON "public"."remembered_places" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
 ALTER TABLE "public"."removed_passages" ENABLE ROW LEVEL SECURITY;
 
 
@@ -68471,6 +68955,13 @@ CREATE POLICY "story_ideas_select_own" ON "public"."story_ideas" FOR SELECT TO "
 
 
 COMMENT ON POLICY "story_ideas_select_own" ON "public"."story_ideas" IS 'Allows a writer to read the questions and ideas of their own stories, and nobody else (S1-E17-27).';
+
+
+
+ALTER TABLE "public"."story_likes" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "story_likes_select_own" ON "public"."story_likes" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -70787,8 +71278,8 @@ REVOKE ALL ON FUNCTION "public"."chapter_code"() FROM PUBLIC;
 
 
 
-GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) TO "anon";
-GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "older_than" timestamp with time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) TO "anon";
+GRANT ALL ON FUNCTION "public"."chapter_comments"("story_slug" "text", "chapter_code" "text", "page_after" timestamp with time zone, "oldest_first" boolean) TO "authenticated";
 
 
 
@@ -72713,6 +73204,15 @@ REVOKE ALL ON FUNCTION "public"."like_state_of"("target_chapter_id" "uuid") FROM
 
 
 
+REVOKE ALL ON FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."like_story"("story_slug" "text", "should_like" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."likeable_story_id"("story_slug" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."list_default_sort"("list_kind" "text") FROM PUBLIC;
 
 
@@ -73715,6 +74215,11 @@ GRANT ALL ON FUNCTION "public"."post_paragraph_comment"("story_slug" "text", "ch
 
 
 
+REVOKE ALL ON FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."post_passage_comment"("story_slug" "text", "chapter_code" "text", "start_block" integer, "start_offset" integer, "end_block" integer, "end_offset" integer, "quote" "text", "body" "text", "is_spoiler" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."preview_story_plan"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."preview_story_plan"("story_slug" "text") TO "authenticated";
 
@@ -74267,6 +74772,11 @@ REVOKE ALL ON FUNCTION "public"."relationship_json"("link" "public"."story_chara
 
 
 
+REVOKE ALL ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."remember_place"("place_kind" "public"."remembered_place_kind", "place_key" "text", "place_value" "jsonb") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."removal_order_log_rows"() FROM PUBLIC;
 
 
@@ -74678,8 +75188,8 @@ GRANT ALL ON FUNCTION "public"."save_reading_position"("story_slug" "text", "cha
 
 
 
-REVOKE ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_theme" "public"."reading_theme", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."save_reading_settings"("wanted_font" "public"."reading_font", "wanted_text_size" smallint, "wanted_line_spacing" "public"."reading_line_spacing", "wanted_line_width" "public"."reading_line_width", "wanted_paper" "public"."reading_paper", "wanted_night_by_clock" boolean, "wanted_night_from" time without time zone, "wanted_night_until" time without time zone, "wanted_reading_ruler" boolean, "wanted_time_left" "text") TO "authenticated";
 
 
 
@@ -75648,6 +76158,15 @@ GRANT ALL ON FUNCTION "public"."story_library_state"("story_slug" "text") TO "au
 
 
 
+GRANT ALL ON FUNCTION "public"."story_like_state"("story_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."story_like_state"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_like_state_of"("target_story_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_like_total"("target_story_id" "uuid") FROM PUBLIC;
 
 
@@ -75717,6 +76236,10 @@ REVOKE ALL ON FUNCTION "public"."story_rating_reasons_fit_rating"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."story_rating_reasons_from"("labels" "jsonb") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_read_total"("target_story_id" "uuid") FROM PUBLIC;
 
 
 
@@ -76807,6 +77330,11 @@ GRANT SELECT ON TABLE "public"."regions" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."remembered_places" TO "service_role";
+GRANT SELECT ON TABLE "public"."remembered_places" TO "authenticated";
+
+
+
 GRANT UPDATE ON SEQUENCE "public"."removal_order_reference_seq" TO "service_role";
 
 
@@ -76951,6 +77479,11 @@ GRANT SELECT ON TABLE "public"."story_character_fields" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_country_scores" TO "service_role";
 GRANT SELECT ON TABLE "public"."story_country_scores" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."story_likes" TO "service_role";
+GRANT SELECT ON TABLE "public"."story_likes" TO "authenticated";
 
 
 

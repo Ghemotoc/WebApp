@@ -106,6 +106,8 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     await expect(page).toHaveURL(new RegExp(`/discover/t/${tag}$`));
     // An English visitor reads English first; "Any language" shows the Romanian story too.
     await expect(page.getByText('1 story', { exact: true })).toBeVisible();
+    // The filters live in the "Filter and sort" panel (user story 1.5).
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await page
       .getByRole('group', { name: 'Filters' })
       .getByRole('combobox', { name: 'Language' })
@@ -117,6 +119,7 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     await status.getByText('Completed', { exact: true }).click();
     await expect(status.getByRole('radio', { name: 'Completed' })).toBeChecked();
     await expect(page).toHaveURL(/status=completed/);
+    await page.getByRole('button', { name: 'Done' }).click();
     await expect(page.getByText('1 story', { exact: true })).toBeVisible();
     await page.reload();
     await expect(page.getByRole('link', { name: /Tide Tables/ })).toBeVisible();
@@ -136,6 +139,7 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
   }) => {
     const page = await openAsVisitor(browser, `/discover/t/${tag}?language=any`);
     const cards = page.getByRole('link', { name: /Tide Tables|Farul de la Sulina/ });
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await page.getByLabel('Sort by').selectOption({ label: 'Title, Z to A' });
     await expect(page).toHaveURL(/sort=title_za/);
     await expect(cards.first()).toHaveAccessibleName(/Tide Tables/);
@@ -143,6 +147,7 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     await expect(cards.first()).toHaveAccessibleName(/Farul de la Sulina/);
     // Another list in the same tab opens with the same sort.
     await page.goto('/discover/all/updated');
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await expect(page.getByLabel('Sort by')).toHaveValue('title_az');
   });
 

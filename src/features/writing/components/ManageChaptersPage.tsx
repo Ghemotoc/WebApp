@@ -37,6 +37,7 @@ import { PlusIcon } from './ManageChaptersIcons';
 import { MoveChapterDialog } from './MoveChapterDialog';
 import { NewChapterButton } from './NewChapterButton';
 import { RecentlyDeletedChapters } from './RecentlyDeletedChapters';
+import { atlasEntryAddress } from '@/features/atlas/lib/atlasSections';
 
 /** A move waiting for the writer's answer, with what the question says. */
 interface PendingMove {
@@ -66,16 +67,14 @@ function ManageChaptersHeader({ slug, storyTitle }: { slug: string; storyTitle: 
         <div className="w-fit">
           <Eyebrow>{storyTitle}</Eyebrow>
         </div>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
-          {t('manageChapters.heading')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display">{t('manageChapters.heading')}</h1>
         <p className="m-0 type-long leading-relaxed text-ink-muted">{t('manageChapters.intro')}</p>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <Link to={`/write/s/${slug}/settings`} className={headerLinkClass}>
           {t('storyCard.settings')}
         </Link>
-        <Link to={`/plan/s/${slug}`} className={headerLinkClass}>
+        <Link to={atlasEntryAddress(slug)} className={headerLinkClass}>
           {t('manageChapters.chapterBoard')}
         </Link>
         <NewChapterButton

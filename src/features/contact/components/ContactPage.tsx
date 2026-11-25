@@ -36,7 +36,7 @@ function MessageSent({ reference, onAgain }: { reference: string; onAgain: () =>
     <section
       role="status"
       aria-labelledby="contact-sent-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="contact-sent-heading"
@@ -70,9 +70,7 @@ export function ContactPage() {
       <title>{t('documentTitle')}</title>
       <div className="flex max-w-[720px] flex-col gap-3">
         <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.02em] text-ink-heading">
-          {t('heading')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display text-ink-heading">{t('heading')}</h1>
         <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('intro')}</p>
         {/* Reports of content go to the Report button, not here (Q10h). */}
         <p className="m-0 text-ink-muted">

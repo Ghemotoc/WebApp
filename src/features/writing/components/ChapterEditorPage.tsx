@@ -43,6 +43,7 @@ import type { MyStory } from '../api/stories';
 import { useOnlineStatus } from '@/features/offline/hooks/useOnlineStatus';
 
 import { useAutosave, type SaveState } from '../hooks/useAutosave';
+import { useRememberedCaret } from '../hooks/useRememberedCaret';
 import { useChapterDraft } from '../hooks/useChapterDraft';
 import { useChapterEditor } from '../hooks/useChapterEditor';
 import { usePoemMode } from '../hooks/usePoemMode';
@@ -128,7 +129,7 @@ function ChapterTitleField(props: {
       autoComplete="off"
       onChange={(event) => props.onChange(event.target.value)}
       onBlur={props.onBlur}
-      className="h-[72px] rounded-none border-0 border-b-2 border-border bg-transparent px-1 font-heading text-[clamp(32px,3.6vw,48px)] font-bold tracking-[-0.02em] text-ink-heading"
+      className="h-[72px] rounded-none border-0 border-b-2 border-border bg-transparent px-1 type-title text-ink-heading"
     />
   );
 }
@@ -215,6 +216,8 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     // Leaving the text saves at once (board 4.3: "when you click away from the text").
     onBlur: () => void autosave.saveNow(),
   });
+  // Design books item 17: the caret comes back where the writer left it in this story.
+  useRememberedCaret(editing.editor, chapter.story.slug, chapter.code);
   /** A title change: keep it and mark the draft as changed. */
   function changeTitle(value: string) {
     setTitle(value);
@@ -349,7 +352,7 @@ function EditorMainColumn(props: {
       )}
       <PoemModeSwitch {...loaded.poem} />
       <div
-        className={`tmc-chapter-text ${loaded.poem.isPoem ? 'tmc-poem' : ''} rounded-card border border-border bg-surface p-[clamp(24px,4vw,56px)] shadow-card`}
+        className={`tmc-chapter-text ${loaded.poem.isPoem ? 'tmc-poem' : ''} rounded-card border border-border bg-surface p-6 lg:p-12 shadow-card`}
       >
         {/* The blocks inside the text (pictures, cards) read the chapter from here (GAPS-8). */}
         <EditingChapterContext value={chapter.id}>

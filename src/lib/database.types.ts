@@ -2896,14 +2896,23 @@ export type Database = {
           paragraph_key: string | null;
           paragraph_number: number | null;
           parent_comment_id: string | null;
+          quote_end_block: number | null;
+          quote_end_key: string | null;
+          quote_end_offset: number | null;
+          quote_start_offset: number | null;
+          quote_text: string | null;
           updated_at: string;
           user_id: string;
           comment_is_shown_to_caller: boolean | null;
+          comment_quote_json: Json | null;
           comment_state_for_caller: string | null;
           open_downvote_case: undefined | null;
         };
         ComputedFields:
-          'comment_is_shown_to_caller' | 'comment_state_for_caller' | 'open_downvote_case';
+          | 'comment_is_shown_to_caller'
+          | 'comment_quote_json'
+          | 'comment_state_for_caller'
+          | 'open_downvote_case';
         Insert: {
           body: string;
           chapter_id: string;
@@ -2915,6 +2924,11 @@ export type Database = {
           paragraph_key?: string | null;
           paragraph_number?: number | null;
           parent_comment_id?: string | null;
+          quote_end_block?: number | null;
+          quote_end_key?: string | null;
+          quote_end_offset?: number | null;
+          quote_start_offset?: number | null;
+          quote_text?: string | null;
           updated_at?: string;
           user_id: string;
         };
@@ -2929,6 +2943,11 @@ export type Database = {
           paragraph_key?: string | null;
           paragraph_number?: number | null;
           parent_comment_id?: string | null;
+          quote_end_block?: number | null;
+          quote_end_key?: string | null;
+          quote_end_offset?: number | null;
+          quote_start_offset?: number | null;
+          quote_text?: string | null;
           updated_at?: string;
           user_id?: string;
         };
@@ -7262,9 +7281,9 @@ export type Database = {
           night_by_clock: boolean;
           night_from: string | null;
           night_until: string | null;
+          paper: Database['public']['Enums']['reading_paper'];
           reading_ruler: boolean;
           text_size: number | null;
-          theme: Database['public']['Enums']['reading_theme'];
           time_left: string;
           updated_at: string;
           user_id: string;
@@ -7279,9 +7298,9 @@ export type Database = {
           night_by_clock?: boolean;
           night_from?: string | null;
           night_until?: string | null;
+          paper?: Database['public']['Enums']['reading_paper'];
           reading_ruler?: boolean;
           text_size?: number | null;
-          theme?: Database['public']['Enums']['reading_theme'];
           time_left?: string;
           updated_at?: string;
           user_id: string;
@@ -7295,9 +7314,9 @@ export type Database = {
           night_by_clock?: boolean;
           night_from?: string | null;
           night_until?: string | null;
+          paper?: Database['public']['Enums']['reading_paper'];
           reading_ruler?: boolean;
           text_size?: number | null;
-          theme?: Database['public']['Enums']['reading_theme'];
           time_left?: string;
           updated_at?: string;
           user_id?: string;
@@ -7339,6 +7358,45 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      remembered_places: {
+        Row: {
+          created_at: string;
+          id: string;
+          item_key: string;
+          kind: Database['public']['Enums']['remembered_place_kind'];
+          place: NonNullable<Json>;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          item_key: string;
+          kind: Database['public']['Enums']['remembered_place_kind'];
+          place: NonNullable<Json>;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          item_key?: string;
+          kind?: Database['public']['Enums']['remembered_place_kind'];
+          place?: NonNullable<Json>;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'remembered_places_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       removed_passages: {
         Row: {
@@ -9818,6 +9876,46 @@ export type Database = {
           },
           {
             foreignKeyName: 'story_ideas_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      story_likes: {
+        Row: {
+          created_at: string;
+          id: string;
+          story_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          story_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          story_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'story_likes_story_id_fkey';
+            columns: ['story_id'];
+            isOneToOne: false;
+            referencedRelation: 'stories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_likes_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
@@ -13394,7 +13492,12 @@ export type Database = {
       };
       chapter_code: { Args: Record<PropertyKey, never>; Returns: string };
       chapter_comments: {
-        Args: { chapter_code: string; older_than?: string; story_slug: string };
+        Args: {
+          chapter_code: string;
+          oldest_first?: boolean;
+          page_after?: string;
+          story_slug: string;
+        };
         Returns: Json;
       };
       chapter_embed_references: {
@@ -14056,6 +14159,15 @@ export type Database = {
           story: Omit<
             Database['public']['Tables']['stories']['Row'],
             Database['public']['Tables']['stories']['ComputedFields']
+          >;
+        };
+        Returns: Json;
+      };
+      comment_quote_json: {
+        Args: {
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
           >;
         };
         Returns: Json;
@@ -15238,6 +15350,8 @@ export type Database = {
         Returns: Json;
       };
       like_state_of: { Args: { target_chapter_id: string }; Returns: Json };
+      like_story: { Args: { should_like: boolean; story_slug: string }; Returns: Json };
+      likeable_story_id: { Args: { story_slug: string }; Returns: string };
       list_default_sort: { Args: { list_kind: string }; Returns: string };
       list_holds_story: {
         Args: {
@@ -16283,6 +16397,10 @@ export type Database = {
         Args: { chapter_code: string; story_slug: string };
         Returns: boolean;
       };
+      passage_text: {
+        Args: { body: string; first_block: number; last_block: number };
+        Returns: string;
+      };
       picture_check_is_signed: { Args: { payload: string; signature: string }; Returns: boolean };
       picture_is_visible: { Args: { bucket: string; path: string }; Returns: boolean };
       picture_item_content: { Args: { picture_id: string }; Returns: Json };
@@ -16382,6 +16500,20 @@ export type Database = {
           body: string;
           chapter_code: string;
           is_spoiler?: boolean;
+          story_slug: string;
+        };
+        Returns: Json;
+      };
+      post_passage_comment: {
+        Args: {
+          body: string;
+          chapter_code: string;
+          end_block: number;
+          end_offset: number;
+          is_spoiler?: boolean;
+          quote: string;
+          start_block: number;
+          start_offset: number;
           story_slug: string;
         };
         Returns: Json;
@@ -16567,6 +16699,17 @@ export type Database = {
       };
       quote_card_picture_file_may_go: { Args: { object_name: string }; Returns: boolean };
       quote_card_state: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
+      quote_still_there: {
+        Args: {
+          body: string;
+          target: Omit<
+            Database['public']['Tables']['comments']['Row'],
+            Database['public']['Tables']['comments']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
+      quote_words: { Args: { value: string }; Returns: string };
       raise_rating_for_picture: {
         Args: {
           new_rating: Database['public']['Enums']['story_rating'];
@@ -16944,6 +17087,14 @@ export type Database = {
           with_note: boolean;
         };
         Returns: Json;
+      };
+      remember_place: {
+        Args: {
+          place_key: string;
+          place_kind: Database['public']['Enums']['remembered_place_kind'];
+          place_value: Json;
+        };
+        Returns: undefined;
       };
       removal_order_log_rows: { Args: Record<PropertyKey, never>; Returns: Json[] };
       remove_character_picture: { Args: { character_id: string }; Returns: Json };
@@ -17362,9 +17513,9 @@ export type Database = {
           wanted_night_by_clock?: boolean;
           wanted_night_from?: string;
           wanted_night_until?: string;
+          wanted_paper: Database['public']['Enums']['reading_paper'];
           wanted_reading_ruler?: boolean;
           wanted_text_size: number;
-          wanted_theme: Database['public']['Enums']['reading_theme'];
           wanted_time_left?: string;
         };
         Returns: undefined;
@@ -18379,6 +18530,8 @@ export type Database = {
       story_languages: { Args: { story_slug: string }; Returns: Json };
       story_last_chapter_number: { Args: { target_story_id: string }; Returns: number };
       story_library_state: { Args: { story_slug: string }; Returns: Json };
+      story_like_state: { Args: { story_slug: string }; Returns: Json };
+      story_like_state_of: { Args: { target_story_id: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };
       story_listing_allows: {
@@ -18437,6 +18590,7 @@ export type Database = {
         Args: { labels: Json };
         Returns: Database['public']['Enums']['story_rating_reason'][];
       };
+      story_read_total: { Args: { target_story_id: string }; Returns: number };
       story_reading_lists: { Args: { story_slug: string }; Returns: Json };
       story_search_document: { Args: { target_story_id: string }; Returns: unknown };
       story_search_rank: {
@@ -19039,7 +19193,8 @@ export type Database = {
         | 'class_competition_won'
         | 'class_competition_results'
         | 'class_readers_choice'
-        | 'comments_resumed';
+        | 'comments_resumed'
+        | 'story_completed';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -19061,7 +19216,8 @@ export type Database = {
       reading_font: 'sans' | 'serif' | 'dyslexia_friendly' | 'atkinson_hyperlegible';
       reading_line_spacing: 'compact' | 'normal' | 'wide';
       reading_line_width: 'narrow' | 'medium' | 'wide';
-      reading_theme: 'light' | 'sepia' | 'night';
+      reading_paper: 'white' | 'sepia' | 'grey' | 'black';
+      remembered_place_kind: 'story_edition' | 'atlas_section' | 'write_caret' | 'atlas_hint';
       report_reason:
         | 'illegal_content'
         | 'harassment'
@@ -19449,6 +19605,7 @@ export const Constants = {
         'class_competition_results',
         'class_readers_choice',
         'comments_resumed',
+        'story_completed',
       ],
       picture_kind: [
         'cover',
@@ -19472,7 +19629,8 @@ export const Constants = {
       reading_font: ['sans', 'serif', 'dyslexia_friendly', 'atkinson_hyperlegible'],
       reading_line_spacing: ['compact', 'normal', 'wide'],
       reading_line_width: ['narrow', 'medium', 'wide'],
-      reading_theme: ['light', 'sepia', 'night'],
+      reading_paper: ['white', 'sepia', 'grey', 'black'],
+      remembered_place_kind: ['story_edition', 'atlas_section', 'write_caret', 'atlas_hint'],
       report_reason: [
         'illegal_content',
         'harassment',

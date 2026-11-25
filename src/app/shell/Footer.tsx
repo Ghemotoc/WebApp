@@ -11,9 +11,12 @@
  * comment, 16 Oct 2026); the full Device / Light / Night choice stays in Settings › Appearance and
  * the staff footer; the end slot holds the language drop-down from S1-E1-04. Links are listed in
  * src/app/navigation.ts and appear only when their page exists.
- * Robert, 23 Nov 2026: the emblem alone sits above the words, aligned left and in the theme's
- * colour, and the company name links to the company's own site (brand.companySiteUrl).
- * Who uses it: AppLayout. What it calls: BrandEmblem, FooterLinkColumn and NightModeButton.
+ * Robert, 24 Nov 2026, 07:06 UTC: the emblem and the name sit at the top of the first column,
+ * above the words, as the same "<brand name>, Home" link the top bar draws (BrandMark, so the logo
+ * colour rules are the same), lined up with the words' left edge with 16 px below it. Robert,
+ * 23 Nov 2026: the company name links to the company's own site (brand.companySiteUrl).
+ * Who uses it: AppLayout. What it calls: BrandMark, useHomeAddress, FooterLinkColumn and
+ * NightModeButton.
  */
 import type { ReactNode } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -22,7 +25,8 @@ import { Link } from 'react-router';
 import { type FooterColumn, footerColumns } from '@/app/navigation';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
-import { BrandEmblem } from '@/features/branding/components/BrandMark';
+import { BrandMark } from '@/features/branding/components/BrandMark';
+import { useHomeAddress } from '@/features/hub/hooks/useHomeAddress';
 import { NightModeButton } from '@/features/theme/components/NightModeButton';
 
 /** What the footer needs. */
@@ -78,6 +82,8 @@ function FooterLinkColumn({ column }: { column: FooterColumn }) {
  */
 export function Footer({ about, endSlot }: FooterProps) {
   const { t } = useTranslation();
+  // The brand link goes where the top bar's does: Home, at "/" (user story 1.1).
+  const homeAddress = useHomeAddress();
 
   return (
     <footer className="mt-16">
@@ -85,10 +91,18 @@ export function Footer({ about, endSlot }: FooterProps) {
         {/* The top line spans the content column only, as in the design, not the side padding. */}
         <div className="border-t border-hairline pt-6 pb-8 sm:pt-8 lg:pt-8 lg:pb-12">
           <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-8 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
-            {/* Step 1: the emblem, then the words: the whole width on phones, the first column
-                from 640 px. The emblem lines up with the words' left edge (Robert, 23 Nov 2026). */}
+            {/* Step 1: the brand link, then the words: the whole width on phones, the first column
+                from 640 px. The link lines up with the words' left edge, 16 px above them (gap-4;
+                Robert, 24 Nov 2026). The link is the mark's own 32 px tall (not the top bar's 44 px)
+                so the space under the cat is the 16 px asked for; 32 px is above the 24 px minimum. */}
             <div className="col-span-2 flex min-w-0 flex-col items-start gap-4 sm:col-span-1">
-              <BrandEmblem />
+              <Link
+                to={homeAddress}
+                aria-label={t('shell.home', { productName: brand.productName })}
+                className="inline-flex min-h-8 items-center font-heading type-heading font-bold tracking-[-0.01em] text-ink-heading no-underline"
+              >
+                <BrandMark />
+              </Link>
               {about ?? (
                 <p className="m-0 max-w-[46ch] type-body leading-6 text-ink-muted">
                   {t('shell.footer.about')}

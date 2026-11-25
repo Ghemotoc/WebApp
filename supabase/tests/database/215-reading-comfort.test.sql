@@ -26,7 +26,7 @@ delete from public.reading_settings where user_id = '00000000-0000-4000-8000-000
 /* ---------- 1. The first five settings alone ---------- */
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000002');
-select lives_ok($$ select public.save_reading_settings('serif', null, 'normal', 'medium', 'light') $$,
+select lives_ok($$ select public.save_reading_settings('serif', null, 'normal', 'medium', 'white') $$,
   'a save with only the first five settings still works');
 select is(
   (select night_by_clock::text || ' ' || coalesce(night_from::text, 'none') || ' ' || reading_ruler::text
@@ -36,7 +36,7 @@ select is(
 /* ---------- 2. The new settings ---------- */
 
 select lives_ok(
-  $$ select public.save_reading_settings('atkinson_hyperlegible', 20::smallint, 'wide', 'narrow', 'light',
+  $$ select public.save_reading_settings('atkinson_hyperlegible', 20::smallint, 'wide', 'narrow', 'white',
        true, '22:30', '06:00', true) $$,
   'the reader picks Atkinson Hyperlegible, Night from 22:30 to 06:00 and the ruler');
 select is((select font::text from public.reading_settings), 'atkinson_hyperlegible',

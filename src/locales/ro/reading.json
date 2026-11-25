@@ -11,7 +11,6 @@
     "labelsHeading": "Etichete de la autor",
     "languageLabel": "Limbă",
     "firstPublishedLabel": "Publicată prima dată",
-    "statusLabel": "Stare",
     "commentsLabel": "Comentarii",
     "commentsOn": "Pornite",
     "commentsOff": "Oprite",
@@ -35,6 +34,9 @@
     "seeProfile": "Vezi profilul",
     "copiedWorkNote": "Moderatorii au constatat că unele părți ale acestei povești copiază o operă publicată.",
     "statsLabel": "Cifrele poveștii",
+    "reads_one": "{{value}} citire",
+    "reads_few": "{{value}} citiri",
+    "reads_other": "{{value}} de citiri",
     "likes_one": "{{value}} apreciere",
     "likes_few": "{{value}} aprecieri",
     "likes_other": "{{value}} de aprecieri",
@@ -85,7 +87,25 @@
     "showAllChapters_one": "Arată {{count}} capitol",
     "showAllChapters_few": "Arată toate cele {{count}} capitole",
     "showAllChapters_other": "Arată toate cele {{count}} de capitole",
-    "showFewerChapters": "Arată mai puține capitole"
+    "showFewerChapters": "Arată mai puține capitole",
+    "numberedChapter": "{{number}}. {{title}}",
+    "showChapterRange": "Arată capitolele {{from}}–{{to}}",
+    "lastChapterOut": "ultimul capitol a apărut pe {{date}}",
+    "tagLink": "#{{tag}}",
+    "getInToSave": "Intră în cont ca să urmărești, să apreciezi sau să salvezi",
+    "writerHeading": "Autorul",
+    "writesOne": "Scrie {{first}}",
+    "writesTwo": "Scrie {{first}} și {{second}}",
+    "writerFollowers_one": "{{value}} urmăritor",
+    "writerFollowers_few": "{{value}} urmăritori",
+    "writerFollowers_other": "{{value}} de urmăritori",
+    "writerReads_one": "{{value}} citire",
+    "writerReads_few": "{{value}} citiri",
+    "writerReads_other": "{{value}} de citiri",
+    "writingRankLabel": "Rang de scriitor:",
+    "reportThisStory": "Raportează povestea",
+    "readOnWebAndApps": "Pe web și în aplicații, când apar",
+    "webAndApp": "Web și aplicație"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
@@ -102,10 +122,16 @@
     "edited": "modificat {{date}}",
     "untitled": "Capitol fără titlu",
     "endOfChapter": "Sfârșitul capitolului {{number}}",
+    "endOfChapterOf": "Sfârșitul capitolului {{number}} din {{total}}",
     "readNext": "Următorul: capitolul {{number}}",
     "latestChapter": "Acesta e cel mai nou capitol de până acum.",
     "endOfStory": "Acesta e sfârșitul poveștii.",
-    "followWriterAtEnd": "Află de povestea următoare: urmărește {{name}}.",
+    "completedChapters_one": "Încheiată · {{count}} capitol",
+    "completedChapters_few": "Încheiată · {{count}} capitole",
+    "completedChapters_other": "Încheiată · {{count}} de capitole",
+    "moreBy": "Mai multe de {{name}}",
+    "whatNext": "Ce urmează",
+    "storyComplete": "{{story}} e încheiată. Trece la Terminate în Bibliotecă, iar cititorii care o urmăresc primesc o ultimă notificare.",
     "nextChapterDay": "Următorul capitol {{day}}",
     "lastChapterDay": "Ultimul capitol {{day}}",
     "chapterDay": {
@@ -156,6 +182,15 @@
       "words_one": "cuvânt până acum",
       "words_few": "cuvinte până acum",
       "words_other": "de cuvinte până acum"
+    },
+    "partComments": {
+      "button_one": "{{count}} comentariu la: {{words}}",
+      "button_few": "{{count}} comentarii la: {{words}}",
+      "button_other": "{{count}} de comentarii la: {{words}}",
+      "comment": "Comentează",
+      "tooLong": "Alege mai puțin ca să comentezi",
+      "tooLongHint": "Cel mult {{limit}} de caractere. Cuvintele alese au {{count}}.",
+      "barLabel": "Comentează cuvintele alese"
     }
   },
   "teaser": {
@@ -182,6 +217,8 @@
   },
   "likes": {
     "like": "Apreciază capitolul",
+    "likeWord": "Apreciază",
+    "likeRest": "capitolul",
     "liked": "Apreciat",
     "logIn": "Intră ca să apreciezi",
     "count_one": "{{count}} apreciere",
@@ -190,19 +227,32 @@
     "readOnly": "Contul nu poate aprecia capitole încă.",
     "failed": "Nu am putut salva aprecierea, așa că a revenit cum era. Încearcă din nou."
   },
+  "storyLikes": {
+    "like": "Apreciază",
+    "liked": "Apreciat",
+    "readOnly": "Contul nu poate aprecia povești încă."
+  },
   "settings": {
     "button": "Setări de citire",
     "buttonSample": "Aa",
     "title": "Setări de citire",
     "close": "Închide setările de citire",
-    "font": "Font",
-    "fonts": {
-      "sans": "Inter",
-      "serif": "Serif",
-      "dyslexia_friendly": "Pentru dislexie",
-      "atkinson_hyperlegible": "Atkinson Hyperlegible"
+    "paper": "Hârtie",
+    "papers": {
+      "white": "Albă",
+      "sepia": "Sepia",
+      "grey": "Gri",
+      "black": "Neagră"
     },
-    "fontHint": "Fonturi care merg în orice browser: OpenDyslexic, pe care mulți cititori cu dislexie îl găsesc mai ușor și Atkinson Hyperlegible, făcut ca literele care seamănă între ele să se deosebească ușor.",
+    "nightMode": "Mod de noapte",
+    "nightModeHint": "Întunecă toată pagina, cu tot cu hârtie.",
+    "typeface": "Font",
+    "typefaces": {
+      "serif": "Literata",
+      "sans": "Inter",
+      "dyslexia_friendly": "OpenDyslexic",
+      "atkinson_hyperlegible": "Atkinson"
+    },
     "textSize": "Mărimea textului",
     "textSizeValue": "{{size}} px",
     "textSizeFromDevice": "{{size}} px, de pe dispozitiv",
@@ -219,25 +269,20 @@
       "medium": "Mediu",
       "wide": "Lat"
     },
-    "theme": "Temă",
-    "themes": {
-      "light": "Luminos",
-      "sepia": "Sepia",
-      "night": "Noapte"
-    },
     "nightByClock": "Noapte după ceas",
-    "nightByClockHint": "Capitolele se deschid în tema Noapte între două ore alese de tine, după ceasul acestui dispozitiv.",
+    "nightByClockHint": "Capitolele se deschid pe hârtie neagră între două ore alese de tine, după ceasul acestui dispozitiv.",
     "nightFrom": "De la",
     "nightUntil": "Până la",
     "nightWaiting": "Alege ambele ore. Nimic nu se schimbă până atunci.",
-    "nightNextChapter": "Capitolele deschise între aceste ore apar în tema Noapte. O temă pe care o alegi tu rămâne până la capitolul următor.",
+    "nightNextChapter": "Capitolele deschise între aceste ore apar pe hârtie neagră. O hârtie pe care o alegi tu rămâne până la capitolul următor.",
     "ruler": "Riglă de citire",
     "rulerHint": "O bandă discretă urmărește rândul pe care îl citești. Mișcă cursorul peste text sau folosește tastele săgeată sus și jos.",
-    "saved": "Salvate în contul tău, deci se aplică pe toate dispozitivele tale. Mărimea textului pornește de la setarea dispozitivului tău.",
     "saveFailed": "Nu am putut salva setările de citire. Se aplică în continuare aici; verifică-ți conexiunea și schimbă din nou o setare ca să încercăm iar.",
     "timeLeft": "Timp rămas",
     "timeLeftBar": "În bară",
-    "timeLeftPage": "Pe pagină"
+    "timeLeftPage": "Pe pagină",
+    "timeLeftHint": "Minute rămase din acest capitol",
+    "moreOptions": "Mai multe opțiuni"
   },
   "embed": {
     "removed": "[Scos de echipa de moderare]",
@@ -301,5 +346,13 @@
     "pageTitlePlain": "{{title}} de {{writer}}, {{site}}",
     "breadcrumbRead": "Citește",
     "label": "Despre această poveste"
+  },
+  "contents": {
+    "button": "Cuprins",
+    "title": "Cuprins",
+    "close": "Închide cuprinsul",
+    "youAreHere": "Ești aici",
+    "loading": "Se încarcă capitolele…",
+    "row": "{{number}}. {{title}}"
   }
 }

@@ -5,7 +5,7 @@
  * What it proves:
  * - the hub's card lists the seven days and starts at "Start day 1";
  * - a writer reads day 1's lesson and task, marks it done, goes on to day 2, and the hub then
- *   says "Continue day 2" with one of seven days done; the tick comes off again;
+ *   says "Continue day 2" with day 2 marked as the current step; the tick comes off again;
  * - a bad day in the address falls back to the first day still open;
  * - an admin changes a day's title at /staff/hub and writers see the new words;
  * - signed out, the page says to log in;
@@ -55,7 +55,8 @@ test.describe('the learning path (GAPS-12g)', () => {
     const days = card.getByRole('list', { name: 'Cele șapte zile' }).getByRole('listitem');
     await expect(days).toHaveCount(7);
     await expect(days.first()).toContainText(dayOne.ro);
-    await expect(card.getByText('0 din 7 zile gata')).toBeVisible();
+    // The next day to do is marked as the current step (board A03 shows no count line).
+    await expect(card.locator('[aria-current="step"]')).toContainText('Ziua 1');
     await expect(card.getByRole('link', { name: 'Începe ziua 1' })).toHaveAttribute(
       'href',
       '/hub/path?day=1',
@@ -85,7 +86,7 @@ test.describe('the learning path (GAPS-12g)', () => {
     await page.getByRole('link', { name: 'Înapoi la Spațiul scriitorilor' }).click();
     const card = page.getByRole('region', { name: 'Un prim capitol în 7 zile' });
     await expect(card.getByRole('link', { name: 'Continuă ziua 2' })).toBeVisible();
-    await expect(card.getByText('1 din 7 zile gata')).toBeVisible();
+    await expect(card.locator('[aria-current="step"]')).toContainText('Ziua 2');
     await page.context().close();
   });
 

@@ -2,12 +2,13 @@
  * CommentItem: one comment, with its replies one level deep (story S1-E6-01; board 3.5).
  *
  * Board values: a 32 px round avatar on a comment and a reply alike (PersonAvatar, LOOK-7; CALM-3,
- * design system Avatar/README.md), the author's name as
- * a link to their profile (15 px bold), the "Writer" pill on the story's writer's comments, the
- * date ("2 days ago", 13 px), then the words in 16 px. A reply sits under its comment after a fine
- * line, 18 px in. Each part is a real <article> with the author named, so a screen reader can move
- * from comment to comment. A comment on one paragraph says which ("On paragraph 4", 13 px, 600, in
- * the link colour; S1-E6-06), or that the writer has since changed it. While the writer has paused
+ * design system Avatar/README.md), then one meta line (board B05-ReaderEnd, BOOKS B05): the
+ * author's name as a link to their profile, "Writer" in bold on the story's writer's comments,
+ * "On paragraph 4" on a comment about one paragraph (S1-E6-06; a button that opens that
+ * paragraph's thread, CommentParagraphLink) and the date ("2 days ago"), joined by middots; then
+ * the words. A reply sits under its comment after a fine line, 16 px in, with no bar at its left
+ * edge (canvas comments, 23 Nov 2026). Each part is a real <article> with the author named, so a
+ * screen reader can move from comment to comment. While the writer has paused
  * new comments, Reply is hidden; likes, reactions, Report and More stay (bundle CALM-8; the design
  * handover's Step 4, point 7).
  * Who uses it: CommentsSection (and itself, for replies). What it calls: CommentBody,
@@ -28,6 +29,8 @@ import { useCommentsTranslation } from '../registerCommentsTranslations';
 import { CommentActions } from './CommentActions';
 import { CommentBody } from './CommentBody';
 import { CommentComposer } from './CommentComposer';
+import { CommentParagraphLink } from './CommentParagraphLink';
+import { CommentQuoteLine } from './CommentQuoteLine';
 import { CommentReactions } from './CommentReactions';
 
 /** What one comment needs. */
@@ -39,55 +42,44 @@ export interface CommentItemProps {
   isInParagraphThread?: boolean;
   /** True while the writer has paused new comments (CALM-8): no Reply and no reply box. */
   isPaused?: boolean;
+  /**
+   * False inside a part's group in a stanza's panel, whose heading already shows the words
+   * (READER-SELECT, board B13); everywhere else a comment on chosen words shows them above its text.
+   */
+  isQuoteShown?: boolean;
 }
 
 /**
- * The name, the "Writer" pill and the date.
+ * The meta line: the name, "Writer" in bold on the writer's comments, "On paragraph 3" on a
+ * top-level comment about one paragraph, and the date, joined by middots (board B05-ReaderEnd;
+ * the simplified pages' meta line, CALM-2, replaces the Writer pill).
  *
+ * @param props.comment - the comment
+ * @param props.isReply - true for a reply, which never names a paragraph
  * @returns the comment's header line
  */
-function CommentHeader({ comment }: { comment: ChapterComment }) {
+function CommentHeader({ comment, isReply }: { comment: ChapterComment; isReply: boolean }) {
   const { t, i18n } = useCommentsTranslation();
   return (
-    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-      <Link
-        to={`/u/${comment.author.handle}`}
-        className="hit-target type-body font-semibold text-ink no-underline hover:underline"
-      >
-        {comment.author.displayName}
-      </Link>
-      {comment.isWriter && (
-        <span className="inline-flex h-6 items-center justify-center gap-2 self-center rounded-full border border-border bg-tint px-3 type-meta leading-none font-semibold whitespace-nowrap text-ink-heading">
-          {t('comment.writer')}
-        </span>
+    <ul className="meta-line items-baseline">
+      <li>
+        <Link
+          to={`/u/${comment.author.handle}`}
+          className="hit-target type-body font-semibold text-ink no-underline hover:underline"
+        >
+          {comment.author.displayName}
+        </Link>
+      </li>
+      {comment.isWriter && <li className="font-semibold text-ink">{t('comment.writer')}</li>}
+      {!isReply && comment.paragraph !== null && (
+        <li>
+          <CommentParagraphLink place={comment.paragraph} />
+        </li>
       )}
-      <time dateTime={comment.createdAt} className="type-meta text-ink-muted">
-        {timeAgo(comment.createdAt, i18n.language)}
-      </time>
-      {comment.isSpoiler && comment.body !== null && (
-        <span className="inline-flex h-6 items-center justify-center self-center rounded-full border border-border bg-paper px-3 type-meta leading-none font-semibold whitespace-nowrap text-ink-muted">
-          {t('comment.spoiler')}
-        </span>
-      )}
-    </div>
-  );
-}
-
-/**
- * "On paragraph 4", or "On an earlier version", for a top-level comment on one paragraph
- * (S1-E6-06). A paragraph's own thread leaves it out (the comments there carry no paragraph).
- *
- * @returns the line, or nothing for a comment on the whole chapter
- */
-function ParagraphLabel({ paragraph }: { paragraph: ChapterComment['paragraph'] }) {
-  const { t } = useCommentsTranslation();
-  if (paragraph === null) return null;
-  return (
-    <p className="m-0 mb-1 type-meta font-semibold text-link">
-      {paragraph === 'earlier'
-        ? t('comment.onEarlierVersion')
-        : t('comment.onParagraph', { number: paragraph })}
-    </p>
+      <li>
+        <time dateTime={comment.createdAt}>{timeAgo(comment.createdAt, i18n.language)}</time>
+      </li>
+    </ul>
   );
 }
 
@@ -135,6 +127,20 @@ function CommentReplies(props: CommentRepliesProps) {
 }
 
 /**
+ * The chosen words to show above a comment: a top-level comment's, unless its group's heading
+ * already shows them (READER-SELECT, board B13).
+ *
+ * @param comment - the comment
+ * @param isReply - replies never show words
+ * @param isQuoteShown - false inside a part's group
+ * @returns the words, or null
+ */
+function shownQuote(comment: ChapterComment, isReply: boolean, isQuoteShown: boolean) {
+  if (isReply || !isQuoteShown) return null;
+  return comment.quote;
+}
+
+/**
  * Renders the comment and, for a top-level one, its replies and the reply box.
  *
  * @returns the comment
@@ -145,6 +151,7 @@ export function CommentItem({
   isReply = false,
   isInParagraphThread = false,
   isPaused = false,
+  isQuoteShown = true,
 }: CommentItemProps) {
   const [isReplying, setIsReplying] = useState(false);
   const name = comment.author.displayName;
@@ -159,8 +166,8 @@ export function CommentItem({
       {/* 32 px on a comment and a reply alike (CALM-3, design system Avatar/README.md). */}
       <PersonAvatar name={name} handle={comment.author.handle} size="small" />
       <div className="min-w-0 flex-1">
-        {!isReply && <ParagraphLabel paragraph={comment.paragraph} />}
-        <CommentHeader comment={comment} />
+        <CommentHeader comment={comment} isReply={isReply} />
+        <CommentQuoteLine quote={shownQuote(comment, isReply, isQuoteShown)} />
         <CommentBody comment={comment} />
         <CommentActions
           address={address}

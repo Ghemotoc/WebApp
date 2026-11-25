@@ -10,7 +10,8 @@ import type { ReactNode } from 'react';
 /** What an EmptyState needs. */
 export interface EmptyStateProps {
   title: string;
-  description: string;
+  /** A line under the title; left out when the title says it all. */
+  description?: string;
   /** Usually one Button or link that helps the reader move on. */
   action?: ReactNode;
 }
@@ -24,7 +25,7 @@ export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-8">
       <h2 className="m-0 type-heading font-bold">{title}</h2>
-      <p className="m-0 type-body text-ink-muted">{description}</p>
+      {description !== undefined && <p className="m-0 type-body text-ink-muted">{description}</p>}
       {action}
     </div>
   );

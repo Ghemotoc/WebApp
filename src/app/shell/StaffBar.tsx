@@ -63,7 +63,7 @@ export function StaffBar({
     // solid and without blur, as the other fixed bars (Robert, 7 Nov 2026, 21:49).
     // It is the staff area's header on phones as well, so like the phone headers it sits below
     // the notch or status bar the page now draws under (viewport-fit=cover, bundle CALM-1).
-    <header className="pointer-events-none sticky top-0 z-30 px-[clamp(16px,4vw,64px)] pt-[calc(24px+env(safe-area-inset-top))]">
+    <header className="pointer-events-none sticky top-0 z-30 px-4 lg:px-16 pt-[calc(24px+env(safe-area-inset-top))]">
       <Island
         aria-label={hasLinks ? t('staff.navigation') : undefined}
         className="glass-float pointer-events-auto mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-4 rounded-nav py-3 pr-3 pl-6"

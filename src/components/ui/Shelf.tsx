@@ -21,9 +21,11 @@ import { useId, useRef, type ReactNode, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Eyebrow } from './Eyebrow';
+import { perPageClasses, rowGridClasses } from './shelfRowStyles';
 import { ShelfArrows } from './ShelfArrows';
 import { useShelfScroll } from './useShelfScroll';
 import { ViewMoreCard } from './ViewMoreCard';
+import { ShelfToolbar, type ShelfToolbarPlacement } from './ShelfToolbar';
 
 /** A row never shows more than this many items (CLAUDE.md rule 20). */
 export const MAXIMUM_SHELF_ITEMS = 20;
@@ -45,6 +47,11 @@ export interface ShelfProps {
   totalCount?: number;
   /** Controls between the heading and the row, such as the home page's genre chips (LOOK-3). */
   toolbar?: ReactNode;
+  /**
+   * Where the toolbar sits: above the row (the default) or under it, as the Home page's genre
+   * chips do on board A01 (Robert's review of 25 Nov 2026).
+   */
+  toolbarPlacement?: ShelfToolbarPlacement;
   /** The section's id, for links to it from elsewhere on the page ("#trending"). */
   anchorId?: string;
   /**
@@ -59,20 +66,6 @@ export interface ShelfProps {
    */
   coversInColumn?: 3 | 4;
 }
-
-/**
- * The row's grid: one column per cover, sized so 5, 4 or 2.3 covers fill the row. The variables
- * are the design system's (.gh-shelf__row in bundle.css); Tailwind's arbitrary properties set them.
- */
-const rowGridClasses =
-  'grid auto-cols-[calc((100%-(var(--per-page)-1)*var(--gap))/var(--per-page))] grid-flow-col gap-(--gap) m-0 list-none p-0';
-
-/** The covers in view at each width: a full-width row, or one in a half-width column. */
-const perPageClasses = {
-  full: '[--per-page:2.3] [--gap:16px] min-[600px]:[--per-page:4] min-[600px]:[--gap:24px] min-[1024px]:[--per-page:5]',
-  3: '[--per-page:2.3] [--gap:16px] min-[600px]:[--per-page:3] min-[600px]:[--gap:24px]',
-  4: '[--per-page:2.3] [--gap:16px] min-[600px]:[--per-page:4] min-[600px]:[--gap:24px]',
-} as const;
 
 /** The scrolling region around the list: no scroll bar, snapping to covers, smooth only with motion. */
 const regionClasses =
@@ -146,6 +139,7 @@ export function Shelf({
   seeAllHref,
   totalCount,
   toolbar,
+  toolbarPlacement = 'above',
   anchorId,
   headerAction,
   coversInColumn,
@@ -181,7 +175,7 @@ export function Shelf({
           )}
         </div>
       </div>
-      {toolbar !== undefined && <div className="mb-4">{toolbar}</div>}
+      <ShelfToolbar toolbar={toolbar} placement={toolbarPlacement} spot="above" />
       <ShelfRow
         rowRef={rowRef}
         title={title}
@@ -193,6 +187,7 @@ export function Shelf({
           ) : undefined
         }
       />
+      <ShelfToolbar toolbar={toolbar} placement={toolbarPlacement} spot="below" />
     </section>
   );
 }

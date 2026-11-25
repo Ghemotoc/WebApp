@@ -71,13 +71,13 @@ describe('the app shell', () => {
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main');
   });
 
-  it('shows the wordmark from the brand config as a link home', () => {
+  it('shows the wordmark from the brand config as a link home in the top bar and the footer', () => {
     renderApp();
 
-    expect(screen.getByRole('link', { name: `${brand.productName}, Home` })).toHaveAttribute(
-      'href',
-      '/',
-    );
+    // Two brand links since 24 Nov 2026: the top bar's and the one at the top of the footer.
+    const brandLinks = screen.getAllByRole('link', { name: `${brand.productName}, Home` });
+    expect(brandLinks).toHaveLength(2);
+    for (const brandLink of brandLinks) expect(brandLink).toHaveAttribute('href', '/');
   });
 
   it('says "An app by" with the company name from the brand config in the footer', () => {
@@ -130,11 +130,16 @@ describe('the app shell', () => {
 });
 
 describe('the shell on a wide window (bundle G4 SHELL)', () => {
-  it('has the website top bar with the search pill and no language menu', () => {
+  it('has the website top bar with a search button and no language menu', () => {
     signIn();
     renderApp('/discover');
 
-    expect(screen.getByRole('search', { name: 'Search' })).toBeInTheDocument();
+    // User story 1.7, boards A01 to A07: a round link to the Search page, after Write.
+    expect(
+      within(screen.getByRole('banner')).getByRole('link', {
+        name: 'Search stories, writers and Together',
+      }),
+    ).toHaveAttribute('href', '/search');
     // The language menu sits only in the footer and in Settings (bundle FIX-3).
     expect(
       within(screen.getByRole('banner')).queryByRole('combobox', { name: 'Language' }),
@@ -156,8 +161,8 @@ describe('the shell on a wide window (bundle G4 SHELL)', () => {
       .getAllByRole('link')
       .map((link) => link.textContent);
     expect(names).toEqual(['Home', 'Read', 'Library', 'Together']);
-    // A member's Home is their own home page (CALM-1).
-    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/hub');
+    // A member's Home is their own home page at "/" (CALM-1; user story 1.1).
+    expect(within(topBar).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     expect(within(topBar).getByRole('link', { name: 'Read' })).toHaveAttribute(
       'aria-current',
       'page',
@@ -183,10 +188,10 @@ describe('the shell on a narrow window (bundle G4 SHELL)', () => {
     useNarrowWindow();
     renderApp('/discover');
 
-    expect(screen.getByRole('link', { name: `${brand.productName}, Home` })).toHaveAttribute(
-      'href',
-      '/hub',
-    );
+    // The header's brand link and the footer's both open Home at "/" (user story 1.1).
+    const brandLinks = screen.getAllByRole('link', { name: `${brand.productName}, Home` });
+    expect(brandLinks.length).toBeGreaterThan(0);
+    for (const brandLink of brandLinks) expect(brandLink).toHaveAttribute('href', '/');
     const tabBar = screen.getByRole('navigation', { name: 'Main' });
     const readTab = within(tabBar).getByRole('link', { name: 'Read' });
     expect(readTab).toHaveAttribute('aria-current', 'page');

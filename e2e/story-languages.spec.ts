@@ -5,9 +5,11 @@
  * Who runs it: `npm run test:e2e`, and CI (Supabase started first).
  * What it proves:
  * - a story with an English edition opens in English on an English page, with "Read in: English",
- *   "4 of 6 in English" on the chapter list and the untranslated chapters marked; choosing Română
+ *   "4 of 6 in English" on the chapter list, the untranslated chapters marked and "About this
+ *   edition" with "One story, counted once" (board B09, user story 2.9); choosing Română
  *   opens the original and the choice is remembered for the story;
- * - in the reader the switch keeps the chapter; a chapter the edition doesn't have yet shows
+ * - in the reader the switch keeps the chapter and the paragraph, and says so (BOOKS B07, user
+ *   story 2.7); a chapter the edition doesn't have yet shows
  *   "This chapter isn't in English yet" with a link to the original and to the last translated
  *   chapter;
  * - a story in one language shows no switch at all (Robert, 16 Nov 2026, 12:23 UTC);
@@ -35,9 +37,16 @@ const teacherId = '00000000-0000-4000-8000-000000000007';
 /** The English edition's address, known once the writer has added the language. */
 let editionSlug = '';
 
-/** Removes this spec's edition and chapters, and puts the teacher's language back. */
+/**
+ * Removes this spec's edition and chapters, the teacher's remembered language for the story and
+ * puts the teacher's language back. The remembered language lives on the account
+ * (remembered_places, kind story_edition), so without this a choice made in one test or run sent
+ * the next one to the Romanian original.
+ */
 function cleanUp() {
-  runSql(`delete from public.chapters where story_id in
+  runSql(`delete from public.remembered_places where user_id = '${teacherId}'
+      and kind = 'story_edition' and item_key = '${slug}';
+    delete from public.chapters where story_id in
       (select id from public.stories where edition_of_story_id = '${storyId}');
     delete from public.chapters where story_id = '${storyId}';
     delete from public.stories where edition_of_story_id = '${storyId}';
@@ -102,6 +111,11 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
     ).toBeVisible();
     await expect(page.getByText('4 of 6 in English')).toBeVisible();
     await expect(page.getByText('Română only for now').first()).toBeVisible();
+    // Board B09 (user story 2.9): "About this edition" and "One story, counted once" as sections.
+    await expect(page.getByRole('heading', { level: 2, name: 'About this edition' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'One story, counted once' }),
+    ).toBeVisible();
 
     // The switch lists both languages; Română opens the original.
     await page.getByRole('button', { name: 'Read in: English' }).click();
@@ -125,19 +139,59 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
     await expect(page).toHaveURL(`/s/${slug}`);
   });
 
-  test('changing language in the reader keeps the chapter', async ({ browser }) => {
+  test('changing language in the reader keeps the chapter and the paragraph (BOOKS B07)', async ({
+    browser,
+  }) => {
+    // Chapter 2 gets twelve paragraphs in each language, so there is a place to keep.
+    runSql(`update public.chapters set published_body = (select string_agg('Paragraph ' || n
+        || '. Grandmother notes the weather in her notebook, early, before coffee.', chr(10) || chr(10))
+        from generate_series(1, 12) as n) where code = 'langen02';
+      update public.chapters set published_body = (select string_agg('Paragraful ' || n
+        || '. Bunica notează vremea în caiet, devreme, înainte de cafea.', chr(10) || chr(10))
+        from generate_series(1, 12) as n) where code = 'langro02';`);
     const page = await openAsReader(browser, `/s/${editionSlug}/langen02`);
     await expect(page.getByRole('heading', { level: 1, name: 'Chapter 2' })).toBeVisible();
     await expect(page.locator('.tmc-chapter-text')).toHaveAttribute('lang', 'en');
+    // The reader is on paragraph 8 when they change language. The rest of the page can still be
+    // drawing above it and push it down (CI, 24 Nov 2026: the page grew after the scroll and the
+    // reader was on paragraph 4), so scroll again until paragraph 8 stays under the bars.
+    const paragraphEight = page.locator('[data-block="8"]');
+    await expect(async () => {
+      await paragraphEight.evaluate((paragraph) => {
+        window.scrollTo({ top: paragraph.getBoundingClientRect().top + window.scrollY - 140 });
+      });
+      await page.waitForTimeout(200);
+      const top = await paragraphEight.evaluate(
+        (paragraph) => paragraph.getBoundingClientRect().top,
+      );
+      expect(Math.abs(top - 140)).toBeLessThan(8);
+    }).toPass();
     await page.getByRole('button', { name: 'Read in: English' }).click();
-    await expect(page.getByText('You stay on chapter 2.')).toBeVisible();
-    await page
-      .getByRole('navigation', { name: 'Read in' })
-      .getByRole('link', { name: /Română/ })
-      .click();
+    // Board B07: one line per language, the one on screen ticked.
+    const list = page.getByRole('navigation', { name: 'Read in' });
+    await expect(list.getByRole('link', { name: 'Română · Original' })).toBeVisible();
+    // Something else moves the page right after the place is brought back (on a slow runner the
+    // rest of the page can still be drawing): the reader must still end up on the paragraph.
+    await page.evaluate((romanianAddress) => {
+      function knockToTop() {
+        // Only once the Romanian page is scrolling down to the paragraph (the list opening may
+        // scroll the English page first, and the new page may start at the top).
+        if (window.location.pathname !== romanianAddress || window.scrollY === 0) return;
+        window.removeEventListener('scroll', knockToTop);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+      window.addEventListener('scroll', knockToTop);
+    }, `/s/${slug}/langro02`);
+    await list.getByRole('link', { name: /Română/ }).click();
     await expect(page).toHaveURL(`/s/${slug}/langro02`);
     await expect(page.getByRole('heading', { level: 1, name: 'Capitolul 2' })).toBeVisible();
     await expect(page.locator('.tmc-chapter-text')).toHaveAttribute('lang', 'ro');
+    await expect(
+      page.getByText('You stay on chapter 2. Your choice is remembered for this story.'),
+    ).toBeAttached();
+    // The same paragraph, in Romanian, is back at the top of the screen.
+    await expect(page.locator('[data-block="8"]')).toBeInViewport();
+    await expect(page.locator('[data-block="2"]')).not.toBeInViewport();
   });
 
   test('a chapter that is not translated yet points to the original', async ({ browser }) => {
@@ -160,6 +214,10 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
     );
     await page.getByRole('link', { name: 'Read chapter 5 in Română' }).click();
     await expect(page).toHaveURL(`/s/${slug}/langro05`);
+    // User story 2.8: reading the original doesn't change the choice, which stays English.
+    expect(
+      await page.evaluate((key) => localStorage.getItem(key), 'story-reading-language'),
+    ).toContain('"en"');
   });
 
   test('a story in one language shows no switch', async ({ browser }) => {
@@ -188,7 +246,12 @@ test.describe('one story in several languages (TRANSLATE-1b)', () => {
       );
       await test.step(`axe at ${view.width} px, ${view.theme}, ${view.language}`, async () => {
         await checkScreen(page, view);
-        await expect(page.getByRole('button', { name: /English/ }).first()).toBeVisible();
+        // The story page shows the English edition's switch; the notice (board B08, no chapter
+        // bar) shows its heading, which names English in either interface language.
+        const englishOnScreen = view.address.endsWith('/langro05')
+          ? page.getByRole('heading', { level: 1 })
+          : page.getByRole('button', { name: /English/ }).first();
+        await expect(englishOnScreen).toBeVisible();
       });
       await page.close();
     }

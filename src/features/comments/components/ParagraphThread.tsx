@@ -17,21 +17,29 @@
  * While the writer has paused new comments, the box at the foot gives way to the same line as
  * under the chapter ("New comments are paused until …") and Reply is hidden (bundle CALM-8; the
  * design handover's Step 4, points 6 and 7); the comments already there can still be read.
+ * READER-SELECT (boards B12 to B14): the panel is one per stanza, grouped (ParagraphThreadGroups),
+ * and can open at chosen words: the field then reads "Comment on this part" with "Commenting on …"
+ * and "Whole stanza instead" above it (PassageTarget). "Choose lines" ("Choose sentences" in
+ * prose) turns the stanza into tick boxes for keyboard and screen reader users (LinePicker).
  * Who uses it: ParagraphCommentMarker and EarlierVersionComments (src/features/reading/), through
  * LazyParagraphThread, which fetches this file only when a reader opens a thread.
  * What it calls: useParagraphComments → paragraph_comments(); CommentItem (each comment, with its
  * replies, reactions and Report button); CommentComposer (posting on the paragraph);
  * CommentsPausedLine (during a pause).
  */
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useContext, useEffect, useRef, useState, type RefObject } from 'react';
 
 import { Notice } from '@/components/ui/Notice';
+import { PlaceholderComments } from '@/components/ui/PlaceholderComments';
 import type { ChapterAddress } from '@/features/reading/api/likes';
-import type { ParagraphPlace } from '@/features/reading/api/paragraphComments';
+import type { CommentPart, ParagraphPlace } from '@/features/reading/api/paragraphComments';
 import { CommentIcon } from '@/features/reading/components/ReaderIcons';
+import { ParagraphCommentsContext } from '@/features/reading/lib/paragraphCommentsContext';
 import { runningPauseEnd } from '@/lib/comment-pause';
 
+import type { CommentQuote } from '../api/comments';
 import type { ParagraphThread as ParagraphThreadData } from '../api/paragraphComments';
+import { composerKey, partKey, quoteOfPart } from '../lib/commentParts';
 
 import { useParagraphComments } from '../hooks/useParagraphComments';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
@@ -39,6 +47,9 @@ import { useCommentsTranslation } from '../registerCommentsTranslations';
 import { CommentComposer } from './CommentComposer';
 import { CommentItem } from './CommentItem';
 import { CommentsPausedLine } from './CommentsPausedLine';
+import { LinePicker } from './LinePicker';
+import { ParagraphThreadGroups } from './ParagraphThreadGroups';
+import { PassageTarget } from './PassageTarget';
 
 /** What the thread needs. */
 export interface ParagraphThreadProps {
@@ -54,6 +65,8 @@ export interface ParagraphThreadProps {
   takesFocus?: boolean;
   /** The paragraph's opening words, ending in an ellipsis, for the head (not for 'earlier'). */
   openingWords?: string;
+  /** The words the panel is open at (READER-SELECT), or null for the whole stanza. */
+  quote?: CommentQuote | null;
 }
 
 /** The card in the side column (board New-Reader): glass, round corners, no focus outline. */
@@ -112,8 +125,9 @@ function ThreadHead({ place, openingWords, total, onClose }: ThreadHeadProps) {
             : t('paragraph.earlierTitle', { count: total })}
         </p>
       ) : (
-        <blockquote className="tmc-thread-quote m-0 min-w-0 flex-1 rounded-field bg-tint px-3 py-2 font-story type-body leading-[22px] text-ink-muted italic">
-          {openingWords}
+        <blockquote className="m-0 min-w-0 flex-1 rounded-field bg-tint px-3 py-2 font-story type-body leading-[22px] text-ink-muted italic">
+          {/* The two-line clamp sits on the words, not the padded box, so no third line peeks out. */}
+          <span className="tmc-thread-quote">{openingWords}</span>
         </blockquote>
       )}
       <button
@@ -179,6 +193,16 @@ interface ThreadFootProps extends Pick<ParagraphThreadProps, 'address' | 'place'
   thread: ParagraphThreadData | null;
   /** When the writer's pause of new comments ends, while it runs (CALM-8); otherwise null. */
   pauseEnd: Date | null;
+  /** What the field posts on: chosen words, or null for the whole stanza (READER-SELECT). */
+  quote: CommentQuote | null;
+  /** True while Choose lines is on: the field says "Comment on these lines". */
+  isPicking: boolean;
+  /** True when the words are a new selection, so the field takes the focus as it appears. */
+  isNewSelection: boolean;
+  /** Turns Choose lines on, or off again with "Whole stanza instead". */
+  onPicking: (isPicking: boolean) => void;
+  /** After a comment on ticked lines posts: the tick boxes give way to the comments again. */
+  onPosted: () => void;
 }
 
 /**
@@ -188,7 +212,8 @@ interface ThreadFootProps extends Pick<ParagraphThreadProps, 'address' | 'place'
  *
  * @returns the composer, the paused line or the note
  */
-function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
+function ThreadFoot(props: ThreadFootProps) {
+  const { address, place, thread, pauseEnd } = props;
   const { t } = useCommentsTranslation();
   // CALM-8: true once the writer's "Resume now" has worked; the box that comes back in place of
   // the line then takes the focus, so the writer isn't left on a button that has gone.
@@ -213,11 +238,60 @@ function ThreadFoot({ address, place, thread, pauseEnd }: ThreadFootProps) {
   if (thread !== null && !thread.audienceAllowsMe) {
     return <p className="m-0 mt-3 type-body text-ink-muted">{t('section.followersOnly')}</p>;
   }
+  return <ThreadComposer {...props} place={place} hasResumed={hasResumed} />;
+}
+
+/**
+ * The box at the foot: the line saying what the comment will be on, then the field (boards B13
+ * and B14).
+ *
+ * @returns the line and the composer
+ */
+function ThreadComposer(props: ThreadFootProps & { place: number; hasResumed: boolean }) {
+  const { address, place, quote, isPicking } = props;
+  const { t } = useCommentsTranslation();
+  const isPoem = useContext(ParagraphCommentsContext)?.isPoem ?? false;
   return (
     <div className="mt-3 border-t border-hairline pt-4">
-      <CommentComposer address={address} paragraph={place} focusOnMount={hasResumed} />
+      <PassageTarget
+        block={place}
+        quote={quote}
+        isPicking={isPicking}
+        onPicking={props.onPicking}
+      />
+      <CommentComposer
+        // A new set of words is a new comment: the box starts empty for it. While lines are being
+        // ticked the box stays, so ticking another line keeps what was typed.
+        key={composerKey(quote, isPicking)}
+        address={address}
+        paragraph={place}
+        quote={quote ?? undefined}
+        label={fieldLabel(quote, isPicking, isPoem, t)}
+        focusOnMount={props.hasResumed || (props.isNewSelection && !isPicking)}
+        onDone={isPicking ? props.onPosted : undefined}
+      />
     </div>
   );
+}
+
+/**
+ * The field's label for chosen words (boards B13 and B14), or undefined for the usual one.
+ *
+ * @param quote - the words, or null for the whole stanza
+ * @param isPicking - true while Choose lines is on
+ * @param isPoem - lines in a poem, sentences in prose
+ * @param t - the comments texts
+ * @returns "Comment on these lines", "Comment on this part" or undefined
+ */
+function fieldLabel(
+  quote: CommentQuote | null,
+  isPicking: boolean,
+  isPoem: boolean,
+  t: (key: string) => string,
+): string | undefined {
+  if (isPicking) return t(isPoem ? 'part.linesLabel' : 'part.sentencesLabel');
+  if (quote !== null) return t('part.composerLabel');
+  return undefined;
 }
 
 /** What the list of comments needs. */
@@ -226,6 +300,10 @@ interface ThreadBodyProps extends Pick<ParagraphThreadProps, 'address' | 'place'
   loadFailed: boolean;
   /** True while the writer's pause of new comments runs (CALM-8): Reply is hidden. */
   isPaused: boolean;
+  /** The underlined parts that start in this stanza (READER-SELECT). */
+  parts: CommentPart[];
+  /** The key of the part the panel is open at, or null. */
+  activeKey: string | null;
 }
 
 /**
@@ -233,27 +311,95 @@ interface ThreadBodyProps extends Pick<ParagraphThreadProps, 'address' | 'place'
  *
  * @returns the list or a line saying why it is empty
  */
-function ThreadBody({ address, place, thread, loadFailed, isPaused }: ThreadBodyProps) {
+function ThreadBody(props: ThreadBodyProps) {
+  const { address, place, thread, loadFailed, isPaused } = props;
   const { t } = useCommentsTranslation();
   if (loadFailed) return <Notice tone="error">{t('section.loadFailed')}</Notice>;
+  // Grey comment shapes after 300 ms, never a spinner (design books item 15).
   if (thread === null)
-    return <p className="m-0 mt-3 type-body text-ink-muted">{t('paragraph.loading')}</p>;
+    return <PlaceholderComments label={t('paragraph.loading')} isBoxed={false} />;
   if (thread.comments.length === 0) {
     if (place === 'earlier') return null;
     return <p className="m-0 mt-3 type-body text-ink-muted">{t('paragraph.emptyTitle')}</p>;
   }
+  // The earlier version's list has no parts: its paragraphs are gone.
+  if (place === 'earlier') {
+    return (
+      <div className="mt-2 divide-y divide-hairline">
+        {thread.comments.map((comment) => (
+          <CommentItem
+            key={comment.id}
+            address={address}
+            comment={comment}
+            isInParagraphThread
+            isPaused={isPaused}
+          />
+        ))}
+      </div>
+    );
+  }
   return (
-    <div className="mt-2 divide-y divide-hairline">
-      {thread.comments.map((comment) => (
-        <CommentItem
-          key={comment.id}
-          address={address}
-          comment={comment}
-          isInParagraphThread
-          isPaused={isPaused}
-        />
-      ))}
-    </div>
+    <ParagraphThreadGroups
+      address={address}
+      comments={thread.comments}
+      parts={props.parts}
+      activeKey={props.activeKey}
+      isPaused={isPaused}
+    />
+  );
+}
+
+/**
+ * The panel's state for chosen words (READER-SELECT): the stanza's parts, the active one, Choose
+ * lines, and whether the words are a new selection (not an underlined part's).
+ *
+ * @param place - the stanza, or 'earlier'
+ * @param quote - the words the panel is open at, or null
+ * @returns what the body and the foot need
+ */
+function usePanelWords(place: ParagraphPlace, quote: CommentQuote | null) {
+  const comments = useContext(ParagraphCommentsContext);
+  const [isPicking, setIsPicking] = useState(false);
+  const parts = (comments?.counts.parts ?? []).filter((part) => part.block === place);
+  const activeKey = quote === null ? null : partKey(quote);
+  // A new selection's words aren't underlined yet; the field then takes the focus (board B12).
+  const isNewSelection =
+    quote !== null && !parts.some((part) => partKey(quoteOfPart(part)) === activeKey);
+  return { comments, isPicking, setIsPicking, parts, activeKey, isNewSelection };
+}
+
+/**
+ * The middle of the panel: the tick boxes while Choose lines is on, otherwise the comments.
+ *
+ * @returns the line picker or the comments
+ */
+function ThreadMiddle(
+  props: Omit<ThreadBodyProps, 'parts' | 'activeKey'> & {
+    isPicking: boolean;
+    words: ReturnType<typeof usePanelWords>;
+  },
+) {
+  const { place, words } = props;
+  if (props.isPicking && typeof place === 'number') {
+    return (
+      <LinePicker
+        block={place}
+        isPoem={words.comments?.isPoem ?? false}
+        language={words.comments?.language ?? 'ro'}
+        onChange={(chosen) => words.comments?.openPanel(place, chosen)}
+      />
+    );
+  }
+  return (
+    <ThreadBody
+      address={props.address}
+      place={place}
+      thread={props.thread}
+      loadFailed={props.loadFailed}
+      isPaused={props.isPaused}
+      parts={words.parts}
+      activeKey={words.activeKey}
+    />
   );
 }
 
@@ -270,9 +416,19 @@ export function ParagraphThread(props: ParagraphThreadProps) {
   const { thread, loadFailed } = useParagraphComments(address, place);
   const pauseEnd = pauseEndOf(thread);
   const sectionRef = useRef<HTMLElement>(null);
-  useThreadKeyboard(sectionRef, onClose, takesFocus);
+  const quote = props.quote ?? null;
+  const words = usePanelWords(place, quote);
+  // For a new selection the field takes the focus instead of the panel (board B12).
+  useThreadKeyboard(sectionRef, onClose, takesFocus && !words.isNewSelection);
   const label =
     place === 'earlier' ? t('paragraph.earlierLabel') : t('paragraph.label', { number: place });
+  const isPicking = words.isPicking && place !== 'earlier';
+
+  /** Choose lines on or off; off goes back to the whole stanza ("Whole stanza instead"). */
+  function setPicking(isOn: boolean) {
+    words.setIsPicking(isOn);
+    if (!isOn && place !== 'earlier') words.comments?.openPanel(place, null);
+  }
 
   return (
     <section
@@ -289,14 +445,26 @@ export function ParagraphThread(props: ParagraphThreadProps) {
         total={thread?.total ?? null}
         onClose={onClose}
       />
-      <ThreadBody
-        address={address}
+      <ThreadMiddle
+        {...props}
         place={place}
         thread={thread}
         loadFailed={loadFailed}
         isPaused={pauseEnd !== null}
+        isPicking={isPicking}
+        words={words}
       />
-      <ThreadFoot address={address} place={place} thread={thread} pauseEnd={pauseEnd} />
+      <ThreadFoot
+        address={address}
+        place={place}
+        thread={thread}
+        pauseEnd={pauseEnd}
+        quote={quote}
+        isPicking={isPicking}
+        isNewSelection={words.isNewSelection}
+        onPicking={setPicking}
+        onPosted={() => words.setIsPicking(false)}
+      />
     </section>
   );
 }

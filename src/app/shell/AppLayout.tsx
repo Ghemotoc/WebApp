@@ -23,9 +23,9 @@
  * MaintenanceGate swaps the notices and the page for the maintenance page while maintenance mode is
  * on (staff and the log-in pages excepted); useTrackRoutePattern remembers which page is on screen
  * for error reports, as a pattern such as "/join/:code", never the address itself.
- * Notifications (S1-E7-01): the bell sits after "Write" and Messages while signed in, with one dot
- * when something is new and the count in its name (bundle CALM-2: search, Write, Messages, bell,
- * avatar).
+ * Notifications (S1-E7-01): the bell sits after "Write" and Messages while signed in, with a small
+ * count (1 to 9, then 9+) when something is new and the full count in its name (bundle CALM-2:
+ * search, Write, Messages, bell, avatar; the count replaced the dot in design books item 16).
  * Investor numbers (S1-E15-04): ActiveMinutesCounter says "here" once a minute while someone is
  * signed in, for the day's totals; it draws nothing.
  * Pictures (S1-E10-05): usePendingPictureRetry asks once per signed-in visit for the check of any
@@ -78,6 +78,7 @@ import { WriteLink } from '@/features/writing/components/WriteLink';
 
 import { PageGates } from './PageGates';
 import { FocusHeader } from './FocusHeader';
+import { HeaderSearch } from './HeaderSearch';
 import { PageHeaderContext } from './pageHeaderContext';
 import { Footer } from './Footer';
 import { FooterAboutContext } from './footerAboutContext';
@@ -88,25 +89,26 @@ import { useIsNarrowScreen } from './useIsNarrowScreen';
 import { useServerHeadReset } from './useServerHeadReset';
 
 /**
- * The website top bar, for windows from 1024 px: Home, Read, Library and Together, search, then
- * Write, Messages, Notifications and the account (the simplified design, bundle CALM-2). The Search page has its
- * own, bigger field with the filters, so the top bar leaves its search pill out there and the page
- * keeps one search region.
+ * The website top bar, for windows from 1024 px: Home, Read, Library and Together, then Write,
+ * the round search link, Messages, Notifications and the account (the simplified design, bundle
+ * CALM-2; user story 1.7 and boards A01 to A07 put search after Write as a button, so the Search
+ * page's own field is the only search field).
  *
- * @param props.hasSearch - false on the Search page
  * @returns the top bar
  */
-function WideHeader({ hasSearch }: { hasSearch: boolean }) {
+function WideHeader() {
+  const { userId } = useSession();
   return (
     <TopBar
-      hasSearch={hasSearch}
       endSlot={
         <>
           {/* "Write", a quiet button, while signed in (S1-E3-01; CALM-2). */}
           <WriteLink />
+          {/* Search, a round link to the Search page, while signed in (user story 1.7). */}
+          {userId !== null && <HeaderSearch />}
           {/* Messages as an icon button, as on phones, while signed in (S1-E9-01; CALM-2). */}
           <MessagesHeaderLink />
-          {/* The bell, with a dot when something is new, while signed in (S1-E7-01). */}
+          {/* The bell, with a small count when something is new, while signed in (S1-E7-01). */}
           <NotificationBell />
           {/* "Get in" while signed out (S1-E2-01, GETIN-1); the account bead after. */}
           <AccountLinks />
@@ -126,8 +128,7 @@ function useShellHeader(isOwnedByPage: boolean) {
   const isNarrow = useIsNarrowScreen();
   const { pathname } = useLocation();
   if (!isNarrow) {
-    const isSearchPage = pathname === '/search' || pathname.startsWith('/search/');
-    return { header: <WideHeader hasSearch={!isSearchPage} />, hasTabBar: false };
+    return { header: <WideHeader />, hasTabBar: false };
   }
   const screen = shellScreenFor(pathname);
   if (screen.kind === 'focus') {

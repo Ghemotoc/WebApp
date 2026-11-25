@@ -47,9 +47,7 @@ function NewStoryHeader() {
         {t('newStory.back')}
       </Link>
       <Eyebrow>{t('newStory.eyebrow')}</Eyebrow>
-      <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
-        {t('newStory.heading')}
-      </h1>
+      <h1 className="m-0 type-title lg:type-display">{t('newStory.heading')}</h1>
       <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('newStory.intro')}</p>
       {/* The writing prompt, when the writer came from the hub's "Write from this prompt". */}
       <PromptNote />

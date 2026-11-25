@@ -1,7 +1,8 @@
 /**
  * Reads and saves the reader's reading settings (story S1-E4-02; board 3.5 Reader), with the
  * reading comfort settings of IDEAS-1 part a: Night by the clock (IDEA-20261031-7) and the
- * reading ruler (IDEA-20261031-8).
+ * reading ruler (IDEA-20261031-8), and the Paper of BOOKS B04 (user story 2.4, board
+ * B04-ReaderSettings), which replaced the Light, Sepia and Night themes.
  *
  * Who calls it: hooks/useReadingSettings.ts, for the reader's settings panel and the chapter text.
  * What it calls next: the reading_settings table (the caller's own row only, by row-level
@@ -16,8 +17,8 @@ export type ReadingFont = Database['public']['Enums']['reading_font'];
 export type ReadingLineSpacing = Database['public']['Enums']['reading_line_spacing'];
 /** The line width choices. */
 export type ReadingLineWidth = Database['public']['Enums']['reading_line_width'];
-/** The theme choices for the chapter text. */
-export type ReadingTheme = Database['public']['Enums']['reading_theme'];
+/** The paper the chapter is read on: White, Sepia (the default), Grey or Black (BOOKS B04). */
+export type ReadingPaper = Database['public']['Enums']['reading_paper'];
 
 /**
  * Where the minutes left in a chapter show (CALM-5; Robert, 20 Nov 2026, 12:28 UTC): 'bar' at the
@@ -34,8 +35,8 @@ export interface ReadingSettings {
   textSize: number | null;
   lineSpacing: ReadingLineSpacing;
   lineWidth: ReadingLineWidth;
-  theme: ReadingTheme;
-  /** Night by the clock: show chapters in Night between the two times below. */
+  paper: ReadingPaper;
+  /** Night by the clock: show chapters on Black paper between the two times below. */
   nightByClock: boolean;
   /** When Night by the clock starts, "HH:MM" on the device's clock, or null until the reader sets it. */
   nightFrom: string | null;
@@ -54,7 +55,8 @@ export const defaultReadingSettings: ReadingSettings = {
   textSize: null,
   lineSpacing: 'normal',
   lineWidth: 'medium',
-  theme: 'light',
+  // Sepia, today's story paper (BOOKS B04, story 2.4: "Sepia is today's default").
+  paper: 'sepia',
   nightByClock: false,
   nightFrom: null,
   nightUntil: null,
@@ -84,7 +86,7 @@ export async function fetchReadingSettings(client: AppSupabaseClient): Promise<R
   const { data, error } = await client
     .from('reading_settings')
     .select(
-      'font, text_size, line_spacing, line_width, theme, night_by_clock, night_from, night_until, reading_ruler, time_left',
+      'font, text_size, line_spacing, line_width, paper, night_by_clock, night_from, night_until, reading_ruler, time_left',
     )
     .maybeSingle();
   if (error !== null) throw new Error(`Could not read your reading settings: ${error.message}`);
@@ -94,7 +96,7 @@ export async function fetchReadingSettings(client: AppSupabaseClient): Promise<R
     textSize: data.text_size,
     lineSpacing: data.line_spacing,
     lineWidth: data.line_width,
-    theme: data.theme,
+    paper: data.paper,
     nightByClock: data.night_by_clock,
     nightFrom: shortTime(data.night_from),
     nightUntil: shortTime(data.night_until),
@@ -121,7 +123,7 @@ export async function saveReadingSettings(
     wanted_text_size: settings.textSize as number,
     wanted_line_spacing: settings.lineSpacing,
     wanted_line_width: settings.lineWidth,
-    wanted_theme: settings.theme,
+    wanted_paper: settings.paper,
     wanted_night_by_clock: settings.nightByClock,
     // The generated types say string, but the function takes null for "not set yet".
     wanted_night_from: settings.nightFrom as string,

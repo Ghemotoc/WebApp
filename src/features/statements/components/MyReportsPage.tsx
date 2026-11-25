@@ -196,9 +196,7 @@ export function MyReportsPage() {
       </Link>
       <header className="flex max-w-[720px] flex-col gap-4">
         <Eyebrow>{t('page.eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
-          {t('page.title')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display">{t('page.title')}</h1>
         <p className="m-0 type-long leading-relaxed text-ink-muted">{t('page.intro')}</p>
       </header>
       {isKnown && userId === null && (

@@ -23,16 +23,14 @@ export function ShellSection() {
   return (
     <DesignSection id="top-bar" title={t('sections.shell')}>
       <p className="m-0 max-w-[720px] text-ink-muted">{t('shell.topBarNote')}</p>
-      <div className="-mx-[calc(clamp(16px,4vw,64px)+10px)]">
+      <div className="-mx-6 md:-mx-8 lg:-mx-16">
         <TopBar
           navigationItems={boardPrimaryNavigation}
           navigationLabel={t('shell.topBarSpecimen')}
-          // One search region per page: the real top bar already has it.
-          hasSearch={false}
         />
       </div>
       <p className="m-0 max-w-[720px] text-ink-muted">{t('shell.staffBarNote')}</p>
-      <div className="-mx-[calc(clamp(16px,4vw,64px)+10px)]">
+      <div className="-mx-6 md:-mx-8 lg:-mx-16">
         <StaffBar
           navigationItems={boardStaffNavigation}
           staffName={t('shell.staffName')}

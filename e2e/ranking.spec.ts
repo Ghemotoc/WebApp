@@ -8,10 +8,11 @@
  * - a list opens in popular order: the story with likes and a comment comes before the one
  *   without (criterion 1), and the sort drop-down says Popular;
  * - "How ranking works" opens the terms at section 5 (DSA art. 27);
- * - the story page's stats row shows the likes, comments, chapters and the last update, and no
- *   read total.
+ * - the story page's stats row shows the public reads total, the story's own likes, comments,
+ *   chapters and the last update (board B01, bundle 2: reads are public since 24 Nov 2026).
  * Test data: two stories of its own by adult_writer tagged "e2e-rank", liked by teacher and
- * blocker and commented on by teacher; removed afterwards, and the setting restored.
+ * blocker (the chapter for ranking, the story for the stats row), read 3 times and commented on
+ * by teacher; removed afterwards, and the setting restored.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
@@ -59,6 +60,13 @@ function seedStories() {
     select persona, chapters.id from public.chapters
     join public.stories on stories.id = chapters.story_id and stories.slug = 'rank-e2e-liked',
       unnest(array['${teacherId}', '${blockerId}']::uuid[]) as persona;
+    insert into public.story_likes (user_id, story_id)
+    select persona, stories.id from public.stories,
+      unnest(array['${teacherId}', '${blockerId}']::uuid[]) as persona
+    where stories.slug = 'rank-e2e-liked';
+    insert into public.chapter_reads (chapter_id, read_on, total)
+    select chapters.id, current_date, 3 from public.chapters
+    join public.stories on stories.id = chapters.story_id and stories.slug = 'rank-e2e-liked';
     insert into public.comments (user_id, chapter_id, body)
     select '${teacherId}', chapters.id, 'Lovely.' from public.chapters
     join public.stories on stories.id = chapters.story_id and stories.slug = 'rank-e2e-liked';
@@ -121,6 +129,8 @@ test.describe('popularity ranking (S1-E5-03)', () => {
     const cards = page.getByRole('link', { name: /Liked lighthouse|Quiet harbour/ });
     await expect(cards).toHaveCount(2);
     await expect(cards.first()).toHaveAccessibleName(/Liked lighthouse/);
+    // The sort lives in the "Filter and sort" panel (user story 1.5).
+    await page.getByRole('button', { name: 'Filter and sort' }).click();
     await expect(page.getByLabel('Sort by')).toHaveValue('popular');
     // Newest first puts the quieter, newer story on top instead.
     await page.getByLabel('Sort by').selectOption({ label: 'Newest' });
@@ -135,15 +145,15 @@ test.describe('popularity ranking (S1-E5-03)', () => {
     await expect(page.locator('#section-5')).toContainText(/rank/i);
   });
 
-  test('the story page shows likes, comments, chapters and the update, never reads', async ({
+  test('the story page shows reads, likes, comments, chapters and the update', async ({
     browser,
   }) => {
     const page = await openAsVisitor(browser, '/s/rank-e2e-liked');
     const stats = page.getByRole('list', { name: 'Story numbers' });
+    await expect(stats).toContainText('3 reads');
     await expect(stats).toContainText('2 likes');
     await expect(stats).toContainText('1 comment');
     await expect(stats).toContainText('1 chapter');
     await expect(stats).toContainText('Updated');
-    await expect(stats).not.toContainText(/reads?/i);
   });
 });

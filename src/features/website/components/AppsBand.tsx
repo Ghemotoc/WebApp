@@ -24,7 +24,7 @@ export function AppsBand({ band, language }: { band: HomeBand; language: string 
       id="apps"
       aria-labelledby="apps-band-heading"
       lang={language}
-      className="relative flex scroll-mt-6 flex-wrap items-end justify-between gap-8 rounded-card border border-border bg-surface p-[clamp(24px,4vw,48px)]"
+      className="relative flex scroll-mt-6 flex-wrap items-end justify-between gap-8 rounded-card border border-border bg-surface p-6 lg:p-12"
     >
       <BandText band={band} headingId="apps-band-heading" tone="page" />
       <BandButtons

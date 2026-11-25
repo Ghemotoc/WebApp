@@ -119,7 +119,7 @@ export function ParentSpotlightPage() {
       <title>{t('spotlight.documentTitle')}</title>
       <section
         aria-labelledby="parent-spotlight-heading"
-        className="flex w-full max-w-[720px] flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[720px] flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
       >
         <div className="flex flex-col gap-2">
           <Eyebrow>{t('parent.eyebrow')}</Eyebrow>

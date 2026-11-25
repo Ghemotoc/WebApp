@@ -308,7 +308,8 @@
       "no_list": "There is no approved tag with that name. Check the spelling.",
       "no_market": "That market doesn’t exist any more. Reload the page.",
       "unreachable": "We couldn’t reach the database. Check your connection and try again."
-    }
+    },
+    "plainDefault": "Default: plain heading"
   },
   "search": {
     "legend": "Search and sharing",

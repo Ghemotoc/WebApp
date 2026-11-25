@@ -2,7 +2,7 @@
  * ReaderSideColumn: the column beside the paper from 1280 px, "Reading tools" (bundle CALM-5;
  * design handover Step 3, "Reader on wide screens", points 6 and 7; board New-Reader).
  *
- * From the top: Reading settings while open, then About this story, then the comments on a
+ * From the top: Contents or Reading settings while open (board B02), then About this story, then the comments on a
  * paragraph while open (LazyParagraphThread draws them into the slot here), then the 300 × 250
  * advert. With nothing open it starts with About this story (Robert, 20 Nov 2026, 12:08).
  * The comment box starts level with its paragraph, About this story above it (CALM-9, board B03,
@@ -24,7 +24,7 @@ import { ParagraphCommentsContext } from '../lib/paragraphCommentsContext';
 export interface ReaderSideColumnProps {
   /** Hands the thread slot's element up, so an open thread can be drawn into it. */
   onThreadSlot: (element: HTMLElement | null) => void;
-  /** Reading settings while open, otherwise nothing. */
+  /** The open bar panel (Contents or Reading settings), otherwise nothing. */
   settings: ReactNode;
   /** About this story, which sits above the comment box. */
   about: ReactNode;

@@ -649,19 +649,26 @@ dialog.bg-surface,
 }
 
 /*
- * The large page title of the liquid glass boards (".h1": Funnel Display, 72 px on a wide
- * screen, stepping down to 40 px on a phone; bundle G8). The list pages of G7c and the Library
- * draw the same size inline; pages restyled from G8 on use this one class instead.
+ * The page title (".h1" of the liquid glass boards, bundle G8), now on the design books' type scale
+ * (user stories Section 1, story 0.1; Robert, 23 Nov 2026): the title style, Funnel Display 32/38,
+ * on phones and tablets, and the display style, 48/52, from 1024 px. It was 40 to 72 px before;
+ * the look rules allow no other sizes.
  */
 @utility page-title {
   margin: 0;
   font-family: var(--font-heading);
-  font-size: clamp(40px, 5.6vw, 72px);
-  line-height: 0.98;
+  font-size: 32px;
+  line-height: 38px;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
   color: var(--heading);
   overflow-wrap: break-word;
+
+  @media (width >= 1024px) {
+    font-size: 48px;
+    line-height: 52px;
+    letter-spacing: -0.02em;
+  }
 }
 
 /*
@@ -1441,7 +1448,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
    paragraph's edge, so the text keeps the whole column and never moves when the counts arrive:
    below 1024 px a small 28 px white pill at the paragraph's top right corner with a 44 px touch
    area (::after), from 1024 px the comment mark and the number in the accent colour in the
-   paper's left margin, beside the first line. A paragraph without comments keeps a quiet plus in
+   paper's right margin, beside the first line (Robert, 24 Nov 2026; CALM-5 had the left). A paragraph without comments keeps a quiet plus in
    the same place. The open paragraph is tinted with a 9% wash of the thread colour. On a narrow
    screen the paragraph scrolls to just under the chapter bar before its sheet opens
    (scroll-margin-top). */
@@ -1504,8 +1511,8 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 @media (min-width: 1024px) {
   .tmc-paragraph-marker {
     top: calc((var(--reading-line-height, 1.7) * var(--reading-font-size, 20px) - 32px) / 2);
-    right: auto;
-    left: -60px;
+    /* Robert, 24 Nov 2026: in the right margin, not the left. */
+    right: -60px;
     height: 32px;
     min-width: 44px;
     padding: 0 8px;
@@ -1562,15 +1569,22 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   line-height: var(--reading-line-height, 1.7);
   letter-spacing: var(--reading-letter-spacing, 0);
 }
-/* The reading paper (S1-E4-02 themes; liquid glass look from bundle G7d, board WebReaderV1): the
-   whole chapter, title to Like, sits on one rounded sheet of paper with a soft shadow. Light uses
-   the story paper (#FFFBF2 by day; #1A1A1C with light text when the site is at night, rulebook),
-   Night reuses the night tokens (data-theme="night" on the same box) on the same dark paper, and
-   Sepia sets its own colours, every one at least 7:1 on #F3E7D3. --reading-page-pad is the side
+/* The reading paper (S1-E4-02; liquid glass look from bundle G7d, board WebReaderV1; Paper from
+   BOOKS B04, board B04-ReaderSettings): the whole chapter, title to Like, sits on one rounded
+   sheet of paper with a soft shadow. Sepia, the default, is the story paper (#FFFBF2 by day; the
+   dark story paper with light text when the site is at night), Black reuses the night tokens
+   (data-theme="night" on the same box) on the dark paper, and White (#FFFFFF) and Grey (#EDEDED)
+   set their own sheet by day only (DESIGN, 24 Nov 2026), so Night mode and high contrast still
+   turn every paper dark or plain. --reading-page-pad is the side
    padding, which ChapterReaderPage adds to the text column's width so the line length stays the
    reader's choice. */
-.tmc-reading-page {
+/* .tmc-reading-width: a box above the paper as wide as the paper (the note after "Read in",
+   BOOKS B07), so it shares the paper's side padding variable at every width. */
+.tmc-reading-page,
+.tmc-reading-width {
   --reading-page-pad: 20px;
+}
+.tmc-reading-page {
   padding: 24px var(--reading-page-pad) 28px;
   border-radius: 32px;
   background: var(--paper);
@@ -1578,32 +1592,36 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   box-shadow: var(--shadow-card);
 }
 @media (min-width: 600px) {
-  .tmc-reading-page {
+  .tmc-reading-page,
+  .tmc-reading-width {
     --reading-page-pad: 40px;
+  }
+  .tmc-reading-page {
     padding-top: 40px;
     padding-bottom: 40px;
   }
 }
 @media (min-width: 1024px) {
-  .tmc-reading-page {
+  .tmc-reading-page,
+  .tmc-reading-width {
     --reading-page-pad: 64px;
+  }
+  .tmc-reading-page {
     padding-top: 56px;
     padding-bottom: 56px;
   }
 }
-.tmc-reading-page--paper {
+.tmc-reading-page--paper,
+.tmc-reading-page--sepia,
+.tmc-reading-page--white,
+.tmc-reading-page--grey {
   --paper: var(--story-paper);
 }
-.tmc-reading-page--sepia {
-  color-scheme: light;
-  --paper: #f3e7d3;
-  --ink: #3b2a1a;
-  --heading: #3b2a1a;
-  --body: #4a3826;
-  --meta: #5c4632;
-  --link: #5e2378;
-  --border: #c9b392;
-  --hairline: #e3d3b8;
+:root:not([data-theme='night']):not([data-contrast]) .tmc-reading-page--white {
+  --paper: var(--reading-paper-white);
+}
+:root:not([data-theme='night']):not([data-contrast]) .tmc-reading-page--grey {
+  --paper: var(--reading-paper-grey);
 }
 /* The reader's row (bundle CALM-5; handover Step 3; board New-Reader): the chapter on the left
    and, from 1280 px, the 360 px side column "Reading tools" 48 px away, which stays in view under
@@ -1621,11 +1639,26 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 .tmc-chapter-bar {
   top: var(--reader-bar-top);
 }
+/* The page column's side space (PageContainer: px-6 md:px-8 lg:px-16), which the reader's bar and
+   paper reach past on smaller screens. Keep the two in step when the column changes. */
+:root {
+  --page-column-side: 24px;
+}
+@media (min-width: 768px) {
+  :root {
+    --page-column-side: 32px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --page-column-side: 64px;
+  }
+}
 /* Below 1024 px the bar sits 12 px from each edge of the screen (board New-PhoneReader), so it
    reaches past the page column's side space. */
 @media (max-width: 1023px) {
   .tmc-chapter-bar {
-    margin-inline: calc(12px - (clamp(16px, 4vw, 64px) + 10px));
+    margin-inline: calc(12px - var(--page-column-side));
   }
 }
 @media (min-width: 1280px) {
@@ -1668,7 +1701,7 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 @media (max-width: 599px) {
   .tmc-reading-page {
     --reading-page-pad: 24px;
-    margin-inline: calc(-1 * (clamp(16px, 4vw, 64px) + 10px));
+    margin-inline: calc(-1 * var(--page-column-side));
     width: auto;
     max-width: none !important;
     border-radius: 0;
@@ -1832,4 +1865,228 @@ html {
 @utility space-banner-guide-safe {
   border: 2px dashed var(--meta);
   background: var(--surface);
+}
+
+/* ---------------------------------------------------------------------------------------------
+ * READER-SELECT: comments on chosen words (boards B12 to B14; Robert, 24 Nov 2026).
+ * Underlines and tints are painted over the real text by the CSS Custom Highlight API
+ * (components/PartHighlights.tsx), so the writer's words are never wrapped in new elements.
+ * ------------------------------------------------------------------------------------------- */
+
+/* The underline under words readers commented on: 2 px in the theme colour, a little faded. */
+::highlight(tmc-part) {
+  text-decoration: underline 2px color-mix(in srgb, var(--plum-to) 45%, transparent);
+  text-underline-offset: 4px;
+}
+
+/* The part the panel is open at, and the part the pointer is on, in the text or in the panel. */
+::highlight(tmc-part-open),
+::highlight(tmc-part-hover) {
+  background-color: var(--tint);
+  text-decoration: underline 2px var(--plum-to);
+  text-underline-offset: 4px;
+}
+
+/* The hand over underlined words: they open their group like a button does. */
+.tmc-chapter-text--on-part {
+  cursor: pointer;
+}
+
+/* The pill above a mouse selection (board B12, frame 1): 40 px, the main fill, a small tail. */
+.tmc-select-pill {
+  position: fixed;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--plum-to);
+  color: var(--on-plum);
+  /* It sits inside the story text (Literata), so it names the interface font itself:
+     Inter 600 at the type-label size (design books, 15/20; the board draws 14 px). */
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--shadow-popover);
+}
+.tmc-select-pill::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 20px;
+  border: 7px solid transparent;
+  border-top-color: var(--plum-to);
+}
+.tmc-select-pill:focus-visible,
+.tmc-select-bar__button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* Over 1,000 characters: grey, "Select less to comment" (board B14, frame 8). */
+.tmc-select-pill.is-off,
+.tmc-select-bar__button.is-off {
+  background: var(--surface-box);
+  color: var(--meta);
+  cursor: default;
+}
+.tmc-select-pill.is-off::after {
+  border-top-color: var(--surface-box);
+}
+
+/* The bar at the foot on a touch screen (board B12, frames 2 and 3). */
+.tmc-select-bar {
+  position: fixed;
+  right: 12px;
+  bottom: 16px;
+  left: 12px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  border: 1px solid var(--line-box);
+  border-radius: 9999px;
+  background: var(--surface-box);
+  box-shadow: var(--shadow-popover);
+}
+.tmc-select-bar__words {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--font-story);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tmc-select-bar__button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--plum-to);
+  color: var(--on-plum);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+@media (min-width: 768px) {
+  .tmc-select-bar {
+    right: 24px;
+    bottom: 24px;
+    left: 24px;
+  }
+}
+/* The "Share quote" bar moves up while the comment bar sits at the foot. */
+html[data-comment-bar] .tmc-quote-share-bar {
+  bottom: 88px;
+}
+
+/* The part buttons for keyboards and screen readers: hidden until one has focus, then a small
+   pill under the stanza (board B14, How it acts). */
+.tmc-part-buttons {
+  display: block;
+}
+.tmc-part-button {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.tmc-part-button:focus-visible {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  height: 32px;
+  margin: 4px 8px 0 0;
+  padding: 0 12px;
+  overflow: visible;
+  clip-path: none;
+  border: 1px solid var(--control-border);
+  border-radius: 9999px;
+  background: var(--surface-box);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* A part's group in the panel (board B13): its words in small italic with a thin bar. */
+.tmc-comment-group {
+  margin-top: 16px;
+  padding: 8px 0 0 12px;
+  border-left: 2px solid var(--thread);
+  border-radius: 0 12px 12px 0;
+}
+.tmc-comment-group--active {
+  background: var(--tint);
+}
+.tmc-comment-group__words {
+  display: block;
+  margin: 0 0 4px;
+  padding: 4px 8px 4px 0;
+  border: 0;
+  background: none;
+  color: var(--meta);
+  font-family: var(--font-story);
+  font-style: italic;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+.tmc-comment-group__words:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+/* The quote above a comment whose words the writer has since changed (board B13). */
+.tmc-comment-quote {
+  margin: 0 0 4px;
+  padding-left: 12px;
+  border-left: 2px solid var(--hairline);
+  color: var(--meta);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Choose lines: the stanza's lines as tick boxes (board B14, frame 9). */
+.tmc-line-picker {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tmc-line-picker__line {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hairline);
+  cursor: pointer;
+}
+.tmc-line-picker__line input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--plum-to);
 }

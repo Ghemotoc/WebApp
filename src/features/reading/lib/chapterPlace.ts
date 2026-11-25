@@ -61,3 +61,14 @@ export function nextChapterText(
     ? t('reader.lastChapterDay', { day })
     : t('reader.nextChapterDay', { day });
 }
+
+/**
+ * Whether a chapter ends its story: it is the one the writer marked as the last (CALM-6), so the
+ * reader shows "That's the end of the story." and What next (BOOKS B06, user story 2.6).
+ *
+ * @param chapter - the chapter's number and the marked last chapter's number (null when none)
+ * @returns true at the end of a story
+ */
+export function isStoryEnd(chapter: { number: number; lastChapterNumber: number | null }): boolean {
+  return chapter.lastChapterNumber !== null && chapter.number === chapter.lastChapterNumber;
+}

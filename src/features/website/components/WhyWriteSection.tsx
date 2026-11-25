@@ -5,7 +5,9 @@
  * Board values: one white card with a soft border and shadow, split into four columns by thin
  * lines (two columns on tablets, one on phones), each with a heading and a short paragraph (no
  * doodles in the liquid glass design, bundle G4). Every word comes from the published CMS version.
- * Who uses it: WebsiteHomePage. What it calls: withBrand.
+ * The heading's sentences after the first are drawn in the look's accent (user story 1.2, board
+ * A02), like the hero's second line.
+ * Who uses it: WebsiteHomePage. What it calls: withBrand and splitHeadingSentences.
  */
 import { useTranslation } from 'react-i18next';
 
@@ -13,6 +15,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow';
 import type { HomePageContent } from '@/schemas/websiteContent';
 
 import { withBrand } from '../lib/brandText';
+import { splitHeadingSentences } from '../lib/headingSentences';
 
 /** What the section needs. */
 interface WhyWriteSectionProps {
@@ -27,15 +30,23 @@ interface WhyWriteSectionProps {
  */
 export function WhyWriteSection({ page, language }: WhyWriteSectionProps) {
   const { t } = useTranslation();
+  const heading = splitHeadingSentences(withBrand(page.whyHeading));
   return (
     <section aria-labelledby="why-write-heading" lang={language} className="flex flex-col gap-6">
       <div className="flex max-w-[760px] flex-col gap-2">
         <Eyebrow>{t('website.whyEyebrow')}</Eyebrow>
         <h2
           id="why-write-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.08] font-bold tracking-[-0.015em] text-balance text-ink-heading"
+          className="m-0 type-title text-balance text-ink-heading lg:type-display"
         >
-          {withBrand(page.whyHeading)}
+          {/* Board A02: the first sentence in the heading colour, the rest in the accent. */}
+          {heading.first}
+          {heading.rest !== '' && (
+            <>
+              {' '}
+              <span className="text-accent">{heading.rest}</span>
+            </>
+          )}
         </h2>
       </div>
       {/* Separate glass cards with a gap between them (G5b, handoff "Public pages": "separate

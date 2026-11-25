@@ -12,8 +12,8 @@ the moderation team approves, renames or rejects the tags writers add (CMS-1e; R
 - `hooks/useTagCatalogue.ts` (every screen that shows tags) and `hooks/useTagQueue.ts` (staff).
 - `components/TagNames.tsx`: a story's tags as one line in the interface language.
 - Rank badges (CMS-1g): `api/tagRanks.ts` (`story_tag_ranks()`, `set_rank_badge_tags()`),
-  `hooks/useTagRanks.ts`, `lib/rankPick.ts` (at most 3 picks), `components/RankBadges.tsx` (under
-  the cover on the story page) and `components/RankBadgePicker.tsx` (Story settings).
+  `hooks/useTagRanks.ts`, `lib/rankPick.ts` (at most 3 picks), `components/RankBadges.tsx` (the rank
+  line in the story page's hero, as links) and `components/RankBadgePicker.tsx` (Story settings).
 - `components/staff/`: `TagsAdminPage.tsx` (/staff/tags and /staff/tags/missing),
   `TagDecisionRow.tsx` (a name per language, Approve or Save the names, Reject) and
   `RejectTagForm.tsx`.

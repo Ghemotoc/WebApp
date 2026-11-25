@@ -80,7 +80,11 @@
     "label": "Bibliotecă",
     "none": "Nu e în bibliotecă",
     "saveFailed": "Nu s-a salvat, așa că raftul a revenit cum era. Încearcă din nou.",
-    "logIn": "Intră ca s-o păstrezi"
+    "logIn": "Intră ca s-o păstrezi",
+    "addToLibrary": "Adaugă în bibliotecă",
+    "inLibrary": "În bibliotecă",
+    "readAgain": "Citește din nou",
+    "continueShort": "Continuă"
   },
   "startReading": "Începe lectura",
   "continueChapter": "Continuă capitolul {{number}}",
@@ -192,7 +196,7 @@
       "emptyOwn": "Folosește „Adaugă pe un raft” din pagina unei povești.",
       "emptyOther": "Nimic de pe acest raft nu îți este deschis acum.",
       "discover": "Caută povești",
-      "removedUndo": "{{title}} a fost scoasă de pe raft."
+      "removedUndo": "Ai scos „{{title}}” de pe raft."
     },
     "books": "{{filled}} din {{count}} cărți",
     "full": "Plin",

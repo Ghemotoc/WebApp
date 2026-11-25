@@ -3,18 +3,18 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - the panel offers the font (with the dyslexia-friendly one), text size, line spacing, line
- *   width and the light, sepia and night themes, and each change shows on the text at once
- *   (first criterion);
+ * - the panel offers Paper (White, Sepia, Grey, Black), the typeface (with OpenDyslexic), text
+ *   size, and line spacing and line width under More options, and each change shows on the text
+ *   at once (first criterion; BOOKS B04, user story 2.4);
  * - the settings are saved to the account: a fresh browser (another device) opens the chapter
  *   with them (second criterion);
  * - with the device set to larger text, the default size follows it until the reader picks one,
  *   and "Use my device's size" brings it back (third criterion);
- * - Escape closes the panel and puts focus back on its button; a visitor has no settings button;
+ * - Escape closes the panel and puts focus back on its button;
  * - time left sits in the chapter bar by default; "On the page" puts back the floating pill and
  *   takes the minutes out of the bar, and the choice is saved (CALM-5, handover Step 4, points 11
  *   and 12); Reading settings and a paragraph's comments are never open together;
- * - the open panel passes axe at 390 px in ro and en, in the night theme, and fits at 320 px.
+ * - the open panel passes axe at 390 px in ro and en, on Black paper, and fits at 320 px.
  * Test data: adult_writer's story "Ploaia de joi" with one chapter; pending_check reads it
  *   (no other spec reads as pending_check in the reader). All removed afterwards.
  */
@@ -102,32 +102,33 @@ test.describe('reading settings (S1-E4-02)', () => {
     const page = await openChapter(browser);
     await page.getByRole('button', { name: 'Reading settings' }).click();
     const panel = page.getByRole('region', { name: 'Reading settings' });
-    await panel.getByRole('radio', { name: 'Dyslexia-friendly' }).click();
+    await panel.locator('label', { hasText: 'OpenDyslexic' }).click();
     await expect.poll(() => textStyle(page, 'fontFamily')).toContain('OpenDyslexic');
     await panel.getByLabel('Text size').fill('24');
     await expect.poll(() => textStyle(page, 'fontSize')).toBe('24px');
+    // Line spacing and line width sit under More options (board B04-ReaderSettings).
+    await panel.getByText('More options').click();
     await panel.getByRole('radio', { name: 'Wide' }).first().click();
     await expect.poll(() => textStyle(page, 'lineHeight')).toBe('48px');
     await panel.getByRole('radio', { name: 'Narrow' }).click();
     await expect(page.locator('article')).toHaveCSS('max-width', '560px');
-    await panel.getByRole('radio', { name: 'Sepia' }).click();
-    await expect(page.locator('.tmc-reading-page--sepia')).toHaveCSS(
+    await panel.locator('label', { hasText: 'Grey' }).click();
+    await expect(page.locator('.tmc-reading-page--grey')).toHaveCSS(
       'background-color',
-      'rgb(243, 231, 211)',
+      'rgb(237, 237, 237)',
     );
-    await expect(panel).toContainText('Saved to your account');
     // Saved once the changes stop.
     await expect
       .poll(() =>
-        runSql(`select font || ' ' || text_size || ' ' || line_spacing || ' ' || line_width || ' ' || theme
+        runSql(`select font || ' ' || text_size || ' ' || line_spacing || ' ' || line_width || ' ' || paper
           from public.reading_settings where user_id = '${readerId}';`).trim(),
       )
-      .toBe('dyslexia_friendly 24 wide narrow sepia');
+      .toBe('dyslexia_friendly 24 wide narrow grey');
     await page.context().close();
     // Another device opens the chapter with the same settings.
     const again = await openChapter(browser);
     await expect.poll(() => textStyle(again, 'fontSize')).toBe('24px');
-    await expect(again.locator('.tmc-reading-page--sepia')).toBeVisible();
+    await expect(again.locator('.tmc-reading-page--grey')).toBeVisible();
   });
 
   test("the default size follows the device's larger text until the reader picks one", async ({
@@ -145,9 +146,7 @@ test.describe('reading settings (S1-E4-02)', () => {
     await expect.poll(() => textStyle(page, 'fontSize')).toBe('25px');
   });
 
-  test('Escape closes the panel and focus goes back to its button; visitors have no settings', async ({
-    browser,
-  }) => {
+  test('Escape closes the panel and focus goes back to its button', async ({ browser }) => {
     const page = await openChapter(browser);
     const button = page.getByRole('button', { name: 'Reading settings' });
     await button.click();
@@ -156,10 +155,6 @@ test.describe('reading settings (S1-E4-02)', () => {
     await expect(page.getByRole('region', { name: 'Reading settings' })).toBeHidden();
     await expect(button).toBeFocused();
     await expect(button).toHaveAttribute('aria-expanded', 'false');
-    const visitor = await browser.newPage();
-    await visitor.goto(chapterPath);
-    await expect(visitor.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(visitor.getByRole('button', { name: 'Reading settings' })).toHaveCount(0);
   });
 
   test('time left shows in the bar until the reader puts it on the page', async ({ browser }) => {
@@ -194,11 +189,11 @@ test.describe('reading settings (S1-E4-02)', () => {
   });
 
   for (const language of ['ro', 'en'] as const) {
-    test(`axe: the open panel and the night theme at 390 px, ${language}, fitting at 320 px`, async ({
+    test(`axe: the open panel on Black paper at 390 px, ${language}, fitting at 320 px`, async ({
       browser,
     }) => {
-      runSql(`insert into public.reading_settings (user_id, theme) values ('${readerId}', 'night')
-        on conflict (user_id) do update set theme = 'night';`);
+      runSql(`insert into public.reading_settings (user_id, paper) values ('${readerId}', 'black')
+        on conflict (user_id) do update set paper = 'black';`);
       const page = await openChapter(browser, { language });
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.setViewportSize({ width: 390, height: 900 });

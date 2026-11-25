@@ -35,6 +35,7 @@ const comment: ChapterComment = {
   isDownvotedByMe: false,
   replies: [],
   paragraph: null,
+  quote: null,
 };
 
 /** Signs the test reader in (a user ID) or out (null). */

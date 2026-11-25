@@ -13,7 +13,9 @@
 import type { ReactNode } from 'react';
 
 import { designsForRow, resolveCoverChoice } from '@/components/covers/automaticCover';
+import { PlaceholderShelf } from '@/components/ui/PlaceholderShelf';
 import { Shelf } from '@/components/ui/Shelf';
+import type { ShelfToolbarPlacement } from '@/components/ui/ShelfToolbar';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 
 import type { ListRequest, ListedStory } from '../api/storyLists';
@@ -48,6 +50,11 @@ export interface DiscoverShelfProps {
   isFollowingRow?: boolean;
   /** Controls between the heading and the row (the home page's genre chips, LOOK-3). */
   toolbar?: ReactNode;
+  /**
+   * Where the toolbar sits: above the row (the default) or under it, as the Home page's genre
+   * chips do on board A01 (Robert's review of 25 Nov 2026).
+   */
+  toolbarPlacement?: ShelfToolbarPlacement;
   /** The section's id, for links from elsewhere on the page. */
   anchorId?: string;
   /**
@@ -58,7 +65,8 @@ export interface DiscoverShelfProps {
 }
 
 /**
- * Renders the shelf, or nothing while it loads or when the list is empty.
+ * Renders the shelf, grey cover shapes while it loads (after 300 ms; design books item 15), or
+ * nothing when the list is empty.
  *
  * @returns the shelf section or null
  */
@@ -67,14 +75,24 @@ export function DiscoverShelf({
   eyebrow,
   request,
   toolbar,
+  toolbarPlacement,
   anchorId,
   emptyNote,
   isFollowingRow = false,
 }: DiscoverShelfProps) {
   const { i18n } = useDiscoveryTranslation();
   const { shelf } = useStoryShelf(request);
-  // Step 1: nothing while the first page loads.
-  if (shelf === null) return null;
+  // Step 1: while the first page loads, the heading and grey cover shapes after 300 ms.
+  if (shelf === null) {
+    return (
+      <PlaceholderShelf
+        eyebrow={eyebrow}
+        title={title}
+        toolbar={toolbar}
+        toolbarPlacement={toolbarPlacement}
+      />
+    );
+  }
   // Step 2: an empty list hides the shelf, unless it has a note to show instead.
   if (shelf.stories.length === 0) {
     if (emptyNote === undefined) return null;
@@ -83,6 +101,7 @@ export function DiscoverShelf({
         eyebrow={eyebrow}
         title={title}
         toolbar={toolbar}
+        toolbarPlacement={toolbarPlacement}
         anchorId={anchorId}
         items={[
           { key: 'empty', content: <p className="m-0 type-body text-ink-muted">{emptyNote}</p> },
@@ -99,6 +118,7 @@ export function DiscoverShelf({
       seeAllHref={listAddress(request)}
       totalCount={shelf.total}
       toolbar={toolbar}
+      toolbarPlacement={toolbarPlacement}
       anchorId={anchorId}
       items={shelf.stories.map((story, index) => ({
         key: story.slug,

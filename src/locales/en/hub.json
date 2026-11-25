@@ -21,7 +21,11 @@
       "openLabel": "See the contest: {{name}}",
       "none": "No contest is open for entries right now. New contests show here.",
       "loadFailed": "We couldn’t load the contests. Check the connection and try again.",
-      "heading": "Open for entries now"
+      "heading": "Open for entries now",
+      "enter": "Enter the contest",
+      "enterLabel": "Enter the contest: {{name}}",
+      "rules": "Rules and prizes",
+      "more": "More contests"
     },
     "prompt": {
       "eyebrow": "Prompt of the week",
@@ -40,11 +44,15 @@
     },
     "guides": {
       "eyebrow": "How-to guides",
-      "previous": "Previous guides",
-      "next": "Next guides",
-      "position": "Guides {{first}} to {{last}} of {{total}}",
       "none": "The guides are on their way. Meanwhile, the Help centre has the answers.",
-      "kind": "Guide"
+      "kind": "Guide",
+      "heading": "Writing guides",
+      "minutes_one": "{{count}} min read",
+      "minutes_few": "{{count}} min read",
+      "minutes_other": "{{count}} min read",
+      "minutesShort_one": "{{count}} min",
+      "minutesShort_few": "{{count}} min",
+      "minutesShort_other": "{{count}} min"
     },
     "tools": {
       "eyebrow": "Tools",
@@ -68,7 +76,8 @@
       "paid": "Paid",
       "openLabel": "{{title}} (opens the organiser’s page in a new tab)",
       "outsideNote": "These calls come from other organisers. Read their rules before sending work.",
-      "loadFailed": "We couldn’t load the calls for submissions. Check the connection and try again."
+      "loadFailed": "We couldn’t load the calls for submissions. Check the connection and try again.",
+      "intro": "Magazines and anthologies looking for writers."
     },
     "week": {
       "eyebrow": "This week",
@@ -130,8 +139,11 @@
       "pace_few": "{{formatted}} words a day keep you on track",
       "pace_other": "{{formatted}} words a day keep you on track",
       "goalReached": "Goal reached this month",
-      "seeBadges": "See the badges",
-      "barLabel": "{{percent}}% of the writing month goal"
+      "barLabel": "{{percent}}% of the writing month goal",
+      "wordsOfGoal": "{{words}} of {{goal}} words",
+      "percentOfGoal": "{{percent}}% of the goal",
+      "heading": "Writing month · day {{day}}",
+      "seeBoard": "See the writing month board"
     },
     "path": {
       "eyebrow": "Learning path",
@@ -143,8 +155,9 @@
       "start": "Start day 1",
       "continue": "Continue day {{day}}",
       "readAgain": "Read the path again",
-      "progress": "{{done}} of {{total}} days done",
-      "loadFailed": "We couldn’t load the learning path. Check the connection and try again."
+      "loadFailed": "We couldn’t load the learning path. Check the connection and try again.",
+      "next": "next",
+      "notStarted": "not started"
     },
     "sessions": {
       "eyebrow": "Live sessions",
@@ -165,7 +178,9 @@
         "18_plus": "18+"
       },
       "remindFailed": "We couldn’t change the reminder. The session may have started. Try again.",
-      "loadFailed": "We couldn’t load the live sessions. Check the connection and try again."
+      "loadFailed": "We couldn’t load the live sessions. Check the connection and try again.",
+      "kind": "Session",
+      "liveTitle": "Live: {{title}}"
     },
     "homeComment": {
       "heading": "The team would like to show this comment on the home page",
@@ -179,8 +194,8 @@
       "withdraw": "Take the comment down"
     },
     "home": {
-      "dayLine": "Writing month, day {{day}}",
-      "welcome": "Welcome back, {{name}}.",
+      "welcomeLead": "Welcome back,",
+      "welcomeName": "{{name}}.",
       "welcomeNoName": "Welcome back.",
       "waiting": "Chapter {{number}} of {{story}} is waiting for you.",
       "contestsClosing_one": "{{count}} contest closes this month.",
@@ -188,12 +203,24 @@
       "contestsClosing_other": "{{count}} contests close this month.",
       "fresh": "A story, a poem or an essay. Nobody sees it until you publish.",
       "keepWriting": "Keep writing chapter {{number}}",
-      "newStory": "Start a new story"
+      "newStory": "Start a new story",
+      "activity": {
+        "label": "This week",
+        "comments_one": "{{count}} new comment on chapters",
+        "comments_few": "{{count}} new comments on chapters",
+        "comments_other": "{{count}} new comments on chapters",
+        "followers_one": "{{count}} new follower this week",
+        "followers_few": "{{count}} new followers this week",
+        "followers_other": "{{count}} new followers this week",
+        "newChapter": "{{name}} posted a new chapter"
+      }
     },
     "continue": {
       "heading": "Continue reading",
       "openLibrary": "Open library",
       "place": "{{writer}} · chapter {{number}} of {{total}}",
+      "continue": "Continue",
+      "continueLabel": "Continue reading {{title}}",
       "placeNumberOnly": "{{writer}} · chapter {{number}}"
     },
     "drafts": {
@@ -224,6 +251,14 @@
       "newPosts_other": "{{count}} new posts",
       "empty": "Nothing new in Together since the last visit.",
       "loadFailed": "We couldn’t load Together. Check the connection and try again."
+    },
+    "homeDocumentTitle": "Home · {{productName}}",
+    "writersHub": {
+      "place": "Writers’ hub",
+      "titleFirst": "Everything for the",
+      "titleSecond": "next chapter.",
+      "intro": "Open contests, this week’s prompt, guides and live sessions.",
+      "startWriting": "Start writing"
     }
   },
   "hubStaff": {

@@ -1,21 +1,25 @@
 /**
- * StoryHeader: the story page's hero (story S1-E3-05; since bundle CALM-7c, board New-Story and
- * the simplified design handover, Step 3, "Story page").
+ * StoryHeader: the story page's hero (story S1-E3-05; redrawn to board B01 in bundle 2, user
+ * story 2.1).
  *
- * The page's one glass hero (Hero): the 240 px cover on the left (the rank badges under it,
- * CMS-1g) and, on the right, in the board's order:
- *   - the meta line "Fiction · Ongoing · No AI · 13+" (lib/storyLabelFacts.ts; it replaces the
- *     pill row and StoryLabelPills here, retired in CALM-9c), with the ranking place after it (S1-E15-05);
- *   - the title in the display style, with the "Read in" switch beside it (TRANSLATE-1b), then
- *     "by <name>" as a link to the profile and, for a translated classic, who translated it;
- *   - the numbers as a second meta line (StoryStats, S1-E5-03);
- *   - the blurb, the note on which language is shown (StoryLanguageNote), the tags as text links
- *     to their tag pages (S1-E5-01);
- *   - "Start reading" or "Continue chapter n" (main) and the Library drop-down
- *     (StoryReadingActions, S1-E4-03), Follow (S1-E6-05) and Share (IDEAS-1c), and the line on
- *     what following does.
- * The board's story-level Like is left out: likes are per chapter (handover, On hold). The content
- * note moved to "Labels from the writer" (StoryLabels), where the board has it.
+ * The page's one hero box (Hero): the 240 px cover on the left and, on the right, in the board's
+ * order, 12 px apart:
+ *   - the breadcrumb "Read / Fiction / title" (StoryBreadcrumb);
+ *   - the facts line "Completed · Fiction · No AI · 13+ · Web and app" (lib/storyLabelFacts.ts);
+ *   - the title in the display style, then "by <name>" as a link to the profile and, for a
+ *     translated classic, who translated it, then "Read in [English]" (TRANSLATE-1b; board B09);
+ *   - the numbers as a meta line, reads first (StoryStats, S1-E5-03; reads public since bundle 2);
+ *   - where the story ranks, as links (RankBadges: its tags, CMS-1g, and its category, S1-E15-05);
+ *   - the blurb, the note on which language is shown (StoryLanguageNote), and the tags as
+ *     "#mystery" links to their tag pages (S1-E5-01);
+ *   - one row of buttons: Start reading, Continue or Read again (main; StoryReadButton), "Tell
+ *     the writer you finished it" once finished (IDEAS-1c), Follow (S1-E6-05), "Add to library"
+ *     or "In library" (StoryLibraryButton, S1-E4-03), the story's own Like (StoryLikeButton) and
+ *     Share (IDEAS-1c); then what following
+ *     does, or for a visitor "Get in to follow, like or save". "You are here, 72% through chapter
+ *     14" sits in that chapter's row of the list (StoryChapterList).
+ * The story-level Like, the public reads total and "Completed" in the facts line are built as
+ * drawn on board B01 (Robert, 24 Nov 2026; docs/board-fixes.md).
  * Who uses it: StoryPage.
  */
 import { useTranslation } from 'react-i18next';
@@ -27,7 +31,12 @@ import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { Hero } from '@/components/ui/Hero';
 import { MetaLine } from '@/components/ui/MetaLine';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
-import { StoryReadingActions } from '@/features/library/components/StoryReadingActions';
+import { useSession } from '@/features/auth/hooks/useSession';
+import {
+  StoryFinishedThanks,
+  StoryLibraryButton,
+  StoryReadButton,
+} from '@/features/library/components/StoryReadingActions';
 import { FollowButton } from '@/features/people/components/FollowButton';
 import { StoryShareButton } from '@/features/sharing/components/StoryShareButton';
 import type { SharedStory } from '@/features/sharing/lib/sharedStory';
@@ -40,12 +49,13 @@ import { ReadInSwitch } from './ReadInSwitch';
 import { StoryLanguageNote, TranslationCredit } from './StoryLanguageNote';
 import { storyLabelFacts } from '../lib/storyLabelFacts';
 
-import { RankingPlacePill } from './RankingPlacePill';
+import { StoryBreadcrumb } from './StoryBreadcrumb';
+import { StoryLikeButton } from './StoryLikeButton';
 import { StoryStats } from './StoryStats';
 
 /**
  * The story's tags as plain text links, each to the page of stories with that tag (S1-E5-01;
- * board New-Story: links 16 px apart, 15 px, in the ink colour).
+ * board B01: "#mystery", underlined, semibold, in the ink colour, 16 px apart).
  *
  * @param tags - the story's tags, as the writer typed them
  * @returns the list, or nothing when the story has no tags
@@ -67,9 +77,9 @@ function StoryTagLinks({ tags }: { tags: string[] }) {
               44 by 32 (design books, item 10). */}
           <Link
             to={listAddress(plainList('tag', tag))}
-            className="hit-target inline-flex min-h-6 items-center type-body text-ink underline-offset-2 hover:underline"
+            className="hit-target inline-flex min-h-6 items-center type-body font-semibold text-ink underline underline-offset-2"
           >
-            {showTag(tag)}
+            {t('storyPage.tagLink', { tag: showTag(tag) })}
           </Link>
         </li>
       ))}
@@ -95,51 +105,69 @@ function sharedStoryOf(story: StoryPageData): SharedStory {
 }
 
 /**
- * The hero's first meta line ("Fiction · Ongoing · No AI · 13+", CALM-7c; it replaces the pill
- * row), with the ranking place (S1-E15-05, "#3 in Fantasy") after it when the story has one.
+ * The line under the buttons: what following does for a member, "Get in to follow, like or save"
+ * for a visitor (user story 2.1).
  *
- * @returns the line
+ * @returns the line, or nothing on one's own story or while the session loads
  */
-function StoryLabelLine({ story }: { story: StoryPageData }) {
+function ActionNote({ story }: { story: StoryPageData }) {
   const { t } = useTranslation('reading');
+  const { userId, isKnown } = useSession();
+  if (!isKnown || story.isOwner || !story.isPublic) return null;
+  if (userId === null) {
+    return (
+      <Link
+        to="/sign-in"
+        className="hit-target self-start type-body font-semibold text-link underline underline-offset-2"
+      >
+        {t('storyPage.getInToSave')}
+      </Link>
+    );
+  }
+  return <p className="m-0 type-meta text-ink-muted">{t('storyPage.followNote')}</p>;
+}
+
+/**
+ * The one row of buttons (board B01): read (main), "Tell the writer you finished it" once
+ * finished, Follow, the library, Like and Share. The writer sees only Share on their own story; a
+ * visitor sees the read button and Share.
+ *
+ * @returns the row and the lines under it
+ */
+function StoryActions({ story }: { story: StoryPageData }) {
+  const { userId } = useSession();
+  const isReader = !story.isOwner;
+  const isMember = isReader && userId !== null;
+  const firstChapterCode =
+    story.chapters.find((chapter) => chapter.status === 'published')?.code ?? null;
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-      <MetaLine facts={storyLabelFacts(story, t)} />
-      <RankingPlacePill storySlug={story.slug} />
-    </div>
+    <>
+      <div className="flex flex-wrap items-center gap-3">
+        {isReader && <StoryReadButton storySlug={story.slug} firstChapterCode={firstChapterCode} />}
+        {isMember && <MemberButtons story={story} />}
+        {/* IDEAS-1c: share the whole story, for readers and the writer alike. */}
+        {story.isPublic && <StoryShareButton story={sharedStoryOf(story)} />}
+      </div>
+      <ActionNote story={story} />
+    </>
   );
 }
 
 /**
- * Start or continue reading and the Library drop-down (S1-E4-03), then "Follow story" (S1-E6-05),
- * none of them on one's own story, and Share (IDEAS-1c) for every public story.
+ * A member's buttons between the main one and Share: "Tell the writer you finished it" once
+ * finished, Follow, the library and the story's Like (bundle 2, board B01).
  *
- * @returns the actions
+ * @returns the buttons
  */
-function StoryActions({ story }: { story: StoryPageData }) {
-  const { t } = useTranslation('reading');
+function MemberButtons({ story }: { story: StoryPageData }) {
   return (
     <>
-      <StoryReadingActions
-        storySlug={story.slug}
-        firstChapterCode={
-          story.chapters.find((chapter) => chapter.status === 'published')?.code ?? null
-        }
-        isOwner={story.isOwner}
-      />
+      <StoryFinishedThanks storySlug={story.slug} />
       {story.isPublic && (
-        <div className="flex flex-wrap items-center gap-3">
-          {!story.isOwner && (
-            <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
-          )}
-          {/* IDEAS-1c: share the whole story, for readers and the writer alike. */}
-          <StoryShareButton story={sharedStoryOf(story)} />
-        </div>
+        <FollowButton target={{ kind: 'story', slug: story.slug }} targetLabel={story.title} />
       )}
-      {/* Board New-Story: what following does, under the buttons. */}
-      {story.isPublic && !story.isOwner && (
-        <p className="m-0 type-meta leading-[18px] text-ink-muted">{t('storyPage.followNote')}</p>
-      )}
+      <StoryLibraryButton storySlug={story.slug} />
+      {story.isPublic && <StoryLikeButton storySlug={story.slug} />}
     </>
   );
 }
@@ -165,8 +193,8 @@ function WriterName({ writer }: { writer: StoryPageData['writer'] }) {
 }
 
 /**
- * The title with "Read in" beside it (it wraps under the title on narrow screens), then "by
- * <name>" and, for a translated classic, who translated it (TRANSLATE-1b; board TrStory).
+ * The title, then "by <name>", for a translated classic who translated it, and "Read in" with
+ * the language as a field under them (TRANSLATE-1b; since BOOKS B09, board B09-StoryLanguages).
  *
  * @returns the title block
  */
@@ -174,22 +202,20 @@ function StoryTitleBlock({ story }: { story: StoryPageData }) {
   const { t } = useTranslation('reading');
   return (
     <>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <h1
-          id="story-title"
-          lang={story.languageCode}
-          className="m-0 min-w-0 flex-[1_1_240px] type-display break-words text-ink-heading"
-        >
-          {story.title}
-        </h1>
-        <ReadInSwitch editions={story.editions} chapterNumber={null} />
-      </div>
+      <h1
+        id="story-title"
+        lang={story.languageCode}
+        className="m-0 min-w-0 type-display break-words text-ink-heading"
+      >
+        {story.title}
+      </h1>
       <div className="flex flex-col gap-1">
         <p className="m-0 type-body text-ink-muted">
           {t('storyPage.by')} <WriterName writer={story.writer} />
         </p>
         <TranslationCredit story={story} />
       </div>
+      <ReadInSwitch editions={story.editions} chapterNumber={null} look="field" />
     </>
   );
 }
@@ -201,12 +227,13 @@ function StoryTitleBlock({ story }: { story: StoryPageData }) {
  * @returns the hero
  */
 export function StoryHeader({ story }: { story: StoryPageData }) {
+  const { t } = useTranslation('reading');
   const cover = resolveCoverChoice(story);
   return (
-    <Hero labelledBy="story-title">
+    <Hero labelledBy="story-title" className="lg:p-12">
       <header className="grid items-start gap-8 min-[900px]:grid-cols-[240px_minmax(0,1fr)] min-[900px]:gap-12">
-        {/* Step 1: the cover, with the story's ranks in its tags under it (CMS-1g). */}
-        <div className="flex w-[240px] max-w-full flex-col gap-3">
+        {/* Step 1: the cover. */}
+        <div className="w-[240px] max-w-full">
           <StoryCoverArt
             story={story}
             className="w-full"
@@ -221,15 +248,16 @@ export function StoryHeader({ story }: { story: StoryPageData }) {
               />
             }
           />
-          <RankBadges slug={story.slug} />
         </div>
-        {/* Step 2: the words, in the board's order. */}
-        <div className="flex min-w-0 flex-col gap-4">
-          <StoryLabelLine story={story} />
+        {/* Step 2: the words, in the board's order, 12 px apart. */}
+        <div className="flex min-w-0 flex-col gap-3">
+          <StoryBreadcrumb title={story.title} categorySlug={story.categorySlug} />
+          <MetaLine facts={storyLabelFacts(story, t)} />
           <StoryTitleBlock story={story} />
           <StoryStats story={story} />
+          <RankBadges slug={story.slug} />
           {story.blurb !== '' && (
-            <p lang={story.languageCode} className="m-0 max-w-[62ch] type-long text-ink-muted">
+            <p lang={story.languageCode} className="m-0 type-long text-ink">
               {story.blurb}
             </p>
           )}

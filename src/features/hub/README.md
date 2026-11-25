@@ -1,8 +1,9 @@
 # Writers' hub and Resources
 
-The signed-in home at `/hub` and the Resources page at `/resources`, built by bundle G9 WRITING, part a (Robert, 9 Nov 2026, 12:09 and 12:11 UTC).
+The signed-in Home at `/` (`MemberHomePage`, shown by WebsiteHomePage), the Writers' hub at `/hub` and the Resources page at `/resources`, built by bundle G9 WRITING, part a (Robert, 9 Nov 2026, 12:09 and 12:11 UTC).
 
-- `components/WritersHubPage.tsx`: the page, the Home of the simplified design (CALM-7c, board New-Home). Signed out it shows a log-in line; signed in, top to bottom: the hero, the invitations, Continue reading beside Drafts, the contests, Tools for the next chapter, From writers you follow beside Talk about stories, then the other blocks below in two columns.
+- `components/MemberHomePage.tsx` (user story 1.1, board A01): Home for a signed-in member at `/`: the hero, the invitations, Continue reading beside Drafts, the contests, Tools for the next chapter, From writers you follow beside Talk about stories.
+- `components/WritersHubPage.tsx` (user story 1.3, board A03): the Writers' hub at `/hub`. Signed out it shows a log-in line; signed in: `HubWritersHero` (title, Start writing, `HubWordsThisMonth`), then two columns: `HubLeadContest`, the prompt, `HubGuideRows`, the path, the sessions, `HubMoreContests` and the calls on the left; the writer of the week, the tools, this week and the badges on the right. Most lists are `HubRows` (a title link, a meta line, an optional button, under hairlines).
 - `components/HubHero.tsx`: the page's one frosted hero: the day and the writing month's day, "Welcome back, Lia.", one line on what waits (the latest draft, the contests closing this month), "Keep writing chapter N" (main) and "Start a new story" (quiet; main when there is no draft), and from 900 px `HubMonthSummary` on the right.
 - `components/HubMonthSummary.tsx` (CALM-7c): the writing month in the hero: the words against the goal, the thread bar, the streak and the words a day still needed (`lib/monthPace.ts`), and a link down to the badges.
 - `components/HubContinueReading.tsx` (CALM-7c): the stories the reader has a place in, three covers to a row with the thread line, from `my_library()`.
@@ -14,7 +15,8 @@ The signed-in home at `/hub` and the Resources page at `/resources`, built by bu
 - `components/HubPrompt.tsx` (GAPS-12c): the prompt of the week with how many writers tried it and how long it runs, "Write from this prompt" (`/write/new?prompt=<ID>`) and "Another prompt", which pages through the earlier ones. Hidden until staff write the first prompt.
 - `components/PromptNote.tsx`: on the new-story screen, the prompt the story is being started from.
 - `components/staff/`: `/staff/hub`, where staff with the contests area keep the hub's content. `StaffHubPage.tsx` shows `PromptsSection.tsx` (`PromptForm`, `PromptItem`) `SpotlightsSection.tsx` (`SpotlightForm`, `SpotlightItem`, GAPS-12e), `LearningPathSection.tsx` (`LearningStepForm`, GAPS-12g), `SessionsSection.tsx` (`SessionForm`, `SessionItem`, GAPS-12h) and `CallsSection.tsx` (`CallForm`, `CallItem`); `ConfirmDeleteButtons.tsx` and `formatStaffDay.ts` are shared.
-- `components/HubGuides.tsx`: the how-to guides three at a time, each "Guide" and its title, with Previous and Next arrows at the bottom.
+- `components/HubToolsGuides.tsx`: the right of Home's Tools band: up to four quiet rows, the how-to guides ("Guide · 6 min · summary") and the next live session.
+- `components/HubHeroActivity.tsx` and `lib/heroActivity.ts`: the hero's lines on this week's comments, followers and new chapters, from the member's notifications.
 - `components/HubWeek.tsx` (GAPS-12b): "This week": chapters posted, reads, comments and new followers in the last 7 days, with a link to the statistics on `/write`. A number from fewer than 5 people reads "fewer than 5".
 - `components/HubPath.tsx`, `PathStepList.tsx` and `LearningPathPage.tsx` (GAPS-12g): "Learning path": the seven days on the hub with a tick on the finished ones and "Continue day N", and each day's lesson and task at `/hub/path?day=N` with "Mark day N done".
 - `components/HubMonth.tsx` (GAPS-12f; since CALM-7c the badges only): the five writing-month badges, each "Earned" or "Not yet" (`#hub-badges`). The words and the streak moved to `HubMonthSummary`. Only the writer sees it.

@@ -33,7 +33,7 @@ export function AccountNamesSection({ account, names }: AccountNamesSectionProps
   return (
     <section
       aria-labelledby="settings-account-heading"
-      className="flex flex-col gap-6 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex flex-col gap-6 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="settings-account-heading"

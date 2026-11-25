@@ -1,40 +1,43 @@
 /**
- * HubMonthSummary: "Writing month" on the right of the Home page's hero (bundle GAPS-12f; since
- * CALM-7c the simplified board New-Home: "6,240 of 20,000 words", the thread bar, "5 days in a
- * row · 1,980 words a day keeps you on track" and a link to the badges).
+ * HubMonthSummary: "Writing month" on the right of the Home page's hero (bundle GAPS-12f; board
+ * A01 since Robert's review of 25 Nov 2026: "Writing month · day 20", "6,240 of 20,000 words",
+ * the thread bar, "5 days in a row · 1,980 words a day keep you on track" and "See the writing
+ * month board").
  *
  * The writer's own words this calendar month against the goal, the streak and the words a day
  * that would still reach the goal. Private: only the writer sees it, and nobody is ranked. The
- * badges sit lower on the page (HubMonth), so the link jumps there.
+ * badges are on the Writers' hub (HubMonth, board A03), so the link opens /hub at them.
  * Who shows it: HubHero. What it calls: useHubMonth and lib/monthPace.ts.
  */
-import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
+import { Link } from 'react-router';
+
 import { Notice } from '@/components/ui/Notice';
 import { dateLocaleFor } from '@/lib/romania-time';
 
 import { monthPercent, type HubMonth } from '../api/hubMonth';
 import { useHubMonth } from '../hooks/useHubMonth';
-import { wordsPerDayToGoal } from '../lib/monthPace';
+import { wordsPerDayToGoal, writingMonthDay } from '../lib/monthPace';
 import { useHubTranslation } from '../registerHubTranslations';
 
 /** The id of the badges section lower on the page, which the link jumps to. */
 export const monthBadgesAnchor = 'hub-badges';
 
 /**
- * The meta line's facts: the streak, then the pace or the goal reached.
+ * The small line under the bar: the streak, then the pace or the goal reached, joined by a
+ * middot (one sentence, so it wraps as text on a narrow card instead of breaking at the dot).
  *
  * @param month - the writer's month
  * @param now - today, for the days left
  * @param t - the hub namespace's translate function
  * @param numbers - the number formatter for the interface language
- * @returns the facts
+ * @returns the line
  */
 function monthFacts(
   month: HubMonth,
   now: Date,
   t: ReturnType<typeof useHubTranslation>['t'],
   numbers: Intl.NumberFormat,
-): MetaFact[] {
+): string {
   // Step 1: the days in a row, or that there is no streak yet.
   const streak =
     month.streakDays > 0
@@ -46,7 +49,7 @@ function monthFacts(
     pace === 0
       ? t('hub.month.goalReached')
       : t('hub.month.pace', { count: pace, formatted: numbers.format(pace) });
-  return [{ text: streak }, { text: paceText }];
+  return `${streak} · ${paceText}`;
 }
 
 /**
@@ -64,15 +67,14 @@ export function HubMonthSummary({ now }: { now: Date }) {
   const percent = monthPercent(month.words, month.goal);
   const goal = numbers.format(month.goal);
   return (
-    <section aria-labelledby="hub-month" className="flex flex-col gap-3">
-      <h2 id="hub-month" className="m-0 type-subheading">
-        {t('hub.month.eyebrow')}
+    <section aria-labelledby="hub-month" className="flex h-full flex-col gap-3">
+      <h2 id="hub-month" className="m-0 type-label">
+        {t('hub.month.heading', { day: writingMonthDay(now) })}
       </h2>
-      <p className="m-0 flex flex-wrap items-baseline gap-x-2">
-        <span className="type-heading">{numbers.format(month.words)}</span>
-        <span className="text-ink-muted">{t('hub.month.ofGoal', { goal })}</span>
+      <p className="m-0 font-semibold text-ink-heading">
+        {t('hub.month.wordsOfGoal', { words: numbers.format(month.words), goal })}
       </p>
-      {/* The thread on its track (board New-Home), with its value for screen readers. */}
+      {/* The thread on its track (board A01), with its value for screen readers. */}
       <div
         role="progressbar"
         aria-label={t('hub.month.progressLabel', { percent, goal })}
@@ -83,13 +85,14 @@ export function HubMonthSummary({ now }: { now: Date }) {
       >
         <div className="h-full rounded-full bg-thread" style={{ width: `${percent}%` }} />
       </div>
-      <MetaLine facts={monthFacts(month, now, t, numbers)} />
-      <a
-        href={`#${monthBadgesAnchor}`}
-        className="inline-flex min-h-11 items-center self-start font-semibold text-link underline"
+      <p className="m-0 type-meta text-ink-muted">{monthFacts(month, now, t, numbers)}</p>
+      {/* The badges and the month live on the Writers' hub (board A03), so the link opens it. */}
+      <Link
+        to={`/hub#${monthBadgesAnchor}`}
+        className="mt-auto inline-flex min-h-11 items-center self-start font-semibold text-ink-heading underline"
       >
-        {t('hub.month.seeBadges')}
-      </a>
+        {t('hub.month.seeBoard')}
+      </Link>
     </section>
   );
 }

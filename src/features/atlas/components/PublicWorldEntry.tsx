@@ -99,7 +99,7 @@ export function PublicWorldEntry({ plan, placed, base, isPreview }: PublicWorldE
             <p className="m-0 type-body break-words text-ink-muted">{nameOf(section)}</p>
             <h2
               id="atlas-world-entry-heading"
-              className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-bold break-words text-ink-heading"
+              className="m-0 type-title break-words text-ink-heading"
             >
               {entry.title}
             </h2>
