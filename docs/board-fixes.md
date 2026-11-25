@@ -401,3 +401,8 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | E26-Atlas family tree, a card's line (user story 6.7) | "1956–1974 · sibling of Ion" | The year born or age, then the occupation or the character in a line, as on the map: the bracket already says who is a sibling |
 | E26-Atlas family tree, Add a relationship (user story 6.7) | A link to board E24 | Opens the same dialog as a sheet, with both characters to pick; it replaces GAPS-3's "Add to this tree" form |
 | E26-Atlas family tree, a character with no family (user story 6.7) | Not drawn | "Teo Stan has no family links yet." in place of the tree when Whose tree picks someone without family links |
+| E27-Atlas story world, space between the list and the entry (user story 6.8) | 40 px | 32 px, the spacing scale's step under 40 (CLAUDE.md, design books) |
+| E27-Atlas story world, New entry (user story 6.8) | One button, no section named | Makes the entry in the open entry's section, or in the first section when none is open; the "+" beside each section still picks one |
+| E27-Atlas story world, a name not found yet (user story 6.8) | Not drawn | "Insula (not found yet)" in the Links line, as the story says, plain words with no link |
+| E27-Atlas story world, What readers see (user story 6.8) | "… shared, from chapter 4: Twelve degrees." in one sentence | "Readers see this entry while the story world is shared." then the chapter picker and Keep private, as on every other item (S1-E17-35) |
+| E27-Atlas story world, phones (user story 6.8) | The Sections back link on the phone frame only | Below 1024 px an open entry hides the list and shows Sections, so a tablet works the same as a phone |

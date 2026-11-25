@@ -113,7 +113,6 @@ const infoPillImport = /from ['"]@\/components\/ui\/InfoPill['"]/;
  */
 const infoPillUsers = new Set([
   '/src/app/shell/StaffBar.tsx',
-  '/src/features/atlas/components/BibleEntryView.tsx',
   '/src/features/atlas/components/CrossLinkChips.tsx',
   '/src/features/atlas/components/IdeaItem.tsx',
   '/src/features/atlas/components/PlanGuardPill.tsx',

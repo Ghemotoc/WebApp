@@ -466,6 +466,7 @@
     },
     "contents": {
       "heading": "Sections",
+      "navLabel": "Sections of the story world",
       "manage": "Manage sections",
       "newEntryIn": "New entry in {{section}}",
       "newEntryName": "New entry",
@@ -512,8 +513,8 @@
       "bodyHint": "You can use **bold**, *italic*, lists, headings and links such as [a map](https://example.com).",
       "empty": "No text yet. Choose Edit to write it.",
       "inSection": "In {{section}}",
+      "more": "More for {{title}}",
       "delete": {
-        "heading": "Delete this entry",
         "button": "Delete entry",
         "confirm": "Delete “{{title}}”? This can’t be undone.",
         "yes": "Yes, delete",
@@ -872,6 +873,7 @@
     "notFound": "not found yet",
     "chipsLabel": "Links:",
     "chipNotFound": "{{name}}: not found yet",
+    "lineNotFound": "{{name}} (not found yet)",
     "mentionedIn": {
       "heading": "Mentioned in",
       "none": "No [[links]] to this character yet. Write [[their name]] in an entry, a chapter or a note.",
@@ -908,7 +910,7 @@
     "item": {
       "heading": "What readers see",
       "characterHint": "Readers see this character while Characters, the map or the family tree is public, and only the parts of the sheet you open below.",
-      "entryHint": "Readers see this entry while the story world is public.",
+      "entryHint": "Readers see this entry while the story world is shared.",
       "settingsLink": "Choose what readers can see",
       "keepPrivate": "Keep private",
       "keepPrivateNamed": "Keep private: {{name}}",

@@ -159,11 +159,11 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
       'Insula: not found yet',
     ]);
     await entry.getByRole('button', { name: 'Edit' }).click();
-    // Reading mode also lists the links under the text (G10c1, board AtlasWorld); both open Ana.
-    await expect(
-      entry.getByRole('list', { name: 'Links:' }).getByRole('link', { name: 'ani' }),
-    ).toBeVisible();
-    await entry.locator('p').getByRole('link', { name: 'ani' }).click();
+    // Reading mode lists the links under the text as one line (story 6.8, board E27); both open Ana.
+    const linksLine = entry.locator('p', { hasText: 'Links:' });
+    await expect(linksLine).toHaveText('Links: ani · Insula (not found yet)');
+    await expect(linksLine.getByRole('link', { name: 'ani' })).toBeVisible();
+    await entry.locator('p', { hasNotText: 'Links:' }).getByRole('link', { name: 'ani' }).click();
     await expect(page).toHaveURL(new RegExp(`/plan/s/${slug}/characters/${anaId}$`));
     await page.context().close();
   });
