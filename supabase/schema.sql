@@ -28953,13 +28953,15 @@ CREATE OR REPLACE FUNCTION "public"."house_ad_candidates"("page_key" "text") RET
     SET "search_path" TO ''
     AS $$
   with landing as (
-    -- Our live landing pages, with the hero block's title in each language (S1-E11-14).
+    -- Our live contest and campaign landing pages, with the hero block's title in each language
+    -- (S1-E11-14). Information pages are reference pages, not promotions (BOOKS-FOOTER).
     select 'landing:' || pages.slug as ad_key, 'landing' as kind, pages.slug as page_slug,
       live.content #>> '{blocks,0,ro,title}' as title_ro, live.content #>> '{blocks,0,en,title}' as title_en,
       0 as tier
     from public.landing_pages as pages
     cross join lateral public.landing_page_live_version(pages.id) as live
     where pages.archived_at is null and live.id is not null
+      and pages.page_type in ('contest', 'campaign')
   ), built_in as (
     -- The three built-in house ads; their words live in the ads locale files.
     select 'house:' || built.kind, built.kind, null::text, null::text, null::text, 1
@@ -28977,7 +28979,7 @@ $$;
 ALTER FUNCTION "public"."house_ad_candidates"("page_key" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."house_ad_candidates"("page_key" "text") IS 'Internal: our own ads for a page, ordered by day and page, never by reader (S1-E12-01).';
+COMMENT ON FUNCTION "public"."house_ad_candidates"("page_key" "text") IS 'Internal: our own ads for a page (contest and campaign pages, then the built-in ones), ordered by day and page, never by reader (S1-E12-01, BOOKS-FOOTER).';
 
 
 

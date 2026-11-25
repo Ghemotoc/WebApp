@@ -32,10 +32,11 @@ grant execute on all functions in schema pg_temp to authenticated, anon;
 create temporary table kept (label text primary key, words jsonb) on commit drop;
 grant all on kept to authenticated, anon;
 
--- No other live landing page, so the test knows which house ad comes first.
+-- No other live landing page, so the test knows which house ad comes first. It is a campaign
+-- page: only contest and campaign pages are ads of ours (BOOKS-FOOTER).
 update public.landing_pages set archived_at = now() where archived_at is null;
 with page as (
-  insert into public.landing_pages (slug, page_type) values ('pagina-reclama', 'information') returning id
+  insert into public.landing_pages (slug, page_type) values ('pagina-reclama', 'campaign') returning id
 )
 insert into public.landing_page_versions (page_id, status, content, show_from, published_at)
 select page.id, 'published', jsonb_build_object('theme', 'gold', 'blocks', jsonb_build_array(
