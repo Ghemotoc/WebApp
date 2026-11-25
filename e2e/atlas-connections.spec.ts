@@ -116,7 +116,6 @@ async function openAs(
   return page;
 }
 
-/** Opens "Add a relationship" on the Relationships page, unless it is open already. */
 /**
  * Opens the Relationships card on a character's sheet: every card but Basics folds shut on a
  * fresh sheet (CALM-9, board E23). Does nothing when it is open already.
@@ -135,59 +134,18 @@ async function openAddDialog(page: Page) {
   return dialog;
 }
 
+/** "Add a relationship" at the foot of the Relationships page's Map view (story 6.6, board E25). */
 async function openAddForm(page: Page) {
   const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
-  const opener = page.getByRole('button', { name: 'Add a relationship' });
-  await expect(opener).toBeVisible();
-  if ((await opener.getAttribute('aria-expanded')) !== 'true') await opener.click();
   await expect(form).toBeVisible();
   return form;
 }
 
-/** Switches the Relationships page to one of its views: Map, Family tree or List. */
-async function showView(page: Page, name: 'Map' | 'Family tree' | 'List') {
+/** Switches the Relationships page to one of its two views: Map or Family tree. */
+async function showView(page: Page, name: 'Map' | 'Family tree') {
   // The radio itself is visually hidden; a person clicks the segment's label.
   await page.getByRole('group', { name: 'View' }).getByText(name, { exact: true }).click();
   await expect(page.getByRole('radio', { name, exact: true })).toBeChecked();
-}
-
-/** Drags with the mouse from one point to another, in small steps, as a person would. */
-async function dragBetween(
-  page: Page,
-  from: { x: number; y: number },
-  to: { x: number; y: number },
-) {
-  await page.mouse.move(from.x, from.y);
-  await page.mouse.down();
-  await page.mouse.move(from.x + 10, from.y + 10, { steps: 3 });
-  await page.mouse.move(to.x, to.y, { steps: 8 });
-  await page.mouse.up();
-}
-
-/** The centre of an element on the screen, read once. */
-async function centreNow(page: Page, selector: string) {
-  const box = await page.locator(selector).boundingBox();
-  if (box === null) throw new Error(`${selector} is not on the screen`);
-  return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
-}
-
-/**
- * The centre of an element once it has stopped moving. The map's zoom follows its width
- * ("Fit"), so a scrollbar appearing or a re-layout after "Arrange for me" can move every
- * card a moment after it is drawn; a drag aimed at the old place then misses (it made this
- * test flaky in CI). Two reads 100 ms apart that agree mean the card has settled.
- */
-async function centreOf(page: Page, selector: string) {
-  let previous = await centreNow(page, selector);
-  // Step 1: read again until two reads in a row agree, for up to about 3 seconds.
-  for (let attempt = 0; attempt < 30; attempt += 1) {
-    await page.waitForTimeout(100);
-    const current = await centreNow(page, selector);
-    if (current.x === previous.x && current.y === previous.y) return current;
-    previous = current;
-  }
-  // Step 2: it never settled, so say so instead of dragging to a guess.
-  throw new Error(`${selector} kept moving on the screen`);
 }
 
 /** One relationship to add: from whom, which relationship, to whom. */
@@ -197,14 +155,20 @@ interface NewLink {
   to: string;
 }
 
-/** Fills in and sends one "Add a relationship" form on the Connections page. */
+/**
+ * Fills in and sends the "Add a relationship" form at the foot of the Relationships page's Map
+ * view; from the Family tree it goes to the Map for it and comes back.
+ */
 async function addOnConnections(page: Page, { from, kind, to }: NewLink) {
+  const wasOnTree = await page.getByRole('radio', { name: 'Family tree', exact: true }).isChecked();
+  if (wasOnTree) await showView(page, 'Map');
   const form = await openAddForm(page);
   await form.getByLabel('Character', { exact: true }).selectOption({ label: from });
   await form.getByLabel('Relationship', { exact: true }).selectOption({ label: kind });
   await form.getByLabel('Other character', { exact: true }).selectOption({ label: to });
   await form.getByRole('button', { name: 'Add relationship' }).click();
   await expect(form.getByText('Relationship added.')).toBeVisible();
+  if (wasOnTree) await showView(page, 'Family tree');
 }
 
 test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
@@ -285,18 +249,20 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('Add a relationship in the top bar opens the Relationships page with its form open', async ({
+  test('Add a relationship in the top bar brings the form at the foot of the Relationships page', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/characters`);
     await page.getByRole('link', { name: 'Add a relationship' }).click();
-    await expect(page).toHaveURL(/\/connections\?add=1$/);
     await expect(page.getByRole('heading', { name: 'Relationships', level: 1 })).toBeVisible();
-    await expect(
-      page.getByRole('region', { name: 'Add a relationship', exact: true }),
-    ).toBeVisible();
-    // On its own page the top bar leaves the add out: the page's button does it.
-    await expect(page.getByRole('link', { name: 'Add a relationship' })).toHaveCount(0);
+    // The form takes the focus on its first picker, and ?add=1 leaves the address.
+    const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
+    await expect(form.getByLabel('Character', { exact: true })).toBeFocused();
+    await expect(page).toHaveURL(/\/connections$/);
+    // The bar keeps the button on this page too (board E25); a second press works again.
+    await page.locator('body').click({ position: { x: 5, y: 5 } });
+    await page.getByRole('link', { name: 'Add a relationship' }).click();
+    await expect(form.getByLabel('Character', { exact: true })).toBeFocused();
     await page.context().close();
   });
 
@@ -319,13 +285,14 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await expect(map.locator('[data-category="conflict"]')).toHaveCount(1);
     // Mara has no relationship yet, so she is named under the map instead (G10b2).
     await expect(page.getByText('Not on the map yet: Mara', { exact: true })).toBeVisible();
-    // The same relationships as a list (S1-E17-15: "available as a list").
-    await showView(page, 'List');
+    // The same relationships in words under the map (story 6.6), with their count and category.
     const list = page.getByRole('region', { name: 'Relationships', exact: true });
+    await expect(list.getByText('3 relationships', { exact: true })).toBeVisible();
     await expect(list.getByText('Ion killed Lupul', { exact: true }).first()).toBeVisible();
-    await expect(page).toHaveURL(/\?view=list$/);
-    await showView(page, 'Map');
-    // Turning Conflict off hides its line.
+    // The old List view (?view=list) opens the map, whose list is under it.
+    await page.goto(`${planAddress}/connections?view=list`);
+    await expect(page.getByRole('radio', { name: 'Map', exact: true })).toBeChecked();
+    // Turning Conflict off hides its line and its row in the list together.
     await page.getByRole('button', { name: 'Conflict' }).click();
     await expect(page.getByRole('button', { name: 'Conflict' })).toHaveAttribute(
       'aria-pressed',
@@ -333,6 +300,8 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     );
     await expect(map.locator('[data-category="conflict"]')).toHaveCount(0);
     await expect(map.locator('[data-category]')).toHaveCount(2);
+    await expect(list.getByText('Ion killed Lupul', { exact: true })).toHaveCount(0);
+    await expect(list.getByText('2 relationships', { exact: true })).toBeVisible();
     // A card is a real link to the sheet.
     await map.getByRole('link', { name: 'Lupul', exact: true }).focus();
     await page.keyboard.press('Enter');
@@ -393,17 +362,12 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('on a phone the map fits, and zoomed in it scrolls inside its region', async ({
+  test('on a phone the map scrolls sideways inside its own box, never the page', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`, 390);
     const map = page.getByTestId('atlas-relationship-map');
     await expect(map.getByRole('link', { name: 'Ana', exact: true })).toBeVisible();
-    // At first the whole map fits across the screen (G10b2: "Fit").
-    const fitted = await map.evaluate((region) => region.scrollWidth - region.clientWidth);
-    expect(fitted).toBeLessThanOrEqual(1);
-    await page.getByRole('button', { name: 'Zoom in' }).click();
-    await page.getByRole('button', { name: 'Zoom in' }).click();
     const sizes = await map.evaluate((region) => ({
       scrollWidth: region.scrollWidth,
       clientWidth: region.clientWidth,
@@ -414,46 +378,36 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
     await page.context().close();
   });
 
-  test('a dragged card keeps its place, and dropped on another opens Add a relationship', async ({
+  test('the map places parents above their children, the circle to the right, and rings the protagonist', async ({
     browser,
   }) => {
+    // Ana is the parent of Vali and Ion's partner; Ion killed Lupul, who is not family.
+    const roleBefore = runSql(
+      `select role from public.story_characters where id = '${cast.ana}';`,
+    ).trim();
+    runSql(`update public.story_characters set role = 'protagonist' where id = '${cast.ana}';`);
     const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
-    const lupul = `[data-map-card="${cast.lupul}"]`;
-    await expect(page.locator(lupul)).toBeVisible();
-    const placeOfLupul = () =>
-      runSql(
-        `select coalesce(map_x::text, 'none') from public.story_characters where id = '${cast.lupul}'`,
-      );
-    // Dragged a little way onto empty map, the card stays there and the place is saved.
-    // The whole map in view first, so both ends of each drag are on the screen.
-    await page.getByTestId('atlas-relationship-map').scrollIntoViewIfNeeded();
-    const start = await centreOf(page, lupul);
-    await dragBetween(page, start, { x: start.x + 40, y: start.y + 30 });
-    await expect.poll(placeOfLupul).not.toBe('none');
-    await expect(page).toHaveURL(/\/connections$/);
-    // Arrange for me forgets every place (the button alternative to dragging).
-    await page.getByRole('button', { name: 'Arrange for me' }).click();
-    await expect.poll(placeOfLupul).toBe('none');
-    await expect(page.getByRole('button', { name: 'Arrange for me' })).toBeDisabled();
-    // Dropped on Ana's card, it opens the form with both picked; nothing is saved yet. The page is
-    // taller with 66-character paragraphs and the bigger reading size, and pressing Arrange for me
-    // scrolls it, so the map comes back into view first: both ends of the drag must be on the
-    // screen.
-    await page.getByTestId('atlas-relationship-map').scrollIntoViewIfNeeded();
-    await dragBetween(
-      page,
-      await centreOf(page, lupul),
-      await centreOf(page, `[data-map-card="${cast.ana}"]`),
-    );
-    const form = page.getByRole('region', { name: 'Add a relationship', exact: true });
-    await expect(form.getByLabel('Character', { exact: true })).toHaveValue(cast.lupul);
-    await expect(form.getByLabel('Other character', { exact: true })).toHaveValue(cast.ana);
-    await expect(form.getByLabel('Relationship', { exact: true })).toBeFocused();
-    expect(placeOfLupul()).toBe('none');
-    // Focus on fades everyone not linked to the chosen character.
-    await page.getByLabel('Focus on', { exact: true }).selectOption({ label: 'Lupul' });
-    await expect(page.locator(`[data-map-card="${cast.vali}"]`)).toHaveClass(/opacity-30/);
-    await expect(page.locator(`[data-map-card="${cast.ion}"]`)).not.toHaveClass(/opacity-30/);
+    const card = (id: string) => page.locator(`[data-map-card="${id}"]`);
+    await expect(card(cast.lupul)).toBeVisible();
+    // Where the map put each card, read from the card itself, so a scrolling page can't skew it.
+    const placeOf = (id: string) =>
+      card(id).evaluate((element: HTMLElement) => ({
+        x: Number.parseFloat(element.style.left),
+        y: Number.parseFloat(element.style.top),
+      }));
+    const ana = await placeOf(cast.ana);
+    const ion = await placeOf(cast.ion);
+    const vali = await placeOf(cast.vali);
+    const lupul = await placeOf(cast.lupul);
+    expect(ion.y).toBe(ana.y);
+    expect(vali.y).toBeGreaterThan(ana.y);
+    expect(lupul.x).toBeGreaterThan(Math.max(ana.x, ion.x));
+    expect(lupul.y).toBe(ion.y);
+    // The protagonist is the map's focus: the ring, and "protagonist" in the meta line.
+    await expect(card(cast.ana)).toHaveAttribute('data-focus', 'true');
+    await expect(card(cast.ana)).toContainText('protagonist');
+    await expect(card(cast.ion)).not.toHaveAttribute('data-focus');
+    runSql(`update public.story_characters set role = '${roleBefore}' where id = '${cast.ana}';`);
     await page.context().close();
   });
 
@@ -532,12 +486,12 @@ test.describe('Story Atlas connections (S1-E17-14 to S1-E17-16)', () => {
   test('Delete happens at once, Undo puts it back, and a second delete is gone from both sheets', async ({
     browser,
   }) => {
-    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections?view=list`);
+    const page = await openAs(browser, 'adult_writer', `${planAddress}/connections`);
     const list = page.getByRole('region', { name: 'Relationships', exact: true });
-    // Design books item 14: no question first; the undo note offers Undo for 8 seconds.
+    // Design books item 14: no question first; "Removed. Undo" shows for 8 seconds (story 6.6).
     await list.getByRole('button', { name: 'Delete Ion killed Lupul' }).click();
     await expect(list.getByText('Ion killed Lupul', { exact: true })).toHaveCount(0);
-    const note = page.locator('[aria-live]').filter({ hasText: 'Deleted “Ion killed Lupul”.' });
+    const note = page.locator('[aria-live]').filter({ hasText: 'Removed.' });
     await note.getByRole('button', { name: 'Undo' }).click();
     await expect(list.getByRole('button', { name: 'Delete Ion killed Lupul' })).toBeVisible();
     await expect(note).toHaveCount(0);

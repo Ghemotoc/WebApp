@@ -30,7 +30,6 @@ const plan: PublicPlan = {
         firstAppearance: null,
         picture: null,
         pictureAlt: '',
-        mapPlace: null,
       },
     ],
     fields: [],

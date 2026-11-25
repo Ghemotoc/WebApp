@@ -389,28 +389,21 @@
       "heading": "Relationships",
       "sheetHeading": "Relationships",
       "none": "No relationships yet.",
+      "count_one": "{{count}} relationship",
+      "count_few": "{{count}} relationships",
+      "count_other": "{{count}} relationships",
       "delete": "Delete",
-      "deletedUndo": "Deleted “{{sentence}}”.",
+      "deletedUndo": "Removed.",
       "failed": "The relationship wasn’t deleted. Check your connection and try again."
     },
     "map": {
-      "heading": "Relationship map",
-      "region": "Relationship map; scrolls on small screens",
+      "region": "Relationship map; scrolls sideways on small screens",
       "categoriesLabel": "Show categories",
       "none": "No relationships to draw yet.",
-      "focusOn": "Focus on",
-      "everyone": "Everyone",
-      "arrange": "Arrange for me",
-      "dragHint": "Drag a card to move it. Drag one card onto another to connect them.",
-      "moveFailed": "The card’s new place wasn’t saved. Check the connection and try again.",
-      "arrangeFailed": "The map wasn’t rearranged. Check the connection and try again.",
-      "zoomLabel": "Zoom",
-      "zoomOut": "Zoom out",
-      "zoomIn": "Zoom in",
-      "fit": "Fit",
-      "zoomNow": "{{percent}}%",
+      "born": "b. {{year}}",
       "offMap": "Not on the map yet: {{names}}",
-      "key": "Each category has its own colour. Solid lines: family and allies. Dotted: love and other. Dashed: conflict. Fine dots: lineage.",
+      "key": "Solid lines: family and allies. Dotted: love and other. Dashed: conflict. Fine dots: lineage. Choose a person to open their sheet; the same relationships are listed under the map.",
+      "readerKey": "Each category has its own colour. Solid lines: family and allies. Dotted: love and other. Dashed: conflict. Fine dots: lineage.",
       "coloursButton": "Category colours",
       "coloursIntro": "Pick a colour for each category. The map and the list follow it.",
       "colourFor": "Colour for {{category}}",
@@ -473,8 +466,7 @@
     "views": {
       "legend": "View",
       "map": "Map",
-      "tree": "Family tree",
-      "list": "List"
+      "tree": "Family tree"
     }
   },
   "bible": {

@@ -1,11 +1,11 @@
 /**
  * useRelationshipChangers: add and delete relationships between a story's characters (story
- * S1-E17-14), move cards on the relationship map and put them back ("Arrange for me", G10b2),
- * then refresh the cast so every sheet, the map and the family tree redraw.
+ * S1-E17-14), then refresh the cast so every sheet, the map and the family tree redraw. The map
+ * places its cards itself since board E25 (story 6.6), so cards are no longer moved or arranged.
  *
  * Kept apart from useStoryCast so each hook stays short. Who calls it: CharacterRelationshipsSection
- * and ConnectionsPage. What it calls: addRelationship(), deleteRelationship(), moveOnMap() and
- * arrangeMap() in api/characters.ts.
+ * and ConnectionsPage. What it calls: addRelationship(), deleteRelationship() and
+ * restoreRelationship() in api/characters.ts.
  */
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -14,12 +14,9 @@ import { useSession } from '@/features/auth/hooks/useSession';
 
 import {
   addRelationship,
-  arrangeMap,
   deleteRelationship,
   restoreRelationship,
-  moveOnMap,
   storyCastQueryKey,
-  type MapPlace,
   type NewRelationship,
 } from '../api/characters';
 
@@ -27,8 +24,8 @@ import {
  * The two relationship changers for one story.
  *
  * @param slug - the story's address
- * @returns relate (records one), unrelate (deletes one and returns its Undo), move (saves a card's place on the map)
- *   and arrange (forgets every place); each throws when it can't
+ * @returns relate (records one) and unrelate (deletes one and returns its Undo); each throws
+ *   when it can't
  */
 export function useRelationshipChangers(slug: string) {
   const { userId } = useSession();
@@ -58,17 +55,5 @@ export function useRelationshipChangers(slug: string) {
     };
   }
 
-  /** Saves where a card was dropped on the map. */
-  async function move(characterId: string, place: MapPlace) {
-    await moveOnMap(await requireClient(), characterId, place);
-    await refresh();
-  }
-
-  /** "Arrange for me": every card goes back to where the map places it. */
-  async function arrange() {
-    await arrangeMap(await requireClient(), slug);
-    await refresh();
-  }
-
-  return { relate, unrelate, move, arrange };
+  return { relate, unrelate };
 }

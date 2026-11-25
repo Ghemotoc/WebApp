@@ -389,28 +389,21 @@
       "heading": "Relații",
       "sheetHeading": "Relații",
       "none": "Încă nu ai legături.",
+      "count_one": "{{count}} legătură",
+      "count_few": "{{count}} legături",
+      "count_other": "{{count}} de legături",
       "delete": "Șterge",
-      "deletedUndo": "Ai șters „{{sentence}}”.",
+      "deletedUndo": "Ștearsă.",
       "failed": "Legătura nu a fost ștearsă. Verifică-ți conexiunea și încearcă din nou."
     },
     "map": {
-      "heading": "Harta legăturilor",
-      "region": "Harta legăturilor; pe ecrane mici se derulează",
+      "region": "Harta legăturilor; pe ecrane mici se derulează în lateral",
       "categoriesLabel": "Arată categoriile",
       "none": "Încă nu sunt legături de desenat.",
-      "focusOn": "Evidențiază",
-      "everyone": "Toată lumea",
-      "arrange": "Aranjează automat",
-      "dragHint": "Trage un card ca să-l muți. Trage un card peste altul ca să le legi.",
-      "moveFailed": "Noul loc al cardului nu a fost salvat. Verifică conexiunea și încearcă din nou.",
-      "arrangeFailed": "Harta nu a fost rearanjată. Verifică conexiunea și încearcă din nou.",
-      "zoomLabel": "Mărire",
-      "zoomOut": "Micșorează",
-      "zoomIn": "Mărește",
-      "fit": "Potrivește",
-      "zoomNow": "{{percent}}%",
+      "born": "n. {{year}}",
       "offMap": "Încă nu sunt pe hartă: {{names}}",
-      "key": "Fiecare categorie are culoarea ei. Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență.",
+      "key": "Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență. Alege o persoană ca să-i deschizi fișa; aceleași legături sunt înșirate sub hartă.",
+      "readerKey": "Fiecare categorie are culoarea ei. Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență.",
       "coloursButton": "Culorile categoriilor",
       "coloursIntro": "Alege o culoare pentru fiecare categorie. Harta și lista o urmează.",
       "colourFor": "Culoarea pentru {{category}}",
@@ -473,8 +466,7 @@
     "views": {
       "legend": "Vizualizare",
       "map": "Hartă",
-      "tree": "Arborele familiei",
-      "list": "Listă"
+      "tree": "Arborele familiei"
     }
   },
   "bible": {

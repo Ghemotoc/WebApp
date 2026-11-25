@@ -1,21 +1,19 @@
 /**
- * MapCards: the character cards on the relationship map (bundle G10 ATLAS, part b2; board
- * AtlasConnections: glass cards like the family tree's, the picture when there is one, the name
- * and the one-line summary).
+ * MapCards: the people on the relationship map (story S1-E17-15; user stories bundle 6, story
+ * 6.6, board E25's .mapnode: the name in bold over a short meta line, 8 by 12 px inside, 12 px
+ * corners, a soft shadow).
  *
- * Each card is a real link to the sheet (or a reader page), so it can be reached by keyboard. On
- * the writer's map the cards can be dragged (useCardDrag); with "Focus on" set, cards that aren't
- * the chosen character or linked to them fade back. Who uses it: RelationshipMap. What it calls:
- * CharacterAvatar and MaybeLink.
+ * Each card is a real link to the character's sheet (or, on a readers' page, their public page
+ * while Characters is public), so it can be reached by keyboard. The meta line is the year born
+ * ("b. 1951") or the age, then the occupation or the character in a line. The protagonist is the
+ * map's focus and wears a 2 px ring in the thread colour (board E25: "Mara (the focus) has a
+ * violet ring"), with "protagonist" in their meta line, so the ring is never the only cue.
+ * Who uses it: RelationshipMap. What it calls: MaybeLink.
  */
-import type { PointerEvent } from 'react';
-
-import type { StoryCast } from '../api/characters';
-import type { useCardDrag } from '../hooks/useCardDrag';
-import { visiblePictureUrl } from '../lib/characterPicture';
+import type { StoryCast, StoryCharacter } from '../api/characters';
 import { cardHeight, cardWidth, type MapNode } from '../lib/relationshipMap';
+import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { CharacterAvatar } from './CharacterAvatar';
 import { MaybeLink } from './MaybeLink';
 
 /** What the cards need. */
@@ -23,64 +21,59 @@ export interface MapCardsProps {
   addressOf: (characterId: string) => string | null;
   cast: StoryCast;
   nodes: MapNode[];
-  /** The drag handlers, or null on a readers' map. */
-  drag: ReturnType<typeof useCardDrag> | null;
-  /** The characters to show at full strength; null shows everyone. */
-  inFocus: Set<string> | null;
 }
 
-/** A card's pointer handlers on the writer's map; none on a readers' map. */
-function dragHandlersFor(drag: MapCardsProps['drag'], node: MapNode) {
-  if (drag === null) return {};
-  return {
-    onPointerDown: (event: PointerEvent<HTMLLIElement>) => drag.onPointerDown(node, event),
-    onPointerMove: drag.onPointerMove,
-    onPointerUp: drag.onPointerUp,
-    onClickCapture: drag.onClickCapture,
-  };
+/** A year on its own, such as "1951", which reads as "b. 1951". */
+const yearOnly = /^\d{4}$/;
+
+/**
+ * The words under a card's name: the year born or the age, then the role for the protagonist or
+ * the occupation, else the character in a line.
+ *
+ * @returns the facts joined by a middot, or an empty string
+ */
+function useCardMeta(character: StoryCharacter): string {
+  const { t } = useAtlasTranslation();
+  const facts: string[] = [];
+  // Step 1: the year born ("b. 1951") or what the writer wrote there ("13", "1956–1974").
+  const born = (character.sheet.age_or_born ?? '').trim();
+  if (born !== '') {
+    facts.push(yearOnly.test(born) ? t('connections.map.born', { year: born }) : born);
+  }
+  // Step 2: the protagonist says so beside the ring; others their work or their line.
+  const occupation = (character.sheet.occupation ?? '').trim();
+  const summary = (character.sheet.summary ?? '').trim();
+  if (character.role === 'protagonist') facts.push(t('characters.role.protagonist').toLowerCase());
+  else if (occupation !== '') facts.push(occupation);
+  else if (summary !== '') facts.push(summary);
+  return facts.join(' · ');
 }
 
-/** One card: the glass link with the picture, name and summary, placed on the map. */
+/** One card: the link with the name and the meta line, placed on the map. */
 function MapCard({
   addressOf,
   character,
   node,
-  drag,
-  isFaded,
 }: {
   addressOf: MapCardsProps['addressOf'];
-  character: StoryCast['characters'][number];
+  character: StoryCharacter;
   node: MapNode;
-  drag: MapCardsProps['drag'];
-  isFaded: boolean;
 }) {
-  // The dragged card is drawn where the pointer is.
-  const live = drag?.live ?? null;
-  const place = live !== null && live.id === node.id ? live : node;
-  const summary = character.sheet.summary ?? '';
-  const dragClasses = drag ? 'cursor-grab touch-none active:cursor-grabbing' : '';
+  const meta = useCardMeta(character);
+  const isFocus = character.role === 'protagonist';
   return (
     <li
       data-map-card={node.id}
-      className={`absolute transition-opacity ${isFaded ? 'opacity-30' : ''} ${dragClasses}`}
-      style={{ left: place.x, top: place.y, width: cardWidth, height: cardHeight }}
-      {...dragHandlersFor(drag, node)}
+      data-focus={isFocus ? 'true' : undefined}
+      className="absolute"
+      style={{ left: node.x, top: node.y, width: cardWidth, height: cardHeight }}
     >
       <MaybeLink
         to={addressOf(node.id)}
-        isNativeDragOff={drag !== null}
-        className="flex size-full flex-col items-center justify-center gap-1 overflow-hidden rounded-card border border-border bg-surface px-3 py-2 text-center no-underline shadow-card select-none"
+        className={`flex size-full flex-col justify-center overflow-hidden rounded-field bg-paper px-3 py-2 text-ink no-underline shadow-card ${isFocus ? 'ring-2 ring-thread ring-inset' : ''}`}
       >
-        {/* A picture only when there is one: no initials circle (G10a). */}
-        {visiblePictureUrl(character) !== null && (
-          <CharacterAvatar character={character} size="small" />
-        )}
-        <span className="max-w-full type-body font-semibold break-words text-ink-heading">
-          {character.name}
-        </span>
-        {summary !== '' && (
-          <span className="max-w-full truncate type-meta text-ink-muted">{summary}</span>
-        )}
+        <span className="truncate type-label font-semibold text-ink-heading">{character.name}</span>
+        {meta !== '' && <span className="truncate type-meta text-ink-muted">{meta}</span>}
       </MaybeLink>
     </li>
   );
@@ -91,22 +84,13 @@ function MapCard({
  *
  * @returns one list item per card
  */
-export function MapCards({ addressOf, cast, nodes, drag, inFocus }: MapCardsProps) {
+export function MapCards({ addressOf, cast, nodes }: MapCardsProps) {
   return (
     <ul className="m-0 list-none p-0">
       {nodes.map((node) => {
         const character = cast.characters.find((candidate) => candidate.id === node.id);
         if (character === undefined) return null;
-        return (
-          <MapCard
-            key={node.id}
-            addressOf={addressOf}
-            character={character}
-            node={node}
-            drag={drag}
-            isFaded={inFocus !== null && !inFocus.has(node.id)}
-          />
-        );
+        return <MapCard key={node.id} addressOf={addressOf} character={character} node={node} />;
       })}
     </ul>
   );

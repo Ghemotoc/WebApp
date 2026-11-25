@@ -1,32 +1,25 @@
 /**
- * Tests for the relationship map's layout (story S1-E17-15). Run by `npm test`.
+ * Tests for the relationship map's layout (story S1-E17-15; user stories bundle 6, story 6.6:
+ * "the map places people by family and circle"). Run by `npm test`.
  */
 import { describe, expect, it } from 'vitest';
 
-import type { CharacterRelationship } from '../api/characters';
+import type { CharacterRelationship, RelationshipKind } from '../api/characters';
 
-import {
-  cardHeight,
-  cardUnder,
-  cardWidth,
-  clampPlace,
-  fitZoom,
-  layoutRelationshipMap,
-  splitMapCast,
-} from './relationshipMap';
-
-/** Cards the writer hasn't moved. */
-function cards(...ids: string[]) {
-  return ids.map((id) => ({ id, mapPlace: null }));
-}
+import { layoutRelationshipMap, splitMapCast } from './relationshipMap';
 
 /** A relationship with only what these tests need. */
-function link(id: string, fromId: string, toId: string): CharacterRelationship {
+function link(
+  id: string,
+  fromId: string,
+  toId: string,
+  kind: RelationshipKind = 'friend_of',
+): CharacterRelationship {
   return {
     id,
     fromId,
     toId,
-    kind: 'friend_of',
+    kind,
     customLabel: '',
     reverseLabel: '',
     cousinDegree: null,
@@ -35,82 +28,95 @@ function link(id: string, fromId: string, toId: string): CharacterRelationship {
   };
 }
 
+/** Each card's place, by ID, for short assertions; a missing card fails the test. */
+function placesOf(ids: string[], relationships: CharacterRelationship[]) {
+  const layout = layoutRelationshipMap(ids, relationships, relationships);
+  return {
+    get(id: string): { x: number; y: number } {
+      const node = layout.nodes.find((candidate) => candidate.id === id);
+      if (node === undefined) throw new Error(`${id} is not on the map`);
+      return node;
+    },
+  };
+}
+
+/** Board E25's story, cut down: grandparents, parents, a child, her friend and the choir leader. */
+const saltMine = [
+  link('1', 'ana', 'ion', 'partner_of'),
+  link('2', 'ion', 'elena', 'parent_of'),
+  link('3', 'elena', 'mihai', 'partner_of'),
+  link('4', 'elena', 'mara', 'parent_of'),
+  link('5', 'mihai', 'mara', 'parent_of'),
+  link('6', 'mara', 'teo', 'friend_of'),
+  link('7', 'mara', 'dobre', 'resents'),
+];
+const saltMineIds = ['ana', 'dobre', 'elena', 'ion', 'mara', 'mihai', 'teo'];
+
 describe('layoutRelationshipMap', () => {
-  it('puts the first card at the top of the circle and the rest clockwise', () => {
-    const layout = layoutRelationshipMap(cards('ana', 'vali', 'stefan', 'ion'), []);
-    const [top, right] = layout.nodes;
-    const middleX = layout.width / 2 - cardWidth / 2;
-    expect(top?.y).toBeLessThan(layout.height / 2);
-    expect(top?.x).toBeCloseTo(middleX, 0);
-    expect(right?.x).toBeGreaterThan(middleX);
+  it('puts parents a row above their children and partners on the same row', () => {
+    const places = placesOf(saltMineIds, saltMine);
+    expect(places.get('ana').y).toBe(places.get('ion').y);
+    expect(places.get('elena').y).toBeGreaterThan(places.get('ion').y);
+    expect(places.get('mihai').y).toBe(places.get('elena').y);
+    expect(places.get('mara').y).toBeGreaterThan(places.get('elena').y);
   });
 
-  it('keeps a card where the writer dropped it, and grows to hold it', () => {
-    const layout = layoutRelationshipMap(
-      [{ id: 'ana', mapPlace: { x: 1200, y: 900 } }, ...cards('vali')],
-      [],
+  it('puts the circle to the right of the family, on the row of the people they know', () => {
+    const places = placesOf(saltMineIds, saltMine);
+    const familyRight = Math.max(
+      ...['ana', 'ion', 'elena', 'mihai', 'mara'].map((id) => places.get(id).x),
     );
-    expect(layout.nodes[0]).toEqual({ id: 'ana', x: 1200, y: 900 });
-    expect(layout.width).toBeGreaterThanOrEqual(1200 + cardWidth);
-    expect(layout.height).toBeGreaterThanOrEqual(900 + cardHeight);
+    expect(places.get('teo').x).toBeGreaterThan(familyRight);
+    expect(places.get('teo').y).toBe(places.get('mara').y);
+    expect(places.get('dobre').y).toBe(places.get('mara').y);
   });
 
-  it('grows with the cast so the cards have room', () => {
-    const many = cards(...Array.from({ length: 30 }, (_, index) => `c${index}`));
-    expect(layoutRelationshipMap(many, []).width).toBeGreaterThan(
-      layoutRelationshipMap(cards('a', 'b'), []).width,
+  it('keeps every card in place when a category is switched off', () => {
+    const everything = layoutRelationshipMap(saltMineIds, saltMine, saltMine);
+    const familyOnly = layoutRelationshipMap(
+      saltMineIds,
+      saltMine,
+      saltMine.filter((relationship) => relationship.kind !== 'friend_of'),
     );
+    expect(familyOnly.nodes).toEqual(everything.nodes);
+    expect(familyOnly.edges).toHaveLength(everything.edges.length - 1);
   });
 
-  it('stops a line at the cards’ edges, not their middles', () => {
-    const layout = layoutRelationshipMap(
-      [
-        { id: 'a', mapPlace: { x: 0, y: 0 } },
-        { id: 'b', mapPlace: { x: 400, y: 0 } },
-      ],
-      [link('1', 'a', 'b')],
-    );
-    expect(layout.edges[0]?.path.startsWith(`M ${cardWidth + 2} ${cardHeight / 2}`)).toBe(true);
+  it('fills rows of four when nobody is family', () => {
+    const ids = ['a', 'b', 'c', 'd', 'e'];
+    const places = placesOf(ids, [link('1', 'a', 'b'), link('2', 'c', 'd'), link('3', 'd', 'e')]);
+    expect(places.get('a').y).toBe(places.get('d').y);
+    expect(places.get('e').y).toBeGreaterThan(places.get('a').y);
+    expect(places.get('e').x).toBe(places.get('a').x);
   });
 
-  it('bends two lines between the same pair apart', () => {
-    const double = layoutRelationshipMap(cards('a', 'b'), [
-      link('1', 'a', 'b'),
-      link('2', 'b', 'a'),
-    ]);
-    const [first, second] = double.edges;
-    expect(first?.labelX).not.toBe(second?.labelX);
+  it('draws a pair’s only line straight and bends two lines between the same pair apart', () => {
+    const one = layoutRelationshipMap(['a', 'b'], [link('1', 'a', 'b')], [link('1', 'a', 'b')]);
+    const [only] = one.edges;
+    // A straight line's control point is its middle.
+    const numbers = (only?.path ?? '').match(/-?\d+(\.\d+)?/g)?.map(Number) ?? [];
+    const [startX = 0, , controlX = 0, , endX = 0] = numbers;
+    expect(controlX).toBe((startX + endX) / 2);
+    const two = [link('1', 'a', 'b'), link('2', 'b', 'a', 'enemy_of')];
+    const bent = layoutRelationshipMap(['a', 'b'], two, two);
+    expect(bent.edges[0]?.path).not.toBe(bent.edges[1]?.path);
   });
 
-  it('leaves out a line to a character that isn’t on the map', () => {
-    expect(layoutRelationshipMap(cards('a'), [link('1', 'a', 'gone')]).edges).toEqual([]);
+  it('sizes the map to hold every card', () => {
+    const layout = layoutRelationshipMap(saltMineIds, saltMine, saltMine);
+    for (const node of layout.nodes) {
+      expect(node.x).toBeGreaterThanOrEqual(0);
+      expect(node.x).toBeLessThan(layout.width);
+      expect(node.y).toBeLessThan(layout.height);
+    }
   });
 });
 
-describe('the map’s helpers', () => {
-  it('only characters in a relationship go on the map; the rest are not on it yet', () => {
-    expect(splitMapCast(['a', 'b', 'c'], [link('1', 'a', 'b')])).toEqual({
-      onMap: ['a', 'b'],
-      offMap: ['c'],
+describe('splitMapCast', () => {
+  it('leaves characters without a relationship off the map, keeping the cast’s order', () => {
+    expect(splitMapCast(['ana', 'ion', 'vali'], [link('1', 'vali', 'ana')])).toEqual({
+      onMap: ['ana', 'vali'],
+      offMap: ['ion'],
     });
-  });
-
-  it('a card dropped onto another names that card; on empty map, none', () => {
-    const nodes = [
-      { id: 'a', x: 0, y: 0 },
-      { id: 'b', x: 400, y: 0 },
-    ];
-    expect(cardUnder(nodes, 'a', { x: 380, y: 10 })).toBe('b');
-    expect(cardUnder(nodes, 'a', { x: 200, y: 300 })).toBeNull();
-  });
-
-  it('a place off the map is pulled back inside 0 to 4,000', () => {
-    expect(clampPlace({ x: -20, y: 5000.4 })).toEqual({ x: 0, y: 4000 });
-  });
-
-  it('Fit shrinks a wide map to the region, never past full size', () => {
-    expect(fitZoom(2000, 1000)).toBe(0.5);
-    expect(fitZoom(500, 1000)).toBe(1);
-    expect(fitZoom(10000, 1000)).toBe(0.4);
   });
 });

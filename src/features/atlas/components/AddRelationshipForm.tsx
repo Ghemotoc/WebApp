@@ -4,9 +4,11 @@
  * then the relationship is saved"; bundle G10 ATLAS, part b, handoff A4 and A5).
  *
  * On a sheet the first character is the sheet's own, shown alone in its drop-down; on the
- * Connections page both are picked. Character, Relationship (the twelve kinds, Cousin of and
- * Custom) and Other character stand one under the other (user stories bundle 6, story 6.5, board
- * E24). A cousin also says which cousin; Custom asks for the writer's own label both ways. When
+ * Relationships page both are picked. Character, Relationship (the twelve kinds, Cousin of and
+ * Custom) and Other character stand one under the other in the sheet's dialog (user stories
+ * bundle 6, story 6.5, board E24), and side by side at the foot of the Relationships page (story
+ * 6.6, board E25), where the "Read it from the first character…" hint shows for the first three
+ * visits only. A cousin also says which cousin; Custom asks for the writer's own label both ways. When
  * the new relationship clashes with one already there, a warning explains it and offers a note on
  * how both are true, and the button turns to Save anyway: it is advice, never a block. In the
  * dialog, Go back closes it (onCancel). A relationship is saved once: a double click saves once,
@@ -41,8 +43,10 @@ export interface AddRelationshipFormProps {
   cast: StoryCast;
   /** The sheet's character; left out on the Connections page, where both are picked. */
   fixedFromId?: string;
-  /** The two characters to start with, when a card was dropped on another on the map (G10b2). */
-  initialPair?: { fromId: string; toId: string };
+  /** 'row' puts the three pickers side by side from 768 px (board E25); 'stacked' by default. */
+  layout?: 'stacked' | 'row';
+  /** False once the writer has seen the hint for three visits (story 6.6). */
+  showsHint?: boolean;
   /** Saves the relationship; throws when it can't. */
   onAdd: (relationship: NewRelationship) => Promise<void>;
   /** In the dialog: Go back, beside Add relationship, closes it (story 6.5). */
@@ -96,15 +100,20 @@ interface RelationshipPickersProps {
   draft: NewRelationship;
   /** False on a sheet, where the first character is the sheet's own. */
   isFromPicked: boolean;
+  layout: 'stacked' | 'row';
   change: (part: Partial<NewRelationship>) => void;
 }
 
-/** The first character, the relationship and the other one, one under the other (board E24). */
+/**
+ * The first character, the relationship and the other one: one under the other (board E24), or
+ * side by side on the Relationships page (board E25).
+ */
 function RelationshipPickers({
   idPrefix,
   cast,
   draft,
   isFromPicked,
+  layout,
   change,
 }: RelationshipPickersProps) {
   const { t } = useAtlasTranslation();
@@ -116,7 +125,13 @@ function RelationshipPickers({
         .filter((character) => character.id === draft.fromId)
         .map((character) => ({ value: character.id, label: character.name }));
   return (
-    <div className="flex flex-col items-start gap-4">
+    <div
+      className={
+        layout === 'row'
+          ? 'grid items-start gap-4 md:grid-cols-3'
+          : 'flex flex-col items-start gap-4'
+      }
+    >
       <Select
         id={`${idPrefix}-from`}
         label={t('connections.add.from')}
@@ -236,13 +251,10 @@ function NoteOrClash(props: NoteOrClashProps) {
 }
 
 /** The state of one form: the draft, the message, and the clash being shown. */
-function useRelationshipDraft(
-  fixedFromId: string | undefined,
-  initialPair: AddRelationshipFormProps['initialPair'],
-) {
+function useRelationshipDraft(fixedFromId: string | undefined) {
+  // On a sheet the first character is the sheet's own; after a save the form starts blank.
   const freshDraft = { ...emptyDraft, fromId: fixedFromId ?? '' };
-  // A pair from the map fills both characters once; after a save the form starts blank.
-  const [draft, setDraft] = useState<NewRelationship>({ ...freshDraft, ...initialPair });
+  const [draft, setDraft] = useState<NewRelationship>(freshDraft);
   const [message, setMessage] = useState<{ tone: 'error' | 'success'; text: string } | null>(null);
   const [clash, setClash] = useState<CharacterRelationship | null>(null);
   /** Changes one part of the draft; a change to the pickers closes the warning. */
@@ -267,15 +279,14 @@ export function AddRelationshipForm({
   idPrefix,
   cast,
   fixedFromId,
-  initialPair,
+  layout = 'stacked',
+  showsHint = true,
   onAdd,
   onCancel,
 }: AddRelationshipFormProps) {
   const { t } = useAtlasTranslation();
-  const { draft, change, reset, message, setMessage, clash, setClash } = useRelationshipDraft(
-    fixedFromId,
-    initialPair,
-  );
+  const { draft, change, reset, message, setMessage, clash, setClash } =
+    useRelationshipDraft(fixedFromId);
 
   const { isBusy, addOnce } = useRelationshipAdd(cast.relationships, onAdd);
   // What every part of the form shares.
@@ -309,8 +320,8 @@ export function AddRelationshipForm({
         void add();
       }}
     >
-      <p className="m-0 type-meta">{t('connections.add.hint')}</p>
-      <RelationshipPickers {...shared} isFromPicked={fixedFromId === undefined} />
+      {showsHint && <p className="m-0 type-meta">{t('connections.add.hint')}</p>}
+      <RelationshipPickers {...shared} isFromPicked={fixedFromId === undefined} layout={layout} />
       <KindDetails {...shared} />
       <NoteOrClash
         {...shared}

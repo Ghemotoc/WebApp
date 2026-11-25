@@ -9,10 +9,14 @@
  * otherwise. Who uses it: PublicPlanView. What it calls: RelationshipMap, FamilyTreeView,
  * useRelationshipWords and ReportButton.
  */
+import { useState } from 'react';
+
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
+import type { CharacterRelationship } from '../api/characters';
 import type { PublicPlan } from '../api/publicPlan';
-import { useRelationshipWords } from '../hooks/useRelationshipWords';
+import { useRelationshipWords, type RelationshipWords } from '../hooks/useRelationshipWords';
+import { categoryOf, type RelationshipCategory } from '../lib/relationshipCategories';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { FamilyTreeView } from './FamilyTreeView';
@@ -26,51 +30,77 @@ export interface PublicConnectionsProps {
   isPreview: boolean;
 }
 
+/** The map's list version: every shown relationship in words, each with Report. */
+function PublicRelationshipList({
+  relationships,
+  words,
+  isPreview,
+}: {
+  relationships: CharacterRelationship[];
+  words: RelationshipWords;
+  isPreview: boolean;
+}) {
+  const { t } = useAtlasTranslation();
+  return (
+    <section aria-labelledby="atlas-public-list-heading" className="flex flex-col gap-2">
+      <h2
+        id="atlas-public-list-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
+        {t('connections.list.heading')}
+      </h2>
+      {relationships.length === 0 && (
+        <p className="m-0 text-ink-muted">{t('connections.list.none')}</p>
+      )}
+      <ul className="m-0 list-none p-0">
+        {relationships.map((relationship) => (
+          <li
+            key={relationship.id}
+            className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline py-2 last:border-b-0"
+          >
+            <span className="min-w-0 break-words text-ink">{words.sentence(relationship)}</span>
+            {!isPreview && (
+              <ReportButton
+                itemType="atlas_item"
+                itemReference={relationship.id}
+                itemLabel={words.sentence(relationship)}
+              />
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 /**
- * Renders the map with its list, or the tree.
+ * Renders the map with its list, or the tree. The category switches filter both, as on the
+ * writer's page (story 6.6).
  *
  * @returns the area's content
  */
 export function PublicConnections({ plan, kind, base, isPreview }: PublicConnectionsProps) {
-  const { t } = useAtlasTranslation();
   const words = useRelationshipWords(plan.cast);
+  const [hiddenCategories, setHiddenCategories] = useState<RelationshipCategory[]>([]);
   // A node opens the character's page only while Characters is public.
   const addressOf = (characterId: string) =>
     plan.areas.includes('characters') ? `${base}/characters/${characterId}` : null;
   if (kind === 'tree') {
     return <FamilyTreeView addressOf={addressOf} cast={plan.cast} words={words} />;
   }
+  const shown = plan.cast.relationships.filter(
+    (relationship) => !hiddenCategories.includes(categoryOf(relationship.kind)),
+  );
   return (
     <div className="flex min-w-0 flex-col gap-6">
-      <RelationshipMap addressOf={addressOf} cast={plan.cast} words={words} />
-      <section aria-labelledby="atlas-public-list-heading" className="flex flex-col gap-2">
-        <h2
-          id="atlas-public-list-heading"
-          className="m-0 font-heading type-heading font-bold text-ink-heading"
-        >
-          {t('connections.list.heading')}
-        </h2>
-        {plan.cast.relationships.length === 0 && (
-          <p className="m-0 text-ink-muted">{t('connections.list.none')}</p>
-        )}
-        <ul className="m-0 list-none p-0">
-          {plan.cast.relationships.map((relationship) => (
-            <li
-              key={relationship.id}
-              className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline py-2 last:border-b-0"
-            >
-              <span className="min-w-0 break-words text-ink">{words.sentence(relationship)}</span>
-              {!isPreview && (
-                <ReportButton
-                  itemType="atlas_item"
-                  itemReference={relationship.id}
-                  itemLabel={words.sentence(relationship)}
-                />
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <RelationshipMap
+        addressOf={addressOf}
+        cast={plan.cast}
+        words={words}
+        hiddenCategories={hiddenCategories}
+        onHiddenChange={setHiddenCategories}
+      />
+      <PublicRelationshipList relationships={shown} words={words} isPreview={isPreview} />
     </div>
   );
 }
