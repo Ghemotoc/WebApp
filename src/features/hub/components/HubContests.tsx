@@ -2,7 +2,8 @@
  * HubContests: "Open for entries now" on the Home page, the contests the signed-in writer can
  * enter today (bundle G9 WRITING, part a; since CALM-7c the simplified board New-Home: up to
  * three columns, each under a 2 px thread line, with "Closes in 8 days" as the deadline in
- * colour, the name, a meta line and a quiet button).
+ * colour, the name, a meta line and a quiet button; since user story 1.1 board A01 they sit in a
+ * tinted band of their own).
  *
  * The contest's full page is its landing page at /c/<slug>, so the item links there; a writer
  * enters a story from that story's settings (StoryContestCard, S1-E11-15), which the item says.
@@ -11,7 +12,7 @@
  * the contests or their entries themselves, so both come from writers_hub_contests().
  * Left out (CALM-7c): the board's "Contests and results" link, because members have no contests
  * page yet, and the description, which contests don't carry.
- * Who shows it: WritersHubPage. What it calls: hooks/useHubContests.ts and lib/hubDates.ts.
+ * Who shows it: MemberHomePage. What it calls: hooks/useHubContests.ts and lib/hubDates.ts.
  */
 import { Link } from 'react-router';
 
@@ -108,8 +109,12 @@ export function HubContests({ now }: { now: Date }) {
   if (loadFailed) return <Notice tone="error">{t('hub.contests.loadFailed')}</Notice>;
   if (!isLoaded) return null;
   return (
-    <section aria-labelledby="hub-contests" className="flex flex-col gap-4">
-      <h2 id="hub-contests" className="m-0 type-heading">
+    <section
+      aria-labelledby="hub-contests"
+      className="box-surface flex flex-col gap-6 rounded-card p-4 sm:p-8 lg:p-12"
+    >
+      {/* Board A01: the contests sit in their own tinted band, under a page-sized heading. */}
+      <h2 id="hub-contests" className="m-0 type-title">
         {t('hub.contests.heading')}
       </h2>
       {contests.length === 0 && <p className="m-0 text-ink-muted">{t('hub.contests.none')}</p>}

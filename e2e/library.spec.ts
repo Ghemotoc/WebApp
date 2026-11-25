@@ -120,6 +120,13 @@ test.describe('library and continue reading (S1-E4-03)', () => {
       'href',
       `/s/${storySlug}/libre2e1`,
     );
+    // Home's hero carries the story read last beside the writing month (board A01, story 1.1).
+    await again.goto('/');
+    const heroCard = again.getByRole('region', { name: 'Continue reading' }).first();
+    await expect(heroCard.getByRole('meter')).toBeVisible();
+    await expect(
+      heroCard.getByRole('link', { name: 'Continue reading Raftul bibliotecii' }),
+    ).toHaveAttribute('href', `/s/${storySlug}/libre2e1`);
     await again.goto(`/s/${storySlug}`);
     await expect(again.getByRole('link', { name: 'Continue chapter 1' })).toBeVisible();
     // Bundle 2 (board B01): the drop-down sits in the sheet "In library" opens.

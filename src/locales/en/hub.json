@@ -192,7 +192,8 @@
     },
     "home": {
       "dayLine": "Writing month, day {{day}}",
-      "welcome": "Welcome back, {{name}}.",
+      "welcomeLead": "Welcome back,",
+      "welcomeName": "{{name}}.",
       "welcomeNoName": "Welcome back.",
       "waiting": "Chapter {{number}} of {{story}} is waiting for you.",
       "contestsClosing_one": "{{count}} contest closes this month.",
@@ -206,6 +207,8 @@
       "heading": "Continue reading",
       "openLibrary": "Open library",
       "place": "{{writer}} · chapter {{number}} of {{total}}",
+      "continue": "Continue",
+      "continueLabel": "Continue reading {{title}}",
       "placeNumberOnly": "{{writer}} · chapter {{number}}"
     },
     "drafts": {

@@ -8,7 +8,7 @@
  * "Draw inspiration from new and rising writers" under it in the same column (A01: the writers
  * moved here from a row of their own); the guides sit on paper on the right. Under 900 px the
  * parts stack. Without a prompt or writers the guides take the whole width.
- * Who shows it: WritersHubPage. What it calls: HubPrompt, HubGuides and RisingWritersList.
+ * Who shows it: MemberHomePage. What it calls: HubPrompt, HubGuides and RisingWritersList.
  */
 import { Link } from 'react-router';
 
@@ -39,7 +39,7 @@ export function HubToolsSection({ now }: { now: Date }) {
     >
       {/* Step 1: the heading and the Guides link, in the band's own text colour. */}
       <div className="flex items-center justify-between gap-4">
-        <h2 id="hub-tools-heading" className="m-0 type-heading text-on-primary">
+        <h2 id="hub-tools-heading" className="m-0 type-title text-on-primary">
           {t('hub.tools.heading')}
         </h2>
         <Link
