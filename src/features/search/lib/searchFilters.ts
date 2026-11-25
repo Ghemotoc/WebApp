@@ -78,7 +78,10 @@ export function filtersOn(request: ListRequest): number {
  */
 export function paramsFor(next: ListRequest, tab: SearchTab): URLSearchParams {
   // Step 1: the See all address already writes q, sort, status and language by its own rules.
-  const params = new URL(listAddress(next), 'https://example.invalid').searchParams;
+  // Only the part after "?" is wanted, so no host is needed to read it.
+  const address = listAddress(next);
+  const queryStart = address.indexOf('?');
+  const params = new URLSearchParams(queryStart === -1 ? '' : address.slice(queryStart + 1));
   // Step 2: "Best match" is the page's own order, so it stays out of the address.
   if (params.get('sort') === 'relevance') params.delete('sort');
   // Step 3: the tab, unless it is the first one.
