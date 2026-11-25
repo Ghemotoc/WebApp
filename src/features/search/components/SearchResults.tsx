@@ -1,148 +1,192 @@
 /**
- * SearchResults: what a search found, under the search field (story S1-E5-04; board Search 3.2;
- * simplified look, bundle CALM-7c, board simplified/New-PhoneSearch).
+ * SearchResults: what a search found, under the search field (story S1-E5-04; user story 1.8,
+ * board A08-SearchResults).
  *
- * The count across every group, then a segmented control named "Show" with each group that found
- * something (Stories, Writers, Tags) and the chosen group's results, then the line about what
- * search never shows. Wide screens keep the group's shelf; under 768 px the results are rows with
- * the group's count as their heading at the right of the control (handover Step 3, "Search on
- * phones"). With nothing found: "No results for …" and a way to Read (board 3.2, "When nothing
- * matches"). The database leaves out what this reader may not see, so the page adds no rules.
- * Who uses it: SearchPage. What it calls: useSearchResults(), useIsPhoneScreen().
+ * Tabs, each with its count: Stories, Writers and Together; the open tab sits on the white
+ * bubble (SegmentedControl) and lives in the address (?in=), so Back and a shared link keep it.
+ * Stories: the filters column and the rows (SearchStoriesTab). Writers: avatar, pen name, what
+ * they write and Follow. Together: threads and posts with their forum. Spaces joins the tabs once
+ * spaces can be searched (board-fixes). The database leaves out what this reader may not see
+ * (ratings, blocks, moderation), so the page adds no rules; the safety line says so.
+ * Who uses it: SearchPage. What it calls: useStoryList(), useFoundWritersList() and
+ * useForumSearch().
  */
-import { useId, useState } from 'react';
-import { Link } from 'react-router';
+import { useId, type ReactNode } from 'react';
+import { useSearchParams } from 'react-router';
 
-import { buttonClassName } from '@/components/ui/buttonStyles';
-import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import type { ListRequest } from '@/features/discovery/api/storyLists';
+import { useStoryList } from '@/features/discovery/hooks/useStoryList';
+import { ForumSearchResultRow } from '@/features/forums/components/ForumSearchResultRow';
+import { useForumSearch } from '@/features/forums/hooks/useForumSearch';
 
-import { useIsPhoneScreen } from '../hooks/useIsPhoneScreen';
-import { useSearchResults } from '../hooks/useSearchResults';
-import { searchGroups, type SearchGroup } from '../lib/searchAddresses';
-import { groupTotal, type SearchGroupResults } from '../lib/searchGroups';
+import { useFoundWritersList } from '../hooks/useSearchGroupList';
+import {
+  paramsFor,
+  paramsForTab,
+  searchTabs,
+  storiesRequest,
+  tabFrom,
+  type SearchTab,
+} from '../lib/searchFilters';
 import { useSearchTranslation } from '../registerSearchTranslations';
 
-import { SearchGroupRows } from './SearchGroupRows';
-import { SearchGroupShelf } from './SearchGroupShelf';
+import { SearchStoriesTab } from './SearchStoriesTab';
+import { WriterResultRow } from './WriterResultRow';
 
-/** "No results for …", with the way to Read. */
-function NothingFound({ term }: { term: string }) {
-  const { t } = useSearchTranslation();
-  return (
-    <div className="flex flex-col">
-      <EmptyState
-        title={t('empty.title', { term })}
-        description={t('empty.description')}
-        action={
-          <Link to="/discover" className={buttonClassName({ variant: 'primary' })}>
-            {t('empty.browse')}
-          </Link>
-        }
-      />
-    </div>
-  );
-}
-
-/** What the group switch needs. */
-interface GroupSwitchProps {
-  groups: SearchGroup[];
-  chosen: SearchGroup;
-  onChoose: (group: SearchGroup) => void;
-}
-
-/** The groups with results as one segmented control named "Show" (board New-PhoneSearch). */
-function GroupSwitch({ groups, chosen, onChoose }: GroupSwitchProps) {
-  const { t } = useSearchTranslation();
-  const name = useId();
-  return (
-    <SegmentedControl
-      legend={t('groups.label')}
-      isLegendVisible={false}
-      name={name}
-      options={groups.map((group) => ({ value: group, label: t(`groups.${group}`) }))}
-      value={chosen}
-      onChange={onChoose}
-    />
-  );
-}
-
-/** What the chosen group's block needs. */
-interface ChosenGroupProps extends GroupSwitchProps {
-  term: string;
-  results: SearchGroupResults;
+/** What a list of rows with "Show more results" needs. */
+interface MoreRowsProps {
+  label: string;
+  hasMore: boolean;
+  isLoadingMore: boolean;
+  onMore: () => void;
+  children: ReactNode;
+  emptyText: string | null;
 }
 
 /**
- * Phones: the switch with the count as a meta-line heading at its right, then the rows.
+ * Rows under a hairline, then "Show more results", or one line when there are none.
  *
- * @param props - the groups, the chosen one, the term and the results
- * @returns the switch and the rows
+ * @param props - the list's name, its rows and the "more" state
+ * @returns the list block
  */
-function PhoneGroup({ groups, chosen, onChoose, term, results }: ChosenGroupProps) {
+function MoreRows({ label, hasMore, isLoadingMore, onMore, children, emptyText }: MoreRowsProps) {
   const { t } = useSearchTranslation();
-  const headingId = useId();
+  if (emptyText !== null) return <p className="m-0 type-body text-ink-muted">{emptyText}</p>;
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <GroupSwitch groups={groups} chosen={chosen} onChoose={onChoose} />
-        <h2 id={headingId} className="m-0 type-meta font-normal">
-          {t(`groups.${chosen}Title`, { count: groupTotal(chosen, results) })}
-        </h2>
-      </div>
-      <SearchGroupRows group={chosen} term={term} results={results} headingId={headingId} />
+    <div className="flex flex-col gap-4">
+      <ul aria-label={label} className="m-0 list-none border-t border-hairline p-0">
+        {children}
+      </ul>
+      {hasMore && (
+        <Button variant="secondary" className="w-full" disabled={isLoadingMore} onClick={onMore}>
+          {t('stories.showMore')}
+        </Button>
+      )}
     </div>
   );
 }
 
-/** The count, the switch, the chosen group's results and the safety line. */
-function FoundResults({ term, results }: { term: string; results: SearchGroupResults }) {
+/** The Writers tab: one row each with Follow. */
+function WritersTab({
+  term,
+  list,
+}: {
+  term: string;
+  list: ReturnType<typeof useFoundWritersList>;
+}) {
   const { t } = useSearchTranslation();
-  const isPhone = useIsPhoneScreen();
-  const groups = searchGroups.filter((group) => groupTotal(group, results) > 0);
-  const [picked, setPicked] = useState<SearchGroup | null>(null);
-  const chosen = picked !== null && groups.includes(picked) ? picked : groups[0];
-  const total = groups.reduce((sum, group) => sum + groupTotal(group, results), 0);
-  if (chosen === undefined) return <NothingFound term={term} />;
-  const switchProps = { groups, chosen, onChoose: setPicked };
+  if (list.loadFailed) return <Notice tone="error">{t('page.loadFailed')}</Notice>;
+  if (!list.isLoaded) return null;
   return (
-    <div className="flex flex-col gap-6">
-      {/* The total is read out when it changes; on phones the group's count heading shows it. */}
-      <p aria-live="polite" className="m-0 type-meta max-md:sr-only">
-        {t('page.count', { count: total })}
-      </p>
-      {isPhone ? (
-        <PhoneGroup {...switchProps} term={term} results={results} />
-      ) : (
-        <>
-          <GroupSwitch {...switchProps} />
-          <SearchGroupShelf group={chosen} term={term} results={results} />
-        </>
-      )}
-      <p className="m-0 type-meta">{t('groups.safetyNote')}</p>
-    </div>
+    <MoreRows
+      label={t('tabs.writers')}
+      hasMore={list.hasMore}
+      isLoadingMore={list.isLoadingMore}
+      onMore={list.loadMore}
+      emptyText={list.items.length === 0 ? t('tabs.noneWriters', { term }) : null}
+    >
+      {list.items.map((writer) => (
+        <WriterResultRow key={writer.handle} writer={writer} />
+      ))}
+    </MoreRows>
+  );
+}
+
+/** The Together tab: threads and posts, each with its forum. */
+function TogetherTab({ term, list }: { term: string; list: ReturnType<typeof useForumSearch> }) {
+  const { t } = useSearchTranslation();
+  if (list.loadFailed) return <Notice tone="error">{t('page.loadFailed')}</Notice>;
+  if (list.results === null) return null;
+  return (
+    <MoreRows
+      label={t('tabs.together')}
+      hasMore={list.hasMore}
+      isLoadingMore={list.isLoadingMore}
+      onMore={list.showMore}
+      emptyText={list.results.length === 0 ? t('tabs.noneTogether', { term }) : null}
+    >
+      {list.results.map((result) => (
+        <ForumSearchResultRow key={`${result.threadNumber}-${result.postNumber}`} result={result} />
+      ))}
+    </MoreRows>
   );
 }
 
 /**
- * Renders the results, a wait (nothing), or a plain error.
+ * A tab's count: the total when the database gives one, the rows loaded so far with "+" while
+ * more wait (Together pages without a total), or nothing while loading.
+ *
+ * @param total - the count, or null while loading
+ * @param hasMore - whether more wait beyond the count
+ * @returns the count as text
+ */
+function countText(total: number | null, hasMore = false): string {
+  if (total === null) return '';
+  return hasMore ? `${total}+` : String(total);
+}
+
+/**
+ * Follows the three lists for one term, all at once, so every tab shows its count.
+ *
+ * @param term - the search term
+ * @param request - the stories list with its filters
+ * @returns the three lists
+ */
+function useSearchTabs(term: string, request: ListRequest) {
+  const stories = useStoryList(request);
+  const writers = useFoundWritersList(term);
+  const together = useForumSearch({ term, forumSlug: null, authorHandle: null });
+  return { stories, writers, together };
+}
+
+/**
+ * Renders the tabs and the open one.
  *
  * @param props.term - the search term from the address
  * @returns the results block
  */
 export function SearchResults({ term }: { term: string }) {
   const { t } = useSearchTranslation();
-  const found = useSearchResults(term);
-  if (found.loadFailed) return <Notice tone="error">{t('page.loadFailed')}</Notice>;
-  if (!found.isLoaded || found.stories === null || found.writers === null || found.tags === null) {
-    return null;
-  }
+  const name = useId();
+  const [params, setParams] = useSearchParams();
+  const tab = tabFrom(params);
+  const request = storiesRequest(term, params);
+  const lists = useSearchTabs(term, request);
+  const counts: Record<SearchTab, string> = {
+    stories: countText(lists.stories.total),
+    writers: countText(lists.writers.total),
+    together: countText(lists.together.results?.length ?? null, lists.together.hasMore),
+  };
+  // A new filter or tab rewrites the address in place: no history entry per click.
+  const changeStories = (next: ListRequest) => setParams(paramsFor(next, tab), { replace: true });
+  const chooseTab = (next: SearchTab) => setParams(paramsForTab(params, next), { replace: true });
   return (
-    <FoundResults
-      key={term}
-      term={term}
-      results={{ stories: found.stories, writers: found.writers, tags: found.tags }}
-    />
+    <div className="flex flex-col gap-8">
+      <SegmentedControl
+        legend={t('tabs.label')}
+        isLegendVisible={false}
+        name={name}
+        options={searchTabs.map((value) => ({
+          value,
+          label: `${t(`tabs.${value}`)} ${counts[value]}`.trim(),
+        }))}
+        value={tab}
+        onChange={chooseTab}
+      />
+      {tab === 'stories' && (
+        <SearchStoriesTab
+          term={term}
+          request={request}
+          list={lists.stories}
+          onChange={changeStories}
+        />
+      )}
+      {tab === 'writers' && <WritersTab term={term} list={lists.writers} />}
+      {tab === 'together' && <TogetherTab term={term} list={lists.together} />}
+      <p className="m-0 type-meta text-ink-muted">{t('groups.safetyNote')}</p>
+    </div>
   );
 }
