@@ -528,7 +528,18 @@ the other person: MessagesHeaderLink (useUnreadMessageCount → unread_message_c
   → opening the chat → mark_conversation_read()
 ```
 
-The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`. Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`, behind its "…" button (board E13). Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+
+Boards E12 and E13 (BOOKS-4) added three reads, all in `…_books_e12_e13_chat_partner_and_new_chat.sql` (tests `412`), none of them changing who may write to whom:
+
+```
+NewChatButton → useNewChatPeople → new_chat_people()
+  → the people the caller follows, live and not staff, kept only when conversation_can_send() says yes
+ChatHeader / ChatFocusBar → usePartnerLine(chat.latestStory)
+  → conversation_with().latest_story ← chat_partner_story(): their newest story the reader may open
+AboutChatPanel / ChatPanel → chat.adultsSwitchStops
+  → conversation_with().adults_switch_stops ← my_adults_switch_stops_chat(): a 16 or 17-year-old's own switch
+```
 
 ## Block and report inside messages (S1-E9-02)
 
@@ -1680,7 +1691,7 @@ post_comment() ────────┘ queues comment_posted            comm
                                              notifications (the person told reads only their own rows)
 NotificationsPage → hooks/useNotifications → api/notifications.ts → my_notifications()
 NotificationBell → hooks/useUnreadNotificationCount (every 60 s and on focus) → my_unread_notification_count()
-"Mark all as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
+"Mark as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
 ```
 
 Reading applies the reader's rules again (`notification_is_shown()`): a chapter they can no longer open (rating, block, moderation) or someone either side now blocks is left out, so the badge and the list always agree. A moderation decision is always shown and `is_required` (DSA art. 17). Answers carry usernames and display names, never a user ID. The words for each kind are picked in `lib/notificationText.ts`; the day headings in `lib/dayGroups.ts` (Romanian time).

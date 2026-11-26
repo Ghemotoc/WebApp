@@ -13777,6 +13777,7 @@ export type Database = {
       character_part_keys: { Args: { parts: string[] }; Returns: string[] };
       character_sheet_keys: { Args: Record<PropertyKey, never>; Returns: string[] };
       chat_cleared_at: { Args: { chat_id: string; person_id: string }; Returns: string };
+      chat_partner_story: { Args: { partner_id: string }; Returns: Json };
       check_bible_text: { Args: { body: string }; Returns: string };
       check_birthday: { Args: { wanted_month: number }; Returns: undefined };
       check_certificate_class: {
@@ -15938,6 +15939,10 @@ export type Database = {
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       move_chapter_scene: { Args: { new_position: number; scene_id: string }; Returns: Json };
       my_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_adults_switch_stops_chat: {
+        Args: { caller_id: string; partner_id: string };
+        Returns: boolean;
+      };
       my_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
       my_archive_email_hash: { Args: Record<PropertyKey, never>; Returns: string };
       my_bible_entry: {
@@ -16326,6 +16331,7 @@ export type Database = {
       };
       network_ads_barred: { Args: { context: Json }; Returns: boolean };
       new_certificate_code: { Args: Record<PropertyKey, never>; Returns: string };
+      new_chat_people: { Args: Record<PropertyKey, never>; Returns: Json };
       next_chapter_json: { Args: { target_story_id: string }; Returns: Json };
       next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
       next_notice_reference: { Args: { notice_kind: string }; Returns: string };

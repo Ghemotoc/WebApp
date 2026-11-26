@@ -1,15 +1,14 @@
 /**
  * MessagesPage: /messages and /messages/:handle, the person's private chats (story S1-E9-01;
- * board Messages 5.5, redrawn in the liquid glass redesign by bundle G8c: boards Messages and
- * Chat).
+ * user stories 4.2 and 4.3, boards E12-Messages and E13-Chat of "Build: the full design as user
+ * stories").
  *
- * The header is the boards' page header: the eyebrow, the large title and the lead line on the
- * left, "Message settings" as a grey glass pill on the right. On desktops (1024 px and wider)
- * three columns in one glass card with 32 px corners: the chats, the open chat and "About this
- * chat". With no chat open, the middle says "Pick a chat" with a "New chat" pill. Narrower, one
- * column at a time: the chats at /messages, the chat (with "Chats" to go back, then About below
- * it) at /messages/:handle, so a phone never squeezes two lists side by side (CLAUDE.md rule 21).
- * A visitor is asked to log in.
+ * Board E12, no chat open: the title, the lead and a row with "+ New chat" (a quiet button) and
+ * "Message settings" (a text button); then, from 1024 px, the chats beside a "Pick a chat" card.
+ * Board E13, a chat open: the title alone, then three columns from 1024 px (the chats, the chat,
+ * About this chat). Narrower, one thing at a time (user story 4.2): the chats at /messages, and
+ * at /messages/:handle the chat full screen under its own bar (ChatFocusBar: Back, the name and
+ * More), with About below it and no tab bar (CLAUDE.md rule 21). A visitor is asked to log in.
  * When a reader arrives from a share dialog's "Send in Messages" (bundle GAPS-7, part a; board
  * 3.6 Share), a notice above the card shows the link and says what to do next: pick a chat, then
  * send. "Don't send" drops the link.
@@ -18,8 +17,6 @@
  */
 import { Link, useParams } from 'react-router';
 
-import { ActionIcon } from '@/components/icons/ActionIcon';
-import { NavIcon } from '@/components/icons/NavIcon';
 import { Button } from '@/components/ui/Button';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Notice } from '@/components/ui/Notice';
@@ -34,54 +31,48 @@ import { ChatPanel } from './ChatPanel';
 import { NewChatButton } from './NewChatButton';
 
 /**
- * The middle column while no chat is open: what to do next, and a way to start a chat.
+ * The right-hand card while no chat is open (board E12): what to do next, and New chat across
+ * the card.
  *
- * @returns the column, shown from 1024 px
+ * @returns the card, shown from 1024 px
  */
 function PickAChat() {
   const { t } = useMessagesTranslation();
   return (
-    <div className="hidden flex-col items-start gap-3 p-8 lg:col-span-2 lg:flex">
-      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">
-        {t('chat.pickTitle')}
-      </h2>
-      <p className="m-0 max-w-[460px] text-ink-muted">{t('chat.pick')}</p>
-      <NewChatButton look="pill" />
+    <div className="hidden flex-col gap-3 rounded-card bg-surface-solid p-12 lg:flex">
+      <h2 className="m-0 type-subheading">{t('chat.pickTitle')}</h2>
+      <p className="m-0 max-w-[460px] type-body text-ink-muted">{t('chat.pick')}</p>
+      <NewChatButton isWide />
     </div>
   );
 }
 
 /**
- * The card with the chats and, when a handle is in the address, that chat.
+ * The chats and, when a handle is in the address, that chat.
+ *
+ * Board E12 (no chat open): the chats and "Pick a chat" side by side, 1 : 1.4, 64 px apart.
+ * Board E13 (a chat open): the chats, the chat and About this chat in columns of 320 px, the rest
+ * and 280 px, 48 px apart. Narrower than 1024 px one thing at a time: the chats at /messages,
+ * the chat with About under it at /messages/:handle (user story 4.2).
  *
  * @param props.handle - the other person's username from the address, or null
- * @returns the card
+ * @returns the columns
  */
-function MessagesCard({ handle }: { handle: string | null }) {
-  const { t } = useMessagesTranslation();
-  const shared = useSharedLink();
-  // On a narrow screen the list gives way to the open chat.
-  const listVisibility = handle === null ? 'flex' : 'hidden lg:flex';
-  return (
-    <div className="grid min-w-0 grid-cols-1 overflow-hidden rounded-card border border-border bg-surface shadow-card lg:grid-cols-[300px_minmax(0,1fr)_260px]">
-      <div className={`${listVisibility} min-w-0 flex-col pb-2`}>
-        <ChatList openHandle={handle} />
-      </div>
-      {handle === null ? (
+function MessagesColumns({ handle }: { handle: string | null }) {
+  if (handle === null) {
+    return (
+      <div className="grid min-w-0 grid-cols-1 items-start gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <ChatList openHandle={null} />
         <PickAChat />
-      ) : (
-        <>
-          <Link
-            to={`/messages${shared.query}`}
-            className="inline-flex min-h-11 w-fit items-center gap-2 px-4 type-body font-semibold text-link underline lg:hidden"
-          >
-            <NavIcon name="back" size={16} />
-            {t('chat.back')}
-          </Link>
-          <ChatPanel key={handle.toLowerCase()} handle={handle} />
-        </>
-      )}
-    </div>
+      </div>
+    );
+  }
+  return (
+    <ChatPanel
+      key={handle.toLowerCase()}
+      handle={handle}
+      chatList={<ChatList openHandle={handle} />}
+    />
   );
 }
 
@@ -110,27 +101,40 @@ function SharedLinkNotice({ hasOpenChat }: { hasOpenChat: boolean }) {
 }
 
 /**
- * The page's header: the title and lead on the left, "Message settings" on the right.
+ * The page's header. Board E12: the title, the lead, then "+ New chat" and "Message settings".
+ * Board E13 (a chat open): the title alone, and on phones and tablets not even that, because
+ * the chat's own bar names the person (it stays for screen readers).
  *
- * @param props.isSignedIn - true to show the settings pill
+ * @param props.isSignedIn - true to show the two actions
+ * @param props.hasOpenChat - true while a chat is open
  * @returns the header
  */
-function MessagesHeader({ isSignedIn }: { isSignedIn: boolean }) {
+function MessagesHeader({
+  isSignedIn,
+  hasOpenChat,
+}: {
+  isSignedIn: boolean;
+  hasOpenChat: boolean;
+}) {
   const { t } = useMessagesTranslation();
-  return (
-    <header className="flex flex-col gap-4 pt-12 md:flex-row md:items-end md:justify-between">
-      <div className="flex max-w-[720px] flex-col gap-2">
+  if (hasOpenChat) {
+    return (
+      <header className="sr-only lg:not-sr-only lg:pt-12">
         <h1 className="page-title">{t('title')}</h1>
-        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('lead')}</p>
-      </div>
+      </header>
+    );
+  }
+  return (
+    <header className="flex flex-col gap-2 pt-12">
+      <h1 className="page-title">{t('title')}</h1>
+      <p className="m-0 max-w-[34em] type-body text-ink-muted">{t('lead')}</p>
       {isSignedIn && (
-        <Link
-          to="/settings#messages"
-          className={buttonClassName({ variant: 'secondary' }, 'w-fit shrink-0')}
-        >
-          <ActionIcon name="settings" size={16} />
-          {t('settings.pageLink')}
-        </Link>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <NewChatButton />
+          <Link to="/settings#messages" className={buttonClassName({ variant: 'text' })}>
+            {t('settings.pageLink')}
+          </Link>
+        </div>
       )}
     </header>
   );
@@ -147,9 +151,9 @@ export function MessagesPage() {
   const { userId, isKnown } = useSession();
   const isSignedIn = isKnown && userId !== null;
   return (
-    <PageContainer className="flex flex-col gap-8 pb-16">
+    <PageContainer className="flex flex-col gap-16 pb-16">
       <title>{t('documentTitle')}</title>
-      <MessagesHeader isSignedIn={isSignedIn} />
+      <MessagesHeader isSignedIn={isSignedIn} hasOpenChat={handle !== null} />
       {isKnown && userId === null && (
         <p className="m-0 text-ink-muted">
           {t('signedOut')}{' '}
@@ -159,7 +163,7 @@ export function MessagesPage() {
         </p>
       )}
       {isSignedIn && <SharedLinkNotice hasOpenChat={handle !== null} />}
-      {isSignedIn && <MessagesCard handle={handle} />}
+      {isSignedIn && <MessagesColumns handle={handle} />}
     </PageContainer>
   );
 }

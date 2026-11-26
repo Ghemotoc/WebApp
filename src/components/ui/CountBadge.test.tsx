@@ -4,8 +4,10 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { createI18n } from '@/lib/i18n';
+
 import { CountBadge } from './CountBadge';
-import { formatBadgeCount } from './countBadgeText';
+import { badgeLinkName, formatBadgeCount } from './countBadgeText';
 
 describe('formatBadgeCount', () => {
   it('shows nothing when nothing is new', () => {
@@ -36,5 +38,43 @@ describe('CountBadge', () => {
     const badge = container.querySelector('[data-count-badge]');
     expect(badge).toHaveTextContent('9+');
     expect(badge).toHaveAttribute('aria-hidden', 'true');
+  });
+});
+
+describe('badgeLinkName', () => {
+  /** The bell's keys, in common.json. */
+  const bellKeys = {
+    none: 'nav.notifications',
+    some: 'nav.notificationsUnread',
+    many: 'nav.notificationsManyUnread',
+  };
+  /** The Messages link's keys, in common.json. */
+  const chatKeys = {
+    none: 'nav.messages',
+    some: 'nav.messagesUnread',
+    many: 'nav.messagesManyUnread',
+  };
+
+  it('says the plain name when nothing is new', () => {
+    const t = createI18n('en').getFixedT('en');
+    expect(badgeLinkName(t, bellKeys, 0)).toBe('Notifications');
+  });
+
+  it('says the same number the badge shows up to 9', () => {
+    const t = createI18n('en').getFixedT('en');
+    expect(badgeLinkName(t, bellKeys, 3)).toBe('Notifications, 3 new');
+    expect(badgeLinkName(t, chatKeys, 1)).toBe('Messages, 1 chat with new messages');
+  });
+
+  it('says 9+ in English once the badge does, so the name holds the visible text', () => {
+    const t = createI18n('en').getFixedT('en');
+    expect(badgeLinkName(t, bellKeys, 11)).toBe('Notifications, 9+ new');
+    expect(badgeLinkName(t, chatKeys, 40)).toBe('Messages, 9+ chats with new messages');
+  });
+
+  it('says 9+ in Romanian once the badge does', () => {
+    const t = createI18n('ro').getFixedT('ro');
+    expect(badgeLinkName(t, bellKeys, 11)).toBe('Notificări, 9+ noi');
+    expect(badgeLinkName(t, chatKeys, 12)).toBe('Mesaje, 9+ conversații cu mesaje noi');
   });
 });

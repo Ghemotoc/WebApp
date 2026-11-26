@@ -6,7 +6,9 @@
  * small hook, useUnreadMessageCount).
  * What it calls next: my_conversations(), conversation_with(), send_message(),
  * answer_message_request(), say_no_thanks_to_request() (IDEAS-2), mark_conversation_read() and
- * my_message_settings() (…_s1_e9_01_private_messages.sql); set_message_audience() and
+ * my_message_settings() (…_s1_e9_01_private_messages.sql); conversation_with() also gives the
+ * writer line and the adults-switch reason, and new_chat_people() lists New chat's people
+ * (…_books_e12_e13_chat_partner_and_new_chat.sql); set_message_audience() and
  * delete_conversation() (…_s1_e9_04_message_settings_and_retention.sql) and
  * set_adults_may_message() (S1-E2-06); the email choices are read by api/messageEmails.ts (IDEAS-2). Every rule is in the database; a
  * refusal never says why (the neutral "isn't taking messages right now", S1-E9-03).
@@ -61,9 +63,24 @@ export interface Conversation {
   /** After "No thanks": when the caller may write again (30 days on), or null. */
   askAgainFrom: string | null;
   canSend: boolean;
+  /**
+   * Sending is off because of the caller's own "Let adults message me" switch, so the chat may
+   * say so and offer Change (user story 4.3). False in every other case (S1-E9-03).
+   */
+  adultsSwitchStops: boolean;
+  /** The other person's latest story the caller may read, for the header line (board E13). */
+  latestStory: PartnerStory | null;
   iFollow: boolean;
   theyFollow: boolean;
   messages: ChatMessage[];
+}
+
+/** The other person's latest story the caller may read (chat_partner_story()). */
+export interface PartnerStory {
+  title: string;
+  /** fiction, poetry or nonfiction_essays, for the "Fiction writer" words. */
+  categorySlug: string | null;
+  chapterCount: number;
 }
 
 /** The caller's own setting and age group, for the notice over the list. */
@@ -109,15 +126,15 @@ export function messagesErrorFrom(error: { code: string; hint?: string | null })
 }
 
 /** A JSON object's field, read safely. */
-type JsonRecord = Record<string, Json | undefined>;
+export type JsonRecord = Record<string, Json | undefined>;
 
 /** Whether a JSON value is an object (not a list). */
-function isRecord(value: Json | undefined): value is JsonRecord {
+export function isRecord(value: Json | undefined): value is JsonRecord {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 /** Reads a text field, or null. */
-function textOf(record: JsonRecord, key: string): string | null {
+export function textOf(record: JsonRecord, key: string): string | null {
   const value = record[key];
   return typeof value === 'string' ? value : null;
 }
@@ -146,6 +163,19 @@ function messageFromJson(value: Json): ChatMessage[] {
 }
 
 /**
+ * Reads the latest_story field of conversation_with()'s JSON.
+ *
+ * @returns the story, or null when there is none the caller may read
+ */
+function partnerStoryOf(value: Json | undefined): PartnerStory | null {
+  if (!isRecord(value)) return null;
+  const title = textOf(value, 'title');
+  if (title === null) return null;
+  const chapterCount = typeof value.chapter_count === 'number' ? value.chapter_count : 0;
+  return { title, categorySlug: textOf(value, 'category_slug'), chapterCount };
+}
+
+/**
  * Reads conversation_with()'s JSON.
  *
  * @param json - as the database returns it
@@ -163,6 +193,8 @@ export function conversationFromJson(json: Json | null): Conversation | null {
     saidNoThanks: json.said_no_thanks === true,
     askAgainFrom: textOf(json, 'ask_again_from'),
     canSend: json.can_send === true,
+    adultsSwitchStops: json.adults_switch_stops === true,
+    latestStory: partnerStoryOf(json.latest_story),
     iFollow: json.i_follow === true,
     theyFollow: json.they_follow === true,
     messages: messages.flatMap(messageFromJson),
@@ -205,6 +237,37 @@ export async function fetchConversation(
   const { data, error } = await client.rpc('conversation_with', { other_handle: handle });
   if (error !== null) throw messagesErrorFrom(error);
   return conversationFromJson(data);
+}
+
+/** One person New chat offers: someone the caller follows and may write to now. */
+export interface NewChatPerson {
+  handle: string;
+  displayName: string;
+}
+
+/**
+ * Reads one entry of new_chat_people()'s list.
+ *
+ * @returns the person, or nothing for a malformed entry
+ */
+function newChatPersonFromJson(value: Json): NewChatPerson[] {
+  if (!isRecord(value)) return [];
+  const handle = textOf(value, 'handle');
+  if (handle === null) return [];
+  return [{ handle, displayName: textOf(value, 'display_name') ?? handle }];
+}
+
+/**
+ * The people New chat offers (user story 4.2): those the caller follows whom the database says
+ * they may write to now. Nobody else can be found from New chat.
+ *
+ * @returns the people, by name
+ * @throws MessagesError
+ */
+export async function fetchNewChatPeople(client: AppSupabaseClient): Promise<NewChatPerson[]> {
+  const { data, error } = await client.rpc('new_chat_people');
+  if (error !== null) throw messagesErrorFrom(error);
+  return Array.isArray(data) ? data.flatMap(newChatPersonFromJson) : [];
 }
 
 /**

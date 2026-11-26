@@ -1,12 +1,15 @@
 /**
- * NotificationFilters: the chips over the list: All, Replies, Follows, Stories and Staff, each
- * with its count (story S1-E7-01; board 6.2).
+ * NotificationFilters: the switch over the list: Everything, Replies, Follows, Stories and From
+ * {{productName}}, each with its count (story S1-E7-01; user story 4.1: "Tabs filter by kind
+ * with a count each; Everything is first"; board E11-Notifications).
  *
- * One choice at a time; the chosen chip is plum with a tick and aria-pressed (DoD pill system),
- * its count in a gold bubble. Who uses it: NotificationsPage.
+ * The board's track of tabs is the shared SegmentedControl: one choice at a time, a real radio
+ * group (arrow keys move, the picked one is bold on the bubble, so the choice never rests on
+ * colour alone), each label "Replies · 3". The staff kinds read "From ghemotoc" with the
+ * product's name from the brand settings.
+ * Who uses it: NotificationsPage. What it calls: SegmentedControl.
  */
-import { Chip } from '@/components/ui/Chip';
-import { cn } from '@/lib/utils';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 
 import type { NotificationCategory, NotificationsPage } from '../api/notifications';
 import { useNotificationsTranslation } from '../registerNotificationsTranslations';
@@ -14,7 +17,7 @@ import { useNotificationsTranslation } from '../registerNotificationsTranslation
 /** A filter: one category, or all of them. */
 export type NotificationFilter = 'all' | NotificationCategory;
 
-/** The chips in the board's order. */
+/** The tabs in the board's order. */
 const filters: NotificationFilter[] = ['all', 'replies', 'follows', 'stories', 'staff'];
 
 /** What the filters need. */
@@ -25,29 +28,24 @@ export interface NotificationFiltersProps {
 }
 
 /**
- * Renders the chips.
+ * Renders the switch.
  *
- * @returns the group of chips
+ * @returns the radio group
  */
 export function NotificationFilters({ counts, chosen, onChoose }: NotificationFiltersProps) {
   const { t } = useNotificationsTranslation();
+  const options = filters.map((filter) => ({
+    value: filter,
+    label: t('filters.withCount', { name: t(`filters.${filter}`), count: counts[filter] }),
+  }));
   return (
-    <div role="group" aria-label={t('filters.label')} className="flex flex-wrap gap-2">
-      {filters.map((filter) => (
-        <Chip key={filter} isPressed={chosen === filter} onPressedChange={() => onChoose(filter)}>
-          {t(`filters.${filter}`)}
-          <span
-            className={cn(
-              'ml-2 inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-2 type-meta leading-none font-semibold',
-              chosen === filter
-                ? 'bg-gold text-on-gold'
-                : 'border border-(--pill-plum-border) bg-(--pill-plum-bg) text-(--pill-plum-text)',
-            )}
-          >
-            {counts[filter]}
-          </span>
-        </Chip>
-      ))}
-    </div>
+    <SegmentedControl
+      legend={t('filters.label')}
+      isLegendVisible={false}
+      name="notification-filter"
+      options={options}
+      value={chosen}
+      onChange={onChoose}
+    />
   );
 }
