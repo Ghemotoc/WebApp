@@ -16204,7 +16204,7 @@ COMMENT ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_asset
 
 
 
-CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text", "story_rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "story_length" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -16234,6 +16234,10 @@ begin
   if coalesce(page_offset, 0) < 0 then
     raise exception 'The page can''t start before the first story.' using errcode = 'invalid_parameter_value';
   end if;
+  -- Step 1a (user story 1.8, board A08): the Length filter knows two answers.
+  if story_length is not null and story_length not in ('short', 'long') then
+    raise exception 'Unknown length.' using errcode = 'invalid_parameter_value';
+  end if;
   -- Step 1b (MARKETS-2d): "Popular in" a country. Only a country on the drop-down's list counts;
   -- one with too few ranked stories falls back to the overall ranking (popular_in is then null
   -- in the answer, so the page can say so).
@@ -16249,8 +16253,11 @@ begin
   -- used to be read twice). Only one of the sort lines is switched on (the others are null for
   -- every row); the last two break ties: the newer story, then the address, so pages never
   -- overlap. A story the job hasn't scored yet counts as 0.
+  -- User story 1.8 (board A08): the Rating and Length filters narrow the list before it is
+  -- numbered, so the total, the pages and the order all agree.
   with listed as (
-    select * from public.listed_stories(list_kind, list_key, category_slug, completion, language)
+    select listed_rows.* from public.listed_stories(list_kind, list_key, category_slug, completion, language) as listed_rows
+    where public.story_matches_list_filters(listed_rows.id, listed_rows.rating, story_rating, story_length)
   ),
   numbered as (
     select listed.id, count(*) over () as list_total, row_number() over (order by
@@ -16290,23 +16297,30 @@ begin
     order by numbered.position
     limit wanted_rows offset coalesce(page_offset, 0)
   )
-  select coalesce(jsonb_agg(public.story_card_json(page_rows.id) order by page_rows.position), '[]'::jsonb),
+  -- User story 1.8 (board A08): a search row also says how many reads the story has, the same
+  -- public total its story page shows (story_read_total(), BOOKS-B2); other lists don't need it,
+  -- so they don't pay for it.
+  select coalesce(jsonb_agg(public.story_card_json(page_rows.id)
+                            || public.story_list_row_extras(list_kind, page_rows.id)
+                            order by page_rows.position), '[]'::jsonb),
          max(page_rows.list_total)
     into page, total
   from page_rows;
   -- Step 4: a page past the end has no rows to carry the total, so count it (rare).
   if total is null then
-    select count(*) into total from public.listed_stories(list_kind, list_key, category_slug, completion, language);
+    select count(*) into total
+    from public.listed_stories(list_kind, list_key, category_slug, completion, language) as listed_rows
+    where public.story_matches_list_filters(listed_rows.id, listed_rows.rating, story_rating, story_length);
   end if;
   return jsonb_build_object('total', total, 'stories', page, 'popular_in', ranked_country);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d).';
+COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages, search) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking, one rating and one length (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d, user story 1.8).';
 
 
 
@@ -46496,6 +46510,48 @@ COMMENT ON FUNCTION "public"."search_snippet_source"("haystack" "text", "title" 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."search_spaces"("term" "text", "skip" integer DEFAULT 0, "how_many" integer DEFAULT 20) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  page_size integer := least(greatest(coalesce(how_many, 20), 1), 50);
+  pattern text := public.search_like_pattern(term);
+  found jsonb;
+  total integer;
+begin
+  -- Step 1: a term under 2 letters is too short to mean anything, as for stories (S1-E5-04).
+  if char_length(public.search_fold(term)) < 2 then
+    return jsonb_build_object('spaces', '[]'::jsonb, 'total', 0, 'has_more', false);
+  end if;
+  -- Step 2: every live space whose card the caller may see and whose name or description holds
+  -- the term, without diacritics; the busiest first, then one page.
+  with seen as (
+    select spaces as row_data, public.space_latest_activity(spaces) as activity from public.spaces
+    where spaces.deleted_at is null and public.space_card_visible(spaces)
+      and public.search_fold(spaces.name || ' ' || spaces.description) like pattern
+  ), page as (
+    select seen.* from seen order by seen.activity desc, (seen.row_data).name
+    offset greatest(coalesce(skip, 0), 0) limit page_size
+  )
+  select coalesce((select jsonb_agg(public.space_json(page.row_data) order by page.activity desc, (page.row_data).name)
+                   from page), '[]'::jsonb),
+         (select count(*)::integer from seen)
+  into found, total;
+  -- Step 3: the answer, shaped as space_list()'s.
+  return jsonb_build_object('spaces', found, 'total', total,
+    'has_more', greatest(coalesce(skip, 0), 0) + page_size < total);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."search_spaces"("term" "text", "skip" integer, "how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."search_spaces"("term" "text", "skip" integer, "how_many" integer) IS 'One page of the spaces whose name or description holds a search term, as the reader may see them (user story 1.8, board A08).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."search_story"("story_slug" "text", "query" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -53568,6 +53624,24 @@ COMMENT ON FUNCTION "public"."story_link_targets"("story_slug" "text") IS 'What 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_list_row_extras"("list_kind" "text", "target_story_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when list_kind = 'search' then jsonb_build_object('reads', public.story_read_total(target_story_id))
+    else '{}'::jsonb
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."story_list_row_extras"("list_kind" "text", "target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_list_row_extras"("list_kind" "text", "target_story_id" "uuid") IS 'Internal: the fields a story list adds to its cards; the reads for a search (user story 1.8).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_listing_allows"("target" "public"."stories", "list_kind" "text") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -53627,6 +53701,43 @@ ALTER FUNCTION "public"."story_marketing"("story_slug" "text") OWNER TO "postgre
 
 
 COMMENT ON FUNCTION "public"."story_marketing"("story_slug" "text") IS 'The caller''s marketing notes on one story (S1-E17-29).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_matches_list_filters"("story_row_id" "uuid", "story_row_rating" "public"."story_rating", "wanted_rating" "public"."story_rating", "wanted_length" "text") RETURNS boolean
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  readable_chapters integer;
+begin
+  -- Step 1: the rating, when one was picked.
+  if wanted_rating is not null and story_row_rating is distinct from wanted_rating then
+    return false;
+  end if;
+  -- Step 2: no length picked, so nothing more to count.
+  if wanted_length is null then
+    return true;
+  end if;
+  -- Step 3: the readable chapters, counted as the story card counts them.
+  select count(*) into readable_chapters
+  from public.chapters
+  where chapters.story_id = story_row_id
+    and chapters.status = 'published' and chapters.deleted_at is null
+    and public.chapter_is_readable(chapters.id);
+  -- Step 4: under 10 chapters is short, 10 or more is long (board A08).
+  if wanted_length = 'short' then
+    return readable_chapters < 10;
+  end if;
+  return readable_chapters >= 10;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."story_matches_list_filters"("story_row_id" "uuid", "story_row_rating" "public"."story_rating", "wanted_rating" "public"."story_rating", "wanted_length" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_matches_list_filters"("story_row_id" "uuid", "story_row_rating" "public"."story_rating", "wanted_rating" "public"."story_rating", "wanted_length" "text") IS 'Internal: whether a story passes the Rating and Length filters of a story list (user story 1.8).';
 
 
 
@@ -72761,9 +72872,9 @@ REVOKE ALL ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_as
 
 
 
-REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") TO "authenticated";
 
 
 
@@ -76899,6 +77010,12 @@ REVOKE ALL ON FUNCTION "public"."search_snippet_source"("haystack" "text", "titl
 
 
 
+REVOKE ALL ON FUNCTION "public"."search_spaces"("term" "text", "skip" integer, "how_many" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."search_spaces"("term" "text", "skip" integer, "how_many" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."search_spaces"("term" "text", "skip" integer, "how_many" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."search_story"("story_slug" "text", "query" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."search_story"("story_slug" "text", "query" "text") TO "authenticated";
 
@@ -77866,12 +77983,20 @@ GRANT ALL ON FUNCTION "public"."story_link_targets"("story_slug" "text") TO "aut
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_list_row_extras"("list_kind" "text", "target_story_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_listing_allows"("target" "public"."stories", "list_kind" "text") FROM PUBLIC;
 
 
 
 REVOKE ALL ON FUNCTION "public"."story_marketing"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_marketing"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_matches_list_filters"("story_row_id" "uuid", "story_row_rating" "public"."story_rating", "wanted_rating" "public"."story_rating", "wanted_length" "text") FROM PUBLIC;
 
 
 

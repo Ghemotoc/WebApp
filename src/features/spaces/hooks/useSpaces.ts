@@ -19,6 +19,7 @@ import {
   fetchJoinRequests,
   fetchMyAgeGroup,
   fetchSpace,
+  fetchFoundSpaces,
   fetchSpaceList,
   joinSpace,
   leaveSpace,
@@ -67,6 +68,35 @@ export function useSpaceList(
   return {
     spaces: pages === null ? null : pages.flatMap((page) => page.spaces),
     total: pages?.[0]?.total ?? 0,
+    hasMore: list.hasNextPage,
+    showMore: () => void list.fetchNextPage(),
+    isLoadingMore: list.isFetchingNextPage,
+    loadFailed: list.isError,
+  };
+}
+
+/**
+ * Reads the spaces a search found, a page at a time (user story 1.8, board A08's Spaces tab).
+ *
+ * @param term - the search term
+ * @param pageSize - how many a page holds
+ * @returns the spaces so far (null while loading), the total, hasMore, showMore() and loadFailed
+ */
+export function useFoundSpaces(term: string, pageSize: number) {
+  // Which spaces show depends on who is reading (the age rules), so signing in reads again.
+  const { userId } = useSession();
+  const list = useInfiniteQuery({
+    queryKey: [...spacesQueryKey, 'search', term, pageSize, userId],
+    queryFn: async ({ pageParam }: { pageParam: number }) =>
+      fetchFoundSpaces(await requireClient(), term, { skip: pageParam, howMany: pageSize }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage: SpaceListPage, pages: SpaceListPage[]) =>
+      lastPage.hasMore ? pages.length * pageSize : null,
+  });
+  const pages = list.data?.pages ?? null;
+  return {
+    spaces: pages === null ? null : pages.flatMap((page) => page.spaces),
+    total: pages === null ? null : (pages[0]?.total ?? 0),
     hasMore: list.hasNextPage,
     showMore: () => void list.fetchNextPage(),
     isLoadingMore: list.isFetchingNextPage,

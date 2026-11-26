@@ -13510,6 +13510,8 @@ export type Database = {
           page_size?: number;
           popular_in?: string;
           sort_order?: string;
+          story_length?: string;
+          story_rating?: Database['public']['Enums']['story_rating'];
         };
         Returns: Json;
       };
@@ -17838,6 +17840,7 @@ export type Database = {
         Args: { haystack: string; title: string; wanted: string };
         Returns: string;
       };
+      search_spaces: { Args: { how_many?: number; skip?: number; term: string }; Returns: Json };
       search_story: { Args: { query: string; story_slug: string }; Returns: Json };
       search_tags: {
         Args: { page_offset?: number; page_size?: number; term: string };
@@ -18846,6 +18849,10 @@ export type Database = {
       story_like_state_of: { Args: { target_story_id: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };
+      story_list_row_extras: {
+        Args: { list_kind: string; target_story_id: string };
+        Returns: Json;
+      };
       story_listing_allows: {
         Args: {
           list_kind: string;
@@ -18857,6 +18864,15 @@ export type Database = {
         Returns: boolean;
       };
       story_marketing: { Args: { story_slug: string }; Returns: Json };
+      story_matches_list_filters: {
+        Args: {
+          story_row_id: string;
+          story_row_rating: Database['public']['Enums']['story_rating'];
+          wanted_length: string;
+          wanted_rating: Database['public']['Enums']['story_rating'];
+        };
+        Returns: boolean;
+      };
       story_matches_search: {
         Args: {
           target: Omit<
