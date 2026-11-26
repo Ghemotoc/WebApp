@@ -35,7 +35,8 @@ function NotifierFields({ draft, problems, onChange }: NoticeFieldsProps) {
   const messageFor = useProblemMessage();
   const isRequired = !isContactOptional(draft.kind);
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    // One under the other, as on board J11 (bundle 10).
+    <div className="flex flex-col gap-4">
       <TextInput
         id="notice-name"
         label={labelFor('form.name', isRequired)}

@@ -6,16 +6,16 @@
  * changes nothing; one press stops the emails. Mail apps that support it use the email's
  * List-Unsubscribe header instead, which needs no page (POST /api/unsubscribe, RFC 8058).
  * It works signed out: the key in the link says whose emails stop. Account, safety and legal
- * emails always arrive. No doodles: a plain safety page.
+ * emails always arrive. No doodles: a plain safety page. Drawn as board J28 (user stories, bundle
+ * 10): one centred card (NoticeCard) with the heading, the line, the button and the answer.
  * Who shows it: the router. What it calls: api/emailSettings.ts → unsubscribe_from_emails().
  */
 import { useMutation } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
+import { NoticeCard } from '@/components/ui/NoticeCard';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 
 import { unsubscribeFromEmails } from '../api/emailSettings';
@@ -57,15 +57,12 @@ export function UnsubscribePage() {
   const result = useUnsubscribe();
   const isDone = result.data === true;
   return (
-    <PageContainer className="tmc-rise flex max-w-[640px] flex-col gap-4 pt-12 pb-6">
-      <title>{t('unsubscribe.documentTitle')}</title>
-      <div className="flex flex-col gap-2">
-        <Eyebrow>{t('unsubscribe.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
-          {t('unsubscribe.heading')}
-        </h1>
-      </div>
-      <p className="m-0 text-ink-muted">{t('unsubscribe.intro')}</p>
+    <NoticeCard
+      heading={t('unsubscribe.heading')}
+      headingId="unsubscribe-heading"
+      documentTitle={t('unsubscribe.documentTitle')}
+    >
+      <p className="m-0 type-body text-ink-muted">{t('unsubscribe.intro')}</p>
       {unsubscribeKey === '' ? (
         <Notice tone="error">{t('unsubscribe.missingKey')}</Notice>
       ) : (
@@ -80,11 +77,11 @@ export function UnsubscribePage() {
             </Button>
           )}
           {/* A polite live region, so a screen reader hears the answer after the press. */}
-          <div aria-live="polite">
+          <div aria-live="polite" className="w-full">
             <UnsubscribeResult result={result} />
           </div>
         </>
       )}
-    </PageContainer>
+    </NoticeCard>
   );
 }

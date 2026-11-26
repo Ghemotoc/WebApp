@@ -8,6 +8,7 @@
 import type { TicketHistoryEntry } from '../api/staffSupportTickets';
 import { valueWords } from '../lib/historyWords';
 import { useSupportTranslation } from '../registerSupportTranslations';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * One history line.
@@ -16,7 +17,7 @@ import { useSupportTranslation } from '../registerSupportTranslations';
  */
 function HistoryItem({ entry }: { entry: TicketHistoryEntry }) {
   const { t, i18n } = useSupportTranslation();
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(entry.at));

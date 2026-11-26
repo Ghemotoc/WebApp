@@ -1,7 +1,9 @@
 /**
  * SearchInput: the big search field from the Discover and Search boards (story S1-E1-03).
  *
- * Board values: 52 px tall, pill-shaped, the magnifier 20 px from the left. The label is hidden
+ * Board values: 52 px tall, the magnifier 20 px from the left. On member pages it is a rounded
+ * square with the 12 px field corner, not a pill (Robert, Atlas look-check comment, 26 Nov 2026);
+ * staff pages keep the pill. The label is hidden
  * on screen (the field and icon make the purpose clear) but always present for screen readers.
  * Typed or pasted ş and ţ become ș and ț straight away (CLAUDE.md rule 4; S1-E1-04), so a
  * search for "ştiri" finds "știri".
@@ -42,7 +44,7 @@ export function SearchInput({ id, label, onChange, ref, ...inputProps }: SearchI
         ref={ref}
         id={id}
         type="search"
-        className="h-13 w-full rounded-full border border-control-border bg-surface pr-4 pl-12 font-body type-body text-ink"
+        className="h-13 w-full rounded-field in-data-[area=staff]:rounded-full border border-control-border bg-surface pr-4 pl-12 font-body type-body text-ink"
         {...inputProps}
         onChange={handleChange}
       />

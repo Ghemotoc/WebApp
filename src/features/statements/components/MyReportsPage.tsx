@@ -2,22 +2,22 @@
  * MyReportsPage: /my-reports, "Reports and decisions" (story S1-E10-04; board 6.5, MyReports;
  * DSA art. 17: the statement of reasons; art. 16(5): the reporter is told the decision).
  *
- * Board: the Safety eyebrow, the title and intro, "Decisions about your posts" (each statement in
- * full) and "Reports you sent" (each with its outcome), and "Need to talk to us?" with a link to
- * the moderators. A decision's notification links here, to the statement's own anchor
- * (#S-000123). Appeals in the app are S1-E10-07 (after March): each statement links to Contact us.
- * In the liquid glass look (bundle G11c, the canvas's MyReports board) a link leads back to
- * Settings and a segmented "Show" control picks one list at a time, each with its count. It starts
- * on the decisions when there are any (or when the address names one), otherwise on the reports.
+ * Board: the title and intro, "Decisions about your posts" (each statement in full) and "Reports
+ * you sent" (each with its outcome), and "Need to talk to us?" with a link to the moderators. A
+ * decision's notification links here, to the statement's own anchor (#S-000123). Appeals in the
+ * app are S1-E10-07 (after March): each statement links to Contact us. A "Show" control (bundle
+ * G11c) picks one list at a time, each with its count; it starts on the decisions when there are
+ * any (or when the address names one), otherwise on the reports.
+ * Since user stories bundle 10 (board J04) the page opens with a breadcrumb, "Settings / Reports
+ * and decisions", instead of an eyebrow and a back link; the "Show" label is visible; the reports
+ * sit straight on the page with fine lines between them; and "Need to talk to us?" is unboxed.
  * Who shows it: the router, at /my-reports (loaded when opened). What it calls:
  * useMyReportsAndDecisions → my_statements(), my_reports().
  */
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 
-import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
-
-import { Eyebrow } from '@/components/ui/Eyebrow';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
@@ -74,7 +74,7 @@ function ReportsSection({ reports }: { reports: MyReport[] }) {
       {reports.length === 0 ? (
         <p className="m-0 text-ink-muted">{t('reports.empty')}</p>
       ) : (
-        <ul className="m-0 list-none rounded-card border border-border bg-surface px-6 py-1 shadow-card">
+        <ul className="m-0 list-none border-t border-hairline p-0">
           {reports.map((report) => (
             <MyReportRow key={report.reference} report={report} />
           ))}
@@ -92,15 +92,12 @@ function ReportsSection({ reports }: { reports: MyReport[] }) {
 function ContactCard() {
   const { t } = useStatementsTranslation();
   return (
-    <aside
-      aria-labelledby="my-reports-contact-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-6 shadow-card"
-    >
+    <aside aria-labelledby="my-reports-contact-heading" className="flex flex-col gap-2">
       <h2 id="my-reports-contact-heading" className="m-0 type-subheading font-bold text-ink">
         {t('page.contactHeading')}
       </h2>
       <p className="m-0 text-ink-muted">{t('page.contactBody')}</p>
-      <Link to="/moderator-mail" className="w-fit font-semibold text-link underline">
+      <Link to="/moderator-mail" className="w-fit font-semibold text-ink-heading underline">
         {t('page.contactLink')}
       </Link>
     </aside>
@@ -135,7 +132,6 @@ function ShownLists({ lists }: { lists: ReturnType<typeof useMyReportsAndDecisio
     <div className="flex min-w-0 flex-[999_1_600px] flex-col gap-8">
       <SegmentedControl
         legend={t('page.showLegend')}
-        isLegendVisible={false}
         name="my-reports-show"
         value={shown}
         onChange={setShown}
@@ -187,15 +183,14 @@ export function MyReportsPage() {
   return (
     <PageContainer className="flex flex-col gap-8 pt-8">
       <title>{t('page.documentTitle')}</title>
-      <Link
-        to="/settings"
-        className="inline-flex min-h-11 items-center gap-2 self-start type-body font-semibold text-ink-heading no-underline hover:underline"
-      >
-        <ChevronLeftIcon />
-        {t('page.backToSettings')}
-      </Link>
+      <Breadcrumb
+        label={t('page.breadcrumb')}
+        steps={[
+          { label: t('page.breadcrumbSettings'), to: '/settings' },
+          { label: t('page.title') },
+        ]}
+      />
       <header className="flex max-w-[720px] flex-col gap-4">
-        <Eyebrow>{t('page.eyebrow')}</Eyebrow>
         <h1 className="m-0 type-title lg:type-display">{t('page.title')}</h1>
         <p className="m-0 type-long leading-relaxed text-ink-muted">{t('page.intro')}</p>
       </header>

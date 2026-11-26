@@ -1,5 +1,4 @@
 {
-  "eyebrow": "Ajutor",
   "signedOut": "Intră în cont ca să vezi cererile tale de ajutor. Fără cont, folosește formularul Contactează-ne.",
   "logIn": "Intră",
   "contactUs": "Contactează-ne",
@@ -28,13 +27,7 @@
     "write": "Cere ajutor",
     "empty": "Încă nu ai cerut ajutor.",
     "loadFailed": "Nu am putut încărca cererile tale. Verifică conexiunea și încearcă din nou.",
-    "backToSettings": "Setări",
     "requestNumber": "Cererea {{number}}",
-    "columns": {
-      "subject": "Subiect",
-      "status": "Stare",
-      "lastUpdate": "Ultima actualizare"
-    },
     "states": {
       "answered": "Ți-am răspuns",
       "new": "Nouă",
@@ -77,7 +70,8 @@
     "notFound": "Nu am găsit această cerere în contul tău.",
     "loadFailed": "Nu am putut încărca această cerere. Verifică conexiunea și încearcă din nou.",
     "mergedInto": "Această cerere continuă ca #{{number}}: am unit-o cu alta despre același lucru.",
-    "reopenNote": "Dacă răspunzi la o cerere rezolvată, se deschide din nou."
+    "reopenNote": "Dacă răspunzi la o cerere rezolvată, se deschide din nou.",
+    "replyHint": "Doar text. Aici nu se pot trimite fișiere."
   },
   "failures": {
     "refused": "Completează toate câmpurile.",
@@ -312,5 +306,9 @@
   },
   "reply": {
     "missing": "Scrie mai întâi ceva."
+  },
+  "breadcrumb": {
+    "label": "Unde ești",
+    "settings": "Setări"
   }
 }

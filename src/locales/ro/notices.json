@@ -1,6 +1,5 @@
 {
   "documentTitle": "Raportează conținut ilegal · {{productName}}",
-  "eyebrow": "Raportează fără cont",
   "heading": "Raportează conținut ilegal",
   "intro": "Oricine poate folosi acest formular, cu sau fără cont. Spune-ne unde este conținutul și de ce crezi că încalcă legea. O persoană din echipa noastră citește fiecare raportare.",
   "contactPoint": "Acest formular este punctul nostru de contact pentru autorități, inclusiv pentru ordinele de eliminare emise în temeiul Regulamentului (UE) 2021/784. Acceptăm raportări și ordine în română și engleză și acționăm asupra ordinelor de eliminare în cel mult o oră.",
@@ -32,7 +31,8 @@
       "email_invalid": "Scrie o adresă de email la care îți putem răspunde, de exemplu nume@exemplu.ro.",
       "good_faith_missing": "Bifează declarația de bună-credință ca să trimiți raportarea.",
       "authority_missing": "Scrie numele autorității care trimite ordinul."
-    }
+    },
+    "kindPlaceholder": "Alege una"
   },
   "order": {
     "heading": "Ordin de eliminare",

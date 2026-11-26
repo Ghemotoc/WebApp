@@ -15,6 +15,7 @@ import { formatCalendarShortDate } from '@/lib/local-time';
 import type { DayReads, MarketWriters } from '../../api/marchNumbers';
 
 import { marketName } from '../../lib/marchNumbers';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /**
  * One list with its heading, or a line saying it is empty.
@@ -67,11 +68,11 @@ export function MarchNumberLists({
   // Newest day first, so today's number is at the top.
   const dayRows = [...readsPerDay].reverse().map((day) => ({
     label: formatCalendarShortDate(day.day, i18n.language),
-    value: day.reads.toLocaleString(i18n.language),
+    value: day.reads.toLocaleString(dateLocaleFor(i18n.language)),
   }));
   const marketRows = writersByMarket.map((row) => ({
     label: marketName(row.market, i18n.language, t('metrics.otherMarkets')),
-    value: row.count.toLocaleString(i18n.language),
+    value: row.count.toLocaleString(dateLocaleFor(i18n.language)),
   }));
   return (
     <div className="grid gap-5 md:grid-cols-2">

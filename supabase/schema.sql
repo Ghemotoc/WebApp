@@ -7288,6 +7288,36 @@ COMMENT ON FUNCTION "public"."admin_list_page_backgrounds"() IS 'Staff: every ge
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_list_page_lines"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  perform public.require_website_staff();
+  return coalesce((
+    select jsonb_agg(jsonb_build_object(
+        'kind', case when lines.category_id is not null then 'category' else 'tag' end,
+        'key', coalesce(categories.slug, tags.name),
+        'language', lines.language,
+        'line', lines.line,
+        'set_by', profiles.handle,
+        'updated_at', lines.updated_at)
+      order by lines.category_id is null, coalesce(categories.slug, tags.name), lines.language)
+    from public.list_page_lines as lines
+    left join public.categories on categories.id = lines.category_id
+    left join public.tags on tags.id = lines.tag_id
+    left join public.profiles on profiles.id = lines.user_id), '[]'::jsonb);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_list_page_lines"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_list_page_lines"() IS 'Staff: every genre and tag page line with who wrote it; owner and admin only (BOOKS-A06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_list_staff"() RETURNS TABLE("user_id" "uuid", "handle" "text", "roles" "public"."staff_role"[], "permissions" "public"."staff_permission"[], "is_intern" boolean)
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -11924,6 +11954,60 @@ ALTER FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "li
 
 
 COMMENT ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") IS 'Chooses a genre or tag page''s band colour for every market or one; owner and admin only; logged (G12b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target record;
+  cleaned_line text := nullif(btrim(coalesce(new_line, '')), '');
+  earlier_line text;
+begin
+  -- Step 1: owner or admin (website content is admin-only, decided 17 Oct 2026, 19:19).
+  perform public.require_website_staff();
+  -- Step 2: a real genre or approved tag, a real language and a short line.
+  select * into target from public.list_page_target(list_kind, list_key);
+  if target.category_id is null and target.tag_id is null then
+    raise exception 'There is no such genre or tag.' using errcode = 'check_violation', hint = 'no_list';
+  end if;
+  if not exists (select 1 from public.languages where languages.code = line_language) then
+    raise exception 'There is no such language.' using errcode = 'check_violation', hint = 'no_language';
+  end if;
+  if char_length(cleaned_line) > 200 then
+    raise exception 'The line is longer than 200 characters.' using errcode = 'check_violation', hint = 'too_long';
+  end if;
+  -- Step 3: the earlier line, for the audit log.
+  select line into earlier_line from public.list_page_lines
+  where category_id is not distinct from target.category_id and tag_id is not distinct from target.tag_id
+    and language = line_language;
+  -- Step 4: clear, or write over any earlier line in the same language.
+  if cleaned_line is null then
+    delete from public.list_page_lines
+    where category_id is not distinct from target.category_id and tag_id is not distinct from target.tag_id
+      and language = line_language;
+  else
+    insert into public.list_page_lines (category_id, tag_id, language, line, user_id)
+    values (target.category_id, target.tag_id, line_language, cleaned_line, (select auth.uid()))
+    on conflict on constraint list_page_lines_one_per_language do update
+      set line = excluded.line, user_id = excluded.user_id, updated_at = now();
+  end if;
+  -- Step 5: the audit log, in the same transaction (architecture 1.8.1), only when it changed.
+  if earlier_line is distinct from cleaned_line then
+    perform public.log_staff_action('website.list_line_set', 'list_page_lines',
+      list_kind || ':' || list_key || ':' || line_language, null, null,
+      jsonb_build_object('line', earlier_line), jsonb_build_object('line', cleaned_line));
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") IS 'Writes or clears the line under a genre or tag page''s title in one language; owner and admin only; logged (BOOKS-A06).';
 
 
 
@@ -23239,6 +23323,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     ('featured_picks', false, 'user_id is the staff member who picked a story for Featured this week, not data about their account; the writer is told by a notification, which is in their export'),
     ('interface_text_overrides', false, 'user_id is the admin who edited interface text, not data about their account'),
     ('list_page_backgrounds', false, 'user_id is the admin who chose a genre or tag page background, not data about their account'),
+    ('list_page_lines', false, 'user_id is the admin who wrote the line under a genre or tag page''s title, not data about their account'),
     ('moderated_items', true, null),
     ('on_call_rota', true, null),
     ('removed_passages', false, 'the exact words staff removed, which may be someone else''s personal data removed to protect them; the removal itself is in story_revisions'),
@@ -23260,7 +23345,7 @@ $$;
 ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33, user story 1.4; GDPR art. 15).';
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33, user stories 1.4, 1.6 and 1.9; GDPR art. 15).';
 
 
 
@@ -31404,6 +31489,30 @@ ALTER FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "t
 
 
 COMMENT ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") IS 'The band colour a genre or tag page shows in a market, or null for the default (G12b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- The page's own language first, then English (LOCALISE-1: English is the main language).
+  select jsonb_build_object('line', lines.line, 'language', lines.language)
+  from public.list_page_target(list_kind, list_key) as target
+  join public.list_page_lines as lines
+    on lines.category_id is not distinct from target.category_id
+   and lines.tag_id is not distinct from target.tag_id
+  where (target.category_id is not null or target.tag_id is not null)
+    and lines.language in (lower(page_language), 'en')
+  order by lines.language <> lower(page_language)
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") IS 'The line under a genre or tag page''s title in a language (English when that one has none), or null (BOOKS-A06).';
 
 
 
@@ -50865,7 +50974,7 @@ CREATE OR REPLACE FUNCTION "public"."sponsor_placement_slots"("placement" "publi
     AS $$
   select case placement
     when 'chapter_banner' then array['chapter_end']
-    when 'list_banner' then array['discover_card', 'see_all_card', 'classics_wide', 'search_wide', 'library_wide']
+    when 'list_banner' then array['discover_card', 'see_all_card', 'classics_wide', 'search_wide', 'library_wide', 'library_lower_wide']
     when 'discover_banner' then array['discover_wide']
     else '{}'::text[]
   end;
@@ -50875,7 +50984,7 @@ $$;
 ALTER FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") IS 'Internal: which ad slots each banner placement fills (S1-E12-02).';
+COMMENT ON FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") IS 'Internal: which ad slots each banner placement fills (S1-E12-02; library_lower_wide for board C01).';
 
 
 
@@ -55167,6 +55276,43 @@ ALTER FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "h
 
 
 COMMENT ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) IS 'A genre''s most used tags, or the tags related to a tag, over stories the reader may see (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."trending_tags"("how_many" integer DEFAULT 6) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(ranked.name order by ranked.week_reads desc, ranked.name), '[]'::jsonb)
+  from (
+    -- Step 1: this week's reads of each story the caller may see.
+    with week_reads as (
+      select story.id as story_id, sum(chapter_reads.total) as reads
+      from public.listed_stories('popular', null, null, null, null) as story
+      join public.chapters on chapters.story_id = story.id
+      join public.chapter_reads on chapter_reads.chapter_id = chapters.id
+      where chapter_reads.read_on > current_date - 7
+        and public.chapter_is_readable(chapters.id)
+      group by story.id
+    )
+    -- Step 2: each approved tag's share of them, the most read first.
+    select tags.name, sum(week_reads.reads) as week_reads
+    from week_reads
+    join public.story_tags on story_tags.story_id = week_reads.story_id
+    join public.tags on tags.id = story_tags.tag_id
+    where tags.status = 'approved'
+    group by tags.id, tags.name
+    having sum(week_reads.reads) > 0
+    order by week_reads desc, tags.name
+    limit least(greatest(coalesce(how_many, 6), 1), 20)
+  ) as ranked;
+$$;
+
+
+ALTER FUNCTION "public"."trending_tags"("how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."trending_tags"("how_many" integer) IS 'The approved tags whose stories the caller may see were read most in the last seven days (user story 1.7, board A07).';
 
 
 
@@ -59627,6 +59773,27 @@ COMMENT ON TABLE "public"."list_page_backgrounds" IS 'kind: staff; the band colo
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."list_page_lines" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "category_id" "uuid",
+    "tag_id" "uuid",
+    "language" "text" NOT NULL,
+    "line" "text" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "list_page_lines_length" CHECK ((("char_length"("line") >= 1) AND ("char_length"("line") <= 200))),
+    CONSTRAINT "list_page_lines_one_list" CHECK (("num_nonnulls"("category_id", "tag_id") = 1))
+);
+
+
+ALTER TABLE "public"."list_page_lines" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."list_page_lines" IS 'kind: staff; the line an admin wrote under a genre or tag page''s title, per language (BOOKS-A06, BOOKS-A09).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."live_session_reminders" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -62202,6 +62369,16 @@ ALTER TABLE ONLY "public"."list_page_backgrounds"
 
 
 
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_one_per_language" UNIQUE NULLS NOT DISTINCT ("category_id", "tag_id", "language");
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."live_session_reminders"
     ADD CONSTRAINT "live_session_reminders_one_per_session" UNIQUE ("user_id", "session_id");
 
@@ -63643,6 +63820,18 @@ CREATE INDEX "list_page_backgrounds_user_id_idx" ON "public"."list_page_backgrou
 
 
 
+CREATE INDEX "list_page_lines_language_idx" ON "public"."list_page_lines" USING "btree" ("language");
+
+
+
+CREATE INDEX "list_page_lines_tag_id_idx" ON "public"."list_page_lines" USING "btree" ("tag_id");
+
+
+
+CREATE INDEX "list_page_lines_user_id_idx" ON "public"."list_page_lines" USING "btree" ("user_id");
+
+
+
 CREATE INDEX "live_session_reminders_session_id_fk_idx" ON "public"."live_session_reminders" USING "btree" ("session_id");
 
 
@@ -64960,6 +65149,10 @@ CREATE OR REPLACE TRIGGER "library_entries_set_updated_at" BEFORE UPDATE ON "pub
 
 
 CREATE OR REPLACE TRIGGER "list_page_backgrounds_set_updated_at" BEFORE UPDATE ON "public"."list_page_backgrounds" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "list_page_lines_set_updated_at" BEFORE UPDATE ON "public"."list_page_lines" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -66675,6 +66868,26 @@ ALTER TABLE ONLY "public"."list_page_backgrounds"
 
 ALTER TABLE ONLY "public"."list_page_backgrounds"
     ADD CONSTRAINT "list_page_backgrounds_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_language_fkey" FOREIGN KEY ("language") REFERENCES "public"."languages"("code");
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_tag_id_fkey" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -68863,6 +69076,17 @@ COMMENT ON POLICY "list_page_backgrounds_select_website_staff" ON "public"."list
 
 
 
+ALTER TABLE "public"."list_page_lines" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "list_page_lines_select_website_staff" ON "public"."list_page_lines" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('website_cms'::"text", 'act'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "list_page_lines_select_website_staff" ON "public"."list_page_lines" IS 'Allows owner and admin to read the genre and tag page lines; changes go only through admin_* functions (BOOKS-A06).';
+
+
+
 ALTER TABLE "public"."live_session_reminders" ENABLE ROW LEVEL SECURITY;
 
 
@@ -70710,6 +70934,11 @@ GRANT ALL ON FUNCTION "public"."admin_list_page_backgrounds"() TO "authenticated
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_list_page_lines"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_list_page_lines"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_list_staff"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_list_staff"() TO "authenticated";
 
@@ -71293,6 +71522,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_launch_date"("new_date" "date") TO "au
 
 REVOKE ALL ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") TO "authenticated";
 
 
 
@@ -73924,6 +74158,12 @@ GRANT ALL ON FUNCTION "public"."list_my_sessions"() TO "authenticated";
 REVOKE ALL ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_key" "text", "visitor_country" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") TO "authenticated";
 
 
 
@@ -77213,6 +77453,12 @@ GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "te
 
 
 
+REVOKE ALL ON FUNCTION "public"."trending_tags"("how_many" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."trending_tags"("how_many" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."trending_tags"("how_many" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."undo_decision_for_appeal"("statement" "public"."statements_of_reasons", "appeal_reference" "text") FROM PUBLIC;
 
 
@@ -77960,6 +78206,11 @@ GRANT SELECT ON TABLE "public"."library_entries" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."list_page_backgrounds" TO "service_role";
 GRANT SELECT ON TABLE "public"."list_page_backgrounds" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."list_page_lines" TO "service_role";
+GRANT SELECT ON TABLE "public"."list_page_lines" TO "authenticated";
 
 
 

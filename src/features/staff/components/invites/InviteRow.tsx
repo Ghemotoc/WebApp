@@ -17,6 +17,7 @@ import type { InviteLink } from '../../api/inviteLinks';
 
 import { InviteStatusPill } from './InviteStatusPill';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /** What a row needs. */
 interface InviteRowProps {
@@ -69,9 +70,9 @@ function RevokeForm({ link, isRevoking, onRevoke }: InviteRowProps) {
 export function InviteRow({ link, isRevoking, onRevoke }: InviteRowProps) {
   const { t, i18n } = useTranslation('staff');
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
-  const expires = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
-    new Date(link.expiresAt),
-  );
+  const expires = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    dateStyle: 'medium',
+  }).format(new Date(link.expiresAt));
   const note = link.note ?? t('invites.noNote');
 
   return (

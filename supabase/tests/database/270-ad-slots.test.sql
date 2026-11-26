@@ -20,7 +20,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(19);
+select plan(20);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -63,6 +63,8 @@ select ok((select count(*) from public.ad_slots) >= 16, 'allowed: ad_slots_selec
 select ok(exists (select 1 from public.ad_slots where slot_key = 'home_wide' and page_key = 'home' and position = 1 and format = 'wide'), 'the Home page has one wide slot, home_wide');
 -- Board A03: the Writers' hub has a side box in its right column.
 select ok(exists (select 1 from public.ad_slots where slot_key = 'hub_side' and page_key = 'hub' and position = 1 and format = 'side_box'), 'the Writers'' hub has one side box, hub_side');
+-- Board A03: below 1200 px, where side boxes are not drawn, the hub's advert is a wide banner.
+select ok(exists (select 1 from public.ad_slots where slot_key = 'hub_wide' and page_key = 'hub' and position = 2 and format = 'wide'), 'the Writers'' hub has one wide slot, hub_wide, for screens under 1200 px');
 reset role;
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select throws_ok($$ insert into public.ad_slots (slot_key, page_key, position, format) values ('extra_slot', 'discover', 2, 'wide') $$,

@@ -311,6 +311,30 @@
     },
     "plainDefault": "Implicit: titlu simplu"
   },
+  "listLines": {
+    "heading": "Rândul de sub titlu",
+    "note": "O propoziție scurtă sub titlul paginii unui gen sau al unei etichete. O limbă fără rândul ei arată rândul în engleză.",
+    "savedLabel": "Rânduri salvate",
+    "place": "{{name}} · {{language}}",
+    "setBy": "Scris de @{{handle}}",
+    "editLabel": "Editează rândul pentru {{place}}",
+    "page": "Pagina",
+    "anotherTag": "Altă etichetă",
+    "tagName": "Eticheta",
+    "language": "Limba",
+    "line": "Rândul",
+    "lineHint": "Cel mult {{count}} de caractere. Salvează-l gol ca să scoți rândul.",
+    "save": "Salvează rândul",
+    "saved": "Salvat. Pagina arată rândul nou.",
+    "cleared": "Rândul nu mai apare pe pagină.",
+    "failures": {
+      "not_allowed": "Doar proprietarul și administratorii pot schimba rândurile.",
+      "no_list": "Nu există un gen sau o etichetă aprobată cu acest nume. Verifică scrierea.",
+      "no_language": "Limba nu mai este în listă. Reîncarcă pagina.",
+      "too_long": "Rândul are peste 200 de caractere. Scurtează-l și salvează din nou.",
+      "unreachable": "Nu am putut ajunge la baza de date. Verifică legătura și încearcă din nou."
+    }
+  },
   "search": {
     "legend": "Căutare și distribuire",
     "intro": "Ce arată motoarele de căutare și cardurile de distribuire. Un câmp gol folosește cuvintele paginii.",
