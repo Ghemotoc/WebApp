@@ -1626,6 +1626,23 @@ Genre and tag follows (BOOKS-A06, BOOKS-A09): a genre or tag page shows `TopicFo
 
 Tests: `143-writer-profile-and-blocks.test.sql`, `144-follows.test.sql`, `lib/formatting.test.ts`, `e2e/writer-profile.spec.ts`, `e2e/follows.spec.ts`.
 
+Since bundle 3 of the user stories (boards C04 to C06; Robert, 25 Nov 2026, 09:50 UTC: no widget missing between the canvas and the live site) the profile also shows what the person does elsewhere:
+
+```
+WriterProfilePage
+  │  ProfileHeader: ProfileStats (Following ← useProfileActivity), ProfileShareButton
+  │     (SharingModal with the /u/<username> link, lib/profileShareLink.ts), ProfileFollowersNote
+  │  ProfileStories: up to five rows, Follow story on each, "See every story" → /u/<username>/stories
+  │  ProfileRecentPosts, and in the side column ProfileAlsoOn and the profile_side banner
+  ▼  useProfileActivity → api/profileActivity.ts → profile_activity(handle, language)
+        profile_is_shown_to_caller(): the same answer as get_writer_profile() (blocks, moderation)
+        following, public bookshelves, posts the caller may read (forum_post_state_for_caller())
+/u/<username>/bookshelves → ProfileBookshelvesPage → useProfileBookshelves → profile_bookshelves()
+        public bookshelves only, never a private one, as rows of covers (Shelf) with Open
+```
+
+Tests: `414-profile-activity.test.sql`, `lib/profileShareLink.test.ts`, `e2e/profile-activity.spec.ts`.
+
 ## Likes, comments, reactions and downvotes on a chapter (S1-E6-03, S1-E6-01, S1-E6-02, S1-E6-04)
 
 Under the chapter text, on `/s/<story>/<chapter>`:
@@ -2178,7 +2195,7 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 
 ## The library and the reader's place (S1-E4-03; READ-4a)
 
-- Screen 3.7 is `/library` (`src/features/library/components/LibraryPage.tsx`): "Continue reading" (`my_library()`), the shelves (Reading, Saved, Finished in a segmented control, each `browse_stories('library', <shelf>)` with its See all page at `/library/<shelf>`), the bookshelves, and two columns: "What you follow" (`my_follows()`) beside "Written by you", the offline reading note and Reading days (simplified design, CALM-7c).
+- Screen 3.7 is `/library` (`src/features/library/components/LibraryPage.tsx`): "Continue reading" (`my_library()`), the shelves (Reading, Saved, Finished in a segmented control, each `browse_stories('library', <shelf>)` with its See all page at `/library/<shelf>`), the first banner (`library_wide`), the bookshelves, "What you follow" (`my_follows()`, writers beside stories from 900 px), the second banner (`library_lower_wide`, booked in Sponsors › Placements), "Written by you" as one row of covers (`MyStoriesShelf`), the offline reading note and Reading days (board C01). A reader with nothing in the Library yet (`useIsNewLibrary`) gets the short page of board C08: Continue reading with "Find a story", the bookshelves and What you follow, with no banner. A bookshelf's page (`/library/lists/:id`, `ReadingListPage`) is board C02: "3 of 10 books · Only you" over the name, the owner's row of actions (`ReadingListOwnerTools`) and the books with their empty places and Remove (`BookshelfBooks`).
 - How a place travels: the reader screen (`ChapterReaderPage`) measures the progress (`useReadingProgress`), `useSavedPlace` saves it 3 seconds after scrolling stops and when the reader leaves → `save_reading_position()` → `reading_positions` (one row per chapter) and `library_entries` (the story joins Reading, and Finished at the end of a completed story). Next time, `my_place_in_chapter()` brings it back and `SavedPlaceOffer` offers "Go back there".
 - The story page's "Start reading" / "Continue" / "Read again" (`StoryReadButton`) and "Add to library" / "In library" (`StoryLibraryButton`, which opens the bookshelf sheet with the Library drop-down on top) are in `StoryReadingActions` → `story_library_state()` and `set_library_shelf()` (bundle 2, board B01).
 - Both tables are readable by their owner only; nobody else ever sees what someone reads. Tests: `supabase/tests/database/179-library.test.sql`, `e2e/library.spec.ts`.
