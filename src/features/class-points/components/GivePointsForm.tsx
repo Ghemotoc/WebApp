@@ -17,7 +17,6 @@ import { type FormEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { ChoiceChips, type ChoiceOption } from '@/components/ui/ChoiceChips';
-import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
 import { useMissingField } from '@/lib/forms/useMissingField';
@@ -97,19 +96,18 @@ function GiveFooter({
   const { t, i18n } = useClassPointsTranslation();
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-      <MetaLine
-        facts={[
-          {
-            text: t('chapter.give.left', { count: giving.budget, left: giving.left }),
-            kind: 'state',
-          },
-          {
-            text: t('chapter.give.until', {
-              date: dayText(lastDayBefore(giving.resetsOn), i18n.language),
-            }),
-          },
-        ]}
-      />
+      {/* The meta-line class draws MetaLine's look; the component itself would add one more file
+          to the chapter reader's preload list (bundle budget). */}
+      <ul className="meta-line">
+        <li className="font-semibold text-ink">
+          {t('chapter.give.left', { count: giving.budget, left: giving.left })}
+        </li>
+        <li>
+          {t('chapter.give.until', {
+            date: dayText(lastDayBefore(giving.resetsOn), i18n.language),
+          })}
+        </li>
+      </ul>
       <Button type="submit" disabled={isRunning}>
         {buttonText(points, t)}
       </Button>

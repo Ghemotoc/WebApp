@@ -7,9 +7,8 @@
  * in quotation marks and Report. The note has no reply box: it is feedback on a piece of work, not
  * a conversation (Robert, 13 Nov 2026, 19:15 UTC). The pupil can report it, like any text written
  * for someone else (CLAUDE.md rule 6; DSA art. 16).
- * What it calls: MetaLine and the shared ReportButton.
+ * What it calls: the shared ReportButton.
  */
-import { MetaLine } from '@/components/ui/MetaLine';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import { useClassPointsTranslation } from '../registerClassPointsTranslations';
@@ -31,12 +30,11 @@ export function TeacherNoteCard({
   const { t } = useClassPointsTranslation();
   return (
     <div className="flex flex-col gap-2 rounded-field bg-tint p-4">
-      <MetaLine
-        facts={[
-          { text: t('chapter.teacher.noteFrom') },
-          { text: t('chapter.teacher.noteAudienceShort'), kind: 'state' },
-        ]}
-      />
+      {/* MetaLine's look through its class, without one more file for the chapter reader. */}
+      <ul className="meta-line">
+        <li>{t('chapter.teacher.noteFrom')}</li>
+        <li className="font-semibold text-ink">{t('chapter.teacher.noteAudienceShort')}</li>
+      </ul>
       <p className="m-0 type-body text-ink [overflow-wrap:anywhere] whitespace-pre-line">
         {t('chapter.quoted', { text: note })}
       </p>
