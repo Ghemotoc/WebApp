@@ -75822,12 +75822,12 @@ GRANT ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") TO "authenticate
 
 
 
+REVOKE ALL ON FUNCTION "public"."reading_list_is_searchable"("target_list_id" "uuid") FROM PUBLIC;
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."reading_lists" TO "service_role";
 GRANT SELECT ON TABLE "public"."reading_lists" TO "authenticated";
-
-
-
-REVOKE ALL ON FUNCTION "public"."reading_list_is_searchable"("target_list_id" "uuid") FROM PUBLIC;
 
 
 
