@@ -1,9 +1,9 @@
 /**
- * useRelationshipAdd: saves one new relationship for the two "add" forms, once, and says how it
+ * useRelationshipAdd: saves one new relationship for the "Add a relationship" form, once, and says how it
  * went (GAPS-3 break test, 10 Nov 2026: a double click on "Add" recorded the same parent twice,
  * and so did adding it again).
  *
- * Who calls it: AddRelationshipForm and AddToTreeForm. What it calls: the form's onAdd
+ * Who calls it: AddRelationshipForm. What it calls: the form's onAdd
  * (useRelationshipChangers' relate), isAlreadyThere and useOneAtATime.
  */
 import type { CharacterRelationship, NewRelationship } from '../api/characters';

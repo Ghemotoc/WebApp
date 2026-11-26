@@ -8,7 +8,10 @@
  *   after a second click (S1-E17-17);
  * - "New entry" opens an entry ready to write; its title, tags and text save by themselves;
  *   reading mode shows clickable links and an Edit toggle; moving it to another section puts it
- *   there; Delete asks twice (S1-E17-18);
+ *   there; "New entry" under the heading makes one in the open entry's section; More holds
+ *   Delete entry, which asks once (S1-E17-18; story 6.8);
+ * - the tags read as one "#tag · #tag" line, and on a phone an open entry is its own screen with
+ *   "Sections" to go back (story 6.8, board E27);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English, with an entry open and with the sections.
  * Test data: adult_writer's seed story "Stația meteo" (its bible goes back to the defaults at the
@@ -68,10 +71,21 @@ async function openAs(
   return page;
 }
 
+/** Opens More on the open entry, chooses Delete entry and answers the question with the button named. */
+async function deleteOpenEntry(page: Page, title: string, answer: 'Keep it' | 'Yes, delete') {
+  const more = page.getByRole('button', { name: `More for ${title}` });
+  await more.click();
+  await page.getByRole('menuitem', { name: 'Delete entry' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Delete entry' });
+  await expect(dialog).toContainText(`Delete “${title}”? This can’t be undone.`);
+  await dialog.getByRole('button', { name: answer }).click();
+  await expect(dialog).toHaveCount(0);
+}
+
 /** The section names in the contents, in order. */
 async function contentsOrder(page: Page): Promise<string[]> {
   return page
-    .getByRole('navigation', { name: 'Sections' })
+    .getByRole('navigation', { name: 'Sections of the story world' })
     .getByRole('heading', { level: 3 })
     .allTextContents();
 }
@@ -173,10 +187,8 @@ test.describe('Story Atlas story world, once the bible (S1-E17-17 and S1-E17-18)
     const link = entry.getByRole('link', { name: 'the map' });
     await expect(link).toHaveAttribute('href', 'https://example.com/map');
     await expect(link).toHaveAttribute('rel', 'nofollow ugc noopener');
-    await expect(entry.getByRole('list', { name: 'Tags' }).getByRole('listitem')).toHaveText([
-      'city',
-      'north',
-    ]);
+    // Story 6.8: the tags read as one meta line, each with a "#" (board E27).
+    await expect(entry.getByText('#city · #north')).toBeVisible();
     // Moving it to another section puts it there.
     await entry.getByRole('button', { name: 'Edit' }).click();
     await page.getByLabel('Section', { exact: true }).selectOption({ label: 'Creatures' });
@@ -184,7 +196,7 @@ test.describe('Story Atlas story world, once the bible (S1-E17-17 and S1-E17-18)
     await expect(entry.getByText('In Creatures')).toHaveCount(0);
     await entry.getByRole('button', { name: 'Edit' }).click();
     await expect(entry.getByText('In Creatures')).toBeVisible();
-    const contents = page.getByRole('navigation', { name: 'Sections' });
+    const contents = page.getByRole('navigation', { name: 'Sections of the story world' });
     await expect(
       contents.getByRole('list', { name: 'Creatures' }).getByRole('link', { name: 'Old harbour' }),
     ).toBeVisible();
@@ -201,12 +213,22 @@ test.describe('Story Atlas story world, once the bible (S1-E17-17 and S1-E17-18)
     await expect(
       page.getByText('Move or delete its entries first', { exact: false }),
     ).toBeVisible();
-    // Delete the entry, asking twice.
+    // "New entry" under the heading makes one in the open entry's section (story 6.8).
     await page.getByRole('link', { name: 'Old harbour' }).click();
-    await page.getByRole('button', { name: 'Delete entry' }).click();
-    await page.getByRole('button', { name: 'Keep it' }).click();
-    await page.getByRole('button', { name: 'Delete entry' }).click();
-    await page.getByRole('button', { name: 'Yes, delete' }).click();
+    await page.getByRole('button', { name: 'New entry', exact: true }).click();
+    await expect(page).toHaveURL(/\/world\/[0-9a-f-]{36}\?edit$/);
+    await expect(page.getByText('Editing: changes save by themselves.')).toBeVisible();
+    const creatures = page
+      .getByRole('navigation', { name: 'Sections of the story world' })
+      .getByRole('list', { name: 'Creatures' });
+    await expect(creatures.getByRole('link')).toHaveText(['New entry', 'Old harbour']);
+    // More holds Delete entry, which asks once; Keep it keeps the entry.
+    await deleteOpenEntry(page, 'New entry', 'Keep it');
+    await expect(page.getByRole('heading', { level: 2, name: 'New entry' })).toBeVisible();
+    await deleteOpenEntry(page, 'New entry', 'Yes, delete');
+    await expect(page).toHaveURL(/\/world$/);
+    await page.getByRole('link', { name: 'Old harbour' }).click();
+    await deleteOpenEntry(page, 'Old harbour', 'Yes, delete');
     await expect(page).toHaveURL(/\/world$/);
     await expect(page.getByRole('link', { name: 'Old harbour' })).toHaveCount(0);
     // Now empty, the section goes.
@@ -214,6 +236,24 @@ test.describe('Story Atlas story world, once the bible (S1-E17-17 and S1-E17-18)
     await page.getByRole('button', { name: 'Yes, delete' }).click();
     await expect.poll(async () => contentsOrder(page)).toEqual(defaults);
     await page.context().close();
+  });
+
+  test('on a phone an open entry is its own screen, and Sections goes back to the list', async ({
+    browser,
+  }) => {
+    runSql(`update public.profiles set locale = 'en' where id = '${suspendedUserId}';`);
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    await useSessionInBrowser(context, (await signInPersona('suspended_user')).session);
+    const page = await context.newPage();
+    await page.goto(axeBible);
+    const contents = page.getByRole('navigation', { name: 'Sections of the story world' });
+    await contents.getByRole('link', { name: 'Farul', exact: true }).click();
+    await expect(page.getByRole('heading', { level: 2, name: 'Farul' })).toBeVisible();
+    await expect(contents).toBeHidden();
+    await page.getByRole('link', { name: 'Sections', exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`${axeBible}$`));
+    await expect(contents).toBeVisible();
+    await context.close();
   });
 
   for (const view of everyView([`${axeBible}/${axeEntryId}`, axeBible])) {
@@ -227,7 +267,12 @@ test.describe('Story Atlas story world, once the bible (S1-E17-17 and S1-E17-18)
       await useSessionInBrowser(context, (await signInPersona('suspended_user')).session);
       const page = await context.newPage();
       await checkScreen(page, view);
-      await expect(page.getByRole('link', { name: 'Farul', exact: true })).toBeVisible();
+      // With an entry open a phone shows only the entry; the sections list is its own screen.
+      if (view.address.endsWith('world')) {
+        await expect(page.getByRole('link', { name: 'Farul', exact: true })).toBeVisible();
+      } else {
+        await expect(page.getByRole('heading', { level: 2, name: 'Farul' })).toBeVisible();
+      }
       await expectNoDoodles(page);
       await context.close();
     });

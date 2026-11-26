@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { readerSummaryOf } from './readerSummary';
 
 const chapters = [
-  { code: 'one', position: 1 },
-  { code: 'two', position: 2 },
+  { code: 'one', position: 1, title: 'The lift' },
+  { code: 'two', position: 2, title: 'Corina counts too' },
 ];
 const fields = [
   { id: 'field-a', name: 'Favourite tea', isHidden: false, sheetGroup: null, ownGroup: null },
@@ -27,17 +27,27 @@ describe('readerSummaryOf', () => {
 
   it('shows a character with no switches set from the start', () => {
     const summary = readerSummaryOf({ item: undefined, openParts: [], fields, chapters });
-    expect(summary).toEqual({ kind: 'shown', chapterNumber: null, groups: [], fieldNames: [] });
+    expect(summary).toEqual({
+      kind: 'shown',
+      chapterNumber: null,
+      chapterTitle: '',
+      groups: [],
+      fieldNames: [],
+    });
   });
 
-  it('gives the number of the chapter the character waits for', () => {
+  it('gives the number and title of the chapter the character waits for', () => {
     const summary = readerSummaryOf({
       item: { isPrivate: false, showFrom: 'two' },
       openParts: [],
       fields,
       chapters,
     });
-    expect(summary).toMatchObject({ kind: 'shown', chapterNumber: 2 });
+    expect(summary).toMatchObject({
+      kind: 'shown',
+      chapterNumber: 2,
+      chapterTitle: 'Corina counts too',
+    });
   });
 
   it('counts a chapter that is gone as the start', () => {

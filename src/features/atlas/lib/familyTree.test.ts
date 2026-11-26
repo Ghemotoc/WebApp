@@ -40,14 +40,14 @@ describe('buildFamilyTree', () => {
     expect(tree.partnerLinks).toEqual([['ana', 'ion']]);
   });
 
-  it('leaves characters with no family link off and counts them', () => {
-    expect(buildFamilyTree(cast, relationships, false).leftOffCount).toBe(2);
+  it('leaves characters with no family link off and names them', () => {
+    expect(buildFamilyTree(cast, relationships, false).leftOff).toEqual(['stefan', 'nora']);
   });
 
   it('counts makers as lineage when "Include turned or made" is on', () => {
     const tree = buildFamilyTree(cast, relationships, true);
     expect(tree.generations[0]).toContain('stefan');
-    expect(tree.leftOffCount).toBe(1);
+    expect(tree.leftOff).toEqual(['nora']);
   });
 
   it('puts a partner in the lower of the two rows', () => {
@@ -75,7 +75,7 @@ describe('buildFamilyTree', () => {
       partnerLinks: [],
       siblingLinks: [],
       cousinLinks: [],
-      leftOffCount: 1,
+      leftOff: ['a'],
     });
   });
 
@@ -107,7 +107,13 @@ describe('buildFamilyTree', () => {
       'd',
     );
     expect(tree.generations.flat().sort()).toEqual(['c', 'd']);
-    // Left off still counts only the characters with no family link at all.
-    expect(tree.leftOffCount).toBe(1);
+    // Left off still names only the characters with no family link at all.
+    expect(tree.leftOff).toEqual(['e']);
+  });
+
+  it('draws nobody when the chosen character has no family link', () => {
+    const tree = buildFamilyTree(['a', 'b', 'c'], [link('a', 'parent_of', 'b')], false, 'c');
+    expect(tree.generations).toEqual([]);
+    expect(tree.leftOff).toEqual(['c']);
   });
 });

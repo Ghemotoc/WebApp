@@ -1,11 +1,12 @@
 /**
- * ideaFilters: the Open, Done and All filter on the questions and ideas list (story S1-E17-28).
+ * ideaFilters: the Open, Done and Both filter on the questions and ideas list (story S1-E17-28;
+ * "Both" since user stories bundle 6, story 6.12, board E31; its value stays 'all' for old links).
  *
  * Who calls it: components/IdeasPage.tsx. What it calls: nothing.
  */
 import type { StoryIdea } from '../api/ideas';
 
-/** The three filters. */
+/** The three filters, in board E31's order. */
 export const ideaFilters = ['open', 'done', 'all'] as const;
 export type IdeaFilter = (typeof ideaFilters)[number];
 
@@ -13,7 +14,7 @@ export type IdeaFilter = (typeof ideaFilters)[number];
  * Keeps the notes a filter shows.
  *
  * @param items - the notes, in the order to show them
- * @param filter - Open (not ticked), Done (ticked) or All
+ * @param filter - Open (not ticked), Done (ticked) or Both ('all')
  * @returns the notes that match, in the same order
  */
 export function filterIdeas(items: StoryIdea[], filter: IdeaFilter): StoryIdea[] {

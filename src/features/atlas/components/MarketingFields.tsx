@@ -1,41 +1,29 @@
 /**
- * MarketingFields: every field of the Marketing page (story S1-E17-29: "one place for my
- * logline, back-cover blurb, genre, audience, comparable titles, hooks and keywords, query
- * pitch, publishing route and launch notes"; "when I edit any field, then it saves by itself").
+ * MarketingFields: the writer's own notes on the Marketing page (story S1-E17-29: "one place for
+ * my back-cover blurb, comparable titles, hooks and keywords, query pitch and launch notes";
+ * "when I edit any field, then it saves by itself"; redrawn by user stories bundle 6, story 6.13,
+ * board E32: "The pitch and Getting it out are private notes that save by themselves; the logline
+ * and route are shared with At a glance, and the genre and audience come from the story").
  *
- * Two cards. "The pitch": the logline and publishing route (the plan's own, the same fields as
- * At a glance), the genre and audience (the story's own, the same as Story settings), then the
- * blurb, comparable titles, hooks and query pitch. "Getting it out": the launch notes (board
- * AtlasMarketing, G10c3), then the writer's own details and "Add detail" (GAPS-2b).
- * Who uses it: MarketingPage. What it calls: the savers it is given (useStoryPlan and
- * useStoryMarketing), useStoryChoiceOptions and MarketingDetails.
+ * Two sections between hairlines, as board E32 draws them. "The pitch": a line saying where the
+ * logline, route, genre and audience are written (At a glance and the story, so they are not
+ * repeated here), then the blurb, comparable titles (one line), hooks and keywords (one line) and
+ * the query pitch. "Getting it out": the launch notes, then the writer's own details and "Add
+ * detail" (GAPS-2b; the board doesn't draw them, docs/board-fixes.md).
+ * Who uses it: MarketingPage. What it calls: the saveNote prop (useStoryMarketing),
+ * AtlasSection and MarketingDetails.
  */
-import { FormSection } from '@/features/writing/components/FormSection';
-
 import type { MarketingNotes } from '../api/marketing';
-import {
-  publishingRoutes,
-  type PlanFields,
-  type StoryField,
-  type StoryPlanPage,
-} from '../api/storyPlans';
-import { useStoryChoiceOptions } from '../hooks/useStoryChoiceOptions';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { MarketingDetails } from './MarketingDetails';
-import { PlanSelectField } from './PlanSelectField';
+import { AtlasSection } from './AtlasSection';
 import { PlanTextField } from './PlanTextField';
 
 /** What the fields need. */
 export interface MarketingFieldsProps {
   slug: string;
-  page: StoryPlanPage;
   notes: MarketingNotes;
-  savePlan: <Field extends keyof PlanFields>(
-    field: Field,
-    value: PlanFields[Field],
-  ) => Promise<void>;
-  saveStory: (field: StoryField, value: string) => Promise<void>;
   saveNote: (field: keyof MarketingNotes, value: string) => Promise<void>;
 }
 
@@ -47,6 +35,9 @@ const noteLengths: Record<keyof MarketingNotes, number> = {
   query_pitch: 3000,
   launch_notes: 5000,
 };
+
+/** The notes board E32 draws as one-line boxes; the rest are three lines tall and grow. */
+const oneLineNotes: ReadonlyArray<keyof MarketingNotes> = ['comparable_titles', 'hooks_keywords'];
 
 /** One marketing note's box, labelled and hinted from the locale files. */
 function NoteField({
@@ -64,7 +55,7 @@ function NoteField({
       id={`atlas-marketing-${field}`}
       label={t(`marketing.fields.${field}`)}
       hint={t(`marketing.hints.${field}`)}
-      isMultiline
+      isMultiline={!oneLineNotes.includes(field)}
       maxLength={noteLengths[field]}
       savedValue={notes[field]}
       save={async (value) => saveNote(field, value)}
@@ -72,77 +63,26 @@ function NoteField({
   );
 }
 
-/** The genre, audience and publishing route drop-downs, side by side. */
-function MarketingChoices({
-  page,
-  savePlan,
-  saveStory,
-}: Omit<MarketingFieldsProps, 'slug' | 'notes' | 'saveNote'>) {
-  const { t } = useAtlasTranslation();
-  const { genreOptions, audienceOptions } = useStoryChoiceOptions();
-  return (
-    <div className="flex flex-wrap gap-x-8 gap-y-2">
-      {genreOptions.length > 0 && (
-        <PlanSelectField
-          id="atlas-marketing-genre"
-          label={t('details.genre')}
-          options={genreOptions}
-          savedValue={page.story.categorySlug}
-          save={async (slug) => saveStory('categorySlug', slug)}
-        />
-      )}
-      <PlanSelectField
-        id="atlas-marketing-audience"
-        label={t('details.audience')}
-        options={audienceOptions}
-        savedValue={page.story.rating}
-        save={async (rating) => saveStory('rating', rating)}
-      />
-      <PlanSelectField
-        id="atlas-marketing-route"
-        label={t('details.publishingRoute')}
-        options={publishingRoutes.map((route) => ({
-          value: route,
-          label: t(`publishingRoute.${route}`),
-        }))}
-        savedValue={page.plan.publishingRoute}
-        save={async (route) => savePlan('publishingRoute', route as PlanFields['publishingRoute'])}
-      />
-    </div>
-  );
-}
-
 /**
- * Renders the two cards.
+ * Renders the two sections.
  *
  * @returns "The pitch" and "Getting it out"
  */
-export function MarketingFields(props: MarketingFieldsProps) {
+export function MarketingFields({ slug, notes, saveNote }: MarketingFieldsProps) {
   const { t } = useAtlasTranslation();
-  const { slug, page, notes, savePlan, saveNote } = props;
   return (
     <>
-      <FormSection legend={t('marketing.pitchHeading')}>
-        <p className="m-0 type-body text-ink-muted">{t('marketing.sharedHint')}</p>
-        <PlanTextField
-          id="atlas-marketing-logline"
-          label={t('details.logline')}
-          hint={t('details.loglineHint')}
-          isMultiline
-          maxLength={400}
-          savedValue={page.plan.logline}
-          save={async (logline) => savePlan('logline', logline)}
-        />
-        <MarketingChoices {...props} />
+      <AtlasSection id="atlas-marketing-pitch-heading" heading={t('marketing.pitchHeading')}>
+        <p className="m-0 type-meta text-ink-muted">{t('marketing.sharedHint')}</p>
         <NoteField field="back_cover_blurb" notes={notes} saveNote={saveNote} />
         <NoteField field="comparable_titles" notes={notes} saveNote={saveNote} />
         <NoteField field="hooks_keywords" notes={notes} saveNote={saveNote} />
         <NoteField field="query_pitch" notes={notes} saveNote={saveNote} />
-      </FormSection>
-      <FormSection legend={t('marketing.launchHeading')}>
+      </AtlasSection>
+      <AtlasSection id="atlas-marketing-launch-heading" heading={t('marketing.launchHeading')}>
         <NoteField field="launch_notes" notes={notes} saveNote={saveNote} />
         <MarketingDetails slug={slug} />
-      </FormSection>
+      </AtlasSection>
     </>
   );
 }

@@ -4,35 +4,33 @@
  * "when I remove it, then it is hidden but the values already written are kept, and bringing it
  * back shows them again").
  *
- * The fields with Remove or Bring back, then a box and "Add field". A plain message says when a
- * change didn't save. Who uses it: AtAGlance. What it calls: useStoryCast's addField and
+ * The fields with Remove or Bring back, then a box and "Add field", flat under a fine line as board
+ * E21 draws it (user stories bundle 6). A plain message says when a change didn't save. Who uses it: AtAGlance. What it calls: useStoryCast's addField and
  * changeField.
  */
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { TextInput } from '@/components/ui/TextInput';
 
 import type { CharacterField } from '../api/characters';
 import { useStoryCast } from '../hooks/useStoryCast';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-/** The heading's look: Funnel Display in the type scale (design books, 23 Nov 2026). */
-const sectionHeadingClass = 'm-0 font-heading type-heading font-bold text-ink-heading';
+import { AtlasFlatSection } from './AtlasFlatSection';
 
 /** One field's row: its name, and Remove or Bring back. */
 function FieldRow({ field, onToggle }: { field: CharacterField; onToggle: () => void }) {
   const { t } = useAtlasTranslation();
   return (
-    <li className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-2 last:border-b-0">
-      <span className="min-w-0 break-words text-ink-muted">
+    <li className="flex items-center justify-between gap-2">
+      <span className="min-w-0 type-body font-semibold break-words text-ink-heading">
         {field.name}
         {field.isHidden && (
-          <span className="block type-body text-ink-muted">{t('fieldsSection.removedNote')}</span>
+          <span className="block type-meta font-normal">{t('fieldsSection.removedNote')}</span>
         )}
       </span>
-      <Button variant="secondary" onClick={onToggle}>
+      <Button variant="text" onClick={onToggle}>
         {field.isHidden ? t('fieldsSection.restore') : t('fieldsSection.remove')}
         <span className="sr-only"> {field.name}</span>
       </Button>
@@ -44,7 +42,7 @@ function FieldRow({ field, onToggle }: { field: CharacterField; onToggle: () => 
  * Renders the section.
  *
  * @param props.slug - the story's address
- * @returns the card with the fields and the add box
+ * @returns the flat section with the fields and the add box
  */
 export function CharacterFieldsSection({ slug }: { slug: string }) {
   const { t } = useAtlasTranslation();
@@ -71,43 +69,43 @@ export function CharacterFieldsSection({ slug }: { slug: string }) {
   }
 
   return (
-    <section
-      aria-labelledby="atlas-fields-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
-    >
-      <h2 id="atlas-fields-heading" className={sectionHeadingClass}>
-        {t('fieldsSection.heading')}
-      </h2>
-      <p className="m-0 type-body text-ink-muted">{t('fieldsSection.hint')}</p>
-      {fields.length === 0 && <p className="m-0 text-ink-muted">{t('fieldsSection.none')}</p>}
+    <AtlasFlatSection headingId="atlas-fields-heading" heading={t('fieldsSection.heading')}>
+      <p className="m-0 type-meta">{t('fieldsSection.hint')}</p>
+      {fields.length === 0 && (
+        <p className="m-0 type-body text-ink-muted">{t('fieldsSection.none')}</p>
+      )}
       {fields.length > 0 && (
-        <ul className="m-0 list-none p-0">
+        <ul className="m-0 flex list-none flex-col gap-1 p-0">
           {fields.map((field) => (
             <FieldRow key={field.id} field={field} onToggle={() => toggle(field)} />
           ))}
         </ul>
       )}
       <form
-        className="flex flex-wrap items-end gap-3"
+        className="flex items-center gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           void add();
         }}
       >
-        <div className="min-w-0 flex-1 basis-48">
-          <TextInput
-            id="atlas-new-field"
-            label={t('fieldsSection.name')}
-            maxLength={60}
-            value={newName}
-            onChange={(event) => setNewName(event.target.value)}
-          />
-        </div>
+        {/* The label is for screen readers; the box says "New field" until the writer types. */}
+        <label htmlFor="atlas-new-field" className="sr-only">
+          {t('fieldsSection.name')}
+        </label>
+        <input
+          id="atlas-new-field"
+          type="text"
+          maxLength={60}
+          placeholder={t('fieldsSection.name')}
+          value={newName}
+          onChange={(event) => setNewName(event.target.value)}
+          className="field-box h-11 min-w-0 flex-1 px-4 font-body type-body"
+        />
         <Button type="submit" variant="secondary">
           {t('fieldsSection.add')}
         </Button>
       </form>
       <div aria-live="polite">{message !== null && <Notice tone="error">{message}</Notice>}</div>
-    </section>
+    </AtlasFlatSection>
   );
 }

@@ -1,48 +1,35 @@
 /**
- * RelationshipMap: the web of a story's cast (story S1-E17-15; bundle G10 ATLAS, part b2, board
- * AtlasConnections).
+ * RelationshipMap: the web of a story's cast (story S1-E17-15; user stories bundle 6, story 6.6,
+ * board E25).
  *
- * - Characters with at least one relationship are glass cards, joined by labelled lines
- *   (lib/relationshipMap.ts). The rest are named under the map as "Not on the map yet".
- * - Each category has a colour the writer picks under "Category colours" (CALM-9, board E25; the
- *   writer's map only) and a line style as the second cue; the category switches double as the
- *   legend, each with its colour dot, and turning one off hides its lines.
- * - Every card is a real link to the character's sheet (or, on a readers' page, their public page
- *   while Characters is public), so it can be reached by keyboard.
- * - On the writer's map the cards can be dragged: dropped on empty map a card stays there, dropped
- *   on another card it opens "Add a connection" with both picked (useCardDrag). Readers' maps
- *   don't move.
- * - "− Fit +" zooms; the map scrolls inside its own focusable region, so the page never does.
- * - The drawing is hidden from screen readers: the same relationships are in the List view.
- * Who uses it: ConnectionsPage (through ConnectionsMapView) and PublicConnections. What it calls:
- * the layout helpers, useCardDrag, useMapZoom, MapLines, MapCards, MapZoomBar, MapCategorySwitches
- * and CategoryColoursFold.
+ * - "Show categories" first: one pressed chip per category, each with its colour dot. Turning one
+ *   off hides its lines here and its rows in the list under the map, so the switches are held by
+ *   the page (hiddenCategories) and shared with the list.
+ * - The map: characters with at least one relationship, placed by family and circle
+ *   (lib/relationshipMap.ts), in a tinted box that scrolls sideways inside its own focusable region
+ *   on tablets and phones, so the page itself never does. The protagonist wears the focus ring.
+ * - The key under it: the line styles in words, and that the same relationships are listed below.
+ * - "Category colours" (the writer's map only), where the writer picks each category's colour.
+ * - The rest of the cast, "Not on the map yet".
+ * Every card is a real link to the character's sheet (or, on a readers' page, their public page
+ * while Characters is public). The drawing is hidden from screen readers: the list says it all.
+ * Who uses it: ConnectionsPage and PublicConnections. What it calls: the layout helpers,
+ * MapLines, MapCards, MapCategorySwitches and CategoryColoursFold.
  */
-import { useState, type ReactNode } from 'react';
-
-import type { CharacterRelationship, MapPlace, StoryCast } from '../api/characters';
-import { useCardDrag, type CardDragActions } from '../hooks/useCardDrag';
-import { useMapZoom } from '../hooks/useMapZoom';
+import type { StoryCast } from '../api/characters';
 import type { RelationshipWords } from '../hooks/useRelationshipWords';
 import {
   categoryOf,
   type RelationshipCategory,
-  type RelationshipColours,
   type RelationshipSwatch,
 } from '../lib/relationshipCategories';
-import {
-  layoutRelationshipMap,
-  splitMapCast,
-  type MapCardInput,
-  type MapLayout,
-} from '../lib/relationshipMap';
+import { layoutRelationshipMap, splitMapCast } from '../lib/relationshipMap';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { CategoryColoursFold } from './CategoryColoursFold';
 import { MapCards } from './MapCards';
 import { MapCategorySwitches } from './MapCategorySwitches';
 import { MapLines } from './MapLines';
-import { MapZoomBar } from './MapZoomBar';
 
 /** What the map needs. */
 export interface RelationshipMapProps {
@@ -50,160 +37,25 @@ export interface RelationshipMapProps {
   addressOf: (characterId: string) => string | null;
   cast: StoryCast;
   words: RelationshipWords;
-  /** What a drag does; left out on a readers' map, where cards don't move. */
-  dragActions?: CardDragActions;
-  /** The character "Focus on" picked, or null for everyone. */
-  focusId?: string | null;
-  /** Places just dropped and not yet saved, so a card doesn't jump back while it saves. */
-  pendingPlaces?: ReadonlyMap<string, MapPlace>;
+  /** The categories switched off, shared with the list under the map. */
+  hiddenCategories: RelationshipCategory[];
+  onHiddenChange: (hiddenCategories: RelationshipCategory[]) => void;
   /** Saves a category's colour; left out on a readers' map, which has no colour picker. */
   onPickColour?: (category: RelationshipCategory, swatch: RelationshipSwatch) => Promise<void>;
-}
-
-/** The character in focus and everyone linked to them by a shown line, or null for everyone. */
-function focusGroup(focusId: string | null, shown: CharacterRelationship[]): Set<string> | null {
-  if (focusId === null) return null;
-  const group = new Set([focusId]);
-  for (const relationship of shown) {
-    if (relationship.fromId === focusId) group.add(relationship.toId);
-    if (relationship.toId === focusId) group.add(relationship.fromId);
-  }
-  return group;
-}
-
-/** The cards to place: each on-map character with the place the writer gave it, if any. */
-function cardInputs(
-  cast: StoryCast,
-  onMap: string[],
-  pendingPlaces: ReadonlyMap<string, MapPlace> | undefined,
-): MapCardInput[] {
-  return onMap.map((id) => {
-    const character = cast.characters.find((candidate) => candidate.id === id);
-    return { id, mapPlace: pendingPlaces?.get(id) ?? character?.mapPlace ?? null };
-  });
-}
-
-/**
- * Lays out the map and its drag, redrawing the lines from the dragged card's live place.
- *
- * @returns the layout to draw, the drag handlers (or null) and the zoom controls
- */
-function useMapDrawing(
-  cards: MapCardInput[],
-  shown: CharacterRelationship[],
-  dragActions: CardDragActions | undefined,
-) {
-  // Step 1: where every card sits at rest, and the zoom that fits it.
-  const restingLayout = layoutRelationshipMap(cards, shown);
-  const zoomControls = useMapZoom(restingLayout.width);
-  // Step 2: the drag works on the resting places; while a card moves, the lines follow it.
-  const drag = useCardDrag(restingLayout.nodes, zoomControls.zoom, dragActions ?? null);
-  const live = drag.live;
-  const layout =
-    live === null
-      ? restingLayout
-      : layoutRelationshipMap(
-          cards.map((card) => (card.id === live.id ? { id: card.id, mapPlace: live } : card)),
-          shown,
-        );
-  return { layout, drag: dragActions === undefined ? null : drag, zoomControls };
-}
-
-/** The map at its zoom: a box the scaled size of the map, with the full-size drawing inside. */
-function MapCanvas({
-  layout,
-  zoom,
-  words,
-  focusId,
-  colours,
-  cards,
-}: {
-  layout: MapLayout;
-  zoom: number;
-  words: RelationshipWords;
-  focusId: string | null;
-  colours: RelationshipColours;
-  cards: ReactNode;
-}) {
-  return (
-    <div
-      className="relative mx-auto"
-      style={{ width: layout.width * zoom, height: layout.height * zoom }}
-    >
-      <div
-        className="absolute top-0 left-0 origin-top-left"
-        style={{ width: layout.width, height: layout.height, transform: `scale(${zoom})` }}
-      >
-        <MapLines layout={layout} words={words} focusId={focusId} colours={colours} />
-        {cards}
-      </div>
-    </div>
-  );
-}
-
-/**
- * What the map draws: the lines whose category is switched on, who is on the map (every
- * relationship decides that, so cards don't come and go with the switches) and the layout.
- *
- * @returns the shown relationships, the characters on and off the map, and the drawing
- */
-function useMapContents(
-  cast: StoryCast,
-  hiddenCategories: RelationshipCategory[],
-  pendingPlaces: ReadonlyMap<string, MapPlace> | undefined,
-  dragActions: CardDragActions | undefined,
-) {
-  const shown = cast.relationships.filter(
-    (relationship) => !hiddenCategories.includes(categoryOf(relationship.kind)),
-  );
-  const { onMap, offMap } = splitMapCast(
-    cast.characters.map((character) => character.id),
-    cast.relationships,
-  );
-  const cards = cardInputs(cast, onMap, pendingPlaces);
-  return { shown, onMap, offMap, ...useMapDrawing(cards, shown, dragActions) };
 }
 
 /** "Not on the map yet": the characters with no relationship. */
 function OffMapLine({ offMap, words }: { offMap: string[]; words: RelationshipWords }) {
   const { t } = useAtlasTranslation();
   return (
-    <p className="m-0 type-body text-ink-muted">
+    <p className="m-0 type-meta text-ink-muted">
       {t('connections.map.offMap', { names: offMap.map((id) => words.nameOf(id)).join(', ') })}
     </p>
   );
 }
 
-/** Above the map: the category switches, "Category colours" (writer only) and the key. */
-function MapKey({
-  hiddenCategories,
-  onHiddenChange,
-  colours,
-  onPickColour,
-}: {
-  hiddenCategories: RelationshipCategory[];
-  onHiddenChange: (hiddenCategories: RelationshipCategory[]) => void;
-  colours: RelationshipColours;
-  onPickColour: RelationshipMapProps['onPickColour'];
-}) {
-  const { t } = useAtlasTranslation();
-  return (
-    <>
-      <MapCategorySwitches
-        hiddenCategories={hiddenCategories}
-        onChange={onHiddenChange}
-        colours={colours}
-      />
-      {onPickColour !== undefined && (
-        <CategoryColoursFold colours={colours} onPick={onPickColour} />
-      )}
-      <p className="m-0 type-body text-ink-muted">{t('connections.map.key')}</p>
-    </>
-  );
-}
-
 /**
- * Renders the switches, the zooming map and the characters not on it.
+ * Renders the switches, the map, its key and the characters not on it.
  *
  * @returns the map's whole block
  */
@@ -211,59 +63,53 @@ export function RelationshipMap({
   addressOf,
   cast,
   words,
-  dragActions,
-  focusId = null,
-  pendingPlaces,
+  hiddenCategories,
+  onHiddenChange,
   onPickColour,
 }: RelationshipMapProps) {
   const { t } = useAtlasTranslation();
-  const [hiddenCategories, setHiddenCategories] = useState<RelationshipCategory[]>([]);
-  // Step 1: the lines shown, who is on the map, and the drawing with its drag and zoom.
-  const { shown, onMap, offMap, layout, drag, zoomControls } = useMapContents(
-    cast,
-    hiddenCategories,
-    pendingPlaces,
-    dragActions,
+  // Step 1: who is on the map (every relationship decides it, so cards don't come and go with the
+  // switches) and the lines whose category is switched on.
+  const { onMap, offMap } = splitMapCast(
+    cast.characters.map((character) => character.id),
+    cast.relationships,
   );
-  const { zoom, regionRef } = zoomControls;
+  const shown = cast.relationships.filter(
+    (relationship) => !hiddenCategories.includes(categoryOf(relationship.kind)),
+  );
+  const layout = layoutRelationshipMap(onMap, cast.relationships, shown);
+  const colours = cast.relationshipColours;
 
   return (
-    <div className="flex min-w-0 flex-col gap-4">
-      <MapKey
+    <div className="flex min-w-0 flex-col gap-3">
+      <MapCategorySwitches
         hiddenCategories={hiddenCategories}
-        onHiddenChange={setHiddenCategories}
-        colours={cast.relationshipColours}
-        onPickColour={onPickColour}
+        onChange={onHiddenChange}
+        colours={colours}
       />
       {onMap.length === 0 && <p className="m-0 text-ink-muted">{t('connections.map.none')}</p>}
-      {/* Step 2: the map scrolls inside its own region; the region can be focused and scrolled
-          by keyboard, with no scrollbar showing (Robert, 23 Nov 2026: no scrollbars in any widget). */}
-      <div
-        ref={regionRef}
-        role="region"
-        aria-label={t('connections.map.region')}
-        tabIndex={0}
-        className="max-w-full overflow-auto rounded-card border border-hairline"
-        data-testid="atlas-relationship-map"
-      >
-        <MapCanvas
-          layout={layout}
-          zoom={zoom}
-          words={words}
-          focusId={focusId}
-          colours={cast.relationshipColours}
-          cards={
-            <MapCards
-              addressOf={addressOf}
-              cast={cast}
-              nodes={layout.nodes}
-              drag={drag}
-              inFocus={focusGroup(focusId, shown)}
-            />
-          }
-        />
-      </div>
-      {onMap.length > 0 && <MapZoomBar zoomControls={zoomControls} />}
+      {/* Step 2: the map scrolls sideways inside its own region, which can be focused and
+          scrolled by keyboard, with no scrollbar showing (Robert, 23 Nov 2026). */}
+      {onMap.length > 0 && (
+        <div
+          role="region"
+          aria-label={t('connections.map.region')}
+          tabIndex={0}
+          className="max-w-full overflow-x-auto rounded-card bg-surface-solid p-4"
+          data-testid="atlas-relationship-map"
+        >
+          <div className="relative" style={{ width: layout.width, height: layout.height }}>
+            <MapLines layout={layout} colours={colours} />
+            <MapCards addressOf={addressOf} cast={cast} nodes={layout.nodes} />
+          </div>
+        </div>
+      )}
+      <p className="m-0 max-w-none type-meta text-ink-muted">
+        {t(onPickColour === undefined ? 'connections.map.readerKey' : 'connections.map.key')}
+      </p>
+      {onPickColour !== undefined && (
+        <CategoryColoursFold colours={colours} onPick={onPickColour} />
+      )}
       {onMap.length > 0 && offMap.length > 0 && <OffMapLine offMap={offMap} words={words} />}
     </div>
   );
