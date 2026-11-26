@@ -57,15 +57,19 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   `ClassAboutCard` beside a class's threads and `ClassCodeForm` on `/class`.
 - `api/classStories.ts` and `hooks/useClassStories.ts` (bundle CLASSES, part c; S1-E8-11):
   sharing a story only with a class (`story_class_share()`, `set_story_class()`) and the class's
-  list (`class_space_stories()`); `StoryClassCard` in Story settings, `ClassStoriesCard` on the
-  class page and `ClassStoriesPage` at `/spaces/<slug>/stories`.
+  list (`class_space_stories()`); `StoryClassCard` in Story settings, `ClassSharedStories` (rows of
+  `ClassStoryRow`) and `ShareClassStory` on the class page and `ClassStoriesPage` at
+  `/spaces/<slug>/stories`.
+- `ClassSpaceContent` (bundle BOOKS-8, board G03): a class space's own page, chosen by `SpacePage`
+  for a class: `ClassSpaceHeader`, `ClassSectionTabs` ("Class · Stories 6"), the competition
+  panel, the class points box, `ClassThreads` (with `ClassThreadRow`) and the Winner card.
 - `archiveClassSpace()` in `api/classTools.ts` and `useArchiveClass()` (bundle CLASSES, part d):
   archiving a class for good; `ClassArchiveCard` in the class's settings. Staff set up pilot
   classes from `src/features/staff/components/schools/ClassSpacesPage.tsx`.
 - `api/classAssignments.ts`, `hooks/useClassAssignments.ts` and `lib/assignmentDue.ts` (bundle
   MUST-1, part d; a date and a time since CALM-7d, part 2): due dates for class assignments.
   `ClassDueDateField` in the teacher's `ClassRepliesPanel` saves one on the teacher's own clock (`set_forum_thread_due_date()`, through `saveThreadDueDate()`),
-  `ClassAssignmentsCard` lists the open ones on the class page (`class_space_assignments()`), and
+  `ClassThreads` shows each open one's due moment on its row (`class_space_assignments()`), and
   the panel marks replies after the due date. The reminder in the day before is a database job,
   worded in the notifications feature.
 - `api/spaceWelcome.ts` and `hooks/useSpaceWelcome.ts` (bundle 14d IDEAS-3, part d): the welcome

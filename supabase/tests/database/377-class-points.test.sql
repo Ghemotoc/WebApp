@@ -18,7 +18,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(65);
+select plan(69);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -160,6 +160,10 @@ select public.class_chapter_points(pg_temp.kept_id('kid_chapter_2'));
 select is(public.give_class_points(pg_temp.kept_id('kid_chapter_2'), 3) -> 'giving' ->> 'left', '5',
   'points to a second chapter come from the same budget');
 
+select is(jsonb_array_length(public.class_points_summary('clasa-a-ix-a') -> 'given'), 2,
+  'BOOKS-8: the class page lists the two chapters the pupil gave points to this week');
+select is((public.class_points_summary('clasa-a-ix-a') -> 'given' -> 0 ->> 'points')::integer, 3,
+  'with the points each one has, the newest first');
 -- allowed: class_point_gifts_select_own: the giver reads their own gifts.
 select is((select count(*)::integer from public.class_point_gifts), 2,
   'allowed: class_point_gifts_select_own: the giver reads their own two gifts');
@@ -179,6 +183,8 @@ select is((select count(*)::integer from jsonb_object_keys(
   'a note is its ID and its words, never who gave it');
 select is(public.class_points_summary('clasa-a-ix-a') ->> 'received_total', '5',
   'the class page tells the writer how many points they received in all');
+select is(public.class_points_summary('clasa-a-ix-a') -> 'given', '[]'::jsonb,
+  'BOOKS-8: the writer''s own list holds only what they gave, never who gave to them');
 -- denied: class_point_gifts_select_own: the writer can't read who gave points from the table.
 select is((select count(*)::integer from public.class_point_gifts), 0,
   'denied: class_point_gifts_select_own: the writer reads no gift from the table, so never the giver');
@@ -191,6 +197,8 @@ select is(public.class_chapter_points(pg_temp.kept_id('kid_chapter_1')) -> 'rece
   'the teacher sees the chapter''s total and nothing else about its points');
 select is((select count(*)::integer from public.class_point_gifts), 0,
   'denied: class_point_gifts_select_moderators: the teacher reads no gift, so never who gave points');
+select is(public.class_points_summary('clasa-a-ix-a') ->> 'given', null,
+  'BOOKS-8: nor does the class page tell the teacher what any pupil gave');
 select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1)$$, pg_temp.kept('kid_chapter_1'))),
   'points:not_offered', 'the teacher has no weekly budget: they give teacher points');
 

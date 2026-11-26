@@ -11,10 +11,8 @@
  * Moderators (part b, S1-E8-07) show in "Who runs it", and the requests card shows for anyone
  * holding the members power. In a class space (bundle CLASSES, part a; S1-E8-11), a member whose
  * account isn't fully active yet (a student waiting for a parent's consent) is told why they
- * can't read, and there are no join requests: students join with the teacher's code. Part b adds
- * the "This space is locked." note above the threads of a locked class (nobody can post) and
- * ClassAboutCard in the side column, and the stories shared only with the class above the threads
- * (ClassStoriesCard, bundle CLASSES, part c). The owner's welcome note shows at the top for a
+ * can't read, and there are no join requests: students join with the teacher's code. Since
+ * BOOKS-8 a class space has its own page, ClassSpaceContent (board G03). The owner's welcome note shows at the top for a
  * new member until "Got it" (SpaceWelcomeNote; bundle 14d IDEAS-3, part d). Above it, the
  * moderator the owner offered the space to sees the offer with Accept and Decline
  * (SpaceHandoverOffer, part e). Not yet, as noted in docs/board-fixes.md: Share and the ad slot.
@@ -32,12 +30,7 @@ import type { Space } from '../api/spaces';
 import { useSpace } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
-import { ClassCompetitionCard } from '@/features/class-competitions/components/ClassCompetitionCard';
-import { ClassPointsCard } from '@/features/class-points/components/ClassPointsCard';
-
-import { ClassAboutCard } from './ClassAboutCard';
-import { ClassAssignmentsCard } from './ClassAssignmentsCard';
-import { ClassStoriesCard } from './ClassStoriesCard';
+import { ClassSpaceContent } from './ClassSpaceContent';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceHeaderCard } from './SpaceHeaderCard';
 import { SpaceNotFound } from './SpaceNotFound';
@@ -83,25 +76,6 @@ function SpaceThreads({ space }: { space: Space }) {
 }
 
 /**
- * A class space's own cards, for a viewer who may read it: class points (CLASS-POINTS, part 1),
- * the class competition and its Winner cards (part 2; S1-E8-15), the open assignments, soonest
- * first (MUST-1d), then the stories shared with the class.
- *
- * @param props.space - the class space
- * @returns the cards
- */
-function ClassCards({ space }: { space: Space }) {
-  return (
-    <>
-      <ClassPointsCard slug={space.slug} />
-      <ClassCompetitionCard slug={space.slug} />
-      <ClassAssignmentsCard space={space} />
-      <ClassStoriesCard space={space} />
-    </>
-  );
-}
-
-/**
  * The space, once it has loaded.
  *
  * @returns the breadcrumb, the header and the two columns
@@ -125,12 +99,9 @@ function SpaceContent({ space }: { space: Space }) {
               {t('classSpace.lockedText')}
             </Notice>
           )}
-          {space.kind === 'class' && space.viewer.canRead && <ClassCards space={space} />}
           <SpaceThreads space={space} />
           {/* A public space's ad slot; a class space never has one (Q70; the server agrees). */}
-          {space.kind !== 'class' && (
-            <PageAdSlot pageKey="space" position={1} context={{ spaceSlug: space.slug }} />
-          )}
+          <PageAdSlot pageKey="space" position={1} context={{ spaceSlug: space.slug }} />
         </div>
         <aside className="flex flex-col gap-8">
           {space.joining === 'approve' && space.kind === 'open' && (
@@ -138,11 +109,20 @@ function SpaceContent({ space }: { space: Space }) {
           )}
           <SpaceRulesCard space={space} />
           <SpaceRunsCard space={space} />
-          {space.kind === 'class' && <ClassAboutCard space={space} />}
         </aside>
       </div>
     </>
   );
+}
+
+/**
+ * A class space has its own page (board G03, BOOKS-8); every other space keeps this one.
+ *
+ * @returns the class's content or the space's
+ */
+function SpaceOrClass({ space }: { space: Space }) {
+  if (space.kind === 'class') return <ClassSpaceContent space={space} />;
+  return <SpaceContent space={space} />;
 }
 
 /**
@@ -158,7 +138,7 @@ export function SpacePage() {
     <PageContainer className="flex flex-col gap-6 py-8">
       {read.isError && <Notice tone="error">{t('space.loadFailed')}</Notice>}
       {read.data === null && <SpaceNotFound />}
-      {read.data !== undefined && read.data !== null && <SpaceContent space={read.data} />}
+      {read.data !== undefined && read.data !== null && <SpaceOrClass space={read.data} />}
     </PageContainer>
   );
 }

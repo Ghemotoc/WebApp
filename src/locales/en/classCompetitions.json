@@ -6,17 +6,17 @@
     "needsGrade": "Set the school year in the class settings first.",
     "openSettings": "Open class settings",
     "start": "Start a class competition",
-    "dates": "{{start}} to {{end}}",
+    "dates": "{{start}} to {{end}}.",
     "phase": {
-      "upcoming": "Starts {{date}}",
-      "open": "Open until {{date}}",
-      "judging": "Ended. The teacher is assessing the entries."
+      "upcoming": "Opens {{date}}",
+      "open": "Closes {{date}}",
+      "judging": "The teacher is assessing the entries."
     },
     "noWinners": "In this school year every entrant is a Contestant. There is no Winner.",
     "join": "Join the competition",
     "joined": "Joined.",
     "leave": "Leave the competition",
-    "joinNote": "Joining is a choice. Only pupils who join get a result.",
+    "joinNote": "Joining is a choice: nobody joins automatically. Class points are a guide for the teacher, never the result.",
     "entrants_one": "{{count}} pupil joined",
     "entrants_few": "{{count}} pupils joined",
     "entrants_other": "{{count}} pupils joined",
@@ -29,26 +29,38 @@
     "deleteConfirm": "Delete this competition? Entries and scores go with it.",
     "deleteYes": "Delete",
     "cancel": "Cancel",
-    "report": "the class competition “{{name}}”"
+    "report": "the class competition “{{name}}”",
+    "state": {
+      "upcoming": "Soon",
+      "open": "Open",
+      "judging": "Closed"
+    },
+    "picks": "{{teacher}} picks one winner using these criteria.",
+    "outcomesToggle": "What each criterion needs"
   },
   "criteria": {
     "heading": "What the teacher assesses",
     "points_one": "{{count}} point",
     "points_few": "{{count}} points",
     "points_other": "{{count}} points",
-    "mustHave": "The work must have:"
+    "total_one": "Total {{count}} point",
+    "total_few": "Total {{count}} points",
+    "total_other": "Total {{count}} points",
+    "outcomesLabel": "What {{label}} needs"
   },
   "winner": {
     "eyebrow": "Winner",
     "noWinnerEyebrow": "Results",
     "noWinner": "Results are out. Every entrant is a Contestant.",
-    "chapter": "Winning chapter:",
     "chapterLink": "{{chapter}}, in {{story}}",
     "readersChoice": "Readers’ choice:",
     "myResult": "Result: {{result}}",
     "myReadersChoice": "Also Readers’ choice: classmates gave these chapters the most points.",
     "seeResults": "See the results",
-    "issueCertificates": "Issue certificates"
+    "issueCertificates": "Issue certificates",
+    "by": "by {{name}}",
+    "readChapter": "Read the chapter",
+    "regionLabel": "{{state}}: {{name}}"
   },
   "results": {
     "winner": "Winner",

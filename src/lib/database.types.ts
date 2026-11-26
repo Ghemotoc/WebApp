@@ -14059,6 +14059,10 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      class_points_given_this_week: {
+        Args: { class_id: string; giver_user_id: string; week: string };
+        Returns: Json;
+      };
       class_points_is_pupil: {
         Args: {
           person_id: string;

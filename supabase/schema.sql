@@ -19728,6 +19728,40 @@ COMMENT ON FUNCTION "public"."class_points_chapter_space"("target_chapter_id" "u
 
 
 
+CREATE OR REPLACE FUNCTION "public"."class_points_given_this_week"("class_id" "uuid", "giver_user_id" "uuid", "week" "date") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+      'story_slug', stories.slug,
+      'story_title', stories.title,
+      'chapter_code', chapters.code,
+      'chapter_position', chapters.position,
+      'writer_handle', writers.handle,
+      'writer_name', public.display_name(writers.handle, writers.pen_name),
+      'points', gifts.points)
+    order by gifts.created_at desc), '[]'::jsonb)
+  from public.class_point_gifts as gifts
+  join public.chapters on chapters.id = gifts.chapter_id and chapters.status = 'published'
+                      and chapters.deleted_at is null
+  join public.stories on stories.id = chapters.story_id and stories.deleted_at is null
+  join public.profiles as writers on writers.id = gifts.receiver_user_id
+  where gifts.space_id = class_points_given_this_week.class_id
+    and gifts.user_id = class_points_given_this_week.giver_user_id
+    and gifts.week_start = class_points_given_this_week.week
+    and gifts.removed_at is null
+    and not public.is_moderated_away('story', stories.id)
+    and not public.is_moderated_away('chapter', chapters.id);
+$$;
+
+
+ALTER FUNCTION "public"."class_points_given_this_week"("class_id" "uuid", "giver_user_id" "uuid", "week" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_points_given_this_week"("class_id" "uuid", "giver_user_id" "uuid", "week" "date") IS 'A pupil''s own class point gifts this week, for their class page (BOOKS-8, board G03).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_points_is_pupil"("target" "public"."spaces", "person_id" "uuid") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -19805,7 +19839,10 @@ CREATE OR REPLACE FUNCTION "public"."class_points_summary"("slug" "text") RETURN
     'received_total', case when not class.is_teacher then (
       select coalesce(sum(gifts.points), 0)::integer from public.class_point_gifts as gifts
       where gifts.space_id = class.id and gifts.receiver_user_id = (select auth.uid())
-        and gifts.removed_at is null) end)
+        and gifts.removed_at is null) end,
+    -- Only the pupil's own gifts: the teacher never learns who gave points.
+    'given', case when not class.is_teacher then
+      public.class_points_given_this_week(class.id, (select auth.uid()), class.week) end)
   from class;
 $$;
 
@@ -73034,6 +73071,10 @@ REVOKE ALL ON FUNCTION "public"."class_invite_row"("code" "text") FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."class_points_chapter_space"("target_chapter_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."class_points_given_this_week"("class_id" "uuid", "giver_user_id" "uuid", "week" "date") FROM PUBLIC;
 
 
 

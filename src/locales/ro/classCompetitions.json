@@ -6,17 +6,17 @@
     "needsGrade": "Alege mai întâi anul școlar în setările clasei.",
     "openSettings": "Deschide setările clasei",
     "start": "Pornește un concurs al clasei",
-    "dates": "{{start}} – {{end}}",
+    "dates": "{{start}} – {{end}}.",
     "phase": {
-      "upcoming": "Începe {{date}}",
-      "open": "Deschis până {{date}}",
-      "judging": "S-a încheiat. Profesorul evaluează lucrările."
+      "upcoming": "Se deschide {{date}}",
+      "open": "Se închide {{date}}",
+      "judging": "Profesorul evaluează lucrările."
     },
     "noWinners": "În acest an școlar fiecare elev înscris este Concurent. Nu există Câștigător.",
     "join": "Intră în concurs",
     "joined": "Înscris.",
     "leave": "Ieși din concurs",
-    "joinNote": "Înscrierea este o alegere. Doar elevii înscriși primesc un rezultat.",
+    "joinNote": "Înscrierea este o alegere: nimeni nu e înscris automat. Punctele clasei sunt un ghid pentru profesor, niciodată rezultatul.",
     "entrants_one": "{{count}} elev înscris",
     "entrants_few": "{{count}} elevi înscriși",
     "entrants_other": "{{count}} de elevi înscriși",
@@ -29,26 +29,38 @@
     "deleteConfirm": "Ștergi acest concurs? Înscrierile și punctajele se șterg odată cu el.",
     "deleteYes": "Șterge",
     "cancel": "Renunță",
-    "report": "concursul clasei „{{name}}”"
+    "report": "concursul clasei „{{name}}”",
+    "state": {
+      "upcoming": "În curând",
+      "open": "Deschis",
+      "judging": "Închis"
+    },
+    "picks": "{{teacher}} alege un câștigător după aceste criterii.",
+    "outcomesToggle": "Ce cere fiecare criteriu"
   },
   "criteria": {
     "heading": "Ce evaluează profesorul",
     "points_one": "{{count}} punct",
     "points_few": "{{count}} puncte",
     "points_other": "{{count}} de puncte",
-    "mustHave": "Lucrarea trebuie să aibă:"
+    "total_one": "Total {{count}} punct",
+    "total_few": "Total {{count}} puncte",
+    "total_other": "Total {{count}} de puncte",
+    "outcomesLabel": "Ce cere criteriul {{label}}"
   },
   "winner": {
     "eyebrow": "Câștigător",
     "noWinnerEyebrow": "Rezultate",
     "noWinner": "Rezultatele au apărut. Fiecare elev înscris este Concurent.",
-    "chapter": "Capitolul câștigător:",
     "chapterLink": "{{chapter}}, din {{story}}",
     "readersChoice": "Alegerea cititorilor:",
     "myResult": "Rezultat: {{result}}",
     "myReadersChoice": "Și Alegerea cititorilor: colegii au dat cele mai multe puncte acestor capitole.",
     "seeResults": "Vezi rezultatele",
-    "issueCertificates": "Emite diplome"
+    "issueCertificates": "Emite diplome",
+    "by": "de {{name}}",
+    "readChapter": "Citește capitolul",
+    "regionLabel": "{{state}}: {{name}}"
   },
   "results": {
     "winner": "Câștigător",
