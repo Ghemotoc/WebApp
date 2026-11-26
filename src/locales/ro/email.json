@@ -44,6 +44,13 @@
     "codeLabel": "Codul pentru această adresă:",
     "linkNote": "Codul merge o singură dată și expiră după o oră."
   },
+  "reauthentication": {
+    "subject": "Codul pentru a confirma că ești tu",
+    "heading": "Codul pentru a confirma că ești tu",
+    "body": "Cineva a cerut o schimbare la un cont {{productName}} care cere mai întâi acest cod. Scrie-l acolo unde ți s-a cerut.",
+    "codeLabel": "Codul:",
+    "linkNote": "Codul merge o singură dată și expiră după o oră."
+  },
   "notificationEmails": {
     "subjectDigest": "Rezumat zilnic de pe {{productName}}",
     "subjectDecision": "O decizie de moderare despre ceva ce ai postat",
