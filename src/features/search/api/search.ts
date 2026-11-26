@@ -1,10 +1,12 @@
 /**
- * Search: the writers and tags a search finds (story S1-E5-04). Stories are an ordinary story
+ * Search: the writers and tags a search finds (story S1-E5-04), and the tags trending this week
+ * on the Search page (user story 1.7, board A07). Stories are an ordinary story
  * list (browse_stories() with the list 'search'), so they come through
  * src/features/discovery/api/storyLists.ts.
  *
  * Who calls it: hooks/useSearchResults.ts.
- * What it calls next: search_writers() and search_tags() (…_s1_e5_04_search.sql). Both leave out
+ * What it calls next: search_writers() and search_tags() (…_s1_e5_04_search.sql), and
+ * trending_tags() (…_books_a07_trending_tags.sql). Both leave out
  * what this reader may not see: writers with no story the reader may see (so readers' own
  * accounts are never listed), both sides of a block, and anything a moderator hid. Neither
  * answers a user ID.
@@ -122,4 +124,21 @@ export async function fetchFoundTags(
       storyCount: typeof tag.story_count === 'number' ? tag.story_count : 0,
     })),
   };
+}
+
+/**
+ * The tags most read this week, over the stories the reader may see (user story 1.7, board A07).
+ *
+ * @param client - the shared Supabase client
+ * @param howMany - how many tags (board A07 draws six)
+ * @returns the tag names, the most read first; empty in a week with no reads
+ * Errors: throws when the database can't be reached.
+ */
+export async function fetchTrendingTags(
+  client: AppSupabaseClient,
+  howMany: number,
+): Promise<string[]> {
+  const { data, error } = await client.rpc('trending_tags', { how_many: howMany });
+  if (error !== null) throw new Error(`Could not read the trending tags: ${error.message}`);
+  return Array.isArray(data) ? data.filter((name): name is string => typeof name === 'string') : [];
 }

@@ -38,11 +38,6 @@ export interface SelectProps {
   /** The label. Always present for screen readers; shown on screen when isLabelVisible. */
   label: string;
   isLabelVisible?: boolean;
-  /**
-   * The visible label above the drop-down, in the same type as a text field's label, as the
-   * boards draw a form's fields one under another (D07, D08). Beside it when false.
-   */
-  isLabelAbove?: boolean;
   options: SelectOption[];
   /** When given, the choices are drawn in these named groups instead of `options`. */
   groups?: SelectGroup[];
@@ -52,6 +47,38 @@ export interface SelectProps {
   placement?: 'bar' | 'form';
   /** The id of a hint under the drop-down, read with it by screen readers (S1-E2-06). */
   descriptionId?: string;
+  /**
+   * True in a form whose other fields have their label above them (bundle 10, board J20): the
+   * label is shown above the drop-down in the same type as a text field's label, whatever
+   * isLabelVisible says. Left out, the label sits beside it, small, as in a filter bar.
+   */
+  isLabelAbove?: boolean;
+  /** True while the choice is missing or wrong after a send, so screen readers say so. */
+  isInvalid?: boolean;
+}
+
+/**
+ * The classes of the wrapper and the label: side by side and small, or stacked like a text
+ * field's label.
+ *
+ * @returns the two class strings
+ */
+function labelLayout(isLabelVisible: boolean, isLabelAbove: boolean) {
+  // A label above the drop-down is always shown: a form field's label is never hidden
+  // (WCAG 3.3.2; bundle 10, boards J11 and J20), so isLabelAbove alone is enough.
+  if (isLabelAbove) {
+    return {
+      wrapper: 'flex flex-col items-start gap-2',
+      label: 'type-body font-semibold wrap-anywhere text-ink',
+    };
+  }
+  if (!isLabelVisible) {
+    return { wrapper: 'inline-flex flex-wrap items-center gap-2', label: 'sr-only' };
+  }
+  return {
+    wrapper: 'inline-flex flex-wrap items-center gap-2',
+    label: 'type-meta font-semibold text-ink-muted',
+  };
 }
 
 /**
@@ -67,40 +94,25 @@ function SelectOptions({ options }: { options: SelectOption[] }) {
   ));
 }
 
-/** The label beside the drop-down (bars, filters) and above it (form fields, D07 and D08). */
-const besideRowClass = 'inline-flex max-w-full min-w-0 flex-wrap items-center gap-2';
-const stackedRowClass = 'flex max-w-full min-w-0 flex-col items-start gap-2';
-
-/**
- * The label's classes: hidden, small beside the drop-down, or a field label above it.
- *
- * @param isVisible - whether the label shows on screen
- * @param isAbove - whether it sits above the drop-down
- * @returns the class names
- */
-function labelClassName(isVisible: boolean, isAbove: boolean): string {
-  if (!isVisible) return 'sr-only';
-  if (isAbove) return 'type-body font-semibold wrap-anywhere text-ink';
-  return 'type-meta font-semibold text-ink-muted';
-}
-
 /**
  * Renders a labelled drop-down.
  *
- * @returns the label and the drop-down, side by side
+ * @returns the label and the drop-down, side by side (or the label above, with isLabelAbove)
  */
 export function Select({
   id,
   label,
   isLabelVisible = false,
-  isLabelAbove = false,
   options,
   groups,
   value,
   onChange,
   placement = 'form',
   descriptionId,
+  isLabelAbove = false,
+  isInvalid = false,
 }: SelectProps) {
+  const layout = labelLayout(isLabelVisible, isLabelAbove);
   /** Passes the chosen value up; the parent keeps the state. */
   function handleChange(event: ChangeEvent<HTMLSelectElement>) {
     onChange(event.target.value);
@@ -109,8 +121,8 @@ export function Select({
   return (
     // max-w-full and min-w-0: a very long option (a story title without spaces) shortens with an
     // ellipsis inside the row, and never pushes the page sideways (rule 21; G10c4 break test).
-    <span className={isLabelAbove ? stackedRowClass : besideRowClass}>
-      <label htmlFor={id} className={labelClassName(isLabelVisible, isLabelAbove)}>
+    <span className={`max-w-full min-w-0 ${layout.wrapper}`}>
+      <label htmlFor={id} className={layout.label}>
         {label}
       </label>
       <span className="tmc-sel relative inline-flex w-fit max-w-full items-center align-middle">
@@ -118,6 +130,7 @@ export function Select({
           id={id}
           value={value}
           aria-describedby={descriptionId}
+          aria-invalid={isInvalid || undefined}
           onChange={handleChange}
           className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
         >

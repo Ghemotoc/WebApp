@@ -14,6 +14,7 @@ import { Notice } from '@/components/ui/Notice';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 
 import { useCanvaConnection } from '../hooks/useCanvaConnection';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The connection's line and its button. */
 function ConnectionState({ canva }: { canva: ReturnType<typeof useCanvaConnection> }) {
@@ -21,7 +22,7 @@ function ConnectionState({ canva }: { canva: ReturnType<typeof useCanvaConnectio
   if (canva.connectedSince === null) {
     return <p className="m-0 text-ink-muted">{t('canva.settings.notConnected')}</p>;
   }
-  const since = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
+  const since = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), { dateStyle: 'long' }).format(
     new Date(canva.connectedSince),
   );
   return (

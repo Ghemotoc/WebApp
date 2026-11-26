@@ -82,8 +82,15 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
     await expect(page.getByText(/Sent\. Your request is #\d+/)).toBeVisible();
     await page.getByRole('link', { name: 'Open a request' }).click();
     await expect(page.getByRole('heading', { name: subject })).toBeVisible();
-    // The request number sits above the subject and the status is a pill (G11c).
-    await expect(page.getByText(`Request ${memberTicketNumber()}`)).toBeVisible();
+    // The request number ends the breadcrumb and sits in the meta line under the subject, after the
+    // status (bundle 10, board J21).
+    const requestLabel = `Request ${memberTicketNumber()}`;
+    await expect(
+      page.getByRole('navigation', { name: 'Where you are' }).getByText(requestLabel),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('listitem').filter({ hasText: new RegExp(`^${requestLabel}$`) }),
+    ).toBeVisible();
     await expect(page.getByText('New', { exact: true })).toBeVisible();
   });
 
@@ -135,7 +142,7 @@ test.describe('support tickets (S1-E11-13, ADMIN-2h1)', () => {
   test('a visitor’s Contact us message becomes an email-only ticket', async ({ browser }) => {
     const visitor = await openAs(browser, null, '/contact');
     const form = visitor.getByRole('form', { name: 'Send a message' });
-    await form.getByText('A question', { exact: true }).click();
+    await form.getByLabel('What is it about?').selectOption({ label: 'A question' });
     await form.getByLabel('Message', { exact: true }).fill(`Is it free to read? ${stamp}`);
     await form.getByLabel('Email').fill(`visitor-${stamp}@example.com`);
     await form.getByRole('button', { name: 'Send message' }).click();

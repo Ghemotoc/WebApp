@@ -11,6 +11,7 @@
 import { useTranslation } from 'react-i18next';
 
 import type { Enums } from '@/lib/database.types';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The word helpers.
@@ -23,13 +24,16 @@ export function useAccountWords() {
 
   /** A date in the page's language, for example "24 Oct 2026". */
   const date = (isoTime: string) =>
-    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(new Date(isoTime));
+    new Intl.DateTimeFormat(dateLocaleFor(i18n.language), { dateStyle: 'medium' }).format(
+      new Date(isoTime),
+    );
 
   /** A date and time in the page's language, for staff notes and history (LOGS-1). */
   const dateTime = (isoTime: string) =>
-    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(
-      new Date(isoTime),
-    );
+    new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(isoTime));
 
   return {
     date,

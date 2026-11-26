@@ -218,7 +218,8 @@ export function lockMomentText(locksAt: string, language: string, timeZone?: str
  * @returns the long date
  */
 export function lockDateText(locksAt: string, language: string): string {
-  return new Intl.DateTimeFormat(language, { dateStyle: 'long', timeZone: lockTimeZone }).format(
-    new Date(locksAt),
-  );
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
+    dateStyle: 'long',
+    timeZone: lockTimeZone,
+  }).format(new Date(locksAt));
 }

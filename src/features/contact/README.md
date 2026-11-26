@@ -4,7 +4,7 @@
 
 - `components/ContactPage.tsx`: the page, the "report content elsewhere" line and "Message sent" with the reference.
 - `components/ContactOtherWays.tsx`: "Other ways to reach us" beside the form (the contact email from the brand config, Report something, the Help centre; G5b).
-- `components/ContactForm.tsx`: topic chips, the message, the email for a visitor (a signed-in person's account email is used, Q10e), the hidden honeypot field (Q10d) and Send.
+- `components/ContactForm.tsx`: the topic drop-down (the shared `Select`, label above, since bundle 10, board J10), the message, the email for a visitor (a signed-in person's account email is used, Q10e), the hidden honeypot field (Q10d) and Send.
 - `hooks/useContactForm.ts`, `api/contact.ts`: who is sending (from the session: email, username and user ID, never the year of birth), and `POST /api/contact`.
 - `src/schemas/contact.ts`: the shared contract, checked in the browser and on the server.
 - The server side: `server/contact.ts` (the two emails, the reference `C-<year>-<4 digits>` that is never stored, Brevo on Cloudflare, Mailpit locally) and `functions/api/contact.ts`; ADR 0006; the by-hand steps in `docs/runbooks/contact-form.md`.

@@ -21,6 +21,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import type { OrderTimeline } from '../api/removalOrders';
 import { useRemovalOrder } from '../hooks/useRemovalOrder';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The hook's result, passed down once. */
 type OrderState = ReturnType<typeof useRemovalOrder>;
@@ -32,7 +33,7 @@ type OrderState = ReturnType<typeof useRemovalOrder>;
  */
 function TimelineRows({ timeline }: { timeline: OrderTimeline }) {
   const { t, i18n } = useTranslation('moderation');
-  const format = new Intl.DateTimeFormat(i18n.language, {
+  const format = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'medium',
   });

@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import type { QueueCase } from '../api/moderationQueue';
 import { useNow } from '../hooks/useNow';
 import { deadlineScale, describeDeadline } from '../lib/deadline';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The words for an open case's deadline.
@@ -45,9 +46,10 @@ export function DeadlineLabel({ theCase }: { theCase: QueueCase }) {
   const { t, i18n } = useTranslation('moderation');
   const now = useNow();
   const fullMoment = (isoTime: string) =>
-    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(
-      new Date(isoTime),
-    );
+    new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(isoTime));
 
   // A decided case: when it was decided, not a countdown.
   if (theCase.status === 'decided' && theCase.decidedAt !== null) {

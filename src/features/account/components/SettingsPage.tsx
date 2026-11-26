@@ -4,6 +4,8 @@
  * very long, you need to scroll a lot, so I will need it to be compartmentalized a bit better").
  *
  * Who shows it: the router, at /settings; the top bar links here while signed in.
+ * Since bundle 10 (25 Nov 2026, the J boards of the full canvas) the title is the plain display
+ * title with no eyebrow, the menu is unboxed and every panel is flat, with a fine line above it.
  * What it shows: "Signed in as …", a moderator's question about one of the person's reports when
  * there is one (S1-E10-08; above the menu, so it is never missed), then the menu
  * (SettingsNav) and the open group's panels (SettingsGroupPanel, which lists them). The address
@@ -16,7 +18,6 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
@@ -47,14 +48,16 @@ function SettingsGroups({ account }: { account: ReturnType<typeof useMyNames> })
   }
 
   return (
-    <div className="flex flex-wrap items-start gap-6">
+    <div className="flex flex-wrap items-start gap-x-12 gap-y-6">
       <SettingsNav open={group} onPick={focusPanel} />
       {/* Not a named region: each panel inside is one already, with the same names as the menu. */}
       <div
         ref={panel}
         id={settingsPanelId}
         tabIndex={-1}
-        className="flex min-w-0 flex-[999_1_420px] flex-col gap-6 outline-none"
+        // settings-flat: the board draws each panel as a flat part of the page, with a fine
+        // line above it, not as a box (bundle 10, J01 to J16; src/styles/index.css).
+        className="settings-flat flex min-w-0 flex-[999_1_420px] flex-col outline-none"
       >
         <SettingsGroupPanel group={group} account={account} names={names} />
       </div>
@@ -79,7 +82,7 @@ function SettingsBody({ account }: { account: ReturnType<typeof useMyNames> }) {
   return (
     <>
       {names.handle !== null && (
-        <p className="m-0 text-ink-muted">
+        <p className="-mt-4 m-0 text-ink-muted">
           {t('settings.signedInAs', {
             name: displayName(names.handle, names.penName),
             handle: names.handle,
@@ -106,9 +109,10 @@ export function SettingsPage() {
   return (
     <PageContainer className="tmc-rise relative flex flex-col gap-6 pt-12 pb-6">
       <title>{t('settings.documentTitle')}</title>
+      {/* The board's plain display title, with no eyebrow above it (bundle 10, J01: COPY-1, an
+          eyebrow never repeats its heading). */}
       <header className="relative flex max-w-[720px] flex-col gap-2">
-        <Eyebrow>{t('settings.eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
+        <h1 className="m-0 font-heading type-title font-bold break-words text-ink-heading lg:type-display">
           {t('settings.heading')}
         </h1>
       </header>

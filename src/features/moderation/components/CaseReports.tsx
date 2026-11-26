@@ -21,6 +21,7 @@ import type { useSanctions } from '../hooks/useSanctions';
 
 import { AskForDetails, CopiedWorkComparison } from './CopiedWorkReportParts';
 import { ReasonForm } from './ReasonForm';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** useSanctions's result, passed down once. */
 type Sanctions = ReturnType<typeof useSanctions>;
@@ -45,7 +46,7 @@ function ReportCard({
   const { t, i18n } = useTranslation('moderation');
   const [isPauseOpen, setIsPauseOpen] = useState(false);
   const handle = report.reporterHandle ?? t('case.noHandle');
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(report.createdAt));

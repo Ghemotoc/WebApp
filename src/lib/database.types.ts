@@ -5500,6 +5500,69 @@ export type Database = {
           },
         ];
       };
+      list_page_lines: {
+        Row: {
+          category_id: string | null;
+          created_at: string;
+          id: string;
+          language: string;
+          line: string;
+          tag_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          language: string;
+          line: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          language?: string;
+          line?: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'list_page_lines_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'list_page_lines_language_fkey';
+            columns: ['language'];
+            isOneToOne: false;
+            referencedRelation: 'languages';
+            referencedColumns: ['code'];
+          },
+          {
+            foreignKeyName: 'list_page_lines_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'list_page_lines_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       live_session_reminders: {
         Row: {
           created_at: string;
@@ -12134,6 +12197,7 @@ export type Database = {
         }[];
       };
       admin_list_page_backgrounds: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_list_page_lines: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_list_staff: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -12727,6 +12791,10 @@ export type Database = {
       admin_set_launch_date: { Args: { new_date: string }; Returns: string };
       admin_set_list_page_background: {
         Args: { list_key: string; list_kind: string; market: string; new_palette: string };
+        Returns: undefined;
+      };
+      admin_set_list_page_line: {
+        Args: { line_language: string; list_key: string; list_kind: string; new_line: string };
         Returns: undefined;
       };
       admin_set_mail_status: {
@@ -15487,6 +15555,10 @@ export type Database = {
       list_page_background: {
         Args: { list_key: string; list_kind: string; visitor_country: string };
         Returns: string;
+      };
+      list_page_line: {
+        Args: { list_key: string; list_kind: string; page_language: string };
+        Returns: Json;
       };
       list_page_target: {
         Args: { list_key: string; list_kind: string };
@@ -18935,6 +19007,7 @@ export type Database = {
         Args: { how_many?: number; topic_key: string; topic_kind: string };
         Returns: Json;
       };
+      trending_tags: { Args: { how_many?: number }; Returns: Json };
       undo_decision_for_appeal: {
         Args: {
           appeal_reference: string;
