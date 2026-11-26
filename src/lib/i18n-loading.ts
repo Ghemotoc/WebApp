@@ -27,9 +27,20 @@ export const eagerNamespaces = [
   'reading',
 ] as const;
 
+/**
+ * Feature namespaces the chapter reader shows (the writer's card, the story's place in the library,
+ * the ad slot). Their Romanian text travels with their components (namespace-translations), but
+ * their English text loads here, with the eager English files, so a Romanian reader's first
+ * download never carries English it can't see (the reader's script budget, e2e/reader-performance.spec.ts).
+ */
+export const readerFeatureNamespaces = ['people', 'ads', 'library'] as const;
+
+/** Every namespace whose English loads here: the eager ones, then the reader's feature ones. */
+const englishLoadedHere = [...eagerNamespaces, ...readerFeatureNamespaces];
+
 /** The English files, each a chunk of its own that downloads only when asked for. */
 const englishFiles = import.meta.glob<{ default: Record<string, unknown> }>(
-  '../locales/en/{common,legal,auth,account,writing,reading}.json',
+  '../locales/en/{common,legal,auth,account,writing,reading,people,ads,library}.json',
 );
 
 /** Languages whose files are already here, by language code (filled by tests and by loading). */
@@ -84,10 +95,11 @@ async function loadEnglishNamespace(namespace: string): Promise<Record<string, u
 export async function loadInterfaceLanguage(language: string): Promise<void> {
   // Step 1: Romanian is bundled, and English loaded before needs nothing more.
   if (language === 'ro' || preloadedLanguages.en !== undefined) return;
-  // Step 2: download the English files side by side, then keep them for every instance.
-  const texts = await Promise.all(eagerNamespaces.map((name) => loadEnglishNamespace(name)));
+  // Step 2: download the English files side by side (the eager namespaces and the reader's feature
+  // ones), then keep them for every instance.
+  const texts = await Promise.all(englishLoadedHere.map((name) => loadEnglishNamespace(name)));
   const resources: ResourceLanguage = {};
-  eagerNamespaces.forEach((name, index) => {
+  englishLoadedHere.forEach((name, index) => {
     const text = texts[index];
     if (text !== null && text !== undefined) resources[name] = text;
   });
@@ -98,7 +110,7 @@ export async function loadInterfaceLanguage(language: string): Promise<void> {
  * Adds the English text to one instance, after downloading it if this is the first time.
  *
  * @param instance - the translation instance about to switch language
- * @returns once every eager English namespace is in the instance
+ * @returns once every English namespace loaded here is in the instance
  * Errors: a failed download rejects, and the instance keeps the language it had.
  */
 async function addEnglishTo(instance: I18nInstance): Promise<void> {

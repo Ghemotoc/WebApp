@@ -7,6 +7,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { createI18n } from '@/lib/i18n';
+import { registerPeopleTranslations } from '@/features/people/registerPeopleTranslations';
+import englishPeople from '@/locales/en/people.json';
 import englishReading from '@/locales/en/reading.json';
 
 describe('loading English when someone switches to it', () => {
@@ -20,6 +22,19 @@ describe('loading English when someone switches to it', () => {
 
     expect(i18n.language).toBe('en');
     expect(i18n.getResourceBundle('en', 'reading')).toEqual(englishReading);
+  });
+
+  it('a reader feature brings only its Romanian text; its English arrives with the switch', async () => {
+    // A page that started in Romanian and drew a people component (the writer's card in the reader).
+    const i18n = createI18n('ro');
+    i18n.removeResourceBundle('en', 'people');
+    registerPeopleTranslations(i18n);
+    expect(i18n.hasResourceBundle('ro', 'people')).toBe(true);
+    expect(i18n.hasResourceBundle('en', 'people')).toBe(false);
+
+    await i18n.changeLanguage('en');
+
+    expect(i18n.getResourceBundle('en', 'people')).toEqual(englishPeople);
   });
 
   it('English text already in the instance, such as an admin override, is kept', async () => {

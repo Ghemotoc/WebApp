@@ -18,7 +18,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(65);
+select plan(72);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -146,6 +146,12 @@ select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1)$$, pg_
   'points:not_offered', 'criterion 3: nor points to their own chapter');
 select is(public.class_chapter_points(pg_temp.kept_id('teen_chapter')) ->> 'role', 'writer',
   'on their own chapter they are the writer, with no give control');
+select is(public.class_chapter_points(pg_temp.kept_id('teen_chapter')) ->> 'teacher_max', '10',
+  'BOOKS-8 (board G06): the writer learns the most a teacher may give, for "7 out of 10"');
+select is(public.class_chapter_points(pg_temp.kept_id('teen_chapter')) ->> 'note_max', null,
+  'but not the teacher''s note settings');
+select is(public.class_chapter_points(pg_temp.kept_id('kid_chapter_1')) ->> 'teacher_max', null,
+  'a classmate is not sent the teacher''s maximum');
 select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1, %L)$$, pg_temp.kept('kid_chapter_1'), repeat('a', 141))),
   'note:too_long', 'criterion 6: a note has at most 140 characters');
 select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1, 'un <b>text</b>')$$, pg_temp.kept('kid_chapter_1'))),
@@ -160,6 +166,12 @@ select public.class_chapter_points(pg_temp.kept_id('kid_chapter_2'));
 select is(public.give_class_points(pg_temp.kept_id('kid_chapter_2'), 3) -> 'giving' ->> 'left', '5',
   'points to a second chapter come from the same budget');
 
+select is(jsonb_array_length(public.class_points_summary('clasa-a-ix-a') -> 'given'), 2,
+  'BOOKS-8: the class page lists the two chapters the pupil gave points to this week');
+-- Both gifts are made in this one transaction, so they share a time: compare them in any order.
+select is((select array_agg((gift ->> 'points')::integer order by (gift ->> 'points')::integer)
+           from jsonb_array_elements(public.class_points_summary('clasa-a-ix-a') -> 'given') as gift),
+  array[2, 3], 'with the points each one has');
 -- allowed: class_point_gifts_select_own: the giver reads their own gifts.
 select is((select count(*)::integer from public.class_point_gifts), 2,
   'allowed: class_point_gifts_select_own: the giver reads their own two gifts');
@@ -179,6 +191,8 @@ select is((select count(*)::integer from jsonb_object_keys(
   'a note is its ID and its words, never who gave it');
 select is(public.class_points_summary('clasa-a-ix-a') ->> 'received_total', '5',
   'the class page tells the writer how many points they received in all');
+select is(public.class_points_summary('clasa-a-ix-a') -> 'given', '[]'::jsonb,
+  'BOOKS-8: the writer''s own list holds only what they gave, never who gave to them');
 -- denied: class_point_gifts_select_own: the writer can't read who gave points from the table.
 select is((select count(*)::integer from public.class_point_gifts), 0,
   'denied: class_point_gifts_select_own: the writer reads no gift from the table, so never the giver');
@@ -191,6 +205,8 @@ select is(public.class_chapter_points(pg_temp.kept_id('kid_chapter_1')) -> 'rece
   'the teacher sees the chapter''s total and nothing else about its points');
 select is((select count(*)::integer from public.class_point_gifts), 0,
   'denied: class_point_gifts_select_moderators: the teacher reads no gift, so never who gave points');
+select is(public.class_points_summary('clasa-a-ix-a') ->> 'given', null,
+  'BOOKS-8: nor does the class page tell the teacher what any pupil gave');
 select is(pg_temp.hint_of(format($$select public.give_class_points(%L, 1)$$, pg_temp.kept('kid_chapter_1'))),
   'points:not_offered', 'the teacher has no weekly budget: they give teacher points');
 

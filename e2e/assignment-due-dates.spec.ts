@@ -6,7 +6,8 @@
  * What it proves:
  * - the teacher sets a due date in the thread's "Who has replied" panel (the time starts at 23:59),
  *   and the thread then shows "Due <day>, <time>" (criterion 1);
- * - a student in the class sees the assignment in the "Assignments" card on the class space page
+ * - a student in the class sees the assignment, with its due moment in bold, in the class page's
+ *   threads (BOOKS-8, board G03: homework shows when it is due)
  *   (criterion 2);
  * - the class space page with the card passes axe at 390, 768 and 1440 px, light and night.
  * The reminder in the day before and the late marks are proved in the database test
@@ -113,22 +114,25 @@ test.describe('due dates for class assignments (MUST-1d)', () => {
     await page.context().close();
   });
 
-  test('a student sees it in the class space’s assignments', async ({ browser }) => {
+  test('a student sees it in the class page’s threads with its due moment', async ({ browser }) => {
     const page = await openAs(browser, 'kid_14_ok', `/spaces/${classSlug}`);
-    // Criterion 2: the card lists the assignment, with a link to it and its day.
-    const card = page.getByRole('region', { name: 'Assignments' });
-    await expect(card.getByRole('link', { name: threadTitle })).toHaveAttribute(
+    // Criterion 2: the thread's row links to it and says when it is due.
+    const row = page.getByRole('list', { name: 'Threads' }).getByRole('listitem').filter({
+      hasText: threadTitle,
+    });
+    // An unread thread opens at its first new post, so the address may carry the post too.
+    await expect(row.getByRole('link', { name: threadTitle })).toHaveAttribute(
       'href',
-      threadAddress,
+      new RegExp(`^${threadAddress}`),
     );
-    await expect(card).toContainText('Due ');
+    await expect(row).toContainText('Due ');
     await page.context().close();
   });
 
-  // The class space page with the card, at each width, light and night, in English.
+  // The class space page with the homework row, at each width, light and night, in English.
   for (const width of screenWidths) {
     for (const theme of ['light', 'night'] as const) {
-      test(`axe: the class space with its assignments at ${width} px, ${theme}`, async ({
+      test(`axe: the class space with its homework at ${width} px, ${theme}`, async ({
         browser,
       }) => {
         const context = await browser.newContext();
@@ -136,7 +140,7 @@ test.describe('due dates for class assignments (MUST-1d)', () => {
         const page = await context.newPage();
         const view = { address: `/spaces/${classSlug}`, width, theme, language: 'en' } as const;
         await checkScreen(page, view, async (opened) => {
-          await expect(opened.getByRole('region', { name: 'Assignments' })).toBeVisible();
+          await expect(opened.getByRole('list', { name: 'Threads' })).toBeVisible();
         });
         await context.close();
       });

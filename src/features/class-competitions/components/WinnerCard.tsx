@@ -2,12 +2,13 @@
  * WinnerCard: what the class sees once a competition's results are published (bundle
  * CLASS-POINTS, part 2; story S1-E8-15 criteria 11 and 13).
  *
- * What it shows: "Winner", the competition's name, the Winner's pen name and the winning
- * chapter; the Readers' choice pen names beside it; no other name, score or number. An entrant
+ * What it shows (board G03, BOOKS-8): "Winner · Autumn short story contest", the winning story's
+ * title, "by" the Winner's pen name and "Read the chapter"; the Readers' choice pen names under
+ * it; no other name, score or number. An entrant
  * also reads their own result. Below the 8th grade there is no Winner, so it says the results
  * are out and every entrant is a Contestant. The teacher gets the links to the results and to
  * the certificates, which open with this competition's results filled in (S1-E8-17).
- * Who shows it: ClassCompetitionCard. What it calls: nothing.
+ * Who shows it: ClassLatestWinner. What it calls: nothing.
  */
 import { Link } from 'react-router';
 
@@ -25,28 +26,33 @@ export interface WinnerCardProps {
 }
 
 /**
- * The Winner's pen name and their chapter.
+ * The winning story, the Winner's pen name and the way to the chapter.
  *
- * @returns the lines; nothing when there is no Winner
+ * @returns the lines, or the "every entrant is a Contestant" line when there is no Winner
  */
 function WinnerLines({ card }: { card: WinnerCardData }) {
   const { t } = useClassCompetitionsTranslation();
-  if (card.winner === null) return <p className="m-0 text-ink-muted">{t('winner.noWinner')}</p>;
+  if (card.winner === null)
+    return <p className="m-0 type-body text-ink-muted">{t('winner.noWinner')}</p>;
   const chapter = card.winningChapter;
+  if (chapter === null) {
+    return <p className="m-0 type-subheading text-ink-heading">{card.winner}</p>;
+  }
+  const address = `/s/${chapter.storySlug}/${chapter.chapterCode}`;
   return (
     <>
-      <p className="m-0 font-heading type-heading font-bold text-ink-heading">{card.winner}</p>
-      {chapter !== null && (
-        <p className="m-0 type-body text-ink-muted">
-          {t('winner.chapter')}{' '}
-          <Link
-            to={`/s/${chapter.storySlug}/${chapter.chapterCode}`}
-            className="font-semibold text-link underline"
-          >
-            {t('winner.chapterLink', { chapter: chapter.title, story: chapter.storyTitle })}
-          </Link>
-        </p>
-      )}
+      <p className="m-0 type-subheading text-ink-heading">
+        <Link to={address} className="text-ink-heading no-underline hover:underline">
+          {chapter.storyTitle}
+        </Link>
+      </p>
+      <p className="m-0 type-meta text-ink-muted">{t('winner.by', { name: card.winner })}</p>
+      <Link
+        to={address}
+        className="flex min-h-11 w-fit items-center type-body font-semibold text-ink-heading underline"
+      >
+        {t('winner.readChapter')}
+      </Link>
     </>
   );
 }
@@ -74,28 +80,19 @@ function MyResult({ card }: { card: WinnerCardData }) {
 /**
  * Renders the card.
  *
- * @returns the card
+ * @param props - the card's data, the class's address and whether the viewer is the teacher
+ * @returns the section
  */
 export function WinnerCard({ card, slug, isTeacher }: WinnerCardProps) {
   const { t } = useClassCompetitionsTranslation();
-  const headingId = `winner-card-${card.id}`;
+  const state = card.winner === null ? t('winner.noWinnerEyebrow') : t('winner.eyebrow');
   return (
     <section
-      aria-labelledby={headingId}
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4 shadow-card"
+      aria-label={t('winner.regionLabel', { state, name: card.name })}
+      className="flex flex-col gap-1 rounded-card bg-surface-solid p-6"
     >
-      {/* "Winner" or "Results" as a bold state word above the name (CALM-9f; was an eyebrow). */}
-      <MetaLine
-        facts={[
-          {
-            text: card.winner === null ? t('winner.noWinnerEyebrow') : t('winner.eyebrow'),
-            kind: 'state',
-          },
-        ]}
-      />
-      <h2 id={headingId} className="m-0 type-body font-bold text-ink">
-        {card.name}
-      </h2>
+      {/* "Winner" in bold, then the competition's name, as one meta line (board G03). */}
+      <MetaLine facts={[{ text: state, kind: 'state' }, { text: card.name }]} />
       <WinnerLines card={card} />
       {card.readersChoice.length > 0 && (
         <p className="m-0 type-body text-ink-muted">

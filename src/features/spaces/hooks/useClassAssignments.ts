@@ -2,7 +2,7 @@
  * useClassAssignments: a class space's open assignments, soonest first (bundle MUST-1, part d;
  * IDEA-20261108-8).
  *
- * Who calls it: ClassAssignmentsCard. What it calls: fetchClassAssignments(). A due date saved in
+ * Who calls it: ClassThreads (the due moment on each homework row, BOOKS-8). What it calls: fetchClassAssignments(). A due date saved in
  * the teacher's panel refreshes it (useSaveThreadDueDate refreshes every forum and space read).
  */
 import { useQuery } from '@tanstack/react-query';
