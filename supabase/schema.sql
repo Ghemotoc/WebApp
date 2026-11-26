@@ -1561,6 +1561,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('story_plans', 'delete', 3, null),
     ('story_tags', 'own_step', 0, 'deleted with their story, unless the story is kept for a case'),
     ('teacher_checks', 'delete', 1, null),
+    ('topic_follows', 'delete', 1, null),
     ('username_approvals', 'delete', 1, null),
     ('waitlist_entries', 'delete', 1, null),
     ('writer_ranks', 'delete', 1, null),
@@ -23370,6 +23371,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('story_plans', true, null),
     ('story_tags', true, null),
     ('teacher_checks', true, null),
+    ('topic_follows', true, null),
     ('username_approvals', false, 'a moderator''s note that a name was refused by mistake; the name itself is in the profile'),
     ('waitlist_entries', true, null),
     ('writer_spotlights', true, null),
@@ -24870,10 +24872,16 @@ CREATE OR REPLACE FUNCTION "public"."email_delivery_for"("target_user_id" "uuid"
     else coalesce(
       (select settings.delivery from public.notification_email_settings as settings
        where settings.user_id = target_user_id
+         -- BOOKS B06: "story finished" follows the reader's choice for new chapters.
          and settings.kind = case when email_delivery_for.kind = 'story_completed'
                                   then 'new_chapter'::public.notification_kind
-                                  else email_delivery_for.kind end),
-      public.default_email_delivery(kind))::text
+                                  else email_delivery_for.kind end)::text,
+      -- Design books S5: no instant email by default for a teenager; one digest a day instead.
+      case
+        when public.default_email_delivery(kind) = 'instant'
+             and public.is_under_18_or_unknown(target_user_id) then 'daily'
+        else public.default_email_delivery(kind)::text
+      end)
   end;
 $$;
 
@@ -24881,7 +24889,7 @@ $$;
 ALTER FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") IS 'Internal: one person''s email delivery for one notification kind (S1-E7-02); story_completed follows the new_chapter choice (BOOKS B06).';
+COMMENT ON FUNCTION "public"."email_delivery_for"("target_user_id" "uuid", "kind" "public"."notification_kind") IS 'Internal: one person''s email delivery for one notification kind; under 18, Instant defaults become a Daily digest (S1-E7-02; design books S5).';
 
 
 
@@ -29074,6 +29082,43 @@ COMMENT ON FUNCTION "public"."insert_class_space"("owner_id" "uuid", "name" "tex
 
 
 
+CREATE OR REPLACE FUNCTION "public"."instant_email_send_time"("person_id" "uuid", "made_at" timestamp with time zone) RETURNS timestamp with time zone
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  person public.profiles;
+  choices jsonb;
+  quiet_end timestamp;
+begin
+  -- Step 1: adults get their instant emails at once.
+  if not public.is_under_18_or_unknown(person_id) then
+    return made_at;
+  end if;
+  -- Step 2: the same quiet hours as message emails (always on under 18, Q50).
+  select * into person from public.profiles where profiles.id = person_id;
+  if person.id is null then
+    return made_at;
+  end if;
+  choices := public.message_email_choices(person);
+  quiet_end := public.quiet_hours_end_after(made_at at time zone 'Europe/Bucharest',
+    (choices ->> 'quiet_from')::time, (choices ->> 'quiet_until')::time);
+  -- Step 3: inside quiet hours, the email waits for their end.
+  if quiet_end is null then
+    return made_at;
+  end if;
+  return quiet_end at time zone 'Europe/Bucharest';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."instant_email_send_time"("person_id" "uuid", "made_at" timestamp with time zone) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."instant_email_send_time"("person_id" "uuid", "made_at" timestamp with time zone) IS 'Internal: when an instant email may go; under 18, after quiet hours (design books S5; Q50).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."interface_language_codes"() RETURNS "text"[]
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -30143,6 +30188,44 @@ CREATE OR REPLACE FUNCTION "public"."landing_block_extra_problems"("block" "json
     SET "search_path" TO ''
     AS $_$
 declare
+  problems text[] := public.landing_block_extra_problems_before_hero(block, block_path);
+  hero_link text := btrim(coalesce(block ->> 'link', ''));
+  has_button boolean;
+begin
+  if block ->> 'kind' <> 'hero' then
+    return problems;
+  end if;
+  -- Step 1: a hero needs a link only when either language shows a button.
+  has_button := btrim(coalesce(block #>> '{ro,button_label}', '')) <> ''
+    or btrim(coalesce(block #>> '{en,button_label}', '')) <> ''
+    or btrim(coalesce(block #>> '{ro,member_button_label}', '')) <> ''
+    or btrim(coalesce(block #>> '{en,member_button_label}', '')) <> '';
+  if not has_button then
+    return problems;
+  end if;
+  -- Step 2: the same rule as a call to action: one of our pages or an https address, never "//".
+  if hero_link = '' then
+    problems := problems || (block_path || '.link:empty');
+  elsif hero_link !~ '^(/([a-z0-9_-][a-z0-9/_-]*)?|https://[^\s]+)$' then
+    problems := problems || (block_path || '.link:bad_link');
+  end if;
+  return problems;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") IS 'Internal: a landing page block''s problems beyond its text fields, a hero''s button link included (S1-E11-14, BOOKS-A10).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."landing_block_extra_problems_before_hero"("block" "jsonb", "block_path" "text") RETURNS "text"[]
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $_$
+declare
   problems text[] := '{}';
   open_on date;
   close_on date;
@@ -30227,10 +30310,10 @@ end;
 $_$;
 
 
-ALTER FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."landing_block_extra_problems_before_hero"("block" "jsonb", "block_path" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", "block_path" "text") IS 'Internal: a landing page block''s problems beyond its text fields (S1-E11-14).';
+COMMENT ON FUNCTION "public"."landing_block_extra_problems_before_hero"("block" "jsonb", "block_path" "text") IS 'Internal: a landing page block''s problems beyond its text fields, before the hero''s buttons (S1-E11-14 to S1-E11-34).';
 
 
 
@@ -30240,6 +30323,9 @@ CREATE OR REPLACE FUNCTION "public"."landing_block_field_rules"() RETURNS TABLE(
     AS $$
   values
     ('hero', 'title', 80, true), ('hero', 'intro', 300, false),
+    -- BOOKS-A10: the kicker, the violet second line and the two buttons, all optional.
+    ('hero', 'kicker', 80, false), ('hero', 'title_accent', 80, false),
+    ('hero', 'button_label', 40, false), ('hero', 'member_button_label', 40, false),
     ('text', 'heading', 80, true), ('text', 'body', 4000, true),
     ('key_dates', 'heading', 80, true), ('key_dates', 'note', 300, false),
     ('who_can_enter', 'heading', 80, true), ('who_can_enter', 'body', 1000, true),
@@ -30249,7 +30335,6 @@ CREATE OR REPLACE FUNCTION "public"."landing_block_field_rules"() RETURNS TABLE(
     ('questions', 'heading', 80, true),
     ('featured', 'heading', 80, true), ('featured', 'intro', 300, false),
     ('remind_me', 'heading', 80, true), ('remind_me', 'intro', 300, false),
-    -- S1-E11-34: the page builder's new blocks.
     ('picture_text', 'heading', 80, true), ('picture_text', 'body', 2000, true),
     ('cards', 'heading', 80, true),
     ('steps', 'heading', 80, true),
@@ -30741,6 +30826,24 @@ ALTER FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" 
 
 
 COMMENT ON FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" "text", "field_name" "text", "field_path" "text", "longest" integer, "is_required" boolean) IS 'Internal: one landing page text field''s problem, or null; text only (S1-E11-14, S1-E11-34).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."landing_words_this_month"() RETURNS bigint
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select case when count(distinct writing_days.user_id) < 5 then null
+              else coalesce(sum(writing_days.words), 0)::bigint end
+  from public.writing_days
+  where writing_days.day >= date_trunc('month', public.romania_today())::date;
+$$;
+
+
+ALTER FUNCTION "public"."landing_words_this_month"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."landing_words_this_month"() IS 'The words every writer wrote this month, for a landing page''s live count; null under five writers (BOOKS-A10).';
 
 
 
@@ -33768,6 +33871,8 @@ declare
   caller_id uuid := (select auth.uid());
   writers jsonb;
   followed_stories jsonb;
+  genres jsonb;
+  followed_tags jsonb;
 begin
   if caller_id is null then
     raise exception 'Log in to see who you follow.' using errcode = 'insufficient_privilege';
@@ -33793,7 +33898,20 @@ begin
   join public.stories on stories.id = follows_stories.story_id
   where follows_stories.user_id = caller_id
     and exists (select 1 from public.reader_visible_story(stories.slug));
-  return jsonb_build_object('writers', writers, 'stories', followed_stories);
+  -- Step 3: the genres, in the order the app lists them.
+  select coalesce(jsonb_agg(categories.slug order by categories.position), '[]'::jsonb)
+  into genres
+  from public.topic_follows
+  join public.categories on categories.id = topic_follows.category_id
+  where topic_follows.user_id = caller_id;
+  -- Step 4: the tags, still approved, by name.
+  select coalesce(jsonb_agg(tags.name order by tags.name), '[]'::jsonb)
+  into followed_tags
+  from public.topic_follows
+  join public.tags on tags.id = topic_follows.tag_id
+  where topic_follows.user_id = caller_id and tags.status = 'approved';
+  return jsonb_build_object('writers', writers, 'stories', followed_stories,
+    'genres', genres, 'tags', followed_tags);
 end;
 $$;
 
@@ -33801,7 +33919,7 @@ $$;
 ALTER FUNCTION "public"."my_follows"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_follows"() IS 'The writers and stories the caller follows, for the Library (S1-E4-03).';
+COMMENT ON FUNCTION "public"."my_follows"() IS 'The writers, stories, genres and tags the caller follows, for the Library (S1-E4-03, BOOKS-A06).';
 
 
 
@@ -35094,18 +35212,9 @@ begin
   select least(coalesce(sum(writing_days.words), 0), 2000000000)::integer into month_words
   from public.writing_days
   where writing_days.user_id = caller_id and writing_days.day >= month_start;
-  -- Step 2: the streak still running: days in a row with words, ending today or yesterday (so a
-  -- streak isn't lost before the writer has had today's chance). Days in a row share the same
-  -- "day minus its place in line".
-  with written as (
-    select writing_days.day,
-           writing_days.day - (row_number() over (order by writing_days.day))::integer as run
-    from public.writing_days
-    where writing_days.user_id = caller_id and writing_days.words > 0
-  ), runs as (
-    select max(written.day) as last_day, count(*)::integer as length from written group by written.run
-  )
-  select coalesce(max(runs.length), 0) into current_streak from runs where runs.last_day >= today - 1;
+  -- Step 2: the streak still running, ending today or yesterday (today is still open), where one
+  -- rest day a week doesn't break it (design books S5).
+  current_streak := public.writing_streak(caller_id, today);
   -- Step 3: the longest run inside this month, for the 5-day badge (it stays earned after a gap).
   with written as (
     select writing_days.day,
@@ -35136,6 +35245,7 @@ begin
       'comments_10', comment_count >= 10,
       'contest_entry', entered_contest,
       'words_15000', month_words >= 15000));
+
 end;
 $$;
 
@@ -35143,7 +35253,7 @@ $$;
 ALTER FUNCTION "public"."my_writing_month"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_writing_month"() IS 'The caller''s writing month: words against a goal of 15,000, the running streak and five badges, from their own activity only (GAPS-12f).';
+COMMENT ON FUNCTION "public"."my_writing_month"() IS 'The caller''s writing month: words against a goal of 15,000, the running streak (one rest day a week allowed) and five badges, from their own activity only (GAPS-12f; design books S5).';
 
 
 
@@ -39641,9 +39751,12 @@ CREATE OR REPLACE FUNCTION "public"."queue_instant_email"() RETURNS "trigger"
 declare
   delivery text := public.email_delivery_for(new.user_id, new.kind);
 begin
-  if delivery in ('instant', 'required') then
+  if delivery = 'required' then
     insert into public.email_outbox (user_id, delivery, notification_ids)
     values (new.user_id, delivery, array[new.id]);
+  elsif delivery = 'instant' then
+    insert into public.email_outbox (user_id, delivery, notification_ids, send_after)
+    values (new.user_id, delivery, array[new.id], public.instant_email_send_time(new.user_id, now()));
   end if;
   return new;
 end;
@@ -39653,7 +39766,7 @@ $$;
 ALTER FUNCTION "public"."queue_instant_email"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."queue_instant_email"() IS 'Internal trigger: queues an instant or required email for a new notification (S1-E7-02).';
+COMMENT ON FUNCTION "public"."queue_instant_email"() IS 'Internal trigger: queues an instant or required email for a new notification; under 18, an instant one waits for quiet hours to end (S1-E7-02; design books S5).';
 
 
 
@@ -48627,6 +48740,48 @@ COMMENT ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  topic record;
+begin
+  -- Step 1: who and what.
+  if caller_id is null then
+    raise exception 'Log in to follow a genre or a tag.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into topic from public.topic_ids_of(topic_kind, topic_key);
+  if not found then
+    raise exception 'There is no such genre or tag.' using errcode = 'no_data_found';
+  end if;
+  -- Step 2: unfollowing is always allowed, even for a read-only account.
+  if not should_follow then
+    delete from public.topic_follows where topic_follows.user_id = caller_id
+      and (topic_follows.category_id = topic.category_id or topic_follows.tag_id = topic.tag_id);
+    return false;
+  end if;
+  -- Step 3: following is a write, so the account gate applies (architecture 1.7.8).
+  if not public.is_active_member() then
+    raise exception 'Your account can''t follow anything right now.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 4: follow; doing it twice changes nothing.
+  insert into public.topic_follows (user_id, category_id, tag_id)
+  values (caller_id, topic.category_id, topic.tag_id)
+  on conflict do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) IS 'Follows or unfollows a genre or an approved tag (BOOKS-A06, BOOKS-A09).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     SET "search_path" TO ''
@@ -54896,6 +55051,90 @@ COMMENT ON FUNCTION "public"."tier_rank"("target_tier" "public"."case_tier") IS 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.topic_ids_of(topic_kind, topic_key) as topic
+    join public.topic_follows on topic_follows.user_id = (select auth.uid())
+      and (topic_follows.category_id = topic.category_id or topic_follows.tag_id = topic.tag_id));
+$$;
+
+
+ALTER FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") IS 'Whether the caller follows a genre or a tag (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") RETURNS TABLE("category_id" "uuid", "tag_id" "uuid")
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: a genre, by its slug.
+  if topic_kind = 'category' then
+    return query select categories.id, null::uuid from public.categories where categories.slug = topic_key;
+    return;
+  end if;
+  -- Step 2: a tag, by any look-alike of its name, and only once staff approved it (CMS-1e).
+  if topic_kind = 'tag' then
+    return query select null::uuid, tags.id from public.tags
+      where tags.normalised_name = public.normalise_tag(topic_key) and tags.status = 'approved';
+    return;
+  end if;
+  raise exception 'Only a genre or a tag can be followed.' using errcode = 'invalid_parameter_value';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") IS 'Internal: the genre or approved tag a page names (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer DEFAULT 8) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  wanted integer := least(greatest(coalesce(how_many, 8), 1), 20);
+  own_tag text := case when topic_kind = 'tag' then public.normalise_tag(topic_key) end;
+  found_tags jsonb;
+begin
+  if topic_kind is null or topic_kind not in ('category', 'tag') then
+    raise exception 'Only a genre or a tag has tags.' using errcode = 'invalid_parameter_value';
+  end if;
+  -- Step 1: the stories of this list the reader may see, then the approved tags on them.
+  select coalesce(jsonb_agg(counted.name order by counted.story_count desc, counted.name), '[]'::jsonb)
+  into found_tags
+  from (
+    select tags.name, count(*) as story_count
+    from public.listed_stories(topic_kind, topic_key, null, null, null) as story
+    join public.story_tags on story_tags.story_id = story.id
+    join public.tags on tags.id = story_tags.tag_id
+    where tags.status = 'approved'
+      and tags.normalised_name is distinct from own_tag
+    group by tags.id, tags.name
+    order by story_count desc, tags.name
+    limit wanted
+  ) as counted;
+  return found_tags;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) IS 'A genre''s most used tags, or the tags related to a tag, over stories the reader may see (BOOKS-A06, BOOKS-A09).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."undo_decision_for_appeal"("statement" "public"."statements_of_reasons", "appeal_reference" "text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -57492,6 +57731,51 @@ ALTER FUNCTION "public"."writers_to_follow_now"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."writers_to_follow_now"() IS '"To follow this week" for this reader: staff picks, else the week''s biggest follower gains; never a user ID (user story 1.4).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."writing_streak"("writer_id" "uuid", "today" "date") RETURNS integer
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  written date[];
+  day_in_question date := today;
+  streak integer := 0;
+  last_rest date;
+begin
+  -- Step 1: the days with words in the last 400 days (a longer streak still shows as 400-odd).
+  select coalesce(array_agg(writing_days.day), '{}') into written
+  from public.writing_days
+  where writing_days.user_id = writer_id and writing_days.words > 0
+    and writing_days.day between today - 400 and today;
+  -- Step 2: today is still open, so a day without words yet starts the count at yesterday.
+  if not (today = any (written)) then
+    day_in_question := today - 1;
+  end if;
+  -- Step 3: walk back, counting days with words and allowing one rest day in any 7.
+  loop
+    if day_in_question = any (written) then
+      streak := streak + 1;
+    -- A day without words is a rest day when the day before it has words and no other rest
+    -- day falls in the same 7 days; the streak carries on past it, but the day itself isn't counted.
+    elsif (day_in_question - 1) = any (written)
+      and (last_rest is null or last_rest - day_in_question >= 7) then
+      last_rest := day_in_question;
+    else
+      exit;
+    end if;
+    day_in_question := day_in_question - 1;
+  end loop;
+  return streak;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."writing_streak"("writer_id" "uuid", "today" "date") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."writing_streak"("writer_id" "uuid", "today" "date") IS 'Internal: the running writing streak, where one rest day a week doesn''t break it (GAPS-12f; design books S5).';
 
 
 
@@ -60883,6 +61167,25 @@ COMMENT ON COLUMN "public"."teacher_checks"."user_id" IS 'The person asking; nev
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."topic_follows" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "category_id" "uuid",
+    "tag_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "topic_follows_one_topic" CHECK (("num_nonnulls"("category_id", "tag_id") = 1))
+);
+
+
+ALTER TABLE "public"."topic_follows" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."topic_follows" IS 'kind: user_action
+Which genres and tags a member follows (BOOKS-A06, BOOKS-A09). Private to the member.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."username_approvals" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -62539,6 +62842,21 @@ ALTER TABLE ONLY "public"."teacher_checks"
 
 
 
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_one_per_genre" UNIQUE ("user_id", "category_id");
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_one_per_tag" UNIQUE ("user_id", "tag_id");
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."username_approvals"
     ADD CONSTRAINT "username_approvals_pkey" PRIMARY KEY ("id");
 
@@ -63982,6 +64300,14 @@ CREATE INDEX "teacher_checks_waiting" ON "public"."teacher_checks" USING "btree"
 
 
 
+CREATE INDEX "topic_follows_category_id" ON "public"."topic_follows" USING "btree" ("category_id");
+
+
+
+CREATE INDEX "topic_follows_tag_id" ON "public"."topic_follows" USING "btree" ("tag_id");
+
+
+
 CREATE INDEX "username_approvals_user_id_idx" ON "public"."username_approvals" USING "btree" ("user_id");
 
 
@@ -65207,6 +65533,14 @@ CREATE OR REPLACE TRIGGER "teacher_checks_refuse_user_id_change" BEFORE UPDATE O
 
 
 CREATE OR REPLACE TRIGGER "teacher_checks_set_updated_at" BEFORE UPDATE ON "public"."teacher_checks" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "topic_follows_keep_user_id" BEFORE UPDATE ON "public"."topic_follows" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "topic_follows_set_updated_at" BEFORE UPDATE ON "public"."topic_follows" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -67326,6 +67660,21 @@ ALTER TABLE ONLY "public"."tags"
 
 ALTER TABLE ONLY "public"."teacher_checks"
     ADD CONSTRAINT "teacher_checks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_tag_id_fkey" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -69464,6 +69813,13 @@ CREATE POLICY "teacher_checks_select_own" ON "public"."teacher_checks" FOR SELEC
 
 
 COMMENT ON POLICY "teacher_checks_select_own" ON "public"."teacher_checks" IS 'Allows a person to read their own Teacher badge requests and outcomes (S1-E2-11).';
+
+
+
+ALTER TABLE "public"."topic_follows" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "topic_follows_select_own" ON "public"."topic_follows" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
 
@@ -73182,6 +73538,10 @@ REVOKE ALL ON FUNCTION "public"."insert_class_space"("owner_id" "uuid", "name" "
 
 
 
+REVOKE ALL ON FUNCTION "public"."instant_email_send_time"("person_id" "uuid", "made_at" timestamp with time zone) FROM PUBLIC;
+
+
+
 GRANT ALL ON FUNCTION "public"."interface_language_codes"() TO "anon";
 GRANT ALL ON FUNCTION "public"."interface_language_codes"() TO "authenticated";
 
@@ -73345,6 +73705,10 @@ REVOKE ALL ON FUNCTION "public"."landing_block_extra_problems"("block" "jsonb", 
 
 
 
+REVOKE ALL ON FUNCTION "public"."landing_block_extra_problems_before_hero"("block" "jsonb", "block_path" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."landing_block_field_rules"() FROM PUBLIC;
 
 
@@ -73423,6 +73787,12 @@ REVOKE ALL ON FUNCTION "public"."landing_search_problems"("search" "jsonb") FROM
 
 
 REVOKE ALL ON FUNCTION "public"."landing_text_problem"("block" "jsonb", "language_code" "text", "field_name" "text", "field_path" "text", "longest" integer, "is_required" boolean) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."landing_words_this_month"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."landing_words_this_month"() TO "anon";
+GRANT ALL ON FUNCTION "public"."landing_words_this_month"() TO "authenticated";
 
 
 
@@ -75884,6 +76254,11 @@ GRANT ALL ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "targe
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_updated_at"() FROM PUBLIC;
 
 
@@ -76777,6 +77152,22 @@ REVOKE ALL ON FUNCTION "public"."tier_rank"("target_tier" "public"."case_tier") 
 
 
 
+REVOKE ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."undo_decision_for_appeal"("statement" "public"."statements_of_reasons", "appeal_reference" "text") FROM PUBLIC;
 
 
@@ -77100,6 +77491,10 @@ REVOKE ALL ON FUNCTION "public"."writers_published_by_market"("for_day" "date") 
 REVOKE ALL ON FUNCTION "public"."writers_to_follow_now"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."writers_to_follow_now"() TO "anon";
 GRANT ALL ON FUNCTION "public"."writers_to_follow_now"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."writing_streak"("writer_id" "uuid", "today" "date") FROM PUBLIC;
 
 
 
@@ -77872,6 +78267,11 @@ GRANT SELECT ON TABLE "public"."tags" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."teacher_checks" TO "service_role";
 GRANT SELECT ON TABLE "public"."teacher_checks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."topic_follows" TO "service_role";
+GRANT SELECT ON TABLE "public"."topic_follows" TO "authenticated";
 
 
 

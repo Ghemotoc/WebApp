@@ -100,10 +100,20 @@ test.describe('Discover and story lists (S1-E5-01, S1-E5-09)', () => {
     await expect(page.getByRole('link', { name: /Noaptea lungă/ })).toHaveCount(0);
   });
 
+  test('a tag no story uses says so, with the way back to Read', async ({ browser }) => {
+    // User story 1.9: "No stories use #tag yet, with a link back to Read."
+    const page = await openAsVisitor(browser, '/discover/t/nobody-uses-this-tag');
+    await expect(page.getByText('No stories use #nobody-uses-this-tag yet')).toBeVisible();
+    await page.getByRole('link', { name: 'Back to Read' }).click();
+    await expect(page).toHaveURL(/\/discover$/);
+  });
+
   test('a tag opens its page, and the filters stay in the address', async ({ browser }) => {
     const page = await openAsVisitor(browser, '/s/disc-e2e-farul');
     await page.getByRole('list', { name: 'Tags' }).getByRole('link', { name: tag }).click();
     await expect(page).toHaveURL(new RegExp(`/discover/t/${tag}$`));
+    // User story 1.9, board A09: the tag is the title, with its hash.
+    await expect(page.getByRole('heading', { level: 1, name: `#${tag}` })).toBeVisible();
     // An English visitor reads English first; "Any language" shows the Romanian story too.
     await expect(page.getByText('1 story', { exact: true })).toBeVisible();
     // The filters live in the "Filter and sort" panel (user story 1.5).

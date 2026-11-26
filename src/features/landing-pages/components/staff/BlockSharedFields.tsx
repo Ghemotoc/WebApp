@@ -2,7 +2,8 @@
  * BlockSharedFields: the fields of a block that are the same in both languages: the key dates,
  * the age groups who can enter and the Rules link (story S1-E11-14; bundle CONTESTS-13a1).
  *
- * Part a2a adds how a Featured stories block picks its stories (FeaturedFields).
+ * Part a2a adds how a Featured stories block picks its stories (FeaturedFields). BOOKS-A10 adds
+ * the hero's link (where its buttons go) and its live count switch (HeroFields).
  * Dates are plain dates in Romanian time, shown without a countdown (no countdown timers, plan
  * 13a1). The Rules link is one of our own pages ("/help/contest-rules") or an https address; the
  * database checks it before publishing.
@@ -127,6 +128,33 @@ function LinkField({ block, index, problems, onChange }: BlockSharedFieldsProps)
 }
 
 /**
+ * The hero's shared fields (BOOKS-A10, board A10): where its buttons go, and whether it shows the
+ * words every writer wrote this month.
+ *
+ * @returns the link field and the switch
+ */
+function HeroFields(props: BlockSharedFieldsProps) {
+  const { t } = useLandingPageTranslation();
+  const { block, index, onChange } = props;
+  const switchId = `landing-b${index}-live-count`;
+  return (
+    <div className="flex flex-col gap-3">
+      <LinkField {...props} />
+      <label htmlFor={switchId} className="inline-flex min-h-6 items-center gap-2 text-sm text-ink">
+        <input
+          id={switchId}
+          type="checkbox"
+          className="h-5 w-5"
+          checked={block.live_count === true}
+          onChange={(event) => onChange({ ...block, live_count: event.target.checked })}
+        />
+        {t('editor.liveCount')}
+      </label>
+    </div>
+  );
+}
+
+/**
  * Renders the shared fields this block kind has, or nothing.
  *
  * @returns the fields
@@ -134,6 +162,7 @@ function LinkField({ block, index, problems, onChange }: BlockSharedFieldsProps)
 export function BlockSharedFields(props: BlockSharedFieldsProps) {
   if (props.block.kind === 'key_dates') return <KeyDatesFields {...props} />;
   if (props.block.kind === 'who_can_enter') return <AgeGroupFields {...props} />;
+  if (props.block.kind === 'hero') return <HeroFields {...props} />;
   // A Rules block and a call to action both link to a page of ours or an https address.
   if (landingLinkKinds.includes(props.block.kind)) return <LinkField {...props} />;
   if (props.block.kind === 'featured') return <FeaturedFields {...props} />;

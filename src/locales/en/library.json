@@ -74,7 +74,8 @@
     "noWriters": "You don’t follow any writers yet. Use “Follow” on a writer’s profile.",
     "noStories": "You don’t follow any stories yet. Use “Follow story” on a story’s page.",
     "new": "New",
-    "notificationSettings": "Notification settings"
+    "notificationSettings": "Notification settings",
+    "topics": "Genres and tags · {{count}}"
   },
   "button": {
     "label": "Library",

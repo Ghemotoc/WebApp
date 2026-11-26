@@ -12,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { rollBack, showOptimistic } from '@/lib/query/optimistic';
+import { libraryQueryKey } from '@/features/library/libraryQueryKey';
 import { getSupabaseClient } from '@/lib/supabase';
 import { trackEvent } from '@/lib/analytics/track';
 
@@ -32,8 +33,19 @@ import {
  * @returns the key
  */
 function followQueryKey(target: FollowTarget, userId: string | null) {
-  const name = target.kind === 'writer' ? target.handle : target.slug;
-  return ['follow-state', target.kind, name, userId];
+  return ['follow-state', target.kind, followTargetKey(target), userId];
+}
+
+/**
+ * The one name that picks out a target within its kind.
+ *
+ * @param target - the writer, story, genre or tag
+ * @returns the username, the address, the slug or the tag's name
+ */
+function followTargetKey(target: FollowTarget): string {
+  if (target.kind === 'writer') return target.handle;
+  if (target.kind === 'tag') return target.name;
+  return target.slug;
 }
 
 /**
@@ -104,9 +116,15 @@ export function useFollow(target: FollowTarget) {
     onSuccess: async (newState, shouldFollow) => {
       queryClient.setQueryData(queryKey, newState);
       // Never who or what was followed (docs/analytics-events.md).
-      if (shouldFollow && newState.following) {
-        trackEvent(target.kind === 'writer' ? 'writer_followed' : 'story_followed', {});
+      // Genres and tags have no event in the catalogue yet, so only writers and stories count.
+      if (shouldFollow && newState.following && target.kind === 'writer') {
+        trackEvent('writer_followed', {});
       }
+      if (shouldFollow && newState.following && target.kind === 'story') {
+        trackEvent('story_followed', {});
+      }
+      // Library's "What you follow" lists genres and tags too (BOOKS-A06).
+      await queryClient.invalidateQueries({ queryKey: [libraryQueryKey, 'follows'] });
       // Discover's "New from writers you follow" shelf changes with every follow (S1-E5-01).
       await queryClient.invalidateQueries({ queryKey: ['story-list'] });
     },

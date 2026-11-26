@@ -10950,6 +10950,56 @@ export type Database = {
           },
         ];
       };
+      topic_follows: {
+        Row: {
+          category_id: string | null;
+          created_at: string;
+          id: string;
+          tag_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'topic_follows_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'topic_follows_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'topic_follows_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       username_approvals: {
         Row: {
           approved_by_user_id: string;
@@ -15181,6 +15231,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      instant_email_send_time: { Args: { made_at: string; person_id: string }; Returns: string };
       interface_language_codes: { Args: Record<PropertyKey, never>; Returns: string[] };
       interface_text_live: {
         Args: { wanted_locale: string };
@@ -15288,6 +15339,10 @@ export type Database = {
         Args: { block: Json; block_path: string };
         Returns: string[];
       };
+      landing_block_extra_problems_before_hero: {
+        Args: { block: Json; block_path: string };
+        Returns: string[];
+      };
       landing_block_field_rules: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -15346,6 +15401,7 @@ export type Database = {
         };
         Returns: string;
       };
+      landing_words_this_month: { Args: Record<PropertyKey, never>; Returns: number };
       landing_youngest_ratings: {
         Args: { content: Json };
         Returns: Database['public']['Enums']['story_rating'][];
@@ -17775,6 +17831,10 @@ export type Database = {
         Args: { new_note?: string; new_points?: number; target_id: string; target_kind: string };
         Returns: Json;
       };
+      set_topic_follow: {
+        Args: { should_follow: boolean; topic_key: string; topic_kind: string };
+        Returns: boolean;
+      };
       setting_value: { Args: { setting_key: string }; Returns: Json };
       setting_value_problem: { Args: { new_value: Json; old_value: Json }; Returns: string };
       share_options: { Args: { chapter_code: string; story_slug: string }; Returns: Json };
@@ -18859,6 +18919,18 @@ export type Database = {
         Args: { target_tier: Database['public']['Enums']['case_tier'] };
         Returns: number;
       };
+      topic_follow_state: { Args: { topic_key: string; topic_kind: string }; Returns: boolean };
+      topic_ids_of: {
+        Args: { topic_key: string; topic_kind: string };
+        Returns: {
+          category_id: string;
+          tag_id: string;
+        }[];
+      };
+      topic_tags: {
+        Args: { how_many?: number; topic_key: string; topic_kind: string };
+        Returns: Json;
+      };
       undo_decision_for_appeal: {
         Args: {
           appeal_reference: string;
@@ -19141,6 +19213,7 @@ export type Database = {
         }[];
       };
       writers_to_follow_now: { Args: Record<PropertyKey, never>; Returns: Json };
+      writing_streak: { Args: { today: string; writer_id: string }; Returns: number };
       written_language_for: { Args: { code: string }; Returns: string };
       youngest_age: {
         Args: { birth_month: number; birth_year: number; on_date: string };
