@@ -36,7 +36,13 @@
       "judging": "Closed"
     },
     "picks": "{{teacher}} picks one winner using these criteria.",
-    "outcomesToggle": "What each criterion needs"
+    "outcomesToggle": "What each criterion needs",
+    "seeEntries": "See entries",
+    "edit": "Edit",
+    "picksYou": "You pick one winner using these criteria.",
+    "enteredSoFar_one": "{{count}} of {{pupils}} pupils entered so far. Scoring opens when it closes.",
+    "enteredSoFar_few": "{{count}} of {{pupils}} pupils entered so far. Scoring opens when it closes.",
+    "enteredSoFar_other": "{{count}} of {{pupils}} pupils entered so far. Scoring opens when it closes."
   },
   "criteria": {
     "heading": "What the teacher assesses",

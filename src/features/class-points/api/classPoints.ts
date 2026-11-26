@@ -125,6 +125,42 @@ export interface ClassPointsSummary {
   receivedTotal: number | null;
   /** The chapters the pupil gave points to this week, newest first (BOOKS-8). Empty for a teacher. */
   given: GivenPoints[];
+  /** This week's totals for the whole class, for the teacher only (BOOKS-8b); null for a pupil. */
+  classWeek: ClassWeekTotals | null;
+}
+
+/**
+ * This week's totals for the whole class, never one pupil's (BOOKS-8b; board G08's "This week",
+ * user story 8.8).
+ */
+export interface ClassWeekTotals {
+  /** Class points given since Monday, and how many every pupil could give together. */
+  given: number;
+  possible: number;
+  /** Notes classmates wrote with their points. */
+  notes: number;
+  /** Chapters shared with the class since Monday. */
+  chaptersShared: number;
+  /** Open reports on the class's points, waiting for the moderators. */
+  reported: number;
+}
+
+/**
+ * Reads the teacher's 'week' object of class_points_summary().
+ *
+ * @param value - the object, or null for a pupil
+ * @returns the totals, or null
+ */
+function classWeekFrom(value: Json | undefined): ClassWeekTotals | null {
+  const row = objectFrom(value);
+  if (row === null) return null;
+  return {
+    given: numberFrom(row['given']),
+    possible: numberFrom(row['possible']),
+    notes: numberFrom(row['notes']),
+    chaptersShared: numberFrom(row['chapters_shared']),
+    reported: numberFrom(row['reported']),
+  };
 }
 
 /** One chapter a pupil gave points to this week: only ever their own gifts (board G03). */
@@ -180,6 +216,7 @@ export function classPointsSummaryFrom(data: Json): ClassPointsSummary | null {
     week: isPupil ? { left: numberFrom(row['left']), resetsOn: String(row['resets_on']) } : null,
     receivedTotal: isPupil ? numberFrom(row['received_total']) : null,
     given: givenPointsFrom(row['given']),
+    classWeek: isPupil ? null : classWeekFrom(row['week']),
   };
 }
 

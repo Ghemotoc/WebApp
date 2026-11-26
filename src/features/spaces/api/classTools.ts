@@ -34,7 +34,8 @@ export interface ClassLock {
 }
 
 /** Why the database refused a tool. */
-export type ClassToolFailure = 'not_allowed' | 'missing' | 'lock_date' | 'archived' | 'unreachable';
+export type ClassToolFailure =
+  'not_allowed' | 'missing' | 'lock_date' | 'archived' | 'school_length' | 'unreachable';
 
 /** The error a refused call throws. */
 export class ClassToolError extends Error {
@@ -51,6 +52,8 @@ const failureForHint: Record<string, ClassToolFailure> = {
   'space:not_class': 'missing',
   'lock:date': 'lock_date',
   'space:archived': 'archived',
+  'space:not_owner': 'not_allowed',
+  'school:length': 'school_length',
 };
 
 /**
@@ -63,24 +66,35 @@ export function classToolErrorFrom(error: { hint?: string | null }): ClassToolEr
   return new ClassToolError(failureForHint[error.hint ?? ''] ?? 'unreachable');
 }
 
+/** A new class's grade and school (BOOKS-8b, board G07: "Class name, grade and school are needed"). */
+export interface NewClassDetails {
+  /** The school year, 1 to 13. */
+  grade: number;
+  /** The school's name, printed on class certificates. */
+  school: string;
+}
+
 /**
  * Starts a class space for a teacher with the badge (criterion 1). The class reads and posts for
- * members only, so only the name, words and banner are sent.
+ * members only, so only the name, words, banner, grade and school are sent.
  *
  * @param client - the Supabase client
  * @param settings - the form's settings (posting, joining and readers are ignored)
+ * @param details - the grade and the school (BOOKS-8b); left out by older callers
  * @returns the new space's address
  * @throws SpaceError when refused (not_teacher, a name problem, too many)
  */
 export async function createClassSpace(
   client: AppSupabaseClient,
   settings: SpaceSettings,
+  details?: NewClassDetails,
 ): Promise<string> {
   const { data, error } = await client.rpc('create_class_space', {
     name: settings.name,
     description: settings.description,
     rules: settings.rules,
     banner: settings.banner,
+    ...(details === undefined ? {} : { grade: details.grade, school: details.school }),
   });
   if (error) throw spaceErrorFrom(error);
   const row = data !== null && typeof data === 'object' && !Array.isArray(data) ? data : {};
@@ -222,4 +236,27 @@ export function lockDateText(locksAt: string, language: string): string {
     dateStyle: 'long',
     timeZone: lockTimeZone,
   }).format(new Date(locksAt));
+}
+
+/**
+ * The teacher changes the school a class belongs to (BOOKS-8b, user story 8.8). It prints on
+ * class certificates and the class's log records the change.
+ *
+ * @param client - the Supabase client
+ * @param request - the class's address and the school's name
+ * @returns the saved name, trimmed
+ * @throws ClassToolError when refused (not_allowed, archived, missing; school_length for an
+ *   empty or long name)
+ */
+export async function setClassSchool(
+  client: AppSupabaseClient,
+  request: { slug: string; school: string },
+): Promise<string> {
+  const { data, error } = await client.rpc('set_class_school', {
+    slug: request.slug,
+    school_name: request.school,
+  });
+  if (error) throw classToolErrorFrom(error);
+  const row = data !== null && typeof data === 'object' && !Array.isArray(data) ? data : {};
+  return String(row['school_name']);
 }

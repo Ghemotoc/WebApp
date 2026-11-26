@@ -440,7 +440,8 @@
       "missing": "Această clasă nu mai există.",
       "lock_date": "Alege o zi din următorii doi ani.",
       "unreachable": "Nu am putut ajunge la server. Încearcă din nou.",
-      "archived": "Clasa aceasta e arhivată, așa că rămâne blocată."
+      "archived": "Clasa aceasta e arhivată, așa că rămâne blocată.",
+      "school_length": "Scrie numele școlii, până la 120 de caractere."
     },
     "archivedNote": "Clasa e arhivată, așa că rămâne blocată definitiv."
   },
@@ -668,6 +669,48 @@
     "storiesCount_one": "{{count}} poveste. Doar clasa o poate citi.",
     "storiesCount_few": "{{count}} povești. Doar clasa le poate citi.",
     "storiesCount_other": "{{count}} de povești. Doar clasa le poate citi.",
-    "openStories": "Deschide poveștile"
+    "openStories": "Deschide poveștile",
+    "pointsTab": "Puncte în clasă",
+    "certificatesTab": "Diplome",
+    "membersTab": "Membri",
+    "grade": "clasa {{grade}}",
+    "invitePupils": "Invită elevi",
+    "classSettings": "Setările clasei",
+    "classLog": "Jurnalul clasei",
+    "newCodeTitle": "Clasa e gata. Trimite-le codul",
+    "newCodeIntro": "Elevii intră cu acest cod sau link. Poți face oricând un cod nou în setările clasei; cel vechi nu mai merge apoi."
+  },
+  "classNew": {
+    "crumb": "Spațiu nou de clasă",
+    "title": "Creează un spațiu de clasă",
+    "intro": "Doar tu și elevii pe care îi inviți vedeți un spațiu de clasă, oricare le-ar fi vârsta. Poți face unul pentru că ai insigna de Profesor.",
+    "name": "Numele clasei",
+    "nameHint": "Elevii văd acest nume. Folosește numele pe care îl folosește școala.",
+    "nameMissing": "Dă-i clasei un nume.",
+    "grade": "Anul școlar",
+    "gradeChoose": "Alege anul școlar",
+    "gradeOption": "Clasa {{grade}}",
+    "gradeHint": "E necesară pentru orice clasă. Sub clasa a VIII-a, concursurile clasei nu au câștigător.",
+    "gradeMissing": "Alege anul școlar al clasei.",
+    "school": "Școala",
+    "schoolHint": "Apare pe diplome sub numele tău.",
+    "schoolMissing": "Scrie numele școlii.",
+    "description": "Descriere",
+    "points": "Puncte în clasă",
+    "pointsHint": "Elevii primesc 10 puncte pe săptămână de dat, cel mult 3 unui capitol. Sunt oprite până le pornești, aici sau în setările clasei.",
+    "create": "Creează clasa",
+    "cancel": "Renunță",
+    "guideTitle": "Ce schimbă anul școlar",
+    "guideHigh": "Clasa a VIII-a și peste",
+    "guideHighValue": "Un Câștigător și oricâți Finaliști într-un concurs al clasei",
+    "guideLow": "Sub clasa a VIII-a",
+    "guideLowValue": "Fiecare elev înscris e Concurent: fără Câștigător și fără cardul Câștigătorului",
+    "guideAny": "Orice an școlar",
+    "guideAnyValue": "Câștigători doar într-un concurs pe care îl organizează profesorul"
+  },
+  "classSchool": {
+    "title": "Școala",
+    "save": "Salvează școala",
+    "saved": "Salvat."
   }
 }

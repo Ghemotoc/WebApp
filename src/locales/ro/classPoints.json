@@ -205,5 +205,22 @@
       "missing": "Nu mai există. Încarcă pagina din nou.",
       "unreachable": "Nu am putut face asta. Verifică conexiunea și încearcă din nou."
     }
+  },
+  "week": {
+    "title": "Săptămâna aceasta",
+    "intro": "Totaluri pentru clasă, niciodată pentru un singur elev.",
+    "given": "Puncte date în clasă",
+    "givenValue": "{{given}} din {{possible}}",
+    "notes": "Note de la colegi",
+    "chapters": "Capitole împărtășite",
+    "chaptersValue_one": "{{count}} de luni încoace",
+    "chaptersValue_few": "{{count}} de luni încoace",
+    "chaptersValue_other": "{{count}} de luni încoace",
+    "reported": "Puncte raportate",
+    "reportedNone": "Niciunul",
+    "reportedValue_one": "{{count}}, în verificare",
+    "reportedValue_few": "{{count}}, în verificare",
+    "reportedValue_other": "{{count}}, în verificare",
+    "off": "Punctele în clasă sunt oprite. Pornește-le din setările clasei."
   }
 }

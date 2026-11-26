@@ -36,7 +36,13 @@
       "judging": "Închis"
     },
     "picks": "{{teacher}} alege un câștigător după aceste criterii.",
-    "outcomesToggle": "Ce cere fiecare criteriu"
+    "outcomesToggle": "Ce cere fiecare criteriu",
+    "seeEntries": "Vezi înscrierile",
+    "edit": "Modifică",
+    "picksYou": "Tu alegi un câștigător după aceste criterii.",
+    "enteredSoFar_one": "Înscriși până acum: {{count}} din {{pupils}}. Notarea începe când se închide.",
+    "enteredSoFar_few": "Înscriși până acum: {{count}} din {{pupils}}. Notarea începe când se închide.",
+    "enteredSoFar_other": "Înscriși până acum: {{count}} din {{pupils}}. Notarea începe când se închide."
   },
   "criteria": {
     "heading": "Ce evaluează profesorul",

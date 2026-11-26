@@ -15,7 +15,7 @@ export interface ConfirmedButtonProps {
   question: string;
   yesLabel: string;
   cancelLabel: string;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'text';
   isDisabled: boolean;
   onConfirm: () => void;
 }

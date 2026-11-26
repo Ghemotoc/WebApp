@@ -205,5 +205,22 @@
       "missing": "That is no longer there. Load the page again.",
       "unreachable": "We couldn’t do that. Check the connection and try again."
     }
+  },
+  "week": {
+    "title": "This week",
+    "intro": "Totals for the class, never for one pupil here.",
+    "given": "Class points given",
+    "givenValue": "{{given}} of {{possible}}",
+    "notes": "Notes from classmates",
+    "chapters": "Chapters shared",
+    "chaptersValue_one": "{{count}} since Monday",
+    "chaptersValue_other": "{{count}} since Monday",
+    "reported": "Points reported",
+    "reportedNone": "None",
+    "reportedValue_one": "{{count}}, being checked",
+    "reportedValue_other": "{{count}}, being checked",
+    "off": "Class points are off. Turn them on in class settings.",
+    "chaptersValue_few": "{{count}} since Monday",
+    "reportedValue_few": "{{count}}, being checked"
   }
 }
