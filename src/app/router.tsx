@@ -1227,6 +1227,17 @@ const writeRoutes: RouteObject[] = [
       return { Component: () => <SearchGroupPage group={group} /> };
     },
   })),
+  // A person's public bookshelves, from "Also on" on their profile (board C06, bundle 3 of the
+  // user stories): only public bookshelves, through profile_bookshelves().
+  {
+    path: '/u/:handle/bookshelves',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ProfileBookshelvesPage } =
+        await import('@/features/people/components/ProfileBookshelvesPage');
+      return { Component: ProfileBookshelvesPage };
+    },
+  },
   // A writer's public profile (S1-E5-05): by username, never the user ID (architecture 1.6);
   // the page reaches the profile only through get_writer_profile() (ADR 0004).
   {
