@@ -55531,37 +55531,6 @@ COMMENT ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text
 
 
 
-CREATE OR REPLACE FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") RETURNS "jsonb"
-    LANGUAGE "plpgsql" SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-declare
-  space public.spaces := public.space_for_power(unblock_space_member.slug, 'members');
-  person_id uuid;
-  removed integer;
-begin
-  -- Step 1: the person, by handle.
-  select profiles.id into person_id from public.profiles
-  where profiles.handle_skeleton = public.username_skeleton(btrim(unblock_space_member.handle, ' @'));
-  -- Step 2: the block goes, and the log says so.
-  delete from public.space_blocks
-  where space_blocks.space_id = space.id and space_blocks.blocked_user_id = person_id;
-  get diagnostics removed = row_count;
-  if removed > 0 then
-    perform public.log_space_action(space, 'member_unblocked', person_id, null, null);
-  end if;
-  return jsonb_build_object('unblocked', removed > 0);
-end;
-$$;
-
-
-ALTER FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") IS 'Lets someone a space blocked ask to join again; logged (BOOKS-7).';
-
-
-
 CREATE OR REPLACE FUNCTION "public"."trending_tags"("how_many" integer DEFAULT 6) RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -55596,6 +55565,37 @@ ALTER FUNCTION "public"."trending_tags"("how_many" integer) OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."trending_tags"("how_many" integer) IS 'The approved tags whose stories the caller may see were read most in the last seven days (user story 1.7, board A07).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  space public.spaces := public.space_for_power(unblock_space_member.slug, 'members');
+  person_id uuid;
+  removed integer;
+begin
+  -- Step 1: the person, by handle.
+  select profiles.id into person_id from public.profiles
+  where profiles.handle_skeleton = public.username_skeleton(btrim(unblock_space_member.handle, ' @'));
+  -- Step 2: the block goes, and the log says so.
+  delete from public.space_blocks
+  where space_blocks.space_id = space.id and space_blocks.blocked_user_id = person_id;
+  get diagnostics removed = row_count;
+  if removed > 0 then
+    perform public.log_space_action(space, 'member_unblocked', person_id, null, null);
+  end if;
+  return jsonb_build_object('unblocked', removed > 0);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") IS 'Lets someone a space blocked ask to join again; logged (BOOKS-7).';
 
 
 
