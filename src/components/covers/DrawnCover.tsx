@@ -37,12 +37,12 @@ import { coverTitleFit } from '@/lib/cover-title';
 import { cn } from '@/lib/utils';
 
 import {
-  coverArtwork,
   coverDesignByKey,
   coverPalette,
   titleColourOn,
   type DrawnCoverChoice,
 } from './coverDesigns';
+import { coverArtwork } from './coverArtwork';
 
 /**
  * The places a drawn cover is shown. Since CALM-4 the sizes inside the cover follow its width, so

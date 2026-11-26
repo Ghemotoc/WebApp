@@ -9,7 +9,6 @@ import {
   classicCoverColourKeys,
   classicOnlyColourKeys,
   coverAccentPart,
-  coverArtwork,
   coverColourKeys,
   coverDesignKeys,
   coverDesigns,
@@ -21,6 +20,7 @@ import {
   writerCoverDesignKeys,
   writerCoverDesigns,
 } from './coverDesigns';
+import { coverArtwork } from './coverArtwork';
 
 describe('cover designs', () => {
   it('are the 22 approved backgrounds: 9 plain colours, 10 patterns and the 3 new ones', () => {

@@ -14,7 +14,7 @@
  * CertificateSealChoices, useClassCertificateCrest and the look helpers in lib/certificateLook.ts.
  */
 import { CheckIcon } from '@/components/icons/CheckIcon';
-import { coverArtwork } from '@/components/covers/coverDesigns';
+import { coverArtwork } from '@/components/covers/coverArtwork';
 
 import {
   certificateColourHex,
