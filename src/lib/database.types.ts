@@ -17458,6 +17458,8 @@ export type Database = {
         Args: { archive_email_hash: string; closed_user_id: string; new_user_id: string };
         Returns: Json;
       };
+      restore_story_event: { Args: { removed: Json; story_slug: string }; Returns: Json };
+      restore_story_idea: { Args: { removed: Json; story_slug: string }; Returns: Json };
       retention_periods: {
         Args: Record<PropertyKey, never>;
         Returns: {

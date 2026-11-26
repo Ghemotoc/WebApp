@@ -755,7 +755,7 @@
     "filters": {
       "open": "Deschise ({{count}})",
       "done": "Rezolvate ({{count}})",
-      "all": "Toate ({{count}})"
+      "all": "Ambele ({{count}})"
     },
     "empty": {
       "open": "Nimic deschis. Totul e bifat sau încă nu e nimic.",
@@ -763,18 +763,15 @@
       "all": "Încă nu ai notițe. Adaug-o pe prima mai sus."
     },
     "doneNamed": "Rezolvat: {{body}}",
-    "doneOn": "Rezolvat pe {{date}}",
+    "doneOn": "Rezolvat pe {{date}}.",
     "tickFailed": "N-am putut salva bifa. Încearcă din nou.",
     "body": "Notiță",
     "outcome": "Acțiune sau rezultat",
     "outcomeHint": "Ce ai hotărât sau ce ai făcut.",
-    "edit": "Editează",
     "editNamed": "Editează „{{body}}”",
-    "delete": "Șterge",
+    "closeEditor": "Gata",
     "deleteNamed": "Șterge „{{body}}”",
-    "confirmDelete": "Ștergi „{{body}}”? Nu se mai poate anula.",
-    "yes": "Da, șterge",
-    "keep": "Păstreaz-o",
+    "removed": "Ștearsă.",
     "deleteFailed": "N-am putut s-o ștergem. Încearcă din nou."
   },
   "marketing": {

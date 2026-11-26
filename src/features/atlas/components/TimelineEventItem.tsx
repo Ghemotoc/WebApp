@@ -6,8 +6,8 @@
  * Reads as a row: "Event", the title and the description as a meta line, whose [[Name]] links
  * are links (S1-E17-31). The "…" More menu holds Edit, which opens the fields in place (each
  * saves by itself) with Done to close them, and Delete, which deletes at once and offers Undo in
- * the shared note for 8 seconds (design books item 14); Undo adds the event back with the same
- * title, date, sort value and description.
+ * the shared note for 8 seconds (design books item 14); Undo puts the event back exactly as it
+ * was, its "Keep private" and the chapter it waits for included (restore_story_event()).
  * Who uses it: TimelineView. What it calls: the save, remove and putBack props (useStoryline),
  * RowMoreMenu, useUndo, CrossLinkText, CrossLinkChips and ItemVisibilityControls.
  */
@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useUndo } from '@/lib/undo/useUndo';
 
-import type { StoryEvent, StoryEventChange } from '../api/storyline';
+import type { RemovedStoryEvent, StoryEvent, StoryEventChange } from '../api/storyline';
 import { useOpenStorySlug } from '../hooks/useOpenStorySlug';
 import { sortValueFrom } from '../lib/optionalNumbers';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
@@ -33,10 +33,10 @@ import { TimelineRow } from './TimelineRow';
 export interface TimelineEventItemProps {
   event: StoryEvent;
   save: (change: StoryEventChange) => Promise<void>;
-  /** Deletes the event; throws when it can't. */
-  remove: () => Promise<void>;
-  /** Adds the deleted event back (Undo); throws when it can't. */
-  putBack: () => Promise<void>;
+  /** Deletes the event and hands back the removed row; throws when it can't. */
+  remove: () => Promise<RemovedStoryEvent>;
+  /** Puts the removed row back (Undo); throws when it can't. */
+  putBack: (removed: RemovedStoryEvent) => Promise<void>;
   /** Called once the event is deleted, so the focus has somewhere to go. */
   onRemoved: () => void;
 }
@@ -120,15 +120,16 @@ function useDeleteWithUndo({ remove, putBack, onRemoved }: TimelineEventItemProp
   async function deleteNow() {
     setHasFailed(false);
     // Step 1: delete; on a failure the row stays and says so.
+    let removed: RemovedStoryEvent;
     try {
-      await remove();
+      removed = await remove();
     } catch {
       setHasFailed(true);
       return;
     }
     // Step 2: the row is gone, so the focus moves on, and the note offers Undo for 8 seconds.
     onRemoved();
-    offerUndo({ message: t('storyline.timeline.removed'), undo: putBack });
+    offerUndo({ message: t('storyline.timeline.removed'), undo: async () => putBack(removed) });
   }
   return { hasFailed, deleteNow };
 }

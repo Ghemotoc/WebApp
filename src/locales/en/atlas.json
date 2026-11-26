@@ -755,7 +755,7 @@
     "filters": {
       "open": "Open ({{count}})",
       "done": "Done ({{count}})",
-      "all": "All ({{count}})"
+      "all": "Both ({{count}})"
     },
     "empty": {
       "open": "Nothing open. Everything is ticked off, or there’s nothing yet.",
@@ -763,18 +763,15 @@
       "all": "No notes yet. Add the first above."
     },
     "doneNamed": "Done: {{body}}",
-    "doneOn": "Done on {{date}}",
+    "doneOn": "Done on {{date}}.",
     "tickFailed": "We couldn’t save the tick. Try again.",
     "body": "Note",
     "outcome": "Action or outcome",
     "outcomeHint": "What you decided or did about it.",
-    "edit": "Edit",
     "editNamed": "Edit “{{body}}”",
-    "delete": "Delete",
+    "closeEditor": "Done",
     "deleteNamed": "Delete “{{body}}”",
-    "confirmDelete": "Delete “{{body}}”? This can’t be undone.",
-    "yes": "Yes, delete it",
-    "keep": "Keep it",
+    "removed": "Removed.",
     "deleteFailed": "We couldn’t delete it. Try again."
   },
   "marketing": {

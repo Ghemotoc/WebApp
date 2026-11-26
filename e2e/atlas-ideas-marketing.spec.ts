@@ -4,16 +4,18 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - the quick-add box adds a line of the chosen type on Enter and clears (S1-E17-27);
+ * - "Jot it down" adds a line of the chosen type on Enter and clears; an empty line says
+ *   "Write something first." beside the field and keeps the focus there (S1-E17-27; story 6.12);
  * - a note has a Done tick-box, editable text and "Action or outcome"; ticking it records the
- *   date it was done; Open, Done and All filter the list; its type changes and it deletes after
- *   a second click (S1-E17-28);
+ *   date it was done ("Done on 2 Nov."); Open, Done and Both filter the list, Both first; its
+ *   type changes; the bin deletes it at once and Undo puts it back as it was (S1-E17-28; story
+ *   6.12, board E31);
  * - every marketing field saves by itself, the logline and genre being the same fields as At a
  *   glance and Story settings; "Back cover" shows a preview of the title, logline, blurb and
  *   comparable titles as real text (S1-E17-29);
  * - "Add detail" adds a detail of the writer's own that saves by itself, renames, is found by
  *   search and deletes after a question; the back cover is signed with the pen name (GAPS-2b);
- * - a note reads as a row and "Edit" opens its fields; the QR code points at the story page,
+ * - a note reads as a row and the pen opens its fields; the QR code points at the story page,
  *   the story's world (while shared) or the profile, and downloads as PNG and SVG (G10c3);
  * - both pages pass axe, don't scroll sideways and draw no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English; the open back cover passes axe too.
@@ -112,60 +114,63 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
   });
   test.afterAll(cleanUp);
 
-  test('a line typed in the quick-add box is added on Enter with its type, and the box clears', async ({
+  test('a line typed in “Jot it down” is added on Enter with its type, and the box clears', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', ideasAddress);
-    await expect(page.getByText('Nothing open.', { exact: false })).toBeVisible();
+    await expect(page.getByText('No notes yet. Add the first above.')).toBeVisible();
     const line = page.getByRole('textbox', { name: 'Question or idea' });
     await line.fill('Who put the light out?');
     await line.press('Enter');
     await expect(line).toHaveValue('');
     await pickSegment(page, 'Type', 'To-do');
     await line.fill('Check the tide tables');
-    await line.press('Enter');
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
     await expect(line).toHaveValue('');
-    expect(await shownNotes(page)).toEqual(['Check the tide tables', 'Who put the light out?']);
+    await expect
+      .poll(() => shownNotes(page))
+      .toEqual(['Check the tide tables', 'Who put the light out?']);
     expect(savedIdea('Who put the light out?')).toBe('question|Who put the light out?||false');
     expect(savedIdea('Check the tide tables')).toBe('todo|Check the tide tables||false');
     await expect(page.getByTestId('atlas-idea-item').first()).toContainText('To-do');
-    // An empty line adds nothing and says so.
+    // An empty line adds nothing, says so beside the field and keeps the focus there.
     await line.press('Enter');
-    await expect(page.getByText('Write something first.')).toBeVisible();
+    await expect(line).toHaveAccessibleDescription(/Write something first\./);
+    await expect(line).toBeFocused();
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(2);
     await page.context().close();
   });
 
-  test('ticking a note records the day it was done, and Open, Done and All filter the list', async ({
+  test('ticking a note records the day it was done, and Open, Done and Both filter the list', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', ideasAddress);
-    await expect(page.getByRole('radio', { name: 'Open (2)' })).toBeChecked();
+    // Board E31 opens on Both.
+    await expect(page.getByRole('radio', { name: 'Both (2)' })).toBeChecked();
     await page.getByRole('checkbox', { name: 'Done: Who put the light out?' }).check();
-    // Open hides it once it is done; Done shows it with the day, and All shows both.
     await expect(page.getByRole('radio', { name: 'Done (1)' })).toBeAttached();
+    await pickSegment(page, 'Show', 'Open (1)');
     expect(await shownNotes(page)).toEqual(['Check the tide tables']);
     await pickSegment(page, 'Show', 'Done (1)');
     expect(await shownNotes(page)).toEqual(['Who put the light out?']);
-    const today = new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(new Date());
-    await expect(page.getByTestId('atlas-idea-item')).toContainText(`Done on ${today}`);
+    // British order, and "Sep" like the other short months (lib/romania-time.ts).
+    const today = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' })
+      .format(new Date())
+      .replace('Sept', 'Sep');
+    await expect(page.getByTestId('atlas-idea-item')).toContainText(`Done on ${today}.`);
     expect(savedIdea('Who put the light out?')).toBe('question|Who put the light out?||true');
-    await pickSegment(page, 'Show', 'All (2)');
+    await pickSegment(page, 'Show', 'Both (2)');
     expect(await shownNotes(page)).toEqual(['Check the tide tables', 'Who put the light out?']);
     await page.context().close();
   });
 
-  test('a note’s text, outcome and type save by themselves, and it deletes after a second click', async ({
+  test('a note’s text, outcome and type save by themselves, and the bin deletes it with Undo', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', ideasAddress);
-    await pickSegment(page, 'Show', 'All (2)');
     const item = page.getByTestId('atlas-idea-item').filter({ hasText: 'Done on' });
-    // The done note is struck through; "Edit" opens its fields.
-    await expect(item.getByTestId('atlas-idea-body')).toHaveCSS(
-      'text-decoration-line',
-      'line-through',
-    );
+    // The type is a word on the row; the pen opens the note's fields in place.
+    await expect(item).toContainText('Question');
     await item.getByRole('button', { name: 'Edit “Who put the light out?”' }).click();
     const idBase = await item.getByRole('textbox', { name: 'Note' }).getAttribute('id');
     await item
@@ -176,26 +181,30 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await expect(page.locator(`#${idBase}-save`)).toHaveText('Saved');
     await item.getByLabel('Type', { exact: true }).selectOption('decision');
     await expect(item).toContainText('Decision');
-    // The row reads the new words and the outcome under them.
+    await item.getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(item.getByRole('textbox')).toHaveCount(0);
+    // The row reads the new words, then "Done on …" with the outcome.
     await expect(item.getByTestId('atlas-idea-body')).toHaveText('Who put the lighthouse out?');
     await expect(item).toContainText('The keeper did. Chapter 4.');
     // The label changes on screen before the save reaches the database, so wait for the row.
     await expect
       .poll(() => savedIdea('Who put the lighthouse out?'))
       .toBe('decision|Who put the lighthouse out?|The keeper did. Chapter 4.|true');
-    // Delete asks first; "Keep it" keeps it, "Yes, delete it" deletes it.
-    // Each click here has its own 10 s limit: on 24 Nov 2026 one CI run spent about 25 s somewhere
-    // in these steps and only the test's 30 s limit caught it, which named none of them. A click
-    // that hangs now fails on the step that hangs (the trace records only retries).
-    const clickLimit = { timeout: 10_000 };
-    const todo = page.getByTestId('atlas-idea-item').filter({ hasText: 'To-do' });
-    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click(clickLimit);
-    await todo.getByRole('button', { name: 'Keep it' }).click(clickLimit);
-    await expect(page.getByTestId('atlas-idea-item')).toHaveCount(2);
-    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click(clickLimit);
-    await todo.getByRole('button', { name: 'Yes, delete it' }).click(clickLimit);
+    // The bin deletes at once; Undo puts the note back with its type, outcome and Done date.
+    const done = page.getByTestId('atlas-idea-item').filter({ hasText: 'Done on' });
+    await done.getByRole('button', { name: 'Delete “Who put the lighthouse out?”' }).click();
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(1);
-    expect(savedIdea('Check the tide tables')).toBe('');
+    await expect(page.getByText('Removed.')).toBeVisible();
+    await page.getByRole('button', { name: 'Undo' }).click();
+    await expect(page.getByTestId('atlas-idea-item')).toHaveCount(2);
+    await expect
+      .poll(() => savedIdea('Who put the lighthouse out?'))
+      .toBe('decision|Who put the lighthouse out?|The keeper did. Chapter 4.|true');
+    // Deleted without Undo, it stays gone.
+    const todo = page.getByTestId('atlas-idea-item').filter({ hasText: 'To-do' });
+    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click();
+    await expect(page.getByTestId('atlas-idea-item')).toHaveCount(1);
+    await expect.poll(() => savedIdea('Check the tide tables')).toBe('');
     await page.context().close();
   });
 

@@ -10,6 +10,7 @@
  */
 import type {
   NewStoryEvent,
+  RemovedStoryEvent,
   StoryEvent,
   Storyline,
   StorylineChapter,
@@ -30,7 +31,10 @@ export interface TimelineViewProps {
   labelOf: (code: string) => string;
   addEvent: (event: NewStoryEvent) => Promise<void>;
   saveEvent: (eventId: string, change: StoryEventChange) => Promise<void>;
-  removeEvent: (eventId: string) => Promise<void>;
+  /** Deletes an event and hands back the removed row. */
+  removeEvent: (eventId: string) => Promise<RemovedStoryEvent>;
+  /** Undo: puts that row back as it was. */
+  putBackEvent: (removed: RemovedStoryEvent) => Promise<void>;
 }
 
 /** The list's id, so the focus can land on it once an event is deleted. */
@@ -48,21 +52,14 @@ function useTellerOf(storyline: Storyline) {
   };
 }
 
-/** One event's row, with Undo adding it back exactly as it was. */
+/** One event's row, with Undo putting it back exactly as it was (the server keeps the row). */
 function EventRow({ event, props }: { event: StoryEvent; props: TimelineViewProps }) {
   return (
     <TimelineEventItem
       event={event}
       save={async (change) => props.saveEvent(event.id, change)}
       remove={async () => props.removeEvent(event.id)}
-      putBack={async () =>
-        props.addEvent({
-          title: event.title,
-          displayDate: event.displayDate,
-          sortValue: event.sortValue,
-          description: event.description,
-        })
-      }
+      putBack={props.putBackEvent}
       onRemoved={() => document.getElementById(listId)?.focus()}
     />
   );

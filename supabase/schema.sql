@@ -24529,12 +24529,15 @@ begin
   if (select auth.uid()) is null then
     raise exception 'Sign in to change your timeline.' using errcode = 'insufficient_privilege';
   end if;
+  -- Step 1: only the caller's own event.
   target_event := public.my_story_event(event_id);
   if target_event.id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
   delete from public.story_events where story_events.id = target_event.id;
-  return jsonb_build_object('outcome', 'ok');
+  -- Step 2: hand the row back for Undo; the owner's id and the story's id stay on the server.
+  return jsonb_build_object('outcome', 'ok',
+    'event', to_jsonb(target_event) - 'user_id' - 'story_id');
 end;
 $$;
 
@@ -24542,7 +24545,7 @@ $$;
 ALTER FUNCTION "public"."delete_story_event"("event_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."delete_story_event"("event_id" "uuid") IS 'Deletes one of the caller''s timeline events (S1-E17-20).';
+COMMENT ON FUNCTION "public"."delete_story_event"("event_id" "uuid") IS 'Deletes one of the caller''s timeline events and returns it for Undo (S1-E17-20; story 6.10).';
 
 
 
@@ -24556,12 +24559,15 @@ begin
   if (select auth.uid()) is null then
     raise exception 'Sign in to change your notes.' using errcode = 'insufficient_privilege';
   end if;
+  -- Step 1: only the caller's own note.
   target_idea := public.my_story_idea(idea_id);
   if target_idea.id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
   delete from public.story_ideas where story_ideas.id = target_idea.id;
-  return jsonb_build_object('outcome', 'ok');
+  -- Step 2: hand the row back for Undo; the owner's id and the story's id stay on the server.
+  return jsonb_build_object('outcome', 'ok',
+    'idea', to_jsonb(target_idea) - 'user_id' - 'story_id');
 end;
 $$;
 
@@ -24569,7 +24575,7 @@ $$;
 ALTER FUNCTION "public"."delete_story_idea"("idea_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."delete_story_idea"("idea_id" "uuid") IS 'Deletes one of the caller''s questions or ideas (S1-E17-28).';
+COMMENT ON FUNCTION "public"."delete_story_idea"("idea_id" "uuid") IS 'Deletes one of the caller''s questions or ideas and returns it for Undo (S1-E17-28; story 6.12).';
 
 
 
@@ -28955,13 +28961,15 @@ CREATE OR REPLACE FUNCTION "public"."house_ad_candidates"("page_key" "text") RET
     SET "search_path" TO ''
     AS $$
   with landing as (
-    -- Our live landing pages, with the hero block's title in each language (S1-E11-14).
+    -- Our live contest and campaign landing pages, with the hero block's title in each language
+    -- (S1-E11-14). Information pages are reference pages, not promotions (BOOKS-FOOTER).
     select 'landing:' || pages.slug as ad_key, 'landing' as kind, pages.slug as page_slug,
       live.content #>> '{blocks,0,ro,title}' as title_ro, live.content #>> '{blocks,0,en,title}' as title_en,
       0 as tier
     from public.landing_pages as pages
     cross join lateral public.landing_page_live_version(pages.id) as live
     where pages.archived_at is null and live.id is not null
+      and pages.page_type in ('contest', 'campaign')
   ), built_in as (
     -- The three built-in house ads; their words live in the ads locale files.
     select 'house:' || built.kind, built.kind, null::text, null::text, null::text, 1
@@ -28979,7 +28987,7 @@ $$;
 ALTER FUNCTION "public"."house_ad_candidates"("page_key" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."house_ad_candidates"("page_key" "text") IS 'Internal: our own ads for a page, ordered by day and page, never by reader (S1-E12-01).';
+COMMENT ON FUNCTION "public"."house_ad_candidates"("page_key" "text") IS 'Internal: our own ads for a page (contest and campaign pages, then the built-in ones), ordered by day and page, never by reader (S1-E12-01, BOOKS-FOOTER).';
 
 
 
@@ -44307,6 +44315,90 @@ ALTER FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "ar
 
 
 COMMENT ON FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "archive_email_hash" "text", "new_user_id" "uuid") IS 'Internal: restores every archived story of one closed account to a new owner, each on its own (ARCHIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  waits_for uuid;
+begin
+  -- Step 1: a signed-in writer and one of their own stories.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your timeline.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the same limit as adding an event.
+  if (select count(*) from public.story_events where story_events.story_id = target_story_id) >= 500 then
+    raise exception 'A timeline can hold at most 500 events.' using errcode = 'check_violation', hint = 'too_many_events';
+  end if;
+  -- Step 3: the chapter it waited for, only if it is still a chapter of this story.
+  select chapters.id into waits_for
+  from public.chapters
+  where chapters.id = (removed ->> 'show_from_chapter_id')::uuid
+    and chapters.story_id = target_story_id
+    and chapters.deleted_at is null;
+  -- Step 4: the row as it was; a second Undo of the same row changes nothing.
+  insert into public.story_events (id, story_id, user_id, title, display_date, sort_value,
+    description, is_private, show_from_chapter_id, created_at)
+  values ((removed ->> 'id')::uuid, target_story_id, (select auth.uid()),
+    public.plan_text(removed ->> 'title'), public.plan_text(coalesce(removed ->> 'display_date', '')),
+    (removed ->> 'sort_value')::numeric, public.plan_text(coalesce(removed ->> 'description', '')),
+    coalesce((removed ->> 'is_private')::boolean, false), waits_for,
+    coalesce((removed ->> 'created_at')::timestamptz, now()))
+  on conflict (id) do nothing;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") IS 'Puts back a timeline event the caller just deleted, with the same id and privacy (story 6.10; design books item 14).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+begin
+  -- Step 1: a signed-in writer and one of their own stories.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to add a note.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_planned_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the same limit as adding a note.
+  if (select count(*) from public.story_ideas where story_ideas.story_id = target_story_id) >= 1000 then
+    raise exception 'A story can hold at most 1,000 notes.' using errcode = 'check_violation', hint = 'too_many_ideas';
+  end if;
+  -- Step 3: the row as it was; a second Undo of the same row changes nothing.
+  insert into public.story_ideas (id, story_id, user_id, kind, body, outcome, done_at, created_at)
+  values ((removed ->> 'id')::uuid, target_story_id, (select auth.uid()), removed ->> 'kind',
+    public.plan_text(removed ->> 'body'), public.plan_text(coalesce(removed ->> 'outcome', '')),
+    (removed ->> 'done_at')::timestamptz, coalesce((removed ->> 'created_at')::timestamptz, now()))
+  on conflict (id) do nothing;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") IS 'Puts back a question or idea the caller just deleted, with the same id, outcome and Done date (story 6.12; design books item 14).';
 
 
 
@@ -75630,6 +75722,16 @@ GRANT ALL ON FUNCTION "public"."restore_my_story"("story_slug" "text") TO "authe
 
 
 REVOKE ALL ON FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "archive_email_hash" "text", "new_user_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") TO "authenticated";
 
 
 

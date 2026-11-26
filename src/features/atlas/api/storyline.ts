@@ -11,9 +11,11 @@
  * - add_chapter_to_act(): "Add chapter" on an act;
  * - add_plan_act(), rename_plan_act() and delete_plan_act(): "Add act" and "Edit act" on the
  *   board (bundle GAPS-2a, …_gaps2a_plan_acts.sql);
- * - add_story_event(), update_story_event() and delete_story_event(): the timeline.
+ * - add_story_event(), update_story_event() and delete_story_event(): the timeline, and
+ *   restore_story_event() for Undo (…_books6_restore_idea_event.sql, story 6.10).
  * All of it is private: only the writer reads it (story_events_select_own and the others).
  */
+import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import type { ChapterKind, PlanningStatus } from './chapterPlans';
@@ -314,11 +316,39 @@ export async function saveStoryEventChange(
 }
 
 /**
- * Deletes an event (the screen asks twice first).
+ * The row delete_story_event() hands back, kept only to give it to restoreStoryEvent() for Undo
+ * (design books item 14). The screen never reads inside it.
+ */
+export type RemovedStoryEvent = Json;
+
+/**
+ * Deletes an event at once (story 6.10, board E29: "Delete (“Removed. Undo” for 8 seconds)").
  *
+ * @returns the removed row, for Undo
  * Errors: throws when the database can't be reached or the event isn't the writer's.
  */
-export async function deleteStoryEvent(client: AppSupabaseClient, eventId: string) {
+export async function deleteStoryEvent(
+  client: AppSupabaseClient,
+  eventId: string,
+): Promise<RemovedStoryEvent> {
   const answer = await client.rpc('delete_story_event', { event_id: eventId });
-  checkedAnswer(answer, 'delete the event');
+  const data = checkedAnswer(answer, 'delete the event');
+  return (data.event ?? null) as RemovedStoryEvent;
+}
+
+/**
+ * Puts back an event the writer just deleted, with the same id, "Keep private" and the chapter
+ * it waits for while that chapter is still there (design books item 14). Called by the Undo note.
+ *
+ * @param removed - what deleteStoryEvent() returned
+ * Errors: throws when the timeline holds 500 events again (hint 'too_many_events') or the
+ *   database can't be reached.
+ */
+export async function restoreStoryEvent(
+  client: AppSupabaseClient,
+  slug: string,
+  removed: RemovedStoryEvent,
+) {
+  const answer = await client.rpc('restore_story_event', { story_slug: slug, removed });
+  checkedAnswer(answer, 'put the event back');
 }

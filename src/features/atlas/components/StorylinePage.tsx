@@ -70,6 +70,7 @@ function StorylineBody({
           addEvent={changers.addEvent}
           saveEvent={changers.saveEvent}
           removeEvent={changers.removeEvent}
+          putBackEvent={changers.putBackEvent}
         />
       )}
       {view === 'lanes' && <PovLanesView slug={slug} storyline={storyline} labelOf={labelOf} />}
