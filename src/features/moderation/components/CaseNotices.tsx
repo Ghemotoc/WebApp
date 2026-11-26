@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { CaseNotice } from '../api/publicNotices';
 import { useCaseNotices } from '../hooks/usePublicNotices';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The notice's first line: the reason, or "Removal order from <authority>".
@@ -39,7 +40,7 @@ function NoticeCard({ notice }: { notice: CaseNotice }) {
   const { t, i18n } = useTranslation('moderation');
   const titleOf = useNoticeTitle();
   // On the viewer's own clock (Robert, 20 Nov 2026, 18:19 UTC: every time in local time).
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'medium',
   }).format(new Date(notice.receivedAt));

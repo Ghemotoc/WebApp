@@ -261,7 +261,6 @@
   },
   "unsubscribe": {
     "documentTitle": "Dezabonare",
-    "eyebrow": "Emailuri",
     "heading": "Oprește emailurile de notificare",
     "intro": "Astfel oprești toate emailurile de notificare pe care ți le trimitem: răspunsuri, capitole noi, comentarii și urmăritori noi. Emailurile despre cont, siguranță și aspecte legale vin în continuare.",
     "button": "Oprește aceste emailuri",

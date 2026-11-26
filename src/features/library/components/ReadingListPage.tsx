@@ -1,34 +1,35 @@
 /**
- * ReadingListPage: one reading list on its own page (bundle GAPS-6; the rows of "Your lists" on
- * design/boards/Library.dc.html lead here).
+ * ReadingListPage: one bookshelf on its own page (bundle GAPS-6; redrawn as board C02 for Robert,
+ * 25 Nov 2026, 09:50 UTC: no widget missing between the canvas and the live site).
  *
  * Who shows it: the router, at /library/lists/:listId.
- * What it shows: the way back to the Library, the list's name, how many stories it holds and who
- * sees it; for the owner, ReadingListOwnerTools (rename, who sees it, remove a story, delete);
- * for anyone else looking at a public list, whose list it is and the Report action (CLAUDE.md
- * rule 6); then the stories as the same grid every story list uses.
- * A private list, a deleted one, one moderators took away and a mistyped address all show the
- * same "There is no such list", so nobody learns that a private list exists.
- * What it calls: useReadingList → reading_list(); useStoryList → browse_stories('reading_list'),
- * which leaves out what this reader may not see (ratings, blocks, moderation).
+ * What it shows, top to bottom (board C02): the way back to the Library; a meta line saying how
+ * full it is and who sees it ("3 of 10 books · Only you"); the name; for the owner, the row of
+ * actions (ReadingListOwnerTools: Find stories, Rename, who sees it, Delete bookshelf); for
+ * anyone else looking at a public bookshelf, whose it is and the Report action (CLAUDE.md rule
+ * 6); then the books with their places (BookshelfBooks), and for the owner the note on what a
+ * public bookshelf shows.
+ * A private bookshelf, a deleted one, one moderators took away and a mistyped address all show
+ * the same "There is no such bookshelf", so nobody learns that a private one exists.
+ * What it calls: useReadingList → reading_list(), whose covers leave out what this reader may not
+ * see (ratings, blocks, moderation); useBookshelfLimits for the places on a bookshelf.
  */
 import { Link, useParams } from 'react-router';
 
 import { EmptyState } from '@/components/ui/EmptyState';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
-import { StoryGrid } from '@/features/discovery/components/StoryGrid';
-import { useStoryList } from '@/features/discovery/hooks/useStoryList';
-import { plainList } from '@/features/discovery/lib/listAddresses';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { ReadingListDetails } from '../api/readingLists';
+import { useBookshelfLimits } from '../hooks/useBookshelfLimits';
 import { useReadingList } from '../hooks/useReadingLists';
 import { isReadingListId } from '../lib/readingListAddress';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
+import { BookshelfBooks } from './BookshelfBooks';
 import { ReadingListOwnerTools } from './ReadingListOwnerTools';
 
 /** "There is no such list", with the way back to the Library. */
@@ -92,48 +93,45 @@ function OwnerLine({ list }: { list: ReadingListDetails }) {
   );
 }
 
-/** The top of the page: breadcrumb, name, count and who sees it. */
-function ListHeader({ list }: { list: ReadingListDetails }) {
+/**
+ * The meta line above the name: how full the bookshelf is for the owner ("3 of 10 books"), or how
+ * many stories it holds for anyone else, then who sees it.
+ */
+function ListFacts({ list, places }: { list: ReadingListDetails; places: number }) {
   const { t } = useLibraryTranslation();
+  const howFull = list.isOwn
+    ? t('lists.books', { filled: list.storyCount, count: places })
+    : t('lists.count', { count: list.storyCount });
+  const seenBy = t(list.isPublic ? 'lists.seenBy.public' : 'lists.seenBy.onlyYou');
   return (
-    <header className="flex flex-col gap-4">
+    <div aria-live="polite">
+      <MetaLine facts={[{ text: howFull }, { text: seenBy }]} />
+    </div>
+  );
+}
+
+/** The top of the page: breadcrumb, the meta line, the name and, for a visitor, whose it is. */
+function ListHeader({ list, places }: { list: ReadingListDetails; places: number }) {
+  return (
+    <header className="flex flex-col gap-3">
       <ListBreadcrumb name={list.name} />
+      <ListFacts list={list} places={places} />
       <h1 className="m-0 type-title lg:type-display break-words text-ink-heading">{list.name}</h1>
-      <div className="flex flex-wrap items-center gap-3">
-        <p aria-live="polite" className="m-0 type-long text-ink-muted">
-          {t('lists.count', { count: list.storyCount })}
-        </p>
-        <InfoPill tone={list.isPublic ? 'sky' : 'neutral'}>
-          {t(list.isPublic ? 'lists.seenBy.public' : 'lists.seenBy.onlyYou')}
-        </InfoPill>
-      </div>
       {!list.isOwn && <OwnerLine list={list} />}
     </header>
   );
 }
 
-/** The list's stories, or the line that says how stories get there. */
-function ListStories({ list }: { list: ReadingListDetails }) {
+/** The note under the owner's books: what a public bookshelf shows (the drop-down's hint). */
+function AudienceNote() {
   const { t } = useLibraryTranslation();
-  const stories = useStoryList(plainList('reading_list', list.id));
-  if (stories.loadFailed) return <Notice tone="error">{t('lists.loadFailed')}</Notice>;
-  if (!stories.isLoaded) return null;
-  if (stories.stories.length === 0) {
-    return (
-      <EmptyState
-        title={t('lists.page.emptyTitle')}
-        description={t(list.isOwn ? 'lists.page.emptyOwn' : 'lists.page.emptyOther')}
-        action={list.isOwn ? <Link to="/discover">{t('lists.page.discover')}</Link> : undefined}
-      />
-    );
-  }
   return (
-    <StoryGrid
-      stories={stories.stories}
-      hasMore={stories.hasMore}
-      isLoadingMore={stories.isLoadingMore}
-      onLoadMore={stories.loadMore}
-    />
+    <p
+      id="reading-list-audience-hint"
+      className="m-0 rounded-card border border-border bg-surface px-4 py-3 type-body text-ink-muted"
+    >
+      {t('lists.page.audienceHint')}
+    </p>
   );
 }
 
@@ -141,6 +139,7 @@ function ListStories({ list }: { list: ReadingListDetails }) {
 function KnownAddressPage({ listId }: { listId: string }) {
   const { t } = useLibraryTranslation();
   const { list, loadFailed } = useReadingList(listId);
+  const limits = useBookshelfLimits();
   if (loadFailed) return <Notice tone="error">{t('lists.loadFailed')}</Notice>;
   if (list === undefined) return null;
   if (list === null) return <UnknownReadingList />;
@@ -149,9 +148,10 @@ function KnownAddressPage({ listId }: { listId: string }) {
       <title>
         {t('lists.page.documentTitle', { name: list.name, productName: brand.productName })}
       </title>
-      <ListHeader list={list} />
+      <ListHeader list={list} places={limits.books} />
       {list.isOwn && <ReadingListOwnerTools list={list} />}
-      <ListStories list={list} />
+      <BookshelfBooks list={list} places={limits.books} />
+      {list.isOwn && <AudienceNote />}
     </>
   );
 }

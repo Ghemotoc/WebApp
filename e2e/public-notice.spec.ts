@@ -92,14 +92,16 @@ test.describe('public report form (S1-E10-02)', () => {
     await expect(form.getByText('Say why you think it’s illegal.')).toBeVisible();
     await expect(form.getByText('Write a name.')).toBeVisible();
     await expect(form.getByText('Tick the good-faith statement to send the report.')).toBeVisible();
-    // Focus goes to the first problem: the kind.
-    await expect(form.getByRole('radio').first()).toBeFocused();
+    // Focus goes to the first problem: the kind's drop-down (bundle 10, board J11).
+    await expect(form.getByLabel('What kind of content is it? (required)')).toBeFocused();
   });
 
   test('a visitor sends a notice and the receipt carries the reference', async ({ page }) => {
     await openReportForm(page);
     const form = page.getByRole('form', { name: 'Report' });
-    await form.getByRole('radio', { name: 'Copyright' }).click();
+    await form
+      .getByLabel('What kind of content is it? (required)')
+      .selectOption({ label: 'Copyright' });
     await form
       .getByLabel('Exact link to the content (required)')
       .fill(`https://elsewhere.example/${stamp}/poem`);
@@ -125,7 +127,9 @@ test.describe('public report form (S1-E10-02)', () => {
   test('child sexual content can be reported without a name or email', async ({ page }) => {
     await openReportForm(page);
     const form = page.getByRole('form', { name: 'Report' });
-    await form.getByRole('radio', { name: 'Sexual content involving a minor' }).click();
+    await form
+      .getByLabel('What kind of content is it? (required)')
+      .selectOption({ label: 'Sexual content involving a minor' });
     await expect(form.getByLabel('Name (optional)')).toBeVisible();
     await form
       .getByLabel('Exact link to the content (required)')
@@ -146,9 +150,9 @@ test.describe('public report form (S1-E10-02)', () => {
     await page.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
     await page.goto('/report?kind=removal_order');
     const form = page.getByRole('form', { name: 'Removal order' });
-    await expect(
-      form.getByRole('radio', { name: 'Removal order from an authority' }),
-    ).toBeChecked();
+    await expect(form.getByLabel('What kind of content is it? (required)')).toHaveValue(
+      'removal_order',
+    );
     await expect(form.getByLabel(/I believe, in good faith/)).toHaveCount(0);
     await form.getByLabel('Issuing authority (required)').fill('Test authority');
     await form.getByLabel('The order’s reference (optional)').fill(`RO-${stamp}`);

@@ -5497,6 +5497,69 @@ export type Database = {
           },
         ];
       };
+      list_page_lines: {
+        Row: {
+          category_id: string | null;
+          created_at: string;
+          id: string;
+          language: string;
+          line: string;
+          tag_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          language: string;
+          line: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          category_id?: string | null;
+          created_at?: string;
+          id?: string;
+          language?: string;
+          line?: string;
+          tag_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'list_page_lines_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'list_page_lines_language_fkey';
+            columns: ['language'];
+            isOneToOne: false;
+            referencedRelation: 'languages';
+            referencedColumns: ['code'];
+          },
+          {
+            foreignKeyName: 'list_page_lines_tag_id_fkey';
+            columns: ['tag_id'];
+            isOneToOne: false;
+            referencedRelation: 'tags';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'list_page_lines_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       live_session_reminders: {
         Row: {
           created_at: string;
@@ -6648,6 +6711,7 @@ export type Database = {
           message_audience_of: Database['public']['Enums']['message_audience'] | null;
           message_email_choices: Json | null;
           profile_audience_of: Database['public']['Enums']['profile_audience'] | null;
+          profile_is_shown_to_caller: boolean | null;
           teacher_check_can_ask: boolean | null;
         };
         ComputedFields:
@@ -6660,6 +6724,7 @@ export type Database = {
           | 'message_audience_of'
           | 'message_email_choices'
           | 'profile_audience_of'
+          | 'profile_is_shown_to_caller'
           | 'teacher_check_can_ask';
         Insert: {
           adults_may_message?: boolean;
@@ -12131,6 +12196,7 @@ export type Database = {
         }[];
       };
       admin_list_page_backgrounds: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_list_page_lines: { Args: Record<PropertyKey, never>; Returns: Json };
       admin_list_staff: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -12724,6 +12790,10 @@ export type Database = {
       admin_set_launch_date: { Args: { new_date: string }; Returns: string };
       admin_set_list_page_background: {
         Args: { list_key: string; list_kind: string; market: string; new_palette: string };
+        Returns: undefined;
+      };
+      admin_set_list_page_line: {
+        Args: { line_language: string; list_key: string; list_kind: string; new_line: string };
         Returns: undefined;
       };
       admin_set_mail_status: {
@@ -15486,6 +15556,10 @@ export type Database = {
         Args: { list_key: string; list_kind: string; visitor_country: string };
         Returns: string;
       };
+      list_page_line: {
+        Args: { list_key: string; list_kind: string; page_language: string };
+        Returns: Json;
+      };
       list_page_target: {
         Args: { list_key: string; list_kind: string };
         Returns: {
@@ -16627,6 +16701,7 @@ export type Database = {
         Returns: Json;
       };
       preview_story_plan: { Args: { story_slug: string }; Returns: Json };
+      profile_activity: { Args: { wanted_handle: string; wanted_language: string }; Returns: Json };
       profile_audience_of: {
         Args: {
           person: Omit<
@@ -16639,6 +16714,7 @@ export type Database = {
       profile_avatar_look: { Args: { profile_handle: string }; Returns: Json };
       profile_avatar_picture: { Args: { profile_handle: string }; Returns: Json };
       profile_avatar_recipe: { Args: { profile_handle: string }; Returns: Json };
+      profile_bookshelves: { Args: { wanted_handle: string }; Returns: Json };
       profile_for_handle: {
         Args: { wanted_handle: string };
         Returns: {
@@ -16714,8 +16790,21 @@ export type Database = {
         };
         Returns: boolean;
       };
+      profile_is_shown_to_caller: {
+        Args: {
+          writer: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       profile_rank: { Args: { wanted_handle: string }; Returns: Json };
       profile_reader_level: { Args: { wanted_handle: string }; Returns: Json };
+      profile_recent_posts_json: {
+        Args: { how_many: number; wanted_language: string; writer_id: string };
+        Returns: Json;
+      };
       profile_signature: { Args: { wanted_handle: string }; Returns: Json };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
       public_character_json: {
@@ -18935,6 +19024,7 @@ export type Database = {
         Args: { how_many?: number; topic_key: string; topic_kind: string };
         Returns: Json;
       };
+      trending_tags: { Args: { how_many?: number }; Returns: Json };
       undo_decision_for_appeal: {
         Args: {
           appeal_reference: string;

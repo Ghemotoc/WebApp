@@ -1,6 +1,5 @@
 {
   "documentTitle": "{{documentTitle}} · Centrul legal · {{productName}}",
-  "eyebrow": "Centrul legal",
   "heading": "Regulile, pe înțelesul tuturor",
   "lead": "Fiecare pagină începe cu o versiune scurtă pe care o poate urmări oricine de la 13 ani în sus. Textul legal complet este sub fiecare parte. Dacă vreodată cele două par să nu se potrivească, întreabă-ne.",
   "documentsNavLabel": "Documente legale",
@@ -45,7 +44,6 @@
   "shortVersion": "Pe scurt",
   "fullTextDraft": "Text complet · ciornă pentru avocat",
   "fullText": "Text complet",
-  "fullTextRegion": "Text complet: {{title}}",
   "proposedSection": "Secțiune propusă",
   "afterTheTest": {
     "label": "După testul cu invitație",
@@ -84,8 +82,6 @@
     "link": "Scrie-ne"
   },
   "reportForm": {
-    "text": "Vrei să raportezi conținut ilegal? Oricine poate folosi formularul de raportare.",
-    "link": "Raportează conținut ilegal",
     "orderLink": "Autorități: trimiteți un ordin de eliminare"
   },
   "country": {
@@ -106,5 +102,11 @@
       "consent": "Acordul părintelui sub",
       "blocked": "Blocat sub"
     }
-  }
+  },
+  "questions": {
+    "heading": "Întrebări sau o raportare?",
+    "report": "Vrei să raportezi conținut ilegal? Oricine poate folosi <report>formularul de raportare</report>."
+  },
+  "centreName": "Centrul legal",
+  "sideColumnLabel": "Despre acest document"
 }

@@ -44,7 +44,6 @@
   },
   "settings": {
     "documentTitle": "Settings · {{productName}}",
-    "eyebrow": "Account",
     "heading": "Settings",
     "signedInAs": "Signed in as {{name}} · @{{handle}}",
     "accountHeading": "Account",

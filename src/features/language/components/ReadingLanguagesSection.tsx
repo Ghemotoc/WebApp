@@ -14,6 +14,7 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
+import { Chip } from '@/components/ui/Chip';
 import { Notice } from '@/components/ui/Notice';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 import { errorShownByHook } from '@/lib/errorShownByHook';
@@ -68,20 +69,18 @@ function ReadingLanguagesForm({ state, codes }: ReadingLanguagesFormProps) {
       className="flex flex-col gap-4"
       onSubmit={(event) => void handleSubmit(event).catch(errorShownByHook)}
     >
-      <fieldset className="m-0 flex flex-wrap gap-x-6 gap-y-3 border-0 p-0">
-        <legend className="mb-2 p-0 font-semibold text-ink-heading">
+      {/* One chip per language, as on the board (bundle 10, J06): a chosen chip is filled and
+          shows a check, and says so with aria-pressed (DoD, pill system: never colour alone). */}
+      <fieldset className="m-0 flex flex-wrap gap-2 border-0 p-0">
+        <legend className="mb-3 p-0 font-semibold text-ink-heading">
           {t('language.readingLegend')}
         </legend>
         {codes.map((code) => (
-          <label key={code} className="inline-flex min-h-11 cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              className="size-6 shrink-0 cursor-pointer accent-(--link)"
-              checked={ticked.includes(code)}
-              onChange={() => toggle(code)}
-            />
-            <span lang={code}>{ownName(code)}</span>
-          </label>
+          <span key={code} lang={code} className="contents">
+            <Chip isPressed={ticked.includes(code)} onPressedChange={() => toggle(code)}>
+              {ownName(code)}
+            </Chip>
+          </span>
         ))}
       </fieldset>
       {/* What happened, read out politely by screen readers. */}

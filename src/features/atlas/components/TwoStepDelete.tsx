@@ -5,7 +5,8 @@
  * The first click shows the question with Yes and Keep; the focus moves to the question so a
  * screen reader hears it. Yes runs the delete; a refusal the caller expects (an outcome message,
  * such as "only an empty section can be deleted") or a failure is said plainly.
- * Who uses it: the bible's section rows and entry view (S1-E17-17, S1-E17-18).
+ * Who uses it: the bible's section rows and entry view (S1-E17-17, S1-E17-18), and a bookshelf's
+ * page (ReadingListOwnerTools).
  */
 import { useEffect, useRef, useState } from 'react';
 
@@ -24,6 +25,11 @@ export interface TwoStepDeleteProps {
   failedMessage: string;
   /** Deletes; resolves to a message to show instead (a refusal), or null when done. */
   onDelete: () => Promise<string | null>;
+  /**
+   * The first button's look: the quiet secondary button (the default), or the underlined text
+   * button where a row of text actions draws it so (a bookshelf's page, board C02).
+   */
+  buttonVariant?: 'secondary' | 'text';
 }
 
 /**
@@ -55,7 +61,7 @@ export function TwoStepDelete(props: TwoStepDeleteProps) {
     <div className="flex min-w-0 flex-col gap-2">
       {!isAsking && (
         <Button
-          variant="secondary"
+          variant={props.buttonVariant ?? 'secondary'}
           className="self-start"
           aria-label={props.buttonAccessibleName}
           onClick={() => {

@@ -14,6 +14,7 @@ import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useMySanctions } from '../hooks/useMySanctions';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Renders the notice, or nothing.
@@ -27,9 +28,10 @@ export function SanctionNotice() {
   );
   if (shown.length === 0) return null;
   const whenText = (isoTime: string) =>
-    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long', timeStyle: 'short' }).format(
-      new Date(isoTime),
-    );
+    new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+      dateStyle: 'long',
+      timeStyle: 'short',
+    }).format(new Date(isoTime));
   return (
     <PageContainer className="flex flex-col gap-3 pt-6">
       {shown.map((sanction) => {

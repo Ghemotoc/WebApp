@@ -26,6 +26,7 @@ import { ClassInviteFields, type ClassInviteValues } from './ClassInviteFields';
 import { NewClassInviteCode } from './NewClassInviteCode';
 import { SpaceFormCard } from './SpaceFormCard';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The line saying whether a code works now.
@@ -36,7 +37,7 @@ import { errorShownByHook } from '@/lib/errorShownByHook';
 function InviteStatusLine({ status }: { status: ClassInviteStatus | null }) {
   const { t, i18n } = useSpacesTranslation();
   if (status === null) return <p className="m-0 text-ink-muted">{t('classInvite.none')}</p>;
-  const until = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
+  const until = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), { dateStyle: 'long' }).format(
     new Date(status.expiresAt),
   );
   return (

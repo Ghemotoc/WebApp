@@ -25,6 +25,7 @@ import { CrossLinkChips } from './CrossLinkChips';
 import { PlanSelectField } from './PlanSelectField';
 import { PlanTextField } from './PlanTextField';
 import { TwoStepDelete } from './TwoStepDelete';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** Each type's pill colour (the pill system's tints; the pill's words carry the meaning). */
 const kindTones: Record<IdeaKind, PillTone> = {
@@ -80,7 +81,7 @@ function IdeaReading({ idea }: { idea: StoryIdea }) {
   const doneDate =
     idea.doneAt === null
       ? null
-      : new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
+      : new Intl.DateTimeFormat(dateLocaleFor(i18n.language), { dateStyle: 'medium' }).format(
           new Date(idea.doneAt),
         );
   return (

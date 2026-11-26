@@ -1,26 +1,29 @@
 /**
- * WriterProfilePage: a writer's public profile, screen 6.1 (story S1-E5-05, with S1-E6-05's
- * Follow; design/boards/Profile.dc.html).
+ * WriterProfilePage: a writer's public profile (story S1-E5-05, with S1-E6-05's Follow; board C04
+ * of the design books, bundle 3 of "Build: the full design as user stories"; Robert, 25 Nov 2026,
+ * 09:50 UTC: no widget missing between the canvas and the live site).
  *
  * Who shows it: the router, at /u/:handle; the story page's writer card ("See profile") and the
  * followers list lead here.
- * What it shows: ProfileHeader (avatar, name, handle, join month, bio, numbers, Follow), then
- * ProfileStories and, when its owner lets the reader see it, ProfileLibrary (S1-E13-01) on the
- * left and, on the right, the rank card (RankPanel, S1-E8-09), the reading level card
- * (ReaderLevelPanel, G7a: for others only when its owner shows it), the forum signature
- * (ProfileSignatureCard, S1-E8-08) and ProfileSafetyCard (Report and Block); one column under
- * 1024 px. The wide ad slot follows the stories (S1-E12-01). The board's forum posts and
- * certificates come with their own stories (S1-E8, S1-E2-11), so they aren't drawn yet.
- * No profile banners (Q50).
+ * What it shows: ProfileHeader (avatar, name, handle, join month, bio, Follow, Message, Share and
+ * the numbers two by two), then two columns 1.6 to 1 from 1024 px, one column below:
+ *   - on the left, ProfileStories (rows with Follow story and "See every story"),
+ *     ProfileRecentPosts ("Recent posts in Together"), ProfileLibrary when its owner lets the
+ *     reader see it (S1-E13-01) and the wide ad slot (S1-E12-01, position 1);
+ *   - on the right, the rank card (RankPanel, S1-E8-09), the reading level card (ReaderLevelPanel,
+ *     G7a: for others only when its owner shows it), ProfileAlsoOn (bookshelves, posts, spaces),
+ *     the forum signature (ProfileSignatureCard, S1-E8-08), ProfileSafetyCard (Report and Block)
+ *     and the side box ad slot (position 2, under the safety card, as board C04 draws it).
+ * Certificates come with their own story (S1-E2-11). No profile banners (Q50).
  * When the profile can't be shown (unknown username, removed, or this person blocks the
  * reader), the page says "This profile isn't available" and nothing more, so a block can't be
  * told from a missing profile.
- * What it calls: useWriterProfile → get_writer_profile() (ADR 0004: never the tables) and
- * useProfileSignature → profile_signature(), useProfileRank → profile_rank() and
- * useProfileReaderLevel → profile_reader_level().
+ * What it calls: useWriterProfile → get_writer_profile() (ADR 0004: never the tables),
+ * useProfileActivity → profile_activity(), useProfileSignature → profile_signature(),
+ * useProfileRank → profile_rank() and useProfileReaderLevel → profile_reader_level().
  */
 import { usePeopleTranslation } from '../registerPeopleTranslations';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -36,31 +39,14 @@ import type { WriterProfile } from '../api/writerProfile';
 import { useProfileReaderLevel } from '../hooks/useReaderLevel';
 import { useWriterProfile } from '../hooks/useWriterProfile';
 
+import { ProfileAlsoOn } from './ProfileAlsoOn';
 import { ProfileHeader } from './ProfileHeader';
 import { ProfileLibrary } from './ProfileLibrary';
+import { ProfileUnavailable } from './ProfileUnavailable';
+import { ProfileRecentPosts } from './ProfileRecentPosts';
 import { ProfileSafetyCard } from './ProfileSafetyCard';
 import { ProfileStories } from './ProfileStories';
 import { ReaderLevelPanel } from './ReaderLevelPanel';
-
-/** "This profile isn't available", with the way home. */
-function ProfileUnavailable() {
-  const { t } = usePeopleTranslation();
-  return (
-    <div className="flex flex-col items-start gap-3 rounded-card border border-border bg-surface px-8 py-8">
-      <title>{t('profile.unavailableTitle')}</title>
-      <h1 className="m-0 font-heading type-heading font-bold text-ink-heading">
-        {t('profile.unavailableTitle')}
-      </h1>
-      <p className="m-0 type-body text-ink-muted">{t('profile.unavailableBody')}</p>
-      <Link
-        to="/"
-        className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold no-underline"
-      >
-        {t('profile.goHome')}
-      </Link>
-    </div>
-  );
-}
 
 /**
  * Which cards the side column draws: the rank card (S1-E8-09), the reading level card (G7a) and
@@ -83,11 +69,12 @@ function useForumCards(profile: WriterProfile) {
 }
 
 /**
- * The right-hand column: the forum signature (S1-E8-08) and the safety card.
+ * The right-hand column: the rank and reading level cards, "Also on", the forum signature, the
+ * safety card and the side box ad slot (board C04).
  *
  * @param props.profile - the profile
  * @param props.isSignedIn - whether someone is signed in (Report and Block need an account)
- * @returns the column, or nothing when it would be empty
+ * @returns the column
  */
 function ProfileSideColumn({
   profile,
@@ -98,18 +85,19 @@ function ProfileSideColumn({
 }) {
   const { showsRank, showsReaderLevel, showsSignature } = useForumCards(profile);
   const showsSafetyCard = !profile.isMe && isSignedIn;
-  const hasAnyCard = showsSafetyCard || showsSignature || showsRank || showsReaderLevel;
-  if (!hasAnyCard) return null;
   return (
-    <div className="flex w-full flex-col gap-4 lg:max-w-[340px] lg:flex-[1_1_300px]">
+    <div className="flex min-w-0 flex-col gap-8">
       {/* The rank card comes first, as on the board (S1-E8-09). */}
       {showsRank && <RankPanel handle={profile.handle} name={profile.displayName} />}
       {/* The reading level card sits under the rank card, as on the board (G7a). */}
       {showsReaderLevel && <ReaderLevelPanel handle={profile.handle} name={profile.displayName} />}
+      {!profile.iBlocked && <ProfileAlsoOn handle={profile.handle} />}
       {showsSignature && (
         <ProfileSignatureCard handle={profile.handle} name={profile.displayName} />
       )}
       {showsSafetyCard && <ProfileSafetyCard profile={profile} />}
+      {/* The side box under the safety card (board C04); staff book it in Sponsors › Placements. */}
+      {!profile.iBlocked && <PageAdSlot pageKey="profile" position={2} />}
     </div>
   );
 }
@@ -146,14 +134,15 @@ export function WriterProfilePage() {
         {t('profile.documentTitle', { name: profile.displayName, handle: profile.handle })}
       </title>
       <ProfileHeader profile={profile} />
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-        <div className="min-w-0 lg:flex-[999_1_620px]">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start">
+        <div className="min-w-0">
           {!profile.iBlocked && (
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-12">
               <ProfileStories profile={profile} />
+              <ProfileRecentPosts handle={profile.handle} />
               {/* The library shelf, when the owner lets this reader see it (S1-E13-01). */}
               <ProfileLibrary profile={profile} />
-              {/* The page's one ad slot (S1-E12-01); a profile has no category, so no context. */}
+              {/* The wide ad slot (S1-E12-01); a profile has no category, so no context. */}
               <PageAdSlot pageKey="profile" position={1} />
             </div>
           )}
