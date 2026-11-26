@@ -4,7 +4,7 @@
  *
  * Who calls it: hooks/useAccountList.ts.
  * What it calls next: admin_list_accounts()
- * (supabase/migrations/20270205100570_staff_users_list.sql). The database lets only the owner and
+ * (supabase/migrations/20270205100600_staff_users_list.sql). The database lets only the owner and
  * admins in, in a staff session, and logs every page read; this file only passes the answer on.
  * Kept apart from the table that draws it, so the staff redesign (STAFF-4, story S1-E11-47) can
  * rehouse the table without touching the data side.
