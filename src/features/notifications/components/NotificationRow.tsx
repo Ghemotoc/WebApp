@@ -40,7 +40,8 @@ export interface NotificationRowProps {
 }
 
 /**
- * The sentence: who in bold, then what happened with its titles in bold, then the team's action.
+ * The sentence: who in bold, then what happened with its titles in bold, then the action, where the
+ * kind has one ("Read the reasons", "See the requests"), as a link word at the end.
  *
  * @returns the sentence
  */
@@ -52,7 +53,6 @@ function Sentence({
   notification: AppNotification;
 }) {
   const pieces = emphasisedWords(text.what, titlesOf(notification));
-  const isTeam = notification.category === 'staff';
   return (
     <span className="type-body text-ink">
       <b>{text.who}</b>{' '}
@@ -60,7 +60,7 @@ function Sentence({
         // The pieces never reorder, so their place is a safe key.
         piece.isTitle ? <b key={index}>{piece.text}</b> : <span key={index}>{piece.text}</span>,
       )}
-      {isTeam && text.actionLabel !== null && (
+      {text.actionLabel !== null && (
         <>
           {' '}
           <span className="text-link underline">{text.actionLabel}</span>
