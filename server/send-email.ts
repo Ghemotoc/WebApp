@@ -8,7 +8,9 @@
  * lays the published admin overrides (published_interface_text(), "email:" keys) over
  * src/locales/<lang>/email.json, fills the locked placeholders (the link or the code Supabase made;
  * we never make or store a code) and sends it through the SendEmail it is given: Brevo on
- * Cloudflare, Mailpit locally.
+ * Cloudflare, Mailpit locally. Each email has a plain-text part and the branded HTML part of
+ * boards E01 and E02 (server/email-layout.ts), both in the person's language; Auth emails are about
+ * the account, so they never carry an unsubscribe link.
  * Links point at our own site (options.siteUrl), never at email_data.site_url: Supabase fills that
  * with its own Auth address, where /reset-password answers "No API key found" (ADMIN thread,
  * 26 Nov 2026, before the 27 Nov trial). Our pages /auth/confirm and /reset-password hand the
@@ -23,6 +25,7 @@ import englishEmail from '../src/locales/en/email.json';
 import romanianEmail from '../src/locales/ro/email.json';
 
 import type { EmailSender, SendEmail } from './contact';
+import { emailLogoUrl, renderEmailHtml, type EmailBrand, type EmailContent } from './email-layout';
 import { sameText } from './same-text';
 import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
 
@@ -92,10 +95,21 @@ export interface SendEmailHookOptions {
   sender: EmailSender;
   productName: string;
   companyName: string;
+  /** The company's own site, which the company name in the footer links to (brand config). */
+  companySiteUrl: string;
+  /** The support address in "Questions? Write to …" (brand config). */
+  supportEmail: string;
   sendEmail: SendEmail;
   /** The live "email:" overrides of a locale; failures fall back to the file text. */
   readOverrides: (locale: string) => Promise<Map<string, string>>;
   now?: () => number;
+}
+
+/** The names textOf() fills in: {{productName}}, {{companyName}} and, when given, {{supportEmail}}. */
+export interface EmailNames {
+  productName: string;
+  companyName: string;
+  supportEmail?: string;
 }
 
 /**
@@ -147,7 +161,7 @@ export async function verifyHookSignature(
 
 /**
  * One text of an email: the admin's override when there is one, else the file text, with the
- * product and company names filled in.
+ * product and company names (and the support address, when given) filled in.
  *
  * @returns the text
  */
@@ -155,7 +169,7 @@ export function textOf(
   texts: EmailTexts,
   overrides: Map<string, string>,
   path: string,
-  names: { productName: string; companyName: string },
+  names: EmailNames,
 ): string {
   const [group, field] = path.includes('.') ? path.split('.') : [path, undefined];
   const fileValue =
@@ -167,22 +181,68 @@ export function textOf(
     .split('{{productName}}')
     .join(names.productName)
     .split('{{companyName}}')
-    .join(names.companyName);
+    .join(names.companyName)
+    .split('{{supportEmail}}')
+    .join(names.supportEmail ?? '{{supportEmail}}');
+}
+
+/** What composing an Auth email needs besides its words: the brand and the language. */
+export interface AuthEmailContext {
+  /** Reads one text by its path ("confirmation.body"), in the person's language. */
+  read: (path: string) => string;
+  brand: EmailBrand;
+  language: string;
 }
 
 /**
- * Writes one Auth email as plain text.
+ * What one Auth email says, for the HTML layout (boards E01 and E02).
+ *
+ * @param kind - which email (its text group, and whether it has the "not you" line)
+ * @param action - the link or the code it carries
+ * @param read - reads one text by its path
+ * @returns the content for renderEmailHtml()
+ */
+export function authEmailContent(
+  kind: Pick<AuthEmailKind, 'group' | 'includesIgnoreLine'>,
+  action: { link?: string; code?: string },
+  read: (path: string) => string,
+): EmailContent {
+  const linkNote = read(`${kind.group}.linkNote`);
+  const content: EmailContent = {
+    heading: read(`${kind.group}.heading`),
+    // The link note is the first line an inbox shows (board E01, frame 1).
+    preheader: linkNote,
+    paragraphs: [read(`${kind.group}.body`)],
+    linkNote,
+    signOff: read('signOff'),
+    madeBy: read('madeBy'),
+    questions: read('questions'),
+  };
+  // The one action: the code Supabase made, or the button with its link.
+  if (action.code !== undefined) {
+    content.code = { label: read(`${kind.group}.codeLabel`), value: action.code };
+  } else {
+    const pasteLabel = read('pasteLink');
+    content.action = { label: read(`${kind.group}.button`), url: action.link ?? '', pasteLabel };
+  }
+  if (kind.includesIgnoreLine !== false) content.notYou = read('notYou');
+  return content;
+}
+
+/**
+ * Writes one Auth email: the plain text every mail app can show, and the branded HTML.
  *
  * @param kind - which email
  * @param action - the link or the code it carries
- * @param read - reads one text by its path ("confirmation.body")
- * @returns the subject and the text
+ * @param context - the text reader, the brand and the language
+ * @returns the subject, the text and the HTML
  */
 export function composeAuthEmail(
   kind: AuthEmailKind,
   action: { link?: string; code?: string },
-  read: (path: string) => string,
-): { subject: string; text: string } {
+  context: AuthEmailContext,
+): { subject: string; text: string; html: string } {
+  const read = context.read;
   const lines = [read(`${kind.group}.heading`), '', read(`${kind.group}.body`), ''];
   // The one action: the code Supabase made, or the button's link.
   if (action.code !== undefined)
@@ -190,8 +250,14 @@ export function composeAuthEmail(
   else lines.push(`${read(`${kind.group}.button`)}: ${action.link ?? ''}`, '');
   lines.push(read(`${kind.group}.linkNote`));
   if (kind.includesIgnoreLine !== false) lines.push('', read('notYou'));
-  lines.push('', read('signOff'), read('madeBy'));
-  return { subject: read(`${kind.group}.subject`), text: lines.join('\n') };
+  // The plain text gives the company's address after its name (board E01, frame 4).
+  lines.push('', read('signOff'), `${read('madeBy')}: ${context.brand.companySiteUrl}`);
+  const html = renderEmailHtml(
+    context.language,
+    authEmailContent(kind, action, read),
+    context.brand,
+  );
+  return { subject: read(`${kind.group}.subject`), text: lines.join('\n'), html };
 }
 
 /** One email to send: where it goes, and the link or the code it carries. */
@@ -272,6 +338,29 @@ export function authEmailKindOf(payload: SendEmailHookPayload): AuthEmailKind | 
 }
 
 /**
+ * The brand parts of the HTML layout, from the handler's options.
+ *
+ * @param options - the names and addresses from the brand config
+ * @param siteUrl - our own site, where the PNG logo lives
+ * @returns the brand for renderEmailHtml()
+ */
+export function emailBrandOf(
+  options: Pick<
+    SendEmailHookOptions,
+    'productName' | 'companyName' | 'companySiteUrl' | 'supportEmail'
+  >,
+  siteUrl: string,
+): EmailBrand {
+  return {
+    productName: options.productName,
+    companyName: options.companyName,
+    companySiteUrl: options.companySiteUrl,
+    supportEmail: options.supportEmail,
+    logoUrl: emailLogoUrl(siteUrl),
+  };
+}
+
+/**
  * Answers one hook call.
  *
  * @param request - Supabase Auth's POST
@@ -306,10 +395,11 @@ export async function handleSendEmailHook(
   // Step 3: send, and tell Auth plainly when it couldn't be sent.
   try {
     const siteUrl = options.siteUrl.replace(/\/+$/, '');
+    const context = { read, brand: emailBrandOf(options, siteUrl), language: locale };
     for (const recipient of recipientsOf(payload, kind, siteUrl)) {
-      const email = composeAuthEmail(kind, recipient, read);
+      const email = composeAuthEmail(kind, recipient, context);
       await options.sendEmail(
-        { to: recipient.to, subject: email.subject, text: email.text },
+        { to: recipient.to, subject: email.subject, text: email.text, html: email.html },
         options.sender,
       );
     }

@@ -15,11 +15,22 @@
  * on), the same choice server/send-email.ts makes for the staging and production sender.
  * Why generated: names are settings, not code (CLAUDE.md, decided 17 Oct 2026, 12:47). The brand
  * values come from src/config/brand.ts, so the brand check allows supabase/templates/ as output.
+ * The look: the same branded layout as the hook's emails (server/email-layout.ts, boards E01 and
+ * E02, S1-E11-19), with the same words (authEmailContent() in server/send-email.ts), so an email
+ * looks the same before and after the hook is switched on.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { brandDefaults } from '../src/config/brand';
+import {
+  emailLogoUrl,
+  escapeHtml,
+  renderEmailBody,
+  renderEmailDocument,
+  type EmailBrand,
+} from '../server/email-layout';
+import { authEmailContent, textOf } from '../server/send-email';
 
 /** One email: its file name, its text group in email.json and its button's link or its code. */
 export interface AuthEmail {
@@ -75,56 +86,31 @@ export const authEmails: AuthEmail[] = [
 /** The words of one language, as in src/locales/<language>/email.json. */
 type EmailTexts = Record<string, string | Record<string, string>>;
 
-/**
- * Fills {{productName}} and {{companyName}} and escapes the text for HTML.
- *
- * @param text - one string from email.json
- * @returns safe HTML text
- */
-function fillAndEscape(text: string): string {
-  const filled = text
-    .split('{{productName}}')
-    .join(brandDefaults.productName)
-    .split('{{companyName}}')
-    .join(brandDefaults.companyName);
-  return filled.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
+/** The brand parts of the layout, from today's brand config values. */
+const templateBrand: EmailBrand = {
+  productName: brandDefaults.productName,
+  companyName: brandDefaults.companyName,
+  companySiteUrl: brandDefaults.companySiteUrl,
+  supportEmail: brandDefaults.supportEmail,
+  logoUrl: emailLogoUrl(`https://${brandDefaults.siteDomain}`),
+};
 
 /**
- * The email's one action: the code in large digits, or the button with its link.
- *
- * @param email - which email
- * @param group - that email's words in one language
- * @returns an HTML paragraph
- */
-function actionLine(email: AuthEmail, group: Record<string, string>): string {
-  if (email.showsCode === true) {
-    // The code is Supabase's own; spaced digits are easy to read and to type.
-    return `<p style="margin:0 0 24px"><span style="font-size:14px;color:#5C4965">${fillAndEscape(group.codeLabel ?? '')}</span><br><strong style="display:inline-block;margin-top:8px;font-size:32px;letter-spacing:8px;color:#2A0E33">{{ .Token }}</strong></p>`;
-  }
-  return `<p style="margin:0 0 24px"><a href="${email.linkTemplate ?? ''}" style="display:inline-block;background:#2A0E33;color:#FBF7EC;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600">${fillAndEscape(group.button ?? '')}</a></p>`;
-}
-
-/**
- * The body of one email in one language.
+ * The body of one email in one language: the branded layout with Supabase's link or code.
  *
  * @param texts - that language's email.json
  * @param email - which email
  * @returns an HTML fragment
  */
 function emailBody(texts: EmailTexts, email: AuthEmail): string {
-  const group = texts[email.textGroup] as Record<string, string>;
-  const shared = (key: string) => fillAndEscape(texts[key] as string);
-  return [
-    `<h1 style="font-size:24px;color:#481C5F;margin:0 0 16px">${fillAndEscape(group.heading ?? '')}</h1>`,
-    `<p style="margin:0 0 24px">${fillAndEscape(group.body ?? '')}</p>`,
-    actionLine(email, group),
-    `<p style="margin:0 0 8px;font-size:14px;color:#5C4965">${fillAndEscape(group.linkNote ?? '')}</p>`,
-    email.includesIgnoreLine === false
-      ? ''
-      : `<p style="margin:0 0 24px;font-size:14px;color:#5C4965">${shared('notYou')}</p>`,
-    `<p style="margin:0">${shared('signOff')}<br><span style="font-size:13px;color:#6B5A73">${shared('madeBy')}</span></p>`,
-  ].join('\n    ');
+  // Step 1: a reader over the file text with the brand's names filled in (no admin overrides:
+  // these files are what Supabase sends until the hook, which reads the overrides, is on).
+  const read = (path: string) => textOf(texts, new Map(), path, templateBrand);
+  // Step 2: the one action, Supabase's code or the link Supabase fills in.
+  const action =
+    email.showsCode === true ? { code: '{{ .Token }}' } : { link: email.linkTemplate ?? '' };
+  const kind = { group: email.textGroup, includesIgnoreLine: email.includesIgnoreLine };
+  return renderEmailBody(authEmailContent(kind, action, read), templateBrand);
 }
 
 /**
@@ -138,14 +124,14 @@ function bothLanguages(email: AuthEmail, localesFolder: string): string {
   const read = (language: string) =>
     JSON.parse(readFileSync(`${localesFolder}/${language}/email.json`, 'utf8')) as EmailTexts;
   return `{{ if eq .Data.locale "en" }}
-    <div lang="en">
-    ${emailBody(read('en'), email)}
-    </div>
-    {{ else }}
-    <div lang="ro">
-    ${emailBody(read('ro'), email)}
-    </div>
-    {{ end }}`;
+<div lang="en">
+${emailBody(read('en'), email)}
+</div>
+{{ else }}
+<div lang="ro">
+${emailBody(read('ro'), email)}
+</div>
+{{ end }}`;
 }
 
 /**
@@ -162,19 +148,19 @@ export function buildAuthEmail(email: AuthEmail, localesFolder: string): string 
   if (email.waitlistTextGroup !== undefined) {
     const waitlistEmail = { ...email, textGroup: email.waitlistTextGroup };
     content = `{{ if .Data.joins_waitlist }}
-    ${bothLanguages(waitlistEmail, localesFolder)}
-    {{ else }}
-    ${content}
-    {{ end }}`;
+${bothLanguages(waitlistEmail, localesFolder)}
+{{ else }}
+${content}
+{{ end }}`;
   }
-  // Step 2: the page around it.
+  // Step 2: the page around it, in the account's language for screen readers.
+  const document = renderEmailDocument({
+    lang: '{{ if eq .Data.locale "en" }}en{{ else }}ro{{ end }}',
+    title: escapeHtml(brandDefaults.productName),
+    body: content,
+  });
   return `<!-- Generated by scripts/build-auth-email-templates.ts from src/locales/*/email.json. Do not edit. -->
-<html>
-  <body style="margin:0;padding:24px;background:#FAF8F5;font-family:Inter,Arial,sans-serif;color:#26142E;line-height:1.6">
-    ${content}
-  </body>
-</html>
-`;
+${document}`;
 }
 
 /** Writes every template into supabase/templates/. */

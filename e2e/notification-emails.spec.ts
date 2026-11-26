@@ -7,7 +7,8 @@
  * local worker key (EMAIL_WORKER_KEY in playwright.config.ts, email_worker_key in the Vault).
  * What it proves:
  * - Settings › Notifications shows each kind with its default and saves a change (criterion 1);
- * - a reply is emailed at once, with an unsubscribe link and the one-click headers (RFC 8058);
+ * - a reply is emailed at once, with an unsubscribe link and the one-click headers (RFC 8058), in
+ *   plain text and in the branded HTML part (S1-E11-19);
  * - the link's page stops every optional email with one press, signed out (criterion 2), and so
  *   does a mail app's one-click POST;
  * - axe finds nothing serious and nothing scrolls sideways at 390, 768 and 1440 px.
@@ -64,11 +65,12 @@ async function waitForNotificationEmail() {
     if (newest !== undefined) {
       const message = (await (await fetch(`${mailpitUrl}/message/${newest.ID}`)).json()) as {
         Text: string;
+        HTML: string;
       };
       const headers = (await (
         await fetch(`${mailpitUrl}/message/${newest.ID}/headers`)
       ).json()) as Record<string, string[]>;
-      return { subject: newest.Subject, text: message.Text, headers };
+      return { subject: newest.Subject, text: message.Text, html: message.HTML, headers };
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
@@ -144,6 +146,11 @@ test.describe('Notification emails', () => {
     const email = await waitForNotificationEmail();
     expect(email.subject).toContain('replied to your comment');
     expect(email.headers['List-Unsubscribe-Post']).toEqual(['List-Unsubscribe=One-Click']);
+    // The branded HTML part (S1-E11-19, board E03) carries the same one-click link under the card.
+    expect(email.html).toContain('<html lang="en">');
+    expect(email.html).toMatch(
+      /href="[^"]*\/unsubscribe\?key=[0-9a-f]{48}"[^>]*>Stop these emails/,
+    );
     const link = /\/unsubscribe\?key=([0-9a-f]{48})/.exec(email.text);
     expect(link).not.toBeNull();
 

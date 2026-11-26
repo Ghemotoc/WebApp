@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { escapeHtml } from '../server/email-layout';
+
 import { authEmails, buildAuthEmail } from './build-auth-email-templates';
 
 const localesFolder = fileURLToPath(new URL('../src/locales', import.meta.url));
@@ -23,8 +25,9 @@ describe('the Supabase Auth email templates', () => {
     const html = buildAuthEmail(email, localesFolder);
     expect(html).toContain('lang="ro"');
     expect(html).toContain('lang="en"');
+    // The link sits in an href, where "&" is written "&amp;" as HTML asks.
     expect(html).toContain(
-      email.showsCode === true ? '{{ .Token }}' : (email.linkTemplate ?? 'missing'),
+      email.showsCode === true ? '{{ .Token }}' : escapeHtml(email.linkTemplate ?? 'missing'),
     );
   });
 
@@ -42,6 +45,8 @@ describe('the Supabase Auth email templates', () => {
     if (emailChange === undefined) throw new Error('email_change.html is missing from authEmails.');
     const html = buildAuthEmail(emailChange, localesFolder);
     expect(html).toContain('{{ .Token }}');
-    expect(html).not.toContain('href=');
+    // No link into the site and no button: only the footer's company and support links.
+    expect(html).not.toContain('{{ .SiteURL }}');
+    expect(html).not.toContain('class="email-button"');
   });
 });
