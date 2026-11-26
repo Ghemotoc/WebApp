@@ -26,9 +26,10 @@ export function WordTargetField({
   savedTarget: number;
   save: (target: number) => Promise<void>;
 }) {
-  const { t } = useAtlasTranslation();
+  const { t, i18n } = useAtlasTranslation();
   const field = useAutosaveField({
-    savedValue: String(savedTarget),
+    // Shown with the language's separators ("40,000", board E21); wordTargetFrom() reads them back.
+    savedValue: new Intl.NumberFormat(i18n.language).format(savedTarget),
     save: async (typed: string) => {
       // isValid has already checked it, so the number is there.
       await save(wordTargetFrom(typed) ?? savedTarget);
@@ -41,7 +42,7 @@ export function WordTargetField({
         id="atlas-word-target"
         label={t('details.wordTarget')}
         inputMode="numeric"
-        className="w-40"
+        className="w-full"
         value={field.value}
         aria-describedby="atlas-word-target-save"
         onChange={(event) => field.change(event.target.value)}

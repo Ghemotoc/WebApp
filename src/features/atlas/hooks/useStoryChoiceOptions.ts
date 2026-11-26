@@ -1,10 +1,11 @@
 /**
- * useStoryChoiceOptions: the genre and audience drop-downs' options (stories S1-E17-03 and
- * S1-E17-29), in the writer's language.
+ * useStoryChoiceOptions: the genre and audience drop-downs' options (story S1-E17-03), in the
+ * writer's language.
  *
  * The genre is the story's category and the audience its rating, the same lists as New story and
  * Story settings (S1-E3-01 and S1-E3-06), so both sides offer the same choices.
- * Who calls it: StoryDetailsSection and MarketingStoryFields. What it calls: useStoryFormOptions
+ * Who calls it: StoryDetailsSection (the Marketing page no longer asks for them: user stories
+ * bundle 6, story 6.13, board E32). What it calls: useStoryFormOptions
  * for the categories; storyRatings for the ratings.
  */
 import { useTranslation } from 'react-i18next';

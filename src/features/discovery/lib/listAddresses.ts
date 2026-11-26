@@ -288,7 +288,6 @@ export interface ListRouteParams {
   listKind?: string;
   categorySlug?: string;
   tag?: string;
-  handle?: string;
   /** The search term (?q=) on /search/stories (S1-E5-04). */
   searchTerm?: string;
   /** The shelf on /library/:shelf (S1-E4-03). */
@@ -301,7 +300,8 @@ export interface ListRouteParams {
  * Which list a route stands for, from the part of the address that is set.
  *
  * @param params - the route's parts: /discover/all/:listKind, /discover/c/:categorySlug,
- *   /discover/t/:tag or /u/:handle/stories
+ *   /discover/t/:tag, /library/:shelf, /u/:readerHandle/library or /search/stories (a writer's
+ *   /u/:handle/stories is ProfileStoriesPage, board C05)
  * @returns the kind and its key, or null for an address such as /discover/all/nothing
  */
 export function listFromParams(
@@ -309,7 +309,6 @@ export function listFromParams(
 ): { kind: ListKind; key: string | null } | null {
   if (params.categorySlug !== undefined) return { kind: 'category', key: params.categorySlug };
   if (params.tag !== undefined) return { kind: 'tag', key: params.tag };
-  if (params.handle !== undefined) return { kind: 'writer', key: params.handle };
   if (params.readerHandle !== undefined)
     return { kind: 'reader_library', key: params.readerHandle };
   if (params.searchTerm !== undefined) return { kind: 'search', key: params.searchTerm };

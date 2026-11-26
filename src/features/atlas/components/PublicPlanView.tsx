@@ -3,8 +3,9 @@
  * S1-E17-33), shared by the readers' pages and the writer's "Preview as a reader".
  *
  * The row of public areas, then the open area: the cast or one character, the relationship map
- * with its list, the family tree, the world or one of its entries (GAPS-4), or the timeline. Around it, ReaderLinksContext makes
- * every [[Name]] resolve against the public items only, so a private item reads as plain words.
+ * with its list, the family tree, the world or one of its entries (GAPS-4), or the timeline.
+ * Around it, ReaderLinksContext makes every [[Name]] resolve against the public items only, so a
+ * private item reads as plain words.
  * Who uses it: PublicPlanPage and PlanPreviewPage. What it calls: the Public* area components,
  * PublicPlanNav and lib/publicPlanAreas.ts.
  */
@@ -85,7 +86,8 @@ export function PublicPlanView(props: PublicPlanViewProps) {
   );
   return (
     <ReaderLinksContext.Provider value={links}>
-      <div className="flex min-w-0 flex-col gap-6">
+      {/* Board E35: the tabs sit 16 px under the title, the area 64 px under the tabs (32 on a phone). */}
+      <div className="flex min-w-0 flex-col gap-8 lg:gap-16">
         <PublicPlanNav base={base} areas={plan.areas} current={props.area} />
         <AreaContent {...props} />
       </div>

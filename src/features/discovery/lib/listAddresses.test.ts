@@ -92,8 +92,8 @@ describe('listFromParams', () => {
     expect(listFromParams({ listKind: 'completed' })).toEqual({ kind: 'completed', key: null });
     expect(listFromParams({ categorySlug: 'poetry' })).toEqual({ kind: 'category', key: 'poetry' });
     expect(listFromParams({ tag: 'bunici' })).toEqual({ kind: 'tag', key: 'bunici' });
-    expect(listFromParams({ handle: 'adult_writer' })).toEqual({
-      kind: 'writer',
+    expect(listFromParams({ readerHandle: 'adult_writer' })).toEqual({
+      kind: 'reader_library',
       key: 'adult_writer',
     });
   });

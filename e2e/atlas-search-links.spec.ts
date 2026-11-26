@@ -6,8 +6,9 @@
  * What it proves:
  * - the search box is in the top bar of every Story Atlas page; a search lists the open story's
  *   matches grouped by type, each with a snippet whose match is marked in bold, and a result
- *   opens its item (a note opens on the Ideas page with every note shown) (S1-E17-30);
- * - a search under two letters asks for more;
+ *   opens its item (a note opens on the Ideas page with every note shown) (S1-E17-30); as board
+ *   E34 draws it, a chapter shows with its number and the count line is announced (story 6.15);
+ * - a search under two letters, an empty one and one that finds nothing each say so in that line;
  * - in a bible entry, [[a name]] or [[an alias]] in any capitals is a link to its character, and
  *   a name nothing has yet reads "not found yet"; under the editing field the links show as
  *   chips; a note's and a timeline event's links do the same (S1-E17-31);
@@ -104,7 +105,10 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
       'Questions and ideas (1)',
       'Marketing notes (1)',
     ]);
-    await expect(page.getByText('4 results for “far”')).toBeVisible();
+    // The count line is the page's live region, announced when results arrive (story 6.15).
+    const statusLine = page.getByTestId('atlas-search-status');
+    await expect(statusLine).toHaveAttribute('role', 'status');
+    await expect(statusLine).toHaveText('4 results for “far”');
     const marketing = page.getByRole('region', { name: 'Marketing notes (1)' });
     await expect(marketing.getByRole('link', { name: 'Back-cover blurb' })).toBeVisible();
     await expect(marketing.locator('mark')).toHaveText('far');
@@ -116,7 +120,9 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
     const chapters = page.getByRole('region', { name: 'Chapters (1)' });
     await expect(chapters.locator('mark')).toHaveText('Ștefan');
     await expect(chapters.locator('mark')).toHaveCSS('font-weight', '600');
-    await chapters.getByRole('link', { name: 'Furtuna' }).click();
+    // A chapter shows with its number, and the snippet doesn't repeat its title (board E34).
+    await expect(chapters.getByTestId('atlas-search-result')).not.toContainText('Furtuna Ștefan');
+    await chapters.getByRole('link', { name: 'Chapter 1: Furtuna' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${slug}/c/e2esrch1$`));
     await page.context().close();
   });
@@ -129,16 +135,30 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
       .getByRole('region', { name: 'Questions and ideas (1)' })
       .getByRole('link', { name: 'Cine a stins farul?' })
       .click();
-    await expect(page.getByRole('radio', { name: 'All (1)' })).toBeChecked();
+    await expect(page.getByRole('radio', { name: 'Both (1)' })).toBeChecked();
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(1);
-    // The note's [[link]] shows as a chip to the character.
+    // The note's [[link]] is a link to the character.
     const chip = page.getByTestId('atlas-idea-item').getByRole('link', { name: 'Bogdan' });
     await chip.click();
     await expect(page).toHaveURL(
       new RegExp(`/plan/s/${slug}/characters/19800000-0000-4000-8000-0000000000b1$`),
     );
     await page.goto(`/plan/s/${slug}/search?q=a`);
-    await expect(page.getByText('Type at least 2 letters to search.')).toBeVisible();
+    await expect(page.getByTestId('atlas-search-status')).toHaveText(
+      'Type at least 2 letters to search.',
+    );
+    // An empty bar still searches, and says how much to type (design books item 9).
+    await page.getByRole('searchbox', { name: 'Search this story' }).fill('');
+    await page.getByRole('button', { name: 'Search', exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`/plan/s/${slug}/search\\?q=$`));
+    await expect(page.getByTestId('atlas-search-status')).toHaveText(
+      'Type at least 2 letters to search.',
+    );
+    // Nothing found says so in the same line.
+    await page.goto(`/plan/s/${slug}/search?q=zzqq`);
+    await expect(page.getByTestId('atlas-search-status')).toHaveText(
+      'Nothing in this story matches “zzqq”.',
+    );
     await page.context().close();
   });
 
@@ -159,11 +179,11 @@ test.describe('Story Atlas search, cross-links and "Mentioned in" (S1-E17-30, 31
       'Insula: not found yet',
     ]);
     await entry.getByRole('button', { name: 'Edit' }).click();
-    // Reading mode also lists the links under the text (G10c1, board AtlasWorld); both open Ana.
-    await expect(
-      entry.getByRole('list', { name: 'Links:' }).getByRole('link', { name: 'ani' }),
-    ).toBeVisible();
-    await entry.locator('p').getByRole('link', { name: 'ani' }).click();
+    // Reading mode lists the links under the text as one line (story 6.8, board E27); both open Ana.
+    const linksLine = entry.locator('p', { hasText: 'Links:' });
+    await expect(linksLine).toHaveText('Links: ani · Insula (not found yet)');
+    await expect(linksLine.getByRole('link', { name: 'ani' })).toBeVisible();
+    await entry.locator('p', { hasNotText: 'Links:' }).getByRole('link', { name: 'ani' }).click();
     await expect(page).toHaveURL(new RegExp(`/plan/s/${slug}/characters/${anaId}$`));
     await page.context().close();
   });

@@ -3,7 +3,7 @@
  * information pill, its words and colour together, never colour alone (DoD pill system; bundle
  * G10a, boards AtlasHome and AtlasStory).
  *
- * Who uses it: StoryPlanCard (/plan) and AtlasStoryCard (at a glance). What it calls: InfoPill.
+ * Who uses it: StorySummary (at a glance). What it calls: InfoPill.
  */
 import { InfoPill, type PillTone } from '@/components/ui/InfoPill';
 

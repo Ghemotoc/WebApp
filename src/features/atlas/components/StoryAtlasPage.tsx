@@ -9,11 +9,9 @@
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryPlan → story_plan(); useMyStories for the switcher, "Write" (lib/writeAddress.ts) and
  * Delete;
- * lib/lastPlannedStory.ts so /plan opens this story next time on this device (S1-E17-02);
  * useResumeAtlasSection, which moves an address ending ?resume to the section the writer had open
  * last (design books item 17).
  */
-import { useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
@@ -24,7 +22,6 @@ import { useMyStories } from '@/features/writing/hooks/useMyStories';
 import type { StoryPlanPage } from '../api/storyPlans';
 import { useStoryPlan } from '../hooks/useStoryPlan';
 import { useResumeAtlasSection } from '../hooks/useLastAtlasSection';
-import { rememberPlannedStory } from '../lib/lastPlannedStory';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
@@ -63,11 +60,6 @@ export function StoryAtlasPage() {
   const { page, loadFailed } = useStoryPlan(storySlug);
   const { stories } = useMyStories();
   const story = stories.find((candidate) => candidate.slug === storySlug);
-
-  // Remember the story once it has opened, so /plan opens it again on this device (S1-E17-02).
-  useEffect(() => {
-    if (page !== undefined && page !== null) rememberPlannedStory(page.story.slug);
-  }, [page]);
 
   // A link from outside the Atlas (?resume) opens the section the writer had open last (item 17).
   const isResuming = useResumeAtlasSection(storySlug);
