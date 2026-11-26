@@ -9,8 +9,9 @@
  *   template and starts a competition;
  * - a pupil reads the name, the dates and every criterion with its outcomes, chooses to join,
  *   can leave and join again, and never sees how many classmates joined;
- * - the teacher ends the competition, scores each entrant beside the outcomes checklist with
- *   class points as a guide only, picks one Winner, their chapter and a Finalist, and confirms;
+ * - the teacher ends the competition, scores each entry beside the outcomes checklist (one at a
+ *   time, and in the table) with class points as a guide only, saves a draft, picks one Winner,
+ *   their chapter and a Finalist, and publishes (boards G11 and G12, BOOKS-8b);
  *   nobody is ranked anywhere;
  * - the class then sees the Winner card with the Winner's pen name and chapter and the Readers'
  *   choice pen name, each entrant reads only their own result, and each is told in
@@ -20,7 +21,8 @@
  *   and a certificate typed by hand under the competition's name can't say anything else
  *   (part 3; S1-E8-17);
  * - the class page, the form, the templates page and the results page pass axe at 390, 768 and
- *   1440 px, light and night, ro and en, and no doodle is drawn.
+ *   1440 px, light and night, ro and en, and no doodle is drawn; the form and the results page
+ *   keep to the look rules by day and at night (boards G11 and G12).
  * Test data: the teacher persona starts the class with SQL; pending_check and adult_writer
  * (invited adults are fully active while adults_only is on) join it and each shares a chapter
  * with it. The journeys with teen_17 and kid_14_ok are in the bundle's closing check
@@ -30,6 +32,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { expectLookRulesByDayAndNight } from './support/lookCheck';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -205,37 +208,28 @@ async function checkScreens(browser: Browser, persona: SignInPersonaName, addres
 /** Fills the first criterion of the form. */
 async function fillFirstCriterion(page: Page) {
   const first = page.getByRole('group', { name: 'Criterion 1' });
-  await first.getByLabel('Label', { exact: true }).fill('Limbaj');
-  await first.getByLabel('Maximum points').fill('20');
+  await first.getByLabel('Name', { exact: true }).fill('Limbaj');
+  await first.getByLabel('Most points').fill('20');
   await first.getByLabel('Description', { exact: true }).fill('Cum este scris textul.');
-  await first.getByLabel('Outcome 1 of criterion 1').fill('folosește dialogul pentru personaje');
+  await first
+    .getByLabel('Outcome 1 of criterion 1', { exact: true })
+    .fill('folosește dialogul pentru personaje');
   await first.getByRole('button', { name: 'Add an outcome' }).click();
-  await first.getByLabel('Outcome 2 of criterion 1').fill('variază lungimea propozițiilor');
+  await first
+    .getByLabel('Outcome 2 of criterion 1', { exact: true })
+    .fill('variază lungimea propozițiilor');
 }
 
 /** Adds and fills the second criterion of the form. */
 async function fillSecondCriterion(page: Page) {
   await page.getByRole('button', { name: 'Add a criterion' }).click();
   const second = page.getByRole('group', { name: 'Criterion 2' });
-  await second.getByLabel('Label', { exact: true }).fill('Structură');
-  await second.getByLabel('Maximum points').fill('10');
+  await second.getByLabel('Name', { exact: true }).fill('Structură');
+  await second.getByLabel('Most points').fill('10');
   await second.getByLabel('Description', { exact: true }).fill('Cum este construită povestea.');
-  await second.getByLabel('Outcome 1 of criterion 2').fill('are început, mijloc și final');
-}
-
-/**
- * Scores one entrant on both criteria and saves.
- *
- * @param page - the teacher's results page
- * @param name - the entrant's name as the class sees it
- * @param scores - the points for Limbaj and Structură
- */
-async function scoreEntrant(page: Page, name: string, scores: [string, string]) {
-  const card = page.getByRole('form', { name });
-  await card.getByLabel('Score for Limbaj (0 to 20)').fill(scores[0]);
-  await card.getByLabel('Score for Structură (0 to 10)').fill(scores[1]);
-  await card.getByRole('button', { name: `Save scores for ${name}` }).click();
-  await expect(card.getByText('Scores saved.')).toBeVisible();
+  await second
+    .getByLabel('Outcome 1 of criterion 2', { exact: true })
+    .fill('are început, mijloc și final');
 }
 
 test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
@@ -260,17 +254,37 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     await teacher.context().close();
   });
 
+  test('the new competition form keeps to the look rules by day and at night (board G11)', async ({
+    browser,
+  }) => {
+    await expectLookRulesByDayAndNight(
+      browser,
+      'teacher',
+      `/spaces/${classSlug}/competition`,
+      (page) => expect(page.getByRole('region', { name: 'What pupils see' })).toBeVisible(),
+    );
+  });
+
   test('the teacher writes criteria, saves a template, uses it and starts a competition', async ({
     browser,
   }) => {
     const teacher = await openAs(browser, 'teacher', `/spaces/${classSlug}`);
     await teacher.getByRole('link', { name: 'Start a class competition' }).click();
-    await expect(teacher.getByRole('heading', { name: 'Start a class competition' })).toBeVisible();
+    await expect(teacher.getByRole('heading', { name: 'New class competition' })).toBeVisible();
     // The app ships no templates: the teacher's list starts empty (S1-E8-19).
     await expect(teacher.getByText('No templates yet.')).toBeVisible();
-    await teacher.getByLabel('Name', { exact: true }).fill(competitionName);
+    // "Open the competition" stays pressable and says what is missing (board G11, DoD).
+    await teacher.getByRole('button', { name: 'Open the competition' }).click();
+    await expect(teacher.getByText('Give the competition a name.')).toBeVisible();
+    await teacher.getByLabel('Name', { exact: true }).first().fill(competitionName);
+    // "What pupils see" follows what is typed (user story 8.11).
+    const preview = teacher.getByRole('region', { name: 'What pupils see' });
+    await expect(preview.getByText(competitionName)).toBeVisible();
     await fillFirstCriterion(teacher);
     await fillSecondCriterion(teacher);
+    // One criterion is open at a time; the others are a row with Edit (board G11).
+    await expect(teacher.getByText('Criterion 1: Limbaj')).toBeVisible();
+    await expect(preview.getByText('Structură')).toBeVisible();
 
     await teacher.getByLabel('Template name').fill(templateName);
     await teacher.getByRole('button', { name: 'Save as template' }).click();
@@ -283,14 +297,15 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
       .selectOption({ label: templateName });
     await teacher.getByRole('button', { name: 'Use template' }).click();
     await expect(teacher.getByText(`Criteria copied from “${templateName}”.`)).toBeVisible();
+    await teacher.getByRole('button', { name: 'Edit criterion 2' }).click();
     await expect(
-      teacher.getByRole('group', { name: 'Criterion 2' }).getByLabel('Label', { exact: true }),
+      teacher.getByRole('group', { name: 'Criterion 2' }).getByLabel('Name', { exact: true }),
     ).toHaveValue('Structură');
 
-    await teacher.getByRole('button', { name: 'Start the competition' }).click();
+    await teacher.getByRole('button', { name: 'Open the competition' }).click();
     await expect(teacher).toHaveURL(new RegExp(`/spaces/${classSlug}$`));
     await expect(teacher.getByRole('heading', { name: competitionName })).toBeVisible();
-    await expect(teacher.getByText('0 pupils joined')).toBeVisible();
+    await expect(teacher.getByText(/^0 of 2 pupils entered so far\./)).toBeVisible();
 
     // The template is on the teacher's templates page.
     await teacher.goto(`/spaces/${classSlug}/competition/templates`);
@@ -338,34 +353,62 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     browser,
   }) => {
     const teacher = await openAs(browser, 'teacher', `/spaces/${classSlug}`);
-    await expect(teacher.getByText('2 pupils joined')).toBeVisible();
+    await expect(teacher.getByText(/^2 of 2 pupils entered so far\./)).toBeVisible();
     await teacher.getByRole('button', { name: 'End the competition now' }).click();
     await teacher.getByRole('button', { name: 'End it' }).click();
     await expect(teacher.getByText('The teacher is assessing the entries.')).toBeVisible();
     await teacher.getByRole('link', { name: 'Assess the entries' }).click();
+    await expect(
+      teacher.getByRole('heading', { name: `Results: ${competitionName}` }),
+    ).toBeVisible();
+    await expect(teacher.getByText('2 entries')).toBeVisible();
 
-    const writerCard = teacher.getByRole('form', { name: writerName });
+    // One entry at a time, by name: Lia Scrie first, then pending_check (board G12).
+    await expect(teacher.getByText('Scoring 1 of 2')).toBeVisible();
+    await teacher.getByRole('button', { name: 'Next entry' }).click();
+    const writerCard = teacher.getByRole('region', {
+      name: `${writerName} · ${writerStory.title}`,
+    });
     // Class points are a guide beside the criteria, and the outcomes are a checklist.
-    await expect(writerCard.getByText('Guide: 3 class points, 0 teacher points')).toBeVisible();
-    await expect(writerCard.getByText('Începutul, in Caietul de concurs')).toBeVisible();
+    await expect(writerCard.getByText('class points 3 · teacher points 0 (a guide)')).toBeVisible();
+    await expect(writerCard.getByRole('link', { name: 'Read the entry' })).toBeVisible();
     await writerCard.getByRole('checkbox', { name: 'folosește dialogul pentru personaje' }).check();
-    await expect(writerCard.getByText('Not scored on every criterion yet.')).toBeVisible();
+    await expect(writerCard.getByText('Total – of 30')).toBeVisible();
 
     // A score above the criterion's maximum is refused in plain words.
-    await writerCard.getByLabel('Score for Limbaj (0 to 20)').fill('21');
-    await writerCard.getByRole('button', { name: `Save scores for ${writerName}` }).click();
-    await expect(writerCard.getByText('A score is a whole number from 0')).toBeVisible();
+    await writerCard.getByLabel(`Limbaj score for ${writerName}, 0 to 20`).fill('21');
+    await teacher.getByRole('button', { name: 'Save as draft' }).click();
+    await expect(teacher.getByText('A score is a whole number from 0')).toBeVisible();
 
-    await scoreEntrant(teacher, writerName, ['15', '8']);
-    await expect(writerCard.getByText('Total: 23 of 30')).toBeVisible();
-    await scoreEntrant(teacher, classmateName, ['18', '9']);
-    // No place numbers or leaderboard, and the app suggests no Winner: no radio is chosen.
+    await writerCard.getByLabel(`Limbaj score for ${writerName}, 0 to 20`).fill('15');
+    await writerCard.getByLabel(`Structură score for ${writerName}, 0 to 10`).fill('8');
+    await expect(writerCard.getByText('Total 23 of 30')).toBeVisible();
+    // The table holds the same scores, and every entry can be scored there too.
+    const table = teacher.getByRole('table', { name: 'Entries and results' });
+    const classmateRow = table.getByRole('row').filter({ hasText: classmateName });
+    await classmateRow.getByLabel(`Limbaj score for ${classmateName}, 0 to 20`).fill('18');
+    await classmateRow.getByLabel(`Structură score for ${classmateName}, 0 to 10`).fill('9');
+    await expect(classmateRow.getByText('27')).toBeVisible();
+    await teacher.getByRole('button', { name: 'Save as draft' }).click();
+    await expect(teacher.getByText('Scores saved. Nothing is published yet.')).toBeVisible();
+
+    // No place numbers or leaderboard, and the app suggests no Winner.
     await expect(teacher.getByText(/1st|#1|top three|leaderboard/i)).toHaveCount(0);
-    for (const radio of await teacher.getByRole('radio').all()) {
+    for (const radio of await teacher.getByRole('radio', { name: 'Winner' }).all()) {
       await expect(radio).not.toBeChecked();
     }
-    await expect(teacher.getByRole('button', { name: 'Confirm the results' })).toBeDisabled();
+    // "Publish results" says what is missing instead of being greyed out (DoD).
+    await teacher.getByRole('button', { name: 'Publish results' }).click();
+    await expect(teacher.getByText('Pick one Winner in the Result column.')).toBeVisible();
     await teacher.context().close();
+  });
+
+  test('the results page keeps to the look rules by day and at night (board G12)', async ({
+    browser,
+  }) => {
+    await expectLookRulesByDayAndNight(browser, 'teacher', resultsAddress(), (page) =>
+      expect(page.getByRole('table', { name: 'Entries and results' })).toBeVisible(),
+    );
   });
 
   test('axe while assessing: the class page, the results page and the templates page', async ({
@@ -384,18 +427,31 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     browser,
   }) => {
     const teacher = await openAs(browser, 'teacher', resultsAddress());
-    const winners = teacher.getByRole('group', { name: 'Winner' });
-    await winners.getByRole('radio', { name: classmateName }).check();
+    // The saved scores come back, and equal totals would be marked; these two differ.
+    await expect(teacher.getByText('Same total')).toHaveCount(0);
+    await teacher
+      .getByRole('group', { name: `Result for ${classmateName}` })
+      .getByText('Winner', { exact: true })
+      .click();
+    await expect(
+      teacher
+        .getByRole('group', { name: `Result for ${classmateName}` })
+        .getByRole('radio', { name: 'Winner' }),
+    ).toBeChecked();
     await teacher
       .getByRole('combobox', { name: 'Winning chapter shown to the class' })
       .selectOption({ label: 'Malul' });
-    const finalists = teacher.getByRole('group', { name: 'Finalists' });
-    // The Winner is not offered as a Finalist.
-    await expect(finalists.getByRole('checkbox', { name: classmateName })).toHaveCount(0);
-    await finalists.getByRole('checkbox', { name: writerName }).check();
-    await teacher.getByRole('button', { name: 'Confirm the results' }).click();
+    await teacher
+      .getByRole('group', { name: `Result for ${writerName}` })
+      .getByText('Finalist', { exact: true })
+      .click();
+    // Readers' choice follows the class points, never the teacher's scores.
+    await expect(
+      teacher.getByText(`${writerName} has the most class points and isn’t the Winner`),
+    ).toBeVisible();
+    await teacher.getByRole('button', { name: 'Publish results' }).click();
     await expect(teacher.getByText('Results can’t change after this.')).toBeVisible();
-    await teacher.getByRole('button', { name: 'Confirm', exact: true }).click();
+    await teacher.getByRole('button', { name: 'Publish', exact: true }).click();
 
     await expect(teacher.getByText('Results are confirmed and locked.')).toBeVisible();
     const table = teacher.getByRole('table', { name: 'Results by entrant' });
@@ -406,7 +462,7 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     await expect(finalistRow.getByRole('cell').nth(0)).toHaveText('Finalist, Readers’ choice');
     // Locked: no score field and no Confirm button are left.
     await expect(teacher.getByRole('textbox')).toHaveCount(0);
-    await expect(teacher.getByRole('button', { name: 'Confirm the results' })).toHaveCount(0);
+    await expect(teacher.getByRole('button', { name: 'Publish results' })).toHaveCount(0);
 
     // The teacher can start the next competition; the Winner card links to the certificates.
     await teacher.goto(`/spaces/${classSlug}`);

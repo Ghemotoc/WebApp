@@ -14,6 +14,7 @@
 import { useState } from 'react';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
+import { CrossIcon } from '@/components/icons/CrossIcon';
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
 
@@ -83,7 +84,7 @@ function OutcomeFields({ fieldId, number, criterion, onChange }: CriterionFields
               onClick={() => onChange(withoutOutcome(criterion, index))}
               className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink hover:bg-tint"
             >
-              <ActionIcon name="close" />
+              <CrossIcon size={18} />
             </button>
           )}
         </div>

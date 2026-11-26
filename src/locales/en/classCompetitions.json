@@ -20,7 +20,6 @@
     "entrants_one": "{{count}} pupil joined",
     "entrants_few": "{{count}} pupils joined",
     "entrants_other": "{{count}} pupils joined",
-    "change": "Change the competition",
     "end": "End the competition now",
     "endConfirm": "End it today? Pupils can no longer join or leave.",
     "endYes": "End it",

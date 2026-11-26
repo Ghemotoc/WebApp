@@ -20,7 +20,6 @@
     "entrants_one": "{{count}} elev înscris",
     "entrants_few": "{{count}} elevi înscriși",
     "entrants_other": "{{count}} de elevi înscriși",
-    "change": "Schimbă concursul",
     "end": "Încheie concursul acum",
     "endConfirm": "Se încheie azi? Elevii nu mai pot intra sau ieși.",
     "endYes": "Încheie",

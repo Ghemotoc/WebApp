@@ -19,10 +19,16 @@
  * gives every select, drawn covers (data-cover-design: their titles are sized
  * in cqi so they scale with the cover) and anything marked data-look-exempt with a reason in the code.
  *
- * Who uses it: the bundle specs (e2e/*.spec.ts) through expectLookRules(). What it calls:
- * Playwright's page.evaluate, so the measuring runs inside the page.
+ * Who uses it: the bundle specs (e2e/*.spec.ts) through expectLookRules(), or
+ * expectLookRulesByDayAndNight() to open a page as a persona in both themes first (BOOKS-8b).
+ * What it calls: Playwright's page.evaluate, so the measuring runs inside the page.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, test, type Browser, type Page } from '@playwright/test';
+
+import { THEME_STORAGE_KEY } from '../../src/lib/theme';
+
+import { LANGUAGE_STORAGE_KEY } from './accessibility';
+import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './personas';
 
 /** One value outside the rules: which element, which property and what it measured. */
 export interface LookIssue {
@@ -163,4 +169,41 @@ export async function expectLookRules(page: Page): Promise<void> {
   const issues = await findLookIssues(page);
   const report = issues.map((issue) => `${issue.property} ${issue.value} on ${issue.element}`);
   expect(report, 'values outside the design books look rules').toEqual([]);
+}
+
+/**
+ * Opens a page as a persona in English at 1440 px, by day and then at night, waits until it is
+ * ready and checks it against the look rules (BOOKS-8b: the teacher's class pages).
+ *
+ * @param browser - the test's browser
+ * @param persona - who looks; their profile's language must already be English
+ * @param address - the page
+ * @param waitUntilReady - waits for something the page shows once its data has loaded
+ */
+export async function expectLookRulesByDayAndNight(
+  browser: Browser,
+  persona: SignInPersonaName,
+  address: string,
+  waitUntilReady: (page: Page) => Promise<void>,
+): Promise<void> {
+  for (const theme of ['day', 'night'] as const) {
+    // Step 1: a fresh browser with the persona signed in, English and the theme chosen.
+    const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    await useSessionInBrowser(context, (await signInPersona(persona)).session);
+    await context.addInitScript(
+      ([languageKey, themeKey, chosenTheme]) => {
+        localStorage.setItem(languageKey, 'en');
+        localStorage.setItem(themeKey, chosenTheme);
+      },
+      [LANGUAGE_STORAGE_KEY, THEME_STORAGE_KEY, theme] as const,
+    );
+    // Step 2: the page, once its data is in.
+    const page = await context.newPage();
+    await page.goto(address);
+    await waitUntilReady(page);
+    await page.waitForLoadState('networkidle');
+    // Step 3: every size, weight, corner and gap against the rules.
+    await test.step(`${address}, ${theme}`, () => expectLookRules(page));
+    await context.close();
+  }
 }

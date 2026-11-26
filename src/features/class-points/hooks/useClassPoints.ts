@@ -13,14 +13,13 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import {
   ClassPointsError,
   fetchChapterClassPoints,
-  fetchClassPointsSummary,
   fetchThreadTeacherPoints,
   giveClassPoints,
   type GiveRequest,
-  setClassPoints,
   setTeacherPoints,
   type TeacherPointsRequest,
 } from '../api/classPoints';
+import { fetchClassPointsSummary, setClassPoints } from '../api/classPointsSummary';
 import {
   fetchClassPointsTable,
   type PointsReportReason,

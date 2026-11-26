@@ -19,8 +19,7 @@
  * reply's formatting toolbar (GAPS-16b: link, quote, list); Story Atlas's "Category colours"
  * (palette, CALM-9, board E25); and a landing page's steps (target, pen, book; CALM-9, board A10);
  * and Story Atlas's Delete on a note (bin, user stories bundle 6, board E31); and the Marketing
- * page's Download PNG and Download SVG (download, board E32); and the competition form's remove
- * button on a learning outcome (close, BOOKS-8b, board G11).
+ * page's Download PNG and Download SVG (download, board E32).
  */
 import type { SVGProps } from 'react';
 
@@ -47,8 +46,6 @@ const drawings = {
       <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" />
     </>
   ),
-  // Close or remove one line: a cross (BOOKS-8b, a learning outcome's remove button, board G11).
-  close: <path d="M6 6l12 12M18 6 6 18" />,
   // Write to someone: a plus (bundle G8c, "New chat" and "Write to the moderators").
   plus: (
     <>

@@ -15,7 +15,7 @@ import { Link } from 'react-router';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { LabelRows } from '@/components/ui/LabelRows';
 
-import type { ClassWeekTotals } from '../api/classPoints';
+import type { ClassWeekTotals } from '../api/classPointsSummary';
 import { useClassPointsSummary } from '../hooks/useClassPoints';
 import { useClassPointsTranslation } from '../registerClassPointsTranslations';
 

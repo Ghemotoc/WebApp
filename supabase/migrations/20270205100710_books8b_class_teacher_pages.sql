@@ -302,7 +302,7 @@ $$;
 /**
  * report_pupil_class_points: the teacher reports the class points one pupil received as odd
  *   (BOOKS-8b, board G09, user story 8.9: "Report points sends the pupil's name, the reason and
- *   the note to the ghemotoc moderators and adds a line to the class log").
+ *   the note to the moderators and adds a line to the class log").
  * Input: slug, the class's address; pupil_handle, the pupil; reason, one of 'swapped' (swapped
  *   between friends), 'not_writing' (given for something other than the writing) or 'other';
  *   note, what the teacher noticed (optional, up to 500 characters).

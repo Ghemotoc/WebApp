@@ -8,9 +8,10 @@
  * - a pupil sees "10 points to give this week", gives 2 points and a line to a classmate's
  *   chapter at its end, and the class page then says "8 of 10 left";
  * - the writer sees the points and the line on their own chapter, never who gave them;
- * - the teacher gives teacher points and a private note on the chapter and on an assignment
- *   reply, sees both numbers in the table with no rank and no giver, and reports a chapter's
- *   points as suspicious; the pupil then reads "Teacher points: 7" and the note;
+ * - the teacher gives teacher points and a private note on the chapter (the − and + stepper,
+ *   board G10) and on an assignment reply, sees both numbers and the notes in the table with no
+ *   rank and no giver, and reports a pupil's points with a reason (board G09); the pupil then
+ *   reads "Teacher points: 7" and the note;
  * - a moderator finds the report, sees who gave the points, removes the gift with a reason and
  *   closes the flag;
  * - the class page, the chapter, the table and the staff page pass axe at 390, 768 and 1440 px,
@@ -26,7 +27,7 @@ import { THEME_STORAGE_KEY } from '../src/lib/theme';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
-import { expectLookRules } from './support/lookCheck';
+import { expectLookRules, expectLookRulesByDayAndNight } from './support/lookCheck';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -141,7 +142,7 @@ async function openAs(
 function pointsSection(page: Page) {
   // The box's heading says what the reader can do there (boards G05, G06 and the teacher's).
   return page.getByRole('region', {
-    name: /^(Give class points|Points this chapter received|Class points)$/,
+    name: /^(Give class points|Points this chapter received|Class points|Teacher points)$/,
   });
 }
 
@@ -239,32 +240,44 @@ test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
   }) => {
     const teacher = await openAs(browser, 'teacher', `/s/${storySlug()}/${chapterCode()}`);
     const section = pointsSection(teacher);
-    await expect(section.getByText('2 points from classmates so far')).toBeVisible();
+    // Under the box: how many class points and notes, never who gave them (board G10).
+    await expect(teacher.getByText('2 class points from classmates and')).toBeVisible();
+    // The stepper: + raises the points one at a time, and the field takes a typed number too.
+    await section.getByRole('button', { name: 'One point more' }).click();
+    await expect(section.getByLabel('Teacher points (0 to 10)')).toHaveValue('1');
     await section.getByLabel('Teacher points (0 to 10)').fill('7');
     await section.getByLabel('Private note (optional)').fill('Dialog bun. Mai lucrează la final.');
-    await section.getByRole('button', { name: 'Save teacher points' }).click();
+    await expect(
+      section.getByText('The writer sees Teacher points: 7 and the note.'),
+    ).toBeVisible();
+    await section.getByRole('button', { name: 'Save points and note' }).click();
     await expect(section.getByText('Teacher points saved.')).toBeVisible();
 
     // An assignment reply gets teacher points too.
     await teacher.goto(`/forums/space-${classSlug}/${threadNumber}`);
     await teacher.getByRole('button', { name: 'Teacher points for reply #2' }).click();
     await teacher.getByLabel('Teacher points (0 to 10)').fill('5');
-    await teacher.getByRole('button', { name: 'Save teacher points' }).click();
+    await teacher.getByRole('button', { name: 'Save points and note' }).click();
     await expect(teacher.getByText('Teacher points saved.')).toBeVisible();
 
-    // The table: both numbers side by side, no rank, no giver.
+    // The table: both numbers side by side, the notes, no rank, no giver (board G09).
     await teacher.goto(`/spaces/${classSlug}/points`);
-    const table = teacher.getByRole('table', { name: 'Points by pupil' });
-    const writerRow = table.getByRole('row').filter({ hasText: '@pending_check' });
-    await expect(writerRow.getByRole('cell').nth(0)).toHaveText('2');
-    await expect(writerRow.getByRole('cell').nth(1)).toHaveText('12');
-    const classmateRow = table.getByRole('row').filter({ hasText: '@adult_writer' });
+    const table = teacher.getByRole('table', { name: 'Class points by pupil' });
+    const writerRow = table.getByRole('row').filter({ hasText: 'pending_check' });
+    await expect(writerRow.getByRole('cell').nth(0)).toHaveText('12');
+    await expect(writerRow.getByRole('cell').nth(1)).toContainText('2');
+    await expect(writerRow.getByRole('cell').nth(2)).toHaveText('1');
+    const classmateRow = table.getByRole('row').filter({ hasText: 'Lia Scrie' });
     await expect(classmateRow.getByText('No class points yet')).toBeVisible();
     await expect(table.getByText(/rank|#1|1st/i)).toHaveCount(0);
-    await teacher.getByRole('button', { name: /Report points as suspicious/ }).click();
-    await teacher.getByLabel('What looks wrong (optional)').fill('Toate punctele într-o zi.');
+    // A pupil's points are reported with a reason; a moderator checks who gave them.
+    await teacher.getByRole('button', { name: 'Report points: pending_check' }).click();
+    await teacher.getByRole('radio', { name: 'Swapped between friends' }).check();
+    await teacher.getByLabel('What did you notice? (optional)').fill('Toate punctele într-o zi.');
     await teacher.getByRole('button', { name: 'Send report' }).click();
-    await expect(teacher.getByText('Reported to the moderation team')).toBeVisible();
+    await expect(
+      teacher.getByText('Sent. A moderator checks the points pending_check received.'),
+    ).toBeVisible();
     await teacher.context().close();
 
     const writer = await openAs(browser, 'pending_check', `/s/${storySlug()}/${chapterCode()}`);
@@ -275,6 +288,18 @@ test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
       pointsSection(writer).getByText('Dialog bun. Mai lucrează la final.'),
     ).toBeVisible();
     await writer.context().close();
+  });
+
+  test('the teacher’s class page and points page keep to the look rules (boards G08, G09)', async ({
+    browser,
+  }) => {
+    runSql(`update public.profiles set locale = 'en' where handle = 'teacher';`);
+    await expectLookRulesByDayAndNight(browser, 'teacher', `/spaces/${classSlug}`, (page) =>
+      expect(page.getByRole('heading', { name: 'This week' })).toBeVisible(),
+    );
+    await expectLookRulesByDayAndNight(browser, 'teacher', `/spaces/${classSlug}/points`, (page) =>
+      expect(page.getByRole('table', { name: 'Class points by pupil' })).toBeVisible(),
+    );
   });
 
   test('axe: the class page, the chapter, the table and the staff page, every view', async ({
@@ -308,7 +333,7 @@ test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
     const moderator = await openAs(browser, 'moderator', '/staff/schools/points');
     const flag = moderator.getByRole('listitem').filter({ hasText: className });
     await expect(flag.getByText('Teacher’s report')).toBeVisible();
-    await expect(flag.getByText('Teacher’s note: Toate punctele într-o zi.')).toBeVisible();
+    await expect(flag.getByText(/^Teacher’s note: .*Toate punctele într-o zi\.$/)).toBeVisible();
     await flag.getByRole('button', { name: 'Show gifts' }).click();
     await expect(flag.getByRole('cell', { name: '@adult_writer', exact: true })).toBeVisible();
     await flag.getByLabel('Reason for removing (required)').fill('Puncte date la schimb.');

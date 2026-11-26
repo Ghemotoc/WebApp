@@ -10,7 +10,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
-import { setClassPoints } from '@/features/class-points/api/classPoints';
+import { setClassPoints } from '@/features/class-points/api/classPointsSummary';
 import { forumsQueryKey } from '@/features/forums/hooks/useForumIndex';
 
 import { makeClassInvite, type NewClassInvite } from '../api/classSpaces';

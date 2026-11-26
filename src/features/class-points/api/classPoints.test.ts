@@ -11,12 +11,12 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 import {
   chapterClassPointsFrom,
   classPointsErrorFrom,
-  classPointsSummaryFrom,
   fetchChapterClassPoints,
   giveClassPoints,
   setTeacherPoints,
   threadTeacherPointsFrom,
 } from './classPoints';
+import { classPointsSummaryFrom } from './classPointsSummary';
 import { classPointsTableFrom } from './classPointsTable';
 
 /**
@@ -125,8 +125,22 @@ describe('chapterClassPointsFrom', () => {
       teacher: { id: 'teacher-1', points: 7, note: 'Dialog bun.' },
     });
     // A gift with no words is left out; a note is its ID and its words and nothing else.
-    expect(points?.received).toEqual({ total: 4, notes: [{ id: 'gift-1', note: 'Bravo.' }] });
+    expect(points?.received).toEqual({
+      total: 4,
+      notes: [{ id: 'gift-1', note: 'Bravo.' }],
+      noteCount: 1,
+    });
     expect(points?.teacher).toEqual({ id: 'teacher-1', points: 7, note: 'Dialog bun.' });
+  });
+
+  it('gives the teacher only how many notes there are, never their words', () => {
+    const points = chapterClassPointsFrom({
+      class: { slug: 'clasa-a-x-a', name: 'Clasa a X-a' },
+      role: 'teacher',
+      received: { total: 4, notes: 2 },
+      teacher: { id: 'teacher-1', points: 7, note: '' },
+    });
+    expect(points?.received).toEqual({ total: 4, notes: [], noteCount: 2 });
   });
 
   it('is null when the database answers nothing or an unknown role', () => {

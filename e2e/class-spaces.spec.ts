@@ -100,7 +100,7 @@ test.describe('class spaces (CLASSES-a, S1-E8-11)', () => {
     expect(inviteLink).toMatch(/\/class\/[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/);
     await expect(card.getByText('0 of 2 places used.', { exact: false })).toBeVisible();
     // The settings form shows the class note in place of the choices about posting and joining.
-    await expect(page.getByRole('heading', { name: 'A class space' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'A class space', exact: true })).toBeVisible();
     await expect(page.getByRole('group', { name: 'Who can post' })).toHaveCount(0);
     await page.context().close();
   });

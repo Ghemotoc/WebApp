@@ -188,22 +188,35 @@ async function openAs(
 function pointsSection(page: Page) {
   // The box's heading says what the reader can do there (boards G05, G06 and the teacher's).
   return page.getByRole('region', {
-    name: /^(Give class points|Points this chapter received|Class points)$/,
+    name: /^(Give class points|Points this chapter received|Class points|Teacher points)$/,
   });
 }
 
 /**
- * Scores one entrant on the template's one criterion and saves.
+ * Scores one entrant on the template's one criterion, in the "Entries and results" table
+ * (board G12); "Save as draft" or "Publish results" saves it.
  *
  * @param page - the teacher's results page
  * @param name - the entrant's name as the class sees it
  * @param score - the points for Limbaj
  */
 async function scoreEntrant(page: Page, name: string, score: string) {
-  const card = page.getByRole('form', { name });
-  await card.getByLabel('Score for Limbaj (0 to 20)').fill(score);
-  await card.getByRole('button', { name: `Save scores for ${name}` }).click();
-  await expect(card.getByText('Scores saved.')).toBeVisible();
+  const table = page.getByRole('table', { name: 'Entries and results' });
+  await table.getByLabel(`Limbaj score for ${name}, 0 to 20`).fill(score);
+}
+
+/**
+ * Picks an entrant's result in the table's Result column.
+ *
+ * @param page - the teacher's results page
+ * @param name - the entrant's name as the class sees it
+ * @param result - Winner or Finalist
+ */
+async function pickResult(page: Page, name: string, result: 'Winner' | 'Finalist') {
+  await page
+    .getByRole('group', { name: `Result for ${name}` })
+    .getByText(result, { exact: true })
+    .click();
 }
 
 test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
@@ -315,10 +328,10 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
     const teacher = await openAs(browser, 'teacher', `/spaces/${classSlug}/competition`);
     // Step 1: write one criterion and save it as a template.
     const first = teacher.getByRole('group', { name: 'Criterion 1' });
-    await first.getByLabel('Label', { exact: true }).fill('Limbaj');
-    await first.getByLabel('Maximum points').fill('20');
+    await first.getByLabel('Name', { exact: true }).fill('Limbaj');
+    await first.getByLabel('Most points').fill('20');
     await first.getByLabel('Description', { exact: true }).fill('Cum este scris textul.');
-    await first.getByLabel('Outcome 1 of criterion 1').fill('folosește dialogul');
+    await first.getByLabel('Outcome 1 of criterion 1', { exact: true }).fill('folosește dialogul');
     await teacher.getByLabel('Template name').fill(templateName);
     await teacher.getByRole('button', { name: 'Save as template' }).click();
     await expect(teacher.getByText(`Template “${templateName}” saved.`)).toBeVisible();
@@ -326,17 +339,17 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
     // Step 2: a new form starts empty; the template fills it in.
     await teacher.reload();
     await expect(
-      teacher.getByRole('group', { name: 'Criterion 1' }).getByLabel('Label', { exact: true }),
+      teacher.getByRole('group', { name: 'Criterion 1' }).getByLabel('Name', { exact: true }),
     ).toHaveValue('');
     await teacher
       .getByRole('combobox', { name: 'Start from a template' })
       .selectOption({ label: templateName });
     await teacher.getByRole('button', { name: 'Use template' }).click();
     await expect(
-      teacher.getByRole('group', { name: 'Criterion 1' }).getByLabel('Label', { exact: true }),
+      teacher.getByRole('group', { name: 'Criterion 1' }).getByLabel('Name', { exact: true }),
     ).toHaveValue('Limbaj');
-    await teacher.getByLabel('Name', { exact: true }).fill(competitionName);
-    await teacher.getByRole('button', { name: 'Start the competition' }).click();
+    await teacher.getByLabel('Name', { exact: true }).first().fill(competitionName);
+    await teacher.getByRole('button', { name: 'Open the competition' }).click();
     await expect(teacher.getByRole('heading', { name: competitionName })).toBeVisible();
     await teacher.context().close();
   });
@@ -356,28 +369,24 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
 
     // Step 2: the teacher ends it and scores each entrant.
     const teacher = await openAs(browser, 'teacher', `/spaces/${classSlug}`);
-    await expect(teacher.getByText('3 pupils joined')).toBeVisible();
+    await expect(teacher.getByText(/^3 of \d+ pupils entered so far\./)).toBeVisible();
     await teacher.getByRole('button', { name: 'End the competition now' }).click();
     await teacher.getByRole('button', { name: 'End it' }).click();
     await teacher.getByRole('link', { name: 'Assess the entries' }).click();
     await scoreEntrant(teacher, kidName, '19');
     await scoreEntrant(teacher, teenName, '16');
     await scoreEntrant(teacher, adultName, '12');
+    await teacher.getByRole('button', { name: 'Save as draft' }).click();
+    await expect(teacher.getByText('Scores saved. Nothing is published yet.')).toBeVisible();
 
     // Step 3: one Winner, their chapter and one Finalist; the third pupil stays a Contestant.
-    await teacher
-      .getByRole('group', { name: 'Winner' })
-      .getByRole('radio', { name: kidName })
-      .check();
+    await pickResult(teacher, kidName, 'Winner');
     await teacher
       .getByRole('combobox', { name: 'Winning chapter shown to the class' })
       .selectOption({ label: 'Scara' });
-    await teacher
-      .getByRole('group', { name: 'Finalists' })
-      .getByRole('checkbox', { name: teenName })
-      .check();
-    await teacher.getByRole('button', { name: 'Confirm the results' }).click();
-    await teacher.getByRole('button', { name: 'Confirm', exact: true }).click();
+    await pickResult(teacher, teenName, 'Finalist');
+    await teacher.getByRole('button', { name: 'Publish results' }).click();
+    await teacher.getByRole('button', { name: 'Publish', exact: true }).click();
     await expect(teacher.getByText('Results are confirmed and locked.')).toBeVisible();
     await teacher.context().close();
   });

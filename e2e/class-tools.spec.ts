@@ -3,15 +3,18 @@
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - a teacher with the badge picks "Class space" on the new space form and lands in a private
- *   class with "How a class space starts" beside its threads (criterion 1);
+ * - a teacher with the badge picks "Class space" on the new space form, gets the class form
+ *   (name, grade, school; board G07, BOOKS-8b), which names what is missing, and lands in a
+ *   private class with its first code; "How a class space starts" is in the class settings
+ *   (criterion 1);
  * - a student types the teacher's code on Forums › Join a class and is shown the class
  *   (criterion 5);
  * - the teacher sees who is waiting to read and why, never their age (criterion 5);
  * - the class has a lock date at the end of the school year; "Lock the space now" stops posting
  *   for everyone while members still read, and "Unlock the space" brings posting back;
  * - the new space form, the code form, the class settings and a locked class pass axe at 390, 768
- *   and 1440 px, light and night, ro and en, and no doodle is drawn.
+ *   and 1440 px, light and night, ro and en, and no doodle is drawn; the class form keeps to the
+ *   look rules by day and at night (board G07).
  * Test data: the teacher persona (with the Teacher badge) makes the class in the browser.
  * pending_check is the student who can read (an invited adult is active while adults_only is on);
  * kid_14_waiting is the one who waits. Codes come from make_class_invite() as the teacher. The
@@ -21,6 +24,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { expectLookRulesByDayAndNight } from './support/lookCheck';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -91,19 +95,42 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
 
   test('a teacher starts a class space from the new space form', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', '/spaces/new');
-    await page.getByRole('radio', { name: 'Class space' }).check();
+    // Picking "Class space" opens the class form in its place (board G07).
+    await page.getByRole('radio', { name: 'Class space' }).click();
+    await expect(page).toHaveURL(/\/spaces\/new\?kind=class$/);
+    await expect(page.getByRole('heading', { name: 'Create a class space' })).toBeVisible();
     await expect(page.getByRole('group', { name: 'Who can post' })).toHaveCount(0);
-    await page.getByLabel('Name').fill(className);
+    // "Create the class" stays pressable and names what is missing, focusing it (DoD).
+    await page.getByRole('button', { name: 'Create the class' }).click();
+    await expect(page.getByText('Give the class a name.')).toBeVisible();
+    await expect(page.getByLabel('Class name')).toBeFocused();
+    await page.getByLabel('Class name').fill(className);
+    await page.getByRole('button', { name: 'Create the class' }).click();
+    await expect(page.getByText('Choose the class’s grade.')).toBeVisible();
+    await page.getByRole('combobox', { name: 'Grade' }).selectOption('9');
+    await page.getByLabel('School', { exact: true }).fill('Liceul Teoretic Ploiești');
     await page.getByLabel('Description').fill('Cercul de lectură al clasei.');
-    await page.getByRole('button', { name: 'Create the class space' }).click();
+    await page.getByRole('button', { name: 'Create the class' }).click();
     await expect(page).toHaveURL(new RegExp(`${classAddress}$`));
     await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();
+    // The class's first code is shown straight away, and the facts say the grade (board G08).
+    await expect(page.getByText('The class is ready. Share its code')).toBeVisible();
+    await expect(page.getByText('grade 9')).toBeVisible();
+    await page.goto(`${classAddress}/settings`);
     await expect(page.getByRole('heading', { name: 'How a class space starts' })).toBeVisible();
     // The lock moment (the start of 1 July, Romanian time) shows on the browser's own clock, with
     // its time (CALM-7d), so the day depends on where the browser is.
-    await expect(page.getByText(/It locks on .+ \d{4} at \d{2}:\d{2}\./)).toBeVisible();
+    await expect(page.getByText(/It locks on .+ \d{4} at \d{2}:\d{2}\./).first()).toBeVisible();
     await page.context().close();
     code = makeCode();
+  });
+
+  test('the class form keeps to the look rules by day and at night (board G07)', async ({
+    browser,
+  }) => {
+    await expectLookRulesByDayAndNight(browser, 'teacher', '/spaces/new?kind=class', (page) =>
+      expect(page.getByRole('heading', { name: 'What the grade changes' })).toBeVisible(),
+    );
   });
 
   test('a student types the code on Join a class', async ({ browser }) => {
@@ -136,7 +163,7 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     await expect(createLink).toHaveAttribute('href', '/spaces/new?kind=class');
     await createLink.click();
     await expect(page).toHaveURL(/\/spaces\/new\?kind=class$/);
-    await expect(page.getByRole('radio', { name: 'Class space' })).toBeChecked();
+    await expect(page.getByRole('heading', { name: 'Create a class space' })).toBeVisible();
     await page.context().close();
   });
 
