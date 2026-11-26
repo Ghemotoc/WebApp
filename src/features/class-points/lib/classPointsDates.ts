@@ -39,3 +39,20 @@ export function lastDayBefore(resetsOn: string): string {
   moment.setUTCDate(moment.getUTCDate() - 1);
   return moment.toISOString().slice(0, 10);
 }
+
+/**
+ * A calendar day as its weekday alone ("Monday"), for "new points on Monday" (board G03).
+ *
+ * @param day - the day as YYYY-MM-DD
+ * @param language - the interface language
+ * @returns the weekday in that language, or the day as given when it can't be read
+ */
+export function weekdayText(day: string, language: string): string {
+  // Noon UTC keeps the same calendar day in every time zone a reader may be in.
+  const moment = new Date(`${day}T12:00:00Z`);
+  if (Number.isNaN(moment.getTime())) return day;
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
+    weekday: 'long',
+    timeZone: 'UTC',
+  }).format(moment);
+}

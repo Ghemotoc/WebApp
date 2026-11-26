@@ -6,7 +6,9 @@
  * - a student shares their story with their class from Story settings › "Share with a class";
  * - the teacher then finds it on the class page under "Stories shared with the class" and on its
  *   See all page, while an adult outside the class can't open the story at all;
- * - the student makes it public again, and the outsider reads it;
+ * - the Stories tab counts it; on the stories page (board G04) the teacher has no "Make public",
+ *   the student makes it public there and shares it again with "Share a story";
+ * - the student makes it public again from Story settings, and the outsider reads it;
  * - Story settings with the card, the class page with the shelf and the See all page pass axe at
  *   390, 768 and 1440 px, light and night, ro and en, and no doodle is drawn.
  * Test data: the teacher persona starts the class and makes a code with SQL; pending_check (an
@@ -135,11 +137,16 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
       teacher.getByRole('heading', { name: 'Stories shared with the class' }),
     ).toBeVisible();
     await expect(teacher.getByRole('link', { name: new RegExp(storyTitle) })).toBeVisible();
-    await teacher.goto(`/spaces/${classSlug}/stories`);
+    // Board G04: the Stories tab counts them and opens the list.
+    await teacher.getByRole('link', { name: 'Stories 1' }).click();
+    await expect(teacher).toHaveURL(new RegExp(`/spaces/${classSlug}/stories$`));
     await expect(
       teacher.getByRole('heading', { level: 1, name: 'Stories shared with the class' }),
     ).toBeVisible();
+    await expect(teacher.getByText('1 story', { exact: true })).toBeVisible();
     await expect(teacher.getByRole('link', { name: new RegExp(storyTitle) })).toBeVisible();
+    // A teacher can never make a pupil's story public (S1-E8-11).
+    await expect(teacher.getByRole('button', { name: /public/ })).toHaveCount(0);
     await teacher.context().close();
 
     const outsider = await openAs(browser, 'adult_writer', `/s/${storySlug()}`);
@@ -169,6 +176,24 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
       await expectNoDoodles(writerPage);
     }
     await writerContext.close();
+  });
+
+  test('on the stories page the student makes it public, then shares it from the class page', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'pending_check', `/spaces/${classSlug}/stories`);
+    const list = page.getByRole('list', { name: 'Stories shared with the class' });
+    await list.getByRole('button', { name: `Make public: ${storyTitle}` }).click();
+    await expect(
+      page.getByText('No stories shared yet. Share one, or wait for homework.'),
+    ).toBeVisible();
+
+    // "Share a story" (boards G03 and G04) puts it back in the class.
+    await page.getByRole('button', { name: 'Share a story' }).click();
+    await page.getByLabel('Story to share').selectOption({ label: storyTitle });
+    await page.getByRole('button', { name: 'Share only with this class' }).click();
+    await expect(list.getByRole('link', { name: new RegExp(storyTitle) })).toBeVisible();
+    await page.context().close();
   });
 
   test('the student makes it public again, and the outsider reads it', async ({ browser }) => {

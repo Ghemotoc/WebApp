@@ -19,14 +19,17 @@ who gave points. Nothing in `api/classPoints.ts` carries a giver, so no screen c
 - `hooks/useClassPoints.ts` and `hooks/useClassPointsStaff.ts`: the reads and changes. After a
   change every class points read is fetched again, so the class page, the chapter and the table
   agree.
-- `lib/classPointsDates.ts`: the day a week ends, in words; `lib/sortPupils.ts`: the teacher's
+- `lib/classPointsDates.ts`: the day a week ends, in words, and its weekday alone; `lib/sortPupils.ts`: the teacher's
   table by name or by either number (never a rank).
-- On a class page: `ClassPointsCard` ("7 of 10 points left", the points received and, for the
-  teacher, the link to the table). In the class's settings: `ClassPointsSettingsCard` (the
+- On a class page: `ClassPointsCard` (board G03, BOOKS-8: a meter and "7 of 10 left", the
+  chapters the pupil gave points to this week with Move, from `class_points_summary()`'s `given`;
+  for the teacher, the link to the table). In the class's settings: `ClassPointsSettingsCard` (the
   switch).
 - At the end of a chapter shared with the class: `ChapterClassPointsWhenNear` fetches
-  `ChapterClassPoints` once the reader is near it. A classmate gets `GivePointsForm`, the writer
-  `ReceivedPoints` (with a Report button on each line and on the teacher's note), the teacher
+  `ChapterClassPoints` once the reader is near it. A classmate gets "Give class points" with
+  `GivePointsForm` and "How class points work" (BOOKS-8, board G05), the writer "Points this
+  chapter received" with `ReceivedPoints` (two figures, `TeacherNoteCard` and the classmates'
+  notes, each with a Report button) and "About these points" (board G06), the teacher
   `TeacherPointsForm`.
 - Under a pupil's reply in a class thread: `ReplyTeacherPoints` (the teacher's form, or
   `TeacherPointsShown` for the pupil who wrote the reply).

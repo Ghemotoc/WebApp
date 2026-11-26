@@ -6,7 +6,7 @@
  * What it proves:
  * - class points are off until the teacher turns them on in the class's settings;
  * - a pupil sees "10 points to give this week", gives 2 points and a line to a classmate's
- *   chapter at its end, and the class page then says "8 of 10 points left";
+ *   chapter at its end, and the class page then says "8 of 10 left";
  * - the writer sees the points and the line on their own chapter, never who gave them;
  * - the teacher gives teacher points and a private note on the chapter and on an assignment
  *   reply, sees both numbers in the table with no rank and no giver, and reports a chapter's
@@ -22,8 +22,11 @@
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
+import { THEME_STORAGE_KEY } from '../src/lib/theme';
+
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { expectLookRules } from './support/lookCheck';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -136,7 +139,10 @@ async function openAs(
 
 /** The class points section at the end of a chapter. */
 function pointsSection(page: Page) {
-  return page.getByRole('region', { name: 'Class points' });
+  // The box's heading says what the reader can do there (boards G05, G06 and the teacher's).
+  return page.getByRole('region', {
+    name: /^(Give class points|Points this chapter received|Class points)$/,
+  });
 }
 
 test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
@@ -165,7 +171,7 @@ test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
   test('a pupil gives 2 points and a line to a classmate’s chapter', async ({ browser }) => {
     const pupil = await openAs(browser, 'adult_writer', `/spaces/${classSlug}`);
     await expect(pupil.getByRole('heading', { name: '10 points to give this week' })).toBeVisible();
-    await expect(pupil.getByText('10 of 10 points left')).toBeVisible();
+    await expect(pupil.getByText('10 of 10 left')).toBeVisible();
 
     await pupil.goto(`/s/${storySlug()}/${chapterCode()}`);
     const section = pointsSection(pupil);
@@ -173,24 +179,58 @@ test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
     // A classmate never sees a counter of what others gave (criterion 8).
     await expect(section.getByText('from classmates')).toHaveCount(0);
     await section.getByRole('radio', { name: '2 points' }).click();
-    await section.getByLabel('A line for the writer (optional)').fill('Mi-a plăcut finalul.');
-    await section.getByRole('button', { name: 'Give points' }).click();
+    await section.getByLabel('What worked (optional)').fill('Mi-a plăcut finalul.');
+    await section.getByRole('button', { name: 'Give 2 points' }).click();
     await expect(section.getByText('Saved. This chapter has 2 points')).toBeVisible();
 
     await pupil.goto(`/spaces/${classSlug}`);
-    await expect(pupil.getByText('8 of 10 points left')).toBeVisible();
+    await expect(pupil.getByText('8 of 10 left')).toBeVisible();
+    // Board G03: the box lists what was given this week, with Move back to the chapter.
+    await expect(pupil.getByRole('heading', { name: 'Given this week' })).toBeVisible();
+    await expect(pupil.getByRole('link', { name: storyTitle, exact: true })).toBeVisible();
+    await expect(pupil.getByText('2 points', { exact: true })).toBeVisible();
+    await expect(
+      pupil.getByRole('link', { name: `Move the points given to ${storyTitle}` }),
+    ).toHaveAttribute('href', new RegExp(`/s/${storySlug()}/`));
     await pupil.context().close();
+  });
+
+  test('the class page keeps to the look rules by day and at night (board G03)', async ({
+    browser,
+  }) => {
+    for (const theme of ['day', 'night'] as const) {
+      runSql(`update public.profiles set locale = 'en' where handle = 'adult_writer';`);
+      const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+      await useSessionInBrowser(context, (await signInPersona('adult_writer')).session);
+      await context.addInitScript(
+        ([languageKey, themeKey, chosenTheme]) => {
+          localStorage.setItem(languageKey, 'en');
+          localStorage.setItem(themeKey, chosenTheme);
+        },
+        [LANGUAGE_STORAGE_KEY, THEME_STORAGE_KEY, theme] as const,
+      );
+      const pupil = await context.newPage();
+      await pupil.goto(`/spaces/${classSlug}`);
+      await expect(pupil.getByText('8 of 10 left')).toBeVisible();
+      await pupil.waitForLoadState('networkidle');
+      await test.step(theme, () => expectLookRules(pupil));
+      await context.close();
+    }
   });
 
   test('the writer sees the points and the line, never who gave them', async ({ browser }) => {
     const writer = await openAs(browser, 'pending_check', `/s/${storySlug()}/${chapterCode()}`);
     const section = pointsSection(writer);
-    await expect(section.getByText('2 points from classmates')).toBeVisible();
+    // Board G06: the figure, not a sentence; no name beside the note.
+    await expect(
+      section.getByRole('heading', { name: 'Points this chapter received' }),
+    ).toBeVisible();
+    await expect(section.getByRole('group', { name: 'Class points' })).toContainText('2');
     await expect(section.getByText('Mi-a plăcut finalul.')).toBeVisible();
     await expect(section.getByText('adult_writer')).toHaveCount(0);
     await expect(section.getByRole('button', { name: /Report/ })).toBeVisible();
     // Their own chapter offers no give control.
-    await expect(section.getByRole('button', { name: 'Give points' })).toHaveCount(0);
+    await expect(section.getByRole('button', { name: /^Give/ })).toHaveCount(0);
     await writer.context().close();
   });
 
@@ -228,7 +268,9 @@ test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
     await teacher.context().close();
 
     const writer = await openAs(browser, 'pending_check', `/s/${storySlug()}/${chapterCode()}`);
-    await expect(pointsSection(writer).getByText('Teacher points: 7')).toBeVisible();
+    const teacherFigure = pointsSection(writer).getByRole('group', { name: 'Teacher points' });
+    await expect(teacherFigure).toContainText('7');
+    await expect(teacherFigure).toContainText('out of 10');
     await expect(
       pointsSection(writer).getByText('Dialog bun. Mai lucrează la final.'),
     ).toBeVisible();
@@ -278,10 +320,12 @@ test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
 
     // The giver has the points back while the week is open, and the writer's total dropped.
     const pupil = await openAs(browser, 'adult_writer', `/spaces/${classSlug}`);
-    await expect(pupil.getByText('10 of 10 points left')).toBeVisible();
+    await expect(pupil.getByText('10 of 10 left')).toBeVisible();
     await pupil.context().close();
     const writer = await openAs(browser, 'pending_check', `/s/${storySlug()}/${chapterCode()}`);
-    await expect(pointsSection(writer).getByText('No points from classmates yet.')).toBeVisible();
+    await expect(pointsSection(writer).getByRole('group', { name: 'Class points' })).toContainText(
+      '0',
+    );
     await writer.context().close();
   });
 });

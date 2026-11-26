@@ -1,21 +1,25 @@
 /**
  * GivePointsForm: a pupil gives this week's points to a classmate's chapter (bundle CLASS-POINTS,
- * part 1; story S1-E8-13).
+ * part 1; story S1-E8-13; bundle BOOKS-8, board G05-ClassGive, user story 8.5).
  *
- * What it shows: "None", 1, 2 and 3 as chips (never more than the weekly cap for one chapter, and
- * a choice the pupil can't afford this week is greyed out), "7 of 10 points left this week", one
- * optional line for the writer, and the button. Points can move until the week ends, so the same
- * form changes or takes back what was given. No counter of what classmates gave ever shows here
- * (criterion 8).
+ * What it shows (board G05): "Points" with 1, 2 and 3 as chips (never more than the weekly cap
+ * for one chapter, and a choice the pupil can't afford this week is greyed out), "What worked
+ * (optional)" with a count of the characters used, then "7 of 10 left · points can move until
+ * Sunday" and "Give 2 points". Points can move until the week ends, so once the pupil gave some
+ * a "None" chip takes them back. Nothing is picked at first; pressing the button then says to pick
+ * (DoD: a member form never greys out its button). No counter of what classmates gave ever shows
+ * here (criterion 8).
  * Who shows it: ChapterClassPoints, for a classmate. What it calls: useGiveClassPoints →
  * give_class_points(). The database checks the cap, the budget and that the chapter was opened.
  */
+import type { TFunction } from 'i18next';
 import { type FormEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { ChoiceChips, type ChoiceOption } from '@/components/ui/ChoiceChips';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 import type { ChapterGiving } from '../api/classPoints';
 import { useGiveClassPoints } from '../hooks/useClassPoints';
@@ -28,8 +32,11 @@ export interface GivePointsFormProps {
   giving: ChapterGiving;
 }
 
+/** The chips' value while nothing is picked. */
+const nothingPicked = '';
+
 /**
- * The chips: "None", then 1 point up to the cap for one chapter.
+ * The chips: "None" once something was given, then 1 point up to the cap for one chapter.
  *
  * @param giving - what the pupil may give
  * @param noneLabel - the words for zero
@@ -43,7 +50,9 @@ function giveOptions(
 ): ChoiceOption[] {
   // What the pupil could give this chapter: what is left this week plus what it already has.
   const affordable = giving.left + giving.given;
-  const options: ChoiceOption[] = [{ value: '0', label: noneLabel }];
+  const options: ChoiceOption[] = [];
+  // Zero only takes points back, so it shows only when there is something to take back.
+  if (giving.given > 0) options.push({ value: '0', label: noneLabel });
   for (let amount = 1; amount <= giving.cap; amount += 1) {
     options.push({
       value: String(amount),
@@ -55,16 +64,99 @@ function giveOptions(
 }
 
 /**
+ * The button's words for the points picked.
+ *
+ * @param points - the points picked, or null when nothing is
+ * @param translate - the class points t()
+ * @returns "Give 2 points", "Take the points back" or "Give points"
+ */
+function buttonText(points: number | null, translate: TFunction<'classPoints'>): string {
+  if (points === null) return translate('chapter.give.giveAny');
+  if (points === 0) return translate('chapter.give.takeBack');
+  return translate('chapter.give.give', { count: points });
+}
+
+/**
+ * The line with what is left and until when, then the button.
+ *
+ * @param props.giving - what the pupil may give
+ * @param props.points - the points picked, or null
+ * @param props.isRunning - whether a save is on its way
+ * @returns the row
+ */
+function GiveFooter({
+  giving,
+  points,
+  isRunning,
+}: {
+  giving: ChapterGiving;
+  points: number | null;
+  isRunning: boolean;
+}) {
+  const { t, i18n } = useClassPointsTranslation();
+  return (
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+      {/* The meta-line class draws MetaLine's look; the component itself would add one more file
+          to the chapter reader's preload list (bundle budget). */}
+      <ul className="meta-line">
+        <li className="font-semibold text-ink">
+          {t('chapter.give.left', { count: giving.budget, left: giving.left })}
+        </li>
+        <li>
+          {t('chapter.give.until', {
+            date: dayText(lastDayBefore(giving.resetsOn), i18n.language),
+          })}
+        </li>
+      </ul>
+      <Button type="submit" disabled={isRunning}>
+        {buttonText(points, t)}
+      </Button>
+    </div>
+  );
+}
+
+/**
+ * What happened after the button: the failure, or "Saved" / "Points taken back".
+ *
+ * @param props.failure - the failure's code, or null
+ * @param props.savedPoints - the points just saved, or null before any save
+ * @returns the live region
+ */
+function SaveResult({
+  failure,
+  savedPoints,
+}: {
+  failure: string | null;
+  savedPoints: number | null;
+}) {
+  const { t } = useClassPointsTranslation();
+  return (
+    <div aria-live="polite">
+      {failure !== null && <Notice tone="error">{t(`failures.${failure}`)}</Notice>}
+      {savedPoints !== null && failure === null && (
+        <Notice tone="success">
+          {savedPoints === 0
+            ? t('chapter.give.takenBack')
+            : t('chapter.give.saved', { count: savedPoints })}
+        </Notice>
+      )}
+    </div>
+  );
+}
+
+/**
  * Renders the form.
  *
- * @returns the chips, the note field, the button and what happened
+ * @returns the chips, the note field, the line with what is left, the button and what happened
  */
 export function GivePointsForm({ chapterId, giving }: GivePointsFormProps) {
-  const { t, i18n } = useClassPointsTranslation();
+  const { t } = useClassPointsTranslation();
   const giver = useGiveClassPoints(chapterId);
-  const [points, setPoints] = useState(giving.given);
+  const [points, setPoints] = useState<number | null>(giving.given > 0 ? giving.given : null);
   const [note, setNote] = useState(giving.note ?? '');
   const [savedPoints, setSavedPoints] = useState<number | null>(null);
+  const choiceId = `class-points-choice-${chapterId}`;
+  const missing = useMissingField(points === null, choiceId);
 
   const options = giveOptions(giving, t('chapter.give.none'), (count) =>
     t('chapter.give.points', { count }),
@@ -77,52 +169,46 @@ export function GivePointsForm({ chapterId, giving }: GivePointsFormProps) {
    */
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // Step 1: show the result straight away.
+    // Step 1: nothing picked yet: say so beside the chips and stop.
+    if (!missing.isReadyToSend() || points === null) return;
+    // Step 2: show the result straight away.
     setSavedPoints(points);
-    // Step 2: send it; a refusal takes the note back and the failure note explains why.
+    // Step 3: send it; a refusal takes the note back and the failure note explains why.
     const saved = await giver.give({ points, note }).catch(() => null);
     if (saved === null) setSavedPoints(null);
   }
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={save}>
-      <ChoiceChips
-        label={t('chapter.give.label')}
-        options={options}
-        value={String(points)}
-        onChange={(value) => setPoints(Number(value))}
-      />
-      <p className="m-0 type-body text-ink-muted">
-        {t('chapter.give.left', { count: giving.budget, left: giving.left })}{' '}
-        {t('chapter.give.resets', {
-          date: dayText(lastDayBefore(giving.resetsOn), i18n.language),
-        })}
-      </p>
-      {points > 0 && (
-        <TextInput
-          id={`class-point-note-${chapterId}`}
-          label={t('chapter.give.noteLabel')}
-          hint={t('chapter.give.noteHint', { max: giving.noteMax })}
-          value={note}
-          maxLength={giving.noteMax}
-          onChange={(event) => setNote(event.target.value)}
+    <form className="flex flex-col gap-4" onSubmit={save} noValidate>
+      <div id={choiceId} tabIndex={-1} className="outline-none">
+        <ChoiceChips
+          label={t('chapter.give.label')}
+          isLabelVisible
+          options={options}
+          value={points === null ? nothingPicked : String(points)}
+          onChange={(value) => setPoints(Number(value))}
+          descriptionId={`${choiceId}-problem`}
+          description={
+            missing.isShown && points === null ? (
+              <span className="text-destructive">{t('chapter.give.pickFirst')}</span>
+            ) : undefined
+          }
         />
-      )}
-      <Button type="submit" className="self-start" disabled={giver.isRunning}>
-        {giving.given > 0 ? t('chapter.give.change') : t('chapter.give.save')}
-      </Button>
-      <div aria-live="polite">
-        {giver.failure !== null && (
-          <Notice tone="error">{t(`failures.${giver.failure.failure}`)}</Notice>
-        )}
-        {savedPoints !== null && giver.failure === null && (
-          <Notice tone="success">
-            {savedPoints === 0
-              ? t('chapter.give.takenBack')
-              : t('chapter.give.saved', { count: savedPoints })}
-          </Notice>
-        )}
       </div>
+      {points !== 0 && (
+        <div className="w-full max-w-[480px]">
+          <TextInput
+            id={`class-point-note-${chapterId}`}
+            label={t('chapter.give.noteLabel')}
+            hint={t('chapter.give.noteHint', { max: giving.noteMax, used: note.length })}
+            value={note}
+            maxLength={giving.noteMax}
+            onChange={(event) => setNote(event.target.value)}
+          />
+        </div>
+      )}
+      <GiveFooter giving={giving} points={points} isRunning={giver.isRunning} />
+      <SaveResult failure={giver.failure?.failure ?? null} savedPoints={savedPoints} />
     </form>
   );
 }

@@ -12,7 +12,7 @@
  * useMyTeacherCheck → my_teacher_check(); useCreateClassSpace → create_class_space().
  */
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
@@ -89,7 +89,11 @@ function NewSpaceForm({ ageGroup, isTeacher }: { ageGroup: SpaceAgeGroup; isTeac
   const navigate = useNavigate();
   const creating = useCreateSpace();
   const creatingClass = useCreateClassSpace();
-  const [kind, setKind] = useState<SpaceKind>('open');
+  // Step 1: "Join a class" links teachers here with ?kind=class (board G01), so the class is
+  // already chosen; anyone without the badge still gets an open space.
+  const [searchParams] = useSearchParams();
+  const askedForClass = isTeacher && searchParams.get('kind') === 'class';
+  const [kind, setKind] = useState<SpaceKind>(askedForClass ? 'class' : 'open');
   const isClass = kind === 'class';
   const running = isClass ? creatingClass : creating;
 
