@@ -3,8 +3,9 @@
  * pen name (story S1-E3-01; S1-E3-13 reuses it for automatic covers).
  *
  * The rules (DoD design rules, covers; decided 16 Oct 2026):
- *   - The full title is always shown: it wraps on spaces and its size steps down with its
- *     length (src/lib/cover-title.ts), never an ellipsis or clipping.
+ *   - The full title is always shown: it wraps on spaces and keeps its look's one size, shrinking
+ *     only when it would run past its room (src/lib/cover-title.ts; Robert, 26 Nov 2026), never
+ *     an ellipsis or clipping.
  *   - The title is real text; the artwork behind it is decorative and hidden from screen readers.
  *   - Dark or light title text is chosen so it always reaches 4.5:1 on its surface.
  *   - On a patterned design the words sit on a solid box, so no line crosses them (FIXES-1b;
