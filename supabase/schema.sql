@@ -20884,6 +20884,26 @@ COMMENT ON FUNCTION "public"."close_unused_accounts"() IS 'Nightly: emails yearl
 
 
 
+CREATE OR REPLACE FUNCTION "public"."closed_market_age_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer DEFAULT NULL::integer, "region_code" "text" DEFAULT ''::"text") RETURNS "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- Step 1: the country's ages (S1-E2-22, MARKETS-1) still apply to an invited person.
+  select case
+    when public.age_rule_outcome(birth_year, birth_month, country_code, coalesce(region_code, ''))
+      in ('blocked', 'under_minimum') then 'under_market_age'
+    else 'ok'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."closed_market_age_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer, "region_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."closed_market_age_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer, "region_code" "text") IS 'Internal: ok or under_market_age from the country''s age rule, for an invite from a closed market (INVITE-MARKET).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."cms_band_problems"("band" "jsonb", "field_prefix" "text", "has_points" boolean) RETURNS "text"[]
     LANGUAGE "plpgsql" IMMUTABLE
     SET "search_path" TO ''
@@ -23017,6 +23037,7 @@ declare
   chosen_handle text;
   outcome text;
   waits_for_market boolean := false;
+  invite_skips_market boolean := false;
 begin
   -- Step 1: the year (and month) of birth, and the product's own age rules (S1-E2-02).
   birth_year := public.sign_up_birth_year(sign_up_data);
@@ -23027,9 +23048,15 @@ begin
   end if;
 
   -- Step 2: the country: the person's own answer, else the connection's (S1-E2-10), and its rules.
-  -- MARKETS-2b: a closed or unknown market waits on the list while it is on.
+  -- INVITE-MARKET (Robert, 26 Nov 2026): a working invite lets the person in from a country that
+  -- isn't open yet; the country's own age rule still applies. Otherwise (MARKETS-2b) a closed or
+  -- unknown market waits on the list while it is on.
   country := coalesce(place ->> 'country', public.verified_signup_country(sign_up_data ->> 'signup_context'));
   outcome := public.sign_up_market_outcome(country, birth_year, birth_month, place ->> 'region');
+  if outcome = 'market_closed' and public.invite_opens_closed_market(sign_up_data ->> 'invite_code') then
+    invite_skips_market := true;
+    outcome := public.closed_market_age_outcome(country, birth_year, birth_month, place ->> 'region');
+  end if;
   if outcome = 'market_closed' and public.is_feature_enabled('waitlist') then
     waits_for_market := true;
   elsif outcome <> 'ok' then
@@ -23056,13 +23083,14 @@ begin
 
   -- Step 5: the waiting list (WAITLIST-1), else the invite while the test is invite only
   -- (S1-E11-17), after the profile so the invite's audit row can name the new account. A class
-  -- link counts too, and joins the class (IDEAS-3c). MARKETS-2b: from a closed market a code
-  -- doesn't skip the queue, so the code is left unused for someone it can let in.
+  -- link counts too, and joins the class (IDEAS-3c). MARKETS-2b: without a working invite, from a
+  -- closed market a code doesn't skip the queue. INVITE-MARKET: a working invite that let the
+  -- person in from a closed market is always used, so it takes one of its places.
   if waits_for_market then
     perform public.join_waitlist_at_sign_up(new_user_id, sign_up_data - 'invite_code');
   elsif public.is_feature_enabled('waitlist') then
     perform public.join_waitlist_at_sign_up(new_user_id, sign_up_data);
-  elsif public.is_feature_enabled('invite_only') then
+  elsif public.is_feature_enabled('invite_only') or invite_skips_market then
     perform public.use_sign_up_invite(sign_up_data ->> 'invite_code', new_user_id);
   end if;
 
@@ -23080,7 +23108,7 @@ $$;
 ALTER FUNCTION "public"."create_profile_from_sign_up"("new_user_id" "uuid", "sign_up_data" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."create_profile_from_sign_up"("new_user_id" "uuid", "sign_up_data" "jsonb") IS 'Internal: the sign-up rules and the new profile and consents, then the scrambled IP and the returning-user check (S1-E2-01, 02, 04, 10, S1-E11-17; shared since S1-E2-09; ADMIN-2 part f2; class codes IDEAS-3c).';
+COMMENT ON FUNCTION "public"."create_profile_from_sign_up"("new_user_id" "uuid", "sign_up_data" "jsonb") IS 'Internal: the sign-up rules and the new profile and consents, then the scrambled IP and the returning-user check (S1-E2-01, 02, 04, 10, S1-E11-17; shared since S1-E2-09; ADMIN-2 part f2; class codes IDEAS-3c; an invite lets in from a closed market, INVITE-MARKET).';
 
 
 
@@ -29515,6 +29543,22 @@ ALTER FUNCTION "public"."invite_new_adults_to_age_check"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."invite_new_adults_to_age_check"() IS 'Daily: invites new adults holding only "13 or over" to an "18 or over" check (S1-E2-08b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."invite_opens_closed_market"("code" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- No code, no way past the closed market; otherwise the same answer the sign-up page shows.
+  select coalesce(nullif(btrim(code), '') is not null and public.check_invite(code) = 'valid', false);
+$$;
+
+
+ALTER FUNCTION "public"."invite_opens_closed_market"("code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."invite_opens_closed_market"("code" "text") IS 'Internal: whether a code is a working invite that lets someone in from a country not open yet (INVITE-MARKET).';
 
 
 
@@ -73164,6 +73208,10 @@ REVOKE ALL ON FUNCTION "public"."close_unused_accounts"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."closed_market_age_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer, "region_code" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."cms_band_problems"("band" "jsonb", "field_prefix" "text", "has_points" boolean) FROM PUBLIC;
 
 
@@ -74271,6 +74319,10 @@ REVOKE ALL ON FUNCTION "public"."investor_months"("months" integer) FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."invite_new_adults_to_age_check"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."invite_opens_closed_market"("code" "text") FROM PUBLIC;
 
 
 

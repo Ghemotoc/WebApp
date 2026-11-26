@@ -14221,6 +14221,15 @@ export type Database = {
       close_finished_safety_checks: { Args: { target_country: string }; Returns: undefined };
       close_unused_account: { Args: { target_user_id: string }; Returns: undefined };
       close_unused_accounts: { Args: Record<PropertyKey, never>; Returns: Json };
+      closed_market_age_outcome: {
+        Args: {
+          birth_month?: number;
+          birth_year: number;
+          country_code: string;
+          region_code?: string;
+        };
+        Returns: string;
+      };
       cms_band_problems: {
         Args: { band: Json; field_prefix: string; has_points: boolean };
         Returns: string[];
@@ -15351,6 +15360,7 @@ export type Database = {
       investor_months: { Args: { months: number }; Returns: Json };
       invite_code_hash: { Args: { code: string }; Returns: string };
       invite_new_adults_to_age_check: { Args: Record<PropertyKey, never>; Returns: number };
+      invite_opens_closed_market: { Args: { code: string }; Returns: boolean };
       is_account_closed_email: {
         Args: {
           queued: Omit<
