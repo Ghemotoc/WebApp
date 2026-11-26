@@ -128,7 +128,9 @@ test.describe('class spaces (CLASSES-a, S1-E8-11)', () => {
   }) => {
     const page = await openAs(browser, 'kid_14_waiting', new URL(inviteLink).pathname);
     await page.getByRole('button', { name: 'Join the class' }).click();
-    await expect(page.getByText(`You’re in ${className}.`, { exact: false })).toBeVisible();
+    await expect(
+      page.getByText('You’re in. You can read the class once a parent or guardian says yes.'),
+    ).toBeVisible();
     await page.goto(classAddress);
     await expect(page.getByText('You’re in this class.', { exact: false })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Tema de vineri' })).toHaveCount(0);

@@ -46,9 +46,11 @@ function InviteBody({ code }: { code: string }) {
   }
   // Step 2: the preview's answer: an error, still checking, ended, unknown or valid.
   if (preview.isError) return <Notice tone="error">{t('joinClass.loadFailed')}</Notice>;
-  if (preview.data === undefined) return <p className="m-0 text-ink-muted">{t('joinClass.checking')}</p>;
+  if (preview.data === undefined)
+    return <p className="m-0 text-ink-muted">{t('joinClass.checking')}</p>;
   if (preview.data.status === 'ended') return <Notice tone="info">{t('joinClass.ended')}</Notice>;
-  if (preview.data.status === 'unknown') return <Notice tone="info">{t('joinClass.unknown')}</Notice>;
+  if (preview.data.status === 'unknown')
+    return <Notice tone="info">{t('joinClass.unknown')}</Notice>;
   return (
     <>
       <p className="m-0 type-body text-ink">{t('joinClass.invitedBody')}</p>
