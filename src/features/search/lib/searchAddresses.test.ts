@@ -13,6 +13,12 @@ describe('searchAddress', () => {
   it('an empty term opens the search page with no term', () => {
     expect(searchAddress('   ')).toBe('/search');
   });
+
+  it('a chosen scope opens its results tab, and Stories stays out of the address', () => {
+    expect(searchAddress('ana', 'writers')).toBe('/search?q=ana&in=writers');
+    expect(searchAddress('ana', 'stories')).toBe('/search?q=ana');
+    expect(searchAddress('', 'spaces')).toBe('/search?in=spaces');
+  });
 });
 
 describe('groupAddress', () => {

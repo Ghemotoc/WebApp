@@ -541,6 +541,28 @@
     },
     "pager": {
       "pageOf": "Page {{number}} of {{count}}"
+    },
+    "list": {
+      "heading": "Members",
+      "intro": "Every account, newest first. Only owners and admins see this list, and each page opened goes to the audit log.",
+      "loading": "Loading accounts…",
+      "count_one": "{{count}} account",
+      "count_few": "{{count}} accounts",
+      "count_other": "{{count}} accounts",
+      "columns": {
+        "email": "Email",
+        "country": "Country",
+        "ageGroup": "Age group",
+        "joined": "Joined",
+        "lastUsed": "Last used"
+      },
+      "showEmail": "Show",
+      "showEmailFor": "Show the email of {{name}}",
+      "emailFailed": "The email couldn’t be shown. Try again.",
+      "noEmail": "None",
+      "noCountry": "Not set",
+      "neverUsed": "Not yet",
+      "pagerLabel": "Pages of members"
     }
   },
   "waitlist": {
