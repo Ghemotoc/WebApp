@@ -389,7 +389,8 @@
       "handle_missing": "Fără nume de utilizator",
       "staff_account": "Echipă",
       "suspended": "Suspendat",
-      "banned": "Interzis"
+      "banned": "Interzis",
+      "waitlisted": "Pe lista de așteptare"
     },
     "ageBands": {
       "under_13": "Sub 13 ani",
@@ -544,7 +545,10 @@
     },
     "list": {
       "heading": "Membri",
-      "intro": "Fiecare cont, cele mai noi primele. Doar proprietarii și administratorii văd această listă, iar fiecare pagină deschisă ajunge în jurnalul de audit.",
+      "intro": "Conturile, cele mai noi primele. Conturile șterse apar doar la starea Șters. Doar proprietarii și administratorii văd această listă, iar fiecare pagină deschisă ajunge în jurnalul de audit.",
+      "statusLabel": "Stare",
+      "anyStatus": "Orice stare",
+      "perPageLabel": "Pe pagină",
       "loading": "Se încarcă conturile…",
       "count_one": "{{count}} cont",
       "count_few": "{{count}} conturi",

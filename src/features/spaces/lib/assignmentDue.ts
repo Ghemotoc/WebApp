@@ -5,7 +5,7 @@
  * The database keeps the moment (forum_threads.due_at). The teacher types a date and a time on
  * their own clock in DateTimeField, and every member reads the moment on theirs (the viewer's
  * local time, CALM-8b): "Friday 13 Nov, 08:00".
- * Who calls it: ThreadHeader, ClassAssignmentsCard and ClassDueDateField.
+ * Who calls it: ThreadHeader, ClassThreadRow and ClassDueDateField.
  * What it calls: the browser's Intl.DateTimeFormat; localFieldsFor() and localTimeToInstant()
  * from src/lib/local-time.ts.
  */
