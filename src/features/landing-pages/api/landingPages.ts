@@ -127,6 +127,21 @@ export async function fetchPublicLandingPage(
 }
 
 /**
+ * Reads the words every writer wrote this month, for a hero's live count (BOOKS-A10, board A10).
+ *
+ * @param client - the Supabase client (signed in or not)
+ * @returns the total, or null while fewer than five writers wrote this month
+ * @throws WebsiteContentError when the server can't be reached
+ */
+export async function fetchLandingWordsThisMonth(
+  client: AppSupabaseClient,
+): Promise<number | null> {
+  const { data, error } = await client.rpc('landing_words_this_month');
+  if (error) throw websiteErrorFrom(error);
+  return data;
+}
+
+/**
  * Asks for, or cancels, the one notification when a page's entries open (part a2b, criterion 8).
  *
  * @param client - the signed-in reader's Supabase client
