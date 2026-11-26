@@ -17658,6 +17658,10 @@ export type Database = {
       };
       search_like_pattern: { Args: { term: string }; Returns: string };
       search_query: { Args: { term: string }; Returns: unknown };
+      search_snippet_source: {
+        Args: { haystack: string; title: string; wanted: string };
+        Returns: string;
+      };
       search_story: { Args: { query: string; story_slug: string }; Returns: Json };
       search_tags: {
         Args: { page_offset?: number; page_size?: number; term: string };

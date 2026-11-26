@@ -5,9 +5,10 @@
  * A small form: what the writer types goes to the search page, /plan/s/<slug>/search?q=…, which
  * shows the results grouped by type. In the top bar it is the box with a quiet "Search" button
  * beside it, up to 420 px wide (board E21, user stories bundle 6). On the search page itself it is
- * the wide bar under the heading, with the main "Search" button and the query already in it
- * (board AtlasSearch, G10c4); the top bar leaves its box out there, so a page never has two
- * search fields with one name.
+ * the bar under the heading, up to 560 px with the same quiet "Search" and the query already in
+ * it (board E34, story 6.15); the top bar leaves its box out there, so a page never has two
+ * search fields with one name. An empty or one-letter search still opens the page, which says
+ * "Type at least 2 letters to search." (design books item 9: the button never goes quiet).
  * Who uses it: AtlasTopBar and AtlasSearchPage. What it calls: React Router's navigate.
  */
 import { useState } from 'react';
@@ -34,14 +35,16 @@ export function AtlasSearchBox({ slug, isPageBar = false }: { slug: string; isPa
   return (
     <div
       role="search"
-      className={cn('w-full min-w-0', !isPageBar && 'max-w-[420px] flex-1 basis-64')}
+      className={cn(
+        'w-full min-w-0',
+        isPageBar ? 'max-w-[560px]' : 'max-w-[420px] flex-1 basis-64',
+      )}
     >
       <form
         className="flex flex-wrap items-center gap-2"
         onSubmit={(submitted) => {
           submitted.preventDefault();
-          // An empty box opens nothing.
-          if (typed.trim() === '') return;
+          // Even an empty box opens the page, which says how much to type (story 6.15).
           void navigate(`/plan/s/${slug}/search?q=${encodeURIComponent(typed.trim())}`);
         }}
       >
@@ -55,8 +58,8 @@ export function AtlasSearchBox({ slug, isPageBar = false }: { slug: string; isPa
             onChange={(changed) => setTyped(changed.target.value)}
           />
         </div>
-        {/* The page's own bar has the main button; the top bar's is the quiet one (board E21). */}
-        <Button type="submit" variant={isPageBar ? 'primary' : 'secondary'}>
+        {/* Both bars have the quiet button (boards E21 and E34). */}
+        <Button type="submit" variant="secondary">
           {t('search.button')}
         </Button>
       </form>

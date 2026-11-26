@@ -45948,6 +45948,28 @@ COMMENT ON FUNCTION "public"."search_query"("term" "text") IS 'Internal: a searc
 
 
 
+CREATE OR REPLACE FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when coalesce(title, '') <> ''
+      and left(public.atlas_fold(haystack), char_length(title)) = public.atlas_fold(title)
+      and strpos(public.atlas_fold(regexp_replace(substr(haystack, char_length(title) + 1), '\s+', ' ', 'g')),
+                 public.atlas_fold(wanted)) > 0
+      then btrim(substr(haystack, char_length(title) + 1))
+    else haystack
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") IS 'Internal: a search result''s text without its own title when the match is also elsewhere (story 6.15).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."search_story"("story_slug" "text", "query" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -45957,6 +45979,7 @@ declare
   -- One space between words, as atlas_snippet() reads the text.
   wanted text := left(btrim(regexp_replace(coalesce(query, ''), '\s+', ' ', 'g')), 200);
 begin
+  -- Step 1: a signed-in writer and their own story.
   if (select auth.uid()) is null then
     raise exception 'Sign in to search your story.' using errcode = 'insufficient_privilege';
   end if;
@@ -45964,14 +45987,20 @@ begin
   if target_story_id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  -- One letter would match nearly everything; the screen asks for two.
+  -- Step 2: one letter would match nearly everything; the screen asks for two.
   if char_length(wanted) < 2 then
     return jsonb_build_object('outcome', 'ok', 'results', '[]'::jsonb);
   end if;
+  -- Step 3: every match, grouped by kind, with a chapter's number and a snippet that doesn't
+  -- repeat the title.
   return jsonb_build_object('outcome', 'ok', 'results', coalesce((
     select jsonb_agg(jsonb_build_object('kind', ranked.kind, 'ref', ranked.ref,
         'title', ranked.title, 'chapter', ranked.chapter,
-        'snippet', public.atlas_snippet(ranked.haystack, wanted))
+        'number', case when ranked.kind = 'chapter' then (
+          select chapters.position from public.chapters
+          where chapters.code = ranked.ref and chapters.story_id = target_story_id) end,
+        'snippet', public.atlas_snippet(
+          public.search_snippet_source(ranked.haystack, ranked.title, wanted), wanted))
       order by array_position(array['character', 'entry', 'chapter', 'scene', 'idea', 'event',
         'marketing'], ranked.kind), ranked.place)
     from (
@@ -45990,7 +46019,7 @@ $$;
 ALTER FUNCTION "public"."search_story"("story_slug" "text", "query" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."search_story"("story_slug" "text", "query" "text") IS 'One search across the caller''s story: characters, bible, chapters, scenes, ideas, events, marketing (S1-E17-30).';
+COMMENT ON FUNCTION "public"."search_story"("story_slug" "text", "query" "text") IS 'One search across the caller''s story: characters, bible, chapters, scenes, ideas, events, marketing, with a chapter''s number (S1-E17-30; story 6.15).';
 
 
 
@@ -75934,6 +75963,10 @@ REVOKE ALL ON FUNCTION "public"."search_like_pattern"("term" "text") FROM PUBLIC
 
 
 REVOKE ALL ON FUNCTION "public"."search_query"("term" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") FROM PUBLIC;
 
 
 
