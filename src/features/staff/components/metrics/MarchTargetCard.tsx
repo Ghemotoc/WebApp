@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Eyebrow } from '@/components/ui/Eyebrow';
 
 import { progressTowards } from '../../lib/marchNumbers';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /** What one card shows. */
 export interface MarchTargetCardProps {
@@ -43,7 +44,8 @@ export function MarchTargetCard({
 }: MarchTargetCardProps) {
   const { t, i18n } = useTranslation('staff');
   const progress = progressTowards(value, target);
-  const formatted = value === null ? t('metrics.notYet') : value.toLocaleString(i18n.language);
+  const formatted =
+    value === null ? t('metrics.notYet') : value.toLocaleString(dateLocaleFor(i18n.language));
   return (
     <div className="flex min-w-0 flex-col gap-2.5 rounded-card border border-border bg-surface p-5 shadow-card">
       <div className="flex flex-wrap items-center gap-2">
@@ -66,7 +68,7 @@ export function MarchTargetCard({
       </div>
       <p className="m-0 text-sm font-semibold text-heading">
         {t('metrics.target', {
-          target: `${target.toLocaleString(i18n.language)}${unit}`,
+          target: `${target.toLocaleString(dateLocaleFor(i18n.language))}${unit}`,
           progress,
         })}
       </p>

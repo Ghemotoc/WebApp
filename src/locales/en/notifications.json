@@ -261,7 +261,6 @@
   },
   "unsubscribe": {
     "documentTitle": "Unsubscribe",
-    "eyebrow": "Emails",
     "heading": "Stop notification emails",
     "intro": "This turns off every notification email we send you: replies, new chapters, comments and new followers. Emails about your account, safety and legal matters still arrive.",
     "button": "Stop these emails",

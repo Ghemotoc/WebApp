@@ -6,11 +6,12 @@
  * The market drop-down starts on "Everywhere": a colour set there shows in every market unless a
  * market has its own. Below it, the genres (each with its colour, or its own accent by default)
  * and the tags that have a band, each with Edit; "Add a tag background" opens the editor for any
- * approved tag. The editor card sits beside the lists. Every change is in the audit log, linked
- * as "Staff history".
+ * approved tag. The editor card sits beside the lists. Under them, "Lines under the title" holds
+ * the short line under each page's title, per language (BOOKS-A06, BOOKS-A09). Every change is in
+ * the audit log, linked as "Staff history".
  * Who shows it: WebsiteAdminPage at /staff/website/list-pages. What it calls: the hooks in
  * hooks/useListPageBackgrounds.ts, useMarkets, useStoryFormOptions (the genres) and
- * ListBackgroundEditor.
+ * ListBackgroundEditor and ListLinesSection.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +36,7 @@ import { pageNameFor, startToneFor } from '../../lib/listBackgrounds';
 
 import { GenreBackgroundRows, TagBackgroundRows } from './ListBackgroundRows';
 import { ListBackgroundEditor } from './ListBackgroundEditor';
+import { ListLinesSection } from './ListLinesSection';
 
 /** What the page says after a change: nothing, saved, cleared, or a failure word. */
 type ChangeMessage = 'none' | 'saved' | 'cleared' | BackgroundSaveError['failure'];
@@ -179,6 +181,7 @@ export function ListBackgroundsTab() {
             onEdit={(key) => startEditing('category', key)}
           />
           <TagBackgroundRows backgrounds={inMarket} onEdit={(key) => startEditing('tag', key)} />
+          <ListLinesSection />
           <Link
             to="/staff/audit-log?action=website.list_background"
             className="inline-flex min-h-6 w-fit items-center text-sm text-link underline"

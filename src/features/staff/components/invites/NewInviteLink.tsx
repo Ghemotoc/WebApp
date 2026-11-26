@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 
 import type { NewInvite } from '../../api/inviteLinks';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /**
  * Renders the panel.
@@ -22,9 +23,9 @@ import type { NewInvite } from '../../api/inviteLinks';
 export function NewInviteLink({ invite, onDismiss }: { invite: NewInvite; onDismiss: () => void }) {
   const { t, i18n } = useTranslation('staff');
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
-  const expires = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
-    new Date(invite.expiresAt),
-  );
+  const expires = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    dateStyle: 'long',
+  }).format(new Date(invite.expiresAt));
 
   /** Copies the link; if the browser refuses, the field is still there to select by hand. */
   async function copyLink() {

@@ -19,6 +19,7 @@ import { useSharedLink } from '../hooks/useSharedLink';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 
 import { ChatAvatar } from './ChatAvatar';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The time beside a chat: the hour today, the date before that.
@@ -31,7 +32,7 @@ function shortTime(iso: string, language: string): string {
   const options: Intl.DateTimeFormatOptions = isToday
     ? { hour: '2-digit', minute: '2-digit' }
     : { day: 'numeric', month: 'short' };
-  return new Intl.DateTimeFormat(language, options).format(date);
+  return new Intl.DateTimeFormat(dateLocaleFor(language), options).format(date);
 }
 
 /**

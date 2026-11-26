@@ -14,6 +14,7 @@ import type { InvestorMonth } from '../../api/investorNumbers';
 import { monthChange } from '../../lib/investorCsv';
 
 import { MetricsCard } from './MetricsCard';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /** The numbers compared, in order, and how each is read from a month. */
 const comparedNumbers: { key: string; read: (month: InvestorMonth) => number | null }[] = [
@@ -94,7 +95,9 @@ export function InvestorMonthCard({ months }: { months: InvestorMonth[] }) {
   const current = months.at(-1);
   const previous = months.at(-2);
   const shown = (value: number | null) =>
-    value === null ? t('metrics.investor.notCounted') : value.toLocaleString(i18n.language);
+    value === null
+      ? t('metrics.investor.notCounted')
+      : value.toLocaleString(dateLocaleFor(i18n.language));
   const change = (value: number | null) =>
     value === null
       ? t('metrics.investor.noChange')

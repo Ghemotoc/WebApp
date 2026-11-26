@@ -8,6 +8,7 @@
 import type { TFunction } from 'i18next';
 
 import type { StatementOfReasons } from '../api/statements';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * A date as people read it, on the reader's own calendar (Robert, 20 Nov 2026, 18:36 UTC).
@@ -17,7 +18,7 @@ import type { StatementOfReasons } from '../api/statements';
  * @returns for example "14 April 2027"
  */
 export function readableDate(isoTime: string, language: string): string {
-  return new Intl.DateTimeFormat(language, {
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
     dateStyle: 'long',
   }).format(new Date(isoTime));
 }

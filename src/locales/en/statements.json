@@ -1,7 +1,6 @@
 {
   "page": {
     "documentTitle": "Reports and decisions",
-    "eyebrow": "Safety",
     "title": "Reports and decisions",
     "intro": "What happened to the reports you sent, and any decisions our team made about your posts. A person reads every report.",
     "signedOut": "Log in to see your reports and decisions.",
@@ -10,10 +9,11 @@
     "contactHeading": "Need to talk to us?",
     "contactBody": "Write to the moderation team about a report or a decision.",
     "contactLink": "Contact the moderators",
-    "backToSettings": "Settings",
     "showLegend": "Show",
     "showDecisions": "Decisions about posts · {{count}}",
-    "showReports": "Reports you sent · {{count}}"
+    "showReports": "Reports you sent · {{count}}",
+    "breadcrumb": "Where you are",
+    "breadcrumbSettings": "Settings"
   },
   "decisions": {
     "heading": "Decisions about posts",
@@ -85,8 +85,6 @@
   "reports": {
     "heading": "Reports you sent",
     "empty": "You haven’t sent any reports.",
-    "meta": "{{reason}} · Sent {{sent}}",
-    "metaDecided": "{{reason}} · Sent {{sent}} · Decided {{decided}}",
     "status": {
       "waiting": "Waiting for a moderator",
       "removed": "Decided: removed",
@@ -114,7 +112,9 @@
       "copied_published_work": "Copied from a published work",
       "undisclosed_ai": "Missing AI label",
       "other": "Other"
-    }
+    },
+    "sent": "Sent {{date}}",
+    "decided": "Decided {{date}}"
   },
   "appeals": {
     "until": "You can appeal this decision until {{date}} (six months). Appealing is free.",

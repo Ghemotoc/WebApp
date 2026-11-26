@@ -9,6 +9,7 @@ import { InfoPill } from '@/components/ui/InfoPill';
 import type { StaffTicketSummary } from '../api/staffSupportTickets';
 import { firstReplyTimer } from '../lib/firstReplyTimer';
 import { useSupportTranslation } from '../registerSupportTranslations';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Renders the pill.
@@ -20,7 +21,7 @@ export function FirstReplyPill({ ticket }: { ticket: StaffTicketSummary }) {
   const { t, i18n } = useSupportTranslation();
   const timer = firstReplyTimer(ticket, new Date());
   if (timer === null) return null;
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(timer.at);

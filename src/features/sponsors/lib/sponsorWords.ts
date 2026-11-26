@@ -8,6 +8,7 @@
 import type { StaffCampaign } from '@/schemas/sponsors';
 
 import type { SponsorError } from '../api/sponsors';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The problem codes the locale files have words for. */
 const knownProblems = new Set([
@@ -94,7 +95,7 @@ export function campaignStatusOf(campaign: StaffCampaign): string {
 export function sponsorDayInWords(day: string, language: string): string {
   // Noon UTC keeps the same calendar day in every time zone.
   const date = new Date(`${day}T12:00:00Z`);
-  return new Intl.DateTimeFormat(language, {
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
     day: 'numeric',
     month: 'short',
     year: 'numeric',

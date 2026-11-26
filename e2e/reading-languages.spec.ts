@@ -134,10 +134,10 @@ test.describe('Languages I read (MARKETS-2c)', () => {
   test('a member who ticks only Swedish sees only the Swedish story', async ({ browser }) => {
     const page = await openAsWriter(browser, '/settings#language');
     const section = page.getByRole('region', { name: 'Reading languages' });
-    await expect(section.getByText(/With none ticked, you read English\./)).toBeVisible();
+    await expect(section.getByText(/With none chosen, you read English\./)).toBeVisible();
     // English is ticked by default for an English-speaking member; untick it and tick Swedish.
-    await section.getByRole('checkbox', { name: 'English' }).uncheck();
-    await section.getByRole('checkbox', { name: 'Svenska' }).check();
+    await section.getByRole('button', { name: 'English', pressed: true }).click();
+    await section.getByRole('button', { name: 'Svenska', pressed: false }).click();
     await section.getByRole('button', { name: 'Save' }).click();
     await expect(
       section.getByText('Saved. The story lists follow these languages now.'),
@@ -153,7 +153,7 @@ test.describe('Languages I read (MARKETS-2c)', () => {
 
     // Unticking every language goes back to the default.
     await page.goto('/settings#language');
-    await section.getByRole('checkbox', { name: 'Svenska' }).uncheck();
+    await section.getByRole('button', { name: 'Svenska', pressed: true }).click();
     await section.getByRole('button', { name: 'Save' }).click();
     await expect(
       section.getByText('Saved. The story lists follow these languages now.'),

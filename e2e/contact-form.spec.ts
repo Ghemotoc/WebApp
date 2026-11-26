@@ -43,7 +43,7 @@ test.describe('contact form (S1-E14-04)', () => {
     await form.getByRole('button', { name: 'Send message' }).click();
     await expect(form.getByText('Check the email address.')).toBeVisible();
 
-    await form.getByText('A question', { exact: true }).click();
+    await form.getByLabel('What is it about?').selectOption({ label: 'A question' });
     await form.getByLabel('Email').fill(`visitor-${stamp}@example.com`);
     await form.getByRole('button', { name: 'Send message' }).click();
     const sent = page.getByRole('status', { name: 'Message sent' });
@@ -70,7 +70,7 @@ test.describe('contact form (S1-E14-04)', () => {
     const form = page.getByRole('form', { name: 'Send a message' });
     await expect(form.getByLabel('Email')).toHaveCount(0);
     await expect(form.getByText(/We’ll reply to adult_writer@personas.test/)).toBeVisible();
-    await form.getByText('A problem with an account', { exact: true }).click();
+    await form.getByLabel('What is it about?').selectOption({ label: 'A problem with an account' });
     await form.getByLabel('Message', { exact: true }).fill(`Signed-in test ${stamp}`);
     await form.getByRole('button', { name: 'Send message' }).click();
     await expect(page.getByRole('heading', { name: 'Message sent' })).toBeVisible();

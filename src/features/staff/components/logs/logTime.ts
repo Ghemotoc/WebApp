@@ -1,3 +1,4 @@
+import { dateLocaleFor } from '../../../../lib/romania-time';
 /**
  * logTime: a log row's time in the page's language, to the second, for Staff › Logs (bundle
  * LOGS-1, part d). Who calls it: CallsView, FailuresView and CrashesView.
@@ -11,7 +12,8 @@
  * @returns for example "6 Nov 2026, 14:02:31"
  */
 export function logTime(isoTime: string, language: string): string {
-  return new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'medium' }).format(
-    new Date(isoTime),
-  );
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
+    dateStyle: 'medium',
+    timeStyle: 'medium',
+  }).format(new Date(isoTime));
 }

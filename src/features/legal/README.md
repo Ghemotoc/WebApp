@@ -19,3 +19,5 @@ Database side: `supabase/migrations/…_s1_e14_01_legal_documents.sql` (tables a
 Contact and company details (S1-E14-02): the fourth document, `contact`, at `/legal/contact`. `lib/fillBrandTokens.ts` turns every address into an email link; Settings (`LegalLinksSection`) and the footer link to the page.
 
 Your country and Ages by country (MARKETS-1, S1-E2-23): `components/CountryLegalSections.tsx` and `AgesByCountryTable.tsx`, under the privacy notice and the terms. A country's own text is a Website › Help page with the address `legal-your-country` in that country's market; the Help centre leaves `legal-` pages out of its list.
+
+Bundle 10 (board J08): `LegalDocumentView` sets the document beside an aside of `LegalVersionHistory` and `LegalQuestions` (Contact us, the report form, a removal order); `LegalSectionCard` folds each section's full text in a `<details>` under its short version.
