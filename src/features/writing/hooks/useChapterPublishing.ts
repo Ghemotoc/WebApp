@@ -16,6 +16,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
+import { chapterProgressQueryKey } from '@/features/atlas/api/chapterPlans';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { trackEvent } from '@/lib/analytics/track';
 
@@ -150,6 +151,10 @@ export function useChapterPublishing(chapter: MyChapter, autosave: AutosaveForPu
       // Your writing shows the chapter's status and "Only you can see this story" from this.
       await queryClient.invalidateQueries({ queryKey: myStoriesKey(userId) });
       await queryClient.invalidateQueries({ queryKey: lastStateKey });
+      // The editor's chapter list says each chapter's state under its name (board D05).
+      await queryClient.invalidateQueries({
+        queryKey: chapterProgressQueryKey(userId, chapter.story.slug),
+      });
     },
     onError: () => setProblem('failed'),
   });

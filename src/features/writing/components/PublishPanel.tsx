@@ -12,8 +12,8 @@
  * time of a draft and under "Scheduled for …"; on the latest published chapter the switch until it
  * is on, then the plain line "This is the last chapter.". A chapter after a marked one says so
  * above the main button, and the main button names the chapter: "Publish chapter 15".
- * Who uses it: EditorAside, given the state and actions by ChapterEditorPage
- * (useChapterPublishing). Problems show under the buttons in a role="alert" line.
+ * Who uses it: ChapterEditorPage, in the sheet Publish opens (board D05; D06 redraws it), with
+ * the state and actions useChapterPublishing gives. Problems show under the buttons in a role="alert" line.
  */
 import { useState } from 'react';
 

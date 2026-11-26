@@ -19,6 +19,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser } from './support/personas';
+import { openPublishSheet } from './support/chapterEditor';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
 const slug = 'statia-meteo-seed01';
@@ -89,7 +90,8 @@ test.describe('the last chapter (CALM-6)', () => {
     runSql(`insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body, word_count)
       values ('${storyId}', '${writerId}', 'lastch01', 1, 'Ultima zi', 'Bunica închide caietul.', 3);`);
     const page = await openEditor(browser);
-    const panel = page.getByRole('region', { name: 'Publish' });
+    // The Publish panel opens in a sheet from the editor's bar (board D05).
+    const panel = await openPublishSheet(page);
 
     // Step 2: the switch, then "Publish chapter 1".
     const lastSwitch = panel.getByRole('switch', { name: 'This is the last chapter' });

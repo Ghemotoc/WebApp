@@ -28,6 +28,7 @@ import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessib
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
+import { editorSaveStatus, openPublishSheet } from './support/chapterEditor';
 
 /** The story journey 1 makes. */
 const storyTitle = 'Verificarea epicului S1-E3';
@@ -75,9 +76,7 @@ async function writeChapter(page: Page, title: string, text: string) {
   await page.getByRole('textbox', { name: 'Chapter title' }).fill(title);
   await page.getByRole('textbox', { name: 'Chapter text' }).fill(text);
   await page.getByRole('textbox', { name: 'Chapter title' }).click();
-  await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-    /Saved at \d/,
-  );
+  await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/);
 }
 
 /** The chapter titles a signed-out reader sees on a story page, in order. */
@@ -109,14 +108,33 @@ async function expectNoSeriousAxeIssue(page: Page) {
   ).toEqual([]);
 }
 
-/** Opens Preview, checks it and closes it. */
+/**
+ * Opens Preview, checks it and closes it. From 1024 px Preview is in the editor's bar; below,
+ * the bar holds only Publish (board D05, header A), so Preview is reached through its sheet.
+ */
 async function checkPreviewDialog(page: Page) {
-  await page.getByRole('button', { name: /^(Preview|Previzualizare)$/ }).click();
+  const preview = page.getByRole('button', { name: /^(Preview|Previzualizare)$/ });
+  const publishSheet = page.getByRole('dialog', { name: /^(Publish|Publicare)$/ });
+  const throughSheet = (await preview.count()) === 0;
+  if (throughSheet) {
+    await page
+      .getByRole('navigation', { name: /^(Chapter editor|Editorul capitolului)$/ })
+      .getByRole('button', { name: /^(Publish|Publică)$/ })
+      .filter({ visible: true })
+      .click();
+    await expect(publishSheet).toBeVisible();
+  }
+  await preview.click();
   const dialog = page.getByRole('dialog', { name: /^(Preview|Previzualizare)$/ });
   await expect(dialog).toBeVisible();
   await expectNoSeriousAxeIssue(page);
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
+  // The Publish sheet is modal too: close it before the next check types in the text.
+  if (throughSheet) {
+    await page.keyboard.press('Escape');
+    await expect(publishSheet).toBeHidden();
+  }
 }
 
 /** Makes a save conflict (another device saved first), opens Compare versions and checks it. */
@@ -129,7 +147,11 @@ async function checkCompareDialog(page: Page, chapterCode: string) {
   await page.keyboard.press('End');
   await page.keyboard.type(' x');
   await page.getByRole('textbox', { name: /^(Chapter title|Titlul capitolului)$/ }).click();
-  await page.getByRole('button', { name: /^(Compare versions|Compară versiunile)$/ }).click();
+  // Compare versions sits under the save line, and in the bar from 1024 px; either opens it.
+  await page
+    .getByRole('button', { name: /^(Compare versions|Compară versiunile)$/ })
+    .first()
+    .click();
   const dialog = page.getByRole('dialog', { name: /^(Compare versions|Compară versiunile)$/ });
   await expect(
     dialog.getByRole('button', { name: /^(Keep this one|Păstrează aceasta)$/ }),
@@ -165,16 +187,19 @@ test.describe('epic S1-E3 journeys', () => {
     await expect(page).toHaveURL(/\/write\/s\/[a-z0-9-]+\/c\/[a-z0-9]{8}$/);
     const slug = new URL(page.url()).pathname.split('/')[3] ?? '';
     await writeChapter(page, 'Dimineața', 'Bunica notează vremea în fiecare dimineață.');
-    const publishPanel = page.getByRole('region', { name: 'Publish' });
+    // Publish opens its sheet from the editor's bar (board D05).
+    let publishPanel = await openPublishSheet(page);
     await publishPanel.getByRole('button', { name: /^Publish chapter \d+$/ }).click();
     await expect(publishPanel.getByText(/^Published /)).toBeVisible();
     expect(await readerTitles(browser, slug)).toEqual(['Dimineața']);
 
-    // The breadcrumb's story link opens Manage chapters; add chapter two and schedule it.
-    await page.getByRole('navigation').getByRole('link', { name: storyTitle }).click();
+    // Back to chapters, in the editor's bar, opens Manage chapters; add chapter two and schedule it.
+    await page.keyboard.press('Escape');
+    await page.getByRole('link', { name: 'Back to chapters' }).filter({ visible: true }).click();
     await expect(page.getByRole('heading', { name: 'Chapters', level: 1 })).toBeVisible();
     await page.getByRole('button', { name: 'New chapter' }).click();
     await writeChapter(page, 'Seara', 'Vântul se întoarce spre seară.');
+    publishPanel = await openPublishSheet(page);
     await publishPanel.getByRole('radio', { name: 'Schedule for later' }).check();
     await publishPanel.getByLabel('Date').fill(`${new Date().getFullYear() + 1}-01-01`);
     await publishPanel.getByLabel('Time').fill('09:30');

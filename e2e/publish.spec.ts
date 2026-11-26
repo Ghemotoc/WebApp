@@ -21,6 +21,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser } from './support/personas';
+import { editorSaveStatus, openPublishSheet } from './support/chapterEditor';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
 const slug = 'statia-meteo-seed01';
@@ -43,8 +44,16 @@ function makeDraft(code: string) {
       'Bunica mea **notează** vremea în fiecare dimineață.', 7);`);
 }
 
-/** Opens the editor on a chapter as adult_writer, in English. */
-async function openEditor(browser: Browser, code: string, timezoneId?: string): Promise<Page> {
+/**
+ * Opens the editor on a chapter as adult_writer, in English, with the Publish sheet open unless
+ * the test types in the text first (the sheet is modal).
+ */
+async function openEditor(
+  browser: Browser,
+  code: string,
+  options: { timezoneId?: string; withSheet?: boolean } = {},
+): Promise<Page> {
+  const { timezoneId, withSheet = true } = options;
   runSql(`update public.profiles set locale = 'en' where id = '${writerId}';`);
   // A browser in a given time zone, when the test needs one (scheduling is on the writer's clock).
   const context = await browser.newContext({ timezoneId });
@@ -53,12 +62,13 @@ async function openEditor(browser: Browser, code: string, timezoneId?: string): 
   const page = await context.newPage();
   await page.goto(`/write/s/${slug}/c/${code}`);
   await expect(page.getByRole('textbox', { name: 'Chapter text' })).toBeVisible();
+  if (withSheet) await openPublishSheet(page);
   return page;
 }
 
-/** The Publish panel. */
+/** The Publish panel: a sheet the editor's bar opens since board D05 (user story 5.5). */
 function publishPanel(page: Page) {
-  return page.getByRole('region', { name: 'Publish' });
+  return page.getByRole('dialog', { name: 'Publish', exact: true });
 }
 
 /** axe on the page as it is now, at two widths. */
@@ -131,12 +141,10 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     browser,
     page: visitor,
   }) => {
-    const page = await openEditor(browser, 'publish1');
+    const page = await openEditor(browser, 'publish1', { withSheet: false });
     await page.getByRole('textbox', { name: 'Chapter title' }).fill('Caietele bunicii (2)');
     await page.getByRole('textbox', { name: 'Chapter text' }).click();
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-    );
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/);
 
     await visitor.goto(`/s/${slug}`);
     // The story page's chapter list numbers each title ("1. Caietele bunicii", board B01), so the
@@ -146,6 +154,7 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
       .locator('[data-chapter-title]');
     await expect(chapterTitle).toHaveText(/^\d+\. Caietele bunicii$/);
 
+    await openPublishSheet(page);
     await publishPanel(page).getByRole('button', { name: 'Update chapter' }).click();
     await expect
       .poll(() => runSql(`select published_title from public.chapters where code = 'publish1'`))
@@ -174,7 +183,7 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
   test('Schedule on the writer’s own clock, cancel, refuse the past, and publish when the time comes', async ({
     browser,
   }) => {
-    const page = await openEditor(browser, 'publish1', 'Europe/Stockholm');
+    const page = await openEditor(browser, 'publish1', { timezoneId: 'Europe/Stockholm' });
     const panel = publishPanel(page);
     await panel.getByRole('radio', { name: 'Schedule for later' }).check();
     await expect(panel.getByText('Local time on this device.', { exact: false })).toBeVisible();
@@ -211,6 +220,7 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     );
     expect(runSql('select public.publish_due_chapters()')).toBe('1');
     await page.reload();
+    await openPublishSheet(page);
     await expect(publishPanel(page).getByText(/^Published /)).toBeVisible();
   });
 });

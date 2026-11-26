@@ -1,137 +1,77 @@
 /**
- * ChapterEditorPage: the chapter editor, screen 4.3 (story S1-E3-02a; design/boards/Editor.dc.html).
+ * ChapterEditorPage: the chapter editor (story S1-E3-02a; board D05, user story 5.5).
  *
  * Who shows it: the router, at /write/s/:storySlug/c/:chapterCode; "Create and write chapter
- * one" (NewStoryPage) and the cards on Your writing lead here.
- * What it shows: the breadcrumb (Writer dashboard › the story › Chapter n, with the state pill),
- * the title field, the toolbar, the text, the paste note and the rights line, with the aside
- * (Saving, Publish, Story details; "Your stories" left in CALM-9, board D05) beside them (below on phones).
- * What it calls: useChapterDraft (the chapter, owner only), useDeviceDraft (the copy kept on
- * this device, S1-E3-02b), useChapterEditor (TipTap; pasted HTML cleaned), useAutosave (every
- * 10 seconds and on blur → save_chapter_draft(); offline keeps; conflicts), useMyStories (the
- * aside), CompareVersionsDialog (after a conflict), useChapterPublishing with PublishPanel and
- * ChapterPreviewDialog (S1-E3-03).
+ * one" (NewStoryPage), Manage chapters and the cards on the Write page lead here.
+ * What it shows, as board D05 draws it at 1440 px: the editor's own bar under the top bar (Back
+ * to chapters, the story with "Chapter 16 · Saved · 240 words", Focus mode, Compare versions after
+ * a conflict, Preview and Publish; EditorBar), then three columns: the chapter list on the left
+ * (WritingChapterList, with Manage chapters and New chapter), the formatting bar and the paper in
+ * the middle (EditorToolbarDock, EditorPaper) and, on the right, the chapter's plan
+ * (ChapterPlanPanel, which closes to a "Plan for this chapter" button) over "Story details"
+ * (EditorStoryDetails). Focus mode hides everything but the bar, the formatting bar and the paper.
+ * Below 1024 px: header A only (Back, the chapter, the save and Publish), no tab bar, the
+ * formatting bar floating above the keyboard and the plan as a sheet from the bottom.
+ * Publish opens the publish panel (PublishPanel, S1-E3-03; its own design is D06) in a sheet.
+ * Deep links: "?preview" opens the preview and "?publish" the publish panel, as Manage chapters'
+ * More menu asks (board D03).
+ * What it calls: useChapterDraft (the chapter, owner only), useDeviceDraft (the copy kept on this
+ * device, S1-E3-02b), useChapterEditor (TipTap; pasted HTML cleaned), useAutosave (half a second
+ * after typing stops, on blur, and every 10 seconds after a failure → save_chapter_draft();
+ * offline keeps; conflicts), useMyStories (story details), CompareVersionsDialog (after a
+ * conflict), useChapterPublishing with PublishPanel and ChapterPreviewDialog (S1-E3-03).
  * Errors: a chapter that isn't the writer's shows "We can't find this chapter on this account"; a
- * failed load shows the plain message; save problems show in the Saving box.
- * The toolbar's Insert menu (ChapterInsertControls) adds pictures (S1-E3-09) while the
- * picture_uploads flag is on; drawings, music and video join it with S1-E3-10 and S1-E3-11.
- * Story Atlas's writing view (S1-E17-23 to S1-E17-26) adds, from src/features/atlas: the story's
- * chapter list on the left (WritingChapterList, with "New chapter"), the chapter's plan under the
- * aside (ChapterPlanPanel), the words against the chapter's target under the text with the
- * long-chapter warning (ChapterWordsLine) and Focus mode (FocusModeToggle), which hides the list
- * and the plan.
+ * failed load shows the plain message; a save the writer must act on shows above the paper
+ * (SaveStatus), a failed one says "Not saved yet. Trying again" in the bar and on the paper.
+ * Story Atlas's writing view (S1-E17-23 to S1-E17-26) gives the chapter list, the plan, the words
+ * against the chapter's target with the long-chapter warning under the paper (ChapterWordsLine).
  */
-import { EditorContent } from '@tiptap/react';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useParams, useSearchParams } from 'react-router';
 
-import { ChevronRightIcon } from '@/components/icons/ChevronRightIcon';
+import { ActionIcon } from '@/components/icons/ActionIcon';
+import { Button } from '@/components/ui/Button';
+import { ButtonRow } from '@/components/ui/ButtonRow';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { InfoPill } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { TextInput } from '@/components/ui/TextInput';
+import { Sheet } from '@/components/ui/Sheet';
 import { brand } from '@/config/brand';
 import { ChapterPlanPanel } from '@/features/atlas/components/ChapterPlanPanel';
 import { ChapterWordsLine } from '@/features/atlas/components/ChapterWordsLine';
-import { FocusModeToggle } from '@/features/atlas/components/FocusModeToggle';
 import { WritingChapterList } from '@/features/atlas/components/WritingChapterList';
-import { MAXIMUM_CHAPTER_TITLE_LENGTH } from '@/schemas/chapter';
-
-import type { ChapterStatus, MyChapter } from '../api/chapters';
-import type { MyStory } from '../api/stories';
 import { useOnlineStatus } from '@/features/offline/hooks/useOnlineStatus';
 
-import { useAutosave, type SaveState } from '../hooks/useAutosave';
-import { useRememberedCaret } from '../hooks/useRememberedCaret';
+import type { MyChapter } from '../api/chapters';
+import type { MyStory } from '../api/stories';
+import { useAutosave } from '../hooks/useAutosave';
 import { useChapterDraft } from '../hooks/useChapterDraft';
 import { useChapterEditor } from '../hooks/useChapterEditor';
-import { usePoemMode } from '../hooks/usePoemMode';
 import { useChapterPublishing } from '../hooks/useChapterPublishing';
 import { useDeviceDraft } from '../hooks/useDeviceDraft';
 import { useMyStories } from '../hooks/useMyStories';
+import { usePoemMode } from '../hooks/usePoemMode';
+import { useRememberedCaret } from '../hooks/useRememberedCaret';
 import { markdownToEditorDocument } from '../lib/chapterMarkdown';
-import { EditingChapterContext } from '../lib/editingChapter';
 import type { DeviceDraft } from '../lib/draftStore';
+import { useEditorTranslation } from '../registerEditorTranslations';
 
 import { ChapterPreviewDialog } from './ChapterPreviewDialog';
 import { CompareVersionsDialog } from './CompareVersionsDialog';
-import { EditorAside } from './EditorAside';
-import { SaveWord } from './SaveWord';
-import { EditorToolbar } from './EditorToolbar';
-import { PoemModeSwitch } from './PoemModeSwitch';
+import { useIsWideEditor } from '../hooks/useIsWideEditor';
+import { EditorBar } from './EditorBar';
+import { EditorPaper } from './EditorPaper';
+import { EditorStoryDetails } from './EditorStoryDetails';
+import { EditorToolbarDock } from './EditorToolbarDock';
 import { LinkDialog } from './LinkDialog';
 import { NewChapterButton } from './NewChapterButton';
 import { PublishPanel } from './PublishPanel';
-import { useEditorTranslation } from '../registerEditorTranslations';
-
-/** The state pill's tone: a draft is neutral, scheduled gold, published sage. */
-const stateTone = { draft: 'neutral', scheduled: 'gold', published: 'sage' } as const;
-
-/** The breadcrumb: Writer dashboard › the story (its Manage chapters page, S1-E3-04) › Chapter n, then the state pill. */
-function EditorBreadcrumb({
-  chapter,
-  status,
-  saveState,
-}: {
-  chapter: MyChapter;
-  status: ChapterStatus;
-  saveState: SaveState;
-}) {
-  const { t } = useEditorTranslation();
-  return (
-    <nav
-      aria-label={t('back')}
-      className="flex flex-wrap items-center gap-2 type-body text-ink-muted"
-    >
-      <Link
-        to="/write"
-        className="inline-flex min-h-11 items-center font-semibold no-underline hover:underline"
-      >
-        {t('back')}
-      </Link>
-      <ChevronRightIcon />
-      <Link
-        to={`/write/s/${chapter.story.slug}/chapters`}
-        className="inline-flex min-h-11 items-center font-semibold no-underline hover:underline"
-      >
-        {chapter.story.title}
-      </Link>
-      <ChevronRightIcon />
-      <span aria-current="page" className="text-ink">
-        {t('chapterNumber', { number: chapter.position })}
-      </span>
-      <InfoPill tone={stateTone[status]}>{t(`state.${status}`)}</InfoPill>
-      {/* "Saved" beside the chapter's name (design books item 16). */}
-      <SaveWord state={saveState} />
-    </nav>
-  );
-}
+import { SaveStatus } from './SaveStatus';
 
 /** Counts words the way the database does: runs of letters, digits or apostrophes. */
 function countWords(text: string): number {
   return text.split(/[^\p{L}\p{N}']+/u).filter((word) => word !== '').length;
-}
-
-/** The title field, styled as the board's big underlined title. */
-function ChapterTitleField(props: {
-  value: string;
-  onChange: (value: string) => void;
-  onBlur: () => void;
-}) {
-  const { t } = useEditorTranslation();
-  return (
-    <TextInput
-      id="chapter-title"
-      label={t('titleLabel')}
-      value={props.value}
-      maxLength={MAXIMUM_CHAPTER_TITLE_LENGTH}
-      autoComplete="off"
-      onChange={(event) => props.onChange(event.target.value)}
-      onBlur={props.onBlur}
-      className="h-[72px] rounded-none border-0 border-b-2 border-border bg-transparent px-1 type-title text-ink-heading"
-    />
-  );
 }
 
 /** The two lines under the text: the paste note and the rights line. */
@@ -287,162 +227,293 @@ function EditorDialogs(props: {
   );
 }
 
-/** The aside column: Saving (with the conflict choices), Publish, Story details and the plan. */
-function EditorSideColumn(props: {
+/** The editor's open panels: preview, publish, the plan (beside or as a sheet) and focus mode. */
+function usePanels() {
+  // Manage chapters' More menu opens the preview or the publish panel straight away (board D03).
+  const [searchParams] = useSearchParams();
+  const [isPreviewOpen, setPreviewOpen] = useState(searchParams.has('preview'));
+  const [isPublishOpen, setPublishOpen] = useState(searchParams.has('publish'));
+  const [isPlanOpen, setPlanOpen] = useState(true);
+  const [isPlanSheetOpen, setPlanSheetOpen] = useState(false);
+  const [isFocusMode, setFocusMode] = useState(false);
+  return {
+    isPreviewOpen,
+    setPreviewOpen,
+    isPublishOpen,
+    setPublishOpen,
+    isPlanOpen,
+    setPlanOpen,
+    isPlanSheetOpen,
+    setPlanSheetOpen,
+    isFocusMode,
+    setFocusMode,
+  };
+}
+
+/** The right column from 1024 px: the chapter's plan (or its button) over Story details. */
+function PlanColumn(props: {
   chapter: MyChapter;
-  loaded: ReturnType<typeof useLoadedEditor>;
-  conflict: ReturnType<typeof useConflictChoices>;
-  publishing: ReturnType<typeof useChapterPublishing>;
-  stories: MyStory[];
-  onPreview: () => void;
-  /** False in focus mode, which hides the planning panel (S1-E17-23). */
-  showsPlan: boolean;
+  story: MyStory | null;
+  wordCount: number;
+  panels: ReturnType<typeof usePanels>;
 }) {
-  const { chapter, publishing } = props;
-  const story = props.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
+  const { t } = useEditorTranslation();
+  const { chapter, panels } = props;
+  // The plan's fields have fixed ids, so it is drawn here only when this column shows (1024 px).
+  const isWide = useIsWideEditor();
   return (
-    <div className="flex w-full flex-[1_1_300px] flex-col gap-6 lg:max-w-[340px]">
-      <EditorAside
-        saveState={props.loaded.autosave.state}
-        publishControls={
-          <PublishPanel {...publishing} onAction={publishing.run} onPreview={props.onPreview} />
-        }
-        onKeepMine={props.conflict.keepMine}
-        onCompare={props.conflict.openCompare}
-        onRetry={() => void props.loaded.autosave.saveNow()}
-        story={story}
-      />
-      {/* The chapter's planning (Story Atlas, S1-E17-24), stacked under the aside on a phone. */}
-      {props.showsPlan && (
+    <div className="hidden min-w-0 flex-col gap-4 lg:flex">
+      {isWide && panels.isPlanOpen ? (
         <ChapterPlanPanel
           slug={chapter.story.slug}
           chapterCode={chapter.code}
-          wordCount={props.loaded.wordCount}
+          wordCount={props.wordCount}
+          onClose={() => panels.setPlanOpen(false)}
         />
+      ) : (
+        <button
+          type="button"
+          aria-expanded={false}
+          onClick={() => panels.setPlanOpen(true)}
+          className={buttonClassName({ variant: 'secondary' }, 'self-start')}
+        >
+          <ActionIcon name="list" />
+          {t('plan.open')}
+        </button>
       )}
+      {props.story !== null && <EditorStoryDetails story={props.story} />}
     </div>
   );
 }
 
-/** The main column: the title, the toolbar, the text, the live count, the notes and the dialogs. */
-function EditorMainColumn(props: {
+/** The left column from 1024 px: the story's chapters, Manage chapters and New chapter. */
+function ChaptersColumn({ chapter }: { chapter: MyChapter }) {
+  const { t } = useEditorTranslation();
+  const slug = chapter.story.slug;
+  return (
+    <div className="hidden min-w-0 lg:block">
+      <WritingChapterList
+        slug={slug}
+        openChapterCode={chapter.code}
+        footer={
+          <div className="flex flex-col items-start gap-2">
+            <Link to={`/write/s/${slug}/chapters`} className={buttonClassName({ variant: 'text' })}>
+              {t('manageChapters')}
+            </Link>
+            {/* S1-E17-24: a new chapter from the list is an ordinary draft chapter. */}
+            <NewChapterButton slug={slug} label={t('newChapter')} variant="secondary" />
+          </div>
+        }
+      />
+    </div>
+  );
+}
+
+/** What shows above the paper: a save the writer must act on, and poem mode's failure. */
+function AboveThePaper(props: {
+  loaded: ReturnType<typeof useLoadedEditor>;
+  conflict: ReturnType<typeof useConflictChoices>;
+}) {
+  const { t } = useEditorTranslation();
+  const { autosave, poem } = props.loaded;
+  return (
+    <>
+      <SaveStatus state={autosave.state} />
+      {/* A refused save tries again every 10 seconds; Retry saves at once (design books item 13). */}
+      {autosave.state.kind === 'failed' && (
+        <ButtonRow>
+          <Button variant="secondary" onClick={() => void autosave.saveNow()}>
+            {t('saving.retry')}
+          </Button>
+        </ButtonRow>
+      )}
+      {autosave.state.kind === 'conflict' && (
+        <ButtonRow>
+          <Button onClick={props.conflict.keepMine}>{t('conflict.keepMine')}</Button>
+          <Button variant="secondary" onClick={props.conflict.openCompare}>
+            {t('conflict.compare')}
+          </Button>
+        </ButtonRow>
+      )}
+      {poem.hasFailed && <Notice tone="error">{t('poemMode.failed')}</Notice>}
+    </>
+  );
+}
+
+/** The middle column: the formatting bar, the paper and the lines under it. */
+function PaperColumn(props: {
   chapter: MyChapter;
   loaded: ReturnType<typeof useLoadedEditor>;
   conflict: ReturnType<typeof useConflictChoices>;
-  language: string;
-  isPreviewOpen: boolean;
-  closePreview: () => void;
+  onOpenPlan: () => void;
 }) {
   const { chapter, loaded } = props;
-  const { title, changeTitle, wordCount, autosave, editing } = loaded;
+  const { editing, autosave } = loaded;
   return (
-    <main className="flex min-w-0 flex-[999_1_560px] flex-col gap-4">
-      <ChapterTitleField
-        value={title}
-        onChange={changeTitle}
-        onBlur={() => void autosave.saveNow()}
-      />
+    <div className="flex min-w-0 flex-col gap-4">
       {editing.editor !== null && (
-        <EditorToolbar
+        <EditorToolbarDock
           editor={editing.editor}
-          wordCount={wordCount}
           onLink={editing.openLinkDialog}
           chapterId={chapter.id}
+          poem={loaded.poem}
+          onOpenPlan={props.onOpenPlan}
         />
       )}
-      <PoemModeSwitch {...loaded.poem} />
-      <div
-        className={`tmc-chapter-text ${loaded.poem.isPoem ? 'tmc-poem' : ''} rounded-card border border-border bg-surface p-6 lg:p-12 shadow-card`}
-      >
-        {/* The blocks inside the text (pictures, cards) read the chapter from here (GAPS-8). */}
-        <EditingChapterContext value={chapter.id}>
-          <EditorContent editor={editing.editor} />
-        </EditingChapterContext>
-      </div>
+      <AboveThePaper loaded={loaded} conflict={props.conflict} />
+      <EditorPaper
+        chapterId={chapter.id}
+        chapterNumber={chapter.position}
+        title={loaded.title}
+        onTitleChange={loaded.changeTitle}
+        onTitleBlur={() => void autosave.saveNow()}
+        editor={editing.editor}
+        isPoem={loaded.poem.isPoem}
+        wordCount={loaded.wordCount}
+        saveState={autosave.state}
+      />
       {/* Words against the chapter's target, live (Story Atlas, S1-E17-23 and S1-E17-26). */}
       <ChapterWordsLine
         slug={chapter.story.slug}
         chapterCode={chapter.code}
-        wordCount={wordCount}
+        wordCount={loaded.wordCount}
         characterCount={loaded.characterCount}
       />
       <EditorFootnotes />
+    </div>
+  );
+}
+
+/** The sheets and dialogs that sit outside the columns: preview, publish and the phone plan. */
+function EditorSheets(props: {
+  chapter: MyChapter;
+  loaded: ReturnType<typeof useLoadedEditor>;
+  conflict: ReturnType<typeof useConflictChoices>;
+  publishing: ReturnType<typeof useChapterPublishing>;
+  panels: ReturnType<typeof usePanels>;
+  language: string;
+}) {
+  const { t } = useEditorTranslation();
+  const { chapter, loaded, panels, publishing } = props;
+  const isWide = useIsWideEditor();
+  return (
+    <>
       <EditorDialogs chapterCode={chapter.code} loaded={loaded} conflict={props.conflict} />
       <ChapterPreviewDialog
-        isOpen={props.isPreviewOpen}
-        title={title}
-        markdown={props.isPreviewOpen ? editing.readBody() : ''}
+        isOpen={panels.isPreviewOpen}
+        title={loaded.title}
+        markdown={panels.isPreviewOpen ? loaded.editing.readBody() : ''}
         isPoem={loaded.poem.isPoem}
         language={props.language}
-        onClose={props.closePreview}
+        onClose={() => panels.setPreviewOpen(false)}
       />
-    </main>
+      <Sheet
+        isOpen={panels.isPublishOpen}
+        onClose={() => panels.setPublishOpen(false)}
+        title={t('publish.heading')}
+      >
+        <PublishPanel
+          {...publishing}
+          onAction={publishing.run}
+          onPreview={() => panels.setPreviewOpen(true)}
+        />
+      </Sheet>
+      {/* Tablets and phones: the plan rises from the bottom (board D05). */}
+      <Sheet
+        isOpen={panels.isPlanSheetOpen}
+        onClose={() => panels.setPlanSheetOpen(false)}
+        title={t('plan.open')}
+      >
+        {/* Only while open, and only under 1024 px: the side panel uses the same field ids. */}
+        {panels.isPlanSheetOpen && !isWide && (
+          <ChapterPlanPanel
+            slug={chapter.story.slug}
+            chapterCode={chapter.code}
+            wordCount={loaded.wordCount}
+            variant="sheet"
+          />
+        )}
+      </Sheet>
+    </>
+  );
+}
+
+/** The three columns from 1024 px; focus mode keeps only the paper, in the middle. */
+const columnClasses = {
+  all: 'flex flex-col gap-6 lg:grid lg:grid-cols-[220px_minmax(0,1fr)_300px] lg:items-start lg:gap-8',
+  focus: 'mx-auto flex w-full max-w-[800px] flex-col gap-6',
+};
+
+/** The browser tab's title ("Chapter title · Story · product") and the page's hidden h1. */
+function EditorDocumentTitle({ chapter, title }: { chapter: MyChapter; title: string }) {
+  const { t } = useEditorTranslation();
+  const chapterName = title === '' ? t('chapterNumber', { number: chapter.position }) : title;
+  return (
+    <>
+      <title>
+        {t('documentTitle', {
+          chapter: chapterName,
+          story: chapter.story.title,
+          productName: brand.productName,
+        })}
+      </title>
+      <h1 className="sr-only">{t('pageHeading')}</h1>
+    </>
   );
 }
 
 /**
- * The editor itself, once the chapter is loaded: the chapter list (Story Atlas's writing view,
- * S1-E17-23; first on a laptop, last on a phone), the main column and the aside with the
- * chapter's plan. Focus mode hides the list and the plan.
+ * The editor itself, once the chapter is loaded: the bar, the three columns and the sheets.
  */
 function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorStart }) {
-  const { t } = useEditorTranslation();
   const writing = useMyStories();
   const loaded = useLoadedEditor(chapter, start);
   const conflict = useConflictChoices(loaded);
   const publishing = useChapterPublishing(chapter, loaded.autosave);
-  const [isPreviewOpen, setPreviewOpen] = useState(false);
-  const [isFocusMode, setFocusMode] = useState(false);
+  const panels = usePanels();
   const story = writing.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
-  const documentTitle =
-    loaded.title === '' ? t('chapterNumber', { number: chapter.position }) : loaded.title;
-
   return (
     <>
-      {/* The toggle follows the breadcrumb, clear of the Saving panel's desk lamp on the right. */}
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-        <EditorBreadcrumb
-          chapter={chapter}
-          status={publishing.state.status}
-          saveState={loaded.autosave.state}
-        />
-        <FocusModeToggle isOn={isFocusMode} onChange={setFocusMode} />
-      </div>
-      <div className="flex flex-col gap-6 lg:flex-row lg:flex-wrap lg:items-start">
-        <title>
-          {t('documentTitle', {
-            chapter: documentTitle,
-            story: chapter.story.title,
-            productName: brand.productName,
-          })}
-        </title>
-        <EditorMainColumn
-          chapter={chapter}
-          loaded={loaded}
-          conflict={conflict}
-          language={story?.languageCode ?? 'ro'}
-          isPreviewOpen={isPreviewOpen}
-          closePreview={() => setPreviewOpen(false)}
-        />
-        <EditorSideColumn
+      <EditorDocumentTitle chapter={chapter} title={loaded.title} />
+      <EditorBar
+        storySlug={chapter.story.slug}
+        storyTitle={chapter.story.title}
+        storyLanguage={story?.languageCode ?? 'ro'}
+        chapterNumber={chapter.position}
+        wordCount={loaded.wordCount}
+        saveState={loaded.autosave.state}
+        isFocusMode={panels.isFocusMode}
+        onFocusModeChange={panels.setFocusMode}
+        canCompare={loaded.autosave.state.kind === 'conflict'}
+        onCompare={conflict.openCompare}
+        onPreview={() => panels.setPreviewOpen(true)}
+        onPublish={() => panels.setPublishOpen(true)}
+      />
+      <div className={panels.isFocusMode ? columnClasses.focus : columnClasses.all}>
+        {!panels.isFocusMode && <ChaptersColumn chapter={chapter} />}
+        <PaperColumn
           chapter={chapter}
           loaded={loaded}
           conflict={conflict}
-          publishing={publishing}
-          stories={writing.stories}
-          onPreview={() => setPreviewOpen(true)}
-          showsPlan={!isFocusMode}
+          onOpenPlan={() => panels.setPlanSheetOpen(true)}
         />
-        {!isFocusMode && (
-          <div className="order-last w-full lg:basis-full xl:order-first xl:w-[240px] xl:shrink-0 xl:basis-auto">
-            <WritingChapterList
-              slug={chapter.story.slug}
-              openChapterCode={chapter.code}
-              footer={<NewChapterButton slug={chapter.story.slug} label={t('newChapter')} />}
-            />
-          </div>
+        {!panels.isFocusMode && (
+          <PlanColumn
+            chapter={chapter}
+            story={story}
+            wordCount={loaded.wordCount}
+            panels={panels}
+          />
         )}
       </div>
+      <EditorSheets
+        chapter={chapter}
+        loaded={loaded}
+        conflict={conflict}
+        publishing={publishing}
+        panels={panels}
+        language={story?.languageCode ?? 'ro'}
+      />
     </>
   );
 }
@@ -513,7 +584,8 @@ export function ChapterEditorPage() {
   if (message !== null || chapter === null)
     return <EditorPageMessage kind={message ?? 'loading'} />;
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-3 pt-8 pb-6">
+    // Below 1024 px the formatting bar floats at the bottom, so the page keeps room under the paper.
+    <PageContainer className="tmc-rise flex flex-col gap-6 pt-3 pb-20 lg:pt-6 lg:pb-12">
       <LoadedEditor
         key={chapter.code}
         chapter={chapter}

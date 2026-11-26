@@ -185,7 +185,6 @@ const infoPillUsers = new Set([
   '/src/features/website/components/staff/SearchSharingTab.tsx',
   '/src/features/website/hooks/useListPageBackgrounds.ts',
   '/src/features/website/lib/listBackgrounds.ts',
-  '/src/features/writing/components/ChapterEditorPage.tsx',
   '/src/features/writing/components/ChapterEmbedNodeView.tsx',
   '/src/features/writing/components/ChapterPictureNodeView.tsx',
   '/src/features/writing/components/DrawnCoverPicker.tsx',

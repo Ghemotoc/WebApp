@@ -605,7 +605,13 @@
     "moreDetails": "Mai multe detalii",
     "moreDetailsLine": "Punctul de vedere, data, actul, locul și scenele.",
     "addChip": "+ Adaugă",
-    "addCharacter": "Adaugă un personaj"
+    "addCharacter": "Adaugă un personaj",
+    "close": "Închide planul",
+    "chapterStates": {
+      "draft": "Ciornă",
+      "scheduled": "Programat",
+      "published": "Publicat"
+    }
   },
   "storyline": {
     "documentTitle": "Firul poveștii pentru {{title}}: Story Atlas",

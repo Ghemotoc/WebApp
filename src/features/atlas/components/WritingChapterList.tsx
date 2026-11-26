@@ -1,11 +1,14 @@
 /**
  * WritingChapterList: the story's chapters on the left of the writing view (stories S1-E17-23:
  * "the chapter list on the left, the chapter on the right"; S1-E17-26: each chapter's progress
- * shows in the chapter list).
+ * shows in the chapter list; board D05, user story 5.5).
  *
- * Each chapter is a link to its editor, the open one marked aria-current; a chapter with a target
- * shows its words against it as text and as a bar. The caller adds the new-chapter button
- * underneath (S1-E17-24: a planned chapter is an ordinary draft chapter). Hidden in focus mode.
+ * As board D05 draws it: "Chapters" in the label type, then one row a chapter, "16. Epilogue:
+ * Spring" over its state ("Draft", "Published"), the open one tinted and marked aria-current,
+ * each row a link to its editor. A chapter with a target adds its words against it to the state
+ * line ("Draft · 240 of 1,500 words", S1-E17-26). The caller adds the way out underneath
+ * ("Manage chapters"). No card around it: the list sits on the page. Hidden in focus mode and
+ * below 1024 px.
  * Who uses it: ChapterEditorPage (src/features/writing). What it calls: useChapterProgress.
  */
 import type { ReactNode } from 'react';
@@ -16,14 +19,13 @@ import { cn } from '@/lib/utils';
 import type { ChapterProgress } from '../api/chapterPlans';
 import { useChapterProgress } from '../hooks/useChapterProgress';
 import { chapterNumbers } from '../lib/boardColumns';
-import { percentOfTarget } from '../lib/planProgress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 /** What the list needs. */
 export interface WritingChapterListProps {
   slug: string;
   openChapterCode: string;
-  /** The new-chapter button, from the writing feature. */
+  /** The way out under the list ("Manage chapters"), from the writing feature. */
   footer: ReactNode;
 }
 
@@ -43,36 +45,30 @@ function ChapterLine({
   const { t, i18n } = useAtlasTranslation();
   const numbers = new Intl.NumberFormat(i18n.language);
   const name = chapter.title === '' ? t('chapterPlan.untitled') : chapter.title;
+  // The state line: the chapter's state, then its words against its target when it has one.
+  const state = t(`chapterPlan.chapterStates.${chapter.status}`, { defaultValue: chapter.status });
+  const stateLine =
+    chapter.wordTarget === null
+      ? state
+      : `${state} · ${t('chapterPlan.wordsOfTarget', {
+          words: numbers.format(chapter.wordCount),
+          target: numbers.format(chapter.wordTarget),
+        })}`;
   return (
     <li>
       <Link
         to={`/write/s/${slug}/c/${chapter.code}`}
         aria-current={isOpen ? 'page' : undefined}
         className={cn(
-          'flex min-h-11 flex-col gap-1 rounded-field px-2 py-2 text-ink-heading no-underline hover:bg-tint',
-          isOpen && 'bg-tint',
+          'flex min-h-11 flex-col rounded-field px-3 py-2 type-label text-ink no-underline hover:bg-tint',
+          isOpen && 'bg-tint font-semibold text-ink-heading',
         )}
       >
-        <span className={cn('break-words', isOpen && 'font-semibold')}>
+        <span className="break-words">
           {t(`chapterPlan.listKinds.${chapter.kind}`, { number: number ?? chapter.position })}{' '}
           {name}
         </span>
-        {chapter.wordTarget !== null && (
-          <>
-            <span className="type-meta text-ink-muted">
-              {t('chapterPlan.wordsOfTarget', {
-                words: numbers.format(chapter.wordCount),
-                target: numbers.format(chapter.wordTarget),
-              })}
-            </span>
-            <progress
-              className="tmc-atlas-progress h-1.5 w-full"
-              max={100}
-              value={percentOfTarget(chapter.wordCount, chapter.wordTarget)}
-              aria-hidden="true"
-            />
-          </>
-        )}
+        <span className="type-meta font-normal text-ink-muted">{stateLine}</span>
       </Link>
     </li>
   );
@@ -89,11 +85,8 @@ export function WritingChapterList({ slug, openChapterCode, footer }: WritingCha
   // Only chapters of the type "chapter" are numbered, as on the storyline board (S1-E17-19).
   const numbers = chapterNumbers(chapters ?? []);
   return (
-    <nav
-      aria-label={t('chapterPlan.listLabel')}
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-4 py-4 shadow-card"
-    >
-      <h2 className="m-0 px-2 font-heading type-long font-bold text-ink-heading">
+    <nav aria-label={t('chapterPlan.listLabel')} className="flex min-w-0 flex-col">
+      <h2 className="m-0 mb-2 type-label font-semibold text-ink-muted">
         {t('chapterPlan.listHeading')}
       </h2>
       <ol className="m-0 flex list-none flex-col gap-1 p-0">
@@ -107,7 +100,7 @@ export function WritingChapterList({ slug, openChapterCode, footer }: WritingCha
           />
         ))}
       </ol>
-      <div className="px-2">{footer}</div>
+      <div className="mt-2">{footer}</div>
     </nav>
   );
 }

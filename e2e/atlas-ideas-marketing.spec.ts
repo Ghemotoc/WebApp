@@ -15,6 +15,8 @@
  *   search and deletes after a question; the back cover is signed with the pen name (GAPS-2b);
  * - a note reads as a row and "Edit" opens its fields; the QR code points at the story page,
  *   the story's world (while shared) or the profile, and downloads as PNG and SVG (G10c3);
+ * - with a note's field still focused, the page holds still where it rests: the top bar's change
+ *   of size at 12 px no longer starts the browser scrolling back and forth (index.css, .top-bar);
  * - both pages pass axe, don't scroll sideways and draw no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English; the open back cover passes axe too.
  * Test data: adult_writer gets "atlas-ideas-seed01"; suspended_user (whose language only the
@@ -104,6 +106,26 @@ async function pickSegment(page: Page, group: string, segment: string) {
   await page.getByRole('group', { name: group }).getByText(segment, { exact: true }).click();
 }
 
+/**
+ * Watches the page's scroll position for 40 frames and returns each position seen. A page at
+ * rest gives one. Before the top bar kept its place in the page (index.css, .top-bar), a page
+ * resting near 12 px with a field focused scrolled back and forth by itself every frame, so a
+ * button there never held still for a click (CI on PR #652).
+ *
+ * @param page - the page to watch
+ * @returns the scroll positions seen, each once
+ */
+async function scrollPositionsAtRest(page: Page): Promise<number[]> {
+  return page.evaluate(async () => {
+    const positions: number[] = [];
+    for (let frame = 0; frame < 40; frame += 1) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      positions.push(Math.round(window.scrollY));
+    }
+    return [...new Set(positions)];
+  });
+}
+
 test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E17-29)', () => {
   test.describe.configure({ mode: 'serial' });
   test.beforeAll(() => {
@@ -189,6 +211,12 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     // that hangs now fails on the step that hangs (the trace records only retries).
     const clickLimit = { timeout: 10_000 };
     const todo = page.getByTestId('atlas-idea-item').filter({ hasText: 'To-do' });
+    // With the type field still focused, bring the Delete button into view: the page must then
+    // hold still where it rests, which is what the click below waits for.
+    await todo
+      .getByRole('button', { name: 'Delete “Check the tide tables”' })
+      .scrollIntoViewIfNeeded();
+    expect(await scrollPositionsAtRest(page)).toHaveLength(1);
     await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click(clickLimit);
     await todo.getByRole('button', { name: 'Keep it' }).click(clickLimit);
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(2);

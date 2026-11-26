@@ -18,7 +18,6 @@
     "quote": "Quote",
     "list": "List",
     "link": "Link",
-    "sceneBreak": "Scene break",
     "withShortcut": "{{name}} ({{keys}})",
     "keys": {
       "bold": "Ctrl+B",
@@ -26,9 +25,10 @@
       "heading": "Ctrl+Alt+2",
       "quote": "Ctrl+Shift+9",
       "list": "Ctrl+Shift+8",
-      "link": "Ctrl+K",
-      "sceneBreak": "Ctrl+Enter"
-    }
+      "link": "Ctrl+K"
+    },
+    "undo": "Undo",
+    "plan": "Chapter plan"
   },
   "wordCount_one": "{{count}} word",
   "wordCount_few": "{{count}} words",
@@ -37,15 +37,13 @@
   "rights": "Your work stays yours. You can publish it anywhere, any time.",
   "rightsLink": "How rights work here",
   "saving": {
-    "heading": "Saving",
-    "explain": "We save every 10 seconds and when you click away from the text.",
     "idle": "Nothing to save yet.",
     "unsaved": "Unsaved changes.",
     "saving": "Saving…",
     "savedJustNow": "Saved now.",
     "savedAt": "Saved at {{time}}.",
     "conflict": "This chapter was changed on another device. Saving has stopped so nothing is overwritten. Choose which version to keep.",
-    "failed": "Could not save. We’ll try again in 10 seconds.",
+    "failed": "Not saved yet. Trying again in 10 seconds; the text stays on this device.",
     "notActive": "This account can’t save chapters yet.",
     "offline": "Saved on this device. It saves online when the connection is back.",
     "retry": "Retry"
@@ -100,13 +98,11 @@
   },
   "details": {
     "heading": "Story details",
-    "intro": "These apply to every chapter.",
-    "category": "Category",
-    "rating": "Rating",
-    "tags": "Tags",
-    "noTags": "None yet",
-    "change": "Change in story settings",
-    "plan": "Plan this story"
+    "settings": "Story settings",
+    "completion": {
+      "ongoing": "Ongoing",
+      "completed": "Completed"
+    }
   },
   "notFound": "We can’t find this chapter on this account.",
   "signedOut": "Log in to write.",
@@ -145,19 +141,19 @@
     "close": "Close"
   },
   "insert": {
-    "button": "Insert",
+    "button": "Insert a picture, video link or scene break",
     "menuLabel": "Insert",
-    "pictureButton": "Insert a picture",
-    "videoButton": "Insert a video link (YouTube, Vimeo or Loom)",
     "picture": "Picture",
-    "pictureNote": "Upload a picture. Alt text is required.",
+    "pictureNote": "A drawing, checked before readers see it",
     "drawing": "Drawing",
     "drawingNote": "Draw a sketch. Saved as a picture.",
     "music": "Music",
     "musicNote": "A link from Spotify or Apple Music.",
-    "video": "Video",
-    "videoNote": "A link from YouTube, Vimeo or Loom.",
-    "embedFootnote": "Links from approved services only. Nothing loads from them until a reader presses play."
+    "video": "Video link",
+    "videoNote": "YouTube, Vimeo or Loom",
+    "embedFootnote": "Links from approved services only. Nothing loads from them until a reader presses play.",
+    "sceneBreak": "Scene break",
+    "sceneBreakNote": "A small diamond between scenes"
   },
   "pictureDialog": {
     "heading": "Add a picture",
@@ -281,15 +277,29 @@
     "cancel": "Cancel"
   },
   "poemMode": {
-    "label": "Poem mode",
     "hint": "Enter starts a new line and a second Enter a new stanza. Spaces at the start of a line stay, and readers see each line as you wrote it.",
-    "failed": "We couldn’t change poem mode. Try again."
+    "failed": "We couldn’t change poem mode. Try again.",
+    "button": "Poem"
   },
   "saveWord": {
     "saved": "Saved",
     "saving": "Saving…",
     "unsaved": "Not saved yet",
     "onDevice": "Saved on this device",
-    "notSaved": "Not saved"
+    "notSaved": "Not saved",
+    "savedAt": "Saved at {{time}}",
+    "retrying": "Not saved yet. Trying again"
+  },
+  "pageHeading": "Chapter editor",
+  "manageChapters": "Manage chapters",
+  "bar": {
+    "label": "Chapter editor",
+    "back": "Back to chapters",
+    "focusMode": "Focus mode",
+    "preview": "Preview",
+    "publish": "Publish"
+  },
+  "plan": {
+    "open": "Plan for this chapter"
   }
 }

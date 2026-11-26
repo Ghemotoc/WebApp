@@ -1425,11 +1425,18 @@ Tests: `supabase/tests/database/104-ratings-and-labels.test.sql`, `e2e/ratings.s
   │  useChapterDraft → the chapters table (chapters_select_own: the owner only)
   │  useChapterEditor → TipTap with chapterEditorExtensions (only the allowed formatting);
   │    the stored Markdown becomes a document (lib/chapterMarkdown.ts) and back on every save
-  │  EditorToolbar (role=toolbar, one tab stop, aria-keyshortcuts), LinkDialog (Ctrl+K)
-  │  useAutosave: every 10 s while there are changes, and on blur
+  │  EditorBar (board D05): Back to chapters, the story's title, "Chapter 16 · Saved · 240 words"
+  │    (SaveWord), Focus mode, Compare versions after a conflict, Preview and Publish (a Sheet)
+  │  EditorToolbar (role=toolbar, one tab stop, aria-keyshortcuts) in EditorToolbarDock (at the
+  │    bottom over the keyboard below 1024 px, useKeyboardInset): the "+" InsertMenu (picture,
+  │    video link, scene break, drawing, music), Undo, the Poem button; LinkDialog (Ctrl+K)
+  │  EditorPaper: "Chapter 16", the title, the text, the words and "Saved at 14:02" at its foot
+  │  useAutosave: half a second after typing stops, every 10 s while a save is owed, and on blur
   │    → chapterDraftSchema (src/schemas/chapter.ts: no HTML, safe links, ş/ţ corrected)
   │    → api/chapters.ts → save_chapter_draft(code, title, body, expected_version)
-  │  EditorAside: SaveStatus (role=status), Publish (S1-E3-03), Story details
+  │  SaveStatus (role=status, hidden unless the writer must act: conflict, refused save with
+  │    Retry, a rule broken, an account that can't save); WritingChapterList on the left and
+  │    ChapterPlanPanel with EditorStoryDetails on the right from 1024 px (the plan is a Sheet below)
   ▼
 save_chapter_draft(): is_active_member(), the caller's own live chapter (locked), a stale
   expected_version → {status: conflict} (S1-E3-02b shows it), check_chapter_text() (the same
@@ -1442,7 +1449,7 @@ Offline, paste and conflicts (S1-E3-02b):
 ```
 every edit → useDeviceKeep: half a second later the title and text go to IndexedDB
   (lib/draftStore.ts, key: the chapter code, with the version they are based on)
-offline (useOnlineStatus, S1-E1-05) → nothing is sent; the Saving box says the words are kept
+offline (useOnlineStatus, S1-E1-05) → nothing is sent; the save words say the words are kept
 back online, or the editor opens with a device copy → that copy is sent at once
 the server has the text → the device copy is forgotten
 a conflict → "Keep this version" (save over the server's version) or "Compare versions"
@@ -1454,7 +1461,8 @@ paste → TipTap's transformPastedHTML → lib/pasteCleaning.ts (Word lists, Doc
 Publishing (S1-E3-03):
 
 ```
-PublishPanel (in EditorAside) ← useChapterPublishing (keeps the status after each action)
+PublishPanel (in a Sheet from the editor's bar, board D05) ← useChapterPublishing (keeps the
+  status after each action and refreshes the chapter list)
   │  "Publish chapter" / "Schedule chapter" / "Update chapter": the autosave saves first
   │    (saveNow, isAllSaved) so what goes live is what is on screen (Q10)
   │  the date and time are on the writer's own clock → src/lib/local-time.ts → an instant (CALM-8b)
@@ -3103,7 +3111,7 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 ## Show what is inside (design books item 16)
 
 - **New chapter in the Library:** `my_library()` adds `has_new_chapter` to each shelf place (true when the story's `last_chapter_published_at` is after the place's `saved_at`; migration `20270205100433_books16_new_chapter_dot.sql`). `LibraryShelves` passes it to `StoryCard`, which draws a small dot on the cover, and adds "new chapter" to the meta line so the dot is never the only cue.
-- **Saved at a glance in the editor:** `SaveWord` (`src/features/writing/components/`) shows one word beside the chapter's name in the breadcrumb ("Saved", "Saving…", "Not saved"), read from the same `useAutosave` state as the Saving box. It is plain text; the Saving box stays the live region.
+- **Saved at a glance in the editor:** `SaveWord` (`src/features/writing/components/`) shows the save in the editor's bar ("Chapter 16 · Saved · 240 words") and at the foot of the paper ("Saved at 14:02"), read from the same `useAutosave` state as `SaveStatus` ("Saving…", "Not saved yet. Trying again" and "Not saved" in the danger colour; board D05, user story 5.5). It is plain text; `SaveStatus` stays the live region.
 
 ## Healthy habits under 18 (design books S5)
 
