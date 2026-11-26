@@ -5,8 +5,8 @@
  *
  * The board's track of tabs is the shared SegmentedControl: one choice at a time, a real radio
  * group (arrow keys move, the picked one is bold on the bubble, so the choice never rests on
- * colour alone), each label "Replies · 3". The staff kinds read "From ghemotoc" with the
- * product's name from the brand settings.
+ * colour alone), each label "Replies · 3". The staff kinds read "From <product name>", the
+ * name coming from the brand settings.
  * Who uses it: NotificationsPage. What it calls: SegmentedControl.
  */
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
