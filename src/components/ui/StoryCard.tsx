@@ -41,6 +41,11 @@ export interface StoryCardProps {
   progressPercent?: number;
   /** True when a chapter came out since the reader last read: the dot on the cover (books 16). */
   hasNewChapter?: boolean;
+  /**
+   * The story's language ("ja"), set as `lang` on the title so screen readers and search engines
+   * read it in that language (WCAG 3.1.2; S1-E3-01). Left out, the title takes the page's.
+   */
+  language?: string;
 }
 
 /**
@@ -70,6 +75,7 @@ export function StoryCard({
   wrapCover,
   progressPercent,
   hasNewChapter = false,
+  language,
 }: StoryCardProps) {
   const { t } = useTranslation();
   // The drawn cover: decorative, because the title is repeated as text below.
@@ -94,6 +100,7 @@ export function StoryCard({
       {progressPercent !== undefined && <ProgressLine percent={progressPercent} />}
       {pill !== undefined && <span className="mt-3">{pill}</span>}
       <span
+        lang={language}
         className={`${pill === undefined ? 'mt-2' : 'mt-2'} type-label break-words text-ink-heading`}
       >
         {title}

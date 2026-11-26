@@ -5,28 +5,29 @@
  * Board values: the title field 52 px tall in Funnel Display 700 at 20 px (maxlength 120); the blurb
  * three rows with a live "n of 500 characters" counter; the language as a drop-down (board D02,
  * user story 5.2: one language per story, others come later as editions), with the hint saying
- * so. Languages staff haven't opened yet are listed but can't be picked, marked "(soon)"
- * (S1-E11-05, criterion 5; MARKETS-2c).
- * Who uses it: NewStoryPage. What it calls: useNewStoryForm's set().
+ * so. Since S1-E3-01 (Robert, 26 Nov 2026) every language of the world can be picked, through
+ * the searchable LanguagePicker; the "(soon)" languages of S1-E11-05 are gone.
+ * Who uses it: NewStoryPage and StorySettingsPage. What it calls: LanguagePicker and
+ * useNewStoryForm's set().
  */
 import { useTranslation } from 'react-i18next';
 
-import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 import { TextInput } from '@/components/ui/TextInput';
+import type { LanguageChoice } from '@/lib/language-names';
 import { MAXIMUM_BLURB_LENGTH, MAXIMUM_TITLE_LENGTH } from '@/schemas/story';
 
-import type { StoryLanguageChoice } from '../api/stories';
 import type { SetStoryAnswer, StoryAnswers, StoryFieldErrors } from '../hooks/storyAnswers';
 
 import { FormSection } from './FormSection';
+import { LanguagePicker } from './LanguagePicker';
 
 /** What the section needs. */
 export interface StoryBasicsSectionProps {
   answers: StoryAnswers;
   errors: StoryFieldErrors;
-  /** Every language; the closed ones show as coming (S1-E11-05). */
-  languages: StoryLanguageChoice[];
+  /** Every language a story may be written in, named in the interface language. */
+  languages: readonly LanguageChoice[];
   set: SetStoryAnswer;
 }
 
@@ -37,8 +38,6 @@ export interface StoryBasicsSectionProps {
  */
 export function StoryBasicsSection({ answers, errors, languages, set }: StoryBasicsSectionProps) {
   const { t } = useTranslation('writing');
-  /** A language's name in the locale files, or its code for one they don't name yet. */
-  const languageName = (code: string) => t(`languages.${code}`, { defaultValue: code });
   return (
     <FormSection legend={t('newStory.basics')}>
       <TextInput
@@ -63,20 +62,10 @@ export function StoryBasicsSection({ answers, errors, languages, set }: StoryBas
           max: MAXIMUM_BLURB_LENGTH,
         })}
       />
-      <Select
+      <LanguagePicker
         id="story-language"
         label={t('newStory.language')}
-        isLabelVisible
-        isLabelAbove
-        placement="form"
-        options={languages.map((language) => ({
-          value: language.code,
-          label: language.isOpen
-            ? languageName(language.code)
-            : t('newStory.languageComing', { language: languageName(language.code) }),
-          lang: language.isOpen ? language.code : undefined,
-          isDisabled: !language.isOpen,
-        }))}
+        choices={languages}
         value={answers.languageCode}
         onChange={(value) => set('languageCode', value)}
         descriptionId="story-language-hint"

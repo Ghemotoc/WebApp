@@ -117,6 +117,21 @@ export async function saveMarket(
 }
 
 /**
+ * Reads the codes of the languages table, interface languages first: the languages staff and
+ * moderators can say they read (S1-E11-05). Story languages are wider since S1-E3-01 (any
+ * language of the world), but who reads what stays the table's list.
+ *
+ * @param client - the shared Supabase client
+ * @returns the codes, for example ['ro', 'en', 'sv']
+ * Errors: throws SettingsAdminError when the database can't be read.
+ */
+export async function fetchLanguageTableCodes(client: AppSupabaseClient): Promise<string[]> {
+  const { data, error } = await client.rpc('story_language_choices');
+  if (error !== null) throw settingsErrorFrom(error);
+  return data.map((row) => row.code);
+}
+
+/**
  * Reads the languages one staff member reads.
  *
  * @param client - the shared Supabase client

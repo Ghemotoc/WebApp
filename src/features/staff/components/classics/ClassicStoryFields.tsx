@@ -2,7 +2,7 @@
  * ClassicStoryFields: the story part of the "Add a classic work" form (story S1-E11-16 AC 1 and 5):
  * title, blurb, the language of this text, category, rating and content note.
  *
- * Who shows it: ClassicWorkForm. What it calls: useStoryFormOptions (the open languages and the
+ * Who shows it: ClassicWorkForm. What it calls: useStoryFormOptions (every language, S1-E3-01, and the
  * categories, as the writer's new story form offers them) and onChange.
  */
 import { useTranslation } from 'react-i18next';
@@ -40,12 +40,7 @@ function ClassicStorySelects({ details, onChange }: ClassicFieldsProps) {
         placement="form"
         value={details.languageCode}
         onChange={(value) => onChange('languageCode', value)}
-        options={languages
-          .filter((language) => language.isOpen)
-          .map(({ code }) => ({
-            value: code,
-            label: t(`languages.${code}`, { ns: 'writing', defaultValue: code }),
-          }))}
+        options={languages.map(({ code, label }) => ({ value: code, label }))}
       />
       <Select
         id="classic-category"

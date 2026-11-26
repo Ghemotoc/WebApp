@@ -4,18 +4,23 @@
  *
  * Who calls it: StaffLanguages, on each card of Staff › Roles. What it calls:
  * features/settings/api/marketsAdmin.ts. After a save, the settings page's moderator counts are
- * read again.
+ * read again. The languages offered are the languages table's (fetchLanguageTableCodes), not
+ * every story language: moderation tooling keeps its own list (S1-E3-01).
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
-import { fetchStaffLanguages, saveStaffLanguages } from '@/features/settings/api/marketsAdmin';
+import {
+  fetchLanguageTableCodes,
+  fetchStaffLanguages,
+  saveStaffLanguages,
+} from '@/features/settings/api/marketsAdmin';
 
 /**
  * Follows one staff member's languages.
  *
  * @param staffUserId - the staff member's user ID
- * @returns their languages, save(codes) and the save's state
+ * @returns the languages to offer, their languages, save(codes) and the save's state
  */
 export function useStaffLanguages(staffUserId: string) {
   const queryClient = useQueryClient();
@@ -23,6 +28,12 @@ export function useStaffLanguages(staffUserId: string) {
     queryKey: ['staff-languages', staffUserId],
     retry: false,
     queryFn: async () => fetchStaffLanguages(await requireClient(), staffUserId),
+  });
+  // The languages to tick from; useMarketsAdmin reads them again after a language changes.
+  const offered = useQuery({
+    queryKey: ['story-languages'],
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => fetchLanguageTableCodes(await requireClient()),
   });
   const mutation = useMutation({
     mutationFn: async (codes: string[]) =>
@@ -33,6 +44,7 @@ export function useStaffLanguages(staffUserId: string) {
     },
   });
   return {
+    offeredCodes: offered.data ?? [],
     codes: languages.data ?? null,
     save: (codes: string[]) => mutation.mutate(codes),
     isSaving: mutation.isPending,
