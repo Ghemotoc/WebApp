@@ -50607,6 +50607,28 @@ COMMENT ON FUNCTION "public"."space_is_member"("target_space_id" "uuid") IS 'Int
 
 
 
+CREATE OR REPLACE FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.spaces
+    where spaces.id = target_space_id
+      and spaces.kind = 'open'
+      and spaces.age_group = '16_plus'
+      and spaces.deleted_at is null
+      and spaces.archived_at is null
+      and not public.is_moderated_away('space', spaces.id));
+$$;
+
+
+ALTER FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") IS 'Internal: whether search engines may list a space and its threads: open, for 16+, live (GROWTH-4).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."space_members" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -50639,28 +50661,6 @@ COMMENT ON COLUMN "public"."space_members"."powers" IS 'A moderator''s powers, c
 
 
 COMMENT ON COLUMN "public"."space_members"."welcome_seen_at" IS 'When the member pressed "Got it" on the space''s welcome note; null while it still shows (IDEA-20261102-6).';
-
-
-
-CREATE OR REPLACE FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") RETURNS boolean
-    LANGUAGE "sql" STABLE SECURITY DEFINER
-    SET "search_path" TO ''
-    AS $$
-  select exists (
-    select 1 from public.spaces
-    where spaces.id = target_space_id
-      and spaces.kind = 'open'
-      and spaces.age_group = '16_plus'
-      and spaces.deleted_at is null
-      and spaces.archived_at is null
-      and not public.is_moderated_away('space', spaces.id));
-$$;
-
-
-ALTER FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") OWNER TO "postgres";
-
-
-COMMENT ON FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") IS 'Internal: whether search engines may list a space and its threads: open, for 16+, live (GROWTH-4).';
 
 
 
