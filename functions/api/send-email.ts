@@ -6,9 +6,10 @@
  * and settings, all set by hand in Cloudflare (GO-LIVE list in the pull request):
  * SEND_EMAIL_HOOK_SECRET (from Supabase › Authentication › Hooks), BREVO_API_KEY, and the public
  * VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY for the overrides read. Brand values come from the
- * same VITE_BRAND_* variables as the front end (names are settings, not code).
+ * same VITE_BRAND_* variables as the front end (names are settings, not code), and so does the
+ * site the links open (VITE_BRAND_SITE_DOMAIN, or the default in src/config/brand.ts), never Supabase's own address.
  */
-import { brandDefaults } from '../../src/config/brand';
+import { brandDefaults, readBrand } from '../../src/config/brand';
 import { sendWithBrevo } from '../../server/contact';
 import { handleSendEmailHook, overridesFromDatabase } from '../../server/send-email';
 
@@ -21,6 +22,7 @@ interface PagesContext {
     VITE_SUPABASE_URL?: string;
     VITE_SUPABASE_ANON_KEY?: string;
     VITE_BRAND_NAME?: string;
+    VITE_BRAND_SITE_DOMAIN?: string;
     VITE_BRAND_COMPANY_NAME?: string;
     VITE_BRAND_SUPPORT_EMAIL?: string;
   };
@@ -48,6 +50,8 @@ export const onRequestPost = (context: PagesContext): Promise<Response> => {
   const productName = env.VITE_BRAND_NAME ?? brandDefaults.productName;
   return handleSendEmailHook(context.request, {
     hookSecret,
+    // The links open our own pages (/auth/confirm, /reset-password), which hand the code to Auth.
+    siteUrl: readBrand(env).siteUrl,
     sender: {
       name: productName,
       email: env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,

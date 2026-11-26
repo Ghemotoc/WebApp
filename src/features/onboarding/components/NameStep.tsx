@@ -5,8 +5,9 @@
  * - the username and pen name (SetupForm) only for an account without a username, because the
  *   username is chosen at sign-up since 25 Oct 2026 (docs/board-fixes.md);
  * - the interface language, saved to the account at once (useInterfaceLanguage, S1-E1-04);
- * - a line saying the country comes from the connection (never asked, S1-E2-10);
- * - the optional county.
+ * - a line naming the country, which comes from the connection (S1-E2-10);
+ * - the optional county, listing only that country's counties and hidden for a country with none
+ *   (COUNTRY-2, trial bug, 26 Nov 2026: a person in Sweden saw Romania's counties).
  * "Next" saves the county if it changed, then moves on.
  */
 import { useState } from 'react';
@@ -19,9 +20,10 @@ import { SetupForm } from '@/features/account/components/SetupForm';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { useInterfaceLanguage } from '@/features/language/hooks/useInterfaceLanguage';
 import { useLanguageOptions } from '@/features/language/hooks/useLanguageOptions';
+import { countryName } from '@/features/safety/lib/countries';
 import { isSupportedLanguage } from '@/lib/i18n';
 
-import type { MyOnboarding } from '../api/onboarding';
+import { regionsOfCountry, shownRegionCode, type MyOnboarding } from '../api/onboarding';
 import type { useMyOnboarding } from '../hooks/useMyOnboarding';
 import { useOnboardingChoices } from '../hooks/useOnboardingChoices';
 
@@ -59,6 +61,29 @@ function LanguageField() {
 }
 
 /**
+ * The line saying where the country comes from, naming it when it is known.
+ *
+ * @param props.countryCode - the country on the profile, or null
+ * @returns the heading and the line
+ */
+function CountryLine({ countryCode }: { countryCode: string | null }) {
+  const { t, i18n } = useTranslation('account');
+  // Step 1: name the country in the page's language ("Sweden", "Suedia"), or keep the general line.
+  const line =
+    countryCode === null
+      ? t('onboarding.name.countryBody')
+      : t('onboarding.name.countryDetected', { country: countryName(countryCode, i18n.language) });
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="m-0 type-meta font-semibold text-ink-muted">
+        {t('onboarding.name.countryHeading')}
+      </p>
+      <p className="m-0 type-meta text-ink-muted">{line}</p>
+    </div>
+  );
+}
+
+/**
  * The language, country and county part, with "Next".
  *
  * @returns the fields and the button
@@ -71,10 +96,14 @@ function LanguageAndRegion(props: {
   const { t } = useTranslation('account');
   const { regions } = useOnboardingChoices();
   const [regionCode, setRegionCode] = useState(props.onboarding.regionCode ?? '');
+  // COUNTRY-2: only the counties of the country on the profile; a saved county of another
+  // country shows as "I'd rather not say" and is cleared on Next.
+  const countryRegions = regionsOfCountry(regions, props.onboarding.countryCode);
+  const shownRegion = shownRegionCode(countryRegions, regionCode);
 
   /** Saves the county only when it changed, then moves on. */
   async function next() {
-    const wanted = regionCode === '' ? null : regionCode;
+    const wanted = shownRegion === '' ? null : shownRegion;
     if (wanted !== props.onboarding.regionCode) {
       await props.state.save({ kind: 'region', regionCode: wanted });
     }
@@ -84,18 +113,15 @@ function LanguageAndRegion(props: {
   return (
     <div className="flex flex-col gap-4">
       <LanguageField />
-      <div className="flex flex-col gap-1">
-        <p className="m-0 type-meta font-semibold text-ink-muted">
-          {t('onboarding.name.countryHeading')}
-        </p>
-        <p className="m-0 type-meta text-ink-muted">{t('onboarding.name.countryBody')}</p>
-      </div>
-      <RegionSelect
-        id="onboarding-region"
-        regions={regions}
-        value={regionCode}
-        onChange={setRegionCode}
-      />
+      <CountryLine countryCode={props.onboarding.countryCode} />
+      {countryRegions.length > 0 && (
+        <RegionSelect
+          id="onboarding-region"
+          regions={countryRegions}
+          value={shownRegion}
+          onChange={setRegionCode}
+        />
+      )}
       {props.state.saveFailed && <Notice tone="error">{t('onboarding.saveFailed')}</Notice>}
       <Button
         className="self-start"

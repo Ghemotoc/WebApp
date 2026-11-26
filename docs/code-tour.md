@@ -752,7 +752,9 @@ SetupProfileNotice ("Finish setting up your profile", AppLayout) → /setup
 Settings › What you like (LikesSettingsSection) → the same writes
 ```
 
-Tests: `202` in `supabase/tests/database/`, `e2e/onboarding.spec.ts`.
+The county list follows the country on the profile: `regionsOfCountry()` in `api/onboarding.ts` offers only that country's counties (none, and no field, for a country without), and `save_my_region()` refuses a county of another country (COUNTRY-2, trial bug, 26 Nov 2026).
+
+Tests: `202` in `supabase/tests/database/`, `e2e/onboarding.spec.ts`, `api/regionsOfCountry.test.ts`.
 
 ## Google, Apple, Microsoft and passkeys (S1-E2-09)
 
@@ -790,9 +792,11 @@ Tests: `203` in `supabase/tests/database/`, `src/features/auth/api/socialReturn.
 the top bar's AccountMenu (your name and @username, which open your public profile, then Edit profile, Settings and Log out; NAV-1) → /settings → SignedInDevicesSection
   │  useMySessions → list_my_sessions() / end_my_session() read auth.sessions, never the IP
   │  "Log out of all other devices" → supabase.auth.signOut({ scope: 'others' })
-/forgot-password → resetPasswordForEmail → supabase/templates/recovery.html
+/forgot-password → resetPasswordForEmail (redirectTo: this site's /reset-password) → supabase/templates/recovery.html
   ▼
 /reset-password?token_hash=… → verifyOtp(recovery) → NewPasswordForm → updateUser
+  (Supabase's own template: Auth's verify address signs in → /reset-password → hasResetSession;
+   a PASSWORD_RECOVERY that lands elsewhere is sent to /reset-password by src/lib/supabase.ts)
   → signOut({ scope: 'others' }) → Supabase sends supabase/templates/password_changed.html
 ```
 
@@ -2068,7 +2072,7 @@ Admins change the app's own words, and the Auth emails', from Staff › Website 
 - **Where it starts (the app):** `src/main.tsx` calls `installInterfaceTextOverrides()` (`src/lib/interface-text-overrides.ts`) right after the translations start. In the background it reads `published_interface_text(locale)` once per language and writes each override over the file text; a namespace that loads later gets its overrides when it is added. If the read fails, the file text stays.
 - **Where it starts (staff):** `/staff/website/interface-text` and `/staff/website/emails` (`src/features/interface-text/`). The key list comes from the bundled locale files (`lib/localeCatalogue.ts`), so the admin site can't invent a key.
 - **How one click travels:** Publish → `useInterfaceTextEditor().act()` → `admin_save_interface_text()` (checks the role, refuses an empty text, changed placeholders or the literal product name, fixes ş and ţ) → `admin_publish_interface_text()` (logs `interface_text.published` with the before and after text) → every visitor's app shows it on its next load.
-- **Emails:** `functions/api/send-email.ts` → `server/send-email.ts` is the Supabase Auth Send Email hook: it checks the Standard Webhooks signature, picks the email and language, lays the `email:` overrides over `email.json` and sends through Brevo. It is switched on by hand (GO-LIVE); until then Auth uses `supabase/templates/`.
+- **Emails:** `functions/api/send-email.ts` → `server/send-email.ts` is the Supabase Auth Send Email hook: it checks the Standard Webhooks signature, picks the email and language, lays the `email:` overrides over `email.json` and sends through Brevo. Every link opens our own site (`VITE_BRAND_SITE_DOMAIN`: `/auth/confirm`, `/reset-password`), never the Auth address Supabase sends as `site_url`; a change of email sends `token` to the current address and `token_new` to the new one (Supabase's names are reversed). It is switched on by hand (GO-LIVE); until then Auth uses `supabase/templates/`.
 - **Tests:** `supabase/tests/database/173-interface-text.test.sql`, `e2e/interface-text.spec.ts`, `server/send-email.test.ts` and the unit tests next to each file.
 
 

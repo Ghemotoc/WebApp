@@ -277,6 +277,7 @@
       "languageHint": "Limba meniurilor și a butoanelor. {{productName}} se deschide în română pentru toată lumea. Dacă preferi engleza, alege-o aici sau din meniul de limbă. Se aplică pe toate dispozitivele tale.",
       "countryHeading": "Țara",
       "countryBody": "Îți aflăm țara din conexiune, așa că nu te întrebăm. O vezi în Setări.",
+      "countryDetected": "Îți aflăm țara din conexiune: {{country}}. O poți schimba în Setări.",
       "regionLabel": "Județul (opțional)",
       "regionNone": "Prefer să nu spun",
       "regionHint": "Doar dacă îl alegi. Îl folosim numai pentru raftul „Populare în zona ta”. Nu urmărim niciodată unde ești."

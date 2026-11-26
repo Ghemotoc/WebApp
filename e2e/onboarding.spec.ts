@@ -29,11 +29,15 @@ import { createTestAccount } from './support/testAccounts';
 const stamp = Date.now() % 100_000_000;
 const password = 'a long and private passphrase';
 
-/** The accounts: an adult who goes through setup, a 17-year-old, and one kept new for axe. */
+/**
+ * The accounts: an adult who goes through setup, a 17-year-old, one kept new for axe and an adult
+ * whose connection is in Sweden (COUNTRY-2).
+ */
 const accounts = {
   adult: { email: `setup-adult-${stamp}@example.com`, handle: `setup_adult_${stamp}` },
   teen: { email: `setup-teen-${stamp}@example.com`, handle: `setup_teen_${stamp}` },
   axe: { email: `setup-axe-${stamp}@example.com`, handle: `setup_axe_${stamp}` },
+  sweden: { email: `setup-se-${stamp}@example.com`, handle: `setup_se_${stamp}` },
 };
 type Account = (typeof accounts)[keyof typeof accounts];
 
@@ -53,7 +57,7 @@ function createNewAccount(account: Account) {
   runSql(`
     set session_replication_role = replica;
     update public.profiles set onboarded_at = null, age_check_result = '18_or_over',
-      age_check_method = 'facial_estimation', age_checked_at = now()
+      age_check_method = 'facial_estimation', age_checked_at = now(), country_code = 'RO'
       where handle = '${account.handle}';`);
 }
 
@@ -153,6 +157,10 @@ test.describe('onboarding (S1-E2-06)', () => {
     createNewAccount(accounts.adult);
     createTeen(accounts.teen);
     createNewAccount(accounts.axe);
+    createNewAccount(accounts.sweden);
+    runSql(
+      `update public.profiles set country_code = 'SE' where handle = '${accounts.sweden.handle}';`,
+    );
     seedStories();
     // Since LOOK-4b Discover shows the board's five shelves; staff can add "Picked for you" back
     // in Settings, as this test does, and it is taken out again afterwards.
@@ -217,6 +225,18 @@ test.describe('onboarding (S1-E2-06)', () => {
     );
     expect(profileValue(accounts.adult, 'region_code')).toBe('RO-CJ');
     expect(profileValue(accounts.adult, 'onboarded_at is not null')).toBe('t');
+  });
+
+  test('a person in Sweden sees their country named and no Romanian counties', async ({
+    browser,
+  }) => {
+    // COUNTRY-2 (trial bug, 26 Nov 2026): the county list follows the country on the profile, and
+    // a country with no counties listed shows no county field at all.
+    const page = await openAs(browser, accounts.sweden, '/setup');
+    await expect(page.getByRole('heading', { name: 'Name and language' })).toBeVisible();
+    await expect(page.getByText(/from your connection: Sweden\./)).toBeVisible();
+    await expect(page.getByLabel('County (optional)')).toHaveCount(0);
+    await page.close();
   });
 
   test('Settings changes the county and the likes later', async ({ browser }) => {

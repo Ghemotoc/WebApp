@@ -1,14 +1,17 @@
 /**
  * ResetPasswordPage: choosing a new password from the reset email (story S1-E2-05).
  *
- * Address: /reset-password?token_hash=…&type=recovery (supabase/templates/recovery.html). There is
+ * Address: /reset-password?token_hash=…&type=recovery (supabase/templates/recovery.html and the
+ * Send Email hook), or /reset-password with the session in the address when Supabase's own reset
+ * email signed the person in on the way (Auth's verify address, redirectTo). There is
  * no board for this screen; it follows the log-in card (board 2.2) and its "Password changed"
  * state: "Your new password is saved. We logged you out on every other device and sent you an
  * email about the change."
  * What it does: hands the one-time token to Supabase (verifyOtp, type recovery), which signs the
  * person in on this device; then NewPasswordForm saves the password. An expired or used link says
  * so and offers a new one.
- * What it calls: api/signIn.ts → openResetLink(); NewPasswordForm → saveNewPassword().
+ * What it calls: api/signIn.ts → openResetLink() or hasResetSession(); NewPasswordForm →
+ * saveNewPassword().
  */
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +19,7 @@ import { Link, useSearchParams } from 'react-router';
 
 import { getSupabaseClient } from '@/lib/supabase';
 
-import { openResetLink } from '../api/signIn';
+import { hasResetSession, openResetLink } from '../api/signIn';
 import { useNewPasswordForm } from '../hooks/useNewPasswordForm';
 
 import { AuthCard } from './AuthCard';
@@ -51,7 +54,10 @@ function useResetLink(tokenHash: string | null) {
     retry: false,
     queryFn: async () => {
       const client = await getSupabaseClient();
-      if (client === null || tokenHash === null) return false;
+      if (client === null) return false;
+      // With a token the page opens it; without one, Auth already signed the person in on the
+      // way here (its own reset email), so the form shows if there is a session.
+      if (tokenHash === null) return hasResetSession(client);
       return openResetLink(client, tokenHash);
     },
   });
