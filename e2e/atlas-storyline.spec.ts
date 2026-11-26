@@ -17,8 +17,9 @@
  *   chapters to "No act" without deleting any (GAPS-2a); a double click adds one act and another
  *   act's name is refused in plain words;
  * - a chapter told by the Narrator says so on the board and has its own lane (G10c2);
- * - the timeline adds, sorts, changes and deletes events beside dated chapters, and lists the
- *   undated chapters apart (S1-E17-20);
+ * - the timeline adds, sorts, changes and deletes events beside dated chapters, says beside a
+ *   field what is missing, deletes with Undo and counts the undated chapters apart, with Show
+ *   them (S1-E17-20; story 6.10, board E29);
  * - the lanes show each chapter in its teller's column with its status in words (S1-E17-21);
  * - the view toggle remembers the last choice (S1-E17-22);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
@@ -350,47 +351,76 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await page.context().close();
   });
 
-  test('the timeline sorts events with dated chapters, changes and deletes them, and remembers the view', async ({
+  test('the timeline sorts events with dated chapters, changes them in place, deletes with Undo, and remembers the view', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
     await showView(page, 'Timeline');
-    await page.getByRole('textbox', { name: 'Title' }).fill('The war');
+    // Add event stays pressable and says what is missing beside each field (story 6.10).
     await page.getByRole('button', { name: 'Add event' }).click();
-    await expect(
-      page.getByText('Give the event a number to sort by, such as 2055.3.'),
-    ).toBeVisible();
-    await page.getByRole('textbox', { name: 'Sort value' }).fill('2054');
+    const titleBox = page.getByRole('textbox', { name: 'Title' });
+    await expect(titleBox).toBeFocused();
+    await expect(titleBox).toHaveAccessibleDescription(/Give the event a title\./);
+    await titleBox.fill('The war');
+    await page.getByRole('button', { name: 'Add event' }).click();
+    const sortBox = page.getByRole('textbox', { name: 'Sort value' });
+    await expect(sortBox).toBeFocused();
+    await expect(sortBox).toHaveAccessibleDescription(
+      /Give the event a number to sort by, such as 2055\.3\./,
+    );
+    await sortBox.fill('2054');
     await page.getByRole('textbox', { name: 'Date as it shows' }).fill('2054');
     await page.getByRole('button', { name: 'Add event' }).click();
-    await expect(page.getByRole('textbox', { name: 'Title' })).toHaveValue('');
-    await page.getByRole('textbox', { name: 'Title' }).fill('Peace');
-    await page.getByRole('textbox', { name: 'Sort value' }).fill('2056,5');
+    await expect(titleBox).toHaveValue('');
+    await titleBox.fill('Peace');
+    await sortBox.fill('2056,5');
     await page.getByRole('button', { name: 'Add event' }).click();
+    // One list, earliest first; the kind is a word on each row.
     const timeline = page.getByRole('list', { name: 'Events and chapters in story order' });
-    await expect(timeline.getByTestId('atlas-timeline-item')).toHaveCount(3);
     const lines = timeline.getByTestId('atlas-timeline-item');
+    await expect(lines).toHaveCount(3);
     await expect(lines.nth(0)).toContainText('Event');
     await expect(lines.nth(0)).toContainText('The war');
+    await expect(lines.nth(0)).toContainText('sort 2054');
     await expect(lines.nth(1)).toContainText('Chapter');
+    await expect(lines.nth(1)).toContainText('Spring 2055');
     await expect(lines.nth(1)).toContainText('Furtuna');
+    await expect(lines.nth(1)).toContainText('POV: Ana');
     await expect(lines.nth(2)).toContainText('Peace');
-    // The undated chapters are listed apart.
-    const undated = page.getByRole('list', { name: 'Chapters without a date' });
-    await expect(undated.getByRole('link', { name: /Calmul/ })).toBeVisible();
-    // Change an event's sort value: it takes its new place.
-    await page.getByRole('button', { name: 'Edit Peace' }).click();
-    const sortBox = timeline.getByRole('textbox', { name: 'Sort value' });
-    await sortBox.fill('2050');
-    await sortBox.blur();
+    // The undated chapters are counted under the list, and Show them lists them.
+    const undated = page.getByRole('region', { name: 'Chapters without a date' });
+    await expect(undated).toContainText(/Chapters \d+ and \d+/);
+    await undated.getByRole('button', { name: 'Show them' }).click();
+    await expect(
+      undated.getByRole('list', { name: 'Chapters without a date' }).getByRole('link', {
+        name: /Calmul/,
+      }),
+    ).toBeVisible();
+    // More, then Edit, opens the fields in place; a new sort value moves the event.
+    await page.getByRole('button', { name: 'More for Peace' }).click();
+    await page.getByRole('menuitem', { name: 'Edit' }).click();
+    const editSort = timeline.getByRole('textbox', { name: 'Sort value' });
+    await editSort.fill('2050');
+    await editSort.blur();
     await expect(lines.nth(0)).toContainText('Peace');
-    // Delete asks twice.
-    await timeline.getByRole('button', { name: 'Delete Peace' }).click();
-    await timeline.getByRole('button', { name: 'Yes, delete it' }).click();
+    await timeline.getByRole('button', { name: 'Done' }).click();
+    await expect(timeline.getByRole('textbox')).toHaveCount(0);
+    // Delete deletes at once and offers Undo, which puts the event back.
+    await page.getByRole('button', { name: 'More for Peace' }).click();
+    await page.getByRole('menuitem', { name: 'Delete' }).click();
+    await expect(lines).toHaveCount(2);
+    await expect(page.getByText('Removed.')).toBeVisible();
+    await page.getByRole('button', { name: 'Undo' }).click();
+    await expect(lines).toHaveCount(3);
+    await expect(lines.nth(0)).toContainText('Peace');
+    // Deleted again, it stays gone.
+    await page.getByRole('button', { name: 'More for Peace' }).click();
+    await page.getByRole('menuitem', { name: 'Delete' }).click();
     await expect(lines).toHaveCount(2);
     // The view is remembered.
     await page.reload();
     await expect(page.getByRole('radio', { name: 'Timeline' })).toBeChecked();
+    await expect(lines).toHaveCount(2);
     await page.context().close();
   });
 
