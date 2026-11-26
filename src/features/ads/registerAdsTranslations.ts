@@ -7,10 +7,11 @@
  * them too. Who calls it: every component in this folder, through useAdsTranslation().
  */
 import { createNamespaceTranslations } from '@/lib/namespace-translations';
-import englishAds from '@/locales/en/ads.json';
 import romanianAds from '@/locales/ro/ads.json';
 
-const adsTranslations = createNamespaceTranslations('ads', romanianAds, englishAds);
+// The English text is left out here: the chapter reader shows this namespace, so its English
+// loads with the rest of the English text (readerFeatureNamespaces in src/lib/i18n-loading.ts).
+const adsTranslations = createNamespaceTranslations('ads', romanianAds);
 
 /**
  * Registers the texts once; calling it again does nothing.
