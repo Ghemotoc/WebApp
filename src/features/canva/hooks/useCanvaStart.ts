@@ -15,13 +15,13 @@ import { useMyStories } from '@/features/writing/hooks/useMyStories';
 import { openCanvaDesign } from '../api/canva';
 import { canvaFailureMessage, type CanvaMessage } from '../lib/canvaMessages';
 
-/** What the start page shows. */
+/** What the start page shows. Opening and failed carry the story's slug, for the way back. */
 export type CanvaStartState =
   | { kind: 'waiting' }
-  | { kind: 'opening' }
+  | { kind: 'opening'; slug: string }
   | { kind: 'signed_out' }
   | { kind: 'not_found' }
-  | { kind: 'failed'; message: CanvaMessage };
+  | { kind: 'failed'; message: CanvaMessage; slug: string | null };
 
 /**
  * Sends the tab to Canva for one story.
@@ -46,9 +46,9 @@ export function useCanvaStart(storyId: string): CanvaStartState {
   }, [story]);
 
   // Step 2: what to show meanwhile, or why nothing happens.
-  if (message !== null) return { kind: 'failed', message };
+  if (message !== null) return { kind: 'failed', message, slug: story?.slug ?? null };
   if (!writing.isKnown) return { kind: 'waiting' };
   if (!writing.isSignedIn) return { kind: 'signed_out' };
   if (story === undefined) return { kind: 'not_found' };
-  return { kind: 'opening' };
+  return { kind: 'opening', slug: story.slug };
 }

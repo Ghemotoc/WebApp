@@ -27,6 +27,7 @@ import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
+import { editorSaveStatus, insertFromMenu, insertMenuButton } from './support/chapterEditor';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
 const moderatorId = '00000000-0000-4000-8000-000000000010';
@@ -78,9 +79,9 @@ async function openAs(
   return page;
 }
 
-/** Opens the Video link button (its own toolbar button since G9e) and pastes a link. */
+/** Opens Insert › Video link (board D05) and pastes a link. */
 async function pasteVideoLink(page: Page, link: string) {
-  await page.getByRole('button', { name: 'Insert a video link (YouTube, Vimeo or Loom)' }).click();
+  await insertFromMenu(page, 'Video link');
   const dialog = page.getByRole('dialog', { name: 'Add a video' });
   await dialog.getByRole('textbox', { name: 'Link' }).fill(link);
   await dialog.getByRole('button', { name: 'Add' }).click();
@@ -125,9 +126,7 @@ test.describe('music and video in chapters (S1-E3-10)', () => {
     await expect(card.getByRole('button', { name: 'Remove video' })).toBeVisible();
     // Leaving the text saves at once; the card is in the stored Markdown, the link isn't.
     await page.getByRole('textbox', { name: 'Chapter title' }).focus();
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-    );
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/);
     const body = runSql(`select draft_body from public.chapters where id = '${chapterId}'`);
     expect(body).toMatch(/!\[Test YouTube title\]\(embed:[0-9a-f-]{36}\)/);
     expect(body).not.toContain('youtube');
@@ -178,10 +177,7 @@ test.describe('music and video in chapters (S1-E3-10)', () => {
     await card.getByRole('button', { name: 'Save link' }).click();
     await expect(card.getByText('Video · YouTube')).toBeVisible();
     // The block's own controls aren't the text, so this is saved by the 10-second autosave.
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-      { timeout: 20_000 },
-    );
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/, { timeout: 20_000 });
     const body = runSql(`select draft_body from public.chapters where id = '${chapterId}'`);
     const cards = [...body.matchAll(/\(embed:([0-9a-f-]{36})\)/g)].map((match) => match[1]);
     expect(cards).toHaveLength(1);
@@ -248,13 +244,11 @@ test.describe('music and video in chapters (S1-E3-10)', () => {
     runSql(`update public.feature_flags set is_enabled = false where key = 'media_embeds';`);
     const page = await openAs(browser, 'adult_writer', editorAddress);
     await expect(page.getByRole('toolbar', { name: 'Formatting' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Insert a video link/ })).toHaveCount(0);
-    const insert = page.getByRole('button', { name: 'Insert', exact: true });
-    if ((await insert.count()) > 0) {
-      await insert.click();
-      await expect(page.getByRole('menuitem', { name: /Video/ })).toHaveCount(0);
-      await expect(page.getByRole('menuitem', { name: /Music/ })).toHaveCount(0);
-    }
+    // The Insert menu stays for pictures and the scene break, without Video link or Music.
+    await insertMenuButton(page).click();
+    await expect(page.getByRole('menuitem', { name: /^Scene break/ })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: /^Video/ })).toHaveCount(0);
+    await expect(page.getByRole('menuitem', { name: /^Music/ })).toHaveCount(0);
     runSql(`update public.feature_flags set is_enabled = true where key = 'media_embeds';`);
     await page.context().close();
   });
@@ -270,12 +264,9 @@ test.describe('music and video in chapters (S1-E3-10)', () => {
       const page = await openAs(browser, 'adult_writer', editorAddress, { width, language });
       await expect(page.locator('.ProseMirror [role="group"]').first()).toBeVisible();
       await expectAccessibleAndFitting(page, width);
-      // The Video link button (G9e), in either language.
-      await page
-        .locator(
-          'button[aria-label^="Insert a video link"], button[aria-label^="Inserează un link video"]',
-        )
-        .click();
+      // Insert › Video link (board D05), in either language.
+      await page.locator('button[aria-haspopup="menu"]').click();
+      await page.getByRole('menuitem', { name: /^(Video link|Link video)/ }).click();
       await expect(page.getByRole('dialog')).toBeVisible();
       await expectAccessibleAndFitting(page, width);
       await page.goto(readerAddress);

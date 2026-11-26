@@ -13016,6 +13016,7 @@ CREATE TABLE IF NOT EXISTS "public"."chapters" (
     "is_poem" boolean DEFAULT false NOT NULL,
     "translation_of_chapter_id" "uuid",
     "is_last" boolean DEFAULT false NOT NULL,
+    "tell_followers" boolean DEFAULT true NOT NULL,
     CONSTRAINT "chapters_code_shape" CHECK (("code" ~ '^[a-z0-9]{8}$'::"text")),
     CONSTRAINT "chapters_draft_title_length" CHECK (("char_length"("draft_title") <= 120)),
     CONSTRAINT "chapters_draft_version_positive" CHECK (("draft_version" >= 1)),
@@ -13063,6 +13064,10 @@ COMMENT ON COLUMN "public"."chapters"."translation_of_chapter_id" IS 'For a chap
 
 
 COMMENT ON COLUMN "public"."chapters"."is_last" IS 'The writer marked this as the story''s last chapter when publishing or scheduling it (CALM-6; Robert, 20 Nov 2026, 12:43 UTC). Readers see "of N" only while a marked chapter is published or scheduled.';
+
+
+
+COMMENT ON COLUMN "public"."chapters"."tell_followers" IS 'Whether followers hear when this chapter goes out (board D06 "Tell followers"); set by publish_chapter() and schedule_chapter().';
 
 
 
@@ -17284,6 +17289,36 @@ COMMENT ON FUNCTION "public"."chapter_embed_states"("body" "text", "owner_id" "u
 
 
 
+CREATE OR REPLACE FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") RETURNS integer
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  chapter_story_id uuid;
+begin
+  -- Only the writer of the chapter learns the number (it is their own followers). A plain read,
+  -- not my_live_chapter(): that one locks the row, and the API runs a stable function in a
+  -- read-only transaction, where a lock is refused.
+  select chapters.story_id into chapter_story_id
+  from public.chapters
+  where chapters.code = chapter_code
+    and chapters.user_id = (select auth.uid())
+    and chapters.deleted_at is null;
+  if chapter_story_id is null then
+    return null;
+  end if;
+  return (select count(*)::integer from public.new_chapter_audience(chapter_story_id));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") IS 'How many people a new chapter tells, for the caller''s own chapter; null for anyone else (board D06 "Tell followers").';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."chapter_gate_outcome"("chapter" "public"."chapters") RETURNS "text"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -17684,8 +17719,10 @@ begin
   end if;
   insert into public.chapter_revisions (chapter_id, user_id, created_by_user_id, reason, title, body)
   values (chapter.id, chapter.user_id, chapter.user_id, 'published', chapter.draft_title, chapter.draft_body);
+  -- Board D06: the job says whether followers are told.
   insert into public.jobs (kind, payload) values ('chapter_published',
-    jsonb_build_object('chapter_id', chapter.id, 'story_id', chapter.story_id));
+    jsonb_build_object('chapter_id', chapter.id, 'story_id', chapter.story_id,
+      'tell_followers', (select chapters.tell_followers from public.chapters where chapters.id = chapter.id)));
 end;
 $$;
 
@@ -17693,7 +17730,7 @@ $$;
 ALTER FUNCTION "public"."chapter_publish_now"("chapter" "public"."chapters") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."chapter_publish_now"("chapter" "public"."chapters") IS 'Internal: puts a chapter live, stamps the story, writes a revision and queues chapter_published (S1-E3-03).';
+COMMENT ON FUNCTION "public"."chapter_publish_now"("chapter" "public"."chapters") IS 'Internal: puts a chapter live, stamps the story, writes a revision and queues chapter_published with the writer''s Tell followers choice (S1-E3-03, board D06).';
 
 
 
@@ -35789,6 +35826,43 @@ COMMENT ON FUNCTION "public"."new_certificate_code"() IS 'Internal: a fresh uniq
 
 
 
+CREATE OR REPLACE FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") RETURNS SETOF "uuid"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with story as (
+    select stories.* from public.stories
+    where stories.id = target_story_id and stories.visibility <> 'private'
+  ),
+  followers as (
+    select follows_users.user_id from public.follows_users, story
+    where follows_users.followed_user_id = story.user_id and story.visibility = 'public'
+      and story.edition_of_story_id is null
+    union
+    select follows_stories.user_id from public.follows_stories, story
+    where follows_stories.story_id = story.id
+    union
+    select follows_stories.user_id from public.follows_stories, story
+    where story.edition_of_story_id is not null
+      and follows_stories.story_id in (select public.story_family_ids(story.id))
+  )
+  select followers.user_id from followers, story
+  where followers.user_id <> story.user_id
+    and (not story.class_only or exists (
+      select 1 from public.space_members
+      where space_members.space_id = story.class_space_id
+        and space_members.user_id = followers.user_id
+        and space_members.status = 'active'));
+$$;
+
+
+ALTER FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") IS 'Internal: the people a new chapter of a story tells (S1-E7-01, NEW-1, TRANSLATE-1a, S1-E8-11; board D06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."next_chapter_json"("target_story_id" "uuid") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -36589,9 +36663,12 @@ declare
   follower_id uuid;
   wanted_kind public.notification_kind := 'new_chapter';
 begin
+  -- Board D06: the writer chose not to tell followers about this chapter.
+  if coalesce((payload ->> 'tell_followers')::boolean, true) = false then
+    return;
+  end if;
   select * into story from public.stories where stories.id = (payload ->> 'story_id')::uuid;
-  -- NEW-1: a private story tells nobody.
-  if story.id is null or story.visibility = 'private' then
+  if story.id is null then
     return;
   end if;
   -- BOOKS B06: the chapter the writer marked as the last ends the story, so followers hear
@@ -36601,31 +36678,8 @@ begin
                and chapters.status = 'published' and chapters.deleted_at is null) then
     wanted_kind := 'story_completed';
   end if;
-  for follower_id in
-    -- NEW-1: the writer's followers hear only of public stories; an unlisted story tells only
-    -- the people who follow that story.
-    select follows_users.user_id from public.follows_users
-    where follows_users.followed_user_id = story.user_id and story.visibility = 'public'
-      -- TRANSLATE-1a: not again for a translation.
-      and story.edition_of_story_id is null
-    union
-    select follows_stories.user_id from public.follows_stories where follows_stories.story_id = story.id
-    union
-    -- TRANSLATE-1a: a translation also tells whoever follows the story in another language.
-    select follows_stories.user_id from public.follows_stories
-    where story.edition_of_story_id is not null
-      and follows_stories.story_id in (select public.story_family_ids(story.id))
-  loop
-    -- S1-E8-11: a chapter of a class-only story tells only followers who are in that class, so
-    -- nobody else learns its title.
-    if story.class_only and not exists (
-      select 1 from public.space_members
-      where space_members.space_id = story.class_space_id
-        and space_members.user_id = follower_id
-        and space_members.status = 'active'
-    ) then
-      continue;
-    end if;
+  -- Everyone the chapter tells, by the rules in new_chapter_audience().
+  for follower_id in select public.new_chapter_audience(story.id) loop
     perform public.notify(follower_id, wanted_kind, story.user_id,
       jsonb_build_object('story_id', story.id, 'chapter_id', payload ->> 'chapter_id'));
   end loop;
@@ -36636,7 +36690,7 @@ $$;
 ALTER FUNCTION "public"."notify_chapter_published"("payload" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."notify_chapter_published"("payload" "jsonb") IS 'Internal: a new chapter notifies the followers of its writer and of its story (S1-E7-01); the chapter that ends the story sends story_completed instead (BOOKS B06).';
+COMMENT ON FUNCTION "public"."notify_chapter_published"("payload" "jsonb") IS 'Internal: a new chapter notifies the followers of its writer and of its story (S1-E7-01); the chapter that ends the story sends story_completed instead (BOOKS B06); nobody when the writer switched Tell followers off (board D06).';
 
 
 
@@ -39100,7 +39154,7 @@ COMMENT ON FUNCTION "public"."public_plan_relationships"("target_story_id" "uuid
 
 
 
-CREATE OR REPLACE FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean DEFAULT false) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean DEFAULT false, "tell_followers" boolean DEFAULT true) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -39132,19 +39186,22 @@ begin
     end if;
     perform public.mark_chapter_last(chapter);
   end if;
-  -- Step 3: out now; a marked chapter turns the story Completed (chapter_publish_now()).
+  -- Step 3 (board D06): the writer's "Tell followers" choice, read by chapter_publish_now().
+  update public.chapters set tell_followers = coalesce(publish_chapter.tell_followers, true)
+  where chapters.id = chapter.id;
+  -- Step 4: out now; a marked chapter turns the story Completed (chapter_publish_now()).
   perform public.chapter_publish_now(chapter);
-  -- Step 4 (CALM-6, step 7): a chapter out after the marked one takes that mark off.
+  -- Step 5 (CALM-6, step 7): a chapter out after the marked one takes that mark off.
   perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok', 'published_at', now());
 end;
 $$;
 
 
-ALTER FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) OWNER TO "postgres";
+ALTER FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean, "tell_followers" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) IS 'Puts the caller''s own chapter live now, as the last when as_last: {outcome: ok | not_active | not_found | empty | wrong_state | original_not_published | not_last} (S1-E3-03, CALM-6).';
+COMMENT ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean, "tell_followers" boolean) IS 'Puts the caller''s own chapter live now, as the last when as_last, telling followers unless tell_followers is false: {outcome: ok | not_active | not_found | empty | wrong_state | original_not_published | not_last} (S1-E3-03, CALM-6, board D06).';
 
 
 
@@ -46048,7 +46105,7 @@ COMMENT ON FUNCTION "public"."say_no_thanks_to_request"("sender_handle" "text") 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean DEFAULT false) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean DEFAULT false, "tell_followers" boolean DEFAULT true) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -46083,8 +46140,10 @@ begin
     end if;
     perform public.mark_chapter_last(chapter);
   end if;
-  -- Step 3: scheduled.
-  update public.chapters set status = 'scheduled', scheduled_for = publish_at where chapters.id = chapter.id;
+  -- Step 3: scheduled, with the "Tell followers" choice kept for publish_due_chapters().
+  update public.chapters set status = 'scheduled', scheduled_for = publish_at,
+    tell_followers = coalesce(schedule_chapter.tell_followers, true)
+  where chapters.id = chapter.id;
   -- Step 4 (CALM-6, step 7): a chapter scheduled after the marked one takes that mark off.
   perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok', 'scheduled_for', publish_at);
@@ -46092,10 +46151,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) OWNER TO "postgres";
+ALTER FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean, "tell_followers" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) IS 'Schedules the caller''s own draft chapter, as the last when as_last: {outcome: ok | not_active | not_found | empty | wrong_state | bad_time | original_not_published | not_last} (S1-E3-03, CALM-6).';
+COMMENT ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean, "tell_followers" boolean) IS 'Schedules the caller''s own draft chapter, as the last when as_last, keeping the Tell followers choice: {outcome: ok | not_active | not_found | empty | wrong_state | bad_time | original_not_published | not_last} (S1-E3-03, CALM-6, board D06).';
 
 
 
@@ -72739,6 +72798,11 @@ REVOKE ALL ON FUNCTION "public"."chapter_embed_states"("body" "text", "owner_id"
 
 
 
+REVOKE ALL ON FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."chapter_gate_outcome"("chapter" "public"."chapters") FROM PUBLIC;
 
 
@@ -75340,6 +75404,10 @@ REVOKE ALL ON FUNCTION "public"."new_certificate_code"() FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."next_chapter_json"("target_story_id" "uuid") FROM PUBLIC;
 
 
@@ -75796,8 +75864,8 @@ REVOKE ALL ON FUNCTION "public"."public_plan_relationships"("target_story_id" "u
 
 
 
-REVOKE ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean, "tell_followers" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean, "tell_followers" boolean) TO "authenticated";
 
 
 
@@ -76692,8 +76760,8 @@ GRANT ALL ON FUNCTION "public"."say_no_thanks_to_request"("sender_handle" "text"
 
 
 
-REVOKE ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean, "tell_followers" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean, "tell_followers" boolean) TO "authenticated";
 
 
 

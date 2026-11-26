@@ -172,11 +172,9 @@ const infoPillUsers = new Set([
   '/src/features/website/components/staff/SearchSharingTab.tsx',
   '/src/features/website/hooks/useListPageBackgrounds.ts',
   '/src/features/website/lib/listBackgrounds.ts',
-  '/src/features/writing/components/ChapterEditorPage.tsx',
   '/src/features/writing/components/ChapterEmbedNodeView.tsx',
   '/src/features/writing/components/ChapterPictureNodeView.tsx',
   '/src/features/writing/components/DrawnCoverPicker.tsx',
-  '/src/features/writing/components/ManagedChapterRow.tsx',
 ]);
 
 /**
@@ -340,12 +338,8 @@ describe('the design rules are the defaults', () => {
   it('no member form or dialog pushes its buttons to the right edge', () => {
     // A justify-end row whose next line opens a button: the footer ButtonRow replaced (item 8).
     const rightButtons = /justify-end[^\n]*>\s*\n\s*<(Button|Link)\b/;
-    // Not footers: the Share button under a chapter picture lines up with the picture's edge, and
-    // the translation editor's top bar keeps its actions at the right like the chapter editor's.
-    const notFooters = [
-      '/src/features/sharing/components/PictureShareButton.tsx',
-      '/src/features/story-languages/components/TranslationEditorBar.tsx',
-    ];
+    // Not a footer: the Share button under a chapter picture lines up with the picture's edge.
+    const notFooters = ['/src/features/sharing/components/PictureShareButton.tsx'];
     const offenders = codeFiles()
       .filter(([path]) => !isStaffFile(path) && !notFooters.includes(path))
       .filter(([, text]) => rightButtons.test(text))

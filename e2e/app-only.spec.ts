@@ -3,8 +3,8 @@
  * S1-E4-09; boards NewStory and AppOnly).
  *
  * What it proves:
- * - the writer finds "Where can people read this story?" in the story's settings, picks "In the
- *   app only", is told nothing changes until the apps exist, and saves;
+ * - the writer finds "Who can read this story?" in the story's settings, turns on "App only",
+ *   is told nothing changes until the apps exist, and saves;
  * - while the switch is off a reader still reads the chapter on the web;
  * - once staff turn the switch on, a reader and a visitor get the "only in the app" notice
  *   instead of the text, the story page says the chapters open in the app, and the page has no
@@ -71,8 +71,8 @@ test.describe('app only stories behind their switch (GAPS-15)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', `/write/s/${storySlug}/settings`);
-    const choice = page.getByRole('radiogroup', { name: 'Where can people read this story?' });
-    await choice.getByRole('radio', { name: 'In the app only' }).click();
+    // Board D07: App only is a switch under "Who can read this story?".
+    await page.getByRole('switch', { name: 'App only' }).click();
     await expect(page.getByText('aren’t out yet', { exact: false })).toBeVisible();
     await page.getByRole('button', { name: 'Save changes' }).click();
     await expect(page.getByText('Saved.')).toBeVisible();

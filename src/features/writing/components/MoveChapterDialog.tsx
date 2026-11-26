@@ -1,5 +1,5 @@
 /**
- * MoveChapterDialog: "Move a published chapter?" before a published chapter gets a new number
+ * MoveChapterDialog: "Change the order readers see?" before a published chapter gets a new number
  * (liquid glass Chapters board, bundle G9 WRITING, part d; story S1-E3-04).
  *
  * Why it asks: chapter numbers follow the reading order, so moving a published chapter changes

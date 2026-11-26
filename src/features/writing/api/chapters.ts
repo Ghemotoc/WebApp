@@ -299,7 +299,9 @@ export async function runChapterAction(
  * @param client - the shared Supabase client
  * @param code - the chapter's code
  * @param publishAt - when it goes live
- * @param asLast - true when the writer turned on "This is the last chapter" (CALM-6)
+ * @param choices - the dialog's two switches: asLast, true when the writer turned on "This is the
+ *   last chapter" (CALM-6, off unless given); tellFollowers, true while "Tell followers" is on
+ *   (board D06, on unless given)
  * @returns the outcome; 'bad_time' when it isn't in the future or is more than a year ahead,
  *   'not_last' when a later chapter is already out or scheduled
  * Errors: throws when the database can't be reached.
@@ -308,12 +310,14 @@ export async function scheduleChapter(
   client: AppSupabaseClient,
   code: string,
   publishAt: Date,
-  asLast = false,
+  choices: { asLast?: boolean; tellFollowers?: boolean } = {},
 ): Promise<ChapterActionOutcome> {
   const { data, error } = await client.rpc('schedule_chapter', {
     chapter_code: code,
     publish_at: publishAt.toISOString(),
-    as_last: asLast,
+    as_last: choices.asLast ?? false,
+    // Board D06: kept with the chapter until its time comes.
+    tell_followers: choices.tellFollowers ?? true,
   });
   if (error !== null) throw new Error(`Could not schedule the chapter: ${error.message}`);
   return toActionOutcome(data);

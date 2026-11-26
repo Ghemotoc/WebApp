@@ -1,13 +1,17 @@
 /**
- * PoemModeSwitch: "Poem mode" above the chapter text (bundle MUST-2; IDEA-20261106-1).
+ * PoemModeSwitch: the "Poem" button at the end of the editor's toolbar (bundle MUST-2; board D05,
+ * user story 5.5: "the Poem switch (keeps line breaks, numbers stanzas)").
  *
- * A labelled checkbox with a hint saying what changes: Enter starts a new line, a second Enter a
- * new stanza, and spaces at the start of a line stay. A failed save says so in words.
- * Who shows it: ChapterEditorPage, under the toolbar. What it calls: nothing; usePoemMode saves.
+ * A text button that stays pressed while the chapter is a poem (aria-pressed), so a screen
+ * reader says "Poem, toggle button, pressed". What poem mode does is its description
+ * (aria-describedby, a hidden line) and its tooltip, because the board shows only the word. While
+ * the change saves the button is busy; a failed change shows its notice above the paper
+ * (ChapterEditorPage).
+ * Who uses it: EditorToolbar (the state comes from usePoemMode, through ChapterEditorPage).
  */
 import { useId } from 'react';
 
-import { Notice } from '@/components/ui/Notice';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 
 import { useEditorTranslation } from '../registerEditorTranslations';
 
@@ -20,33 +24,36 @@ export interface PoemModeSwitchProps {
 }
 
 /**
- * Renders the switch.
+ * Renders the toggle.
  *
- * @returns the checkbox, its hint and an error note when a save failed
+ * @returns the "Poem" text button with its hidden description
  */
-export function PoemModeSwitch({ isPoem, isSaving, hasFailed, change }: PoemModeSwitchProps) {
+export function PoemModeSwitch({ isPoem, isSaving, change }: PoemModeSwitchProps) {
   const { t } = useEditorTranslation();
-  const fieldId = useId();
+  const hintId = useId();
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-start gap-3">
-        <input
-          id={fieldId}
-          type="checkbox"
-          checked={isPoem}
-          disabled={isSaving}
-          aria-describedby={`${fieldId}-hint`}
-          onChange={(event) => change(event.target.checked)}
-          className="mt-1 size-6 shrink-0 cursor-pointer accent-(--link) disabled:cursor-default"
-        />
-        <label htmlFor={fieldId} className="type-body font-normal text-ink-heading">
-          {t('poemMode.label')}
-        </label>
-      </div>
-      <p id={`${fieldId}-hint`} className="m-0 type-meta text-ink-muted">
+    <>
+      <button
+        type="button"
+        aria-pressed={isPoem}
+        aria-busy={isSaving}
+        aria-describedby={hintId}
+        title={t('poemMode.hint')}
+        onClick={() => {
+          // A second press while the first change saves would only race it.
+          if (!isSaving) change(!isPoem);
+        }}
+        className={buttonClassName(
+          { variant: 'text' },
+          // Pressed, the word reads in the link colour with the thicker underline.
+          `mx-2 h-9 ${isPoem ? 'text-link decoration-2' : ''}`,
+        )}
+      >
+        {t('poemMode.button')}
+      </button>
+      <span id={hintId} hidden>
         {t('poemMode.hint')}
-      </p>
-      {hasFailed && <Notice tone="error">{t('poemMode.failed')}</Notice>}
-    </div>
+      </span>
+    </>
   );
 }

@@ -5,10 +5,17 @@
  * In the order of CALM-9's board D05: the summary; the status and the word goal side by side
  * ("240 of 1,500 words" with a meter); the characters present with a "+ Add" chip; then, folded
  * under "More details", the type, point of view, act, in-world date, location and scenes.
- * Everything saves by itself and none of it shows to readers. Who uses it: ChapterEditorPage (src/features/writing), hidden in focus mode.
+ * Everything saves by itself and none of it shows to readers.
+ * The head, as board D05 draws it: "Plan for this chapter" in the subheading type with Close ×
+ * at the right (the plan closes to a button, user story 5.5), then "Only you see this. Readers
+ * never do. Open the story's plan" in the meta type. Inside the phone sheet (variant "sheet") the
+ * sheet already carries the title and Close, so the panel starts at the note and draws no card.
+ * Who uses it: ChapterEditorPage (src/features/writing), hidden in focus mode.
  * What it calls: useChapterPlan → chapter_plan() and the change functions.
  */
 import { Link } from 'react-router';
+
+import { CrossIcon } from '@/components/icons/CrossIcon';
 
 import { Notice } from '@/components/ui/Notice';
 
@@ -26,6 +33,46 @@ export interface ChapterPlanPanelProps {
   chapterCode: string;
   /** The words in the chapter text now, for the goal's progress; leave out where none is open. */
   wordCount?: number;
+  /** "side": a card beside the paper with its own head and Close; "sheet": inside a Sheet. */
+  variant?: 'side' | 'sheet';
+  /** Closes the plan to its button (the side card's Close ×). */
+  onClose?: () => void;
+}
+
+/** The side card's head: the heading and Close × (board D05). */
+function PanelHead({ onClose }: { onClose?: () => void }) {
+  const { t } = useAtlasTranslation();
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <h2 id="atlas-chapter-plan-heading" className="m-0 type-subheading text-ink-heading">
+        {t('chapterPlan.heading')}
+      </h2>
+      {onClose !== undefined && (
+        <button
+          type="button"
+          aria-label={t('chapterPlan.close')}
+          onClick={onClose}
+          className="inline-flex size-11 items-center justify-center rounded-full text-ink-heading hover:bg-tint"
+        >
+          <CrossIcon />
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** "Only you see this. Readers never do." and the way to the story's whole plan. */
+function PrivateNote({ slug }: { slug: string }) {
+  const { t } = useAtlasTranslation();
+  return (
+    <p className="m-0 type-meta text-ink-muted">
+      {t('chapterPlan.privateNote')}{' '}
+      {/* 24 px tall at least, the WCAG 2.5.8 target for a link inside a sentence. */}
+      <Link to={`/plan/s/${slug}`} className="inline-block min-h-6 font-semibold">
+        {t('chapterPlan.openPlan')}
+      </Link>
+    </p>
+  );
 }
 
 /**
@@ -33,33 +80,25 @@ export interface ChapterPlanPanelProps {
  *
  * @returns the card with every planning field, or a plain message while it can't
  */
-export function ChapterPlanPanel({ slug, chapterCode, wordCount }: ChapterPlanPanelProps) {
+export function ChapterPlanPanel(props: ChapterPlanPanelProps) {
+  const { slug, chapterCode, wordCount, variant = 'side' } = props;
   const { t } = useAtlasTranslation();
   const changers = useChapterPlan(slug, chapterCode);
   const { plan } = changers;
+  const isSide = variant === 'side';
   return (
     <section
-      aria-labelledby="atlas-chapter-plan-heading"
+      aria-labelledby={isSide ? 'atlas-chapter-plan-heading' : undefined}
+      aria-label={isSide ? undefined : t('chapterPlan.heading')}
       data-testid="atlas-chapter-plan"
-      className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
+      className={
+        isSide
+          ? 'box-surface flex min-w-0 flex-col gap-3 rounded-card p-6'
+          : 'flex min-w-0 flex-col gap-3'
+      }
     >
-      <div className="flex flex-col gap-1">
-        <h2
-          id="atlas-chapter-plan-heading"
-          className="m-0 font-heading type-heading font-bold text-ink-heading"
-        >
-          {t('chapterPlan.heading')}
-        </h2>
-        <p className="m-0 type-body text-ink-muted">{t('chapterPlan.privateNote')}</p>
-        {/* 44 px tall so it stays a full touch target when the floating Back button sits near
-            it on a phone (WCAG 2.5.8; CLAUDE.md rule 9). */}
-        <Link
-          to={`/plan/s/${slug}`}
-          className="inline-flex min-h-11 items-center type-body font-semibold"
-        >
-          {t('chapterPlan.openPlan')}
-        </Link>
-      </div>
+      {isSide && <PanelHead onClose={props.onClose} />}
+      <PrivateNote slug={slug} />
       {changers.loadFailed && <Notice tone="error">{t('chapterPlan.loadFailed')}</Notice>}
       {plan !== undefined && plan !== null && (
         <>

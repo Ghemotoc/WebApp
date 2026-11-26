@@ -5,10 +5,10 @@
  * What it proves:
  * - "Write chapter one" on a story card makes the chapter and opens the editor; typing a title
  *   and text saves on blur ("Saved at …") and the database holds the Markdown with ș and ț;
- * - the toolbar works by keyboard alone: one tab stop, arrows between buttons, every button
- *   named with its shortcut; Ctrl+B makes bold text, which is stored as **bold**;
+ * - the toolbar works by keyboard alone: one tab stop, arrows between the formatting buttons,
+ *   every one named with its shortcut; Ctrl+B makes bold text, which is stored as **bold**;
  * - a typed "<script>" is stored as escaped text and shows as text, never runs;
- * - the autosave saves on its own within 10 seconds of a change;
+ * - the autosave saves on its own half a second after typing stops (user story 5.5);
  * - teen_17 can't open adult_writer's chapter; a signed-out visitor is asked to log in;
  * - the editor passes axe, fits the width and draws no doodle at 390, 768 and 1440 px,
  *   light and night, ro and en.
@@ -20,6 +20,7 @@ import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessib
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
+import { editorSaveStatus } from './support/chapterEditor';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
 const slug = 'statia-meteo-seed01';
@@ -66,10 +67,11 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     const card = page.getByRole('article', { name: 'Stația meteo' });
     await card.getByRole('button', { name: 'Write chapter one' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${slug}/c/[a-z0-9]{8}$`));
-    await expect(page.getByText('Chapter 1', { exact: true })).toBeVisible();
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      'Nothing to save yet.',
-    );
+    await expect(
+      page.getByText('Chapter 1', { exact: true }).filter({ visible: true }),
+    ).toBeVisible();
+    // Nothing is said before the first change (board D05: no save words before typing).
+    await expect(editorSaveStatus(page)).toHaveText('');
     // Hold the clock still, so the editor's 10-second autosave tick can't save between the typing
     // and the "Unsaved changes." check (on a slow runner it did, and the test saw "Saved at"
     // instead; CI-3). Saving on leaving the text doesn't wait on a timer, so it still runs.
@@ -79,23 +81,26 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     const text = page.getByRole('textbox', { name: 'Chapter text' });
     await text.click();
     await page.keyboard.type('Bunica mea notează vremea în fiecare dimineaţă.');
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      'Unsaved changes.',
-    );
-    // The word beside the chapter's name says the same at a glance (design books item 16).
-    await expect(page.locator('[data-save-word]')).toHaveText('Not saved yet');
+    await expect(editorSaveStatus(page)).toHaveText('Unsaved changes.');
+    // The words in the bar and at the foot of the paper say the same at a glance (design books
+    // item 16; board D05).
+    await expect(page.locator('[data-save-word]').filter({ visible: true })).toHaveText([
+      'Not saved yet',
+      'Not saved yet',
+    ]);
     // Leaving the text saves at once.
     await page.getByRole('textbox', { name: 'Chapter title' }).focus();
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-    );
-    await expect(page.locator('[data-save-word]')).toHaveText('Saved');
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/);
+    // The bar says "Saved"; the foot of the paper names the time (user story 5.5).
+    const saveWords = page.locator('[data-save-word]').filter({ visible: true });
+    await expect(saveWords.first()).toHaveText('Saved');
+    await expect(saveWords.last()).toHaveText(/^Saved at \d{2}:\d{2}$/);
     expect(
       runSql(
         `select draft_title || ' | ' || draft_body from public.chapters where code = '${firstChapterCode()}'`,
       ),
     ).toBe('Caietele bunicii | Bunica mea notează vremea în fiecare dimineață.');
-    await expect(page.getByText('7 words')).toBeVisible();
+    await expect(page.getByText('7 words', { exact: true })).toBeVisible();
   });
 
   test('the toolbar works by keyboard, bold is stored as Markdown, and a typed <script> stays text', async ({
@@ -115,7 +120,6 @@ test.describe('chapter editor (S1-E3-02a)', () => {
       ['Quote', 'Control+Shift+9'],
       ['List', 'Control+Shift+8'],
       ['Link', 'Control+K'],
-      ['Scene break', 'Control+Enter'],
     ]) {
       await expect(toolbar.getByRole('button', { name, exact: true })).toHaveAttribute(
         'aria-keyshortcuts',
@@ -127,7 +131,7 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     await page.keyboard.press('ArrowRight');
     await expect(toolbar.getByRole('button', { name: 'Italic', exact: true })).toBeFocused();
     await page.keyboard.press('End');
-    await expect(toolbar.getByRole('button', { name: 'Scene break', exact: true })).toBeFocused();
+    await expect(toolbar.getByRole('button', { name: 'Link', exact: true })).toBeFocused();
 
     // Bold through the shortcut; a typed tag stays text.
     await text.click();
@@ -142,9 +146,7 @@ test.describe('chapter editor (S1-E3-02a)', () => {
       'false',
     );
     await page.getByRole('textbox', { name: 'Chapter title' }).focus();
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-    );
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/);
     const stored = runSql(`select draft_body from public.chapters where code = '${code}'`);
     expect(stored).toContain('**Important**');
     expect(stored).toContain('\\<script\\>alert(1)\\</script\\>');
@@ -172,29 +174,22 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     expect(look.mask).toContain('svg');
     expect(look.height).toBe('28px');
     await page.getByRole('textbox', { name: 'Chapter title' }).focus();
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-    );
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/);
     expect(runSql(`select draft_body from public.chapters where code = '${code}'`)).toContain(
       '* * *',
     );
   });
 
-  test('the autosave saves on its own within 10 seconds', async ({ browser }) => {
+  test('the autosave saves on its own half a second after typing stops', async ({ browser }) => {
     const code = firstChapterCode();
     const page = await openAsPersona(browser, 'adult_writer', `/write/s/${slug}/c/${code}`);
     const text = page.getByRole('textbox', { name: 'Chapter text' });
     await text.click();
     await page.keyboard.press('End');
     await page.keyboard.type(' Încă o propoziție.');
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      'Unsaved changes.',
-    );
-    // No blur: the 10-second tick saves it.
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-      { timeout: 15_000 },
-    );
+    // No blur: the pause after typing saves it (user story 5.5: "Saving…" half a second after
+    // typing stops); the 10-second tick is only the retry.
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/, { timeout: 5_000 });
     expect(runSql(`select draft_body from public.chapters where code = '${code}'`)).toContain(
       'Încă o propoziție.',
     );

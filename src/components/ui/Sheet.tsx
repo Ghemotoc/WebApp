@@ -7,18 +7,21 @@
  *     corners, the title in the subheading type and a Close × at the top right.
  *   - Its rows are split by hairlines (divide-y divide-border on the list inside it).
  *   - On phones (under 600 px) it rises from the bottom edge, full width, with square bottom
- *     corners; on wider screens it sits beside the page, at the right, 400 px wide, or, with
- *     placement "centre", in the middle of the screen as a dialog, 520 px wide (Story Atlas's
- *     "Add a relationship", user stories bundle 6, story 6.5, board E24).
+ *     corners; on wider screens it sits beside the page, at the right, 400 px wide. With
+ *     placement "centre" it sits in the middle of the screen as a dialog instead, 520 px wide
+ *     (board D06 Publish chapter; Story Atlas's "Add a relationship", story 6.5, board E24).
+ *   - An optional subtitle sits under the title in the meta type ("Chapter 16 · Epilogue: Spring").
  *   - It is a native <dialog> opened with showModal(), so focus stays inside, Escape closes it and
  *     focus goes back to the button that opened it, with no focus-trap code of our own.
- * Who uses it: AddToReadingList, the search and list filters, the bug report panel and the Story
- * Atlas's AddRelationshipDialog. What it calls: CrossIcon.
+ * Who uses it: AddToReadingList, the search and list filters, the bug report panel, the chapter
+ * editor's Publish chapter (centre) and the Story Atlas's AddRelationshipDialog (centre). What it
+ * calls: CrossIcon.
  */
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { CrossIcon } from '@/components/icons/CrossIcon';
+import { cn } from '@/lib/utils';
 
 /** What a Sheet needs. */
 export interface SheetProps {
@@ -26,7 +29,9 @@ export interface SheetProps {
   /** Called when the sheet closes: Close × or Escape. */
   onClose: () => void;
   title: string;
-  /** Where it sits from 600 px: beside the page (the default) or centred as a dialog. */
+  /** A short line under the title, in the meta type; left out, nothing shows. */
+  subtitle?: string;
+  /** Beside the page at the right (the default), or in the middle of the screen from 600 px. */
   placement?: 'side' | 'centre';
   children: ReactNode;
 }
@@ -41,26 +46,29 @@ const sharedClasses = [
   'backdrop:bg-black/30',
   // Phones: a bottom sheet, its top corners rounded.
   'top-auto bottom-0 rounded-t-card rounded-b-none',
+  // From 600 px: all four corners rounded, only as tall as its content.
+  'min-[600px]:bottom-0 min-[600px]:top-0 min-[600px]:my-auto min-[600px]:h-fit min-[600px]:rounded-card',
 ].join(' ');
 
-/** From 600 px: beside the page, at the right, all four corners rounded. */
-const sideClasses = [
-  'min-[600px]:top-0 min-[600px]:right-6 min-[600px]:bottom-0 min-[600px]:left-auto min-[600px]:my-auto',
-  'min-[600px]:h-fit min-[600px]:w-[400px] min-[600px]:rounded-card',
-].join(' ');
-
-/** From 600 px: in the middle of the screen, 520 px wide, all four corners rounded. */
-const centreClasses = [
-  'min-[600px]:inset-0 min-[600px]:m-auto',
-  'min-[600px]:h-fit min-[600px]:w-[520px] min-[600px]:rounded-card',
-].join(' ');
+/** From 600 px: beside the page at the right, 400 px wide (side), or centred, 520 px (centre). */
+const placementClasses = {
+  side: 'min-[600px]:right-6 min-[600px]:left-auto min-[600px]:w-[400px]',
+  centre: 'min-[600px]:inset-x-0 min-[600px]:mx-auto min-[600px]:w-[520px]',
+} as const;
 
 /**
  * Renders the sheet; nothing shows while it is closed.
  *
  * @returns the dialog
  */
-export function Sheet({ isOpen, onClose, title, placement = 'side', children }: SheetProps) {
+export function Sheet({
+  isOpen,
+  onClose,
+  title,
+  subtitle,
+  placement = 'side',
+  children,
+}: SheetProps) {
   const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -77,14 +85,19 @@ export function Sheet({ isOpen, onClose, title, placement = 'side', children }: 
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}
-      className={`${sharedClasses} ${placement === 'centre' ? centreClasses : sideClasses}`}
+      className={cn(sharedClasses, placementClasses[placement])}
       onClose={onClose}
     >
       <div className="flex flex-col gap-4 p-6">
         <div className="flex items-start justify-between gap-4">
-          <h2 id={titleId} className="m-0 type-subheading text-ink-heading">
-            {title}
-          </h2>
+          <div className="flex min-w-0 flex-col gap-1">
+            <h2 id={titleId} className="m-0 type-subheading text-ink-heading">
+              {title}
+            </h2>
+            {subtitle !== undefined && subtitle !== '' && (
+              <p className="m-0 type-meta text-ink-muted">{subtitle}</p>
+            )}
+          </div>
           <button
             type="button"
             onClick={onClose}

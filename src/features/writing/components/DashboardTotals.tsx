@@ -4,8 +4,8 @@
  *
  * Simplified look (bundle CALM-7c, board simplified/New-Write): the page's one glass hero
  * (`Hero`), with the heading and the "Last 30 days / All time" switch (SegmentedControl) on one
- * line, then five figures in a row (two a line on phones), each under a 2 px thread line: a label,
- * the number in 32/38 Funnel Display and a meta line; then "These are totals only" as a meta line.
+ * line, then five figures in a row (two a line on phones), each under a 1 px hairline (board D01's
+ * `.stat`, user story 5.1): a meta label, the number in 32/38 Funnel Display and a meta line; then "These are totals only" as a meta line.
  * No tiles, icons or eyebrows.
  * A count from fewer than 5 readers reads "fewer than 5" (criterion 2); the numbers are totals,
  * never a list of readers (criterion 3).
@@ -31,15 +31,15 @@ interface TileContent {
 
 /**
  * One figure: its label, the number (words such as "fewer than 5" a size smaller) and the note,
- * under the thread line.
+ * under the hairline (board D01).
  *
  * @param props.tile - the figure
  * @returns one list item
  */
 function StatTile({ tile }: { tile: TileContent }) {
   return (
-    <li className="flex min-w-0 flex-col gap-1 border-t-2 border-thread pt-3">
-      <span className="type-body font-semibold text-ink-heading">{tile.label}</span>
+    <li className="flex min-w-0 flex-col gap-1 border-t border-hairline pt-4">
+      <span className="type-meta">{tile.label}</span>
       <span
         className={
           tile.isWords === true

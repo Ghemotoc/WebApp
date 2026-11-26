@@ -23,6 +23,7 @@ import { waitForAnimationsToFinish } from './support/animations';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 import { approveWaitingPictures } from './support/pictures';
+import { editorSaveStatus, insertFromMenu } from './support/chapterEditor';
 
 const writerId = '00000000-0000-4000-8000-000000000001';
 const chapterId = 'e2e00511-0000-4000-8000-000000000001';
@@ -65,8 +66,7 @@ async function openAs(
 
 /** Opens Insert › Drawing. */
 async function openSketchPad(page: Page) {
-  await page.getByRole('button', { name: 'Insert', exact: true }).click();
-  await page.getByRole('menuitem', { name: /Drawing/ }).click();
+  await insertFromMenu(page, 'Drawing');
   return page.getByRole('dialog', { name: 'Draw a sketch' });
 }
 
@@ -159,9 +159,7 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
     // The seed story is All ages, so the drawing waits for a moderator (ADMIN-2e1b).
     await expect(figure.getByText('Waiting for a person', { exact: true })).toBeVisible();
     await page.getByRole('textbox', { name: 'Chapter title' }).focus();
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-    );
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/);
     const body = runSql(`select draft_body from public.chapters where id = '${chapterId}'`);
     expect(body).toMatch(/!\[A storm cloud over the station\]\(picture:[0-9a-f-]{36}\)/);
     expect(
@@ -187,8 +185,8 @@ test.describe('drawings in chapters (S1-E3-11)', () => {
     test(`the sketch pad passes axe and fits at ${width} px`, async ({ browser }) => {
       const page = await openAs(browser, 'adult_writer', editorAddress, { width, language });
       await page.locator('button[aria-haspopup="menu"]').click();
-      // Drawing is the menu's first item since Picture got its own button (G9e).
-      await page.getByRole('menuitem').first().click();
+      // Drawing comes after Picture, Video link and Scene break in the menu (board D05).
+      await page.getByRole('menuitem', { name: /^(Drawing|Desen)/ }).click();
       await expect(page.locator('dialog canvas')).toBeVisible();
       await dragAcross(page);
       await expectAccessibleAndFitting(page, width);

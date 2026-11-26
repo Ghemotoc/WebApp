@@ -173,10 +173,12 @@
   --quiet-pressed-hover: var(--plum-hover-to);
   --quiet-pressed-text: var(--on-plum);
   /* The one box surface (CALM-1c; rules doc "Defaults from the full-canvas review", Robert, 21 Nov
-     2026): every frosted card and tinted band on a member page is warm off-white with a soft edge,
-     in every look. index.css paints the cards and bands with these. */
-  --surface-box: #faf6ee;
-  --line-box: #eadfcb;
+     2026): every card and tinted band on a member page is white with a soft warm-grey edge, in
+     every day look. index.css paints the cards and bands with these. White since 26 Nov 2026
+     (Robert, DESIGN card, 10:48 UTC: the cream #faf6ee sat badly with the warm grey page and the
+     lilac buttons); the reader's sepia story paper is a separate token and stays. */
+  --surface-box: #ffffff;
+  --line-box: #e8e4e0;
   --dashed-border: #b3a5c8;
   /* Focus ring: 3 px plum with a 6 px soft white halo, so it shows on any glass (handoff). */
   --focus-ring: #48125d;

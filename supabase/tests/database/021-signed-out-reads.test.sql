@@ -59,12 +59,13 @@ select results_eq(
        ('ad_bookings', 0::bigint),
        -- The ad slot catalogue: which slots exist, no personal data (SPONSORS-a1, S1-E12-01).
        ('ad_blocked_categories', (select count(*) from public.ad_blocked_categories)),
-       -- 27: CALM-5 added the reader's side box (chapter_side), BOOKS-A01 the home and hub slots,
+       -- 29: CALM-5 added the reader's side box (chapter_side), BOOKS-A01 the home and hub slots,
        -- BOOKS-A03 the hub's wide banner under 1200 px (hub_wide), bundle 3 the profile's side
        -- box (board C04, profile_side) and the Library's lower banner (board C01,
-       -- library_lower_wide), bundle 7 five forum and space slots (boards F02 to F08:
-       -- forum_search_wide, forum_side, forum_wide, spaces_wide, space_side).
-       ('ad_slots', 27::bigint),
+       -- library_lower_wide), board D01 the two Write slots (write_wide, write_lower), bundle 7
+       -- five forum and space slots (boards F02 to F08: forum_search_wide, forum_side,
+       -- forum_wide, spaces_wide, space_side).
+       ('ad_slots', 29::bigint),
        ('age_check_attempts', 0::bigint),
        ('age_check_sessions', 0::bigint),
        ('appeals', 0::bigint),

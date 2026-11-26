@@ -25,6 +25,7 @@ export const adPageKeys = [
   'library',
   'home',
   'hub',
+  'write',
   // BOOKS-7: the forum search, a forum's own page and the spaces list (boards F02, F03, F06).
   'forum_search',
   'forum',
