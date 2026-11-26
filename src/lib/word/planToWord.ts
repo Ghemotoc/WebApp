@@ -12,7 +12,11 @@
  */
 import { HeadingLevel, Paragraph, TextRun } from 'docx';
 
-import { chapterTextToWord, type ChapterConversion } from './chapterTextToWord';
+import {
+  chapterTextToWord,
+  type ChapterConversion,
+  wordFootnoteCollector,
+} from './chapterTextToWord';
 import { detailLine, wordDocumentBytes } from './storyToWord';
 import type { WordLabels, WordPlan, WordPlanEntry, WordPlanPart } from './wordTypes';
 
@@ -68,10 +72,12 @@ function partParagraphs(part: WordPlanPart, conversion: ChapterConversion): Para
 export async function planToWord(plan: WordPlan, options: PlanToWordOptions): Promise<Uint8Array> {
   // Step 1: the writer's longer text goes through the chapter converter; a plan has no pictures.
   let listCount = 0;
+  const notes = wordFootnoteCollector();
   const conversion: ChapterConversion = {
     assets: { pictures: new Map(), embeds: new Map() },
     labels: options.labels,
     nextListInstance: () => (listCount += 1),
+    addFootnote: notes.addFootnote,
   };
   // Step 2: the opening, then every part, or one line when nothing is planned yet.
   const body =
@@ -84,5 +90,6 @@ export async function planToWord(plan: WordPlan, options: PlanToWordOptions): Pr
     creator: plan.writerName,
     languageCode: plan.languageCode,
     children: [...planOpening(plan, options.labels), ...body],
+    footnotes: notes.footnotes,
   });
 }

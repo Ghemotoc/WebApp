@@ -173,3 +173,27 @@ describe('markdownToPlainText', () => {
     );
   });
 });
+
+describe('footnotes in the converters (BOOKS-D05b)', () => {
+  it('reads a footnote as one node holding its note, and writes it back the same', () => {
+    const markdown = 'Liftul e vopsit[Se vopsește în fiecare primăvară.](footnote:) din nou.';
+    const document = markdownToEditorDocument(markdown);
+    expect(JSON.stringify(document)).toContain(
+      '{"type":"chapterFootnote","attrs":{"note":"Se vopsește în fiecare primăvară."}}',
+    );
+    expect(roundTrip(markdown)).toBe(markdown);
+  });
+
+  it('keeps Markdown characters in a note as text, and a note after "!" never turns into a picture', () => {
+    const markdown = 'Strigă\\![Un \\[colț\\] și o \\*stea\\*.](footnote:)';
+    expect(roundTrip(markdown)).toBe(markdown);
+    const document = markdownToEditorDocument(markdown);
+    expect(JSON.stringify(document)).toContain('"note":"Un [colț] și o *stea*."');
+  });
+
+  it('leaves the note out of the plain text, as the word count does', () => {
+    expect(markdownToPlainText('Liftul[O notă lungă aici.](footnote:) e verde.')).not.toContain(
+      'notă',
+    );
+  });
+});

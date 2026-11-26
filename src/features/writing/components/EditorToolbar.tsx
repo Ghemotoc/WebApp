@@ -2,7 +2,8 @@
  * EditorToolbar: the formatting bar above the chapter's paper (story S1-E3-02a; board D05, user
  * story 5.5).
  *
- * In board order: Bold, Italic, Heading, Quote, List and Link, a thin divider, then Insert (a
+ * In board order: Bold, Italic, Heading, Quote, List, Link and Footnote ("fn", Ctrl+Alt+F, pressed
+ * while a note is open; BOOKS-D05b, board D13), a thin divider, then Insert (a
  * round "+" that opens Picture, Video link and Scene break, ChapterInsertControls), Undo and the
  * "Poem" text button (PoemModeSwitch). Below 1024 px a last button opens the chapter's plan as a
  * sheet, and the bar floats just above the on-screen keyboard (EditorToolbarDock). The word count
@@ -32,7 +33,7 @@ import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** One button: its key in the locale file, its icon, what it does and whether it is "on". */
 interface ToolbarAction {
-  key: 'bold' | 'italic' | 'heading' | 'quote' | 'list' | 'link';
+  key: 'bold' | 'italic' | 'heading' | 'quote' | 'list' | 'link' | 'footnote';
   /** The machine-readable shortcut (aria-keyshortcuts); the title shows the locale's text. */
   keyshortcuts: string;
   icon: ReactNode;
@@ -44,6 +45,10 @@ interface ToolbarAction {
 export interface EditorToolbarProps {
   editor: Editor;
   onLink: () => void;
+  /** Puts a footnote at the cursor and opens its note (BOOKS-D05b). */
+  onFootnote: () => void;
+  /** True while a footnote's note is open: the fn button shows as pressed (board D13). */
+  isFootnoteOpen: boolean;
   /** The chapter's row ID, for the Insert menu's pictures (S1-E3-09). */
   chapterId: string;
   /** Poem mode's state and change (usePoemMode). */
@@ -53,12 +58,29 @@ export interface EditorToolbarProps {
 }
 
 /**
+ * The "fn" the board draws for Footnote: two small bold letters, in the toolbar's colour. They are
+ * drawn by the stylesheet (`.tmc-footnote-mark::before`), not written in the page, so the button's
+ * one name is "Footnote" in each language: axe counts letters in the page as part of the name and
+ * refuses "fn" beside "Notă de subsol" (WCAG 2.5.3, label in name).
+ */
+function FootnoteMark() {
+  return <span aria-hidden="true" className="tmc-footnote-mark type-kicker font-semibold" />;
+}
+
+/** What the toolbar's own buttons open. */
+interface ToolbarOpeners {
+  onLink: () => void;
+  onFootnote: () => void;
+  isFootnoteOpen: boolean;
+}
+
+/**
  * The actions, in board order.
  *
- * @param onLink - opens the link dialog
+ * @param openers - opens the link dialog and adds a footnote
  * @returns the list
  */
-function toolbarActions(onLink: () => void): ToolbarAction[] {
+function toolbarActions({ onLink, onFootnote, isFootnoteOpen }: ToolbarOpeners): ToolbarAction[] {
   return [
     {
       key: 'bold',
@@ -102,6 +124,13 @@ function toolbarActions(onLink: () => void): ToolbarAction[] {
       run: () => onLink(),
       isOn: (editor) => editor.isActive('link'),
     },
+    {
+      key: 'footnote',
+      keyshortcuts: 'Control+Alt+F',
+      icon: <FootnoteMark />,
+      run: () => onFootnote(),
+      isOn: () => isFootnoteOpen,
+    },
   ];
 }
 
@@ -130,9 +159,10 @@ function ToolButton(props: {
  *
  * @returns the bar with its buttons
  */
-export function EditorToolbar({ editor, onLink, chapterId, poem, onOpenPlan }: EditorToolbarProps) {
+export function EditorToolbar(props: EditorToolbarProps) {
+  const { editor, chapterId, poem, onOpenPlan } = props;
   const { t } = useEditorTranslation();
-  const actions = toolbarActions(onLink);
+  const actions = toolbarActions(props);
   // One tab stop: Tab lands on the remembered button, the arrow keys move along the bar.
   const [focusedIndex, setFocusedIndex] = useState(0);
 

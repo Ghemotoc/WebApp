@@ -120,6 +120,7 @@ test.describe('chapter editor (S1-E3-02a)', () => {
       ['Quote', 'Control+Shift+9'],
       ['List', 'Control+Shift+8'],
       ['Link', 'Control+K'],
+      ['Footnote', 'Control+Alt+F'],
     ]) {
       await expect(toolbar.getByRole('button', { name, exact: true })).toHaveAttribute(
         'aria-keyshortcuts',
@@ -131,7 +132,7 @@ test.describe('chapter editor (S1-E3-02a)', () => {
     await page.keyboard.press('ArrowRight');
     await expect(toolbar.getByRole('button', { name: 'Italic', exact: true })).toBeFocused();
     await page.keyboard.press('End');
-    await expect(toolbar.getByRole('button', { name: 'Link', exact: true })).toBeFocused();
+    await expect(toolbar.getByRole('button', { name: 'Footnote', exact: true })).toBeFocused();
 
     // Bold through the shortcut; a typed tag stays text.
     await text.click();

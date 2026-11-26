@@ -130,6 +130,15 @@ describe('chapterTextToPdf', () => {
   });
 });
 
+describe('chapterTextToPdf footnotes (BOOKS-D05b)', () => {
+  it('raises each footnote’s number and lists the notes under the chapter', () => {
+    const json = contentJson('Liftul[Se vopsește primăvara.](footnote:) e verde.');
+    expect(json).toContain('"text":"1","sup":true');
+    expect(json).toContain('"text":"1. Se vopsește primăvara."');
+    expect(json.indexOf('"sup":true')).toBeLessThan(json.indexOf('1. Se vopsește'));
+  });
+});
+
 describe('storyToPdf', () => {
   it('builds a real PDF in the story’s language, with its title', async () => {
     // jsdom has no Worker, which pdfmake needs to unpack a PNG, so the picture is left to the

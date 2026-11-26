@@ -53,4 +53,11 @@ describe('chapterDraftSchema', () => {
     expect(many.error?.issues[0]?.message).toBe('errors.tooManyPictures');
     expect(chapterDraftSchema.safeParse({ ...good, body: picture('Hartă') }).success).toBe(true);
   });
+
+  it('accepts a footnote and refuses one over 600 characters (BOOKS-D05b)', () => {
+    const note = (length: number) => `Text[${'n'.repeat(length)}](footnote:).`;
+    expect(chapterDraftSchema.safeParse({ ...good, body: note(600) }).success).toBe(true);
+    const tooLong = chapterDraftSchema.safeParse({ ...good, body: note(601) });
+    expect(tooLong.error?.issues[0]?.message).toBe('errors.footnoteTooLong');
+  });
 });

@@ -9,7 +9,8 @@
  * and ş/ţ corrected (rule 4). Pictures (S1-E3-09): each needs alt text of at most 300
  * characters, and a chapter holds at most 30 (check_chapter_pictures() in the database also
  * checks each picture is the writer's own). Music and video cards (S1-E3-10): at most 10
- * (check_chapter_embeds() also checks each card is the writer's own).
+ * (check_chapter_embeds() also checks each card is the writer's own). Footnotes (BOOKS-D05b): each
+ * note at most 600 characters (board D13, "45 of 600"; src/lib/chapter-footnotes.ts).
  */
 import { z } from 'zod';
 
@@ -19,6 +20,7 @@ import {
   pictureReferencesIn,
 } from '@/lib/chapter-pictures';
 import { embedReferenceCount, MAXIMUM_EMBEDS_PER_CHAPTER } from '@/lib/chapter-embeds';
+import { footnotesIn, MAXIMUM_FOOTNOTE_LENGTH } from '@/lib/chapter-footnotes';
 import { normaliseRomanianLetters } from '@/lib/romanian-text';
 
 /** The chapter title's limit (the database constraint). */
@@ -66,6 +68,17 @@ function everyAltFits(body: string): boolean {
   );
 }
 
+/**
+ * Whether every footnote fits (BOOKS-D05b; the note box stops at 600 characters, so this only
+ * catches text that arrived another way, such as a copy kept on the device).
+ *
+ * @param body - the Markdown
+ * @returns false when one note is over 600 characters
+ */
+function everyFootnoteFits(body: string): boolean {
+  return footnotesIn(body).every((note) => note.length <= MAXIMUM_FOOTNOTE_LENGTH);
+}
+
 /** The draft as the autosave sends it. */
 export const chapterDraftSchema = z.object({
   title: z
@@ -91,7 +104,8 @@ export const chapterDraftSchema = z.object({
         .refine(
           (body) => embedReferenceCount(body) <= MAXIMUM_EMBEDS_PER_CHAPTER,
           'errors.tooManyEmbeds',
-        ),
+        )
+        .refine(everyFootnoteFits, 'errors.footnoteTooLong'),
     ),
   /** The draft_version the editor loaded or last saved; a stale one is a conflict. */
   expectedVersion: z.number().int().min(1),

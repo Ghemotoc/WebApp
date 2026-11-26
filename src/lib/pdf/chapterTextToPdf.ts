@@ -11,6 +11,8 @@
  *   the PDF itself, which pdfmake can't tag; the Word file keeps it), or a line "Picture: <alt>"
  *   when it couldn't be loaded; a music or video card, `![title](embed:<ID>)`, becomes a line with
  *   its link (S1-E11-09: embeds are listed as links);
+ * - a footnote, `[note](footnote:)` (BOOKS-D05b), becomes a small raised number in the text and
+ *   its note in a numbered line under the chapter (pdfmake has no page-foot notes; board D13);
  * - anything else (raw HTML, code) becomes plain text, as in the Word converter.
  * Who calls it: storyToPdf() and planToPdf(). What it calls: mdast-util-from-markdown and the
  * shared link and address checks; it builds plain objects and never loads pdfmake itself.
@@ -18,6 +20,7 @@
 import type { Content, ContentText } from 'pdfmake/interfaces';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import type {
+  Link,
   List,
   Nodes as MarkdownNode,
   Paragraph as MarkdownParagraph,
@@ -26,6 +29,7 @@ import type {
 } from 'mdast';
 
 import { embedIdFromAddress } from '@/lib/chapter-embeds';
+import { takeFootnotes } from '@/lib/chapter-footnotes';
 import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 import type { WordAssets, WordLabels, WordPicture } from '@/lib/word/wordTypes';
@@ -82,6 +86,24 @@ function textRun(text: string, style: RunStyle): ContentText {
 }
 
 /**
+ * A link in the PDF: an allowed address clickable, any other keeping only its words.
+ *
+ * @param node - the Markdown link
+ * @param style - the look around it
+ * @returns its runs
+ */
+function linkToPdf(node: Link, style: RunStyle): ContentText[] {
+  if (!isAllowedLink(node.url)) {
+    // A refused link: the words stay, the address goes.
+    const text = plainTextOf(node);
+    return text === '' ? [] : [textRun(text, style)];
+  }
+  // Only allowed addresses become clickable (CLAUDE.md rule 8); the words keep their look.
+  const words = inlineToPdf(node.children, { ...style, link: node.url });
+  return words.length > 0 ? words : [textRun(node.url, { ...style, link: node.url })];
+}
+
+/**
  * Inline content to pdfmake runs: text with its bold and italic, line breaks and links.
  *
  * @param nodes - the inline Markdown nodes
@@ -97,14 +119,13 @@ function inlineToPdf(nodes: PhrasingContent[], style: RunStyle): ContentText[] {
       result.push(...inlineToPdf(node.children, { ...style, bold: true }));
     } else if (node.type === 'emphasis') {
       result.push(...inlineToPdf(node.children, { ...style, italics: true }));
-    } else if (node.type === 'link' && isAllowedLink(node.url)) {
-      // Only allowed addresses become clickable (CLAUDE.md rule 8); the words keep their look.
-      const words = inlineToPdf(node.children, { ...style, link: node.url });
-      result.push(
-        ...(words.length > 0 ? words : [textRun(node.url, { ...style, link: node.url })]),
-      );
+    } else if (node.type === 'link') {
+      result.push(...linkToPdf(node, style));
     } else if (node.type === 'break') {
       result.push({ text: '\n' });
+    } else if (node.type === 'footnoteReference') {
+      // A footnote's number (BOOKS-D05b): small and raised; its note is listed under the chapter.
+      result.push({ text: node.identifier, sup: true });
     } else {
       // A refused link, inline code, raw HTML: the words stay, the rest goes.
       const text = plainTextOf(node);
@@ -253,5 +274,29 @@ function blockToPdf(
  */
 export function chapterTextToPdf(markdown: string, conversion: PdfChapterConversion): Content[] {
   const tree = fromMarkdown(markdown);
-  return tree.children.flatMap((node) => blockToPdf(node, conversion));
+  // Step 1: the footnotes become numbers in the text, and their notes are kept for the end.
+  const notes = takeFootnotes(tree);
+  // Step 2: the text, then its notes.
+  return [...tree.children.flatMap((node) => blockToPdf(node, conversion)), ...notesToPdf(notes)];
+}
+
+/**
+ * A chapter's notes under its text (BOOKS-D05b): a short rule, then "1. The note" for each, a
+ * little smaller than the text, as a book's endnotes are.
+ *
+ * @param notes - the chapter's notes, in order
+ * @returns the content, or nothing when the chapter has no notes
+ */
+function notesToPdf(notes: string[]): Content[] {
+  if (notes.length === 0) return [];
+  const rule: Content = {
+    canvas: [{ type: 'line', x1: 0, y1: 0, x2: 120, y2: 0, lineWidth: 0.5 }],
+    margin: [0, 8, 0, 8],
+  };
+  const lines: Content[] = notes.map((note, index) => ({
+    text: `${index + 1}. ${note}`,
+    fontSize: 10,
+    margin: [0, 0, 0, 4],
+  }));
+  return [rule, ...lines];
 }

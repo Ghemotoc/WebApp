@@ -18,6 +18,7 @@
     "quote": "Citat",
     "list": "Listă",
     "link": "Link",
+    "footnote": "Notă de subsol",
     "withShortcut": "{{name}} ({{keys}})",
     "keys": {
       "bold": "Ctrl+B",
@@ -25,7 +26,8 @@
       "heading": "Ctrl+Alt+2",
       "quote": "Ctrl+Shift+9",
       "list": "Ctrl+Shift+8",
-      "link": "Ctrl+K"
+      "link": "Ctrl+K",
+      "footnote": "Ctrl+Alt+F"
     },
     "undo": "Anulează",
     "plan": "Planul capitolului"
@@ -126,7 +128,8 @@
     "pictureNeedsAlt": "Fiecare imagine are nevoie de un text alternativ. Scrie-l sub imagine și capitolul se va salva.",
     "altTooLong": "Textul alternativ poate avea cel mult 300 de caractere. Scurtează-l sub imagine.",
     "tooManyPictures": "Un capitol poate avea cel mult 30 de imagini. Scoate câteva sau împarte capitolul în două.",
-    "tooManyEmbeds": "Un capitol poate avea cel mult 10 carduri cu muzică și video. Scoate câteva sau împarte capitolul în două."
+    "tooManyEmbeds": "Un capitol poate avea cel mult 10 carduri cu muzică și video. Scoate câteva sau împarte capitolul în două.",
+    "footnoteTooLong": "O notă de subsol poate avea cel mult 600 de caractere. Scurteaz-o în notă."
   },
   "conflict": {
     "keepMine": "Păstrează această versiune",
@@ -310,5 +313,17 @@
   },
   "plan": {
     "open": "Planul capitolului"
+  },
+  "footnote": {
+    "label": "Nota de subsol {{number}}",
+    "textLabel": "Textul notei de subsol {{number}}",
+    "count": "{{count}} din {{max}}",
+    "remove": "Scoate",
+    "done": "Gata",
+    "close": "Închide",
+    "notesHeading": "Note",
+    "edit": "Editează",
+    "editLabel": "Editează nota de subsol {{number}}",
+    "notesNotCounted": "notele nu se numără"
   }
 }
