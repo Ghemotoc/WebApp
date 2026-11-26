@@ -2,11 +2,14 @@
  * WriterDashboardTop: the writer dashboard's upper half (story S1-E3-07; board WriterDashboard
  * 4.1): "How readers respond" with its five figures (the page's one glass hero since CALM-7c),
  * then the followers line (CALM-7b) and "Not published yet" side by side from 1024 px, 64 px apart
- * (board simplified/New-Write; one column below).
+ * (board simplified/New-Write; one column below), then the page's first advert (board D01, user
+ * story 5.1; slot write_wide, which staff turn off or book in Sponsors › Placements).
  *
  * Who uses it: YourWritingPage, once the writer has a story. What it calls: DashboardTotals,
- * FollowersChart and NotPublishedYet; the numbers come in from useWriterDashboard.
+ * FollowersChart, NotPublishedYet and PageAdSlot; the numbers come in from useWriterDashboard.
  */
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
+
 import type { DashboardPeriod, WriterDashboard } from '../api/dashboard';
 
 import { DashboardTotals } from './DashboardTotals';
@@ -44,6 +47,7 @@ export function WriterDashboardTop({
         />
         <NotPublishedYet chapters={dashboard.chapters} storyTitles={storyTitles} />
       </div>
+      <PageAdSlot pageKey="write" position={1} className="mx-auto w-full max-w-[970px]" />
     </>
   );
 }

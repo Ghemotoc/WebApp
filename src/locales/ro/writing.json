@@ -18,18 +18,22 @@
     "onlyYou": "Doar tu vezi această poveste până îi publici primul capitol.",
     "created": "Povestea ta e salvată. Doar tu o vezi până îi publici primul capitol."
   },
+  "breadcrumb": {
+    "label": "Unde ești",
+    "writing": "Scrieri"
+  },
   "newStory": {
     "documentTitle": "Începe o poveste nouă · {{productName}}",
     "back": "Panoul scriitorului",
-    "eyebrow": "Scrie · poveste nouă",
+    "crumb": "Poveste nouă",
     "heading": "Începe o poveste nouă",
     "intro": "Cinci pași scurți, apoi scrii primul capitol. Poți schimba totul mai târziu, din setările poveștii.",
     "basics": "Lucrurile de bază",
     "title": "Titlu",
     "blurb": "Descriere scurtă",
     "blurbHint": "Una sau două propoziții: despre cine e povestea și ce se întâmplă. {{count}} din {{max}} caractere.",
-    "language": "Limba poveștii (obligatoriu)",
-    "languageHint": "Alege limba în care e scrisă povestea. Alte limbi se deschid când avem moderatori care le citesc.",
+    "language": "Limba poveștii",
+    "languageHint": "Limba în care o scrii. Alte limbi pot fi adăugate mai târziu, ca ediții ale aceleiași povești.",
     "categoryAndTags": "Categorie, etichete și loc",
     "category": "Categorie",
     "tags": "Etichete",
@@ -37,7 +41,8 @@
     "tagsFull": "{{max}} din {{max}} etichete. Scoate una ca să adaugi alta.",
     "tagPlaceholder": "Adaugă o etichetă",
     "removeTag": "Scoate eticheta {{tag}}",
-    "rights": "Munca ta rămâne a ta. Păstrezi drepturile și o poți publica oriunde. Doar tu vezi această poveste până îi publici primul capitol.",
+    "rights": "Munca rămâne a ta: păstrezi drepturile și o poți publica oriunde. Doar tu vezi această poveste până îi publici primul capitol.",
+    "missing": "Mai ai de completat: {{steps}}.",
     "cancel": "Renunță",
     "create": "Creează și scrie primul capitol",
     "creating": "Se creează…",
@@ -222,7 +227,8 @@
     "notPublishedYet": "Încă nepublicată",
     "chaptersPublished_one": "{{count}} capitol publicat",
     "chaptersPublished_few": "{{count}} capitole publicate",
-    "chaptersPublished_other": "{{count}} de capitole publicate"
+    "chaptersPublished_other": "{{count}} de capitole publicate",
+    "lastUpdated": "actualizată la {{date}}"
   },
   "status": {
     "heading": "Stare și comentarii",
@@ -616,12 +622,15 @@
     },
     "noNumbersYet": "Încă nu sunt cifre.",
     "comments": {
-      "heading": "Cele mai noi la capitole",
+      "heading": "Cele mai noi comentarii",
       "onChapter": "la capitolul {{number}} · {{when}}",
       "reply": "Răspunde",
       "replyLabel": "Răspunde-i lui {{name}} la capitolul {{number}}",
       "empty": "Încă nu ai comentarii. Apar aici când cititorii scriu sub capitolele tale.",
       "seeAll": "Mai multe comentarii",
+      "viewCount_one": "Vezi {{count}} comentariu",
+      "viewCount_few": "Vezi {{count}} comentarii",
+      "viewCount_other": "Vezi {{count}} de comentarii",
       "onChapterOf": "la capitolul {{number}} din {{title}} · {{when}}"
     }
   },
@@ -664,9 +673,7 @@
     "arrived": "Coperta nouă din Canva a ajuns aici și este deja salvată."
   },
   "insights": {
-    "eyebrow": "Doar tu vezi asta",
     "heading": "Rânduri și opriri",
-    "intro": "Totaluri din pasajele distribuite de cititori, din comentariile la paragrafe și din locurile salvate. Niciodată cine.",
     "chapterLabel": "Capitol",
     "option": "{{story}} · Capitolul {{number}}: {{title}}",
     "lovedHeading": "Cele mai iubite rânduri",

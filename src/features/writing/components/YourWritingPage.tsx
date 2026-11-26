@@ -8,13 +8,16 @@
  * deleted" with undo when a story was deleted in the last 30 days (S1-E3-05). Once the writer has
  * a story, the writer dashboard (S1-E3-07) joins it: "Continue draft" in the header, the tiles,
  * followers chart and drafts list above the stories (WriterDashboardTop), a numbers table in each
- * story card and "Latest on your chapters" below. Between the two sits "Lines and stops"
+ * story card and "Latest comments" below. Between the two sits "Lines and stops"
  * (ChapterInsights, bundle IDEAS-1 part d): one chapter's most-loved lines and where readers stop.
+ * Board D01 (user story 5.1) adds "Story Atlas" to the header and two adverts (PageAdSlot, page
+ * write): one after the followers chart and one after the comments.
  * What it calls: useMyStories (stories through stories_select_own) and useWriterDashboard
  * (writer_dashboard()). After creating a story, NewStoryPage lands here with a "saved" notice
  * (router state).
- * Simplified look (bundle CALM-7c, board simplified/New-Write): the display title with the line
- * under it and "Continue draft" (the page's one main button) and "New story" (quiet) at the right;
+ * Simplified look (bundle CALM-7c, board simplified/New-Write; board D01): the display title with
+ * the line under it and, under them, "Continue draft" (the page's one main button), "New story"
+ * and "Story Atlas" (quiet);
  * "How readers respond" is the one glass hero; sections have plain headings, no eyebrows, no cards
  * and no info pills.
  */
@@ -23,17 +26,19 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
 import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import type { DashboardChapter, DashboardPeriod, WriterDashboard } from '../api/dashboard';
 import type { MyStory } from '../api/stories';
 import { useMyStories } from '../hooks/useMyStories';
 import { useWriterDashboard } from '../hooks/useWriterDashboard';
-import { waitingChapters } from '../lib/dashboardChapters';
+import { allTimeCommentCount, waitingChapters } from '../lib/dashboardChapters';
 
 import { ChapterInsights } from './ChapterInsights';
 import { LatestComments } from './LatestComments';
@@ -73,15 +78,32 @@ function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
 }
 
 /**
- * The "New story" link. In the header it is the quiet button beside "Continue draft" (board
- * simplified/New-Write); in the empty state, where it is the only thing to do, it is the main
- * button.
+ * The "New story" link. In the header it is a quiet button with a plus beside "Continue draft"
+ * (board D01); in the empty state, where it is the only thing to do, it is the main button.
  */
 function NewStoryLink({ label, look }: { label: string; look: 'quiet' | 'main' }) {
-  const variant = look === 'quiet' ? 'secondary' : 'primary';
+  if (look === 'main') {
+    return (
+      <Link to="/write/new" className={buttonClassName({ variant: 'primary' })}>
+        {label}
+      </Link>
+    );
+  }
   return (
-    <Link to="/write/new" className={buttonClassName({ variant })}>
+    <Link to="/write/new" className={buttonClassName({ variant: 'secondary' })}>
+      <ActionIcon name="plus" />
       {label}
+    </Link>
+  );
+}
+
+/** "Story Atlas", the quiet button with the map that opens the writer's Atlas (board D01). */
+function StoryAtlasLink() {
+  const { t } = useTranslation('writing');
+  return (
+    <Link to="/plan" className={buttonClassName({ variant: 'secondary' })}>
+      <ActionIcon name="map" />
+      {t('storyCard.atlas')}
     </Link>
   );
 }
@@ -155,7 +177,10 @@ function StoriesBody({
   );
 }
 
-/** The page's header: the title, the line under it, "Continue draft" and "New story". */
+/**
+ * The page's header (board D01, user story 5.1): the title, the line under it, then "Continue
+ * draft", "New story" and "Story Atlas" in a row under them, at the left.
+ */
 function YourWritingHeader({
   isSignedIn,
   chapters,
@@ -165,15 +190,16 @@ function YourWritingHeader({
 }) {
   const { t } = useTranslation('writing');
   return (
-    <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+    <header className="flex flex-col gap-6">
       <div className="flex min-w-0 flex-col gap-2">
         <h1 className="m-0 type-display text-ink-heading">{t('yourWriting.heading')}</h1>
         <p className="m-0 max-w-[62ch] type-body text-ink-muted">{t('yourWriting.intro')}</p>
       </div>
       {isSignedIn && (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <ContinueDraftLink chapters={chapters} />
           <NewStoryLink label={t('yourWriting.newStory')} look="quiet" />
+          <StoryAtlasLink />
         </div>
       )}
     </header>
@@ -236,6 +262,36 @@ function DashboardTopWhenReady({
 }
 
 /**
+ * The dashboard's lower half (board D01): "Lines and stops" beside "Latest comments" from 1024 px,
+ * then the page's second advert (slot write_lower; staff turn it off or book it in Sponsors ›
+ * Placements).
+ *
+ * @param props.dashboard - the numbers and the latest comments
+ * @param props.stories - the live stories, for the chapter titles
+ * @returns the two sections and the advert
+ */
+function DashboardLowerHalf({
+  dashboard,
+  stories,
+}: {
+  dashboard: WriterDashboard;
+  stories: MyStory[];
+}) {
+  return (
+    <>
+      <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
+        <ChapterInsights chapters={dashboard.chapters} storyTitles={titlesBySlug(stories)} />
+        <LatestComments
+          comments={dashboard.latestComments}
+          totalComments={allTimeCommentCount(dashboard.chapters)}
+        />
+      </div>
+      <PageAdSlot pageKey="write" position={2} className="mx-auto w-full max-w-[970px]" />
+    </>
+  );
+}
+
+/**
  * What NewStoryPage said on the way here (router state): a story was just created, or its first
  * chapter couldn't be made.
  *
@@ -259,7 +315,8 @@ function useArrivalNotices() {
 export function YourWritingPage() {
   const { t } = useTranslation('writing');
   const writing = useMyStories();
-  const [period, setPeriod] = useState<DashboardPeriod>('all');
+  // The figures open on the last 30 days, as board D01 draws them (user story 5.1).
+  const [period, setPeriod] = useState<DashboardPeriod>('last_30_days');
   const { dashboard, loadFailed } = useWriterDashboard(period);
   const { justCreated, chapterFailed } = useArrivalNotices();
   const liveStories = liveStoriesFor(writing.stories, 'all');
@@ -284,11 +341,7 @@ export function YourWritingPage() {
       )}
       <StoriesSection writing={writing} chapterNumbers={chapters} />
       {hasStories && dashboard !== null && (
-        // Lines and stops beside the latest comments from 1024 px (board New-Write).
-        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
-          <ChapterInsights chapters={chapters} storyTitles={titlesBySlug(liveStories)} />
-          <LatestComments comments={dashboard.latestComments} />
-        </div>
+        <DashboardLowerHalf dashboard={dashboard} stories={liveStories} />
       )}
       <RecentlyDeleted stories={deletedStories} />
     </PageContainer>

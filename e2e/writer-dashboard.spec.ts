@@ -10,11 +10,13 @@
  *   under the chapter, appears (criterion 3);
  * - "Lines and stops" (bundle IDEAS-1, part d) shows the most-loved paragraph and where readers'
  *   saved places are, as totals only;
- * - "Last 30 days" changes the tiles; "Not published yet" lists the draft with an Edit link and
- *   "Continue draft" opens it;
+ * - the tiles open on "Last 30 days" and "All time" changes them; "Not published yet" lists the
+ *   draft with an Edit link and "Continue draft" opens it;
+ * - board D01 (user story 5.1): "New story" and "Story Atlas" in the header, the story's meta line
+ *   from its state to when it last changed, and the page's two wide adverts;
  * - axe finds nothing serious, nothing scrolls sideways and no doodle is drawn at 390, 768
  *   and 1440 px;
- * - "More comments" opens /write/comments: every comment newest first, 20 at a time with "Show
+ * - "View 22 comments" opens /write/comments: every comment newest first, 20 at a time with "Show
  *   older", each naming its story and chapter; comments written at the same moment are all
  *   shown, and the story picker keeps its place and focus while another story loads (bundle
  *   GAPS-5 and its break test, 10 Nov 2026).
@@ -156,7 +158,7 @@ test.describe('The writer dashboard', () => {
 
   test('the page names no reader, only the public comment', async ({ browser }) => {
     const page = await openDashboard(browser);
-    const comments = page.getByRole('region', { name: 'Latest on the chapters' });
+    const comments = page.getByRole('region', { name: 'Latest comments' });
     await expect(comments.getByText('Ce praf frumos!')).toBeVisible();
     await expect(comments.getByRole('link', { name: /Reply to .* on chapter 1/ })).toHaveAttribute(
       'href',
@@ -172,15 +174,42 @@ test.describe('The writer dashboard', () => {
   test('the period, the waiting draft and "Continue draft"', async ({ browser }) => {
     const page = await openDashboard(browser);
     // The period is the glass switch (G9b): a press on a segment's words picks it.
+    // Board D01 (user story 5.1): the figures open on the last 30 days.
     const period = page.getByRole('group', { name: 'Time period' });
-    await period.getByText('Last 30 days', { exact: true }).click();
     await expect(period.getByRole('radio', { name: 'Last 30 days' })).toBeChecked();
     await expect(page.getByText('New followers in 30 days')).toBeVisible();
+    await period.getByText('All time', { exact: true }).click();
+    await expect(period.getByRole('radio', { name: 'All time' })).toBeChecked();
+    await expect(page.getByText('New followers in 30 days')).toHaveCount(0);
     const waiting = page.getByRole('region', { name: 'Not published yet' });
     await expect(waiting.getByText('Chapter 2: Rama')).toBeVisible();
     await expect(waiting.getByRole('link', { name: 'Edit: Chapter 2: Rama' })).toBeVisible();
     await page.getByRole('link', { name: 'Continue draft' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${storySlug}/c/${draftCode}$`));
+    await page.context().close();
+  });
+
+  test('the header has its three actions and the page its two adverts (board D01)', async ({
+    browser,
+  }) => {
+    const page = await openDashboard(browser);
+    // User story 5.1: "Continue draft", "New story" and "Story Atlas" sit under the intro.
+    const header = page.locator('header').filter({ has: page.getByRole('heading', { level: 1 }) });
+    await expect(header.getByRole('link', { name: 'New story' })).toHaveAttribute(
+      'href',
+      '/write/new',
+    );
+    await expect(header.getByRole('link', { name: 'Story Atlas' })).toHaveAttribute(
+      'href',
+      '/plan',
+    );
+    // The story's meta line starts with its state and ends with when it last changed.
+    const story = page.getByRole('article', { name: 'Tabloul din pod' });
+    await expect(story.getByText(/^Ongoing/)).toBeVisible();
+    await expect(story.getByText(/^last updated /)).toBeVisible();
+    // Two wide adverts: after the followers chart and after the comments (slots write_wide and
+    // write_lower, which staff turn off or book in Sponsors › Placements).
+    await expect(page.locator('[data-ad="wide"]')).toHaveCount(2);
     await page.context().close();
   });
 
@@ -250,7 +279,7 @@ test.describe('The writer dashboard', () => {
       await page.context().close();
     });
   }
-  test('"More comments" opens every comment, a page at a time', async ({ browser }) => {
+  test('"View 22 comments" opens every comment, a page at a time', async ({ browser }) => {
     // 21 older comments join the one already there, so the list needs a second page. All 21
     // were written at the very same moment: none may be skipped between the two pages (break
     // test, 10 Nov 2026).
@@ -260,8 +289,9 @@ test.describe('The writer dashboard', () => {
       where chapters.code = '${publishedCode}';`);
     const page = await openDashboard(browser);
     await page
-      .getByRole('region', { name: 'Latest on the chapters' })
-      .getByRole('link', { name: 'More comments' })
+      .getByRole('region', { name: 'Latest comments' })
+      // Board D01: the link names the all-time total once every chapter's count can be shown.
+      .getByRole('link', { name: 'View 22 comments' })
       .click();
     await expect(page).toHaveURL(/\/write\/comments$/);
     await expect(

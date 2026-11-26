@@ -74,7 +74,7 @@ function firstPlanLink(page: Page) {
 /** Fills New story's required answers and creates the story. */
 async function createStory(page: Page, title: string) {
   await page.getByRole('textbox', { name: 'Title' }).fill(title);
-  await page.getByRole('radio', { name: 'Română' }).click();
+  await page.getByLabel('Language of the story').selectOption('ro');
   // The form is a five-step wizard (CALM-9, board D02): the category is step 2, the rating step 5.
   await goToNewStoryStep(page, 'Category, tags and setting');
   await page.getByRole('radio', { name: 'Fiction' }).click();
@@ -156,6 +156,10 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
   test('the switcher moves between stories, and /plan opens the one open last', async ({
     browser,
   }) => {
+    // A card shows "Story Atlas" and its Atlas line once the story is out (board D01, user story
+    // 5.1); before that it offers only "Write chapter one" and "Story settings".
+    runSql(`update public.stories set first_published_at = now()
+      where title = 'Atlas test: harta nopții';`);
     const page = await openAs(browser, 'adult_writer', '/write');
     // "Story Atlas" sits on each story card, and its Atlas line links straight to each part.
     const card = page.getByRole('article').filter({ hasText: 'Atlas test: harta nopții' });

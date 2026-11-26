@@ -3,15 +3,15 @@
  * NewStory 4.2, section 1).
  *
  * Board values: the title field 52 px tall in Funnel Display 700 at 20 px (maxlength 120); the blurb
- * three rows with a live "n of 500 characters" counter; the language as choice chips, with the
- * note that more open once we have moderators who read them. Languages staff haven't opened yet
- * show as disabled chips marked "(soon)", short enough to fit a phone; the hint under them says why
+ * three rows with a live "n of 500 characters" counter; the language as a drop-down (board D02,
+ * user story 5.2: one language per story, others come later as editions), with the hint saying
+ * so. Languages staff haven't opened yet are listed but can't be picked, marked "(soon)"
  * (S1-E11-05, criterion 5; MARKETS-2c).
  * Who uses it: NewStoryPage. What it calls: useNewStoryForm's set().
  */
 import { useTranslation } from 'react-i18next';
 
-import { ChoiceChips } from '@/components/ui/ChoiceChips';
+import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 import { TextInput } from '@/components/ui/TextInput';
 import { MAXIMUM_BLURB_LENGTH, MAXIMUM_TITLE_LENGTH } from '@/schemas/story';
@@ -63,9 +63,11 @@ export function StoryBasicsSection({ answers, errors, languages, set }: StoryBas
           max: MAXIMUM_BLURB_LENGTH,
         })}
       />
-      <ChoiceChips
+      <Select
+        id="story-language"
         label={t('newStory.language')}
         isLabelVisible
+        placement="form"
         options={languages.map((language) => ({
           value: language.code,
           label: language.isOpen
@@ -77,10 +79,16 @@ export function StoryBasicsSection({ answers, errors, languages, set }: StoryBas
         value={answers.languageCode}
         onChange={(value) => set('languageCode', value)}
         descriptionId="story-language-hint"
-        description={
-          errors.languageCode === undefined ? t('newStory.languageHint') : t(errors.languageCode)
-        }
       />
+      {/* The hint, or the mistake in its place, read with the drop-down (aria-describedby). */}
+      <p
+        id="story-language-hint"
+        className={
+          errors.languageCode === undefined ? 'm-0 type-meta' : 'm-0 type-meta text-(--error-text)'
+        }
+      >
+        {errors.languageCode === undefined ? t('newStory.languageHint') : t(errors.languageCode)}
+      </p>
     </FormSection>
   );
 }

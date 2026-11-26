@@ -268,7 +268,9 @@
       "profile_wide": "Profile wide banner",
       "library_wide": "Library wide banner",
       "home_wide": "Home wide banner",
-      "hub_side": "Writers’ hub side box"
+      "hub_side": "Writers’ hub side box",
+      "write_wide": "Write page wide banner",
+      "write_lower": "Write page lower banner"
     },
     "formats": {
       "wide": "wide banner",

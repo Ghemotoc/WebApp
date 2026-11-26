@@ -21,6 +21,8 @@ export interface SelectOption {
   label: string;
   /** The option's own language when it differs from the page, such as "Română" (WCAG 3.1.2). */
   lang?: string;
+  /** True for a choice shown but not yet open ("Dansk (soon)" for a story's language, D02). */
+  isDisabled?: boolean;
 }
 
 /** A named group of choices, drawn as an <optgroup> (the page builder's block families, CMS-2b). */
@@ -54,7 +56,7 @@ export interface SelectProps {
  */
 function SelectOptions({ options }: { options: SelectOption[] }) {
   return options.map((option) => (
-    <option key={option.value} value={option.value} lang={option.lang}>
+    <option key={option.value} value={option.value} lang={option.lang} disabled={option.isDisabled}>
       {option.label}
     </option>
   ));

@@ -1319,7 +1319,10 @@ The word lists start in `content/username-word-lists/` and reach the database th
 
 ```
 /write (YourWritingPage) → "New story"    → /write/new (NewStoryPage)      src/features/writing/
-/write → "More comments" → /write/comments (ChapterCommentsPage, GAPS-5)   useMyChapterComments → my_chapter_comments()
+/write → "View 72 comments" → /write/comments (ChapterCommentsPage, GAPS-5)   useMyChapterComments → my_chapter_comments()
+  │  board D01 (user story 5.1): "Story Atlas" (/plan) beside "New story"; the total beside
+  │     "Latest comments" and each story's "last updated" come from lib/dashboardChapters.ts;
+  │     two adverts, PageAdSlot pageKey="write" (slots write_wide and write_lower)
   │  the simplified look (CALM-7c): the figures on one glass Hero, each story a hairline row
   │     with one meta line (lib/writerStoryFacts.ts), quiet buttons, "Continue draft" the main one
   │  the choices: useStoryFormOptions → api/stories.ts → open_story_languages(), categories
@@ -3076,6 +3079,7 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 ### New story wizard and "Set in" (CALM-9, board D02)
 
 - `/write/new` is five steps, one open at a time: `NewStoryPage` → `useNewStorySteps` (which section each step holds) → `StepWizard` (`src/components/ui/`, shared with later long forms such as the waitlist, H08). "Next" checks only the open step's answers (`checkFields()` in `useNewStoryForm`); Create checks them all and opens the first step with a mistake.
+- Since bundle 5 (story 5.2) every step is a box with Back beside Next (`goToPreviousStep` in `useStepWizard`), the page opens with `WritingBreadcrumb` (Writing / New story, shared with the other Write pages), and Create sits under the steps at every step (`NewStoryActionBar`): a press with steps unfinished names them ("Still to finish: …") and opens the first. The language is a `Select` (its closed languages are `isDisabled` options), and `StoryPreviewAside` is one sticky box with a small cover.
 - "Set in" (up to five countries) is its own column, `stories.set_in_countries`, saved by `set_my_story_set_in_countries()` after `create_story()` (`saveNewStoryExtras()`) and from story settings (`updateMyStory()`). The migration `…_calm9_d02_set_in_countries.sql` moved existing "set in <country>" tags into it.
 
 ## Coming back to the same place (design books item 17)

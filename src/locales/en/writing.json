@@ -18,18 +18,22 @@
     "onlyYou": "Only you can see this story until you publish its first chapter.",
     "created": "Your story is saved. Only you can see it until you publish its first chapter."
   },
+  "breadcrumb": {
+    "label": "Where you are",
+    "writing": "Writing"
+  },
   "newStory": {
     "documentTitle": "Start a new story · {{productName}}",
     "back": "Writer dashboard",
-    "eyebrow": "Write · new story",
+    "crumb": "New story",
     "heading": "Start a new story",
     "intro": "Five short steps, then you write chapter one. Everything can change later in story settings.",
     "basics": "The basics",
     "title": "Title",
     "blurb": "Blurb",
     "blurbHint": "One or two sentences: who the story is about and what happens. {{count}} of {{max}} characters.",
-    "language": "Language of the story (required)",
-    "languageHint": "Choose the language your story is written in. More languages open once we have moderators who read them.",
+    "language": "Language of the story",
+    "languageHint": "The language you write it in. Other languages can be added later, as editions of the same story.",
     "categoryAndTags": "Category, tags and setting",
     "category": "Category",
     "tags": "Tags",
@@ -37,7 +41,8 @@
     "tagsFull": "{{max}} of {{max}} tags. Remove one to add another.",
     "tagPlaceholder": "Add a tag",
     "removeTag": "Remove tag {{tag}}",
-    "rights": "Your work stays yours. You keep the rights and can publish it anywhere. Only you can see this story until you publish its first chapter.",
+    "rights": "The work stays yours: you keep the rights and can publish it anywhere. Only you can see this story until you publish its first chapter.",
+    "missing": "Still to finish: {{steps}}.",
     "cancel": "Cancel",
     "create": "Create and write chapter one",
     "creating": "Creating…",
@@ -222,7 +227,8 @@
     "notPublishedYet": "Not published yet",
     "chaptersPublished_one": "{{count}} chapter published",
     "chaptersPublished_few": "{{count}} chapters published",
-    "chaptersPublished_other": "{{count}} chapters published"
+    "chaptersPublished_other": "{{count}} chapters published",
+    "lastUpdated": "last updated {{date}}"
   },
   "status": {
     "heading": "Status and comments",
@@ -616,12 +622,15 @@
     },
     "noNumbersYet": "No numbers yet.",
     "comments": {
-      "heading": "Latest on the chapters",
+      "heading": "Latest comments",
       "onChapter": "on chapter {{number}} · {{when}}",
       "reply": "Reply",
       "replyLabel": "Reply to {{name}} on chapter {{number}}",
       "empty": "No comments yet. They appear here when readers write under your chapters.",
       "seeAll": "More comments",
+      "viewCount_one": "View {{count}} comment",
+      "viewCount_few": "View {{count}} comments",
+      "viewCount_other": "View {{count}} comments",
       "onChapterOf": "on chapter {{number}} of {{title}} · {{when}}"
     }
   },
@@ -664,9 +673,7 @@
     "arrived": "Your new cover from Canva is here, and it’s already saved."
   },
   "insights": {
-    "eyebrow": "Only you see this",
     "heading": "Lines and stops",
-    "intro": "Totals from readers’ shared passages, paragraph comments and saved places. Never who.",
     "chapterLabel": "Chapter",
     "option": "{{story}} · Chapter {{number}}: {{title}}",
     "lovedHeading": "Most-loved lines",

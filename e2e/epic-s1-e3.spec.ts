@@ -152,7 +152,7 @@ test.describe('epic S1-E3 journeys', () => {
     // Create, with a rating, the AI answer and the automatic cover (S1-E3-01, S1-E3-06, S1-E3-13).
     const page = await openAsPersona(browser, 'adult_writer', '/write/new');
     await page.getByRole('textbox', { name: 'Title' }).fill(storyTitle);
-    await page.getByRole('radio', { name: 'Română' }).click();
+    await page.getByLabel('Language of the story').selectOption('ro');
     // The form is a five-step wizard (CALM-9, board D02): the category is step 2, the rating step 5.
     await goToNewStoryStep(page, 'Category, tags and setting');
     await page.getByRole('radio', { name: 'Fiction' }).click();
