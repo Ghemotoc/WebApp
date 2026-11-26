@@ -1323,6 +1323,10 @@ The word lists start in `content/username-word-lists/` and reach the database th
   │  board D01 (user story 5.1): "Story Atlas" (/plan) beside "New story"; the total beside
   │     "Latest comments" and each story's "last updated" come from lib/dashboardChapters.ts;
   │     two adverts, PageAdSlot pageKey="write" (slots write_wide and write_lower)
+  │  board D04 (user story 5.4): no live story → WriteEmptyState ("No stories yet" box with
+  │     New story, "Plan before you write" → /plan, FirstStoryGuides: CMS help pages whose
+  │     address starts with "first-story-", lib/firstStoryGuides.ts); figures only once a
+  │     chapter is out (WriterDashboardTop hasChapterOut)
   │  the simplified look (CALM-7c): the figures on one glass Hero, each story a hairline row
   │     with one meta line (lib/writerStoryFacts.ts), quiet buttons, "Continue draft" the main one
   │  the choices: useStoryFormOptions → api/stories.ts → open_story_languages(), categories

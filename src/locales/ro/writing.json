@@ -10,9 +10,6 @@
     "storiesHeading": "Poveste cu poveste",
     "signedOut": "Conectează-te ca să vezi poveștile.",
     "empty": {
-      "title": "Nicio poveste încă",
-      "description": "Începe o poveste și scrie primul capitol. Doar tu o vezi până o publici.",
-      "action": "Începe o poveste nouă",
       "filteredTitle": "Nicio poveste cu această stare"
     },
     "onlyYou": "Doar tu vezi această poveste până îi publici primul capitol.",
@@ -741,5 +738,21 @@
     "remove": "Scoate {{country}}",
     "groupLabel": "Țările în care are loc povestea",
     "preview": "Are loc în {{countries}}"
+  },
+  "writeEmpty": {
+    "title": "Nicio poveste încă",
+    "line": "Începe o poveste, o poezie sau un eseu. Doar tu o vezi până publici primul capitol; numerele cititorilor încep atunci.",
+    "newStory": "Poveste nouă",
+    "plan": {
+      "heading": "Plănuiește înainte să scrii",
+      "line": "Atlasul poveștii ține personajele, locurile și ordinea lucrurilor lângă o poveste. Doar tu îl vezi, până alegi ce văd cititorii.",
+      "open": "Deschide Atlasul poveștii"
+    },
+    "guides": {
+      "heading": "Ghiduri pentru o primă poveste",
+      "minutes_one": "{{count}} min",
+      "minutes_few": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    }
   }
 }

@@ -12,6 +12,10 @@
  * (ChapterInsights, bundle IDEAS-1 part d): one chapter's most-loved lines and where readers stop.
  * Board D01 (user story 5.1) adds "Story Atlas" to the header and two adverts (PageAdSlot, page
  * write): one after the followers chart and one after the comments.
+ * Board D04 (user story 5.4): a member with no story sees WriteEmptyState instead (New story as
+ * the one main button, the Atlas and the first-story guides), with no buttons in the header. The
+ * reader figures, the followers graph and the comment and line tables wait until a chapter is
+ * out, so nothing shows a row of zeros; the drafts list shows from the first story.
  * What it calls: useMyStories (stories through stories_select_own) and useWriterDashboard
  * (writer_dashboard()). After creating a story, NewStoryPage lands here with a "saved" notice
  * (router state).
@@ -43,6 +47,7 @@ import { allTimeCommentCount, waitingChapters } from '../lib/dashboardChapters';
 import { ChapterInsights } from './ChapterInsights';
 import { LatestComments } from './LatestComments';
 import { RecentlyDeleted } from './RecentlyDeleted';
+import { WriteEmptyState } from './WriteEmptyState';
 import { WriterDashboardTop } from './WriterDashboardTop';
 import { WriterStoryCard } from './WriterStoryCard';
 
@@ -78,17 +83,10 @@ function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
 }
 
 /**
- * The "New story" link. In the header it is a quiet button with a plus beside "Continue draft"
- * (board D01); in the empty state, where it is the only thing to do, it is the main button.
+ * The "New story" link: a quiet button with a plus beside "Continue draft" (board D01). With no
+ * story yet it is the empty state's main button instead (WriteEmptyState, board D04).
  */
-function NewStoryLink({ label, look }: { label: string; look: 'quiet' | 'main' }) {
-  if (look === 'main') {
-    return (
-      <Link to="/write/new" className={buttonClassName({ variant: 'primary' })}>
-        {label}
-      </Link>
-    );
-  }
+function NewStoryLink({ label }: { label: string }) {
   return (
     <Link to="/write/new" className={buttonClassName({ variant: 'secondary' })}>
       <ActionIcon name="plus" />
@@ -152,15 +150,8 @@ function StoriesBody({
     return <p className="m-0 text-ink-muted">{t('yourWriting.signedOut')}</p>;
   if (writing.loadFailed) return <Notice tone="error">{t('errors.loadFailed')}</Notice>;
   const stories = liveStoriesFor(writing.stories, filter);
-  if (stories.length === 0) {
-    return (
-      <EmptyState
-        title={t(filter === 'all' ? 'yourWriting.empty.title' : 'yourWriting.empty.filteredTitle')}
-        description={t('yourWriting.empty.description')}
-        action={<NewStoryLink label={t('yourWriting.empty.action')} look="main" />}
-      />
-    );
-  }
+  // With no story at all the page shows WriteEmptyState, so only a filter can empty this list.
+  if (stories.length === 0) return <EmptyState title={t('yourWriting.empty.filteredTitle')} />;
   // Automatic covers come from each story's ID; two neighbours never share a design (S1-E3-13).
   const covers = designsForRow(stories);
   return (
@@ -182,10 +173,11 @@ function StoriesBody({
  * draft", "New story" and "Story Atlas" in a row under them, at the left.
  */
 function YourWritingHeader({
-  isSignedIn,
+  showsButtons,
   chapters,
 }: {
-  isSignedIn: boolean;
+  /** False when signed out, and with no story yet (board D04 puts New story in the box). */
+  showsButtons: boolean;
   chapters: DashboardChapter[];
 }) {
   const { t } = useTranslation('writing');
@@ -195,10 +187,10 @@ function YourWritingHeader({
         <h1 className="m-0 type-display text-ink-heading">{t('yourWriting.heading')}</h1>
         <p className="m-0 max-w-[62ch] type-body text-ink-muted">{t('yourWriting.intro')}</p>
       </div>
-      {isSignedIn && (
+      {showsButtons && (
         <div className="flex flex-wrap items-center gap-3">
           <ContinueDraftLink chapters={chapters} />
-          <NewStoryLink label={t('yourWriting.newStory')} look="quiet" />
+          <NewStoryLink label={t('yourWriting.newStory')} />
           <StoryAtlasLink />
         </div>
       )}
@@ -229,6 +221,14 @@ function StoriesSection({
   );
 }
 
+/**
+ * Whether any chapter has ever been out, the moment reader numbers start (board D04: before it,
+ * nothing shows a row of zeros).
+ */
+function hasChapterOut(chapters: DashboardChapter[]): boolean {
+  return chapters.some((chapter) => chapter.firstPublishedAt !== null);
+}
+
 /** Story titles by slug, for the dashboard's draft rows. */
 function titlesBySlug(stories: MyStory[]): Map<string, string> {
   return new Map(stories.map((story) => [story.slug, story.title]));
@@ -254,6 +254,7 @@ function DashboardTopWhenReady({
   return (
     <WriterDashboardTop
       dashboard={dashboard}
+      hasChapterOut={hasChapterOut(dashboard.chapters)}
       period={period}
       onPeriodChange={onPeriodChange}
       storyTitles={titlesBySlug(stories)}
@@ -308,6 +309,29 @@ function useArrivalNotices() {
 }
 
 /**
+ * What the page shows, worked out from the stories and the dashboard.
+ *
+ * @param writing - the writer's stories
+ * @param dashboard - the writer dashboard, or null while it loads
+ * @returns the live and deleted stories, the chapters and which parts show
+ */
+function usePageParts(writing: ReturnType<typeof useMyStories>, dashboard: WriterDashboard | null) {
+  const liveStories = liveStoriesFor(writing.stories, 'all');
+  const hasStories = writing.isSignedIn && liveStories.length > 0;
+  return {
+    liveStories,
+    deletedStories: writing.stories.filter((story) => story.deletedAt !== null),
+    chapters: dashboard?.chapters ?? [],
+    hasStories,
+    // Board D04: a signed-in member whose stories have loaded and come to none.
+    hasNoStory:
+      writing.isKnown && writing.isSignedIn && !writing.loadFailed && liveStories.length === 0,
+    // The comments and the lines table wait for the first chapter out, like the figures.
+    showsLowerHalf: hasStories && dashboard !== null && hasChapterOut(dashboard.chapters),
+  };
+}
+
+/**
  * Renders the page.
  *
  * @returns the Your writing screen
@@ -319,31 +343,35 @@ export function YourWritingPage() {
   const [period, setPeriod] = useState<DashboardPeriod>('last_30_days');
   const { dashboard, loadFailed } = useWriterDashboard(period);
   const { justCreated, chapterFailed } = useArrivalNotices();
-  const liveStories = liveStoriesFor(writing.stories, 'all');
-  const deletedStories = writing.stories.filter((story) => story.deletedAt !== null);
-  const chapters = dashboard?.chapters ?? [];
-  const hasStories = writing.isSignedIn && liveStories.length > 0;
+  const parts = usePageParts(writing, dashboard);
 
   return (
     <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-6">
       <title>{t('yourWriting.documentTitle')}</title>
-      <YourWritingHeader isSignedIn={writing.isSignedIn} chapters={chapters} />
+      <YourWritingHeader
+        showsButtons={writing.isSignedIn && !parts.hasNoStory}
+        chapters={parts.chapters}
+      />
       {justCreated && <Notice tone="success">{t('yourWriting.created')}</Notice>}
       {chapterFailed && <Notice tone="warning">{t('errors.chapterCreateFailed')}</Notice>}
-      {hasStories && (
+      {parts.hasStories && (
         <DashboardTopWhenReady
           dashboard={dashboard}
           loadFailed={loadFailed}
-          stories={liveStories}
+          stories={parts.liveStories}
           period={period}
           onPeriodChange={setPeriod}
         />
       )}
-      <StoriesSection writing={writing} chapterNumbers={chapters} />
-      {hasStories && dashboard !== null && (
-        <DashboardLowerHalf dashboard={dashboard} stories={liveStories} />
+      {parts.hasNoStory ? (
+        <WriteEmptyState />
+      ) : (
+        <StoriesSection writing={writing} chapterNumbers={parts.chapters} />
       )}
-      <RecentlyDeleted stories={deletedStories} />
+      {parts.showsLowerHalf && dashboard !== null && (
+        <DashboardLowerHalf dashboard={dashboard} stories={parts.liveStories} />
+      )}
+      <RecentlyDeleted stories={parts.deletedStories} />
     </PageContainer>
   );
 }

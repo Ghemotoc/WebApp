@@ -10,9 +10,6 @@
     "storiesHeading": "Story by story",
     "signedOut": "Log in to see stories.",
     "empty": {
-      "title": "No stories yet",
-      "description": "Start a story and write chapter one. Only you can see it until you publish.",
-      "action": "Start a new story",
       "filteredTitle": "No stories with this status"
     },
     "onlyYou": "Only you can see this story until you publish its first chapter.",
@@ -741,5 +738,21 @@
     "remove": "Remove {{country}}",
     "groupLabel": "Countries the story is set in",
     "preview": "Set in {{countries}}"
+  },
+  "writeEmpty": {
+    "title": "No stories yet",
+    "line": "Start a story, a poem or an essay. Only you can see it until you publish the first chapter; the reader numbers start then.",
+    "newStory": "New story",
+    "plan": {
+      "heading": "Plan before you write",
+      "line": "The Story Atlas keeps characters, places and the order of things beside a story. Only you see it, until you choose what readers see.",
+      "open": "Open the Story Atlas"
+    },
+    "guides": {
+      "heading": "Guides for a first story",
+      "minutes_one": "{{count}} min",
+      "minutes_few": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    }
   }
 }
