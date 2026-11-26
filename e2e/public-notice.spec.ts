@@ -19,7 +19,8 @@
  * Test data: synthetic @example.com addresses and addresses we don't host, so no seed case
  * changes; the rows are removed at the end.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { brand } from '../src/config/brand';
 

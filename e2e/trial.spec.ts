@@ -11,7 +11,8 @@
  * Who runs it: `npm run test:e2e`, and CI on every pull request. The flags are switched off again
  * after each test, so the specs after this one see the app as it ships.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { brand } from '../src/config/brand';
 

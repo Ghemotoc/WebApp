@@ -10,7 +10,8 @@
  * - the Library's Written by you shelf and the open account menu pass axe at 390 px, light, ro and en.
  * Test data: a draft story "Ciorna din raft" for adult_writer, removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

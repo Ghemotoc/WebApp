@@ -12,7 +12,8 @@
  * - the thread page with the toolbar passes axe at 390 px, night, and 1440 px, light.
  * Test data: one thread teacher starts in the database, removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

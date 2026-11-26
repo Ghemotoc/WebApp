@@ -23,7 +23,8 @@
  * Test data: chapters made in SQL on adult_writer's seed story "Stația meteo"; deleted after.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Locator, type Page } from '@playwright/test';
+import { type Browser, type Locator, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { waitForAnimationsToFinish } from './support/animations';

@@ -13,7 +13,8 @@
  *   the legal draft pill spilled past the screen edge.
  * Who runs it: `npm run test:e2e`. What it calls: the seed persona adult_writer (who has stories).
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { signInPersona, useSessionInBrowser } from './support/personas';
 

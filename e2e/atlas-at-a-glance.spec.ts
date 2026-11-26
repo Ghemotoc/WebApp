@@ -22,7 +22,8 @@
  * Test data: adult_writer makes "Atlas test" stories (deleted at the end); suspended_user (whose
  * language no other spec changes) gets one seeded story for the accessibility checks.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { goToLastNewStoryStep, goToNewStoryStep } from './support/newStoryWizard';
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';

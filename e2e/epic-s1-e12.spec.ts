@@ -17,7 +17,8 @@
  * story, the network switched on with a test account; all put back afterwards. Requests to Google
  * are answered by a stub, so the real script is never fetched.
  */
-import { expect, test, type Browser, type Page, type Request } from '@playwright/test';
+import { type Browser, type Page, type Request } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

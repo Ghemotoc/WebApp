@@ -18,7 +18,8 @@
  *   Romanian and English) finds nothing serious; nothing scrolls sideways, down to 320 px.
  * Test data: chapters made in SQL on adult_writer's seed story "Stația meteo"; removed after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

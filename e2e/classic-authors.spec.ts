@@ -15,7 +15,7 @@
  * Test data: one story of its own, owned by adult_writer as a stand-in for the classics account,
  * with one published chapter and a made-up author; removed afterwards.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

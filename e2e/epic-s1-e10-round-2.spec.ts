@@ -15,7 +15,8 @@
  * (S1-E10-13b) have their own specs; docs/epic-reports/S1-E10.md lists them. Test data: seed
  * personas only; what the journey makes is removed afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
