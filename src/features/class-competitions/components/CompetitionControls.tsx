@@ -8,9 +8,11 @@
  * Who shows it: ClassCompetitionCard. What it calls: useCompetitionAction → the join, leave,
  * end and delete functions.
  */
+import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Notice } from '@/components/ui/Notice';
 
 import type { CompetitionAction, RunningCompetition } from '../api/classCompetitions';
@@ -27,30 +29,35 @@ interface ControlsProps {
 }
 
 /**
- * A pupil's choice to join or leave.
+ * A pupil's choice to join or leave (board G03: a quiet button beside "What each criterion
+ * needs", with the note under them).
  *
- * @returns the button, the note and any failure
+ * @param props.children - the criteria toggle, which sits in the same row
+ * @returns the row, the note and any failure
  */
-export function PupilControls({ competition }: ControlsProps) {
+export function PupilControls({ competition, children }: ControlsProps & { children?: ReactNode }) {
   const { t } = useClassCompetitionsTranslation();
   const action = useCompetitionAction(competition.id);
   const run = (what: CompetitionAction) => void action.act(what).catch(() => undefined);
   return (
-    <div className="flex flex-col items-start gap-2">
-      {competition.isEntrant && <p className="m-0 font-semibold text-ink">{t('card.joined')}</p>}
-      {competition.canJoin && (
-        <Button disabled={action.isRunning} onClick={() => run('join')}>
-          {t('card.join')}
-        </Button>
+    <div className="flex flex-col gap-3">
+      {competition.isEntrant && (
+        <p className="m-0 type-body font-semibold text-ink">{t('card.joined')}</p>
       )}
-      {competition.canLeave && (
-        <Button variant="secondary" disabled={action.isRunning} onClick={() => run('leave')}>
-          {t('card.leave')}
-        </Button>
-      )}
-      {(competition.canJoin || competition.canLeave) && (
-        <p className="m-0 type-body text-ink-muted">{t('card.joinNote')}</p>
-      )}
+      <ButtonRow>
+        {competition.canJoin && (
+          <Button variant="secondary" disabled={action.isRunning} onClick={() => run('join')}>
+            {t('card.join')}
+          </Button>
+        )}
+        {competition.canLeave && (
+          <Button variant="secondary" disabled={action.isRunning} onClick={() => run('leave')}>
+            {t('card.leave')}
+          </Button>
+        )}
+        {children}
+      </ButtonRow>
+      <p className="m-0 type-meta text-ink-muted">{t('card.joinNote')}</p>
       <div aria-live="polite">
         {action.failure !== null && (
           <Notice tone="error">{t(`failures.${action.failure.failure}`)}</Notice>
