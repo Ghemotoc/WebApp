@@ -7,6 +7,6 @@
  *   it; the member accepts or declines on the space's page (user stories 7.7 and 7.10: "they
  *   accept first").
  *
- * Called by: 20270205100571_books7_02_together_and_spaces.sql.
+ * Called by: 20270205100521_books7_02_together_and_spaces.sql.
  */
 alter type public.notification_kind add value if not exists 'space_moderator_invited';
