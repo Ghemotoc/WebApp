@@ -63,6 +63,15 @@ export type SortOrder =
 /** Ongoing or completed: the status filter. */
 export type CompletionStatus = 'ongoing' | 'completed';
 
+/**
+ * The Length filter of the search results (user story 1.8, board A08): under 10 readable chapters
+ * or 10 and more; the database counts them (story_matches_list_filters()).
+ */
+export const storyLengths = ['short', 'long'] as const;
+
+/** One answer of the Length filter. */
+export type StoryLength = (typeof storyLengths)[number];
+
 /** Which list to read, with its filters. */
 export interface ListRequest {
   kind: ListKind;
@@ -83,6 +92,10 @@ export interface ListRequest {
    * picked yet (it then starts on the reader's own country, usePopularIn).
    */
   popularIn?: string | null;
+  /** The Rating filter (user story 1.8): one rating, or null/absent for any. */
+  storyRating?: StoryRating | null;
+  /** The Length filter (user story 1.8): short, long, or null/absent for any. */
+  storyLength?: StoryLength | null;
 }
 
 /** "Popular in › Everywhere": the overall ranking (MARKETS-2d). */
@@ -172,6 +185,11 @@ export interface ListedStory {
   titleFont?: string | null;
   chapterCount: number;
   lastChapterPublishedAt: string | null;
+  /**
+   * The story's public reads total, on a search's rows only (story_list_row_extras(); user story
+   * 1.8, board A08); null on other lists.
+   */
+  reads?: number | null;
   /** The writer chose "In the app only" and it applies now: the card's label (GAPS-15, Q4). */
   appOnly: boolean;
   /**
@@ -223,6 +241,8 @@ export interface ListedStoryRow {
   };
   chapter_count: number;
   last_chapter_published_at: string | null;
+  /** A search's rows only: the story's public reads total (user story 1.8, board A08). */
+  reads?: number;
   /** GAPS-15 (story_card_json()); missing from functions that build their own cards. */
   app_only?: boolean;
   /** TRANSLATE-1a (story_card_json()); missing from functions that build their own cards. */
@@ -272,6 +292,7 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
     titleFont: row.cover.title_font ?? null,
     chapterCount: row.chapter_count,
     lastChapterPublishedAt: row.last_chapter_published_at,
+    reads: row.reads ?? null,
     appOnly: row.app_only === true,
     languages: (row.languages ?? []).map((language) => ({
       code: language.language_code,
@@ -279,6 +300,23 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
     })),
     translatorName: row.writer.classic_author?.translator_name ?? null,
   };
+}
+
+/**
+ * The Rating and Length filters as the database's inputs, only those that are set (user story
+ * 1.8, board A08).
+ *
+ * @param request - the list and its filters
+ * @returns story_rating and story_length when set, else nothing
+ */
+function rangeFilterArguments(request: ListRequest): {
+  story_rating?: StoryRating;
+  story_length?: StoryLength;
+} {
+  const inputs: { story_rating?: StoryRating; story_length?: StoryLength } = {};
+  if (request.storyRating != null) inputs.story_rating = request.storyRating;
+  if (request.storyLength != null) inputs.story_length = request.storyLength;
+  return inputs;
 }
 
 /**
@@ -307,6 +345,7 @@ export async function fetchStoryList(
     ...(language === null ? {} : { language }),
     ...(request.sortOrder === null ? {} : { sort_order: request.sortOrder }),
     ...(popularIn === null ? {} : { popular_in: popularIn }),
+    ...rangeFilterArguments(request),
     page_size: page.pageSize,
     page_offset: page.offset,
   });

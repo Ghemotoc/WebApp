@@ -25,7 +25,11 @@
     "chapters_one": "{{count}} capitol",
     "chapters_few": "{{count}} capitole",
     "chapters_other": "{{count}} de capitole",
-    "writerHandle": "@{{handle}}"
+    "writerHandle": "@{{handle}}",
+    "reads_one": "{{value}} citire",
+    "reads_few": "{{value}} citiri",
+    "reads_other": "{{value}} de citiri",
+    "updated": "actualizată {{when}}"
   },
   "seeAll": {
     "writersEyebrow": "Căutare",
@@ -48,8 +52,10 @@
     "stories": "Povești",
     "writers": "Scriitori",
     "together": "Împreună",
+    "spaces": "Spații",
     "noneWriters": "Niciun scriitor nu se potrivește cu „{{term}}”.",
-    "noneTogether": "Nicio discuție sau postare nu se potrivește cu „{{term}}”."
+    "noneTogether": "Nicio discuție sau postare nu se potrivește cu „{{term}}”.",
+    "noneSpaces": "Niciun spațiu nu se potrivește cu „{{term}}”."
   },
   "filters": {
     "title": "Filtrează și ordonează",
@@ -67,6 +73,15 @@
       "ro": "Română"
     },
     "both": "Ambele",
+    "rating": "Clasificare",
+    "anyRating": "Orice clasificare",
+    "ratingHint": "Clasificările peste vârsta ta nu apar.",
+    "length": "Lungime",
+    "anyLength": "Orice lungime",
+    "lengths": {
+      "short": "Sub 10 capitole",
+      "long": "10 capitole sau mai multe"
+    },
     "clear": "Șterge filtrele",
     "done": "Gata"
   },

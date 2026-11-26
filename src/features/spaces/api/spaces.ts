@@ -1,7 +1,8 @@
 /**
  * Spaces people create (bundle FORUMS-2, part a; story S1-E8-06; board 5.3 A user space).
  *
- * Who calls it: hooks/useSpaces.ts. What it calls next: space_list(), space_page(),
+ * Who calls it: hooks/useSpaces.ts. What it calls next: space_list(), search_spaces() (the
+ * search's Spaces tab, user story 1.8), space_page(),
  * space_name_available(), create_space(), update_space(), join_space(), leave_space(),
  * space_join_requests() and decide_space_join_request() in
  * supabase/migrations/…_forums2_a_spaces.sql (the powers and "moderator" from
@@ -471,9 +472,44 @@ export async function fetchSpaceList(
 ): Promise<SpaceListPage> {
   const { data, error } = await client.rpc('space_list', { skip, how_many: howMany });
   if (error) throw new Error(`Could not read the spaces: ${error.message}`);
+  return spaceListPageFrom(data);
+}
+
+/**
+ * Reads a page of spaces as space_list() and search_spaces() both answer it.
+ *
+ * @param data - the database's answer
+ * @returns the page
+ */
+function spaceListPageFrom(data: Json): SpaceListPage {
   const page = objectOf(data);
   const spaces = Array.isArray(page['spaces']) ? page['spaces'].map(spaceFrom) : [];
   return { spaces, total: Number(page['total'] ?? 0), hasMore: page['has_more'] === true };
+}
+
+/**
+ * Reads the spaces whose name or description holds a search term, busiest first (user story
+ * 1.8, board A08's Spaces tab). The database keeps the same rule as the Spaces page for which
+ * cards a reader may see, and a term under 2 letters finds nothing.
+ *
+ * @param client - the Supabase client
+ * @param term - what the reader searched for
+ * @param page - skip (how many the page already shows) and howMany (how many to read, at most 50)
+ * @returns the page
+ * @throws Error in plain words when the database can't be reached
+ */
+export async function fetchFoundSpaces(
+  client: AppSupabaseClient,
+  term: string,
+  page: { skip: number; howMany: number },
+): Promise<SpaceListPage> {
+  const { data, error } = await client.rpc('search_spaces', {
+    term,
+    skip: page.skip,
+    how_many: page.howMany,
+  });
+  if (error) throw new Error(`Could not search the spaces: ${error.message}`);
+  return spaceListPageFrom(data);
 }
 
 /**
