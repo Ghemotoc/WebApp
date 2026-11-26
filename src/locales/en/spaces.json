@@ -482,7 +482,7 @@
     "count_few": "{{count}} stories",
     "count_other": "{{count}} stories",
     "makePublic": "Make public",
-    "makePublicLabel": "Make {{title}} public",
+    "makePublicLabel": "Make public: {{title}}",
     "noAds": "Class spaces never show advertising of any kind: no ads, no sponsored items and no sponsor credits."
   },
   "storyClass": {

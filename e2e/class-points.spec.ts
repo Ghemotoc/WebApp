@@ -187,7 +187,7 @@ test.describe('class points (CLASS-POINTS, S1-E8-13, 14 and 16)', () => {
     await expect(pupil.getByText('8 of 10 left')).toBeVisible();
     // Board G03: the box lists what was given this week, with Move back to the chapter.
     await expect(pupil.getByRole('heading', { name: 'Given this week' })).toBeVisible();
-    await expect(pupil.getByRole('link', { name: storyTitle })).toBeVisible();
+    await expect(pupil.getByRole('link', { name: storyTitle, exact: true })).toBeVisible();
     await expect(pupil.getByText('2 points', { exact: true })).toBeVisible();
     await expect(
       pupil.getByRole('link', { name: `Move the points given to ${storyTitle}` }),

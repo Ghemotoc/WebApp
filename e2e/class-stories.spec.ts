@@ -183,7 +183,7 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
   }) => {
     const page = await openAs(browser, 'pending_check', `/spaces/${classSlug}/stories`);
     const list = page.getByRole('list', { name: 'Stories shared with the class' });
-    await list.getByRole('button', { name: `Make ${storyTitle} public` }).click();
+    await list.getByRole('button', { name: `Make public: ${storyTitle}` }).click();
     await expect(
       page.getByText('No stories shared yet. Share one, or wait for homework.'),
     ).toBeVisible();

@@ -29,16 +29,20 @@ import { SpaceBannerBand } from './SpaceBannerBand';
 import { SpaceToolLinks } from './SpaceToolLinks';
 
 /**
- * The meta line's facts: private, who sees it, how many pupils and the teacher.
+ * The meta line's facts: "Locked" while the class is locked, then private, who sees it, how many
+ * pupils and the teacher.
  *
  * @param space - the class
- * @returns the four facts, the first one bold
+ * @returns the facts, the states first and bold
  */
 function useClassFacts(space: Space) {
   const { t } = useSpacesTranslation();
   // The teacher is a member of the class too; the board counts only pupils.
   const pupils = Math.max(space.memberCount - 1, 0);
+  // A locked class says so first, so a pupil knows why nothing can be posted (CLASSES-b).
+  const lockedFact = space.isLocked ? [{ text: t('pills.locked'), kind: 'state' as const }] : [];
   return [
+    ...lockedFact,
     { text: t('classPage.private'), kind: 'state' as const },
     { text: t('classPage.onlyClass') },
     { text: t('classPage.pupils', { count: pupils }) },

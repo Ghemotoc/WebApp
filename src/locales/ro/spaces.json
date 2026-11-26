@@ -482,7 +482,7 @@
     "count_few": "{{count}} povești",
     "count_other": "{{count}} de povești",
     "makePublic": "Fă-o publică",
-    "makePublicLabel": "Fă publică povestea {{title}}",
+    "makePublicLabel": "Fă-o publică: {{title}}",
     "noAds": "Spațiile de clasă nu arată niciodată publicitate: nicio reclamă, niciun conținut sponsorizat și nicio mențiune a sponsorilor."
   },
   "storyClass": {
