@@ -6711,6 +6711,7 @@ export type Database = {
           message_audience_of: Database['public']['Enums']['message_audience'] | null;
           message_email_choices: Json | null;
           profile_audience_of: Database['public']['Enums']['profile_audience'] | null;
+          profile_is_shown_to_caller: boolean | null;
           teacher_check_can_ask: boolean | null;
         };
         ComputedFields:
@@ -6723,6 +6724,7 @@ export type Database = {
           | 'message_audience_of'
           | 'message_email_choices'
           | 'profile_audience_of'
+          | 'profile_is_shown_to_caller'
           | 'teacher_check_can_ask';
         Insert: {
           adults_may_message?: boolean;
@@ -16697,6 +16699,7 @@ export type Database = {
         Returns: Json;
       };
       preview_story_plan: { Args: { story_slug: string }; Returns: Json };
+      profile_activity: { Args: { wanted_handle: string; wanted_language: string }; Returns: Json };
       profile_audience_of: {
         Args: {
           person: Omit<
@@ -16709,6 +16712,7 @@ export type Database = {
       profile_avatar_look: { Args: { profile_handle: string }; Returns: Json };
       profile_avatar_picture: { Args: { profile_handle: string }; Returns: Json };
       profile_avatar_recipe: { Args: { profile_handle: string }; Returns: Json };
+      profile_bookshelves: { Args: { wanted_handle: string }; Returns: Json };
       profile_for_handle: {
         Args: { wanted_handle: string };
         Returns: {
@@ -16784,8 +16788,21 @@ export type Database = {
         };
         Returns: boolean;
       };
+      profile_is_shown_to_caller: {
+        Args: {
+          writer: Omit<
+            Database['public']['Tables']['profiles']['Row'],
+            Database['public']['Tables']['profiles']['ComputedFields']
+          >;
+        };
+        Returns: boolean;
+      };
       profile_rank: { Args: { wanted_handle: string }; Returns: Json };
       profile_reader_level: { Args: { wanted_handle: string }; Returns: Json };
+      profile_recent_posts_json: {
+        Args: { how_many: number; wanted_language: string; writer_id: string };
+        Returns: Json;
+      };
       profile_signature: { Args: { wanted_handle: string }; Returns: Json };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
       public_character_json: {
