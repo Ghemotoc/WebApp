@@ -14,7 +14,7 @@
  */
 import { useTranslation } from 'react-i18next';
 
-import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { choiceRowClassName } from '@/components/ui/choiceRowStyles';
 import { isSupportedLanguage } from '@/lib/i18n';
 
 import { useInterfaceLanguage, type LanguageSaveStatus } from '../hooks/useInterfaceLanguage';
@@ -56,17 +56,28 @@ export function LanguageSettingsSection() {
         </h2>
         <p className="m-0 text-ink-muted">{t('language.settingsIntro')}</p>
       </div>
-      <SegmentedControl
-        legend={t('language.settingsLegend')}
-        isLegendVisible={false}
-        name="settings-language"
-        options={options}
-        value={language}
-        onChange={(value) => {
-          // Step 2: the control only offers our languages; the check keeps TypeScript sure.
-          if (isSupportedLanguage(value)) void changeLanguage(value);
-        }}
-      />
+      {/* Plain radios with a visible legend, as on the board (bundle 10, J06). */}
+      <fieldset className="m-0 flex flex-col gap-1 border-0 p-0">
+        <legend className="mb-2 p-0 type-body font-semibold text-ink-heading">
+          {t('language.settingsLegend')}
+        </legend>
+        {options.map((option) => (
+          <label key={option.value} className={choiceRowClassName} lang={option.lang}>
+            <input
+              type="radio"
+              name="settings-language"
+              value={option.value}
+              checked={language === option.value}
+              onChange={() => {
+                // Step 2: the radios only offer our languages; the check keeps TypeScript sure.
+                if (isSupportedLanguage(option.value)) void changeLanguage(option.value);
+              }}
+              className="size-5 shrink-0 cursor-pointer accent-(--link)"
+            />
+            {option.label}
+          </label>
+        ))}
+      </fieldset>
       {/* Step 3: where the choice was saved, read out politely by screen readers. The line stays
           in the page while empty, so the announcement is heard; empty, it has no height. */}
       <div className="flex flex-col gap-1">

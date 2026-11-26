@@ -8,9 +8,13 @@
  * can still choose a band colour for a genre or a tag page in Staff › Website › Genre and tag
  * pages (bundle G12b; useListPageBackground); the breadcrumb, title and line then sit inside it
  * in white (the genre-band utility in index.css). The count is announced politely when a filter
- * changes it. A sponsored category says "Sponsored by" under its heading (bundle SPONSORS-b3;
+ * changes it. On a genre or tag page the Follow button and the tag links follow (TopicFollowBar;
+ * BOOKS-A06, BOOKS-A09). A sponsored category says "Sponsored by" under its heading (bundle SPONSORS-b3;
  * S1-E12-02 criterion 3), with or without a band.
- * Who uses it: StoryListPage. What it calls: useListPageBackground and SponsoredByLine.
+ * Under the title, a line staff wrote for the genre or tag can lead the muted line (useListPageLine;
+ * BOOKS-A06, BOOKS-A09).
+ * Who uses it: StoryListPage. What it calls: useListPageBackground, useListPageLine,
+ * TopicFollowBar and SponsoredByLine.
  */
 import { Link } from 'react-router';
 
@@ -19,8 +23,10 @@ import { cn } from '@/lib/utils';
 
 import type { ListRequest } from '../api/storyLists';
 import { useListPageBackground } from '../hooks/useListPageBackground';
+import { useListPageLine } from '../hooks/useListPageLine';
 import type { ListTitle } from '../hooks/useListTitle';
 import { accentDeepBandClasses } from '../lib/categoryAccents';
+import { TopicFollowBar } from './TopicFollowBar';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
 /** What the header needs. */
@@ -66,28 +72,55 @@ function ListBreadcrumb({ title }: { title: string }) {
  * The title and the line under it, the same inside the band and on the page (board A05: a
  * display title, then one muted line naming the list). The line is the list's description (its
  * old eyebrow), the count and "Ratings above your age never show", joined by middots; the count
- * is announced politely when a filter changes it.
+ * is announced politely when a filter changes it. On a genre or tag page with a line staff wrote
+ * (Staff › Website › Genre and tag pages), that line leads instead of the description (boards
+ * A06 and A09).
  *
+ * @param props.request - the list, for the staff line
  * @param props.heading - the list's description and title
  * @param props.total - how many stories, or null while loading
  * @returns the heading block
  */
-function ListHeading({ heading, total }: Pick<StoryListHeaderProps, 'heading' | 'total'>) {
+function ListHeading({ request, heading, total }: StoryListHeaderProps) {
   const { t } = useDiscoveryTranslation();
+  // Board A06: "Maps, magic and long journeys. 4,812 stories…": the line staff wrote leads the
+  // muted line in place of the list's description; without one the description stays.
+  const pageLine = useListPageLine(request);
   return (
     <div className="flex flex-col gap-2">
       <h1 className="m-0 type-title lg:type-display break-words text-ink-heading">
         {heading.title}
       </h1>
       <p className="m-0 type-body text-ink-muted">
-        {heading.eyebrow}
-        {' · '}
+        {pageLine === null ? (
+          <>
+            {heading.eyebrow}
+            {' · '}
+          </>
+        ) : (
+          <>
+            {/* lang marks an English line shown on a Romanian page (WCAG 3.1.2). */}
+            <span lang={pageLine.language}>{pageLine.line}</span>{' '}
+          </>
+        )}
         <span aria-live="polite">{total === null ? '' : t('seeAll.count', { count: total })}</span>
         {total === null ? '' : ' · '}
         {t('seeAll.ratingShort')}
       </p>
     </div>
   );
+}
+
+/**
+ * The Follow button and tag links, on a genre or tag page only (boards A06 and A09).
+ *
+ * @param props.request - the list
+ * @param props.title - the page's title
+ * @returns the bar, or null on any other list
+ */
+function TopicBar({ request, title }: { request: ListRequest; title: string }) {
+  if (request.kind !== 'category' && request.kind !== 'tag') return null;
+  return <TopicFollowBar topicKind={request.kind} topicKey={request.key ?? ''} title={title} />;
 }
 
 /**
@@ -105,8 +138,9 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
     return (
       <header className="flex flex-col gap-3">
         <ListBreadcrumb title={heading.title} />
-        <ListHeading heading={heading} total={total} />
+        <ListHeading request={request} heading={heading} total={total} />
         {isCategory && <SponsoredByLine kind="category" slug={request.key ?? ''} />}
+        <TopicBar request={request} title={heading.title} />
       </header>
     );
   }
@@ -124,8 +158,9 @@ export function StoryListHeader({ request, heading, total }: StoryListHeaderProp
       {/* No soft light in the corner: the band is one flat colour (no gradients, 23 Nov 2026). */}
       <div className="relative flex flex-col gap-4">
         <ListBreadcrumb title={heading.title} />
-        <ListHeading heading={heading} total={total} />
+        <ListHeading request={request} heading={heading} total={total} />
         {isCategory && <SponsoredByLine kind="category" slug={listKey} />}
+        <TopicBar request={request} title={heading.title} />
       </div>
     </header>
   );

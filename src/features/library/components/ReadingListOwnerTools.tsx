@@ -1,26 +1,29 @@
 /**
- * ReadingListOwnerTools: what only a reading list's owner sees on its page: rename it, choose who
- * sees it, take stories out and delete it (bundle GAPS-6).
+ * ReadingListOwnerTools: the owner's actions on a bookshelf's page, one row under the name as
+ * drawn on board C02: "Find stories", "Rename", who sees it and "Delete bookshelf" (bundle GAPS-6
+ * built them as a "Manage bookshelf" card; redrawn as the row for Robert, 25 Nov 2026, 09:50 UTC:
+ * no widget missing between the canvas and the live site).
  *
- * - Rename: the name in a field with Save; the database's refusal (a name already used, HTML, too
- *   long) is said under the field.
- * - "Who sees it": a drop-down in the shared style, "Only you" or "Anyone with the link"; it
- *   saves at once. A public list can be reported by whoever opens it.
- * - Each story has a "Remove" button named after the story; it takes the story out at once and
- *   offers "Undo" for 8 seconds instead of asking first (design books item 14).
- * - "Delete list" asks once more (TwoStepDelete), then returns to the Library.
- * Who uses it: ReadingListPage. What it calls: useReadingListActions → update_reading_list(),
- * set_story_in_reading_list() and delete_reading_list().
+ * - Find stories: a quiet button to Discover, where "Add to a bookshelf" fills the places.
+ * - Rename: opens the name field with Save under the row; the database's refusal (a name already
+ *   used, HTML, too long) is said under the field.
+ * - Who sees it: a drop-down in the shared style, "Only you" or "Anyone with the link"; it saves
+ *   at once. The board leaves it out, because it draws the rule that bookshelves are private
+ *   under 18 and public from 18 unless the member goes premium; that rule needs the member's age
+ *   band and a premium plan, which aren't built, so the choice stays (docs/board-fixes.md).
+ * - Delete bookshelf asks once more (TwoStepDelete), then returns to the Library.
+ * Removing a story is under each book (BookshelfBooks).
+ * Who uses it: ReadingListPage. What it calls: useReadingListActions → update_reading_list() and
+ * delete_reading_list().
  */
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
 import { TwoStepDelete } from '@/features/atlas/components/TwoStepDelete';
-import { useUndo } from '@/lib/undo/useUndo';
 
 import {
   readingListFailureKey,
@@ -30,7 +33,7 @@ import {
 import { useReadingListActions } from '../hooks/useReadingLists';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
-/** The name field with Save. */
+/** The name field with Save, shown once "Rename" is pressed. */
 function RenameForm({ list }: { list: ReadingListDetails }) {
   const { t } = useLibraryTranslation();
   const { changeList } = useReadingListActions();
@@ -56,7 +59,11 @@ function RenameForm({ list }: { list: ReadingListDetails }) {
   }
 
   return (
-    <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-3">
+    <form
+      id="reading-list-rename"
+      onSubmit={(event) => void submit(event)}
+      className="flex max-w-xl flex-col gap-3"
+    >
       <TextInput
         id="reading-list-name"
         label={t('lists.page.nameLabel')}
@@ -77,7 +84,7 @@ function RenameForm({ list }: { list: ReadingListDetails }) {
   );
 }
 
-/** "Who sees it": Only you, or Anyone with the link. */
+/** "Who sees it": Only you, or Anyone with the link. The hint is the note under the books. */
 function AudienceChoice({ list }: { list: ReadingListDetails }) {
   const { t } = useLibraryTranslation();
   const { changeList } = useReadingListActions();
@@ -107,9 +114,6 @@ function AudienceChoice({ list }: { list: ReadingListDetails }) {
         onChange={choose}
         descriptionId="reading-list-audience-hint"
       />
-      <p id="reading-list-audience-hint" className="m-0 type-body text-ink-muted">
-        {t('lists.page.audienceHint')}
-      </p>
       <div aria-live="polite">
         {errorMessage !== null && <Notice tone="error">{errorMessage}</Notice>}
       </div>
@@ -117,72 +121,19 @@ function AudienceChoice({ list }: { list: ReadingListDetails }) {
   );
 }
 
-/** The list's stories, each with its Remove button. */
-function EntryRows({ list }: { list: ReadingListDetails }) {
-  const { t } = useLibraryTranslation();
-  const { setStoryInList } = useReadingListActions();
-  const { offerUndo } = useUndo();
-  const [hasFailed, setHasFailed] = useState(false);
-  if (list.entries.length === 0) return null;
-
-  /** Takes one story out of the list, then offers to put it back. */
-  async function remove(storySlug: string, title: string) {
-    setHasFailed(false);
-    try {
-      await setStoryInList({ listId: list.id, storySlug, isIn: false });
-    } catch {
-      setHasFailed(true);
-      return;
-    }
-    // Undo puts the same story back on the same bookshelf.
-    offerUndo({
-      message: t('lists.page.removedUndo', { title }),
-      undo: () => setStoryInList({ listId: list.id, storySlug, isIn: true }).then(() => undefined),
-    });
-  }
-
-  return (
-    <div className="flex flex-col gap-2">
-      <h3 className="m-0 font-heading type-long font-bold text-ink-heading">
-        {t('lists.page.entriesHeading')}
-      </h3>
-      <ul className="m-0 list-none p-0">
-        {list.entries.map((entry) => (
-          <li
-            key={entry.slug}
-            className="flex items-center justify-between gap-3 border-t border-border py-2 first:border-t-0"
-          >
-            <span className="min-w-0 break-words text-ink-heading">{entry.title}</span>
-            <Button
-              variant="text"
-              className="shrink-0"
-              aria-label={t('lists.page.removeLabel', { title: entry.title })}
-              onClick={() => void remove(entry.slug, entry.title)}
-            >
-              {t('lists.page.remove')}
-            </Button>
-          </li>
-        ))}
-      </ul>
-      <div aria-live="polite">
-        {hasFailed && <Notice tone="error">{t('lists.errors.saveFailed')}</Notice>}
-      </div>
-    </div>
-  );
-}
-
 /**
- * Renders the owner's tools as one card.
+ * Renders the owner's row of actions, and the name field once Rename is pressed.
  *
- * @param props.list - the reader's own list
- * @returns the card
+ * @param props.list - the reader's own bookshelf
+ * @returns the row
  */
 export function ReadingListOwnerTools({ list }: { list: ReadingListDetails }) {
   const { t } = useLibraryTranslation();
   const navigate = useNavigate();
   const { deleteList } = useReadingListActions();
+  const [isRenaming, setIsRenaming] = useState(false);
 
-  /** Deletes the list, then goes back to the Library, where it is gone from the rows. */
+  /** Deletes the bookshelf, then goes back to the Library, where it is gone from the rows. */
   async function deleteThenLeave(): Promise<null> {
     await deleteList(list.id);
     void navigate('/library');
@@ -190,29 +141,34 @@ export function ReadingListOwnerTools({ list }: { list: ReadingListDetails }) {
   }
 
   return (
-    <section
-      aria-labelledby="reading-list-tools-heading"
-      className="flex flex-col gap-6 rounded-card border border-border bg-surface p-4 shadow-card"
-    >
-      <h2
-        id="reading-list-tools-heading"
-        className="m-0 font-heading type-heading font-bold text-ink-heading"
-      >
-        {t('lists.page.toolsHeading')}
-      </h2>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <RenameForm list={list} />
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
+        <Link
+          to="/discover"
+          className="inline-flex h-11 items-center rounded-full button-glass px-4 type-body font-semibold no-underline"
+        >
+          {t('lists.page.discover')}
+        </Link>
+        <Button
+          variant="text"
+          aria-expanded={isRenaming}
+          aria-controls={isRenaming ? 'reading-list-rename' : undefined}
+          onClick={() => setIsRenaming((open) => !open)}
+        >
+          {t('lists.page.rename')}
+        </Button>
         <AudienceChoice list={list} />
+        <TwoStepDelete
+          buttonLabel={t('lists.page.delete')}
+          buttonVariant="text"
+          question={t('lists.page.deleteQuestion', { name: list.name })}
+          yesLabel={t('lists.page.deleteYes')}
+          keepLabel={t('lists.page.deleteKeep')}
+          failedMessage={t('lists.errors.saveFailed')}
+          onDelete={deleteThenLeave}
+        />
       </div>
-      <EntryRows list={list} />
-      <TwoStepDelete
-        buttonLabel={t('lists.page.delete')}
-        question={t('lists.page.deleteQuestion', { name: list.name })}
-        yesLabel={t('lists.page.deleteYes')}
-        keepLabel={t('lists.page.deleteKeep')}
-        failedMessage={t('lists.errors.saveFailed')}
-        onDelete={deleteThenLeave}
-      />
-    </section>
+      {isRenaming && <RenameForm list={list} />}
+    </div>
   );
 }

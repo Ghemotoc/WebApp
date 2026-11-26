@@ -14,6 +14,7 @@ import { TextInput } from '@/components/ui/TextInput';
 
 import type { ClassGift } from '../../api/classPointsStaff';
 import { useClassPointsTranslation } from '../../registerClassPointsTranslations';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /** What the row needs. */
 export interface StaffGiftRowProps {
@@ -34,7 +35,10 @@ const cellClasses = 'border-t border-border px-2 py-2 align-top text-sm text-bod
 export function StaffGiftRow({ gift, isRunning, onRemove }: StaffGiftRowProps) {
   const { t, i18n } = useClassPointsTranslation();
   const [reason, setReason] = useState('');
-  const week = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeZone: 'UTC' });
+  const week = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    dateStyle: 'medium',
+    timeZone: 'UTC',
+  });
   return (
     <tr>
       <td className={cellClasses}>{week.format(new Date(`${gift.weekStart}T12:00:00Z`))}</td>

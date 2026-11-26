@@ -30,7 +30,8 @@ export function SupportRequestsSection() {
         {t('settings.heading')}
       </h2>
       <p className="m-0 text-ink-muted">{t('settings.intro')}</p>
-      <Link to="/support" className="w-fit font-semibold text-link underline">
+      {/* A quiet button, as on the board (bundle 10, J14). */}
+      <Link to="/support" className="button-glass w-fit no-underline">
         {t('settings.open')}
       </Link>
     </section>

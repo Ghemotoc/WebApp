@@ -5,16 +5,16 @@
  *
  * Signed in, it opens Settings › Delete account. Signed out, it says how: log in, open Settings ›
  * Delete account, log in again to confirm; with the 14 days, a Log in button and the support
- * address for anyone who can't log in. In the liquid glass look (bundle G11c, the canvas's
- * DeleteAccount board) it is one glass card: the steps carry numbered rounds, and the 14 days sit
- * in a tinted box so they stand out.
+ * address for anyone who can't log in. Drawn as board J19 (user stories, bundle 10): one centred
+ * card (NoticeCard) with the steps as a plain numbered list, the 14 days as a line of text and the
+ * support address in the small meta size.
  * Who shows it: the router, at /delete-account, loaded when opened.
  * What it calls: useSession (features/auth); the 14 days are the default of account_deletion_days.
  */
 import { Link, Navigate } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { PageContainer } from '@/components/ui/PageContainer';
+import { NoticeCard } from '@/components/ui/NoticeCard';
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { brand } from '@/config/brand';
 import { useSession } from '@/features/auth/hooks/useSession';
 
@@ -35,22 +35,14 @@ const deletionDays = 14;
 function StepList() {
   const { t } = useAccountDeletionTranslation();
   return (
-    <div className="flex flex-col gap-3">
-      <Eyebrow>{t('page.stepsLabel')}</Eyebrow>
-      <ol className="m-0 flex list-none flex-col gap-3 p-0 text-ink-muted">
-        {steps.map((step, index) => (
-          <li key={step} className="flex items-start gap-4">
-            <span
-              aria-hidden="true"
-              className="flex size-8 flex-none items-center justify-center rounded-full bg-tint font-semibold text-ink-heading"
-            >
-              {index + 1}
-            </span>
-            <span className="pt-1">{t(`page.steps.${step}`)}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
+    <ol
+      aria-label={t('page.stepsLabel')}
+      className="m-0 flex list-decimal flex-col gap-1 pl-6 type-body text-ink"
+    >
+      {steps.map((step) => (
+        <li key={step}>{t(`page.steps.${step}`)}</li>
+      ))}
+    </ol>
   );
 }
 
@@ -65,27 +57,20 @@ export function DeleteAccountPage() {
   if (!isKnown) return null;
   if (userId !== null) return <Navigate to="/settings#delete-account" replace />;
   return (
-    <PageContainer className="flex max-w-[720px] flex-col pt-8 pb-8">
-      <title>{t('page.title')}</title>
-      <section className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:px-8 sm:py-8">
-        <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
-          {t('page.heading')}
-        </h1>
-        <p className="m-0 text-ink-muted">{t('page.intro')}</p>
-        <StepList />
-        <p className="m-0 rounded-card bg-tint px-4 py-3 type-body text-ink-muted">
-          {t('page.after', { count: deletionDays })}
-        </p>
-        <Link
-          to="/sign-in"
-          className="inline-flex h-12 w-fit items-center rounded-full button-main px-6 type-body font-semibold"
-        >
-          {t('page.logIn')}
-        </Link>
-        <p className="m-0 type-body text-ink-muted">
-          {t('page.noAccess', { email: brand.supportEmail })}
-        </p>
-      </section>
-    </PageContainer>
+    <NoticeCard
+      heading={t('page.heading')}
+      headingId="delete-account-heading"
+      documentTitle={t('page.title')}
+    >
+      <p className="m-0 type-body text-ink-muted">{t('page.intro')}</p>
+      <StepList />
+      <p className="m-0 type-body text-ink-muted">{t('page.after', { count: deletionDays })}</p>
+      <Link to="/sign-in" className={buttonClassName({ size: 'lg' })}>
+        {t('page.logIn')}
+      </Link>
+      <p className="m-0 type-meta text-ink-muted">
+        {t('page.noAccess', { email: brand.supportEmail })}
+      </p>
+    </NoticeCard>
   );
 }

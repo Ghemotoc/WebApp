@@ -1561,6 +1561,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('story_plans', 'delete', 3, null),
     ('story_tags', 'own_step', 0, 'deleted with their story, unless the story is kept for a case'),
     ('teacher_checks', 'delete', 1, null),
+    ('topic_follows', 'delete', 1, null),
     ('username_approvals', 'delete', 1, null),
     ('waitlist_entries', 'delete', 1, null),
     ('writer_ranks', 'delete', 1, null),
@@ -7287,6 +7288,36 @@ COMMENT ON FUNCTION "public"."admin_list_page_backgrounds"() IS 'Staff: every ge
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_list_page_lines"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  perform public.require_website_staff();
+  return coalesce((
+    select jsonb_agg(jsonb_build_object(
+        'kind', case when lines.category_id is not null then 'category' else 'tag' end,
+        'key', coalesce(categories.slug, tags.name),
+        'language', lines.language,
+        'line', lines.line,
+        'set_by', profiles.handle,
+        'updated_at', lines.updated_at)
+      order by lines.category_id is null, coalesce(categories.slug, tags.name), lines.language)
+    from public.list_page_lines as lines
+    left join public.categories on categories.id = lines.category_id
+    left join public.tags on tags.id = lines.tag_id
+    left join public.profiles on profiles.id = lines.user_id), '[]'::jsonb);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_list_page_lines"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_list_page_lines"() IS 'Staff: every genre and tag page line with who wrote it; owner and admin only (BOOKS-A06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_list_staff"() RETURNS TABLE("user_id" "uuid", "handle" "text", "roles" "public"."staff_role"[], "permissions" "public"."staff_permission"[], "is_intern" boolean)
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -11923,6 +11954,60 @@ ALTER FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "li
 
 
 COMMENT ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") IS 'Chooses a genre or tag page''s band colour for every market or one; owner and admin only; logged (G12b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target record;
+  cleaned_line text := nullif(btrim(coalesce(new_line, '')), '');
+  earlier_line text;
+begin
+  -- Step 1: owner or admin (website content is admin-only, decided 17 Oct 2026, 19:19).
+  perform public.require_website_staff();
+  -- Step 2: a real genre or approved tag, a real language and a short line.
+  select * into target from public.list_page_target(list_kind, list_key);
+  if target.category_id is null and target.tag_id is null then
+    raise exception 'There is no such genre or tag.' using errcode = 'check_violation', hint = 'no_list';
+  end if;
+  if not exists (select 1 from public.languages where languages.code = line_language) then
+    raise exception 'There is no such language.' using errcode = 'check_violation', hint = 'no_language';
+  end if;
+  if char_length(cleaned_line) > 200 then
+    raise exception 'The line is longer than 200 characters.' using errcode = 'check_violation', hint = 'too_long';
+  end if;
+  -- Step 3: the earlier line, for the audit log.
+  select line into earlier_line from public.list_page_lines
+  where category_id is not distinct from target.category_id and tag_id is not distinct from target.tag_id
+    and language = line_language;
+  -- Step 4: clear, or write over any earlier line in the same language.
+  if cleaned_line is null then
+    delete from public.list_page_lines
+    where category_id is not distinct from target.category_id and tag_id is not distinct from target.tag_id
+      and language = line_language;
+  else
+    insert into public.list_page_lines (category_id, tag_id, language, line, user_id)
+    values (target.category_id, target.tag_id, line_language, cleaned_line, (select auth.uid()))
+    on conflict on constraint list_page_lines_one_per_language do update
+      set line = excluded.line, user_id = excluded.user_id, updated_at = now();
+  end if;
+  -- Step 5: the audit log, in the same transaction (architecture 1.8.1), only when it changed.
+  if earlier_line is distinct from cleaned_line then
+    perform public.log_staff_action('website.list_line_set', 'list_page_lines',
+      list_kind || ':' || list_key || ':' || line_language, null, null,
+      jsonb_build_object('line', earlier_line), jsonb_build_object('line', cleaned_line));
+  end if;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") IS 'Writes or clears the line under a genre or tag page''s title in one language; owner and admin only; logged (BOOKS-A06).';
 
 
 
@@ -23238,6 +23323,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_held_tables"() RETURNS TABLE("t
     ('featured_picks', false, 'user_id is the staff member who picked a story for Featured this week, not data about their account; the writer is told by a notification, which is in their export'),
     ('interface_text_overrides', false, 'user_id is the admin who edited interface text, not data about their account'),
     ('list_page_backgrounds', false, 'user_id is the admin who chose a genre or tag page background, not data about their account'),
+    ('list_page_lines', false, 'user_id is the admin who wrote the line under a genre or tag page''s title, not data about their account'),
     ('moderated_items', true, null),
     ('on_call_rota', true, null),
     ('removed_passages', false, 'the exact words staff removed, which may be someone else''s personal data removed to protect them; the removal itself is in story_revisions'),
@@ -23259,7 +23345,7 @@ $$;
 ALTER FUNCTION "public"."data_export_held_tables"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33, user story 1.4; GDPR art. 15).';
+COMMENT ON FUNCTION "public"."data_export_held_tables"() IS 'Internal: every staff table with a user_id and whether Download my data''s "held_about_you" includes it, or why not (QA-7, LOGS-1a, LOOK-4a, S1-E11-33, user stories 1.4, 1.6 and 1.9; GDPR art. 15).';
 
 
 
@@ -23361,6 +23447,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('story_plans', true, null),
     ('story_tags', true, null),
     ('teacher_checks', true, null),
+    ('topic_follows', true, null),
     ('username_approvals', false, 'a moderator''s note that a name was refused by mistake; the name itself is in the profile'),
     ('waitlist_entries', true, null),
     ('writer_spotlights', true, null),
@@ -31407,6 +31494,30 @@ COMMENT ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_ke
 
 
 
+CREATE OR REPLACE FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- The page's own language first, then English (LOCALISE-1: English is the main language).
+  select jsonb_build_object('line', lines.line, 'language', lines.language)
+  from public.list_page_target(list_kind, list_key) as target
+  join public.list_page_lines as lines
+    on lines.category_id is not distinct from target.category_id
+   and lines.tag_id is not distinct from target.tag_id
+  where (target.category_id is not null or target.tag_id is not null)
+    and lines.language in (lower(page_language), 'en')
+  order by lines.language <> lower(page_language)
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") IS 'The line under a genre or tag page''s title in a language (English when that one has none), or null (BOOKS-A06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."list_page_target"("list_kind" "text", "list_key" "text") RETURNS TABLE("category_id" "uuid", "tag_id" "uuid")
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -33862,6 +33973,8 @@ declare
   caller_id uuid := (select auth.uid());
   writers jsonb;
   followed_stories jsonb;
+  genres jsonb;
+  followed_tags jsonb;
 begin
   if caller_id is null then
     raise exception 'Log in to see who you follow.' using errcode = 'insufficient_privilege';
@@ -33887,7 +34000,20 @@ begin
   join public.stories on stories.id = follows_stories.story_id
   where follows_stories.user_id = caller_id
     and exists (select 1 from public.reader_visible_story(stories.slug));
-  return jsonb_build_object('writers', writers, 'stories', followed_stories);
+  -- Step 3: the genres, in the order the app lists them.
+  select coalesce(jsonb_agg(categories.slug order by categories.position), '[]'::jsonb)
+  into genres
+  from public.topic_follows
+  join public.categories on categories.id = topic_follows.category_id
+  where topic_follows.user_id = caller_id;
+  -- Step 4: the tags, still approved, by name.
+  select coalesce(jsonb_agg(tags.name order by tags.name), '[]'::jsonb)
+  into followed_tags
+  from public.topic_follows
+  join public.tags on tags.id = topic_follows.tag_id
+  where topic_follows.user_id = caller_id and tags.status = 'approved';
+  return jsonb_build_object('writers', writers, 'stories', followed_stories,
+    'genres', genres, 'tags', followed_tags);
 end;
 $$;
 
@@ -33895,7 +34021,7 @@ $$;
 ALTER FUNCTION "public"."my_follows"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_follows"() IS 'The writers and stories the caller follows, for the Library (S1-E4-03).';
+COMMENT ON FUNCTION "public"."my_follows"() IS 'The writers, stories, genres and tags the caller follows, for the Library (S1-E4-03, BOOKS-A06).';
 
 
 
@@ -38181,6 +38307,48 @@ COMMENT ON FUNCTION "public"."preview_story_plan"("story_slug" "text") IS 'The w
 
 
 
+CREATE OR REPLACE FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  writer public.profiles;
+begin
+  -- Step 1: the live profile behind the username, shown to this caller.
+  select * into writer from public.profile_for_handle(wanted_handle);
+  if not found or not public.profile_is_shown_to_caller(writer) then
+    return null;
+  end if;
+  -- Step 2: the numbers and lines, each limited to what the caller may see.
+  return jsonb_build_object(
+    'following', (select count(*) from public.follows_users
+      join public.profiles as followed on followed.id = follows_users.followed_user_id
+      where follows_users.user_id = writer.id and followed.deleted_at is null),
+    'public_bookshelves', (select count(*) from public.reading_lists
+      where reading_lists.user_id = writer.id and reading_lists.is_public
+        and public.reading_list_is_visible(reading_lists)),
+    'post_count', (select count(*) from public.forum_posts
+      join public.forum_threads on forum_threads.id = forum_posts.thread_id
+      where forum_posts.user_id = writer.id
+        and public.forum_thread_is_shown(forum_threads)
+        and public.forum_post_state_for_caller(forum_posts) = 'live'),
+    'recent_posts', public.profile_recent_posts_json(writer.id, wanted_language, 3),
+    'spaces', (select coalesce(jsonb_agg(jsonb_build_object('name', spaces.name, 'slug', spaces.slug)
+        order by spaces.name), '[]'::jsonb)
+      from public.spaces
+      where spaces.user_id = writer.id and spaces.kind = 'open' and spaces.archived_at is null
+        and public.space_card_visible(spaces)));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") IS 'A profile''s following count, public bookshelves, readable forum posts and open spaces; never the user ID (board C04).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."profile_audience_of"("person" "public"."profiles") RETURNS "public"."profile_audience"
     LANGUAGE "sql" STABLE
     SET "search_path" TO ''
@@ -38265,6 +38433,36 @@ COMMENT ON FUNCTION "public"."profile_avatar_recipe"("profile_handle" "text") IS
 
 
 
+CREATE OR REPLACE FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  writer public.profiles;
+begin
+  -- Step 1: the live profile behind the username, shown to this caller.
+  select * into writer from public.profile_for_handle(wanted_handle);
+  if not found or not public.profile_is_shown_to_caller(writer) then
+    return null;
+  end if;
+  -- Step 2: the public bookshelves the caller may see.
+  return (
+    select coalesce(jsonb_agg(public.reading_list_json(reading_lists)
+      order by reading_lists.updated_at desc, reading_lists.id), '[]'::jsonb)
+    from public.reading_lists
+    where reading_lists.user_id = writer.id and reading_lists.is_public
+      and public.reading_list_is_visible(reading_lists));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") IS 'A person''s public bookshelves for their profile, in the my_reading_lists() shape (board C06).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."profile_for_handle"("wanted_handle" "text") RETURNS SETOF "public"."profiles"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -38303,6 +38501,24 @@ ALTER FUNCTION "public"."profile_is_open_to"("owner" "public"."profiles", "viewe
 
 
 COMMENT ON FUNCTION "public"."profile_is_open_to"("owner" "public"."profiles", "viewer_id" "uuid") IS 'Internal: whether a visitor sees someone''s whole profile (S1-E13-01).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select writer.id is not null
+    and (writer.id = (select auth.uid()) or not public.is_moderated_away('profile', writer.id))
+    and not public.is_blocked_with(writer.id)
+    and public.profile_is_open_to(writer, (select auth.uid()));
+$$;
+
+
+ALTER FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") IS 'Internal: a profile''s extra parts (activity, bookshelves) show only where the profile itself shows (board C04).';
 
 
 
@@ -38355,6 +38571,39 @@ ALTER FUNCTION "public"."profile_reader_level"("wanted_handle" "text") OWNER TO 
 
 
 COMMENT ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") IS 'A profile''s reading level: always for its owner, for others only when shown, by the profile''s own visibility rules (G7a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(recent.item order by recent.posted_at desc), '[]'::jsonb)
+  from (
+    select forum_posts.created_at as posted_at,
+      jsonb_build_object(
+        'thread_title', forum_threads.title,
+        'forum_slug', forums.slug,
+        'forum_name', (select names.name from public.forum_name_in(forums.id, wanted_language) as names),
+        'thread_number', forum_threads.thread_number,
+        'post_number', forum_posts.post_number,
+        'posted_at', forum_posts.created_at) as item
+    from public.forum_posts
+    join public.forum_threads on forum_threads.id = forum_posts.thread_id
+    join public.forums on forums.id = forum_threads.forum_id
+    where forum_posts.user_id = writer_id
+      and public.forum_thread_is_shown(forum_threads)
+      and public.forum_post_state_for_caller(forum_posts) = 'live'
+    order by forum_posts.created_at desc
+    limit how_many
+  ) as recent;
+$$;
+
+
+ALTER FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) IS 'Internal: a person''s latest forum posts that the caller may read (board C04, Recent posts in Together).';
 
 
 
@@ -48674,6 +48923,48 @@ COMMENT ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "target_
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  topic record;
+begin
+  -- Step 1: who and what.
+  if caller_id is null then
+    raise exception 'Log in to follow a genre or a tag.' using errcode = 'insufficient_privilege';
+  end if;
+  select * into topic from public.topic_ids_of(topic_kind, topic_key);
+  if not found then
+    raise exception 'There is no such genre or tag.' using errcode = 'no_data_found';
+  end if;
+  -- Step 2: unfollowing is always allowed, even for a read-only account.
+  if not should_follow then
+    delete from public.topic_follows where topic_follows.user_id = caller_id
+      and (topic_follows.category_id = topic.category_id or topic_follows.tag_id = topic.tag_id);
+    return false;
+  end if;
+  -- Step 3: following is a write, so the account gate applies (architecture 1.7.8).
+  if not public.is_active_member() then
+    raise exception 'Your account can''t follow anything right now.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 4: follow; doing it twice changes nothing.
+  insert into public.topic_follows (user_id, category_id, tag_id)
+  values (caller_id, topic.category_id, topic.tag_id)
+  on conflict do nothing;
+  return true;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) IS 'Follows or unfollows a genre or an approved tag (BOOKS-A06, BOOKS-A09).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     SET "search_path" TO ''
@@ -50685,7 +50976,7 @@ CREATE OR REPLACE FUNCTION "public"."sponsor_placement_slots"("placement" "publi
     AS $$
   select case placement
     when 'chapter_banner' then array['chapter_end']
-    when 'list_banner' then array['discover_card', 'see_all_card', 'classics_wide', 'search_wide', 'library_wide']
+    when 'list_banner' then array['discover_card', 'see_all_card', 'classics_wide', 'search_wide', 'library_wide', 'library_lower_wide']
     when 'discover_banner' then array['discover_wide']
     else '{}'::text[]
   end;
@@ -50695,7 +50986,7 @@ $$;
 ALTER FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") IS 'Internal: which ad slots each banner placement fills (S1-E12-02).';
+COMMENT ON FUNCTION "public"."sponsor_placement_slots"("placement" "public"."sponsor_placement") IS 'Internal: which ad slots each banner placement fills (S1-E12-02; library_lower_wide for board C01).';
 
 
 
@@ -54903,6 +55194,127 @@ ALTER FUNCTION "public"."tier_rank"("target_tier" "public"."case_tier") OWNER TO
 
 
 COMMENT ON FUNCTION "public"."tier_rank"("target_tier" "public"."case_tier") IS 'Internal: 1 (most urgent) to 4 (S1-E10-03a).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.topic_ids_of(topic_kind, topic_key) as topic
+    join public.topic_follows on topic_follows.user_id = (select auth.uid())
+      and (topic_follows.category_id = topic.category_id or topic_follows.tag_id = topic.tag_id));
+$$;
+
+
+ALTER FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") IS 'Whether the caller follows a genre or a tag (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") RETURNS TABLE("category_id" "uuid", "tag_id" "uuid")
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: a genre, by its slug.
+  if topic_kind = 'category' then
+    return query select categories.id, null::uuid from public.categories where categories.slug = topic_key;
+    return;
+  end if;
+  -- Step 2: a tag, by any look-alike of its name, and only once staff approved it (CMS-1e).
+  if topic_kind = 'tag' then
+    return query select null::uuid, tags.id from public.tags
+      where tags.normalised_name = public.normalise_tag(topic_key) and tags.status = 'approved';
+    return;
+  end if;
+  raise exception 'Only a genre or a tag can be followed.' using errcode = 'invalid_parameter_value';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") IS 'Internal: the genre or approved tag a page names (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer DEFAULT 8) RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  wanted integer := least(greatest(coalesce(how_many, 8), 1), 20);
+  own_tag text := case when topic_kind = 'tag' then public.normalise_tag(topic_key) end;
+  found_tags jsonb;
+begin
+  if topic_kind is null or topic_kind not in ('category', 'tag') then
+    raise exception 'Only a genre or a tag has tags.' using errcode = 'invalid_parameter_value';
+  end if;
+  -- Step 1: the stories of this list the reader may see, then the approved tags on them.
+  select coalesce(jsonb_agg(counted.name order by counted.story_count desc, counted.name), '[]'::jsonb)
+  into found_tags
+  from (
+    select tags.name, count(*) as story_count
+    from public.listed_stories(topic_kind, topic_key, null, null, null) as story
+    join public.story_tags on story_tags.story_id = story.id
+    join public.tags on tags.id = story_tags.tag_id
+    where tags.status = 'approved'
+      and tags.normalised_name is distinct from own_tag
+    group by tags.id, tags.name
+    order by story_count desc, tags.name
+    limit wanted
+  ) as counted;
+  return found_tags;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) IS 'A genre''s most used tags, or the tags related to a tag, over stories the reader may see (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."trending_tags"("how_many" integer DEFAULT 6) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(ranked.name order by ranked.week_reads desc, ranked.name), '[]'::jsonb)
+  from (
+    -- Step 1: this week's reads of each story the caller may see.
+    with week_reads as (
+      select story.id as story_id, sum(chapter_reads.total) as reads
+      from public.listed_stories('popular', null, null, null, null) as story
+      join public.chapters on chapters.story_id = story.id
+      join public.chapter_reads on chapter_reads.chapter_id = chapters.id
+      where chapter_reads.read_on > current_date - 7
+        and public.chapter_is_readable(chapters.id)
+      group by story.id
+    )
+    -- Step 2: each approved tag's share of them, the most read first.
+    select tags.name, sum(week_reads.reads) as week_reads
+    from week_reads
+    join public.story_tags on story_tags.story_id = week_reads.story_id
+    join public.tags on tags.id = story_tags.tag_id
+    where tags.status = 'approved'
+    group by tags.id, tags.name
+    having sum(week_reads.reads) > 0
+    order by week_reads desc, tags.name
+    limit least(greatest(coalesce(how_many, 6), 1), 20)
+  ) as ranked;
+$$;
+
+
+ALTER FUNCTION "public"."trending_tags"("how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."trending_tags"("how_many" integer) IS 'The approved tags whose stories the caller may see were read most in the last seven days (user story 1.7, board A07).';
 
 
 
@@ -59363,6 +59775,27 @@ COMMENT ON TABLE "public"."list_page_backgrounds" IS 'kind: staff; the band colo
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."list_page_lines" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "category_id" "uuid",
+    "tag_id" "uuid",
+    "language" "text" NOT NULL,
+    "line" "text" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "list_page_lines_length" CHECK ((("char_length"("line") >= 1) AND ("char_length"("line") <= 200))),
+    CONSTRAINT "list_page_lines_one_list" CHECK (("num_nonnulls"("category_id", "tag_id") = 1))
+);
+
+
+ALTER TABLE "public"."list_page_lines" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."list_page_lines" IS 'kind: staff; the line an admin wrote under a genre or tag page''s title, per language (BOOKS-A06, BOOKS-A09).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."live_session_reminders" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -60938,6 +61371,25 @@ COMMENT ON COLUMN "public"."teacher_checks"."user_id" IS 'The person asking; nev
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."topic_follows" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "category_id" "uuid",
+    "tag_id" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "topic_follows_one_topic" CHECK (("num_nonnulls"("category_id", "tag_id") = 1))
+);
+
+
+ALTER TABLE "public"."topic_follows" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."topic_follows" IS 'kind: user_action
+Which genres and tags a member follows (BOOKS-A06, BOOKS-A09). Private to the member.';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."username_approvals" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -61919,6 +62371,16 @@ ALTER TABLE ONLY "public"."list_page_backgrounds"
 
 
 
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_one_per_language" UNIQUE NULLS NOT DISTINCT ("category_id", "tag_id", "language");
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."live_session_reminders"
     ADD CONSTRAINT "live_session_reminders_one_per_session" UNIQUE ("user_id", "session_id");
 
@@ -62591,6 +63053,21 @@ ALTER TABLE ONLY "public"."teacher_checks"
 
 ALTER TABLE ONLY "public"."teacher_checks"
     ADD CONSTRAINT "teacher_checks_token_hash_key" UNIQUE ("token_hash");
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_one_per_genre" UNIQUE ("user_id", "category_id");
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_one_per_tag" UNIQUE ("user_id", "tag_id");
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_pkey" PRIMARY KEY ("id");
 
 
 
@@ -63345,6 +63822,18 @@ CREATE INDEX "list_page_backgrounds_user_id_idx" ON "public"."list_page_backgrou
 
 
 
+CREATE INDEX "list_page_lines_language_idx" ON "public"."list_page_lines" USING "btree" ("language");
+
+
+
+CREATE INDEX "list_page_lines_tag_id_idx" ON "public"."list_page_lines" USING "btree" ("tag_id");
+
+
+
+CREATE INDEX "list_page_lines_user_id_idx" ON "public"."list_page_lines" USING "btree" ("user_id");
+
+
+
 CREATE INDEX "live_session_reminders_session_id_fk_idx" ON "public"."live_session_reminders" USING "btree" ("session_id");
 
 
@@ -64037,6 +64526,14 @@ CREATE INDEX "teacher_checks_waiting" ON "public"."teacher_checks" USING "btree"
 
 
 
+CREATE INDEX "topic_follows_category_id" ON "public"."topic_follows" USING "btree" ("category_id");
+
+
+
+CREATE INDEX "topic_follows_tag_id" ON "public"."topic_follows" USING "btree" ("tag_id");
+
+
+
 CREATE INDEX "username_approvals_user_id_idx" ON "public"."username_approvals" USING "btree" ("user_id");
 
 
@@ -64657,6 +65154,10 @@ CREATE OR REPLACE TRIGGER "list_page_backgrounds_set_updated_at" BEFORE UPDATE O
 
 
 
+CREATE OR REPLACE TRIGGER "list_page_lines_set_updated_at" BEFORE UPDATE ON "public"."list_page_lines" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "live_session_reminders_refuse_user_id_change" BEFORE UPDATE ON "public"."live_session_reminders" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"();
 
 
@@ -65262,6 +65763,14 @@ CREATE OR REPLACE TRIGGER "teacher_checks_refuse_user_id_change" BEFORE UPDATE O
 
 
 CREATE OR REPLACE TRIGGER "teacher_checks_set_updated_at" BEFORE UPDATE ON "public"."teacher_checks" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "topic_follows_keep_user_id" BEFORE UPDATE ON "public"."topic_follows" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "topic_follows_set_updated_at" BEFORE UPDATE ON "public"."topic_follows" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -66364,6 +66873,26 @@ ALTER TABLE ONLY "public"."list_page_backgrounds"
 
 
 
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_language_fkey" FOREIGN KEY ("language") REFERENCES "public"."languages"("code");
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_tag_id_fkey" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."list_page_lines"
+    ADD CONSTRAINT "list_page_lines_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
 ALTER TABLE ONLY "public"."live_session_reminders"
     ADD CONSTRAINT "live_session_reminders_session_id_fkey" FOREIGN KEY ("session_id") REFERENCES "public"."live_sessions"("id") ON DELETE CASCADE;
 
@@ -67381,6 +67910,21 @@ ALTER TABLE ONLY "public"."tags"
 
 ALTER TABLE ONLY "public"."teacher_checks"
     ADD CONSTRAINT "teacher_checks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_tag_id_fkey" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."topic_follows"
+    ADD CONSTRAINT "topic_follows_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -68534,6 +69078,17 @@ COMMENT ON POLICY "list_page_backgrounds_select_website_staff" ON "public"."list
 
 
 
+ALTER TABLE "public"."list_page_lines" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "list_page_lines_select_website_staff" ON "public"."list_page_lines" FOR SELECT TO "authenticated" USING (( SELECT "public"."staff_may"('website_cms'::"text", 'act'::"text") AS "staff_may"));
+
+
+
+COMMENT ON POLICY "list_page_lines_select_website_staff" ON "public"."list_page_lines" IS 'Allows owner and admin to read the genre and tag page lines; changes go only through admin_* functions (BOOKS-A06).';
+
+
+
 ALTER TABLE "public"."live_session_reminders" ENABLE ROW LEVEL SECURITY;
 
 
@@ -69522,6 +70077,13 @@ COMMENT ON POLICY "teacher_checks_select_own" ON "public"."teacher_checks" IS 'A
 
 
 
+ALTER TABLE "public"."topic_follows" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "topic_follows_select_own" ON "public"."topic_follows" FOR SELECT TO "authenticated" USING (("user_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+
+
 ALTER TABLE "public"."username_approvals" ENABLE ROW LEVEL SECURITY;
 
 
@@ -70374,6 +70936,11 @@ GRANT ALL ON FUNCTION "public"."admin_list_page_backgrounds"() TO "authenticated
 
 
 
+REVOKE ALL ON FUNCTION "public"."admin_list_page_lines"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_list_page_lines"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."admin_list_staff"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_list_staff"() TO "authenticated";
 
@@ -70957,6 +71524,11 @@ GRANT ALL ON FUNCTION "public"."admin_set_launch_date"("new_date" "date") TO "au
 
 REVOKE ALL ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_set_list_page_background"("list_kind" "text", "list_key" "text", "market" "text", "new_palette" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_set_list_page_line"("list_kind" "text", "list_key" "text", "line_language" "text", "new_line" "text") TO "authenticated";
 
 
 
@@ -73591,6 +74163,12 @@ GRANT ALL ON FUNCTION "public"."list_page_background"("list_kind" "text", "list_
 
 
 
+REVOKE ALL ON FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."list_page_line"("list_kind" "text", "list_key" "text", "page_language" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."list_page_target"("list_kind" "text", "list_key" "text") FROM PUBLIC;
 
 
@@ -74584,6 +75162,12 @@ GRANT ALL ON FUNCTION "public"."preview_story_plan"("story_slug" "text") TO "aut
 
 
 
+REVOKE ALL ON FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."profile_activity"("wanted_handle" "text", "wanted_language" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."profile_audience_of"("person" "public"."profiles") FROM PUBLIC;
 
 
@@ -74605,11 +75189,21 @@ GRANT ALL ON FUNCTION "public"."profile_avatar_recipe"("profile_handle" "text") 
 
 
 
+REVOKE ALL ON FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."profile_bookshelves"("wanted_handle" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."profile_for_handle"("wanted_handle" "text") FROM PUBLIC;
 
 
 
 REVOKE ALL ON FUNCTION "public"."profile_is_open_to"("owner" "public"."profiles", "viewer_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") FROM PUBLIC;
 
 
 
@@ -74621,6 +75215,10 @@ GRANT ALL ON FUNCTION "public"."profile_rank"("wanted_handle" "text") TO "authen
 REVOKE ALL ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) FROM PUBLIC;
 
 
 
@@ -75947,6 +76545,11 @@ GRANT ALL ON FUNCTION "public"."set_teacher_points"("target_kind" "text", "targe
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_topic_follow"("topic_kind" "text", "topic_key" "text", "should_follow" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_updated_at"() FROM PUBLIC;
 
 
@@ -76836,6 +77439,28 @@ REVOKE ALL ON FUNCTION "public"."tier_rank"("target_tier" "public"."case_tier") 
 
 
 
+REVOKE ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."topic_follow_state"("topic_kind" "text", "topic_key" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."trending_tags"("how_many" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."trending_tags"("how_many" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."trending_tags"("how_many" integer) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."undo_decision_for_appeal"("statement" "public"."statements_of_reasons", "appeal_reference" "text") FROM PUBLIC;
 
 
@@ -77586,6 +78211,11 @@ GRANT SELECT ON TABLE "public"."list_page_backgrounds" TO "authenticated";
 
 
 
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."list_page_lines" TO "service_role";
+GRANT SELECT ON TABLE "public"."list_page_lines" TO "authenticated";
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."live_session_reminders" TO "service_role";
 GRANT SELECT ON TABLE "public"."live_session_reminders" TO "authenticated";
 
@@ -77935,6 +78565,11 @@ GRANT SELECT ON TABLE "public"."tags" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."teacher_checks" TO "service_role";
 GRANT SELECT ON TABLE "public"."teacher_checks" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."topic_follows" TO "service_role";
+GRANT SELECT ON TABLE "public"."topic_follows" TO "authenticated";
 
 
 

@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Select } from '@/components/ui/Select';
 
 import type { BirthdayChoice } from '../api/birthday';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** What the picker needs. */
 export interface BirthdayPickerProps {
@@ -29,7 +30,10 @@ export interface BirthdayPickerProps {
  * @returns the options, "Not set" first
  */
 function monthOptions(language: string, noneLabel: string) {
-  const formatter = new Intl.DateTimeFormat(language, { month: 'long', timeZone: 'UTC' });
+  const formatter = new Intl.DateTimeFormat(dateLocaleFor(language), {
+    month: 'long',
+    timeZone: 'UTC',
+  });
   const months = Array.from({ length: 12 }, (_, index) => ({
     value: String(index + 1),
     label: formatter.format(new Date(Date.UTC(2000, index, 1))),

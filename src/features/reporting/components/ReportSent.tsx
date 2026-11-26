@@ -14,6 +14,7 @@ import { CheckIcon } from '@/components/icons/CheckIcon';
 import { Button } from '@/components/ui/Button';
 
 import type { ReportReceipt } from '../api/reports';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Renders the confirmation.
@@ -24,7 +25,7 @@ import type { ReportReceipt } from '../api/reports';
  */
 export function ReportSent({ receipt, onClose }: { receipt: ReportReceipt; onClose: () => void }) {
   const { t, i18n } = useTranslation('reporting');
-  const receivedAt = new Intl.DateTimeFormat(i18n.language, {
+  const receivedAt = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(receipt.receivedAt));

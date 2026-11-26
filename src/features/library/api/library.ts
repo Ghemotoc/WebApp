@@ -79,6 +79,10 @@ export interface FollowedWriter {
 export interface MyFollows {
   writers: FollowedWriter[];
   stories: ListedStory[];
+  /** The genres followed, by slug, in the app's order (BOOKS-A06). */
+  genres: string[];
+  /** The tags followed, by name (BOOKS-A09). */
+  tags: string[];
 }
 
 /** A story's shelf and the reader's latest place in it. */
@@ -174,10 +178,10 @@ export async function fetchLibraryOverview(client: AppSupabaseClient): Promise<L
 }
 
 /**
- * Reads the writers and stories the reader follows.
+ * Reads the writers, stories, genres and tags the reader follows.
  *
  * @param client - the shared Supabase client
- * @returns both lists
+ * @returns the four lists
  * Errors: throws with the database's message when they can't be read.
  */
 export async function fetchMyFollows(client: AppSupabaseClient): Promise<MyFollows> {
@@ -186,6 +190,8 @@ export async function fetchMyFollows(client: AppSupabaseClient): Promise<MyFollo
   const answer = data as unknown as {
     writers: { handle: string; display_name: string; last_published_at: string | null }[];
     stories: ListedStoryRow[];
+    genres: string[];
+    tags: string[];
   };
   return {
     writers: answer.writers.map((writer) => ({
@@ -194,6 +200,8 @@ export async function fetchMyFollows(client: AppSupabaseClient): Promise<MyFollo
       lastPublishedAt: writer.last_published_at,
     })),
     stories: answer.stories.map(toListedStory),
+    genres: answer.genres,
+    tags: answer.tags,
   };
 }
 

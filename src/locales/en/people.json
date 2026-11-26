@@ -9,9 +9,6 @@
     "messageLabel": "Message {{name}}",
     "notTakingMessages": "{{name}} isn’t taking messages right now.",
     "avatarLabel": "{{name}}’s profile picture",
-    "stories_one": "Story",
-    "stories_few": "Stories",
-    "stories_other": "Stories",
     "chapters_one": "Chapter published",
     "chapters_few": "Chapters published",
     "chapters_other": "Chapters published",
@@ -21,10 +18,7 @@
     "followers_one": "Follower",
     "followers_few": "Followers",
     "followers_other": "Followers",
-    "followersPrivate": "only {{name}} sees who",
-    "followersPrivateMine": "only you see who",
     "seeFollowers": "See who follows you",
-    "storiesEyebrow": "Published",
     "storiesHeading": "Stories by {{name}}",
     "storyMeta_one": "{{count}} chapter",
     "storyMeta_few": "{{count}} chapters",
@@ -44,7 +38,11 @@
     "libraryVisibleTo": "Who can see this: {{audience}}.",
     "libraryChange": "Change",
     "libraryChangeLabel": "Change who can see the library",
-    "onlineLabel": "{{name}} is online"
+    "onlineLabel": "{{name}} is online",
+    "following": "Following",
+    "followersNote": "Followers are counted publicly; only {{name}} sees who they are.",
+    "followersNoteMine": "Followers are counted publicly; only you see who they are.",
+    "seeEveryStory": "See every story"
   },
   "safety": {
     "heading": "Something wrong here?",
@@ -71,7 +69,11 @@
     "logIn": "Get in to follow",
     "readOnly": "This account can’t follow anyone yet.",
     "failed": "We couldn’t save that, so it’s back as it was. Try again.",
-    "unfollowed": "You no longer follow {{name}}."
+    "unfollowed": "You no longer follow {{name}}.",
+    "followNamed": "Follow {{name}}",
+    "followingNamed": "Following {{name}}",
+    "followTag": "Follow this tag",
+    "followingTag": "Following this tag"
   },
   "followers": {
     "eyebrow": "Only you see this",
@@ -131,5 +133,34 @@
     "top": "{{name}} has reached the top reading level.",
     "hiddenNote": "Only you can see this. To show it on your profile, change Your reading level in Settings › Privacy.",
     "hiddenLink": "Open Privacy settings"
+  },
+  "share": {
+    "button": "Share",
+    "buttonLabel": "Share {{name}}’s profile",
+    "title": "Share this profile",
+    "withApp": "Share with an app",
+    "privacy": "The link doesn’t include a name or tracking code. People who open it see only what the profile shows their account.",
+    "done": "Done",
+    "close": "Close"
+  },
+  "activity": {
+    "recentPostsHeading": "Recent posts in Together",
+    "alsoOnHeading": "Also on {{productName}}",
+    "bookshelvesLabel": "Bookshelves",
+    "publicBookshelves_one": "{{count}} public bookshelf",
+    "publicBookshelves_few": "{{count}} public bookshelves",
+    "publicBookshelves_other": "{{count}} public bookshelves",
+    "togetherLabel": "Together",
+    "posts_one": "{{count}} post",
+    "posts_few": "{{count}} posts",
+    "posts_other": "{{count}} posts",
+    "spacesLabel": "Spaces"
+  },
+  "bookshelves": {
+    "documentTitle": "Bookshelves of {{name}} · {{productName}}",
+    "open": "Open",
+    "openLabel": "Open the bookshelf {{name}}",
+    "none": "{{name}} has no public bookshelf yet.",
+    "loadFailed": "We couldn’t load the bookshelves. Check your connection and try again."
   }
 }

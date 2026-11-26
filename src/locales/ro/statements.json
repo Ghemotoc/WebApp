@@ -1,7 +1,6 @@
 {
   "page": {
     "documentTitle": "Raportări și decizii",
-    "eyebrow": "Siguranță",
     "title": "Raportări și decizii",
     "intro": "Ce s-a întâmplat cu raportările trimise de tine și deciziile echipei noastre despre postările tale. O persoană citește fiecare raportare.",
     "signedOut": "Intră în cont ca să vezi raportările și deciziile tale.",
@@ -10,10 +9,11 @@
     "contactHeading": "Vrei să vorbești cu noi?",
     "contactBody": "Scrie echipei de moderare despre o raportare sau o decizie.",
     "contactLink": "Scrie moderatorilor",
-    "backToSettings": "Setări",
     "showLegend": "Arată",
     "showDecisions": "Decizii despre postări · {{count}}",
-    "showReports": "Rapoarte trimise · {{count}}"
+    "showReports": "Rapoarte trimise · {{count}}",
+    "breadcrumb": "Unde ești",
+    "breadcrumbSettings": "Setări"
   },
   "decisions": {
     "heading": "Decizii despre postări",
@@ -85,8 +85,6 @@
   "reports": {
     "heading": "Raportările trimise de tine",
     "empty": "Nu ai trimis nicio raportare.",
-    "meta": "{{reason}} · Trimisă pe {{sent}}",
-    "metaDecided": "{{reason}} · Trimisă pe {{sent}} · Decisă pe {{decided}}",
     "status": {
       "waiting": "Așteaptă un moderator",
       "removed": "Decis: eliminat",
@@ -114,7 +112,9 @@
       "copied_published_work": "Copiat dintr-o lucrare publicată",
       "undisclosed_ai": "Lipsește eticheta AI",
       "other": "Altceva"
-    }
+    },
+    "sent": "Trimisă pe {{date}}",
+    "decided": "Decisă pe {{date}}"
   },
   "appeals": {
     "until": "Poți contesta această decizie până pe {{date}} (șase luni). Contestația e gratuită.",

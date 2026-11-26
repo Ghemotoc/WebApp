@@ -15,7 +15,6 @@
 import { useState } from 'react';
 
 import { choiceRowClassName } from '@/components/ui/choiceRowStyles';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { SettingSwitchRow } from '@/features/settings/components/SettingSwitchRow';
 
@@ -149,7 +148,6 @@ export function MessageSettingsSection() {
       className="flex scroll-mt-24 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card"
     >
       <div className="flex flex-col gap-2">
-        <Eyebrow>{t('settings.eyebrow')}</Eyebrow>
         <h2
           id="settings-messages-heading"
           className="m-0 font-heading type-heading font-bold text-ink-heading"

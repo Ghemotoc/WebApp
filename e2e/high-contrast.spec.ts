@@ -83,7 +83,7 @@ test.describe('Settings › Appearance: High contrast (CONTRAST-1)', () => {
     await expect(page.locator('html')).not.toHaveAttribute('data-contrast');
     expect(await rootToken(page, '--paper')).toBe('rgb(244, 240, 236)');
 
-    // Step 2: switched on, the page is white, the blobs are gone and the card is solid.
+    // Step 2: switched on, the page is white, the blobs are gone and the panel is plain.
     await highContrast.click();
     await expect(highContrast).toHaveAttribute('aria-checked', 'true');
     await expect(page.locator('html')).toHaveAttribute('data-contrast', 'more');
@@ -102,8 +102,9 @@ test.describe('Settings › Appearance: High contrast (CONTRAST-1)', () => {
     });
     expect(drawn.page).toBe('rgb(255, 255, 255)');
     expect(drawn.blobs).toBe('none');
-    // Since CALM-1c the card is the one box surface: a flat fill, no glass image (white here).
-    expect(drawn.card).toBe('rgb(255, 255, 255)');
+    // Since bundle 10 (board J05) a Settings panel is flat: it paints no fill of its own, so the
+    // plain white page shows through, with no glass image or blur.
+    expect(drawn.card).toBe('rgba(0, 0, 0, 0)');
     expect(drawn.cardImage).toBe('none');
     expect(drawn.cardBlur).toBe('none');
     expect(drawn.text).toBe('rgb(0, 0, 0)');

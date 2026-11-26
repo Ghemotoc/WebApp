@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ChevronDownIcon } from '@/components/icons/ChevronDownIcon';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** What the field needs. */
 interface MonthOfBirthFieldProps {
@@ -28,7 +29,10 @@ interface MonthOfBirthFieldProps {
  * @returns January to December, as words
  */
 function monthNames(language: string): string[] {
-  const format = new Intl.DateTimeFormat(language, { month: 'long', timeZone: 'UTC' });
+  const format = new Intl.DateTimeFormat(dateLocaleFor(language), {
+    month: 'long',
+    timeZone: 'UTC',
+  });
   return Array.from({ length: 12 }, (_unused, index) =>
     format.format(new Date(Date.UTC(2000, index, 1))),
   );
@@ -70,7 +74,7 @@ export function MonthOfBirthField({
           aria-describedby={describedBy}
           aria-invalid={problem === undefined ? undefined : true}
           onChange={(event) => onChange(event.target.value)}
-          className="h-11 w-auto cursor-pointer appearance-none rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
+          className="h-11 w-auto cursor-pointer appearance-none rounded-field in-data-[area=staff]:rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
         >
           <option value="">{t('signUp.birthMonth.placeholder')}</option>
           {monthNames(i18n.language).map((name, index) => (

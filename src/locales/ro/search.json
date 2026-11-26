@@ -80,5 +80,9 @@
     "tipSpelling": "Verifică scrierea.",
     "tipFewer": "Folosește mai puține cuvinte sau mai scurte.",
     "tipTag": "Caută o etichetă, de exemplu „fantasy”."
+  },
+  "trending": {
+    "heading": "Etichete în tendințe",
+    "tag": "#{{tag}}"
   }
 }
