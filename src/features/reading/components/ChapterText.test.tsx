@@ -161,30 +161,30 @@ describe('ChapterText footnotes (BOOKS-D05b, board B15)', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  it('draws each footnote as a numbered button, keeping its words out of the sentence', () => {
+  it('draws each footnote as a numbered button, keeping its words out of the sentence', async () => {
     render(
       <I18nextProvider i18n={createI18n('en')}>
         <ChapterText language="ro" markdown={markdown} />
       </I18nextProvider>,
     );
-    const first = screen.getByRole('button', { name: 'Footnote 1' });
+    const first = await screen.findByRole('button', { name: 'Footnote 1' });
     expect(first).toHaveTextContent('1');
     expect(first).toHaveAttribute('aria-expanded', 'false');
     expect(screen.getByRole('button', { name: 'Footnote 2' })).toBeInTheDocument();
     // The notes are listed under the text, in the same order.
-    const notes = screen.getByRole('region', { name: 'Notes' });
+    const notes = await screen.findByRole('region', { name: 'Notes' });
     expect(notes).toHaveTextContent('Se vopsește în fiecare primăvară.');
     expect(notes.querySelectorAll('li')).toHaveLength(2);
   });
 
-  it('opens the note under its number from 768 px, and Escape closes it back to the number', () => {
+  it('opens the note under its number from 768 px, and Escape closes it back to the number', async () => {
     asWideWindow();
     render(
       <I18nextProvider i18n={createI18n('en')}>
         <ChapterText language="ro" markdown={markdown} />
       </I18nextProvider>,
     );
-    const marker = screen.getByRole('button', { name: 'Footnote 1' });
+    const marker = await screen.findByRole('button', { name: 'Footnote 1' });
     fireEvent.click(marker);
     const note = screen.getByRole('dialog', { name: 'Note 1' });
     expect(note).toHaveTextContent('Se vopsește în fiecare primăvară.');
@@ -195,15 +195,15 @@ describe('ChapterText footnotes (BOOKS-D05b, board B15)', () => {
     expect(marker).toHaveFocus();
   });
 
-  it('goes back from a note in the list to its number in the text', () => {
+  it('goes back from a note in the list to its number in the text', async () => {
     render(
       <I18nextProvider i18n={createI18n('en')}>
         <ChapterText language="ro" markdown={markdown} />
       </I18nextProvider>,
     );
     Element.prototype.scrollIntoView = vi.fn();
-    const back = screen.getByRole('link', { name: 'Back to the text, note 2' });
-    const marker = screen.getByRole('button', { name: 'Footnote 2' });
+    const back = await screen.findByRole('link', { name: 'Back to the text, note 2' });
+    const marker = await screen.findByRole('button', { name: 'Footnote 2' });
     expect(back).toHaveAttribute('href', `#${marker.id}`);
     fireEvent.click(back);
     expect(marker).toHaveFocus();

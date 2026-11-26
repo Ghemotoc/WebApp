@@ -110,6 +110,9 @@ test.describe('footnotes (BOOKS-D05b)', () => {
     // Done closes the box and the writing goes on after the number.
     await box.getByRole('button', { name: 'Done', exact: true }).click();
     await expect(box).toBeHidden();
+    // Done hands the focus back to the text just after the number; wait for it, or the first
+    // letters typed land on the closing box and the count comes out short.
+    await expect(text).toBeFocused();
     await page.keyboard.type(' din nou.');
     const notes = page.getByRole('region', { name: 'Notes' });
     await expect(notes).toContainText(note);

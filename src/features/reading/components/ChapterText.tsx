@@ -27,7 +27,7 @@
  * the first paragraph. The blocks keep their numbers, so links to a spot and comments still match.
  * Footnotes (BOOKS-D05b, board B15): a "footnote:" link is drawn as its raised number
  * (FootnoteMarker, numbered by lib/numberFootnotes.ts) and the notes are listed under the text
- * (ChapterFootnoteList) once the whole text is drawn.
+ * (ChapterFootnoteList) once the whole text is drawn; both are fetched only for a chapter with a note.
  * Look: the shared `.tmc-chapter-text` styles (src/styles/index.css), board 4.3 and 3.5.
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.
  */
@@ -35,6 +35,7 @@ import type { Element, ElementContent } from 'hast';
 import type { Components, ExtraProps, Options } from 'react-markdown';
 import {
   createContext,
+  lazy,
   Suspense,
   useContext,
   useEffect,
@@ -54,7 +55,7 @@ import type { PictureView } from '@/features/pictures/api/pictures';
 import { ChapterPicture } from '@/features/pictures/components/ChapterPicture';
 import { chapterBlocks, type SpotRange } from '@/lib/chapter-blocks';
 import { embedIdFromAddress } from '@/lib/chapter-embeds';
-import { isFootnoteAddress } from '@/lib/chapter-footnotes';
+import { FOOTNOTE_ADDRESS, isFootnoteAddress } from '@/lib/chapter-footnotes';
 import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
@@ -63,8 +64,19 @@ import { numberBlocks } from '../lib/numberBlocks';
 import { numberFootnotes } from '../lib/numberFootnotes';
 import { poemStanzas } from '../lib/poemStanzas';
 
-import { ChapterFootnoteList } from './ChapterFootnoteList';
-import { FootnoteMarker } from './FootnoteMarker';
+/**
+ * The footnote pieces (BOOKS-D05b), fetched only for a chapter that has a note, so a plain
+ * chapter's first load stays inside the reader's script budget (1,300 KB, S1-E4-01b;
+ * e2e/reader-performance.spec.ts).
+ */
+const FootnoteMarker = lazy(async () => {
+  const module = await import('./FootnoteMarker');
+  return { default: module.FootnoteMarker };
+});
+const ChapterFootnoteList = lazy(async () => {
+  const module = await import('./ChapterFootnoteList');
+  return { default: module.ChapterFootnoteList };
+});
 
 /**
  * Whether an image address is one of ours: a chapter picture or a music or video card.
@@ -239,6 +251,16 @@ function ChapterParagraph({ node, ...props }: ComponentPropsWithoutRef<'p'> & Ex
 }
 
 /**
+ * Whether the chapter has at least one footnote, so the notes' code is fetched only then.
+ *
+ * @param markdown - the chapter as stored
+ * @returns true when a "(footnote:)" address is in the text
+ */
+function hasFootnote(markdown: string): boolean {
+  return markdown.includes(`](${FOOTNOTE_ADDRESS})`);
+}
+
+/**
  * Draws one link: a footnote as its raised number (BOOKS-D05b), a safe address as a link that is
  * never followed for ranking and never given the page's opener (CLAUDE.md rule 8), anything else
  * as its words only.
@@ -250,10 +272,13 @@ function ChapterLink({ href, children, ...props }: ComponentPropsWithoutRef<'a'>
   const media = useContext(ChapterMediaContext);
   const footnoteNumber = Number((props as Record<string, unknown>)['data-footnote']);
   if (href !== undefined && isFootnoteAddress(href) && Number.isInteger(footnoteNumber)) {
+    // While the marker's code arrives, the number shows raised as plain text in its place.
     return (
-      <FootnoteMarker number={footnoteNumber} idPrefix={media.idPrefix}>
-        {children}
-      </FootnoteMarker>
+      <Suspense fallback={<sup>{footnoteNumber}</sup>}>
+        <FootnoteMarker number={footnoteNumber} idPrefix={media.idPrefix}>
+          {children}
+        </FootnoteMarker>
+      </Suspense>
     );
   }
   if (href === undefined || !isAllowedLink(href)) return <>{children}</>;
@@ -422,8 +447,10 @@ export function ChapterText(props: ChapterTextProps) {
       </div>
       {/* The notes under the text (board B15), once the whole text is drawn. They sit after the
           text's box, so the chapter text's list and heading styles don't reach them. */}
-      {!isPartial && (
-        <ChapterFootnoteList markdown={markdown} language={language} idPrefix={media.idPrefix} />
+      {!isPartial && hasFootnote(markdown) && (
+        <Suspense fallback={null}>
+          <ChapterFootnoteList markdown={markdown} language={language} idPrefix={media.idPrefix} />
+        </Suspense>
       )}
     </>
   );
