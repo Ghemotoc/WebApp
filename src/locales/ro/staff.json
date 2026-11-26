@@ -541,6 +541,28 @@
     },
     "pager": {
       "pageOf": "Pagina {{number}} din {{count}}"
+    },
+    "list": {
+      "heading": "Membri",
+      "intro": "Fiecare cont, cele mai noi primele. Doar proprietarii și administratorii văd această listă, iar fiecare pagină deschisă ajunge în jurnalul de audit.",
+      "loading": "Se încarcă conturile…",
+      "count_one": "{{count}} cont",
+      "count_few": "{{count}} conturi",
+      "count_other": "{{count}} de conturi",
+      "columns": {
+        "email": "Email",
+        "country": "Țară",
+        "ageGroup": "Grupă de vârstă",
+        "joined": "S-a înscris",
+        "lastUsed": "Ultima folosire"
+      },
+      "showEmail": "Arată",
+      "showEmailFor": "Arată emailul lui {{name}}",
+      "emailFailed": "Emailul nu a putut fi afișat. Încearcă din nou.",
+      "noEmail": "Niciunul",
+      "noCountry": "Nesetată",
+      "neverUsed": "Încă nu",
+      "pagerLabel": "Paginile de membri"
     }
   },
   "waitlist": {

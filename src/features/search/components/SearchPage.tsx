@@ -4,14 +4,17 @@
  *
  * Who shows it: the router, at /search?q=…; the search button in the top bar leads here.
  * What it shows: the title "Search" on the left and the search field the width of the page.
- * Before a search (board A07): Recent searches and Trending tags on the left (the searches kept
- * on this device only), and Writers to try with one advert that fills the column on the right; no advert under the field (Robert,
+ * Before a search (board A07): the scope chips under the field (Stories, Writers, Together,
+ * Spaces), which choose the results tab the search opens on; Recent searches and Trending tags
+ * on the left (the searches kept on this device only), and Writers to try with one advert that
+ * fills the column on the right; no advert under the field (Robert,
  * 20 Nov 2026, 17:44). With a term (board A08): the results tabs across the page (SearchResults),
  * with their own advert under the filters. A term under 2 letters says so instead of searching.
  * The term lives in the address, so a search can be shared; it follows what is typed
  * (SearchForm).
  * On phones the title is for screen readers only and the field sits at the top (bundle CALM-7c).
- * What it calls: SearchForm, RecentSearches, TrendingTags, SearchResults and RisingWritersList.
+ * What it calls: SearchForm, SearchScopeChips, RecentSearches, TrendingTags, SearchResults and
+ * RisingWritersList.
  */
 import { useSearchParams } from 'react-router';
 
@@ -21,11 +24,13 @@ import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { RisingWritersList } from '@/features/discovery/components/RisingWritersList';
 
 import { isSearchable } from '../lib/searchAddresses';
+import { paramsForTab, tabFrom } from '../lib/searchFilters';
 import { useSearchTranslation } from '../registerSearchTranslations';
 
 import { RecentSearches } from './RecentSearches';
 import { SearchForm } from './SearchForm';
 import { SearchResults } from './SearchResults';
+import { SearchScopeChips } from './SearchScopeChips';
 import { TrendingTags } from './TrendingTags';
 
 /**
@@ -48,8 +53,10 @@ function SearchBody({ term }: { term: string }) {
  */
 export function SearchPage() {
   const { t } = useSearchTranslation();
-  const [search] = useSearchParams();
+  const [search, setSearch] = useSearchParams();
   const term = (search.get('q') ?? '').trim();
+  // The results tab the search opens on: chosen by the chips before a search, by the tabs after.
+  const scope = tabFrom(search);
   return (
     <PageContainer className="tmc-rise flex flex-col gap-12 pt-8 pb-16 max-md:gap-4 max-md:pt-4">
       <title>{t('page.documentTitle', { productName: brand.productName })}</title>
@@ -57,7 +64,15 @@ export function SearchPage() {
         <h1 className="m-0 min-w-0 break-words type-title lg:type-display max-md:sr-only">
           {t('page.heading')}
         </h1>
-        <SearchForm initialTerm={term} />
+        <SearchForm initialTerm={term} scope={scope} />
+        {term === '' && (
+          // Board A07: the chips sit under the field until there is a term; the results tabs take
+          // over after it. Choosing one only prepares the search, so no new history entry.
+          <SearchScopeChips
+            scope={scope}
+            onChange={(tab) => setSearch(paramsForTab(search, tab), { replace: true })}
+          />
+        )}
       </div>
       {term === '' ? (
         // Left, the recent searches and the trending tags; right, Writers to try and the one advert that fills the

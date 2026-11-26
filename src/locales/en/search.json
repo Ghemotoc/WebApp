@@ -96,6 +96,9 @@
     "tipFewer": "Use fewer or shorter words.",
     "tipTag": "Search for a tag, such as “fantasy”."
   },
+  "scope": {
+    "label": "Search in"
+  },
   "trending": {
     "heading": "Trending tags",
     "tag": "#{{tag}}"
