@@ -18,4 +18,10 @@ export const linkPreviewPalette = {
   sky: '#D7E6F2',
   sage: '#C9D8BF',
   paper: '#FAF8F5',
+  crimson: '#9F1239',
+  seaglass: '#0F766E',
+  peach: '#C2412D',
+  pistachio: '#4D7C0F',
+  candy: '#C0266D',
+  linkblue: '#3D4290',
 } as const;

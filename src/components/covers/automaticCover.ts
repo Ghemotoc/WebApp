@@ -35,9 +35,12 @@ import {
  * The three patterns G9c added (Arches, Rings, Forest waves) are for writers to pick only: the
  * choice is the story ID's hash taken over this list, so a longer list would move every
  * existing automatic cover to another design, and "always the same for that story" would break.
+ * The classic covers' artwork designs are the classics account's only, so they are left out too.
  */
 export const automaticDesignKeys: readonly CoverDesignKey[] = coverDesigns
-  .filter((design) => design.kind !== 'plain' && design.isNew !== true)
+  .filter(
+    (design) => design.kind !== 'plain' && design.isNew !== true && design.classicOnly !== true,
+  )
   .map((design) => design.key);
 
 /** A story as the cover code needs it: its ID, its cover kind and, for drawn covers, the choice. */
