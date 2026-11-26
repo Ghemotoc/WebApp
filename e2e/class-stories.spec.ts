@@ -3,7 +3,7 @@
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - a student shares their story with their class from Story settings › "Who can read it";
+ * - a student shares their story with their class from Story settings › "Share with a class";
  * - the teacher then finds it on the class page under "Stories shared with the class" and on its
  *   See all page, while an adult outside the class can't open the story at all;
  * - the student makes it public again, and the outsider reads it;
@@ -116,10 +116,9 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
 
   test('a student shares their story only with the class', async ({ browser }) => {
     const page = await openAs(browser, 'pending_check', `/write/s/${storySlug()}/settings`);
-    // Story settings has two groups with this name since NEW-1 (#327): Public, Unlisted or
-    // Private, and this class card. The class card is the one about sharing with a class.
+    // Board D07 names the class card "Share with a class".
     const card = page
-      .getByRole('group', { name: 'Who can read it' })
+      .getByRole('group', { name: 'Share with a class' })
       .filter({ hasText: 'one of your classes' });
     await expect(card).toBeVisible();
     await card.getByLabel('Class').selectOption({ label: className });
@@ -174,10 +173,9 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
 
   test('the student makes it public again, and the outsider reads it', async ({ browser }) => {
     const page = await openAs(browser, 'pending_check', `/write/s/${storySlug()}/settings`);
-    // Story settings has two groups with this name since NEW-1 (#327): Public, Unlisted or
-    // Private, and this class card. The class card is the one about sharing with a class.
+    // Board D07 names the class card "Share with a class".
     const card = page
-      .getByRole('group', { name: 'Who can read it' })
+      .getByRole('group', { name: 'Share with a class' })
       .filter({ hasText: 'one of your classes' });
     await card.getByRole('button', { name: 'Make it public' }).click();
     await expect(

@@ -1,8 +1,8 @@
 /**
- * The icons on Manage chapters, drawn as inline SVG from board 4.4 (story S1-E3-04). Plain
- * icons, not doodles: the DoD keeps arrows, plus and small handles under 18 px out of the doodle
- * set. Each is hidden from screen readers; the button around it carries the name.
- * Who uses it: ManageChaptersPage, ManagedChapterRow and ChapterRowActions.
+ * The arrows on a story's Chapters page, drawn as inline SVG from board D03 (story S1-E3-04,
+ * user story 5.3). Plain line icons, not doodles. Each is hidden from screen readers; the button
+ * around it carries the name. The plus and the "…" come from ActionIcon.
+ * Who uses it: ChapterRowActions.
  */
 import type { SVGProps } from 'react';
 
@@ -25,44 +25,22 @@ function Frame(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-/** Six dots: the drag handle. */
-export function GripIcon() {
-  return (
-    <Frame strokeWidth="2.4">
-      <path d="M9 5h.01" />
-      <path d="M9 12h.01" />
-      <path d="M9 19h.01" />
-      <path d="M15 5h.01" />
-      <path d="M15 12h.01" />
-      <path d="M15 19h.01" />
-    </Frame>
-  );
-}
-
-/** An arrow head pointing up: "Move up". */
-export function ChevronUpIcon() {
+/** An arrow pointing up: "Move chapter 3 earlier" (board D03). */
+export function ArrowEarlierIcon() {
   return (
     <Frame>
-      <path d="m18 15-6-6-6 6" />
+      <path d="M12 19V5" />
+      <path d="m5 12 7-7 7 7" />
     </Frame>
   );
 }
 
-/** An arrow head pointing down: "Move down". */
-export function ChevronDownIcon() {
-  return (
-    <Frame>
-      <path d="m6 9 6 6 6-6" />
-    </Frame>
-  );
-}
-
-/** A plus: "New chapter". */
-export function PlusIcon() {
+/** An arrow pointing down: "Move chapter 3 later" (board D03). */
+export function ArrowLaterIcon() {
   return (
     <Frame>
       <path d="M12 5v14" />
-      <path d="M5 12h14" />
+      <path d="m19 12-7 7-7-7" />
     </Frame>
   );
 }

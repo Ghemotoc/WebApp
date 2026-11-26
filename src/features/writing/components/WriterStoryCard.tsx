@@ -4,15 +4,18 @@
  *
  * Simplified look (bundle CALM-7c, board simplified/New-Write): no card. A hairline above each
  * story, the 120 px cover on the left (64 px on phones) and beside it the title, the meta line
- * ("Fiction · Ongoing · No AI · 6 chapters published", writerStoryFacts), the blurb, the tags, the
- * line "Only you can see this story until you publish its first chapter" while nothing is
- * published, and the actions (bundle CALM-9a, board D01): "Write chapter one" or "Continue
- * chapter n" (S1-E3-02a) and "Story Atlas" as quiet buttons (quiet, because "Continue draft" at the
- * top is the page's one main button), then "Manage chapters" (S1-E3-04), "Story settings"
- * (S1-E3-05) and "See story page" as text links, and the line "In the Atlas: Characters ·
- * Relationships · Story world · Storyline" (StoryCardAtlasLine). Under them, once a chapter exists, the numbers per chapter
- * (ChapterStatsTable, S1-E3-07).
- * Who uses it: YourWritingPage. What it calls: writerStoryFacts, StoryCardAtlasLine, ChapterStatsTable.
+ * ("Ongoing · Fiction · No AI · 6 chapters published · last updated 10 October 2026",
+ * writerStoryFacts), the blurb and the actions (bundle CALM-9a, board D01, user story 5.1).
+ * Once a chapter is published: "Continue chapter n" (S1-E3-02a) and "Story Atlas" as quiet buttons
+ * (quiet, because "Continue draft" at the top is the page's one main button), then "Manage
+ * chapters" (S1-E3-04), "Story settings" (S1-E3-05) and "See story page" as text links, and the
+ * line "In the Atlas: Characters · Relationships · Story world · Storyline" (StoryCardAtlasLine).
+ * While nothing is published: "Write chapter one" and "Story settings" only, then "Only you can
+ * see this story until you publish its first chapter. No numbers yet." Under them, once a chapter
+ * exists, the numbers per chapter (ChapterStatsTable, S1-E3-07). The tags are left out, as on the
+ * board; story settings show them.
+ * Who uses it: YourWritingPage. What it calls: writerStoryFacts, storyLastUpdatedAt,
+ * StoryCardAtlasLine, ChapterStatsTable.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -23,10 +26,11 @@ import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { MetaLine } from '@/components/ui/MetaLine';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
-import { TagNames } from '@/features/tags/components/TagNames';
+import { formatLocalDate } from '@/lib/local-time';
 
 import type { DashboardChapter } from '../api/dashboard';
 import type { MyStory } from '../api/stories';
+import { storyLastUpdatedAt } from '../lib/dashboardChapters';
 import { writerStoryFacts } from '../lib/writerStoryFacts';
 
 import { ChapterStatsTable } from './ChapterStatsTable';
@@ -64,6 +68,27 @@ function WriteChapterLink({
       <ActionIcon name="pen" />
       {t('storyCard.continueChapter', { number: latestChapter.position })}
     </Link>
+  );
+}
+
+/**
+ * The actions of a story with nothing published yet (board D01): "Write chapter one" and "Story
+ * settings", then the line saying only the writer sees it and there are no numbers yet.
+ */
+function UnpublishedStoryLinks({ story }: { story: MyStory }) {
+  const { t } = useTranslation('writing');
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <WriteChapterLink slug={story.slug} latestChapter={story.chapters.at(-1)} />
+        <Link to={`/write/s/${story.slug}/settings`} className={textLink}>
+          {t('storyCard.settings')}
+        </Link>
+      </div>
+      <p className="m-0 type-meta">
+        {t('yourWriting.onlyYou')} {t('dashboard.noNumbersYet')}
+      </p>
+    </div>
   );
 }
 
@@ -123,9 +148,17 @@ function StoryCardCover({ story, cover }: { story: MyStory; cover: DrawnCoverCho
   );
 }
 
-/** The words beside the cover: title, meta line, blurb, tags, the lock line and the buttons. */
-function StoryCardSummary({ story }: { story: MyStory }) {
-  const { t } = useTranslation('writing');
+/** The words beside the cover: title, meta line, blurb and the actions. */
+function StoryCardSummary({
+  story,
+  lastUpdatedAt,
+}: {
+  story: MyStory;
+  lastUpdatedAt: string | null;
+}) {
+  const { t, i18n } = useTranslation('writing');
+  const lastUpdated =
+    lastUpdatedAt === null ? null : formatLocalDate(new Date(lastUpdatedAt), i18n.language);
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-3">
       <div className="flex flex-col gap-1">
@@ -135,20 +168,16 @@ function StoryCardSummary({ story }: { story: MyStory }) {
         >
           {story.title}
         </h3>
-        <MetaLine facts={writerStoryFacts(story, t)} />
+        <MetaLine facts={writerStoryFacts(story, t, lastUpdated)} />
       </div>
       {story.blurb !== '' && (
         <p className="m-0 max-w-[72ch] type-body text-ink-muted">{story.blurb}</p>
       )}
-      {story.tags.length > 0 && (
-        <p className="m-0 type-meta">
-          <TagNames tags={story.tags} />
-        </p>
+      {story.firstPublishedAt === null ? (
+        <UnpublishedStoryLinks story={story} />
+      ) : (
+        <StoryCardLinks story={story} />
       )}
-      {story.firstPublishedAt === null && (
-        <p className="m-0 type-meta">{t('yourWriting.onlyYou')}</p>
-      )}
-      <StoryCardLinks story={story} />
     </div>
   );
 }
@@ -167,7 +196,7 @@ export function WriterStoryCard({ story, cover, chapterNumbers }: WriterStoryCar
     >
       <div className="flex gap-4 md:gap-6">
         <StoryCardCover story={story} cover={cover} />
-        <StoryCardSummary story={story} />
+        <StoryCardSummary story={story} lastUpdatedAt={storyLastUpdatedAt(chapterNumbers)} />
       </div>
       {chapterNumbers.length > 0 && (
         <ChapterStatsTable storyTitle={story.title} chapters={chapterNumbers} />
