@@ -7,14 +7,15 @@
  *     corners, the title in the subheading type and a Close × at the top right.
  *   - Its rows are split by hairlines (divide-y divide-border on the list inside it).
  *   - On phones (under 600 px) it rises from the bottom edge, full width, with square bottom
- *     corners; on wider screens it sits beside the page, at the right, 400 px wide. A sheet for
- *     a decision about the page itself (placement "centre", board D06 Publish chapter) sits in
- *     the middle of the screen instead, 520 px wide.
+ *     corners; on wider screens it sits beside the page, at the right, 400 px wide. With
+ *     placement "centre" it sits in the middle of the screen as a dialog instead, 520 px wide
+ *     (board D06 Publish chapter; Story Atlas's "Add a relationship", story 6.5, board E24).
  *   - An optional subtitle sits under the title in the meta type ("Chapter 16 · Epilogue: Spring").
  *   - It is a native <dialog> opened with showModal(), so focus stays inside, Escape closes it and
  *     focus goes back to the button that opened it, with no focus-trap code of our own.
- * Who uses it: AddToReadingList, the chapter editor's Publish chapter (centre). What it calls:
- * CrossIcon.
+ * Who uses it: AddToReadingList, the search and list filters, the bug report panel, the chapter
+ * editor's Publish chapter (centre) and the Story Atlas's AddRelationshipDialog (centre). What it
+ * calls: CrossIcon.
  */
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +40,7 @@ export interface SheetProps {
  * The panel's classes: the one solid box surface (no glass outside the nav bars, Robert, 23 Nov
  * 2026, 19:26 UTC), the corners, and where it sits at each width.
  */
-const sheetClasses = [
+const sharedClasses = [
   'box-surface m-0 max-h-[85vh] w-full max-w-none overflow-y-auto',
   'p-0 text-ink-muted shadow-popover',
   'backdrop:bg-black/30',
@@ -84,7 +85,7 @@ export function Sheet({
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}
-      className={cn(sheetClasses, placementClasses[placement])}
+      className={cn(sharedClasses, placementClasses[placement])}
       onClose={onClose}
     >
       <div className="flex flex-col gap-4 p-6">

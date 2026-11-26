@@ -3,7 +3,7 @@
   "documentTitle": "{{title}}: Story Atlas",
   "eyebrow": "Story Atlas",
   "atAGlance": "At a glance",
-  "glanceAside": "Recent changes and own fields",
+  "glanceAside": "Edited recently",
   "switcher": {
     "label": "Story",
     "newStory": "New story",
@@ -16,11 +16,29 @@
     "action": "New story"
   },
   "home": {
-    "heading": "Story plans",
-    "lead": "Characters, places, connections and the order of things, kept beside every story you write.",
+    "heading": "Story Atlas",
+    "lead": "Characters, places, connections and the order of things, kept beside each story.",
     "privateNote": "Only you can see a plan, unless you choose what readers see.",
-    "newPlan": "Plan a new story",
-    "loadFailed": "The plans didn’t load. Check the connection and try again."
+    "loadFailed": "The plans didn’t load. Check the connection and try again.",
+    "count_one": "{{count}} story",
+    "count_few": "{{count}} stories",
+    "count_other": "{{count}} stories",
+    "order": "Most recently edited first.",
+    "listLabel": "Stories with a plan",
+    "wordsOnly_one": "{{formatted}} word",
+    "wordsOnly_few": "{{formatted}} words",
+    "wordsOnly_other": "{{formatted}} words",
+    "edited": "edited {{when}}",
+    "chaptersOut_one": "{{count}} chapter out",
+    "chaptersOut_few": "{{count}} chapters out",
+    "chaptersOut_other": "{{count}} chapters out",
+    "poemsOut_one": "{{count}} poem out",
+    "poemsOut_few": "{{count}} poems out",
+    "poemsOut_other": "{{count}} poems out",
+    "essaysOut_one": "{{count}} essay out",
+    "essaysOut_few": "{{count}} essays out",
+    "essaysOut_other": "{{count}} essays out",
+    "notPublished": "not published"
   },
   "signedOut": "Sign in to plan stories.",
   "notFound": "We couldn’t find that story on this account. It may have been deleted.",
@@ -67,7 +85,8 @@
   "words": {
     "heading": "Words",
     "count": "{{written}} of {{target}} words",
-    "percent": "{{percent}}% of the word target"
+    "percent": "{{percent}}% of the word target",
+    "numbers": "{{written}} of {{target}}"
   },
   "chapters": {
     "heading": "Chapters",
@@ -83,8 +102,14 @@
     "line": {
       "published": "Published {{date}}",
       "scheduled": "Scheduled for {{date}}",
-      "draft": "Draft"
-    }
+      "draft": "Draft",
+      "publishedToday": "Published today",
+      "publishedNoDate": "Published",
+      "saved": "saved {{when}}"
+    },
+    "drafts_one": "{{count}} draft",
+    "drafts_few": "{{count}} drafts",
+    "drafts_other": "{{count}} drafts"
   },
   "linked": {
     "heading": "Linked project",
@@ -123,7 +148,8 @@
     "filterHint": "By name, or by what they’re also known as.",
     "none": "No characters yet. Add the first with New character.",
     "noMatch": "No one matches “{{filter}}”.",
-    "sideColumn": "Relationships, chapters and readers",
+    "choose": "Choose a character to open their sheet.",
+    "backToCast": "Characters",
     "notFound": "That character isn’t in this story any more.",
     "createFailed": "The character wasn’t added. Check your connection and try again.",
     "name": "Name",
@@ -182,14 +208,14 @@
     },
     "firstAppearance": "First appearance",
     "firstAppearanceNone": "Not picked yet",
-    "firstAppearancePill": "First appearance: Chapter {{number}}",
-    "povPill_one": "Point of view in {{count}} chapter",
-    "povPill_few": "Point of view in {{count}} chapters",
-    "povPill_other": "Point of view in {{count}} chapters",
+    "povFact_one": "point of view in {{count}} chapter",
+    "povFact_few": "point of view in {{count}} chapters",
+    "povFact_other": "point of view in {{count}} chapters",
+    "firstAppearsFact": "first appears in chapter {{number}}",
     "custom": {
-      "heading": "Custom fields",
+      "heading": "Character fields",
       "none": "No custom fields yet.",
-      "manage": "Remove or bring back fields on the at-a-glance page"
+      "manage": "Add or remove fields on At a glance"
     },
     "details": {
       "add": "Add detail",
@@ -216,9 +242,8 @@
     },
     "picture": {
       "heading": "Picture",
-      "none": "No picture yet.",
       "upload": "Choose a picture",
-      "hint": "JPEG, PNG or WebP, up to 5 MB. It’s checked before it shows, and only you see it.",
+      "hint": "A drawing, never a photo of a real person. JPEG, PNG or WebP, up to 5 MB. It’s checked before it shows.",
       "alt": "Describe the picture",
       "altHint": "For anyone who can’t see it.",
       "remove": "Remove picture",
@@ -329,21 +354,22 @@
     },
     "add": {
       "heading": "Add a relationship",
-      "hint": "Read from the first character to the second: “Ana is the parent of Vali”.",
+      "hint": "Read it from the first character to the second: “Ana is the parent of Vali”.",
       "from": "Character",
       "to": "Other character",
       "pickCharacter": "Pick a character",
       "kind": "Relationship",
+      "customOption": "Custom (your own label)",
       "customLabel": "What is {{from}} to {{to}}?",
       "customHint": "For example “godmother of” or “owes a debt to”.",
       "note": "Note (optional)",
       "button": "Add relationship",
+      "sheetNote": "Each one shows on both characters’ sheets and fills in the map and the family tree.",
       "added": "Relationship added.",
       "alreadyThere": "That relationship is already there.",
       "pickBoth": "Pick both characters.",
-      "labelRequired": "Write a label for this relationship.",
+      "labelRequired": "Write your label for this relationship.",
       "failed": "The relationship wasn’t saved. Check your connection and try again.",
-      "group": "Kind",
       "cousinDegree": "Which cousin",
       "cousinDegree1": "First cousin",
       "cousinDegree2": "Second cousin",
@@ -363,28 +389,21 @@
       "heading": "Relationships",
       "sheetHeading": "Relationships",
       "none": "No relationships yet.",
+      "count_one": "{{count}} relationship",
+      "count_few": "{{count}} relationships",
+      "count_other": "{{count}} relationships",
       "delete": "Delete",
-      "deletedUndo": "Deleted “{{sentence}}”.",
+      "deletedUndo": "Removed.",
       "failed": "The relationship wasn’t deleted. Check your connection and try again."
     },
     "map": {
-      "heading": "Relationship map",
-      "region": "Relationship map; scrolls on small screens",
+      "region": "Relationship map; scrolls sideways on small screens",
       "categoriesLabel": "Show categories",
       "none": "No relationships to draw yet.",
-      "focusOn": "Focus on",
-      "everyone": "Everyone",
-      "arrange": "Arrange for me",
-      "dragHint": "Drag a card to move it. Drag one card onto another to connect them.",
-      "moveFailed": "The card’s new place wasn’t saved. Check the connection and try again.",
-      "arrangeFailed": "The map wasn’t rearranged. Check the connection and try again.",
-      "zoomLabel": "Zoom",
-      "zoomOut": "Zoom out",
-      "zoomIn": "Zoom in",
-      "fit": "Fit",
-      "zoomNow": "{{percent}}%",
+      "born": "b. {{year}}",
       "offMap": "Not on the map yet: {{names}}",
-      "key": "Each category has its own colour. Solid lines: family and allies. Dotted: love and other. Dashed: conflict. Fine dots: lineage.",
+      "key": "Solid lines: family and allies. Dotted: love and other. Dashed: conflict. Fine dots: lineage. Choose a person to open their sheet; the same relationships are listed under the map.",
+      "readerKey": "Each category has its own colour. Solid lines: family and allies. Dotted: love and other. Dashed: conflict. Fine dots: lineage.",
       "coloursButton": "Category colours",
       "coloursIntro": "Pick a colour for each category. The map and the list follow it.",
       "colourFor": "Colour for {{category}}",
@@ -402,39 +421,22 @@
     },
     "tree": {
       "heading": "Family tree",
-      "hint": "Built from “Parent of”, “Partner or spouse of” and “Sibling of”. Partners sit side by side, children hang from their line, and brothers and sisters share a bracket.",
+      "hint": "Built from “Parent of”, “Partner or spouse of” and “Sibling of”. Older generations at the top.",
       "includeMade": "Include turned or made",
       "region": "Family tree; scrolls sideways on small screens",
       "swipe": "Swipe sideways to see the whole tree.",
-      "none": "No family links yet. Add “Parent of”, “Sibling of”, “Partner or spouse of” or “Cousin of” to draw the tree.",
-      "leftOff_one": "{{count}} character with no family links is left off.",
-      "leftOff_few": "{{count}} characters with no family links are left off.",
-      "leftOff_other": "{{count}} characters with no family links are left off.",
+      "none": "No family links yet. Add “Parent of” or “Partner or spouse of” to draw the tree.",
+      "leftOff_one": "{{count}} character with no family links is left off: {{names}}.",
+      "leftOff_few": "{{count}} characters with no family links are left off: {{names}}.",
+      "leftOff_other": "{{count}} characters with no family links are left off: {{names}}.",
       "generationsLabel": "Generations",
       "generation": "Generation {{number}}: {{names}}",
       "whose": "Whose tree",
-      "everyFamily": "Every family",
-      "add": {
-        "open": "Add to this tree",
-        "heading": "Add to {{name}}’s tree",
-        "headingAny": "Add to this tree",
-        "relatedTo": "Related to",
-        "character": "Character",
-        "how": "How they’re related to {{name}}",
-        "howAny": "How they’re related",
-        "relations": {
-          "parent": "Parent",
-          "child": "Child",
-          "sibling": "Sibling",
-          "partner": "Partner or spouse",
-          "cousin": "Cousin"
-        },
-        "cancel": "Cancel",
-        "button": "Add"
-      }
+      "noneFor": "{{name}} has no family links yet.",
+      "generationsNote": "The same tree in words."
     },
     "clash": {
-      "title": "This clashes with a relationship already here.",
+      "title": "This clashes with a relationship already here",
       "explain": "Already here: “{{existing}}”. Saving adds “{{proposed}}” as well.",
       "bothTrue": "Both can be true in a story. If they are, add a note so you remember how.",
       "note": "How both are true (optional)",
@@ -447,8 +449,7 @@
     "views": {
       "legend": "View",
       "map": "Map",
-      "tree": "Family tree",
-      "list": "List"
+      "tree": "Family tree"
     }
   },
   "bible": {
@@ -465,6 +466,7 @@
     },
     "contents": {
       "heading": "Sections",
+      "navLabel": "Sections of the story world",
       "manage": "Manage sections",
       "newEntryIn": "New entry in {{section}}",
       "newEntryName": "New entry",
@@ -511,8 +513,8 @@
       "bodyHint": "You can use **bold**, *italic*, lists, headings and links such as [a map](https://example.com).",
       "empty": "No text yet. Choose Edit to write it.",
       "inSection": "In {{section}}",
+      "more": "More for {{title}}",
       "delete": {
-        "heading": "Delete this entry",
         "button": "Delete entry",
         "confirm": "Delete “{{title}}”? This can’t be undone.",
         "yes": "Yes, delete",
@@ -620,11 +622,12 @@
     "views": {
       "board": "Board",
       "timeline": "Timeline",
-      "lanes": "POV lanes"
+      "lanes": "Point-of-view lanes"
     },
     "board": {
       "heading": "Chapter board",
-      "hint": "Drag a card by its grip (on a phone or tablet, press and hold it), or use its menu: Earlier, Later, Previous act, Next act. Moving a chapter that’s already published asks first.",
+      "hint": "Drag a card, or use its menu (Earlier, Later, Previous act, Next act). Moving a chapter that’s already published asks first.",
+      "regionLabel": "Chapter board; scrolls sideways on small screens",
       "noAct": "No act",
       "empty": "No chapters here yet.",
       "chapterNumber": "Chapter {{number}}",
@@ -632,10 +635,10 @@
       "pov": "POV: {{name}}",
       "noPov": "No point of view yet",
       "published": "Published",
+      "draft": "Draft",
       "words_one": "{{words}} word",
       "words_few": "{{words}} words",
       "words_other": "{{words}} words",
-      "worldDate": "In-world date: {{date}}",
       "addChapter": "Add chapter",
       "addChapterIn": "Add chapter to {{name}}",
       "addFailed": "We couldn’t add the chapter. Try again in a moment.",
@@ -695,24 +698,29 @@
         "button": "Add event",
         "titleRequired": "Give the event a title.",
         "sortRequired": "Give the event a number to sort by, such as 2055.3.",
-        "failed": "We couldn’t add the event. Try again in a moment."
+        "failed": "We couldn’t add the event. Try again in a moment.",
+        "titlePlaceholder": "The lift breaks down",
+        "displayDatePlaceholder": "Spring 2027",
+        "sortValuePlaceholder": "2027.3"
       },
       "edit": "Edit",
-      "editNamed": "Edit {{title}}",
       "done": "Done",
       "sortValueInvalid": "Use a number, such as 2055.3.",
       "delete": "Delete",
-      "deleteNamed": "Delete {{title}}",
-      "confirmDelete": "Delete “{{title}}” for good?",
-      "yes": "Yes, delete it",
-      "keep": "Keep it",
       "deleteFailed": "We couldn’t delete the event. Try again in a moment.",
       "undatedHeading": "Chapters without a date",
       "undatedHint": "Open a chapter and fill in its in-world date and sort value to place it on the timeline.",
       "undatedNone": "Every chapter has a place on the timeline.",
       "sortLine": "sort {{value}}",
-      "noDateYet": "No in-world date yet",
-      "sideLabel": "Add an event and undated chapters"
+      "sideLabel": "Add an event and undated chapters",
+      "more": "More for {{title}}",
+      "removed": "Removed.",
+      "draft": "draft",
+      "undatedNumbers_one": "Chapter {{list}}",
+      "undatedNumbers_few": "Chapters {{list}}",
+      "undatedNumbers_other": "Chapters {{list}}",
+      "showUndated": "Show them",
+      "hideUndated": "Hide them"
     },
     "lanes": {
       "heading": "Point-of-view lanes",
@@ -722,8 +730,12 @@
       "none": "No chapter has a point of view yet. Pick one in each chapter’s plan.",
       "noChapters": "This story has no chapters yet.",
       "countsLabel": "Chapters by teller",
-      "chaptersBy": "Told by {{name}}",
-      "toldByNarrator": "Told by the Narrator"
+      "countFirst_one": "{{name}}: {{count}} chapter",
+      "countFirst_few": "{{name}}: {{count}} chapters",
+      "countFirst_other": "{{name}}: {{count}} chapters",
+      "count": "{{name}}: {{count}}",
+      "rowName": "{{number}}. {{title}}",
+      "tellsIt": "tells it"
     }
   },
   "ideas": {
@@ -749,7 +761,7 @@
     "filters": {
       "open": "Open ({{count}})",
       "done": "Done ({{count}})",
-      "all": "All ({{count}})"
+      "all": "Both ({{count}})"
     },
     "empty": {
       "open": "Nothing open. Everything is ticked off, or there’s nothing yet.",
@@ -757,18 +769,15 @@
       "all": "No notes yet. Add the first above."
     },
     "doneNamed": "Done: {{body}}",
-    "doneOn": "Done on {{date}}",
+    "doneOn": "Done on {{date}}.",
     "tickFailed": "We couldn’t save the tick. Try again.",
     "body": "Note",
     "outcome": "Action or outcome",
     "outcomeHint": "What you decided or did about it.",
-    "edit": "Edit",
     "editNamed": "Edit “{{body}}”",
-    "delete": "Delete",
+    "closeEditor": "Done",
     "deleteNamed": "Delete “{{body}}”",
-    "confirmDelete": "Delete “{{body}}”? This can’t be undone.",
-    "yes": "Yes, delete it",
-    "keep": "Keep it",
+    "removed": "Removed.",
     "deleteFailed": "We couldn’t delete it. Try again."
   },
   "marketing": {
@@ -776,7 +785,7 @@
     "heading": "Marketing",
     "pitchHeading": "The pitch",
     "launchHeading": "Getting it out",
-    "sharedHint": "The logline and publishing route are the same as on At a glance; the genre and audience are the same as in Story settings.",
+    "sharedHint": "The logline and publishing route are the same as on At a glance; the genre and audience come from the story.",
     "fields": {
       "back_cover_blurb": "Back-cover blurb",
       "comparable_titles": "Comparable titles",
@@ -786,7 +795,7 @@
     },
     "hints": {
       "back_cover_blurb": "What a reader turning the book over would read.",
-      "comparable_titles": "Books or stories like yours, for example “The Shadow of the Wind meets Stranger Things”.",
+      "comparable_titles": "Books or stories like yours.",
       "hooks_keywords": "What makes it stand out, and the words a reader might search for.",
       "query_pitch": "The pitch you’d send to an agent or a publisher.",
       "launch_notes": "Dates, places to share it, who to tell."
@@ -812,16 +821,15 @@
     },
     "backCover": {
       "heading": "Back cover",
-      "show": "Show the back cover",
-      "hide": "Hide the back cover",
+      "hint": "The title, logline, blurb and comparable titles laid out like the back of a book.",
+      "toggle": "Back cover",
       "forReadersOf": "For readers of",
       "empty": "Write a logline, a blurb or comparable titles and they’ll show here.",
       "byline": "{{name}} · {{productName}}"
     },
     "qr": {
       "heading": "QR code",
-      "use": "For posters, flyers and bookmarks",
-      "hint": "People scan it with a phone camera and land on the story. Pick where it goes, then download it.",
+      "hint": "For posters, flyers and bookmarks. People scan it with a phone camera and land on the story.",
       "destination": "Where it takes people",
       "destinations": {
         "story": "The story page",
@@ -877,6 +885,7 @@
     "notFound": "not found yet",
     "chipsLabel": "Links:",
     "chipNotFound": "{{name}}: not found yet",
+    "lineNotFound": "{{name}} (not found yet)",
     "mentionedIn": {
       "heading": "Mentioned in",
       "none": "No [[links]] to this character yet. Write [[their name]] in an entry, a chapter or a note.",
@@ -894,26 +903,31 @@
   "readers": {
     "documentTitle": "What readers can see in {{title}}: Story Atlas",
     "heading": "What readers can see",
-    "intro": "Everything in your plan is private until you turn an area on. An area you turn on shows with your story once it’s published, for every reader the story’s rating allows.",
-    "introItems": "To hold one thing back, tick “Keep private” on its own page: a character, a relationship, a section or entry of the story world, or an event. A character, entry or event can also wait until a reader reaches a chapter, so sharing it doesn’t spoil the story.",
+    "intro": "Everything in your plan is private until you turn an area on. To hold one thing back, tick Keep private on its own page: a character, a relationship or an entry.",
     "notPublished": "Your story isn’t published yet, so readers can’t see any of this yet.",
     "previewLink": "Preview as a reader",
     "areas": {
       "legend": "Areas readers see",
+      "hint": "An area you turn on shows on the story page, under Shared by the writer.",
+      "names": {
+        "characters": "Characters",
+        "relationship_map": "Relationship map",
+        "family_tree": "Family tree",
+        "bible": "Story world",
+        "timeline": "Timeline"
+      },
       "hints": {
         "characters": "Each character’s page, with only the parts of the sheet you open.",
         "relationship_map": "The map of how your characters are connected, with its list.",
         "family_tree": "The family tree.",
-        "bible": "The story world, in reading mode.",
+        "bible": "Your story world, in reading mode.",
         "timeline": "The events on your timeline, in order."
-      },
-      "on": "On",
-      "off": "Off"
+      }
     },
     "item": {
       "heading": "What readers see",
       "characterHint": "Readers see this character while Characters, the map or the family tree is public, and only the parts of the sheet you open below.",
-      "entryHint": "Readers see this entry while the story world is public.",
+      "entryHint": "Readers see this entry while the story world is shared.",
       "settingsLink": "Choose what readers can see",
       "keepPrivate": "Keep private",
       "keepPrivateNamed": "Keep private: {{name}}",
@@ -933,24 +947,26 @@
     },
     "preview": {
       "documentTitle": "Preview of {{title}} as a reader: Story Atlas",
-      "note": "Preview as a reader. This is what readers see. Anything marked with a chapter shows only once a reader gets there.",
-      "notPublished": "Preview as a reader. This is what readers will see once the story is published. Anything marked with a chapter shows only once a reader gets there.",
+      "note": "This is what readers see. Anything marked with a chapter shows only once a reader has reached it.",
+      "notPublished": "This is what readers will see once the story is published. Anything marked with a chapter shows only once a reader has reached it.",
       "nothing": "Nothing is public yet."
     },
     "characters": {
       "heading": "Characters",
+      "hint": "Pick the chapter each one shows from, and the parts of the sheet. Readers who haven’t reached that chapter don’t see it.",
+      "listLabel": "What readers see of each character",
       "none": "No characters yet.",
       "keptPrivate": "Kept private",
-      "fromStart": "Readers see it from the start",
-      "fromChapter": "Readers see it from chapter {{number}}",
+      "fromStart": "From the start",
+      "fromChapter": "From chapter {{number}}",
       "noParts": "no part of the sheet",
       "change": "Change",
       "done": "Done",
-      "changeNamed": "Change what readers see of {{name}}"
-    },
-    "spoilers": {
-      "heading": "Spoilers stay safe",
-      "body": "Pick the chapter each thing shows from. Readers who haven’t reached it don’t see it."
+      "changeNamed": "Change what readers see of {{name}}",
+      "fromChapterTitled": "From chapter {{number}}: {{title}}",
+      "showMore_one": "Show {{count}} more",
+      "showMore_few": "Show {{count}} more",
+      "showMore_other": "Show {{count}} more"
     },
     "summary": {
       "private": "Kept private",
@@ -965,7 +981,7 @@
     "documentTitle": "{{area}}: {{title}}",
     "eyebrow": "The story’s world",
     "navLabel": "Parts of the story’s world",
-    "notFound": "This isn’t available. The writer may not share it, or the story isn’t available to you.",
+    "notFound": "This isn’t available. The writer may not share it, or the story isn’t available any more.",
     "loadFailed": "This couldn’t load. Check your connection and try again.",
     "guard": "Shows from chapter {{number}}: {{title}}",
     "areas": {
@@ -976,25 +992,29 @@
       "timeline": "Timeline"
     },
     "cast": {
-      "none": "No characters to show yet."
+      "none": "No characters to show yet.",
+      "lead": "Only what the writer shares, and only up to the chapter you’ve reached."
     },
     "character": {
       "back": "Characters",
-      "connections": "Relationships",
+      "connections": "Connections",
       "notShown": "This character isn’t shown here."
     },
     "world": {
       "none": "Nothing from the story’s world to show yet.",
-      "back": "World",
       "more": "More from the world",
       "notShown": "This entry isn’t shown here."
     },
     "timeline": {
       "none": "No events to show yet."
     },
-    "byline": "by {{name}} · shared by the writer"
+    "byline": "by {{name}} · shared by the writer",
+    "bylineLinked": "by <writer>{{name}}</writer> · shared by the writer"
   },
   "breadcrumb": {
     "label": "Where you are"
+  },
+  "glance": {
+    "editedRecently": "Edited recently"
   }
 }

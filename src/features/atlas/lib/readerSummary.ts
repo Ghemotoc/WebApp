@@ -1,7 +1,7 @@
 /**
  * What readers see of one character, in a few facts the Readers page turns into one line (story
- * S1-E17-32; bundle G10 ATLAS, part c4, board AtlasReaders: "Readers see it from Chapter 1 ·
- * Basics, Look and voice" or "Kept private").
+ * S1-E17-32; user stories bundle 6, story 6.14, board E33: "From chapter 9: Corina counts too ·
+ * Basics" or "Kept private").
  *
  * Who calls it: ReaderCharacterRow. What it calls: nothing.
  */
@@ -15,6 +15,8 @@ export type ReaderSummary =
       kind: 'shown';
       /** The chapter readers must reach first, or null for the start. */
       chapterNumber: number | null;
+      /** That chapter's title, or '' when it has none (or for the start). */
+      chapterTitle: string;
       /** The sheet's open groups, in the sheet's own order. */
       groups: SheetPart[];
       /** The names of the writer's own open fields, in the sheet's order. */
@@ -29,14 +31,14 @@ export interface ReaderSummaryInput {
   openParts: string[];
   /** The writer's own fields; a hidden field is never shown to readers. */
   fields: CharacterField[];
-  chapters: { code: string; position: number }[];
+  chapters: { code: string; position: number; title: string }[];
 }
 
 /**
  * Works out the summary of one character.
  *
  * @param input - the character's switches, open parts, the story's fields and chapters
- * @returns "private", or the chapter number (null for the start) and the open parts
+ * @returns "private", or the chapter number (null for the start), its title and the open parts
  */
 export function readerSummaryOf(input: ReaderSummaryInput): ReaderSummary {
   // Step 1: "Keep private" wins over everything else.
@@ -48,6 +50,7 @@ export function readerSummaryOf(input: ReaderSummaryInput): ReaderSummary {
   return {
     kind: 'shown',
     chapterNumber: chapter?.position ?? null,
+    chapterTitle: chapter?.title ?? '',
     groups: sheetParts.filter((part) => input.openParts.includes(part)),
     fieldNames: input.fields
       .filter((field) => !field.isHidden && input.openParts.includes(field.id))

@@ -15,6 +15,7 @@ const plan: PublicPlan = {
   coverKind: 'automatic',
   drawnCover: null,
   writerName: 'inkwolf',
+  writerHandle: 'inkwolf',
   areas: ['characters', 'bible'],
   cast: {
     storyId: '',
@@ -30,7 +31,6 @@ const plan: PublicPlan = {
         firstAppearance: null,
         picture: null,
         pictureAlt: '',
-        mapPlace: null,
       },
     ],
     fields: [],
@@ -38,7 +38,7 @@ const plan: PublicPlan = {
     relationships: [],
     relationshipColours: {},
   },
-  characterGuards: {},
+  itemGuards: {},
   sections: [
     {
       id: 's1',

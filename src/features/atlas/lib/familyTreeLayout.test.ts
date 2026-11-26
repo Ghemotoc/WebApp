@@ -18,7 +18,7 @@ const smallFamily: FamilyTree = {
   partnerLinks: [['ana', 'ion']],
   siblingLinks: [],
   cousinLinks: [],
-  leftOffCount: 0,
+  leftOff: [],
 };
 
 /** The board's tree: Ilie beside his brother Ion, Ion with Ana, their daughter Elena with Mihai,
@@ -37,7 +37,7 @@ const boardFamily: FamilyTree = {
   ],
   siblingLinks: [['ilie', 'ion']],
   cousinLinks: [],
-  leftOffCount: 0,
+  leftOff: [],
 };
 
 /** A card by character, failing the test when it is missing. */

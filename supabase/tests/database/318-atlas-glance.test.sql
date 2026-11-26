@@ -4,15 +4,16 @@
 -- - a character's sheet takes the new one-line summary, and the at-a-glance plan lists the
 --   characters edited last with their role and that line;
 -- - the at-a-glance plan's recent chapters carry their publishing status and planning status;
--- - my_story_plans() lists the writer's own live stories with the plan's fields and the words
---   written, never another writer's, and a visitor can't call it.
+-- - my_story_plans() lists the writer's own live stories with the plan's fields, the words
+--   written, the chapters published and the last edit, newest first (board E20), never another
+--   writer's, and a visitor can't call it.
 -- Personas: adult_writer (…01, owns statia-meteo-seed01), teen_17 (…02).
 -- Test data: one character and one chapter in adult_writer's story; rolled back.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(8);
+select plan(10);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -68,6 +69,20 @@ select ok(
    from jsonb_array_elements(public.my_story_plans()) as plan_row
    where plan_row ->> 'slug' = 'statia-meteo-seed01'),
   'the list counts the words written in the story''s chapters');
+
+-- Board E20 (bundle 6, story 6.1): each row says how many chapters are out and when it was
+-- last edited, and the newest edit comes first.
+select ok(
+  (select (plan_row ->> 'published_chapters')::int >= 0 and (plan_row ->> 'edited_at')::timestamptz is not null
+   from jsonb_array_elements(public.my_story_plans()) as plan_row
+   where plan_row ->> 'slug' = 'statia-meteo-seed01'),
+  'each plan in the list says how many chapters are published and when it was last edited');
+select is(
+  (select array_agg((plan_row ->> 'edited_at')::timestamptz order by ordinality)
+   from jsonb_array_elements(public.my_story_plans()) with ordinality as rows (plan_row, ordinality)),
+  (select array_agg((plan_row ->> 'edited_at')::timestamptz order by (plan_row ->> 'edited_at')::timestamptz desc)
+   from jsonb_array_elements(public.my_story_plans()) as plan_row),
+  'the newest edit comes first');
 
 select ok(
   not exists (select 1 from jsonb_array_elements(public.my_story_plans()) as plan_row

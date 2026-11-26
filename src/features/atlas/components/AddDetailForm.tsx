@@ -13,6 +13,7 @@
  */
 import { useEffect, useState } from 'react';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
@@ -61,12 +62,14 @@ export function AddDetailForm({ slug, id, place, groupLabel }: AddDetailFormProp
 
   if (!isOpen) {
     return (
+      // A text button with a plus, as board E23 draws "Add detail" (story 6.4).
       <Button
-        variant="secondary"
+        variant="text"
         className="self-start"
         aria-label={t('characters.details.addTo', { group: groupLabel })}
         onClick={() => setIsOpen(true)}
       >
+        <ActionIcon name="plus" />
         {t('characters.details.add')}
       </Button>
     );

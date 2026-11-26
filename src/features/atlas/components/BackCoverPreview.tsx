@@ -1,22 +1,25 @@
 /**
  * BackCoverPreview: "Back cover" on the Marketing page (story S1-E17-29: "when I open the
  * preview, then the title, logline, blurb and comps are laid out like a book's back cover, as
- * real text").
+ * real text"; redrawn by user stories bundle 6, story 6.13, board E32: "Back cover shows and hides
+ * the preview").
  *
- * Beside the fields (board AtlasMarketing, G10c3): the heading with a button that hides and shows
- * the preview (aria-expanded; open at first), then a book-shaped panel, two wide by three tall,
- * in the buttons' colour: the title, the logline in the story serif as the line that sells it,
- * the blurb and "For readers of" with the comparable titles, and at the foot the writer's pen name
+ * A section between hairlines, as board E32 draws it: the heading, a line saying what it shows,
+ * a quiet "Back cover" button that shows and hides the preview (aria-expanded; open at first),
+ * then the preview on the story paper: the title, the logline in the reading font as the line
+ * that sells it, the blurb, "For readers of" with the comparable titles, and the writer's pen name
  * with the product's name (GAPS-2b). All of it is real HTML text, never a picture, so it reads
- * aloud and zooms (Architecture 1.1 principle 8). Empty parts are left out, with a plain
- * line when there is nothing to show yet. No doodles: a working screen.
- * Who uses it: MarketingPage. What it calls: nothing; the page passes the saved text.
+ * aloud and zooms (Architecture 1.1 principle 8). Empty parts are left out, with a plain line
+ * when there is nothing to show yet.
+ * Who uses it: MarketingPage. What it calls: AtlasSection; the page passes the saved text.
  */
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
+
+import { AtlasSection } from './AtlasSection';
 
 /** The pieces the back cover shows. */
 export interface BackCoverText {
@@ -28,7 +31,7 @@ export interface BackCoverText {
   writerName: string;
 }
 
-/** The book-shaped panel itself. */
+/** The preview itself: board E32's .backcover, at most 420 px wide, 32 px inside. */
 function BackCover({ text }: { text: BackCoverText }) {
   const { t } = useAtlasTranslation();
   const hasWords = text.logline !== '' || text.blurb !== '' || text.comparableTitles !== '';
@@ -36,45 +39,42 @@ function BackCover({ text }: { text: BackCoverText }) {
     <figure
       aria-labelledby="atlas-back-cover-title"
       data-testid="atlas-back-cover"
-      className="m-0 flex aspect-[2/3] w-full max-w-[420px] flex-col gap-4 self-center overflow-hidden rounded-card bg-primary px-8 py-8 text-on-primary shadow-card"
+      className="m-0 flex w-full max-w-[420px] flex-col rounded-cover border border-border bg-story-paper p-8 text-story-ink"
     >
       <p
         id="atlas-back-cover-title"
-        className="m-0 font-heading type-heading leading-tight font-bold break-words text-on-primary"
+        className="m-0 font-heading type-heading font-bold break-words text-story-ink"
       >
         {text.title}
       </p>
       {text.logline !== '' && (
-        <p className="m-0 font-[family-name:var(--font-story)] type-body leading-[1.6] break-words whitespace-pre-line italic">
+        <p className="m-0 mt-3 font-[family-name:var(--font-story)] type-body break-words whitespace-pre-line italic">
           {text.logline}
         </p>
       )}
       {text.blurb !== '' && (
-        <p className="m-0 font-[family-name:var(--font-story)] type-body leading-[1.6] break-words whitespace-pre-line">
+        <p className="m-0 mt-4 font-[family-name:var(--font-story)] type-body break-words whitespace-pre-line">
           {text.blurb}
         </p>
       )}
-      {!hasWords && <p className="m-0 type-body">{t('marketing.backCover.empty')}</p>}
-      {/* The foot of the cover: who the book is for, then who wrote it. */}
-      <div className="mt-auto flex flex-col gap-4">
-        {text.comparableTitles !== '' && (
-          <p className="m-0 flex flex-col gap-1 type-body break-words whitespace-pre-line">
-            <span className="eyebrow-type">{t('marketing.backCover.forReadersOf')}</span>
-            {text.comparableTitles}
-          </p>
-        )}
-        {text.writerName !== '' && (
-          <p data-testid="atlas-back-cover-byline" className="m-0 type-body break-words">
-            {t('marketing.backCover.byline', { name: text.writerName })}
-          </p>
-        )}
-      </div>
+      {!hasWords && <p className="m-0 mt-4 type-body">{t('marketing.backCover.empty')}</p>}
+      {text.comparableTitles !== '' && (
+        <>
+          <p className="m-0 mt-4 type-meta">{t('marketing.backCover.forReadersOf')}</p>
+          <p className="m-0 type-label break-words whitespace-pre-line">{text.comparableTitles}</p>
+        </>
+      )}
+      {text.writerName !== '' && (
+        <p data-testid="atlas-back-cover-byline" className="m-0 mt-4 type-meta break-words">
+          {t('marketing.backCover.byline', { name: text.writerName })}
+        </p>
+      )}
     </figure>
   );
 }
 
 /**
- * Renders the button and, once opened, the back cover.
+ * Renders the section and, while it is open, the back cover.
  *
  * @param props.text - the saved title, logline, blurb and comparable titles, and the writer's name
  * @returns the "Back cover" section
@@ -83,27 +83,20 @@ export function BackCoverPreview({ text }: { text: BackCoverText }) {
   const { t } = useAtlasTranslation();
   const [isOpen, setIsOpen] = useState(true);
   return (
-    <section aria-labelledby="atlas-back-cover-heading" className="flex min-w-0 flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2
-          id="atlas-back-cover-heading"
-          className="m-0 font-heading type-heading font-bold text-ink-heading"
-        >
-          {t('marketing.backCover.heading')}
-        </h2>
-        <Button
-          variant="secondary"
-          className="h-9 px-4 type-meta"
-          aria-expanded={isOpen}
-          aria-controls="atlas-back-cover-panel"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? t('marketing.backCover.hide') : t('marketing.backCover.show')}
-        </Button>
-      </div>
+    <AtlasSection id="atlas-back-cover-heading" heading={t('marketing.backCover.heading')}>
+      <p className="m-0 type-meta text-ink-muted">{t('marketing.backCover.hint')}</p>
+      <Button
+        variant="secondary"
+        className="self-start"
+        aria-expanded={isOpen}
+        aria-controls="atlas-back-cover-panel"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {t('marketing.backCover.toggle')}
+      </Button>
       <div id="atlas-back-cover-panel" className="flex flex-col" hidden={!isOpen}>
         {isOpen && <BackCover text={text} />}
       </div>
-    </section>
+    </AtlasSection>
   );
 }

@@ -19,9 +19,11 @@ import {
   deleteStoryEvent,
   fetchStoryline,
   renamePlanAct,
+  restoreStoryEvent,
   saveStoryEventChange,
   storylineQueryKey,
   type NewStoryEvent,
+  type RemovedStoryEvent,
   type Storyline,
   type StoryEventChange,
 } from '../api/storyline';
@@ -31,8 +33,9 @@ import {
  *
  * @param slug - the story's address
  * @returns storyline (null when it isn't the writer's, undefined while loading), loadFailed,
- *   refresh and the changers: addChapter, addAct, renameAct, deleteAct, addEvent, saveEvent and
- *   removeEvent (each throws when it can't)
+ *   refresh and the changers: addChapter, addAct, renameAct, deleteAct, addEvent, saveEvent,
+ *   removeEvent (which returns the removed event) and putBackEvent, its Undo (each throws when it
+ *   can't)
  */
 export function useStoryline(slug: string) {
   const { userId } = useSession();
@@ -52,10 +55,11 @@ export function useStoryline(slug: string) {
     ]);
   }
 
-  /** Runs one change, then refreshes. */
-  async function changeThenRefresh(change: () => Promise<unknown>): Promise<void> {
-    await change();
+  /** Runs one change, then refreshes; hands back what the change returned. */
+  async function changeThenRefresh<Result>(change: () => Promise<Result>): Promise<Result> {
+    const result = await change();
     await refresh();
+    return result;
   }
 
   return {
@@ -63,7 +67,9 @@ export function useStoryline(slug: string) {
     loadFailed: storyline.isError,
     refresh,
     addChapter: async (actId: string | null) =>
-      changeThenRefresh(async () => addChapterToAct(await requireClient(), slug, actId)),
+      changeThenRefresh(async () => {
+        await addChapterToAct(await requireClient(), slug, actId);
+      }),
     addAct: async (name: string) =>
       changeThenRefresh(async () => addPlanAct(await requireClient(), slug, name)),
     renameAct: async (actId: string, name: string) =>
@@ -78,5 +84,7 @@ export function useStoryline(slug: string) {
       changeThenRefresh(async () => saveStoryEventChange(await requireClient(), eventId, change)),
     removeEvent: async (eventId: string) =>
       changeThenRefresh(async () => deleteStoryEvent(await requireClient(), eventId)),
+    putBackEvent: async (removed: RemovedStoryEvent) =>
+      changeThenRefresh(async () => restoreStoryEvent(await requireClient(), slug, removed)),
   };
 }

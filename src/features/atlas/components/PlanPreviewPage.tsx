@@ -26,24 +26,13 @@ import { AtlasFrame } from './AtlasFrame';
 import { PublicPlanHero } from './PublicPlanHero';
 import { PublicPlanView } from './PublicPlanView';
 
-/** The preview's note, then the view of the open area (the first public one by default). */
-function PreviewBody({
-  slug,
-  plan,
-  isPublished,
-}: {
-  slug: string;
-  plan: PublicPlan;
-  isPublished: boolean;
-}) {
+/** The view of the open area (the first public one by default), or a line when none is on. */
+function PreviewBody({ slug, plan }: { slug: string; plan: PublicPlan }) {
   const { t } = useAtlasTranslation();
   const { areaPath, itemId } = useParams();
   const area = areaFromPath(areaPath) ?? plan.areas[0] ?? null;
   return (
     <>
-      <Notice tone="info">
-        {isPublished ? t('readers.preview.note') : t('readers.preview.notPublished')}
-      </Notice>
       {area === null || !plan.areas.includes(area) ? (
         <p className="m-0 text-ink-muted">
           {t('readers.preview.nothing')}{' '}
@@ -91,8 +80,12 @@ export function PlanPreviewPage() {
       {preview === null && <Notice tone="error">{t('notFound')}</Notice>}
       {preview && (
         <>
+          {/* Story 6.16: the preview is the readers' page with one line on top. */}
+          <Notice tone="info">
+            {preview.isPublished ? t('readers.preview.note') : t('readers.preview.notPublished')}
+          </Notice>
           <PublicPlanHero plan={preview.plan} storyAddress={null} />
-          <PreviewBody slug={storySlug} plan={preview.plan} isPublished={preview.isPublished} />
+          <PreviewBody slug={storySlug} plan={preview.plan} />
         </>
       )}
     </AtlasFrame>

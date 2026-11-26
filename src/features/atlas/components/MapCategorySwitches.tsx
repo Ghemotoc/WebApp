@@ -1,7 +1,8 @@
 /**
  * MapCategorySwitches: the relationship map's category switches, which double as its legend
  * (story S1-E17-15: turning one off hides its lines). Each switch shows its category's colour as
- * a dot beside the name (CALM-9, board E25), in the colour the writer picked.
+ * a dot beside the name (CALM-9), in the colour the writer picked, under a visible "Show
+ * categories" label (board E25).
  * Who uses it: RelationshipMap. What it calls: the shared Chip and CategoryDot.
  */
 import { Chip } from '@/components/ui/Chip';
@@ -45,21 +46,25 @@ export function MapCategorySwitches({
   }
 
   return (
-    <div
-      role="group"
-      aria-label={t('connections.map.categoriesLabel')}
-      className="flex flex-wrap gap-2"
-    >
-      {relationshipCategories.map((category) => (
-        <Chip
-          key={category}
-          isPressed={!hiddenCategories.includes(category)}
-          onPressedChange={(isShown) => toggle(category, isShown)}
-        >
-          <CategoryDot category={category} colours={colours} />
-          {t(`connections.categories.${category}`)}
-        </Chip>
-      ))}
+    <div className="flex min-w-0 flex-col gap-2">
+      <span id="atlas-map-categories" className="type-label font-semibold text-ink-heading">
+        {t('connections.map.categoriesLabel')}
+      </span>
+      <div role="group" aria-labelledby="atlas-map-categories" className="flex flex-wrap gap-2">
+        {relationshipCategories.map((category) => (
+          <Chip
+            key={category}
+            isPressed={!hiddenCategories.includes(category)}
+            onPressedChange={(isShown) => toggle(category, isShown)}
+          >
+            {/* The dot and the name sit 8 px apart, as the chips' check and text do. */}
+            <span className="inline-flex items-center gap-2">
+              <CategoryDot category={category} colours={colours} />
+              {t(`connections.categories.${category}`)}
+            </span>
+          </Chip>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,11 +1,14 @@
 /**
  * AtlasSearchPage: /plan/s/:storySlug/search?q=…, the results of one search across the open
- * story (story S1-E17-30).
+ * story (story S1-E17-30; redrawn as board E34 in user stories bundle 6, story 6.15).
  *
- * The Story Atlas top bar, the heading, the wide search bar holding the query, then the results
- * grouped by type (characters, bible entries, chapters, scenes, questions and ideas, timeline
- * events, marketing notes) in two columns of glass lists, each group with its count and each row
- * a link to the item with the match marked (board AtlasSearch, G10c4). Only the writer sees any of it.
+ * The Story Atlas top bar, the heading with "Only you can see your plan.", the search bar holding
+ * the query (up to 560 px, with the quiet "Search"), the count line ("9 results for “register”",
+ * announced when results arrive), then one section a type, one under another (characters, story
+ * world entries, chapters, scenes, questions and ideas, timeline events, marketing notes), each
+ * with its count and rows between hairlines: the item's title as a link and the snippet with the
+ * match marked. Too short, nothing found and a failure each say so in the same announced line.
+ * Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStorySearch → search_story(); lib/searchGroups.ts; SearchResultItem; useMyStories for the
  * top bar and the story's title.
@@ -16,9 +19,9 @@ import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
-import { shortestSearch, type SearchResult } from '../api/search';
+import { shortestSearch } from '../api/search';
 import { useStorySearch } from '../hooks/useStorySearch';
-import { groupSearchResults } from '../lib/searchGroups';
+import { groupSearchResults, type SearchGroup } from '../lib/searchGroups';
 import { writeAddressFor } from '../lib/writeAddress';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
@@ -27,65 +30,70 @@ import { AtlasSearchBox } from './AtlasSearchBox';
 import { AtlasFrame } from './AtlasFrame';
 import { SearchResultItem } from './SearchResultItem';
 
-/** The results, one section per type, or a plain line when there are none. */
-function SearchResults({
-  slug,
-  query,
-  results,
-}: {
-  slug: string;
-  query: string;
-  results: SearchResult[];
-}) {
+/** One type's results: its name with the count, then a row each between hairlines. */
+function ResultGroup({ slug, query, group }: { slug: string; query: string; group: SearchGroup }) {
   const { t } = useAtlasTranslation();
-  if (results.length === 0) {
-    return <p className="m-0 break-words text-ink-muted">{t('search.nothing', { query })}</p>;
-  }
   return (
-    <div className="flex min-w-0 flex-col gap-4">
-      <p className="m-0 break-words text-ink-muted" role="status">
-        {t('search.count', { count: results.length, query })}
-      </p>
-      <div className="grid min-w-0 items-start gap-x-6 gap-y-4 md:grid-cols-2">
-        {groupSearchResults(results).map((group) => (
-          <section
-            key={group.kind}
-            aria-labelledby={`atlas-search-${group.kind}`}
-            className="flex min-w-0 flex-col gap-2"
-          >
-            <h2
-              id={`atlas-search-${group.kind}`}
-              className="m-0 px-4 type-meta font-bold tracking-[0.08em] break-words text-ink-muted uppercase"
-            >
-              {t(`search.kinds.${group.kind}`, { count: group.results.length })}
-            </h2>
-            <ul className="m-0 flex list-none flex-col overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card">
-              {group.results.map((result) => (
-                <SearchResultItem
-                  key={`${result.kind}-${result.ref}`}
-                  slug={slug}
-                  result={result}
-                  query={query}
-                />
-              ))}
-            </ul>
-          </section>
+    <section aria-labelledby={`atlas-search-${group.kind}`} className="flex min-w-0 flex-col gap-1">
+      <h2
+        id={`atlas-search-${group.kind}`}
+        className="m-0 type-label font-semibold break-words text-ink-heading"
+      >
+        {t(`search.kinds.${group.kind}`, { count: group.results.length })}
+      </h2>
+      <ul className="m-0 list-none p-0">
+        {group.results.map((result) => (
+          <SearchResultItem
+            key={`${result.kind}-${result.ref}`}
+            slug={slug}
+            result={result}
+            query={query}
+          />
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }
 
-/** What shows under the heading: a hint, a wait, a plain message or the results. */
+/** The line under the bar: too short, nothing found or the count (board E34). */
+function useStatusLine(state: ReturnType<typeof useStorySearch>, query: string): string {
+  const { t } = useAtlasTranslation();
+  if (state.isTooShort) return t('search.tooShort', { count: shortestSearch });
+  if (state.results === undefined || state.results === null || state.loadFailed) return '';
+  if (state.results.length === 0) return t('search.nothing', { query });
+  return t('search.count', { count: state.results.length, query });
+}
+
+/**
+ * What shows under the heading: the bar with its announced line, then the groups. The line is
+ * one live region that stays on the page, so a screen reader hears each new count (story 6.15).
+ */
 function SearchBody({ slug, query }: { slug: string; query: string }) {
   const { t } = useAtlasTranslation();
-  const { results, loadFailed, isTooShort } = useStorySearch(slug, query);
-  if (isTooShort)
-    return <p className="m-0 text-ink-muted">{t('search.tooShort', { count: shortestSearch })}</p>;
-  if (loadFailed) return <Notice tone="error">{t('search.failed')}</Notice>;
-  if (results === null) return <Notice tone="error">{t('notFound')}</Notice>;
-  if (results === undefined) return null;
-  return <SearchResults slug={slug} query={query.trim()} results={results} />;
+  const trimmed = query.trim();
+  const search = useStorySearch(slug, query);
+  const statusLine = useStatusLine(search, trimmed);
+  const hasResults = !search.isTooShort && Array.isArray(search.results);
+  const groups = hasResults ? groupSearchResults(search.results ?? []) : [];
+  return (
+    <>
+      <div className="flex min-w-0 flex-col gap-4">
+        <AtlasSearchBox key={query} slug={slug} isPageBar />
+        <p
+          role="status"
+          data-testid="atlas-search-status"
+          className="m-0 type-subheading font-bold break-words text-ink-heading empty:hidden"
+        >
+          {statusLine}
+        </p>
+        {search.loadFailed && <Notice tone="error">{t('search.failed')}</Notice>}
+        {search.results === null && <Notice tone="error">{t('notFound')}</Notice>}
+      </div>
+      {groups.map((group) => (
+        <ResultGroup key={group.kind} slug={slug} query={trimmed} group={group} />
+      ))}
+    </>
+  );
 }
 
 /**
@@ -113,11 +121,11 @@ export function AtlasSearchPage() {
       <title>{t('search.documentTitle', { query })}</title>
       {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {userId !== null && (
-        <>
+        // Board E34: 40 px between the heading, the bar and each group (32 on the scale).
+        <div className="flex min-w-0 flex-col gap-8">
           <AtlasPageHeading title={t('search.heading')} />
-          <AtlasSearchBox key={query} slug={storySlug} isPageBar />
           <SearchBody slug={storySlug} query={query} />
-        </>
+        </div>
       )}
     </AtlasFrame>
   );

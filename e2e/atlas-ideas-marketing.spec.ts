@@ -4,16 +4,18 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - the quick-add box adds a line of the chosen type on Enter and clears (S1-E17-27);
+ * - "Jot it down" adds a line of the chosen type on Enter and clears; an empty line says
+ *   "Write something first." beside the field and keeps the focus there (S1-E17-27; story 6.12);
  * - a note has a Done tick-box, editable text and "Action or outcome"; ticking it records the
- *   date it was done; Open, Done and All filter the list; its type changes and it deletes after
- *   a second click (S1-E17-28);
- * - every marketing field saves by itself, the logline and genre being the same fields as At a
- *   glance and Story settings; "Back cover" shows a preview of the title, logline, blurb and
- *   comparable titles as real text (S1-E17-29);
+ *   date it was done ("Done on 2 Nov."); Open, Done and Both filter the list, Both first; its
+ *   type changes; the bin deletes it at once and Undo puts it back as it was (S1-E17-28; story
+ *   6.12, board E31);
+ * - every marketing note saves by itself, and the logline written on At a glance shows on the
+ *   back cover, which the page doesn't ask for again; "Back cover" shows and hides a preview of
+ *   the title, logline, blurb and comparable titles as real text (S1-E17-29; story 6.13, E32);
  * - "Add detail" adds a detail of the writer's own that saves by itself, renames, is found by
  *   search and deletes after a question; the back cover is signed with the pen name (GAPS-2b);
- * - a note reads as a row and "Edit" opens its fields; the QR code points at the story page,
+ * - a note reads as a row and the pen opens its fields; the QR code points at the story page,
  *   the story's world (while shared) or the profile, and downloads as PNG and SVG (G10c3);
  * - with a note's field still focused, the page holds still where it rests: the top bar's change
  *   of size at 12 px no longer starts the browser scrolling back and forth (index.css, .top-bar);
@@ -134,60 +136,63 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
   });
   test.afterAll(cleanUp);
 
-  test('a line typed in the quick-add box is added on Enter with its type, and the box clears', async ({
+  test('a line typed in “Jot it down” is added on Enter with its type, and the box clears', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', ideasAddress);
-    await expect(page.getByText('Nothing open.', { exact: false })).toBeVisible();
+    await expect(page.getByText('No notes yet. Add the first above.')).toBeVisible();
     const line = page.getByRole('textbox', { name: 'Question or idea' });
     await line.fill('Who put the light out?');
     await line.press('Enter');
     await expect(line).toHaveValue('');
     await pickSegment(page, 'Type', 'To-do');
     await line.fill('Check the tide tables');
-    await line.press('Enter');
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
     await expect(line).toHaveValue('');
-    expect(await shownNotes(page)).toEqual(['Check the tide tables', 'Who put the light out?']);
+    await expect
+      .poll(() => shownNotes(page))
+      .toEqual(['Check the tide tables', 'Who put the light out?']);
     expect(savedIdea('Who put the light out?')).toBe('question|Who put the light out?||false');
     expect(savedIdea('Check the tide tables')).toBe('todo|Check the tide tables||false');
     await expect(page.getByTestId('atlas-idea-item').first()).toContainText('To-do');
-    // An empty line adds nothing and says so.
+    // An empty line adds nothing, says so beside the field and keeps the focus there.
     await line.press('Enter');
-    await expect(page.getByText('Write something first.')).toBeVisible();
+    await expect(line).toHaveAccessibleDescription(/Write something first\./);
+    await expect(line).toBeFocused();
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(2);
     await page.context().close();
   });
 
-  test('ticking a note records the day it was done, and Open, Done and All filter the list', async ({
+  test('ticking a note records the day it was done, and Open, Done and Both filter the list', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', ideasAddress);
-    await expect(page.getByRole('radio', { name: 'Open (2)' })).toBeChecked();
+    // Board E31 opens on Both.
+    await expect(page.getByRole('radio', { name: 'Both (2)' })).toBeChecked();
     await page.getByRole('checkbox', { name: 'Done: Who put the light out?' }).check();
-    // Open hides it once it is done; Done shows it with the day, and All shows both.
     await expect(page.getByRole('radio', { name: 'Done (1)' })).toBeAttached();
+    await pickSegment(page, 'Show', 'Open (1)');
     expect(await shownNotes(page)).toEqual(['Check the tide tables']);
     await pickSegment(page, 'Show', 'Done (1)');
     expect(await shownNotes(page)).toEqual(['Who put the light out?']);
-    const today = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(new Date());
-    await expect(page.getByTestId('atlas-idea-item')).toContainText(`Done on ${today}`);
+    // British order, and "Sep" like the other short months (lib/romania-time.ts).
+    const today = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' })
+      .format(new Date())
+      .replace('Sept', 'Sep');
+    await expect(page.getByTestId('atlas-idea-item')).toContainText(`Done on ${today}.`);
     expect(savedIdea('Who put the light out?')).toBe('question|Who put the light out?||true');
-    await pickSegment(page, 'Show', 'All (2)');
+    await pickSegment(page, 'Show', 'Both (2)');
     expect(await shownNotes(page)).toEqual(['Check the tide tables', 'Who put the light out?']);
     await page.context().close();
   });
 
-  test('a note’s text, outcome and type save by themselves, and it deletes after a second click', async ({
+  test('a note’s text, outcome and type save by themselves, and the bin deletes it with Undo', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', ideasAddress);
-    await pickSegment(page, 'Show', 'All (2)');
     const item = page.getByTestId('atlas-idea-item').filter({ hasText: 'Done on' });
-    // The done note is struck through; "Edit" opens its fields.
-    await expect(item.getByTestId('atlas-idea-body')).toHaveCSS(
-      'text-decoration-line',
-      'line-through',
-    );
+    // The type is a word on the row; the pen opens the note's fields in place.
+    await expect(item).toContainText('Question');
     await item.getByRole('button', { name: 'Edit “Who put the light out?”' }).click();
     const idBase = await item.getByRole('textbox', { name: 'Note' }).getAttribute('id');
     await item
@@ -198,42 +203,54 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await expect(page.locator(`#${idBase}-save`)).toHaveText('Saved');
     await item.getByLabel('Type', { exact: true }).selectOption('decision');
     await expect(item).toContainText('Decision');
-    // The row reads the new words and the outcome under them.
+    await item.getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(item.getByRole('textbox')).toHaveCount(0);
+    // The row reads the new words, then "Done on …" with the outcome.
     await expect(item.getByTestId('atlas-idea-body')).toHaveText('Who put the lighthouse out?');
     await expect(item).toContainText('The keeper did. Chapter 4.');
     // The label changes on screen before the save reaches the database, so wait for the row.
     await expect
       .poll(() => savedIdea('Who put the lighthouse out?'))
       .toBe('decision|Who put the lighthouse out?|The keeper did. Chapter 4.|true');
-    // Delete asks first; "Keep it" keeps it, "Yes, delete it" deletes it.
-    // Each click here has its own 10 s limit: on 24 Nov 2026 one CI run spent about 25 s somewhere
-    // in these steps and only the test's 30 s limit caught it, which named none of them. A click
-    // that hangs now fails on the step that hangs (the trace records only retries).
-    const clickLimit = { timeout: 10_000 };
-    const todo = page.getByTestId('atlas-idea-item').filter({ hasText: 'To-do' });
-    // With the type field still focused, bring the Delete button into view: the page must then
-    // hold still where it rests, which is what the click below waits for.
-    await todo
-      .getByRole('button', { name: 'Delete “Check the tide tables”' })
-      .scrollIntoViewIfNeeded();
+    // With a field still focused, bring the bin into view: the page must then hold still where
+    // it rests (index.css, .top-bar), which is what the click below waits for.
+    const done = page.getByTestId('atlas-idea-item').filter({ hasText: 'Done on' });
+    const doneBin = done.getByRole('button', { name: 'Delete “Who put the lighthouse out?”' });
+    await doneBin.scrollIntoViewIfNeeded();
     expect(await scrollPositionsAtRest(page)).toHaveLength(1);
-    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click(clickLimit);
-    await todo.getByRole('button', { name: 'Keep it' }).click(clickLimit);
-    await expect(page.getByTestId('atlas-idea-item')).toHaveCount(2);
-    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click(clickLimit);
-    await todo.getByRole('button', { name: 'Yes, delete it' }).click(clickLimit);
+    // The bin deletes at once; Undo puts the note back with its type, outcome and Done date.
+    await doneBin.click();
     await expect(page.getByTestId('atlas-idea-item')).toHaveCount(1);
-    expect(savedIdea('Check the tide tables')).toBe('');
+    await expect(page.getByText('Removed.')).toBeVisible();
+    await page.getByRole('button', { name: 'Undo' }).click();
+    await expect(page.getByTestId('atlas-idea-item')).toHaveCount(2);
+    await expect
+      .poll(() => savedIdea('Who put the lighthouse out?'))
+      .toBe('decision|Who put the lighthouse out?|The keeper did. Chapter 4.|true');
+    // Deleted without Undo, it stays gone.
+    const todo = page.getByTestId('atlas-idea-item').filter({ hasText: 'To-do' });
+    await todo.getByRole('button', { name: 'Delete “Check the tide tables”' }).click();
+    await expect(page.getByTestId('atlas-idea-item')).toHaveCount(1);
+    await expect.poll(() => savedIdea('Check the tide tables')).toBe('');
     await page.context().close();
   });
 
-  test('every marketing field saves by itself, sharing the logline and genre with the story', async ({
+  test('every marketing note saves by itself, and the logline comes from At a glance', async ({
     browser,
   }) => {
-    const page = await openAs(browser, 'adult_writer', marketingAddress);
-    await expect(page.getByRole('heading', { level: 1, name: 'Marketing' })).toBeVisible();
+    // The logline is written once, on At a glance.
+    const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}`);
     await page.getByRole('textbox', { name: 'Logline' }).fill('A keeper hunts the light.');
-    await expect(page.locator('#atlas-marketing-logline-save')).toHaveText('Saved');
+    await expect(page.locator('#atlas-logline-save')).toHaveText('Saved');
+    await page.goto(marketingAddress);
+    await expect(page.getByRole('heading', { level: 1, name: 'Marketing' })).toBeVisible();
+    // Board E32: the page doesn't repeat the logline, genre, audience or route; it says where
+    // they are written.
+    await expect(page.getByRole('textbox', { name: 'Logline' })).toHaveCount(0);
+    await expect(page.getByLabel('Genre')).toHaveCount(0);
+    await expect(
+      page.getByText('The logline and publishing route are the same as on At a glance'),
+    ).toBeVisible();
     const notes = [
       ['back_cover_blurb', 'Back-cover blurb', 'A dark lighthouse and a quiet island.'],
       ['comparable_titles', 'Comparable titles', 'The Shadow of the Wind'],
@@ -245,21 +262,13 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
       await page.getByRole('textbox', { name: label }).fill(value);
       await expect(page.locator(`#atlas-marketing-${column}-save`)).toHaveText('Saved');
     }
-    await page.getByLabel('Genre').selectOption('poetry');
-    await expect(page.locator('#atlas-marketing-genre-save')).toHaveText('Saved');
-    await page.getByLabel('Publishing route').selectOption('complete_here');
-    await expect(page.locator('#atlas-marketing-route-save')).toHaveText('Saved');
     for (const [column, , value] of notes) expect(savedMarketing(column)).toBe(value);
-    expect(
-      runSql(`select stories.title || '|' || categories.slug || '|' || story_plans.logline || '|' || story_plans.publishing_route
-        from public.stories join public.categories on categories.id = stories.category_id
-        join public.story_plans on story_plans.story_id = stories.id where stories.slug = '${slug}'`),
-    ).toBe('Farul de pe stâncă|poetry|A keeper hunts the light.|complete_here');
-    // The same logline shows on At a glance: one place for both.
-    await page.goto(`/plan/s/${slug}`);
-    await expect(page.getByRole('textbox', { name: 'Logline' })).toHaveValue(
-      'A keeper hunts the light.',
+    // Comparable titles and hooks are one-line boxes, as the board draws them.
+    await expect(page.locator('#atlas-marketing-comparable_titles')).toHaveJSProperty(
+      'tagName',
+      'INPUT',
     );
+    await expect(page.getByTestId('atlas-back-cover')).toContainText('A keeper hunts the light.');
     await page.context().close();
   });
 
@@ -279,13 +288,13 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
       `select coalesce(pen_name, handle) from public.profiles where id = '${writerId}'`,
     );
     await expect(page.getByTestId('atlas-back-cover-byline')).toContainText(`${writerName} · `);
-    const hide = page.getByRole('button', { name: 'Hide the back cover' });
-    await expect(hide).toHaveAttribute('aria-expanded', 'true');
-    await hide.click();
+    // One quiet "Back cover" button shows and hides it, saying which through aria-expanded.
+    const toggle = page.getByRole('button', { name: 'Back cover', exact: true });
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await toggle.click();
     await expect(page.getByTestId('atlas-back-cover')).toHaveCount(0);
-    const show = page.getByRole('button', { name: 'Show the back cover' });
-    await expect(show).toHaveAttribute('aria-expanded', 'false');
-    await show.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await toggle.click();
     await expect(page.getByTestId('atlas-back-cover')).toBeVisible();
     await page.context().close();
   });
@@ -348,14 +357,15 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
   }) => {
     const page = await openAs(browser, 'adult_writer', marketingAddress);
     const card = page.getByRole('region', { name: 'QR code' });
-    // It starts on the story page, with the address written under the code.
+    // It starts on the story page, with the address written beside the code.
+    const address = card.getByTestId('atlas-story-qr-address');
     await expect(card.getByRole('img', { name: `QR code for /s/${slug}` })).toBeVisible();
-    await expect(card.locator('figcaption')).toHaveText(`/s/${slug}`);
+    await expect(address).toHaveText(new RegExp(`^[^/]+/s/${slug}$`));
     // The story's world is offered only while it is shared; the profile always is.
     const where = card.getByLabel('Where it takes people');
     await expect(where.locator('option')).toHaveText(['The story page', 'The writer’s profile']);
     await where.selectOption({ label: 'The writer’s profile' });
-    await expect(card.locator('figcaption')).toHaveText('/u/adult_writer');
+    await expect(address).toHaveText(/^[^/]+\/u\/adult_writer$/);
     // Both files are made in the browser and named after the story and the place.
     const svg = page.waitForEvent('download');
     await card.getByRole('button', { name: 'Download SVG' }).click();
@@ -371,9 +381,9 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
       .getByRole('region', { name: 'QR code' })
       .getByLabel('Where it takes people')
       .selectOption({ label: 'The story’s world' });
-    await expect(page.getByRole('region', { name: 'QR code' }).locator('figcaption')).toHaveText(
-      `/s/${slug}/atlas/world`,
-    );
+    await expect(
+      page.getByRole('region', { name: 'QR code' }).getByTestId('atlas-story-qr-address'),
+    ).toHaveText(new RegExp(`^[^/]+/s/${slug}/atlas/world$`));
     await page.context().close();
   });
 
