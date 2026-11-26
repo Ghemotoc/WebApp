@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 26 Nov 2026 (doc "Product: feature ideas", by category; Notion Feature ideas database)
+
+10 ideas, IDEA-20261126-1 to 10: preview a chapter at phone width, named snapshots before a big rewrite, chapter lengths at a glance, choose what I hear from each writer, a reading schedule for book clubs, a comment bank for teachers, freeze my account if someone else got in, bigger buttons and links, read two language editions side by side, the story so far (spoiler-safe).
+
 ### Sent 25 Nov 2026 (doc "Product: feature ideas", by category; Notion Feature ideas database)
 
 10 ideas, IDEA-20261125-1 to 10: back to where I was after a jump, an "Updated this week" shelf, a chapter outline, chapters readers come back to, mark a conversation as unread, a moderation log for a space, an assignment that opens at lesson time, take my story off someone's public list, solid bars instead of frosted glass, find this classic in a library.
