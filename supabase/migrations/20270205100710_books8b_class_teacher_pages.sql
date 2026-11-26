@@ -18,11 +18,14 @@
  *   points "can change until the competition the chapter is entered in is published; then they
  *   lock": class_chapter_points() adds the notes' count and 'teacher_locked' for the teacher, and
  *   a trigger refuses any change to locked teacher points.
+ * - G12 (user story 8.12): "Results: <name>", "Ended 31 October", and "Read the entry" beside each
+ *   entry: class_competition_scoring() adds 'ends_at' and each chapter's story address and code.
  * Privacy: every number the teacher gets is a total; nobody but our moderators ever learns who
  *   gave points (Robert, 13 Nov 2026, class points decisions).
  * Who calls it: src/features/spaces/api/spaces.ts (createClassSpace), src/features/spaces/api/
  *   classTools.ts (setClassSchool), src/features/class-points/api/classPoints.ts (the summary,
  *   the table, the pupil report and the chapter's points).
+ *   src/features/class-competitions/api/competitionScoring.ts (the scoring page).
  * Tests: supabase/tests/database/416-class-teacher-pages.test.sql.
  */
 
@@ -545,3 +548,68 @@ begin
     'is_locked', public.space_is_locked(space));
 end;
 $$;
+
+/* ---------- 5. The results page: when it ended, and a link to each entry (G12) ---------- */
+
+/**
+ * class_competition_scoring: for the teacher, a competition's entrants by name with their scores
+ * and the guide numbers, never a rank (S1-E8-15). Same as before, plus 'ends_at' for "Ended 31
+ * October" and each chapter's 'story_slug' and 'code' for "Read the entry" (board G12).
+ * Inputs: target_competition_id.
+ * Returns: jsonb.
+ * Errors: as class_competition_for_teacher(): missing for anyone but the class's teacher.
+ * Called by: src/features/class-competitions/api/competitionScoring.ts.
+ */
+create or replace function public.class_competition_scoring(target_competition_id uuid)
+returns jsonb
+language plpgsql
+volatile
+security definer
+set search_path = ''
+as $$
+declare
+  competition public.class_competitions := public.class_competition_for_teacher(target_competition_id);
+  space public.spaces;
+begin
+  -- Step 1: the class the competition belongs to.
+  select * into space from public.spaces where spaces.id = competition.space_id;
+  -- Step 2: the competition and its entrants by name; the guide numbers never order them.
+  return jsonb_build_object(
+    'id', competition.id, 'name', competition.name,
+    'phase', public.class_competition_phase(competition),
+    'ends_at', competition.ends_at,
+    'class_slug', space.slug,
+    'winners_allowed', public.class_winners_allowed(space.class_grade),
+    'criteria', public.class_competition_criteria_json(competition.id),
+    'entrants', (
+      select coalesce(jsonb_agg(jsonb_build_object(
+        'handle', profiles.handle,
+        'display_name', public.display_name(profiles.handle, profiles.pen_name),
+        'class_points', public.class_competition_class_points(competition, profiles.id),
+        'teacher_points', (
+          select coalesce(sum(marks.points), 0)::integer from public.class_teacher_points as marks
+          where marks.space_id = space.id and marks.pupil_user_id = profiles.id),
+        'chapters', (
+          select coalesce(jsonb_agg(jsonb_build_object(
+            'id', chapters.id, 'title', chapters.published_title, 'story_title', stories.title,
+            'story_slug', stories.slug, 'code', chapters.code,
+            'position', chapters.position) order by stories.title, chapters.position), '[]'::jsonb)
+          from public.chapters join public.stories on stories.id = chapters.story_id
+          where chapters.user_id = profiles.id and stories.class_only and stories.class_space_id = space.id
+            and chapters.status = 'published' and chapters.deleted_at is null and stories.deleted_at is null),
+        'scores', (
+          select coalesce(jsonb_object_agg(scores.criterion_id, scores.points), '{}'::jsonb)
+          from public.class_competition_scores as scores
+          where scores.competition_id = competition.id and scores.pupil_user_id = profiles.id),
+        'result', results.result,
+        'readers_choice', coalesce(results.readers_choice, false))
+        order by public.display_name(profiles.handle, profiles.pen_name), profiles.handle), '[]'::jsonb)
+      from public.class_competition_entrants as entrants
+      join public.profiles on profiles.id = entrants.user_id
+      left join public.class_competition_results as results
+        on results.competition_id = competition.id and results.pupil_user_id = profiles.id
+      where entrants.competition_id = competition.id));
+end;
+$$;
+comment on function public.class_competition_scoring(uuid) is
+  'For the teacher: a class competition''s entrants by name with their scores, the guide numbers and a link to each chapter, never a rank (S1-E8-15; BOOKS-8b, board G12).';

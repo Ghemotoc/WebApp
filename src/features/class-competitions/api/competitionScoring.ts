@@ -31,6 +31,9 @@ export interface EntrantChapter {
   id: string;
   title: string;
   storyTitle: string;
+  /** The chapter's address, for "Read the entry" (board G12). */
+  storySlug: string;
+  code: string;
   position: number;
 }
 
@@ -54,6 +57,8 @@ export interface CompetitionScoring {
   id: string;
   name: string;
   phase: CompetitionPhase;
+  /** The moment it closes (ISO), for "Ended 31 October"; empty when the answer has none. */
+  endsAt: string;
   classSlug: string;
   areWinnersAllowed: boolean;
   criteria: Criterion[];
@@ -93,6 +98,8 @@ function entrantFrom(value: Json): ScoringEntrant {
         id: textOf(chapter.id),
         title: textOf(chapter.title),
         storyTitle: textOf(chapter.story_title),
+        storySlug: textOf(chapter.story_slug),
+        code: textOf(chapter.code),
         position: numberFrom(chapter.position),
       };
     }),
@@ -115,6 +122,7 @@ export function scoringFrom(value: Json): CompetitionScoring {
     id: textOf(answer.id),
     name: textOf(answer.name),
     phase: phase === 'upcoming' || phase === 'open' || phase === 'published' ? phase : 'judging',
+    endsAt: textOf(answer.ends_at),
     classSlug: textOf(answer.class_slug),
     areWinnersAllowed: answer.winners_allowed === true,
     criteria: listOf(answer.criteria).map(criterionFrom),

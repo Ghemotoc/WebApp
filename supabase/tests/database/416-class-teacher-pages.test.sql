@@ -10,7 +10,9 @@
 --   refused, and the class log gets one line;
 -- - the teacher sees how many notes a chapter got and whether its teacher points are locked;
 -- - once a competition the writer entered is published, the chapter's teacher points can't
---   change or be removed, while deleting the class still works.
+--   change or be removed, while deleting the class still works;
+-- - the teacher's scoring page says when the competition ended and links each entry's chapter;
+--   a pupil can't read it.
 -- No table or policy is added (the trigger guards an existing table), so there is no new policy
 -- to test. Personas: adult_writer (…01, no badge), teen_17 (…02), kid_14_ok (…03), teacher (…07).
 -- Rolled back.
@@ -18,7 +20,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(28);
+select plan(31);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -188,6 +190,18 @@ select is(pg_temp.hint_of(format($$select public.set_teacher_points('chapter', %
           'points:locked', 'locked teacher points can''t change');
 select is(pg_temp.hint_of(format($$select public.set_teacher_points('chapter', %L)$$, pg_temp.kept('chapter'))),
           'points:locked', 'locked teacher points can''t be removed');
+
+/* ---------- 6. The results page: when it ended, and a link to each entry (G12) ---------- */
+
+select ok(public.class_competition_scoring(pg_temp.kept_id('competition')) ->> 'ends_at' is not null,
+          'the teacher''s results page says when the competition ended');
+select ok(public.class_competition_scoring(pg_temp.kept_id('competition')) -> 'entrants' -> 0 -> 'chapters' -> 0
+            ?& array['story_slug', 'code'],
+          'and gives each entry''s chapter its story address and code for "Read the entry"');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000003');
+select is(pg_temp.hint_of(format($$select public.class_competition_scoring(%L)$$, pg_temp.kept('competition'))),
+          'competition:missing', 'a pupil can''t read the results page');
+
 select pg_temp.as_postgres();
 select lives_ok($$delete from public.class_teacher_points where chapter_id = (select value::uuid from kept where name = 'chapter')$$,
                 'our own clean-up can still remove locked points');

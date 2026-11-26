@@ -19517,10 +19517,13 @@ declare
   competition public.class_competitions := public.class_competition_for_teacher(target_competition_id);
   space public.spaces;
 begin
+  -- Step 1: the class the competition belongs to.
   select * into space from public.spaces where spaces.id = competition.space_id;
+  -- Step 2: the competition and its entrants by name; the guide numbers never order them.
   return jsonb_build_object(
     'id', competition.id, 'name', competition.name,
     'phase', public.class_competition_phase(competition),
+    'ends_at', competition.ends_at,
     'class_slug', space.slug,
     'winners_allowed', public.class_winners_allowed(space.class_grade),
     'criteria', public.class_competition_criteria_json(competition.id),
@@ -19535,6 +19538,7 @@ begin
         'chapters', (
           select coalesce(jsonb_agg(jsonb_build_object(
             'id', chapters.id, 'title', chapters.published_title, 'story_title', stories.title,
+            'story_slug', stories.slug, 'code', chapters.code,
             'position', chapters.position) order by stories.title, chapters.position), '[]'::jsonb)
           from public.chapters join public.stories on stories.id = chapters.story_id
           where chapters.user_id = profiles.id and stories.class_only and stories.class_space_id = space.id
@@ -19558,7 +19562,7 @@ $$;
 ALTER FUNCTION "public"."class_competition_scoring"("target_competition_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."class_competition_scoring"("target_competition_id" "uuid") IS 'For the teacher: a class competition''s entrants by name with their scores and the guide numbers, never a rank (S1-E8-15).';
+COMMENT ON FUNCTION "public"."class_competition_scoring"("target_competition_id" "uuid") IS 'For the teacher: a class competition''s entrants by name with their scores, the guide numbers and a link to each chapter, never a rank (S1-E8-15; BOOKS-8b, board G12).';
 
 
 

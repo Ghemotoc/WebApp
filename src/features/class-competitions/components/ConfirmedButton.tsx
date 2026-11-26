@@ -3,7 +3,7 @@
  * and deleting a competition and confirming its results can't be undone, so the first press
  * shows the question with "yes" and "Cancel" in place, with no browser dialog.
  *
- * Who shows it: TeacherControls and ResultsForm. What it calls: nothing.
+ * Who shows it: TeacherControls and PublishFooter. What it calls: nothing.
  */
 import { useState } from 'react';
 

@@ -2,7 +2,7 @@
  * typedScores: turns what the teacher typed in the score fields into what the database takes
  * (bundle CLASS-POINTS, part 2; story S1-E8-17).
  *
- * Who calls it: EntrantScoreCard. What it calls: nothing.
+ * Who calls it: ScoringWorkspace and lib/resultsDraft. What it calls: nothing.
  */
 import type { Criterion } from '../api/classCompetitions';
 
