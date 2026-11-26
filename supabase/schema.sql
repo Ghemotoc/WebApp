@@ -27989,6 +27989,7 @@ declare
   text_to_send text;
   teaser_words integer;
   app_only boolean;
+  open_to_visitors boolean;
   awaits_adult_answer boolean;
 begin
   -- Step 1: the story, if this caller may read it (age, blocks, deleted, moderated).
@@ -28090,9 +28091,12 @@ begin
   -- only once they have said in this browser that they are 18 or over.
   awaits_adult_answer := caller_id is null and story.rating = '18_plus'
     and not public.visitor_said_adult();
+  -- GROWTH-2 (Robert, 26 Nov 2026, 15:11 UTC): a public-domain classic is read whole by
+  -- visitors too, so search engines can list its chapters; a writer's own story keeps the teaser.
+  open_to_visitors := story.classic_author_id is not null;
   if app_only or awaits_adult_answer then
     text_to_send := '';
-  elsif caller_id is not null then
+  elsif caller_id is not null or open_to_visitors then
     text_to_send := chapter.published_body;
   else
     select coalesce((settings.value #>> '{}')::integer, 600) into teaser_words
@@ -28120,8 +28124,9 @@ begin
     'edited_at', chapter.edited_at,
     'minutes_to_read', greatest(1, ceil(coalesce(chapter.published_word_count, 0) / 200.0))::integer,
     'is_owner', story.user_id = caller_id,
-    'needs_sign_in', caller_id is null and not app_only,
-    'is_teaser', caller_id is null and not app_only and not awaits_adult_answer,
+    'needs_sign_in', caller_id is null and not app_only and not open_to_visitors,
+    'is_teaser', caller_id is null and not app_only and not awaits_adult_answer
+      and not open_to_visitors,
     'app_only', app_only,
     -- CALM-9m: true while a visitor hasn't yet said they are 18 or over (no text is sent).
     'needs_adult_answer', awaits_adult_answer,
@@ -49749,6 +49754,21 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       and not public.is_moderated_away('story', stories.id)
       -- CALM-9s: a story hidden in any country stays out, as search engines list worldwide.
       and cardinality(stories.hidden_in_countries) = 0
+    union all
+    -- Step 5 (GROWTH-2): each readable chapter of a story listed in step 4 that visitors get
+    -- text from: the whole chapter for a classic, the teaser for a writer's story. 16+ and 18+
+    -- chapters show visitors no text, so they stay out.
+    select '/s/' || stories.slug || '/' || chapters.code,
+      coalesce(chapters.edited_at, chapters.first_published_at)::date
+    from public.stories
+    join public.chapters on chapters.story_id = stories.id
+    where stories.first_published_at is not null and stories.deleted_at is null
+      and stories.visibility = 'public' and not stories.class_only
+      and stories.rating not in ('16_plus', '18_plus')
+      and not public.story_app_only_applies(stories.is_app_only)
+      and not public.is_moderated_away('story', stories.id)
+      and cardinality(stories.hidden_in_countries) = 0
+      and public.chapter_is_readable(chapters.id)
   )
   limit 50000;
 $$;

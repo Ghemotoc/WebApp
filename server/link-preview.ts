@@ -12,8 +12,10 @@
  *   pen name, category, blurb and a plain picture in the drawn cover's colour (plum otherwise);
  * - for story pages, JSON-LD (schema.org CreativeWork) with the title, blurb, pen name, category
  *   (`genre`) and tags (`keywords`), and a keywords meta tag with the category and tags;
- * - for chapter pages and unknown addresses, <meta name="robots" content="noindex"> and the same
- *   rule in an X-Robots-Tag header: only story pages are indexable (Q36).
+ * - for unknown addresses, shared passages and chapters visitors get no text from (16+ and 18+),
+ *   <meta name="robots" content="noindex"> and the same rule in an X-Robots-Tag header. Story pages
+ *   and their other chapters are indexable (Q36; GROWTH-2, Robert, 26 Nov 2026: a classic's
+ *   chapter is read whole, a writer's chapter shows visitors the teaser).
  * Every story gets the same details whatever its rating, and the rating itself is never shown
  * (Robert, 11 Nov 2026; S1-E11-36, replacing Q6's "title and rating only"). An 18+ story adds a
  * plain "For mature readers" note (16+ adds nothing). A 16+ or 18+ story still never shares a
@@ -591,16 +593,21 @@ function keywordTagsFor(preview: LinkPreview): string[] {
 }
 
 /**
- * Whether search engines may list the page: a public story's own page only (Q36; S1-E11-36),
- * read on the web and shown in every country (CALM-9s).
+ * Whether search engines may list the page: a public story's own page (Q36; S1-E11-36), read on
+ * the web and shown in every country (CALM-9s), and its chapters when visitors get text from them
+ * (GROWTH-2, Robert, 26 Nov 2026, 15:13 UTC: a classic's whole chapter, a writer's teaser).
  *
  * @param preview - the story's preview
- * @returns true for the page of such a story; false for a chapter, or an unlisted, app-only or
- *   country-hidden story
+ * @returns true for such a story's page or chapter; false for a shared passage, a 16+ or 18+
+ *   chapter (visitors get no text), or an unlisted, app-only or country-hidden story
  */
 export function isIndexable(preview: LinkPreview): boolean {
   // CALM-9s: an app-only or country-hidden story stays out too.
-  return carriesStatement(preview) && !preview.isChapter;
+  if (!carriesStatement(preview)) return false;
+  if (!preview.isChapter) return true;
+  // GROWTH-2: a chapter is listed only on its own address (a shared passage repeats it) and only
+  // when visitors get its text; sitemap_entries() lists the same chapters.
+  return preview.passage === null && !preview.hidesText;
 }
 
 /**
@@ -629,12 +636,14 @@ export function headTagsFor(
     `<meta name="twitter:title" content="${escapeHtml(title)}">`,
     `<meta name="twitter:description" content="${escapeHtml(description)}">`,
   ];
-  // Only story pages are indexable; chapters carry noindex and no structured data (Q36).
-  // An unlisted story is shared by its link only, so it is noindex too (S1-E11-36).
+  // An unlisted story is shared by its link only, so it is noindex (S1-E11-36).
   // CALM-9s: an app-only or country-hidden story is noindex as well, with no structured data.
-  if (isIndexable(preview)) {
+  // GROWTH-2: a chapter visitors get text from is indexable, but the language links and the
+  // structured data describe the story, so only the story's own page carries them.
+  if (!isIndexable(preview)) tags.push('<meta name="robots" content="noindex">');
+  else if (!preview.isChapter) {
     tags.push(...languageLinksFor(preview, page.origin), structuredData(preview, page));
-  } else tags.push('<meta name="robots" content="noindex">');
+  }
   return tags.join('\n    ');
 }
 

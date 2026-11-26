@@ -142,12 +142,13 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
     browser,
     request,
   }) => {
-    // What WhatsApp reads: the server-rendered preview, and noindex on a chapter.
+    // What WhatsApp reads: the server-rendered preview. A chapter visitors get text from may be
+    // listed by search engines (GROWTH-2), so it carries no noindex.
     const preview = await request.get(firstChapter);
     expect(await preview.text()).toContain(
       '<meta property="og:title" content="Stația meteo · Caietele bunicii">',
     );
-    expect(preview.headers()['x-robots-tag']).toBe('noindex');
+    expect(preview.headers()['x-robots-tag']).toBeUndefined();
     // The visitor's browser: the teaser, copy-protected, and the prompt.
     const visitorContext = await browser.newContext({
       permissions: ['clipboard-read', 'clipboard-write'],
