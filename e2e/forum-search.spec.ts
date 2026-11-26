@@ -123,6 +123,9 @@ test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
     const page = await openAs(browser, 'adult_writer', '/forums/search?q=povesti');
     await expect.poll(() => resultsShown(page)).toEqual([`Thread ${dragonTitle}`]);
     await page.goto('/forums/search?q=dragoni');
+    // Wait for the results first: they load after the page has hydrated, and a pick made before
+    // that is reset to the empty forum when React takes over the server-drawn select.
+    await expect.poll(() => resultsShown(page)).toContain(`Thread ${dragonTitle}`);
     await page.getByLabel('Forum', { exact: true }).selectOption('worldbuilding');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/forum=worldbuilding/);
