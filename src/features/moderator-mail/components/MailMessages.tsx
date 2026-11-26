@@ -2,15 +2,18 @@
  * MailMessages: the messages of one moderator mail thread, oldest first (story S1-E10-11).
  *
  * For the member: "You" or "The moderation team", never which person wrote (criterion 2), drawn
- * as chat bubbles the way board ModMailOne does in the liquid glass redesign (bundle G8c): the
- * member's own words on the right in the main colour, the team's on the left in a glass bubble.
+ * as blocks the way board J24 does (user stories bundle 10; it replaces the chat bubbles of bundle
+ * G8c): who wrote it and when on top, the words under it, the team's blocks tinted.
  * For staff (isStaffView): the writer's username and internal notes, marked as notes only staff
  * see, as plain cards (staff screens stay plain). Plain text, kept as written (line breaks shown),
  * never HTML.
  * Who shows it: MailThreadPage and StaffMailThreadPage.
  */
+import { dayAndTime } from '@/lib/dayAndTime';
+
 import type { MailMessage } from '../api/moderatorMail';
 import { useMailTranslation } from '../registerMailTranslations';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Who wrote a message, as the reader is told.
@@ -41,32 +44,25 @@ function toneOf(message: MailMessage): string {
 }
 
 /**
- * One message as the member sees it: a bubble, with who and when under it.
+ * One message as the member sees it (user stories bundle 10, board J24): who wrote it and when on
+ * top, then the words, in a block; the team's blocks are tinted. Who wrote it is always in words,
+ * never colour alone.
  *
  * @returns a list item
  */
 function MemberMessageItem({ message }: { message: MailMessage }) {
   const { i18n } = useMailTranslation();
   const author = useAuthorLine(message, false);
-  const when = new Intl.DateTimeFormat(i18n.language, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(message.at));
-  // The member's own words sit on the right, the team's on the left, as in a chat.
-  const sideStyle = message.fromTeam ? 'items-start' : 'items-end';
-  const bubbleStyle = message.fromTeam
-    ? 'rounded-bl-field border border-border bg-surface text-ink'
-    : 'rounded-br-field bg-primary text-on-primary';
+  // Step 1: the team's messages get the tint, the member's own the plain box.
+  const blockStyle = message.fromTeam ? 'bg-tint' : 'bg-surface';
   return (
-    <li className={`flex flex-col gap-1 ${sideStyle}`}>
-      <p
-        className={`m-0 max-w-[min(560px,85%)] rounded-field px-4 py-3 type-body leading-relaxed break-words whitespace-pre-line ${bubbleStyle}`}
-      >
-        {message.body}
-      </p>
+    <li className={`flex flex-col gap-1 rounded-card px-4 py-4 ${blockStyle}`}>
+      {/* Step 2: who and when, the name in bold. */}
       <p className="m-0 type-meta text-ink-muted">
-        {author} · {when}
+        <span className="font-semibold text-ink-heading">{author}</span> ·{' '}
+        <time dateTime={message.at}>{dayAndTime(message.at, i18n.language)}</time>
       </p>
+      <p className="m-0 type-body break-words whitespace-pre-line text-ink">{message.body}</p>
     </li>
   );
 }
@@ -79,7 +75,7 @@ function MemberMessageItem({ message }: { message: MailMessage }) {
 function StaffMessageItem({ message }: { message: MailMessage }) {
   const { i18n } = useMailTranslation();
   const author = useAuthorLine(message, true);
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(message.at));

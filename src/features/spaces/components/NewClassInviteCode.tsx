@@ -18,6 +18,7 @@ import type { NewClassInvite } from '../api/classSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 import { ClassInviteQrCode } from './ClassInviteQrCode';
 import { ClassInviteSheet } from './ClassInviteSheet';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The link in a read-only field with Copy; if the browser refuses to copy, it says so and the
@@ -83,9 +84,9 @@ export function NewClassInviteCode({
   onDismiss: () => void;
 }) {
   const { t, i18n } = useSpacesTranslation();
-  const expires = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
-    new Date(invite.expiresAt),
-  );
+  const expires = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    dateStyle: 'long',
+  }).format(new Date(invite.expiresAt));
 
   return (
     <div

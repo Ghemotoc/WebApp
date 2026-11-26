@@ -15,6 +15,7 @@ import type { OnCallRota, OnCallShift } from '../api/removalOrders';
 import type { useOnCallRota } from '../hooks/useOnCallRota';
 
 import { ReasonForm } from './ReasonForm';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * A time on the viewer's own clock (Robert, 20 Nov 2026, 18:19 UTC: every time in local time).
@@ -23,7 +24,7 @@ import { ReasonForm } from './ReasonForm';
  */
 function useRotaTime() {
   const { i18n } = useTranslation();
-  const format = new Intl.DateTimeFormat(i18n.language, {
+  const format = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   });

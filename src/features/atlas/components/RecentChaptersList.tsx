@@ -18,6 +18,7 @@ import type { RecentChapter, StoryPlanPage } from '../api/storyPlans';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasFlatSection } from './AtlasFlatSection';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The grey line under a chapter's name.
@@ -37,11 +38,14 @@ function chapterLine(
   }
   if (chapter.status === 'published' && chapter.publishedAt !== null) {
     if (isToday(chapter.publishedAt)) return t('chapters.line.publishedToday');
-    const day = new Intl.DateTimeFormat(language, { day: 'numeric', month: 'short' });
+    const day = new Intl.DateTimeFormat(dateLocaleFor(language), {
+      day: 'numeric',
+      month: 'short',
+    });
     return t('chapters.line.published', { date: day.format(new Date(chapter.publishedAt)) });
   }
   if (chapter.status === 'scheduled' && chapter.scheduledFor !== null) {
-    const moment = new Intl.DateTimeFormat(language, {
+    const moment = new Intl.DateTimeFormat(dateLocaleFor(language), {
       weekday: 'short',
       day: 'numeric',
       month: 'short',

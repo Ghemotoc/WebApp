@@ -1,14 +1,17 @@
 /**
- * NoticeSideColumn: the right-hand column of /report: what happens next, "Is someone in danger
- * right now?" (the safety contacts by country), "Have an account?" for visitors and "Your
- * details" (story S1-E10-02; board NoticeForm, 7.3).
+ * NoticeSideColumn: the right-hand column of /report, in board J11's order (user stories, bundle
+ * 10): "Is someone in danger right now?" (the safety contacts by country, one line each), what
+ * happens next, "Have an account?" for visitors and "Contact details" (story S1-E10-02).
  *
- * The danger block reuses SafetyContactsBlock (S1-E10-13a), so the numbers are the same seeded
- * list the rest of the app shows. Plain panels, no doodles (DoD: reporting screens).
+ * The danger block reuses SafetyContactsBlock (S1-E10-13a) in its compact look, so the numbers
+ * are the same seeded list the rest of the app shows. Every block sits straight on the page under
+ * its heading, with no box, as drawn. No doodles (DoD: reporting screens).
  * Who shows it: NoticePage. What it calls: SafetyContactsBlock and useSession.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+
+import { buttonClassName } from '@/components/ui/buttonStyles';
 
 import { useSession } from '@/features/auth/hooks/useSession';
 import { SafetyContactsBlock } from '@/features/safety/components/SafetyContactsBlock';
@@ -24,17 +27,14 @@ const nextSteps = ['receipt', 'check', 'decision'] as const;
 function WhatHappensNext() {
   const { t } = useTranslation('notices');
   return (
-    <section
-      aria-labelledby="notice-next-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4"
-    >
+    <section aria-labelledby="notice-next-heading" className="flex flex-col gap-2">
       <h2
         id="notice-next-heading"
         className="m-0 font-heading type-subheading font-bold text-ink-heading"
       >
         {t('next.heading')}
       </h2>
-      <ol className="m-0 flex list-decimal flex-col gap-2 pl-4 type-body text-ink-muted">
+      <ol className="m-0 flex list-decimal flex-col gap-2 pl-6 type-body text-ink">
         {nextSteps.map((step) => (
           <li key={step}>{t(`next.steps.${step}`)}</li>
         ))}
@@ -53,10 +53,7 @@ function HaveAnAccount() {
   const session = useSession();
   if (!session.isKnown || session.userId !== null) return null;
   return (
-    <section
-      aria-labelledby="notice-account-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4"
-    >
+    <section aria-labelledby="notice-account-heading" className="flex flex-col gap-2">
       <h2
         id="notice-account-heading"
         className="m-0 font-heading type-subheading font-bold text-ink-heading"
@@ -64,7 +61,8 @@ function HaveAnAccount() {
         {t('account.heading')}
       </h2>
       <p className="m-0 type-body text-ink-muted">{t('account.body')}</p>
-      <Link to="/sign-in" className="inline-flex min-h-6 items-center text-link underline">
+      {/* The board's quiet "Get in" button: a link drawn as the quiet button. */}
+      <Link to="/sign-in" className={buttonClassName({ variant: 'secondary' }, 'w-fit')}>
         {t('account.logIn')}
       </Link>
     </section>
@@ -79,10 +77,7 @@ function HaveAnAccount() {
 function YourDetails() {
   const { t } = useTranslation('notices');
   return (
-    <section
-      aria-labelledby="notice-details-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface p-4"
-    >
+    <section aria-labelledby="notice-details-heading" className="flex flex-col gap-2">
       <h2
         id="notice-details-heading"
         className="m-0 font-heading type-subheading font-bold text-ink-heading"
@@ -100,13 +95,13 @@ function YourDetails() {
 /**
  * Renders the column.
  *
- * @returns the four panels
+ * @returns the four blocks, the danger one first
  */
 export function NoticeSideColumn() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-8">
+      <SafetyContactsBlock isCompact />
       <WhatHappensNext />
-      <SafetyContactsBlock />
       <HaveAnAccount />
       <YourDetails />
     </div>

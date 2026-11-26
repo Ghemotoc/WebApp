@@ -10,8 +10,11 @@
  * - a private list shows "There is no such list" to another account and to a visitor; once its
  *   owner makes it public, a visitor sees its name, whose it is and its story, and another
  *   account gets the Report action, never the owner's tools;
- * - a second list can't take the first one's name; the owner takes a story out and deletes the
- *   list after a second, confirming click;
+ * - the bookshelf's page is drawn as board C02: "0 of 10 books · Only you" above the name, the
+ *   owner's row of actions (Rename, who sees it, Delete bookshelf) and the first empty place's +
+ *   (Robert, 25 Nov 2026, 09:50 UTC);
+ * - a second list can't take the first one's name; the owner takes a story out with the Remove
+ *   under its cover and deletes the list after a second, confirming click;
  * - a list name and a story title that are one long word stay inside a 390 px screen;
  * - "Notification settings" in "What you follow" opens Settings at its notifications part;
  * - the Library with a list, and the list's page, pass axe and never scroll sideways at 390, 768
@@ -101,8 +104,9 @@ test.describe('reading lists (GAPS-6)', () => {
     await page.getByRole('button', { name: 'Create bookshelf' }).click();
     await expect(page.getByRole('heading', { level: 1, name: listName })).toBeVisible();
     await expect(page).toHaveURL(/\/library\/lists\/[0-9a-f-]{36}$/);
-    await expect(page.getByText('0 stories')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'No stories yet' })).toBeVisible();
+    // Board C02: the meta line says how full it is, and the first empty place leads to Read.
+    await expect(page.getByText('0 of 10 books', { exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: `Find stories for ${listName}` })).toBeVisible();
     // Step 2: the story page's "Add to a bookshelf" sheet puts the story on it.
     await page.goto(`/s/${storySlug}`);
     await page.getByRole('button', { name: /^(Add to|In) library$/ }).click();
@@ -160,7 +164,7 @@ test.describe('reading lists (GAPS-6)', () => {
     await expect(visitor.getByRole('heading', { level: 1, name: listName })).toBeVisible();
     await expect(visitor.getByText('A bookshelf by')).toBeVisible();
     await expect(visitor.getByRole('link', { name: /Lista de ploaie/ }).first()).toBeVisible();
-    await expect(visitor.getByRole('heading', { name: 'Manage bookshelf' })).toHaveCount(0);
+    await expect(visitor.getByRole('button', { name: 'Rename' })).toHaveCount(0);
     // Step 4: another account can report it, and has no owner's tools either.
     await other.reload();
     await expect(
@@ -187,16 +191,16 @@ test.describe('reading lists (GAPS-6)', () => {
     await page.getByRole('link', { name: listName, exact: true }).click();
     const remove = page.getByRole('button', { name: 'Remove Lista de ploaie from this bookshelf' });
     await remove.click();
-    await expect(page.getByText('0 stories')).toBeVisible();
+    await expect(page.getByText('0 of 10 books', { exact: true })).toBeVisible();
     await page
       .locator('[aria-live]')
       .filter({ hasText: 'Lista de ploaie is off the bookshelf.' })
       .getByRole('button', { name: 'Undo' })
       .click();
-    await expect(page.getByText('1 story')).toBeVisible();
+    await expect(page.getByText('1 of 10 books', { exact: true })).toBeVisible();
     await remove.click();
-    await expect(page.getByText('0 stories')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'No stories yet' })).toBeVisible();
+    await expect(page.getByText('0 of 10 books', { exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: `Find stories for ${listName}` })).toBeVisible();
     // Step 3: "Delete list" asks once more, then the Library no longer shows it.
     await page.getByRole('button', { name: 'Delete bookshelf' }).click();
     await expect(

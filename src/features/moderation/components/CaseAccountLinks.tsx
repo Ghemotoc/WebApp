@@ -21,6 +21,7 @@ import { useCaseAccountLinks } from '../hooks/useCaseAccountLinks';
 
 import { LinkAccountForm } from './LinkAccountForm';
 import { ReasonForm } from './ReasonForm';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 type Links = ReturnType<typeof useCaseAccountLinks>;
 
@@ -32,9 +33,10 @@ type Links = ReturnType<typeof useCaseAccountLinks>;
 function useWhenText() {
   const { i18n } = useTranslation('moderation');
   return (isoTime: string) =>
-    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(
-      new Date(isoTime),
-    );
+    new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(isoTime));
 }
 
 /**

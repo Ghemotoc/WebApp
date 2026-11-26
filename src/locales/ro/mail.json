@@ -1,8 +1,6 @@
 {
-  "eyebrow": "Siguranță",
   "signedOut": "Intră în cont ca să le scrii moderatorilor.",
   "logIn": "Intră",
-  "back": "Mesaje către moderatori",
   "statuses": {
     "open": "Așteaptă echipa",
     "waiting": "Ți s-a răspuns",
@@ -15,12 +13,8 @@
     "write": "Scrie moderatorilor",
     "empty": "Încă nu le-ai scris moderatorilor.",
     "loadFailed": "Nu am putut încărca mesajele. Verifică-ți conexiunea și încearcă din nou.",
-    "settings": "Setări",
-    "subject": "Subiect",
-    "status": "Stare",
-    "updated": "Ultima actualizare",
-    "referenceLinked": "{{reference}} · legat de {{decision}}",
-    "noAccount": "Fără cont? Folosește <report>formularul public de raportare</report> sau <contact>Contactează-ne</contact>."
+    "noAccount": "Fără cont? Folosește <report>formularul public de raportare</report> sau <contact>Contactează-ne</contact>.",
+    "linkedTo": "legat de {{decision}}"
   },
   "new": {
     "documentTitle": "Scrie moderatorilor",
@@ -53,7 +47,8 @@
     "notFound": "Nu am găsit această conversație în contul tău.",
     "loadFailed": "Nu am putut încărca conversația. Verifică-ți conexiunea și încearcă din nou.",
     "textOnly": "Doar text. Aici nu se pot trimite fișiere.",
-    "reopens": "Un răspuns într-o conversație închisă o redeschide."
+    "reopens": "Un răspuns într-o conversație închisă o redeschide.",
+    "aboutDecision": "despre decizia {{reference}}"
   },
   "failures": {
     "refused": "Completează toate câmpurile.",
@@ -90,5 +85,9 @@
     "replyLabel": "Răspunde din partea echipei sau adaugă o notă",
     "addNote": "Adaugă o notă internă",
     "back": "Înapoi la mesaje"
+  },
+  "breadcrumb": {
+    "label": "Unde ești",
+    "settings": "Setări"
   }
 }

@@ -12,6 +12,7 @@ import { Link } from 'react-router';
 
 import type { DashboardTile } from '../api/staffDashboard';
 import { useStaffDashboard } from '../hooks/useStaffDashboard';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** A tile's classes: the card, with the warning colours when it needs someone today. */
 function tileClasses(isWarning: boolean): string {
@@ -33,7 +34,7 @@ function Tile({ tile }: { tile: DashboardTile }) {
   return (
     <Link to={tile.href} className={tileClasses(tile.isWarning)}>
       <span className="font-heading text-[32px] leading-none font-bold">
-        {tile.count.toLocaleString(i18n.language)}
+        {tile.count.toLocaleString(dateLocaleFor(i18n.language))}
         {tile.isWarning && <span aria-hidden="true"> !</span>}
       </span>
       <span className="text-sm font-semibold">{t(`dashboard.tiles.${tile.key}`)}</span>

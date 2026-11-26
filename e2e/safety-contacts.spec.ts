@@ -82,7 +82,7 @@ test.describe('safety contacts (S1-E10-13a)', () => {
     await expect(block).toContainText('Call the local emergency number.');
     await expect(block).toContainText('We don’t have checked contacts for your country yet.');
     // The two international directories, checked by the CTO on 24 Oct 2026 (Q9c).
-    await expect(block).toContainText('International directories, checked October 24, 2026:');
+    await expect(block).toContainText('International directories, checked 24 October 2026:');
     await expect(
       block.getByRole('link', { name: /Child Helpline International: find a child helpline/ }),
     ).toHaveAttribute('href', 'https://childhelplineinternational.org/helplines/');

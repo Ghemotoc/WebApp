@@ -1,9 +1,9 @@
 /**
  * NewMailPage: /moderator-mail/new, "Write to the moderators" (story S1-E10-11; board ModMailNew in
- * the liquid glass redesign, bundle G8c).
+ * the liquid glass redesign, bundle G8c; user stories bundle 10, board J23).
  *
- * As the board draws it: "Moderator mail" to go back, the eyebrow and the title, then one glass
- * card with the linked decision (when there is one), Subject, Message, the line saying a suspended
+ * Board J23: the trail "Settings / Moderator mail / Write to the moderators", the title and lead,
+ * then the form straight on the page with the linked decision (when there is one), Subject, Message, the line saying a suspended
  * account can still write and where formal appeals go, and Cancel and Send. When opened from a
  * decision (?decision=S-000012) the message is linked to it, so the team sees which decision it
  * is about. The thread lands in the team's one shared inbox, never with one moderator
@@ -19,7 +19,6 @@ import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { ButtonRow } from '@/components/ui/ButtonRow';
 import { buttonClassName } from '@/components/ui/buttonStyles';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { TextInput } from '@/components/ui/TextInput';
@@ -31,7 +30,7 @@ import { mailLimits } from '../api/moderatorMail';
 import { useSendMail } from '../hooks/useMyMail';
 import { useMailTranslation } from '../registerMailTranslations';
 
-import { MailBackLink } from './MailBackLink';
+import { MailBreadcrumb } from './MailBreadcrumb';
 
 /** A decision reference from the address, or null when it doesn't look like one. */
 function decisionFrom(value: string | null): string | null {
@@ -95,11 +94,7 @@ function NewMailForm({ decision }: { decision: string | null }) {
   }
 
   return (
-    <form
-      noValidate
-      onSubmit={handleSubmit}
-      className="flex max-w-[760px] flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
-    >
+    <form noValidate onSubmit={handleSubmit} className="flex max-w-[720px] flex-col gap-4">
       {decision !== null && <DecisionNote reference={decision} />}
       <TextInput
         id="mail-subject"
@@ -163,11 +158,10 @@ export function NewMailPage() {
   const { userId, isKnown } = useSession();
   const [searchParams] = useSearchParams();
   return (
-    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
+    <PageContainer className="flex flex-col gap-8 pt-8 pb-16">
       <title>{t('new.documentTitle')}</title>
-      <MailBackLink to="/moderator-mail" label={t('back')} />
-      <header className="flex max-w-[720px] flex-col gap-2">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
+      <MailBreadcrumb current={t('new.title')} />
+      <header className="flex max-w-[720px] flex-col gap-4">
         <h1 className="page-title">{t('new.title')}</h1>
         <p className="m-0 type-long leading-relaxed text-ink-muted">{t('new.intro')}</p>
       </header>

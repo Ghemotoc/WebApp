@@ -13,7 +13,7 @@
  * Run it on its own when the suite is split across parallel runs on one database: while the new
  * version exists every signed-in persona sees the notice, so other specs fail at random.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';
@@ -40,6 +40,16 @@ test('a signed-out visitor opens the terms from the footer, in Romanian, marked 
   await expect(page.getByRole('heading', { name: 'Istoricul versiunilor' })).toBeVisible();
 });
 
+/**
+ * Opens the "Full text" of the section that holds the words, then checks the words show. A
+ * section's full text starts closed (bundle 10, board J08), so this is what a reader does.
+ */
+async function expectFullTextShows(page: Page, words: RegExp) {
+  const section = page.locator('details').filter({ hasText: words }).first();
+  await section.locator('summary').click();
+  await expect(section.getByText(words)).toBeVisible();
+}
+
 test('each document opens from the row of documents, and English is one choice away', async ({
   page,
 }) => {
@@ -50,17 +60,20 @@ test('each document opens from the row of documents, and English is one choice a
   const documents = page.getByRole('navigation', { name: 'Legal documents' });
   await documents.getByRole('link', { name: 'Privacy notice' }).click();
   await expect(page.getByRole('heading', { level: 2, name: 'Privacy notice' })).toBeVisible();
-  // The corrected provider list (decided 17 Oct 2026, 19:43).
-  await expect(
-    page.getByText(/Supabase \(our database, sign-in and file storage\), in the EU \(Ireland\)/),
-  ).toBeVisible();
+  // The corrected provider list (decided 17 Oct 2026, 19:43). Each section's full text sits
+  // behind its "Full text" summary since bundle 10 (board J08), so the reader opens it first.
+  await expectFullTextShows(
+    page,
+    /Supabase \(our database, sign-in and file storage\), in the EU \(Ireland\)/,
+  );
 
   await documents.getByRole('link', { name: 'Community guidelines' }).click();
   await expect(page.getByRole('heading', { level: 2, name: 'Community guidelines' })).toBeVisible();
   // The minors-in-fiction rule (decided 17 Oct 2026, 10:36).
-  await expect(
-    page.getByText(/no story may describe sexual activity involving anyone under 18/),
-  ).toBeVisible();
+  await expectFullTextShows(
+    page,
+    /no story may describe sexual activity involving anyone under 18/,
+  );
 });
 
 test.describe('after a new important version of the terms', () => {

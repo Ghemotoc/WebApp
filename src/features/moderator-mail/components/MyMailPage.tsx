@@ -1,21 +1,19 @@
 /**
  * MyMailPage: /moderator-mail, a member's messages with the moderation team (story S1-E10-11;
  * DSA art. 12: one place to reach the moderators; board ModMail in the liquid glass redesign,
- * bundle G8c).
+ * bundle G8c; user stories bundle 10, board J22).
  *
- * As the board draws it: "Settings" to go back, the eyebrow, the title and the lead on the left
- * with "Write to the moderators" as the main pill on the right, the threads as one glass table,
- * then a note for people without an account pointing to the public report form and Contact us.
- * Signed-out visitors are asked to log in.
+ * Board J22: the trail "Settings / Moderator mail", the title and the lead with "Write to the
+ * moderators" under them, the threads as rows straight on the page, then a note for people
+ * without an account pointing to the public report form and Contact us. Signed-out visitors are
+ * asked to log in.
  * Who shows it: the router; My reports and Settings link here.
- * What it calls: useMyMail, MailThreadTable.
+ * What it calls: useMyMail, MailThreadRows.
  */
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -23,13 +21,13 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyMail } from '../hooks/useMyMail';
 import { useMailTranslation } from '../registerMailTranslations';
 
-import { MailBackLink } from './MailBackLink';
-import { MailThreadTable } from './MailThreadTable';
+import { MailBreadcrumb } from './MailBreadcrumb';
+import { MailThreadRows } from './MailThreadRows';
 
 /**
  * The threads for a signed-in person.
  *
- * @returns the table, a line when there are none, a wait or an error
+ * @returns the rows, a line when there are none, a wait or an error
  */
 function SignedInList() {
   const { t } = useMailTranslation();
@@ -37,30 +35,26 @@ function SignedInList() {
   if (mail.isError) return <Notice tone="error">{t('list.loadFailed')}</Notice>;
   if (mail.isPending) return null;
   if (mail.data.length === 0) return <p className="m-0 text-ink-muted">{t('list.empty')}</p>;
-  return <MailThreadTable threads={mail.data} />;
+  return <MailThreadRows threads={mail.data} />;
 }
 
 /**
- * The title and lead, with "Write to the moderators" on the right for a signed-in person.
+ * The title and lead, with "Write to the moderators" under them for a signed-in person.
  *
- * @param props.isSignedIn - true to show the pill
+ * @param props.isSignedIn - true to show the button
  * @returns the header
  */
 function MailHeader({ isSignedIn }: { isSignedIn: boolean }) {
   const { t } = useMailTranslation();
   return (
-    <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-      <div className="flex max-w-[720px] flex-col gap-2">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="page-title">{t('list.title')}</h1>
-        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('list.intro')}</p>
-      </div>
+    <header className="flex max-w-[720px] flex-col gap-4">
+      <h1 className="page-title">{t('list.title')}</h1>
+      <p className="m-0 type-long leading-relaxed text-ink-muted">{t('list.intro')}</p>
       {isSignedIn && (
         <Link
           to="/moderator-mail/new"
-          className={buttonClassName({ variant: 'primary' }, 'w-fit shrink-0')}
+          className={buttonClassName({ variant: 'primary' }, 'mt-2 w-fit')}
         >
-          <ActionIcon name="plus" size={16} />
           {t('list.write')}
         </Link>
       )}
@@ -76,7 +70,7 @@ function MailHeader({ isSignedIn }: { isSignedIn: boolean }) {
 function NoAccountNote() {
   const { t } = useMailTranslation();
   return (
-    <p className="m-0 type-body text-ink-muted">
+    <p className="m-0 type-meta text-ink-muted">
       <Trans
         t={t}
         i18nKey="list.noAccount"
@@ -99,9 +93,9 @@ export function MyMailPage() {
   const { userId, isKnown } = useSession();
   const isSignedIn = isKnown && userId !== null;
   return (
-    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
+    <PageContainer className="flex flex-col gap-8 pt-8 pb-16">
       <title>{t('list.documentTitle')}</title>
-      <MailBackLink to="/settings" label={t('list.settings')} />
+      {isSignedIn && <MailBreadcrumb />}
       <MailHeader isSignedIn={isSignedIn} />
       {isKnown && userId === null && (
         <p className="m-0 text-ink-muted">
