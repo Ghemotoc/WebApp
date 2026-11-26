@@ -10,26 +10,27 @@
     "storiesHeading": "Story by story",
     "signedOut": "Log in to see stories.",
     "empty": {
-      "title": "No stories yet",
-      "description": "Start a story and write chapter one. Only you can see it until you publish.",
-      "action": "Start a new story",
       "filteredTitle": "No stories with this status"
     },
     "onlyYou": "Only you can see this story until you publish its first chapter.",
     "created": "Your story is saved. Only you can see it until you publish its first chapter."
   },
+  "breadcrumb": {
+    "label": "Where you are",
+    "writing": "Writing"
+  },
   "newStory": {
     "documentTitle": "Start a new story · {{productName}}",
     "back": "Writer dashboard",
-    "eyebrow": "Write · new story",
+    "crumb": "New story",
     "heading": "Start a new story",
     "intro": "Five short steps, then you write chapter one. Everything can change later in story settings.",
     "basics": "The basics",
     "title": "Title",
     "blurb": "Blurb",
     "blurbHint": "One or two sentences: who the story is about and what happens. {{count}} of {{max}} characters.",
-    "language": "Language of the story (required)",
-    "languageHint": "Choose the language your story is written in. More languages open once we have moderators who read them.",
+    "language": "Language of the story",
+    "languageHint": "The language you write it in. Other languages can be added later, as editions of the same story.",
     "categoryAndTags": "Category, tags and setting",
     "category": "Category",
     "tags": "Tags",
@@ -37,7 +38,8 @@
     "tagsFull": "{{max}} of {{max}} tags. Remove one to add another.",
     "tagPlaceholder": "Add a tag",
     "removeTag": "Remove tag {{tag}}",
-    "rights": "Your work stays yours. You keep the rights and can publish it anywhere. Only you can see this story until you publish its first chapter.",
+    "rights": "The work stays yours: you keep the rights and can publish it anywhere. Only you can see this story until you publish its first chapter.",
+    "missing": "Still to finish: {{steps}}.",
     "cancel": "Cancel",
     "create": "Create and write chapter one",
     "creating": "Creating…",
@@ -222,7 +224,8 @@
     "notPublishedYet": "Not published yet",
     "chaptersPublished_one": "{{count}} chapter published",
     "chaptersPublished_few": "{{count}} chapters published",
-    "chaptersPublished_other": "{{count}} chapters published"
+    "chaptersPublished_other": "{{count}} chapters published",
+    "lastUpdated": "last updated {{date}}"
   },
   "status": {
     "heading": "Status and comments",
@@ -248,17 +251,16 @@
     }
   },
   "readOn": {
-    "heading": "Where people can read it",
-    "label": "Where can people read this story?",
-    "options": {
-      "web_and_app": "On the web and in the app",
-      "app_only": "In the app only"
-    },
     "hints": {
       "web_and_app": "Readers open the chapters on the web and in the app.",
       "app_only": "On the web readers see the cover, blurb and chapter list. The chapters open in the app, where they are harder to copy."
     },
     "notYet": "The {{productName}} apps aren’t out yet. Until they are, everyone who’s logged in reads every chapter on the web, and we’ll tell you before “In the app only” starts to apply."
+  },
+  "whoCanReadCard": {
+    "heading": "Who can read this story?",
+    "visibility": "Visibility",
+    "appOnly": "App only"
   },
   "comments": {
     "label": "Who can comment",
@@ -297,31 +299,33 @@
   },
   "settings": {
     "documentTitle": "Story settings · {{productName}}",
-    "eyebrow": "Write · story settings",
     "heading": "Story settings",
     "save": "Save changes",
     "saving": "Saving…",
     "saved": "Saved.",
     "saveFailed": "We couldn’t save the changes. Check your connection and try again.",
     "notFound": "We can’t find this story on this account.",
-    "intro": "Change anything here. Readers see the changes as soon as you save.",
+    "intro": "{{title}}. Readers see the changes as soon as you save.",
     "unsaved": "You have unsaved changes.",
     "cancel": "Cancel"
   },
   "deleteStory": {
-    "eyebrow": "The whole story",
     "heading": "Delete this story",
-    "intro": "We ask you twice. The story and all its chapters are hidden straight away and deleted for good after 30 days.",
+    "intro": "The story and its chapters are hidden straight away and deleted for good after 30 days.",
     "button": "Delete story",
-    "firstTitle": "Delete “{{title}}” and its chapters?",
-    "firstBody": "Readers lose access straight away.",
-    "keep": "Keep story",
-    "confirmFirst": "Yes, delete story",
-    "lastCheckTitle": "Last check.",
-    "lastCheckBody": "We hide the story now and delete it for good on {{date}}. You can undo until then.",
-    "confirmLast": "Delete story",
+    "keep": "Keep the story",
     "deleted": "Story deleted. It’s hidden from readers and will be gone for good on {{date}}.",
-    "undo": "Undo"
+    "undo": "Undo",
+    "dialogTitle": "Delete {{title}}?",
+    "dialogBody_one": "It disappears from {{productName}} straight away: {{count}} chapter, its comments and its place in readers’ bookshelves. For 30 days it waits in Recently deleted on Writing, where Undo brings everything back. After that it is gone for good.",
+    "dialogBody_few": "It disappears from {{productName}} straight away: {{count}} chapters, their comments and its place in readers’ bookshelves. For 30 days it waits in Recently deleted on Writing, where Undo brings everything back. After that it is gone for good.",
+    "dialogBody_other": "It disappears from {{productName}} straight away: {{count}} chapters, their comments and its place in readers’ bookshelves. For 30 days it waits in Recently deleted on Writing, where Undo brings everything back. After that it is gone for good.",
+    "typeTitle": "Type the title to delete it",
+    "typeTitleHint": "Type {{title}}",
+    "titleMismatch": "The title doesn’t match yet. Type it as it is in the line above.",
+    "confirm": "Delete the story",
+    "failed": "The story wasn’t deleted. Check the connection and try again.",
+    "undoFailed": "The story wasn’t brought back. Check the connection and try again."
   },
   "recentlyDeleted": {
     "heading": "Recently deleted",
@@ -396,17 +400,14 @@
     "parody": "Parody"
   },
   "manageChapters": {
-    "documentTitle": "Manage chapters",
-    "heading": "Manage chapters",
-    "intro": "Change the order, rename, unpublish or delete chapters. Readers see changes straight away.",
+    "documentTitle": "Chapters",
+    "heading": "Chapters",
     "newChapter": "New chapter",
-    "listEyebrow": "Chapters",
     "noChapters": "No chapters yet",
-    "note": "Drag a chapter, or use the arrows. Moving a published chapter asks first.",
+    "note": "Drag a chapter, or use Earlier and Later. Moving a published chapter asks first, because it changes the order for everyone reading.",
     "listLabel": "Chapters in reading order",
-    "dragLabel": "Drag chapter {{number}} to reorder. You can also use the arrows.",
-    "moveUp": "Move chapter {{number}} up",
-    "moveDown": "Move chapter {{number}} down",
+    "moveUp": "Move chapter {{number}} earlier",
+    "moveDown": "Move chapter {{number}} later",
     "edit": "Edit",
     "rename": "Rename",
     "renameLabel": "New title for chapter {{number}}",
@@ -437,16 +438,11 @@
       "unpublished": "Unpublished"
     },
     "meta": {
-      "published": "Published {{date}}",
       "edited": "readers see “Edited on {{date}}”",
-      "draft": "Draft",
       "words_one": "{{count}} word",
       "words_few": "{{count}} words",
       "words_other": "{{count}} words",
-      "saved": "saved {{date}}",
-      "scheduled": "Goes live {{when}}, local time",
-      "unpublished": "Unpublished {{date}}",
-      "unpublishedNote": "readers can’t open it · comments hidden but kept"
+      "saved": "saved {{date}}"
     },
     "deleteDialog": {
       "title": "Delete “{{title}}”?",
@@ -456,10 +452,14 @@
     },
     "deleted": {
       "heading": "Recently deleted",
-      "intro": "Deleted chapters are hidden straight away and deleted for good after 30 days. Until then you can undo.",
-      "meta": "Deleted {{date}} · gone for good on {{purgeDate}}",
-      "undo": "Undo",
-      "empty": "Nothing deleted in the last 30 days."
+      "intro": "Deleted chapters stay here for 30 days, then they are gone for good.",
+      "undo": "Restore",
+      "empty": "Nothing deleted in the last 30 days.",
+      "restoreLabel": "Restore “{{title}}”",
+      "deletedOn": "Deleted {{date}}",
+      "daysLeft_one": "{{count}} day left",
+      "daysLeft_few": "{{count}} days left",
+      "daysLeft_other": "{{count}} days left"
     },
     "problems": {
       "notActive": "Your account can’t change chapters yet. Confirm your email and choose a username first.",
@@ -468,32 +468,65 @@
       "failed": "That didn’t work. Check your connection and try again."
     },
     "drag": {
-      "instructions": "To move a chapter, focus its handle and press Space. Use the up and down arrow keys to move it, Space again to drop it, or Escape to cancel.",
       "pickedUp": "Picked up chapter {{position}}, {{title}}.",
       "over": "{{title}} is now at position {{position}} of {{total}}.",
       "dropped": "Dropped {{title}} at position {{position}} of {{total}}.",
       "cancelled": "Move cancelled. {{title}} stays where it was."
     },
     "rowTitle": "Chapter {{number}}: {{title}}",
-    "movedFrom": "Moved here from chapter {{number}}",
-    "wasChapter": "Was chapter {{number}}",
     "chapterBoard": "Open the chapter board",
     "stats": {
       "label": "This story in numbers",
-      "chapters": "chapters",
-      "words": "words",
-      "nextChapter": "next chapter",
-      "noneScheduled": "none scheduled"
+      "chapters": "Chapters",
+      "out": "{{count}} out",
+      "drafts_one": "{{count}} draft",
+      "drafts_few": "{{count}} drafts",
+      "drafts_other": "{{count}} drafts",
+      "scheduled": "{{count}} scheduled",
+      "unpublished": "{{count}} unpublished",
+      "noChapters": "No chapters yet",
+      "words": "Words",
+      "chaptersOut_one": "{{count}} chapter out",
+      "chaptersOut_few": "{{count}} chapters out",
+      "chaptersOut_other": "{{count}} chapters out",
+      "noneOut": "Nothing out yet",
+      "reads": "Reads",
+      "allTime": "All time",
+      "status": "Status",
+      "lastIs": "Chapter {{number}} is the last",
+      "noLast": "No last chapter yet"
     },
     "moveDialog": {
-      "title": "Move a published chapter?",
+      "title": "Change the order readers see?",
       "body": "“{{title}}” becomes chapter {{number}}. Readers see the new numbers at once, and their saved places stay with the chapters.",
       "keep": "Keep the order",
-      "confirm": "Move chapter"
+      "confirm": "Move it"
+    },
+    "earlier": "Earlier",
+    "later": "Later",
+    "more": "More for chapter {{number}}",
+    "preview": "Preview",
+    "schedule": "Schedule",
+    "changeSchedule": "Change the schedule",
+    "copyLink": "Copy link",
+    "linkCopied": "Link to chapter {{number}} copied.",
+    "copyFailed": "The link couldn’t be copied. Open the chapter as a reader and copy it from the address bar.",
+    "showEarlier": "Show chapters 1 to {{last}}",
+    "row": {
+      "today": "today",
+      "goesLive": "goes live {{when}}, local time",
+      "notOpen": "readers can’t open it",
+      "commentsKept": "comments hidden but kept",
+      "likes_one": "{{count}} like",
+      "likes_few": "{{count}} likes",
+      "likes_other": "{{count}} likes",
+      "movedFrom": "moved here from chapter {{number}}",
+      "wasChapter": "was chapter {{number}}",
+      "lastChapter": "the last chapter"
     }
   },
   "rankBadges": {
-    "legend": "Rank badges on the cover",
+    "legend": "Badges on the cover",
     "intro": "Your cover shows where the story stands in its tags, like “#4 in Fantasy”, counted the same way as the tag pages. It shows the 3 best ranks unless you pick up to 3 tags here. A tag shows a rank once the story has readers and the tag holds a few stories.",
     "pickLabel": "Tags to show as badges",
     "rankOf": "{{tag}} · #{{rank}} of {{count}}",
@@ -616,26 +649,28 @@
     },
     "noNumbersYet": "No numbers yet.",
     "comments": {
-      "heading": "Latest on the chapters",
+      "heading": "Latest comments",
       "onChapter": "on chapter {{number}} · {{when}}",
       "reply": "Reply",
       "replyLabel": "Reply to {{name}} on chapter {{number}}",
       "empty": "No comments yet. They appear here when readers write under your chapters.",
       "seeAll": "More comments",
+      "viewCount_one": "View {{count}} comment",
+      "viewCount_few": "View {{count}} comments",
+      "viewCount_other": "View {{count}} comments",
       "onChapterOf": "on chapter {{number}} of {{title}} · {{when}}"
     }
   },
   "canva": {
     "documentTitle": "Design it in Canva · {{productName}}",
-    "heading": "Design it in Canva",
     "backToWriting": "Back to Writing",
-    "backToSettings": "Back to your story’s settings",
+    "backToSettings": "Back to story settings",
     "opening": "Opening Canva…",
-    "signedOut": "Log in first, then press “Design it in Canva” again in your story’s settings.",
-    "working": "One moment. We’re talking to Canva…",
-    "cancelled": "You didn’t connect Canva, so nothing was shared with Canva. You can try again any time from your story’s settings.",
-    "saved": "Canva cover saved.",
-    "savedChecking": "You can see it now. Readers see it once it has been checked. That takes a few minutes, or up to two days when a person on our moderation team looks at it. You can close this tab.",
+    "signedOut": "Log in first, then press “Design it in Canva” again in story settings.",
+    "working": "Talking to Canva…",
+    "cancelled": "The answer on Canva’s page was no, so nothing was shared with Canva and the cover hasn’t changed. Try again any time from story settings.",
+    "saved": "The cover is saved",
+    "savedChecking": "You can see it now. Readers see it once its picture check has passed: usually within a few minutes, or up to two days when a person on the moderation team looks at it. You can close this tab.",
     "savedVisible": "Readers can see it now. You can close this tab.",
     "design": "Design it in Canva",
     "newTab": "(opens a new tab)",
@@ -643,14 +678,14 @@
     "failed": {
       "switched_off": "Designing covers in Canva is switched off right now.",
       "account": "This account can’t change covers right now.",
-      "not_connected": "Canva isn’t connected any more. Press “Design it in Canva” again in your story’s settings to connect it.",
+      "not_connected": "Canva isn’t connected any more. Press “Design it in Canva” again in story settings to connect it.",
       "declined": "Canva didn’t accept the connection. Try again from the story’s settings.",
       "expired": "This link has expired or didn’t come from Canva. Start again from the story’s settings.",
       "export_failed": "Canva couldn’t export your design. Open it in Canva and press Return again.",
       "unavailable": "Canva isn’t set up yet. Try again later.",
       "unreachable": "We couldn’t reach Canva or our server. Check your connection and try again.",
       "signed_out": "Log in first, then try again.",
-      "invalid": "This page only works on the way to Canva and back. Start from your story’s settings.",
+      "invalid": "This page only works on the way to Canva and back. Start from story settings.",
       "storyNotFound": "We couldn’t find that story on this account."
     },
     "settings": {
@@ -661,12 +696,24 @@
       "disconnectFailed": "We couldn’t disconnect Canva. Try again.",
       "loadFailed": "We couldn’t check whether Canva is connected. Try again."
     },
-    "arrived": "Your new cover from Canva is here, and it’s already saved."
+    "arrived": "Your new cover from Canva is here, and it’s already saved.",
+    "openingLine": "A blank design at cover size (1600 × 2560) opens in Canva. The first time, Canva asks whether it may share the design with {{productName}}.",
+    "stoppedHeading": "Something went wrong",
+    "crumbCover": "Cover",
+    "workingLine": "This takes a few seconds. Keep this tab open.",
+    "cancelledHeading": "Nothing was shared",
+    "waitingCheck": "Waiting for a check",
+    "stops": {
+      "heading": "If something stops it",
+      "noAnswer": "Canva didn’t answer",
+      "noAnswerLine": "Try again in a minute. The story is safe.",
+      "tryAgain": "Try again",
+      "popUps": "Pop-ups are blocked",
+      "popUpsLine": "Allow pop-ups for {{site}}, then press “Design it in Canva” again."
+    }
   },
   "insights": {
-    "eyebrow": "Only you see this",
     "heading": "Lines and stops",
-    "intro": "Totals from readers’ shared passages, paragraph comments and saved places. Never who.",
     "chapterLabel": "Chapter",
     "option": "{{story}} · Chapter {{number}}: {{title}}",
     "lovedHeading": "Most-loved lines",
@@ -705,5 +752,21 @@
     "remove": "Remove {{country}}",
     "groupLabel": "Countries the story is set in",
     "preview": "Set in {{countries}}"
+  },
+  "writeEmpty": {
+    "title": "No stories yet",
+    "line": "Start a story, a poem or an essay. Only you can see it until you publish the first chapter; the reader numbers start then.",
+    "newStory": "New story",
+    "plan": {
+      "heading": "Plan before you write",
+      "line": "The Story Atlas keeps characters, places and the order of things beside a story. Only you see it, until you choose what readers see.",
+      "open": "Open the Story Atlas"
+    },
+    "guides": {
+      "heading": "Guides for a first story",
+      "minutes_one": "{{count}} min",
+      "minutes_few": "{{count}} min",
+      "minutes_other": "{{count}} min"
+    }
   }
 }

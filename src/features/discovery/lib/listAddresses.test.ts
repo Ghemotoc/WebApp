@@ -63,6 +63,24 @@ describe('requestFromAddress', () => {
     expect(requestFromAddress('updated', null, search).languageCode).toBe('any');
   });
 
+  it('reads back the Rating and Length filters of a search (user story 1.8)', () => {
+    const request = {
+      ...plainList('search', 'sare'),
+      storyRating: '16_plus' as const,
+      storyLength: 'long' as const,
+    };
+    const address = listAddress(request);
+    expect(address).toContain('rating=16_plus');
+    expect(address).toContain('length=long');
+    const search = new URL(address, 'https://example.test').searchParams;
+    expect(requestFromAddress('search', 'sare', search)).toEqual(request);
+  });
+
+  it('ignores a rating or length it does not know', () => {
+    const search = new URLSearchParams('rating=21_plus&length=medium');
+    expect(requestFromAddress('updated', null, search)).toEqual(plainList('updated'));
+  });
+
   it('ignores a category filter on a category page, which is its own category', () => {
     const search = new URLSearchParams('category=poetry');
     expect(requestFromAddress('category', 'fiction', search).categorySlug).toBeNull();

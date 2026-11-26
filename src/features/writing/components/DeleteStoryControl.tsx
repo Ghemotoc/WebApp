@@ -1,16 +1,16 @@
 /**
- * DeleteStoryControl: "Delete this story", asked twice, with undo (story S1-E3-05; board
- * Chapters 4.4, "The whole story").
+ * DeleteStoryControl: "Delete this story" in Story settings and the Story Atlas (story
+ * S1-E3-05), as board D12 draws it (BOOKS D12, user story 5.12).
  *
- * The four steps on the board: (0) "Delete story" with "We ask you twice…"; (1) an alert:
- * "Delete “<title>” and all N chapters? Readers lose access straight away." with Keep story /
- * Yes, delete story; (2) "Last check. We hide the story now and delete it for good on <date>.
- * You can undo until then." with Keep story / Delete story; (3) a status: "Story deleted. It’s
- * hidden from readers and will be gone for good on <date>." with Undo.
- * Rules: two confirmations; hidden at once; 30 days of undo (content_purge_days); then the
- * nightly purge (S1-E3-05). Chapters follow the story (S1-E3-02a extends the function).
- * Who uses it: StorySettingsPage. What it calls: useStoryActions → delete_my_story(),
- * restore_my_story().
+ * The steps: (1) the line "The story and its chapters are hidden straight away…" with "Delete
+ * story"; (2) the dialog "Delete <title>?" (DeleteStoryDialog), which asks for the title to be
+ * typed; (3) once deleted, a status: "Story deleted. It's hidden from readers and will be gone
+ * for good on <date>." with Undo.
+ * Rules: asked twice (the button, then the typed title); hidden at once; 30 days of undo
+ * (content_purge_days); then the nightly purge (S1-E3-05). Chapters follow the story
+ * (S1-E3-02a extends the function).
+ * Who uses it: StorySettingsPage and the Atlas's AtAGlance. What it calls: useStoryActions →
+ * delete_my_story(), restore_my_story(); DeleteStoryDialog.
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,48 +19,27 @@ import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
 import type { MyStory } from '../api/stories';
-import { purgeDateFor } from '../lib/purgeDate';
 import { useStoryActions } from '../hooks/useStoryActions';
+import { purgeDateFor } from '../lib/purgeDate';
 
-/** Which of the four steps is on screen. */
-type Step = 'idle' | 'first' | 'second';
+import { DeleteStoryDialog } from './DeleteStoryDialog';
 
-/** Steps 1 and 2 of the board: the question, then the last check. */
-function ConfirmSteps({
-  story,
-  isLast,
-  purgeDate,
-  isDeleting,
-  onKeep,
-  onConfirm,
-}: {
-  story: MyStory;
-  isLast: boolean;
-  purgeDate: string;
-  isDeleting: boolean;
-  onKeep: () => void;
-  onConfirm: () => void;
-}) {
-  const { t } = useTranslation('writing');
+/** Step 3: the story is deleted; Undo until the purge date. */
+function DeletedNotice({ story }: { story: MyStory }) {
+  const { t, i18n } = useTranslation('writing');
+  const { restoreStory } = useStoryActions();
+  const purgeDate = purgeDateFor(story.deletedAt ?? new Date().toISOString(), i18n.language);
   return (
-    <div
-      role="alert"
-      className="flex flex-col gap-3 rounded-card border border-(--error-border) bg-(--error-bg) p-4 type-body text-(--error-text)"
-    >
-      <p className="m-0">
-        <strong>
-          {isLast
-            ? t('deleteStory.lastCheckTitle')
-            : t('deleteStory.firstTitle', { title: story.title })}
-        </strong>{' '}
-        {isLast ? t('deleteStory.lastCheckBody', { date: purgeDate }) : t('deleteStory.firstBody')}
-      </p>
-      <div className="flex flex-wrap gap-3">
-        <Button variant="secondary" onClick={onKeep}>
-          {t('deleteStory.keep')}
-        </Button>
-        <Button variant="destructive" disabled={isDeleting} onClick={onConfirm}>
-          {isLast ? t('deleteStory.confirmLast') : t('deleteStory.confirmFirst')}
+    <div className="flex flex-col gap-3">
+      <Notice tone="info">{t('deleteStory.deleted', { date: purgeDate })}</Notice>
+      {restoreStory.isError && <Notice tone="error">{t('deleteStory.undoFailed')}</Notice>}
+      <div>
+        <Button
+          variant="secondary"
+          onClick={() => restoreStory.mutate(story.slug)}
+          disabled={restoreStory.isPending}
+        >
+          {t('deleteStory.undo')}
         </Button>
       </div>
     </div>
@@ -73,50 +52,30 @@ function ConfirmSteps({
  * @returns the card's contents
  */
 export function DeleteStoryControl({ story }: { story: MyStory }) {
-  const { t, i18n } = useTranslation('writing');
-  const [step, setStep] = useState<Step>('idle');
-  const { deleteStory, restoreStory } = useStoryActions();
-  const purgeDate = purgeDateFor(story.deletedAt ?? new Date().toISOString(), i18n.language);
+  const { t } = useTranslation('writing');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { deleteStory } = useStoryActions();
 
-  // Step 3 of the board: the story is deleted; offer undo until the purge date.
-  if (story.deletedAt !== null) {
-    return (
-      <div className="flex flex-col gap-3">
-        <Notice tone="info">{t('deleteStory.deleted', { date: purgeDate })}</Notice>
-        <div>
-          <Button
-            variant="secondary"
-            onClick={() => restoreStory.mutate(story.slug)}
-            disabled={restoreStory.isPending}
-          >
-            {t('deleteStory.undo')}
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // Step 3: once the story is deleted, the dialog has done its job and Undo shows instead.
+  if (story.deletedAt !== null) return <DeletedNotice story={story} />;
 
-  if (step === 'idle') {
-    return (
-      <div className="flex flex-col gap-3">
-        <p className="m-0 type-body text-ink-muted">{t('deleteStory.intro')}</p>
-        <div>
-          <Button variant="destructive" onClick={() => setStep('first')}>
-            {t('deleteStory.button')}
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
+  // Steps 1 and 2: the line and the button, which opens the dialog.
   return (
-    <ConfirmSteps
-      story={story}
-      isLast={step === 'second'}
-      purgeDate={purgeDate}
-      isDeleting={deleteStory.isPending}
-      onKeep={() => setStep('idle')}
-      onConfirm={() => (step === 'second' ? deleteStory.mutate(story.slug) : setStep('second'))}
-    />
+    <div className="flex flex-col gap-3">
+      <p className="m-0 type-body text-ink-muted">{t('deleteStory.intro')}</p>
+      <div>
+        <Button variant="destructive" onClick={() => setIsDialogOpen(true)}>
+          {t('deleteStory.button')}
+        </Button>
+      </div>
+      <DeleteStoryDialog
+        story={story}
+        isOpen={isDialogOpen}
+        isDeleting={deleteStory.isPending}
+        hasFailed={deleteStory.isError}
+        onClose={() => setIsDialogOpen(false)}
+        onDelete={() => deleteStory.mutate(story.slug)}
+      />
+    </div>
   );
 }

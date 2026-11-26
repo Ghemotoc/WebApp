@@ -11,17 +11,22 @@
  *   /library/<reading|saved|finished>                 one shelf of the reader's library (S1-E4-03)
  *   /u/<username>/library                             someone's library, from their profile (S1-E13-01)
  *   /library/lists/<list ID>                          one reading list (GAPS-6; its own page, ReadingListPage)
- * and ?category=…&status=…&language=…&sort=… for the filters.
+ * and ?category=…&status=…&language=…&sort=… for the filters, plus ?rating=… and ?length=… on the
+ * search results (user story 1.8).
  * Who uses it: DiscoverPage (each shelf's "View more"), StoryListPage, StoryBreadcrumb, the story
  * page's tags.
  */
+import { storyRatings, type StoryRating } from '@/schemas/story';
+
 import {
   everyLanguage,
   everywhereRanking,
+  storyLengths,
   type CompletionStatus,
   type ListKind,
   type ListRequest,
   type SortOrder,
+  type StoryLength,
 } from '../api/storyLists';
 
 /** The lists Discover links to under /discover/all/. */
@@ -67,6 +72,18 @@ export function sortChoicesFor(kind: ListKind): readonly SortOrder[] {
 }
 
 /**
+ * Writes the Rating and Length filters into a list's query string, when set (user story 1.8,
+ * board A08).
+ *
+ * @param query - the query string being built; changed in place
+ * @param request - the list
+ */
+function setRangeFilters(query: URLSearchParams, request: ListRequest): void {
+  if (request.storyRating != null) query.set('rating', request.storyRating);
+  if (request.storyLength != null) query.set('length', request.storyLength);
+}
+
+/**
  * The query string of a list's address: the search term, the filters and the sort.
  *
  * @param request - the list
@@ -79,6 +96,7 @@ function listQuery(request: ListRequest): URLSearchParams {
   if (request.completion !== null) query.set('status', request.completion);
   if (request.languageCode !== null) query.set('language', request.languageCode);
   if (request.sortOrder !== null) query.set('sort', request.sortOrder);
+  setRangeFilters(query, request);
   // MARKETS-2d: "Popular in", on the popular list only.
   if (request.kind === 'popular' && request.popularIn != null)
     query.set('country', request.popularIn);
@@ -160,6 +178,26 @@ function completionFrom(value: string | null): CompletionStatus | null {
 }
 
 /**
+ * The Rating filter from the address (user story 1.8); anything else counts as no filter.
+ *
+ * @param value - ?rating=
+ * @returns a rating or null
+ */
+function ratingFrom(value: string | null): StoryRating | null {
+  return storyRatings.find((rating) => rating === value) ?? null;
+}
+
+/**
+ * The Length filter from the address (user story 1.8); anything else counts as no filter.
+ *
+ * @param value - ?length=
+ * @returns short, long or null
+ */
+function lengthFrom(value: string | null): StoryLength | null {
+  return storyLengths.find((length) => length === value) ?? null;
+}
+
+/**
  * The sort from the address; anything else counts as the list's own order.
  *
  * @param value - ?sort=
@@ -222,6 +260,26 @@ export function requestFromAddress(
     sortOrder: sortOrder === 'relevance' && kind !== 'search' ? null : sortOrder,
     // MARKETS-2d: only the popular list carries "Popular in".
     ...(kind === 'popular' ? { popularIn: popularInFrom(kind, search.get('country')) } : {}),
+    // User story 1.8: the search's Rating and Length filters, only when the address has them.
+    ...rangeFiltersFrom(search),
+  };
+}
+
+/**
+ * The Rating and Length filters from the address, left out entirely when neither is set, so a
+ * list without them keeps the same request (and the same cached page) as before.
+ *
+ * @param search - the query string
+ * @returns the filters that are set
+ */
+function rangeFiltersFrom(
+  search: URLSearchParams,
+): Pick<ListRequest, 'storyRating' | 'storyLength'> {
+  const storyRating = ratingFrom(search.get('rating'));
+  const storyLength = lengthFrom(search.get('length'));
+  return {
+    ...(storyRating === null ? {} : { storyRating }),
+    ...(storyLength === null ? {} : { storyLength }),
   };
 }
 

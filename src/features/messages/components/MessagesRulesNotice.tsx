@@ -1,15 +1,15 @@
 /**
- * MessagesRulesNotice: the plum box over the Chats list that says who may message the person
- * (stories S1-E9-01 and S1-E9-03; board Messages 5.5).
+ * MessagesRulesNotice: the box over the chats that says, in words, who may message the person
+ * (stories S1-E9-01 and S1-E9-03; user story 4.2, "The rules sit above the list in words";
+ * board E12-Messages).
  *
- * Under-18s also read the age rule ("Adults can never message anyone under 16…"); everyone reads
- * their own setting ("Right now, only people you follow can message you."). It shows only the
- * person's own age group, never anyone else's. "Change" opens Settings › Messages (S1-E9-04).
+ * As the board draws it: the information colours, 12 px corners, the age rule ("Adults can never
+ * message anyone under 16…") and the person's own setting ("Right now, only people you follow can
+ * message you.") in one paragraph, then "Change" to Settings › Messages (S1-E9-04). The age rule
+ * is the same for everyone, so everyone reads it; the setting is the person's own, never anyone
+ * else's.
  * Who shows it: ChatList. What it calls: useMyMessageSettings.
  */
-
-import { ActionIcon } from '@/components/icons/ActionIcon';
-
 import { useMyMessageSettings } from '../hooks/useMessages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
 
@@ -24,17 +24,12 @@ export function MessagesRulesNotice() {
   const { t } = useMessagesTranslation();
   const settings = useMyMessageSettings();
   if (settings.data === undefined) return null;
-  const isUnder18 = settings.data.ageGroup !== 'adult';
   return (
-    <div className="flex gap-3 rounded-card border border-border bg-tint p-4 type-body leading-relaxed text-ink">
-      <ActionIcon name="shield" size={22} className="mt-1 flex-none text-ink-heading" />
-      <div className="flex flex-col gap-1">
-        <p className="m-0">
-          {isUnder18 && <strong className="font-semibold">{t('rules.minors')} </strong>}
-          {t(`rules.audience.${settings.data.audience}`)}
-        </p>
-        <MessageSettingsLink text={t('settings.change')} label={t('settings.changeWho')} />
-      </div>
+    <div className="flex flex-col gap-1 rounded-field border border-(--info-border) bg-(--info-bg) p-4 text-(--info-text)">
+      <p className="m-0 type-body">
+        {t('rules.minors')} {t(`rules.audience.${settings.data.audience}`)}
+      </p>
+      <MessageSettingsLink text={t('settings.change')} label={t('settings.changeWho')} />
     </div>
   );
 }

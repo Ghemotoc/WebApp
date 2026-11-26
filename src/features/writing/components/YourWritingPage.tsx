@@ -8,13 +8,20 @@
  * deleted" with undo when a story was deleted in the last 30 days (S1-E3-05). Once the writer has
  * a story, the writer dashboard (S1-E3-07) joins it: "Continue draft" in the header, the tiles,
  * followers chart and drafts list above the stories (WriterDashboardTop), a numbers table in each
- * story card and "Latest on your chapters" below. Between the two sits "Lines and stops"
+ * story card and "Latest comments" below. Between the two sits "Lines and stops"
  * (ChapterInsights, bundle IDEAS-1 part d): one chapter's most-loved lines and where readers stop.
+ * Board D01 (user story 5.1) adds "Story Atlas" to the header and two adverts (PageAdSlot, page
+ * write): one after the followers chart and one after the comments.
+ * Board D04 (user story 5.4): a member with no story sees WriteEmptyState instead (New story as
+ * the one main button, the Atlas and the first-story guides), with no buttons in the header. The
+ * reader figures, the followers graph and the comment and line tables wait until a chapter is
+ * out, so nothing shows a row of zeros; the drafts list shows from the first story.
  * What it calls: useMyStories (stories through stories_select_own) and useWriterDashboard
  * (writer_dashboard()). After creating a story, NewStoryPage lands here with a "saved" notice
  * (router state).
- * Simplified look (bundle CALM-7c, board simplified/New-Write): the display title with the line
- * under it and "Continue draft" (the page's one main button) and "New story" (quiet) at the right;
+ * Simplified look (bundle CALM-7c, board simplified/New-Write; board D01): the display title with
+ * the line under it and, under them, "Continue draft" (the page's one main button), "New story"
+ * and "Story Atlas" (quiet);
  * "How readers respond" is the one glass hero; sections have plain headings, no eyebrows, no cards
  * and no info pills.
  */
@@ -23,21 +30,24 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 
 import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
 import type { DashboardChapter, DashboardPeriod, WriterDashboard } from '../api/dashboard';
 import type { MyStory } from '../api/stories';
 import { useMyStories } from '../hooks/useMyStories';
 import { useWriterDashboard } from '../hooks/useWriterDashboard';
-import { waitingChapters } from '../lib/dashboardChapters';
+import { allTimeCommentCount, waitingChapters } from '../lib/dashboardChapters';
 
 import { ChapterInsights } from './ChapterInsights';
 import { LatestComments } from './LatestComments';
 import { RecentlyDeleted } from './RecentlyDeleted';
+import { WriteEmptyState } from './WriteEmptyState';
 import { WriterDashboardTop } from './WriterDashboardTop';
 import { WriterStoryCard } from './WriterStoryCard';
 
@@ -73,15 +83,25 @@ function ContinueDraftLink({ chapters }: { chapters: DashboardChapter[] }) {
 }
 
 /**
- * The "New story" link. In the header it is the quiet button beside "Continue draft" (board
- * simplified/New-Write); in the empty state, where it is the only thing to do, it is the main
- * button.
+ * The "New story" link: a quiet button with a plus beside "Continue draft" (board D01). With no
+ * story yet it is the empty state's main button instead (WriteEmptyState, board D04).
  */
-function NewStoryLink({ label, look }: { label: string; look: 'quiet' | 'main' }) {
-  const variant = look === 'quiet' ? 'secondary' : 'primary';
+function NewStoryLink({ label }: { label: string }) {
   return (
-    <Link to="/write/new" className={buttonClassName({ variant })}>
+    <Link to="/write/new" className={buttonClassName({ variant: 'secondary' })}>
+      <ActionIcon name="plus" />
       {label}
+    </Link>
+  );
+}
+
+/** "Story Atlas", the quiet button with the map that opens the writer's Atlas (board D01). */
+function StoryAtlasLink() {
+  const { t } = useTranslation('writing');
+  return (
+    <Link to="/plan" className={buttonClassName({ variant: 'secondary' })}>
+      <ActionIcon name="map" />
+      {t('storyCard.atlas')}
     </Link>
   );
 }
@@ -130,15 +150,8 @@ function StoriesBody({
     return <p className="m-0 text-ink-muted">{t('yourWriting.signedOut')}</p>;
   if (writing.loadFailed) return <Notice tone="error">{t('errors.loadFailed')}</Notice>;
   const stories = liveStoriesFor(writing.stories, filter);
-  if (stories.length === 0) {
-    return (
-      <EmptyState
-        title={t(filter === 'all' ? 'yourWriting.empty.title' : 'yourWriting.empty.filteredTitle')}
-        description={t('yourWriting.empty.description')}
-        action={<NewStoryLink label={t('yourWriting.empty.action')} look="main" />}
-      />
-    );
-  }
+  // With no story at all the page shows WriteEmptyState, so only a filter can empty this list.
+  if (stories.length === 0) return <EmptyState title={t('yourWriting.empty.filteredTitle')} />;
   // Automatic covers come from each story's ID; two neighbours never share a design (S1-E3-13).
   const covers = designsForRow(stories);
   return (
@@ -155,25 +168,30 @@ function StoriesBody({
   );
 }
 
-/** The page's header: the title, the line under it, "Continue draft" and "New story". */
+/**
+ * The page's header (board D01, user story 5.1): the title, the line under it, then "Continue
+ * draft", "New story" and "Story Atlas" in a row under them, at the left.
+ */
 function YourWritingHeader({
-  isSignedIn,
+  showsButtons,
   chapters,
 }: {
-  isSignedIn: boolean;
+  /** False when signed out, and with no story yet (board D04 puts New story in the box). */
+  showsButtons: boolean;
   chapters: DashboardChapter[];
 }) {
   const { t } = useTranslation('writing');
   return (
-    <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+    <header className="flex flex-col gap-6">
       <div className="flex min-w-0 flex-col gap-2">
         <h1 className="m-0 type-display text-ink-heading">{t('yourWriting.heading')}</h1>
         <p className="m-0 max-w-[62ch] type-body text-ink-muted">{t('yourWriting.intro')}</p>
       </div>
-      {isSignedIn && (
-        <div className="flex flex-wrap gap-3">
+      {showsButtons && (
+        <div className="flex flex-wrap items-center gap-3">
           <ContinueDraftLink chapters={chapters} />
-          <NewStoryLink label={t('yourWriting.newStory')} look="quiet" />
+          <NewStoryLink label={t('yourWriting.newStory')} />
+          <StoryAtlasLink />
         </div>
       )}
     </header>
@@ -203,6 +221,14 @@ function StoriesSection({
   );
 }
 
+/**
+ * Whether any chapter has ever been out, the moment reader numbers start (board D04: before it,
+ * nothing shows a row of zeros).
+ */
+function hasChapterOut(chapters: DashboardChapter[]): boolean {
+  return chapters.some((chapter) => chapter.firstPublishedAt !== null);
+}
+
 /** Story titles by slug, for the dashboard's draft rows. */
 function titlesBySlug(stories: MyStory[]): Map<string, string> {
   return new Map(stories.map((story) => [story.slug, story.title]));
@@ -228,10 +254,41 @@ function DashboardTopWhenReady({
   return (
     <WriterDashboardTop
       dashboard={dashboard}
+      hasChapterOut={hasChapterOut(dashboard.chapters)}
       period={period}
       onPeriodChange={onPeriodChange}
       storyTitles={titlesBySlug(stories)}
     />
+  );
+}
+
+/**
+ * The dashboard's lower half (board D01): "Lines and stops" beside "Latest comments" from 1024 px,
+ * then the page's second advert (slot write_lower; staff turn it off or book it in Sponsors ›
+ * Placements).
+ *
+ * @param props.dashboard - the numbers and the latest comments
+ * @param props.stories - the live stories, for the chapter titles
+ * @returns the two sections and the advert
+ */
+function DashboardLowerHalf({
+  dashboard,
+  stories,
+}: {
+  dashboard: WriterDashboard;
+  stories: MyStory[];
+}) {
+  return (
+    <>
+      <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
+        <ChapterInsights chapters={dashboard.chapters} storyTitles={titlesBySlug(stories)} />
+        <LatestComments
+          comments={dashboard.latestComments}
+          totalComments={allTimeCommentCount(dashboard.chapters)}
+        />
+      </div>
+      <PageAdSlot pageKey="write" position={2} className="mx-auto w-full max-w-[970px]" />
+    </>
   );
 }
 
@@ -252,6 +309,29 @@ function useArrivalNotices() {
 }
 
 /**
+ * What the page shows, worked out from the stories and the dashboard.
+ *
+ * @param writing - the writer's stories
+ * @param dashboard - the writer dashboard, or null while it loads
+ * @returns the live and deleted stories, the chapters and which parts show
+ */
+function usePageParts(writing: ReturnType<typeof useMyStories>, dashboard: WriterDashboard | null) {
+  const liveStories = liveStoriesFor(writing.stories, 'all');
+  const hasStories = writing.isSignedIn && liveStories.length > 0;
+  return {
+    liveStories,
+    deletedStories: writing.stories.filter((story) => story.deletedAt !== null),
+    chapters: dashboard?.chapters ?? [],
+    hasStories,
+    // Board D04: a signed-in member whose stories have loaded and come to none.
+    hasNoStory:
+      writing.isKnown && writing.isSignedIn && !writing.loadFailed && liveStories.length === 0,
+    // The comments and the lines table wait for the first chapter out, like the figures.
+    showsLowerHalf: hasStories && dashboard !== null && hasChapterOut(dashboard.chapters),
+  };
+}
+
+/**
  * Renders the page.
  *
  * @returns the Your writing screen
@@ -259,38 +339,39 @@ function useArrivalNotices() {
 export function YourWritingPage() {
   const { t } = useTranslation('writing');
   const writing = useMyStories();
-  const [period, setPeriod] = useState<DashboardPeriod>('all');
+  // The figures open on the last 30 days, as board D01 draws them (user story 5.1).
+  const [period, setPeriod] = useState<DashboardPeriod>('last_30_days');
   const { dashboard, loadFailed } = useWriterDashboard(period);
   const { justCreated, chapterFailed } = useArrivalNotices();
-  const liveStories = liveStoriesFor(writing.stories, 'all');
-  const deletedStories = writing.stories.filter((story) => story.deletedAt !== null);
-  const chapters = dashboard?.chapters ?? [];
-  const hasStories = writing.isSignedIn && liveStories.length > 0;
+  const parts = usePageParts(writing, dashboard);
 
   return (
     <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-6">
       <title>{t('yourWriting.documentTitle')}</title>
-      <YourWritingHeader isSignedIn={writing.isSignedIn} chapters={chapters} />
+      <YourWritingHeader
+        showsButtons={writing.isSignedIn && !parts.hasNoStory}
+        chapters={parts.chapters}
+      />
       {justCreated && <Notice tone="success">{t('yourWriting.created')}</Notice>}
       {chapterFailed && <Notice tone="warning">{t('errors.chapterCreateFailed')}</Notice>}
-      {hasStories && (
+      {parts.hasStories && (
         <DashboardTopWhenReady
           dashboard={dashboard}
           loadFailed={loadFailed}
-          stories={liveStories}
+          stories={parts.liveStories}
           period={period}
           onPeriodChange={setPeriod}
         />
       )}
-      <StoriesSection writing={writing} chapterNumbers={chapters} />
-      {hasStories && dashboard !== null && (
-        // Lines and stops beside the latest comments from 1024 px (board New-Write).
-        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
-          <ChapterInsights chapters={chapters} storyTitles={titlesBySlug(liveStories)} />
-          <LatestComments comments={dashboard.latestComments} />
-        </div>
+      {parts.hasNoStory ? (
+        <WriteEmptyState />
+      ) : (
+        <StoriesSection writing={writing} chapterNumbers={parts.chapters} />
       )}
-      <RecentlyDeleted stories={deletedStories} />
+      {parts.showsLowerHalf && dashboard !== null && (
+        <DashboardLowerHalf dashboard={dashboard} stories={parts.liveStories} />
+      )}
+      <RecentlyDeleted stories={parts.deletedStories} />
     </PageContainer>
   );
 }

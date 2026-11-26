@@ -7,7 +7,6 @@
   "logIn": "Get in",
   "list": {
     "title": "Chats",
-    "newChat": "Start a new chat",
     "tabsLabel": "Which chats",
     "all": "Chats",
     "requests": "Requests",
@@ -17,10 +16,11 @@
     "requestsHint": "First messages from people who don’t follow you show up here. They can’t send more until you accept.",
     "you": "You: {{text}}",
     "removed": "[Removed by the moderation team]",
-    "unread": "new messages",
     "waiting": "Waiting for them to accept",
     "loadFailed": "We couldn’t load your chats. Try again in a moment.",
-    "saidNoThanks": "Said no thanks for now"
+    "saidNoThanks": "Said no thanks for now",
+    "yesterday": "yesterday",
+    "new": "New"
   },
   "rules": {
     "minors": "Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on.",
@@ -36,7 +36,6 @@
     "newChat": "New chat",
     "notFound": "There’s nobody to message with that username.",
     "loadFailed": "We couldn’t load this chat. Try again in a moment.",
-    "back": "Chats",
     "messagesLabel": "Messages with {{name}}",
     "you": "You",
     "removed": "[Removed by the moderation team]",
@@ -48,7 +47,25 @@
     "reportLabel": "the message from {{name}} at {{time}}",
     "noThanksReply": "{{name}} replied: “Thanks for writing, but I’d rather not chat right now.”",
     "noThanksAgain": "You can send a new request from {{date}}.",
-    "missing": "Write a message first."
+    "missing": "Write a message first.",
+    "today": "Today",
+    "moreFor": "More for the message from {{name}} at {{time}}",
+    "adultsOff": "Messages from adults are off in your settings, so you can’t write to {{name}}."
+  },
+  "bar": {
+    "back": "Back to Messages",
+    "more": "More: block or report"
+  },
+  "header": {
+    "kind": {
+      "fiction": "Fiction writer",
+      "poetry": "Poet",
+      "nonfiction_essays": "Essayist",
+      "other": "Writer"
+    },
+    "story_one": "{{title}}, {{count}} chapter",
+    "story_few": "{{title}}, {{count}} chapters",
+    "story_other": "{{title}}, {{count}} chapters"
   },
   "share": {
     "pick": "Pick a chat, or start a new one, to send this link.",
@@ -79,10 +96,10 @@
   "about": {
     "title": "About this chat",
     "viewProfile": "View {{name}}’s profile",
-    "followEachOther": "You follow each other.",
-    "iFollow": "You follow them.",
-    "theyFollow": "They follow you.",
-    "noFollow": "You don’t follow each other.",
+    "followEachOther": "follow each other",
+    "iFollow": "follow them",
+    "theyFollow": "are followed by them",
+    "noFollow": "don’t follow each other",
     "whoTitle": "Who can message you",
     "audience": {
       "everyone": "Everyone",
@@ -93,17 +110,18 @@
     "on": "On",
     "off": "Off",
     "adultsHint": "Adults can never message anyone under 16. If you’re 16 or 17, messages from adults are off unless you turn them on. Only you can turn this on, in Settings.",
-    "privacyTitle": "Who can read messages",
-    "privacy": "Messages aren’t end-to-end encrypted. Our team reads them only if someone reports them or the law requires it."
+    "privacy": "Messages aren’t end-to-end encrypted. Our team reads them only if someone reports them or the law requires it.",
+    "profile": "Profile",
+    "you": "You"
   },
   "newChat": {
     "eyebrow": "Messages",
     "title": "Start a new chat",
-    "label": "Username",
-    "hint": "The name after @ on the profile.",
-    "open": "Open chat",
     "close": "Close",
-    "missing": "Type a username first."
+    "intro": "People you follow who can get messages from you. Open one to start a chat.",
+    "listLabel": "People you follow",
+    "empty": "Nobody to write to yet. Follow writers, and the ones who can get messages from you show up here.",
+    "loadFailed": "We couldn’t load the people you follow. Try again in a moment."
   },
   "failures": {
     "not_taking": "They aren’t taking messages right now.",
@@ -130,10 +148,8 @@
     "off": "Off"
   },
   "deleteChat": {
-    "eyebrow": "Delete",
     "button": "Delete chat",
     "title": "Delete this chat?",
-    "explain": "This removes the chat for you. When both of you delete it, the messages are deleted for good.",
     "body": "It goes from your messages straight away. When {{name}} deletes it too, the messages are gone for good.",
     "confirm": "Delete the chat",
     "deleting": "Deleting…",

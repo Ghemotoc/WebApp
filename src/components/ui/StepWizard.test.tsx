@@ -40,6 +40,7 @@ function Harness() {
       onOpenStep={wizard.openStep}
       onNext={wizard.goToNextStep}
       onSkip={wizard.goToNextStep}
+      onBack={wizard.goToPreviousStep}
       lastStepActions={
         <button type="button" onClick={wizard.finish}>
           Create
@@ -63,7 +64,7 @@ describe('StepWizard', () => {
 
   it('moves on with Next, folds the done step to its summary and focuses the new step', () => {
     renderWithProviders(<Harness />, 'en');
-    fireEvent.click(screen.getByRole('button', { name: 'Next: Cover' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next: cover' }));
     expect(screen.getByText('The Weather Station · English')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Cover' })).toHaveFocus();
     expect(screen.getAllByRole('listitem')[1]).toHaveAttribute('aria-current', 'step');
@@ -71,7 +72,7 @@ describe('StepWizard', () => {
 
   it('skips an optional step and reopens a done step with Change', () => {
     renderWithProviders(<Harness />, 'en');
-    fireEvent.click(screen.getByRole('button', { name: 'Next: Cover' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next: cover' }));
     fireEvent.click(screen.getByRole('button', { name: 'Skip this step' }));
     expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Change The basics' }));
@@ -83,8 +84,8 @@ describe('StepWizard', () => {
 
   it('folds every step as done after finish, and Change opens one again', () => {
     renderWithProviders(<Harness />, 'en');
-    fireEvent.click(screen.getByRole('button', { name: 'Next: Cover' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Next: Labels' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next: cover' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next: labels' }));
     fireEvent.click(screen.getByRole('button', { name: 'Create' }));
     // No step is open: each one shows its Change button instead of its fields.
     expect(screen.queryByText('Label fields')).not.toBeInTheDocument();

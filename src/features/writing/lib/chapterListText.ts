@@ -1,21 +1,23 @@
 /**
- * The words Manage chapters shows about each chapter: the list's summary ("6 published,
- * 1 draft, 1 scheduled") and each row's meta line (story S1-E3-04; board 4.4).
+ * The words the Chapters page shows about each chapter: the list's summary ("6 published,
+ * 1 draft, 1 scheduled", read by screen readers), each row's meta line and each deleted row's
+ * line (story S1-E3-04; board D03, user story 5.3, which turns the lines into MetaLine facts).
  *
- * GAPS-11 adds the note for a chapter whose number changed ("Was chapter 13").
+ * GAPS-11 adds the note for a chapter whose number changed ("was chapter 13").
  *
- * Who calls it: ChapterListCard, ManagedChapterRow and RecentlyDeletedChapters.
+ * Who calls it: ChapterList, ManagedChapterRow and RecentlyDeletedChapters.
  * What it calls: i18next's t() for the words (writing.json, manageChapters.*) and
  * src/lib/local-time.ts and src/lib/romania-time.ts for the dates and a scheduled chapter's
  * time, all on the writer's own clock (Robert, 20 Nov 2026, 18:19 and 18:36 UTC). Kept apart from the components so it can be tested on its own.
  */
 import type { TFunction } from 'i18next';
 
-import { formatLocalDateTime } from '@/lib/local-time';
+import type { MetaFact } from '@/components/ui/MetaLine';
+import { formatLocalDateTime, localDaysBetween } from '@/lib/local-time';
 import { dateLocaleFor, withShortSeptember } from '@/lib/romania-time';
 
 import type { ManagedChapter, ManagedChapterState } from '../api/manageChapters';
-import { purgeDateFor } from './purgeDate';
+import { CONTENT_PURGE_DAYS } from './purgeDate';
 
 /** The order the board lists the counts in. */
 const summaryOrder: ManagedChapterState[] = ['published', 'draft', 'scheduled', 'unpublished'];
@@ -53,82 +55,133 @@ export function chapterSummary(t: TFunction, chapters: ManagedChapter[]): string
   return parts.join(', ');
 }
 
-/** The published line, with the "Edited on" readers see when the text changed since. */
-function publishedMeta(t: TFunction, chapter: ManagedChapter, language: string): string {
-  const parts = [
-    t('manageChapters.meta.published', {
-      date: shortLocalDate(chapter.firstPublishedAt ?? '', language),
-    }),
-  ];
-  if (chapter.editedAt !== null) {
-    parts.push(
-      t('manageChapters.meta.edited', { date: shortLocalDate(chapter.editedAt, language) }),
-    );
-  }
-  return parts.join(' · ');
-}
-
-/** The draft line: "Draft · 228 words · saved 23 Oct". */
-function draftMeta(t: TFunction, chapter: ManagedChapter, language: string): string {
-  const parts = [
-    t('manageChapters.meta.draft'),
-    t('manageChapters.meta.words', { count: chapter.wordCount }),
-  ];
-  if (chapter.draftSavedAt !== null) {
-    parts.push(
-      t('manageChapters.meta.saved', { date: shortLocalDate(chapter.draftSavedAt, language) }),
-    );
-  }
-  return parts.join(' · ');
+/** What a row's meta line needs besides the chapter. */
+export interface RowFactOptions {
+  /** The interface language. */
+  language: string;
+  /** The moment to count "today" from (the page passes new Date()). */
+  now: Date;
+  /** The chapter's likes from the writer dashboard; null when unknown or "fewer than 5". */
+  likes: number | null;
 }
 
 /**
- * The line under a live chapter's title.
+ * A day on the viewer's own calendar, as a row says it: "today" or "18 Sep".
+ *
+ * @param t - the writing namespace's t()
+ * @param isoTime - the moment
+ * @param options - the language and the moment to count from
+ * @returns the words
+ */
+function dayText(t: TFunction, isoTime: string, options: RowFactOptions): string {
+  if (localDaysBetween(new Date(isoTime), options.now) === 0) return t('manageChapters.row.today');
+  return shortLocalDate(isoTime, options.language);
+}
+
+/** The facts only a published chapter has: the day, the "Edited on" readers see, its likes. */
+function publishedFacts(t: TFunction, chapter: ManagedChapter, options: RowFactOptions) {
+  const facts: MetaFact[] = [{ text: dayText(t, chapter.firstPublishedAt ?? '', options) }];
+  if (chapter.editedAt !== null) {
+    const date = shortLocalDate(chapter.editedAt, options.language);
+    facts.push({ text: t('manageChapters.meta.edited', { date }) });
+  }
+  return facts;
+}
+
+/**
+ * The facts that say when, for each state: the day it came out, when it goes live on the
+ * writer's own clock (Robert, 20 Nov 2026, 18:19 UTC), when the draft was saved, or the day it
+ * was taken back and what that means for readers.
  *
  * @param t - the writing namespace's t()
  * @param chapter - the chapter
- * @param language - the interface language
- * @returns the line, for example "Goes live Saturday 24 October at 18:00, local time"
+ * @param options - the language and the moment to count from
+ * @returns the facts after the state
  */
-export function chapterMeta(t: TFunction, chapter: ManagedChapter, language: string): string {
+function whenFacts(t: TFunction, chapter: ManagedChapter, options: RowFactOptions): MetaFact[] {
   switch (chapter.state) {
     case 'published':
-      return publishedMeta(t, chapter, language);
-    case 'scheduled':
-      return t('manageChapters.meta.scheduled', {
-        when: formatLocalDateTime(new Date(chapter.scheduledFor ?? ''), language),
-      });
+      return publishedFacts(t, chapter, options);
+    case 'scheduled': {
+      const when = formatLocalDateTime(new Date(chapter.scheduledFor ?? ''), options.language);
+      return [{ text: t('manageChapters.row.goesLive', { when }) }];
+    }
     case 'unpublished':
       return [
-        t('manageChapters.meta.unpublished', {
-          date: shortLocalDate(chapter.unpublishedAt ?? '', language),
-        }),
-        t('manageChapters.meta.unpublishedNote'),
-      ].join(' · ');
+        { text: dayText(t, chapter.unpublishedAt ?? '', options) },
+        { text: t('manageChapters.row.notOpen') },
+        { text: t('manageChapters.row.commentsKept') },
+      ];
     case 'draft':
-      return draftMeta(t, chapter, language);
+      if (chapter.draftSavedAt === null) return [];
+      return [
+        {
+          text: t('manageChapters.meta.saved', { date: dayText(t, chapter.draftSavedAt, options) }),
+        },
+      ];
   }
 }
 
 /**
- * The line under a deleted chapter: "Deleted 14 Oct · gone for good on 13 November 2026".
+ * The meta line under a live chapter's title (board D03, user story 5.3: "a row says what
+ * readers know"): the state in bold, when, the words, then a move note, the likes and "the last
+ * chapter" on the marked one. For example "Published · 9 Oct · 1,840 words · 212 likes · was
+ * chapter 13".
+ *
+ * @param t - the writing namespace's t()
+ * @param chapter - the chapter
+ * @param options - the language, the moment to count from and the chapter's likes
+ * @returns the facts, in reading order
+ */
+export function chapterRowFacts(
+  t: TFunction,
+  chapter: ManagedChapter,
+  options: RowFactOptions,
+): MetaFact[] {
+  // Step 1: the state, then when, then the words.
+  const facts: MetaFact[] = [
+    { text: t(`manageChapters.state.${chapter.state}`), kind: 'state' },
+    ...whenFacts(t, chapter, options),
+    { text: t('manageChapters.meta.words', { count: chapter.wordCount }) },
+  ];
+  // Step 2: what only some chapters have.
+  if (chapter.state === 'published' && options.likes !== null && options.likes > 0) {
+    facts.push({ text: t('manageChapters.row.likes', { count: options.likes }) });
+  }
+  const movedNote = chapterMovedNote(t, chapter);
+  if (movedNote !== null) facts.push({ text: movedNote });
+  if (chapter.isMarkedLast) facts.push({ text: t('manageChapters.row.lastChapter') });
+  return facts;
+}
+
+/**
+ * The line under a deleted chapter (board D03): "Deleted 14 Oct · 27 days left".
  *
  * @param t - the writing namespace's t()
  * @param deletedAt - when it was deleted
- * @param language - the interface language
- * @returns the line
+ * @param options - the language and the moment to count from
+ * @returns the two facts
  */
-export function deletedMeta(t: TFunction, deletedAt: string, language: string): string {
-  return t('manageChapters.deleted.meta', {
-    date: shortLocalDate(deletedAt, language),
-    purgeDate: purgeDateFor(deletedAt, language),
-  });
+export function deletedFacts(
+  t: TFunction,
+  deletedAt: string,
+  options: Pick<RowFactOptions, 'language' | 'now'>,
+): MetaFact[] {
+  const day = dayText(t, deletedAt, { ...options, likes: null });
+  // The undo lasts CONTENT_PURGE_DAYS from the deletion; never fewer than 0 days.
+  const daysGone = localDaysBetween(new Date(deletedAt), options.now);
+  const daysLeft = Math.max(CONTENT_PURGE_DAYS - daysGone, 0);
+  return [
+    { text: t('manageChapters.deleted.deletedOn', { date: day }) },
+    { text: t('manageChapters.deleted.daysLeft', { count: daysLeft }) },
+  ];
 }
 
 /**
  * The note for a chapter whose number changed in the last 7 days (GAPS-11; liquid glass
- * Chapters board): "Moved here from chapter 14" for the chapter the writer moved, "Was chapter
- * 13" for one that shifted to make room.
+ * Chapters board; board D03): "moved here from chapter 14" for the chapter the writer moved,
+ * "was chapter 13" for one that shifted to make room, in lower case because it sits in the meta
+ * line.
  *
  * @param t - the writing namespace's t()
  * @param chapter - the chapter as the list has it
@@ -137,6 +190,6 @@ export function deletedMeta(t: TFunction, deletedAt: string, language: string): 
 export function chapterMovedNote(t: TFunction, chapter: ManagedChapter): string | null {
   // No move on record, or the list already shows it back at its old number.
   if (chapter.wasPosition === null || chapter.wasPosition === chapter.position) return null;
-  const key = chapter.wasPicked ? 'manageChapters.movedFrom' : 'manageChapters.wasChapter';
+  const key = chapter.wasPicked ? 'manageChapters.row.movedFrom' : 'manageChapters.row.wasChapter';
   return t(key, { number: chapter.wasPosition });
 }

@@ -250,7 +250,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
 | `src/features/flags/` | The public feature flags for screens that change with them (`useFeatureFlags`) | S1-E2-01 |
-| `src/features/errors/` | Our own error log's browser side: the global handlers, the router's error page ("Something went wrong on our side") and the scrubbing before anything is sent; see its README | S1-E1-05 |
+| `src/features/errors/` | Our own error log's browser side: the global handlers, the router's error page ("Something went wrong on our side"), the one quiet reload when a tab still runs an older release, and the scrubbing before anything is sent; see its README | S1-E1-05 |
 | `src/features/maintenance/` | The maintenance page and the gate in AppLayout that shows it while `maintenance_mode` is on (staff and the log-in pages excepted) | S1-E1-05 |
 | `src/features/offline/` | The "You're offline" / "You're back online" banner under the top bar | S1-E1-05 |
 | `src/config/appVersion.ts` | The build's version for error reports: the short commit on Cloudflare, `local` elsewhere (set in `vite.config.ts`) | S1-E1-05 |
@@ -528,7 +528,18 @@ the other person: MessagesHeaderLink (useUnreadMessageCount → unread_message_c
   → opening the chat → mark_conversation_read()
 ```
 
-The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`. Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`, behind its "…" button (board E13). Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+
+Boards E12 and E13 (BOOKS-4) added three reads, all in `…_books_e12_e13_chat_partner_and_new_chat.sql` (tests `412`), none of them changing who may write to whom:
+
+```
+NewChatButton → useNewChatPeople → new_chat_people()
+  → the people the caller follows, live and not staff, kept only when conversation_can_send() says yes
+ChatHeader / ChatFocusBar → usePartnerLine(chat.latestStory)
+  → conversation_with().latest_story ← chat_partner_story(): their newest story the reader may open
+AboutChatPanel / ChatPanel → chat.adultsSwitchStops
+  → conversation_with().adults_switch_stops ← my_adults_switch_stops_chat(): a 16 or 17-year-old's own switch
+```
 
 ## Block and report inside messages (S1-E9-02)
 
@@ -926,6 +937,7 @@ The error page shows the first six characters of the stored row's ID as the code
   │                      area, grouped as the side menu is
   ├─ /staff/roles      StaffRolesPage (S1-E2-07a, below)
   ├─ /staff/users      UsersPage (S1-E11-02): search → useUserLookup → admin_user_lookup()
+  │                      and, for owners and admins, AccountList → useAccountList → admin_list_accounts() (every account, paged, each page logged)
   ├─ /staff/users/:id  AccountPage: useAccount → admin_user_account(), admin_account_open_cases(),
   │                      admin_account_sanctions(), admin_reveal_email();
   │                      AccountActions → useAccountActions → admin_apply_sanction(),
@@ -1327,7 +1339,14 @@ The word lists start in `content/username-word-lists/` and reach the database th
 
 ```
 /write (YourWritingPage) → "New story"    → /write/new (NewStoryPage)      src/features/writing/
-/write → "More comments" → /write/comments (ChapterCommentsPage, GAPS-5)   useMyChapterComments → my_chapter_comments()
+/write → "View 72 comments" → /write/comments (ChapterCommentsPage, GAPS-5)   useMyChapterComments → my_chapter_comments()
+  │  board D01 (user story 5.1): "Story Atlas" (/plan) beside "New story"; the total beside
+  │     "Latest comments" and each story's "last updated" come from lib/dashboardChapters.ts;
+  │     two adverts, PageAdSlot pageKey="write" (slots write_wide and write_lower)
+  │  board D04 (user story 5.4): no live story → WriteEmptyState ("No stories yet" box with
+  │     New story, "Plan before you write" → /plan, FirstStoryGuides: CMS help pages whose
+  │     address starts with "first-story-", lib/firstStoryGuides.ts); figures only once a
+  │     chapter is out (WriterDashboardTop hasChapterOut)
   │  the simplified look (CALM-7c): the figures on one glass Hero, each story a hairline row
   │     with one meta line (lib/writerStoryFacts.ts), quiet buttons, "Continue draft" the main one
   │  the choices: useStoryFormOptions → api/stories.ts → open_story_languages(), categories
@@ -1361,7 +1380,7 @@ first_published_at and get_story_page() (S1-E3-05) serves the public page (ADR 0
   │  SaveBar (G9d): stays at the foot of the window, says "You have unsaved changes" while
   │  isDirty, and Cancel puts the last saved answers back (useStorySettingsForm.discard);
   │  StoryPreviewAside beside the form shows the card readers will see
-  │  DeleteStoryControl: asked twice → delete_my_story(slug); Undo → restore_my_story(slug)
+  │  DeleteStoryControl: Delete story → DeleteStoryDialog (type the title) → delete_my_story(slug); Undo → restore_my_story(slug)
   ▼
 update_my_story(): is_active_member(), my_live_story_id() (the caller's own live story),
   check_story_basics() (shared with create_story()), check_story_cover(), set_story_tags();
@@ -1426,11 +1445,18 @@ Tests: `supabase/tests/database/104-ratings-and-labels.test.sql`, `e2e/ratings.s
   │  useChapterDraft → the chapters table (chapters_select_own: the owner only)
   │  useChapterEditor → TipTap with chapterEditorExtensions (only the allowed formatting);
   │    the stored Markdown becomes a document (lib/chapterMarkdown.ts) and back on every save
-  │  EditorToolbar (role=toolbar, one tab stop, aria-keyshortcuts), LinkDialog (Ctrl+K)
-  │  useAutosave: every 10 s while there are changes, and on blur
+  │  EditorBar (board D05): Back to chapters, the story's title, "Chapter 16 · Saved · 240 words"
+  │    (SaveWord), Focus mode, Compare versions after a conflict, Preview and Publish (a Sheet)
+  │  EditorToolbar (role=toolbar, one tab stop, aria-keyshortcuts) in EditorToolbarDock (at the
+  │    bottom over the keyboard below 1024 px, useKeyboardInset): the "+" InsertMenu (picture,
+  │    video link, scene break, drawing, music), Undo, the Poem button; LinkDialog (Ctrl+K)
+  │  EditorPaper: "Chapter 16", the title, the text, the words and "Saved at 14:02" at its foot
+  │  useAutosave: half a second after typing stops, every 10 s while a save is owed, and on blur
   │    → chapterDraftSchema (src/schemas/chapter.ts: no HTML, safe links, ş/ţ corrected)
   │    → api/chapters.ts → save_chapter_draft(code, title, body, expected_version)
-  │  EditorAside: SaveStatus (role=status), Publish (S1-E3-03), Story details
+  │  SaveStatus (role=status, hidden unless the writer must act: conflict, refused save with
+  │    Retry, a rule broken, an account that can't save); WritingChapterList on the left and
+  │    ChapterPlanPanel with EditorStoryDetails on the right from 1024 px (the plan is a Sheet below)
   ▼
 save_chapter_draft(): is_active_member(), the caller's own live chapter (locked), a stale
   expected_version → {status: conflict} (S1-E3-02b shows it), check_chapter_text() (the same
@@ -1443,7 +1469,7 @@ Offline, paste and conflicts (S1-E3-02b):
 ```
 every edit → useDeviceKeep: half a second later the title and text go to IndexedDB
   (lib/draftStore.ts, key: the chapter code, with the version they are based on)
-offline (useOnlineStatus, S1-E1-05) → nothing is sent; the Saving box says the words are kept
+offline (useOnlineStatus, S1-E1-05) → nothing is sent; the save words say the words are kept
 back online, or the editor opens with a device copy → that copy is sent at once
 the server has the text → the device copy is forgotten
 a conflict → "Keep this version" (save over the server's version) or "Compare versions"
@@ -1455,7 +1481,8 @@ paste → TipTap's transformPastedHTML → lib/pasteCleaning.ts (Word lists, Doc
 Publishing (S1-E3-03):
 
 ```
-PublishPanel (in EditorAside) ← useChapterPublishing (keeps the status after each action)
+PublishPanel (in a Sheet from the editor's bar, board D05) ← useChapterPublishing (keeps the
+  status after each action and refreshes the chapter list)
   │  "Publish chapter" / "Schedule chapter" / "Update chapter": the autosave saves first
   │    (saveNow, isAllSaved) so what goes live is what is on screen (Q10)
   │  the date and time are on the writer's own clock → src/lib/local-time.ts → an instant (CALM-8b)
@@ -1498,11 +1525,17 @@ Tests: `supabase/tests/database/392-last-chapter.test.sql`, `src/features/writin
 Managing chapters (S1-E3-04), at `/write/s/<slug>/chapters` ("Manage chapters" on a story card, or the story in the editor's breadcrumb):
 
 ```
-ManageChaptersPage → ChapterStats ("This story in numbers": chapters, words, next scheduled)
-  │  → ChapterListCard → SortableChapterList (dnd-kit: mouse, touch, keyboard)
-  │                     → ManagedChapterRow ("Chapter 3: Title", pill, meta from lib/chapterListText.ts)
-  │                       → ChapterRowActions (arrows, Edit, Rename, Unpublish, Delete)
-  │  → RecentlyDeletedChapters (Undo), DeleteChapterDialog (asks first)
+ManageChaptersPage → ChapterStats (board D03: Chapters by state, Words out, Reads of all time,
+  │                    Status and the marked last chapter; lib/chapterStats.ts, reads from
+  │                    useWriterDashboard with "fewer than 5" counted as a "+" floor)
+  │  → ChapterList (more than 10 chapters: the newest 6, then "Show chapters 1 to N")
+  │    → SortableChapterList (dnd-kit: mouse and touch drag the whole row; the click a drop
+  │                           lands on the title is dropped, lib/blockClickAfterDrag.ts)
+  │      → ManagedChapterRow ("Chapter 3: Title" over a MetaLine from lib/chapterListText.ts)
+  │        → ChapterRowActions (Earlier, Later, Edit, then MoreMenu: Rename, Preview, Schedule,
+  │          Unpublish or Publish again, Copy link, Delete; Earlier and Later move into More
+  │          under 600 px)
+  │  → RecentlyDeletedChapters (Restore, days left), DeleteChapterDialog (asks first)
   │  → MoveChapterDialog: a move that gives a published chapter a new number asks first
   │    (lib/chapterMoves.ts decides; drafts and scheduled chapters move straight away; G9d)
   ▼
@@ -1704,7 +1737,7 @@ post_comment() ────────┘ queues comment_posted            comm
                                              notifications (the person told reads only their own rows)
 NotificationsPage → hooks/useNotifications → api/notifications.ts → my_notifications()
 NotificationBell → hooks/useUnreadNotificationCount (every 60 s and on focus) → my_unread_notification_count()
-"Mark all as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
+"Mark as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
 ```
 
 Reading applies the reader's rules again (`notification_is_shown()`): a chapter they can no longer open (rating, block, moderation) or someone either side now blocks is left out, so the badge and the list always agree. A moderation decision is always shown and `is_required` (DSA art. 17). Answers carry usernames and display names, never a user ID. The words for each kind are picked in `lib/notificationText.ts`; the day headings in `lib/dayGroups.ts` (Romanian time).
@@ -1712,6 +1745,10 @@ Reading applies the reader's rules again (`notification_is_shown()`): a chapter 
 Tests: `154-notifications.test.sql`, `lib/notificationText.test.ts`, `lib/dayGroups.test.ts`, `e2e/notifications.spec.ts`.
 
 **The end of a followed story (BOOKS B06, user story 2.6).** When the chapter a `chapter_published` job names is the writer's marked last chapter (`chapters.is_last`), `notify_chapter_published()` tells the story's and the writer's followers once with the kind `story_completed` instead of `new_chapter` ("Lia Scrie finished Stația meteo.", opening the story page). It sits under Stories, and its email follows the person's New chapters choice (`email_delivery_for()`, the `storyCompleted` line in `email.json`). Tests: `404-story-completed-notification.test.sql`, `e2e/last-chapter.spec.ts`.
+
+**Tell followers (BOOKS D06, user story 5.6).** The Publish dialog's "Tell followers" switch (`TellFollowersSwitch`, on by default) sits under "This is the last chapter", with "1,284 followers get a notification when it goes out." from `chapter_followers_to_tell()` (`api/followersToTell.ts`, writer only; another writer gets null). It counts `new_chapter_audience()`, the one list `notify_chapter_published()` also loops over, so the number and the bells always agree; nobody but the database calls that list. `publish_chapter()` and `schedule_chapter()` take `tell_followers` (default true), keep it in `chapters.tell_followers`, and `chapter_publish_now()` copies it into the job; a job with `tell_followers` false tells nobody. Migration `20270205100552_books_d06_tell_followers.sql`; tests `409-tell-followers.test.sql`, `PublishPanel.test.tsx`, `e2e/publish.spec.ts`.
+
+**Story settings and Languages, as boards D07 and D08 draw them (user stories 5.7 and 5.8).** `StorySettingsHeader` puts "Writing / <the story>" (`WritingBreadcrumb`) over the heading "Story settings", the story's title in the line under it, and Manage chapters, Languages and See story page below. `StorySettingsPage` wraps its sections in `FlatFormSections`, so every `FormSection` there draws as a flat group under a 1 px line (`flatGroupClassName`) instead of a card, beside the preview from 1024 px. The Languages screen (`StoryLanguagesPage`) is one column: the table of languages with no "Translated by" column, "Add a language" as a flat group, and the card "One story, many languages" last; `LanguagesBreadcrumb` draws through the same `WritingBreadcrumb`. Translating one chapter (board D09, user story 5.9): `TranslationEditorHeader` puts "Writing / <the language's title> / Chapter N" over the chapter's place as the heading, the words translated so far and Save draft and Publish; below it, `SideBySidePapers` draws each side under its own head (side, language, word count) with no card around the page. The two Canva pages (boards D10 and D11, user stories 5.10 and 5.11) share `CanvaTripPage`: "Story settings / Cover", a heading that says what is happening ("Opening Canva…", "The cover is saved"), the line under it and "Back to story settings"; the start page adds `CanvaStopRows` ("If something stops it"). Deleting a story (board D12, user story 5.12) opens `DeleteStoryDialog`, a centred `Sheet` (a bottom sheet on phones) that says what goes and for how long Undo can bring it back, and deletes only once the title is typed; a press before that says so beside the field (`useMissingField`).
 
 ## Notification emails (S1-E7-02)
 
@@ -2084,6 +2121,7 @@ A landing page is a page at its own address, `/c/<name>`, for a contest, a campa
 - **How one click travels:** Publish → `useLandingPageEditor().act({ kind: 'publish', draft })` → `admin_save_landing_page_draft()` then `admin_publish_landing_page()`, which asks `landing_page_problems()` for what is missing (a hero first, every required field in both languages, a contest's key dates and Rules link, dates in order) and refuses with the list as the hint, which `labelOfField()` turns into "Block 3: Rules, English: Link text". The limits live twice, in `src/schemas/landingPages.ts` (`landingFieldRules`) and `landing_block_field_rules()`, so the counters and the server agree. Each create, publish, restore and archive writes `landing_page.*` to `audit_log`.
 - **Tables:** `landing_pages` (address, type, archived) and `landing_page_versions` (one draft per page, published versions with "show from" and "take down on"). `c` is a reserved name, so no username can take the address.
 - **Tests:** `supabase/tests/database/261-landing-pages.test.sql`, `e2e/landing-pages.spec.ts`, `src/features/landing-pages/lib/blocks.test.ts`.
+- **The footer's pages:** "About the apps" (`/c/apps`) and "For partners" (`/c/partners`) in `footerColumns` (`src/app/navigation.ts`) are information landing pages seeded live by `supabase/migrations/20270205100553_books_footer_apps_partners_pages.sql`, which runs the same publish checks first; staff rewrite them like any other page. Tests: `412-footer-pages.test.sql`, `e2e/footer-pages.spec.ts`.
 
 ### Pictures and featured stories (CONTESTS-13a2a)
 
@@ -2172,9 +2210,9 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - **How a story matches:** `story_search_text()` folds the title, blurb, the writer's username and pen name, a classic's author and every language's name of its approved tags (lower case, no marks, ş and ţ corrected, as `normalise_tag()`). `story_matches_search()` takes a Romanian or English word match (`search_query()`, stemmed, so "povestea" finds "Povești") or a plain "contains" match for a word typed in part. `story_search_rank()` puts title matches first; the See all page (`/search/stories`, the shared `StoryListPage`) sorts by `relevance` ("Best match"), a sort only search accepts.
 - **Stored search rows (QA-2):** `story_search_text()` is no longer worked out for every story on every search. Each story's folded text and word index live in `story_search_documents` (one row per story, GIN indexes for words and for "contains"), kept up to date by triggers on `stories`, `profiles`, `story_tags`, `tags`, `tag_names` and `classic_authors` (`refresh_story_search_document()`). Only staff read the table directly; members search through `browse_stories()`. `rebuild_story_search_documents()` rebuilds every row and is safe to run again.
 - **How fast the lists are (QA-2):** `scripts/volume/run-volume-check.sh` copies the local schema into a scratch database, seeds 50,000 accounts and 20,000 stories (`seed-volume.sql`) and times Discover, See all pages, search, the story page, a chapter and notifications against their budgets (`time-read-paths.sql`). Run it after any change to `listed_stories()`, `browse_stories()` or `story_card_json()`.
+- **How the results show (user story 1.8, board A08):** tabs with their counts, Stories, Writers and Together, on a segmented control; the open tab is `?in=` in the address. The Stories tab (`SearchStoriesTab`) has Sort by, Status, Language, Rating and Length as radio groups (`SearchFilterFields`, `SearchRangeFilters`, each group a `FilterRadios`) in a left column from 1024 px with the one advert under them (a "Filter and sort · 1" sheet below), applied at once by rewriting the address in place, and one `StoryResultRow` per story with "Show more results"; a search's cards also carry the story's public reads (`browse_stories()` adds `story_list_row_extras()`), which the row shows with "updated 2 days ago" (`timeAgo()`). Writers are `WriterResultRow` with Follow; Together is `ForumSearchResultRow` from `useForumSearch()`; Spaces is `SpaceResultRow` from `useFoundSpaces()` → `fetchFoundSpaces()` → `search_spaces()`, which keeps the Spaces page's rule for who sees which card (`space_card_visible()`). Rating and Length are `?rating=` and `?length=` in the address and `story_rating` and `story_length` in `browse_stories()`, which keeps a story only when `story_matches_list_filters()` lets it through (one rating; under 10 readable chapters or 10 and more), before the list is counted and paged; a rating above the reader's age is already left out by `listed_stories()`.
 - **Before a search (user story 1.7, board A07):** Recent searches (this device only), then `TrendingTags` → `useTrendingTags()` → `fetchTrendingTags()` → `trending_tags()`, the approved tags read most in the last seven days over the stories the reader may see; Writers to try and the advert on the right.
-- **How the results show (user story 1.8, board A08):** tabs with their counts, Stories, Writers and Together, on a segmented control; the open tab is `?in=` in the address. The Stories tab (`SearchStoriesTab`) has Sort by, Status and Language as radio groups in a left column from 1024 px with the one advert under them (a "Filter and sort · 1" sheet below), applied at once by rewriting the address in place, and one `StoryResultRow` per story with "Show more results". Writers are `WriterResultRow` with Follow; Together is `ForumSearchResultRow` from `useForumSearch()`.
-- **The page before a search (user story 1.7, board A07):** the top bar's `HeaderSearch` is a round link after Write; `/search` itself shows the field, `RecentSearches` and, on the right, Writers to try (`RisingWritersList`) with the one advert. `SearchForm` searches as the member types: 300 ms after the last key a term of two letters or more replaces the address (`navigate(..., { replace: true })`); Search or Enter adds a history entry and keeps the term in `lib/recentSearches.ts`, the last five terms in this browser's localStorage only, never sent to the server (CLAUDE.md rule 12).
+- **The page before a search (user story 1.7, board A07):** the top bar's `HeaderSearch` is a round link after Write; `/search` itself shows the field, `RecentSearches` and, on the right, Writers to try (`RisingWritersList`) with the one advert. `SearchForm` searches as the member types: 300 ms after the last key a term of two letters or more replaces the address (`navigate(..., { replace: true })`); Search or Enter adds a history entry and keeps the term in `lib/recentSearches.ts`, the last five terms in this browser's localStorage only, never sent to the server (CLAUDE.md rule 12). Under the field, `SearchScopeChips` (Stories, Writers, Together, Spaces) puts the results tab in the address as `in=` (`paramsForTab`, in place), and `SearchForm` keeps it in `searchAddress(term, scope)`, so the search opens on that tab; once there is a term the results tabs take over.
 - **Writers and tags:** `search_writers()` lists only writers with a story this reader may see, so a search never turns up a minor's account, and never answers a user ID. `search_tags()` finds approved tags by any of their names. Their See all pages are `/search/writers` and `/search/tags` (`SearchGroupPage`).
 - **Tests:** `supabase/tests/database/177-search.test.sql`, `e2e/search.spec.ts`, `src/features/search/lib/searchAddresses.test.ts`, `src/features/search/lib/recentSearches.test.ts`, `src/features/discovery/lib/listAddresses.test.ts`.
 
@@ -2929,7 +2967,8 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Waiting: `account_state()` returns 'waitlisted' (after the staff check, so a staff account never waits), so `is_active_member()` is false and every write policy refuses. In the app, `WaitlistGate` (inside `AppLayout`) → `useMyWaitlist()` → `my_waitlist()` shows `WaitlistHoldingPage` instead of the page, with `WaitlistProfileSteps`, a three-step optional wizard (`StepWizard`, CALM-9 H08): the answer (`set_my_waitlist_interest()`), the avatar builder (`may_change_own_avatar()` allows 'waitlisted') and favourite genres. Sign-in, legal, help, Contact us, support and Settings stay open.
 - Staff › Waitlist (`/staff/waitlist`, owner and admin, People group): `StaffWaitlistPage` → `useStaffWaitlist()` → `admin_waitlist()` (counts, countries, one page of people; never the user ID or the email). Tick people → `admin_admit_from_waitlist()`; a wave → `admin_admit_waitlist_wave()` (confirmed emails only, oldest first, by answer and country). Both go through `admit_waitlist_entry()`, which sets `admitted_at`, writes the notice and the audit log (`waitlist.admitted`). The dashboard tile counts the people waiting (`staff_dashboard()` step 9).
 - Retention: an entry is deleted with the account; an account whose email is never confirmed is removed by `purge_unconfirmed_accounts()` after 7 days (`docs/retention.md`).
-- Countries that aren't open yet (MARKETS-2b, S1-E11-32): once sign-up is public and the list is on, a sign-up from a closed or unknown country joins the list with its country instead of being refused (`create_profile_from_sign_up()` sets `waits_for_market`; an invite code is left unused, so it doesn't skip the queue) and `SignUpPage` shows the form with "We're not open in your country yet" instead of sending them to `/not-open` (still used while the list is off). `my_waitlist()` returns `country` and `market_open`, so `WaitlistHoldingPage` says they wait for their country. `waitlist_market_outcome()` asks `sign_up_market_outcome()` about the person's profile at the moment they would be let in, so a closed market (`market_closed`) or the country's age rules as they are that day (`under_market_age`) refuse them: `admin_admit_from_waitlist()` names the refusal in its hint and `admin_admit_waitlist_wave()` refuses a closed country and skips people who can't be let in. Staff › Waitlist marks closed countries and people (`admin_waitlist()`'s `open` and `market_open`). Migration `…_markets2b_waitlist_closed_markets.sql`; test `357-waitlist-closed-markets.test.sql`.
+- Countries that aren't open yet (MARKETS-2b, S1-E11-32): once sign-up is public and the list is on, a sign-up from a closed or unknown country joins the list with its country instead of being refused (`create_profile_from_sign_up()` sets `waits_for_market`; a code that isn't a working invite is left unused, so it doesn't skip the queue) and `SignUpPage` shows the form with "We're not open in your country yet" instead of sending them to `/not-open` (still used while the list is off). `my_waitlist()` returns `country` and `market_open`, so `WaitlistHoldingPage` says they wait for their country. `waitlist_market_outcome()` asks `sign_up_market_outcome()` about the person's profile at the moment they would be let in, so a closed market (`market_closed`) or the country's age rules as they are that day (`under_market_age`) refuse them: `admin_admit_from_waitlist()` names the refusal in its hint and `admin_admit_waitlist_wave()` refuses a closed country and skips people who can't be let in. Staff › Waitlist marks closed countries and people (`admin_waitlist()`'s `open` and `market_open`). Migration `…_markets2b_waitlist_closed_markets.sql`; test `357-waitlist-closed-markets.test.sql`.
+- An invite from a closed country (INVITE-MARKET, Robert, 26 Nov 2026): a working invite link lets the person in from a country that isn't open yet, with the waiting list on or off. `create_profile_from_sign_up()` asks `invite_opens_closed_market()` (the same 'valid' answer `check_invite()` gives the page), then checks the country's own age rule with `closed_market_age_outcome()` and uses the invite in step 5. On the page, `useInviteAndMarket()` reads the code from `/join/<code>` whenever the country is closed and treats the country as open for a working invite, so neither `/not-open` nor the waiting list shows. Migration `…_invite_lets_in_closed_market.sql`; test `415-invite-closed-market.test.sql`.
 - Staff emails (WAITLIST-2; Robert, 21 Nov 2026: "One per person."): once someone on the list confirms their email, `run_waitlist_alert_worker()` (pg_cron, every 5 minutes) wakes `/api/waitlist-alerts` (`functions/api/waitlist-alerts.ts`, locally `server/pages-functions-plugin.ts`). `handleWaitlistAlerts()` in `server/waitlist-alerts.ts` claims them (`waitlist_alert_worker_claim()`: username, country, answer, joining time, never the email address), sends one email per person to the setting `waitlist_alert_email` (empty: the support address from the brand config) and marks them (`waitlist_alert_worker_mark_sent()`). Texts: `email.json` "waitlistAlert". Migration `…_waitlist2_staff_alerts.sql`; tests `supabase/tests/database/390-waitlist-staff-alerts.test.sql`, `server/waitlist-alerts.test.ts`.
 - The sign-up form and the holding page say "We may ask you to confirm your identity later." (`signUp.waitlist.identityNote`, `waitlist.holding.identityNote`), and Settings › Ways to log in hides its age check line while `adults_only` is on (WAITLIST-2).
 - Migrations `…_waitlist1_01_kinds.sql` and `…_waitlist1_02_waitlist.sql`. Tests: `supabase/tests/database/310-waitlist.test.sql`, `src/features/waitlist/api/waitlist.test.ts`, `src/features/auth/api/signUp.test.ts`, `e2e/waitlist-1.spec.ts`.
@@ -2964,8 +3003,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 
 ### App only stories (GAPS-15)
 
-A writer picks "Where can people read this story?" in the story's settings
-(`src/features/writing/components/StoryReadOnSection.tsx`); `updateMyStory()` saves it last through
+A writer turns on "App only" under "Who can read this story?" in the story's settings
+(`src/features/writing/components/StoryWhoCanReadSection.tsx`, board D07); `updateMyStory()` saves
+it last through
 `set_my_story_app_only()` into `stories.is_app_only`. Nothing changes for readers until staff turn
 the `app_only_stories` flag on (it waits for the apps): `story_app_only_applies()` is the one place
 that checks both. Then `get_chapter()` sends no text to anyone but the writer and says `app_only`,
@@ -3114,6 +3154,7 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 ### New story wizard and "Set in" (CALM-9, board D02)
 
 - `/write/new` is five steps, one open at a time: `NewStoryPage` → `useNewStorySteps` (which section each step holds) → `StepWizard` (`src/components/ui/`, shared with later long forms such as the waitlist, H08). "Next" checks only the open step's answers (`checkFields()` in `useNewStoryForm`); Create checks them all and opens the first step with a mistake.
+- Since bundle 5 (story 5.2) every step is a box with Back beside Next (`goToPreviousStep` in `useStepWizard`), the page opens with `WritingBreadcrumb` (Writing / New story, shared with the other Write pages), and Create sits under the steps at every step (`NewStoryActionBar`): a press with steps unfinished names them ("Still to finish: …") and opens the first. The language is a `Select` (its closed languages are `isDisabled` options), and `StoryPreviewAside` is one sticky box with a small cover.
 - "Set in" (up to five countries) is its own column, `stories.set_in_countries`, saved by `set_my_story_set_in_countries()` after `create_story()` (`saveNewStoryExtras()`) and from story settings (`updateMyStory()`). The migration `…_calm9_d02_set_in_countries.sql` moved existing "set in <country>" tags into it.
 
 ## Coming back to the same place (design books item 17)
@@ -3127,7 +3168,7 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 ## Show what is inside (design books item 16)
 
 - **New chapter in the Library:** `my_library()` adds `has_new_chapter` to each shelf place (true when the story's `last_chapter_published_at` is after the place's `saved_at`; migration `20270205100433_books16_new_chapter_dot.sql`). `LibraryShelves` passes it to `StoryCard`, which draws a small dot on the cover, and adds "new chapter" to the meta line so the dot is never the only cue.
-- **Saved at a glance in the editor:** `SaveWord` (`src/features/writing/components/`) shows one word beside the chapter's name in the breadcrumb ("Saved", "Saving…", "Not saved"), read from the same `useAutosave` state as the Saving box. It is plain text; the Saving box stays the live region.
+- **Saved at a glance in the editor:** `SaveWord` (`src/features/writing/components/`) shows the save in the editor's bar ("Chapter 16 · Saved · 240 words") and at the foot of the paper ("Saved at 14:02"), read from the same `useAutosave` state as `SaveStatus` ("Saving…", "Not saved yet. Trying again" and "Not saved" in the danger colour; board D05, user story 5.5). It is plain text; `SaveStatus` stays the live region.
 
 ## Healthy habits under 18 (design books S5)
 

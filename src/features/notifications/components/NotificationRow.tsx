@@ -1,29 +1,30 @@
 /**
- * NotificationRow: one notification in the list (story S1-E7-01; board 6.2).
+ * NotificationRow: one notification in the list (story S1-E7-01; user story 4.1, board
+ * E11-Notifications).
  *
- * Board values (Notifications, liquid glass redesign, bundle G8d): 16 by 20 px padding, a hairline
- * between rows, unread rows on a faint tint with a plum dot, a 15 px line "<b>who</b> what", the
- * quote under it, then the time, a grouped count in bold ("12 reactions", a pill until CALM-9d), "Always on" with a padlock for
- * a decision and the one action in bold. A "new rank"
- * row also names the rank in its pill (bundle G4; DESIGN thread, 8 Nov 2026: no sticker).
- * Opening a row marks it as read. A row whose item is gone (no address) is plain text.
- * A row about a person (a follow, a reply, a new chapter) starts with that person's avatar, the
- * first of them when several are grouped (CALM-3, the simplified design: avatars show at every
- * notification row); a staff row, or one with nobody named, keeps the category icon, so a
- * moderator is never shown.
- * Who uses it: NotificationsPage. What it calls: lib/notificationText.ts for the words,
- * hooks/useMarkNotificationsRead.ts when opened, PersonAvatar or NotificationIcon at the start.
+ * As the board draws it: 16 px padding, a hairline above each row, the 36 px avatar, the sentence
+ * "<b>who</b> what" with the titles in it in bold (emphasisedWords), a quote in the reading face
+ * (Literata italic, muted) when there is one, and a line with the time only. Unread rows sit on
+ * the tint; story 4.1 says "No coloured bar on the left edge", so there is none, and screen
+ * readers hear "Unread", so colour is never the only sign. The whole sentence is one link that
+ * opens the exact place, and opening it marks the row read. Rows from the team (moderation
+ * decisions, the account's own news) start with a plum circle with the product's first letter,
+ * so a moderator is never shown; their one action ("Read the reasons") is written in the
+ * sentence as a link-coloured phrase, as the board does. A "new rank" row also names the rank in
+ * its pill (IDEAS-3a; no sticker). A row whose item is gone (no address) is plain text.
+ * Who uses it: NotificationList. What it calls: lib/notificationText.ts and lib/emphasisedWords.ts
+ * for the words, PersonAvatar, NotificationIcon or BrandInitial at the start.
  */
 import { Link } from 'react-router';
 
-import { ActionIcon } from '@/components/icons/ActionIcon';
-import { StateWord } from '@/components/ui/StateWord';
+import { brand } from '@/config/brand';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { RankChip } from '@/features/forums/components/RankChip';
 import { cn } from '@/lib/utils';
 
 import type { AppNotification } from '../api/notifications';
+import { emphasisedWords, titlesOf } from '../lib/emphasisedWords';
 import { notificationText, type NotificationText } from '../lib/notificationText';
 import { useNotificationsTranslation } from '../registerNotificationsTranslations';
 
@@ -39,7 +40,38 @@ export interface NotificationRowProps {
 }
 
 /**
- * The words of the row: who, what, the quote and the line of details.
+ * The sentence: who in bold, then what happened with its titles in bold, then the action, where the
+ * kind has one ("Read the reasons", "See the requests"), as a link word at the end.
+ *
+ * @returns the sentence
+ */
+function Sentence({
+  text,
+  notification,
+}: {
+  text: NotificationText;
+  notification: AppNotification;
+}) {
+  const pieces = emphasisedWords(text.what, titlesOf(notification));
+  return (
+    <span className="type-body text-ink">
+      <b>{text.who}</b>{' '}
+      {pieces.map((piece, index) =>
+        // The pieces never reorder, so their place is a safe key.
+        piece.isTitle ? <b key={index}>{piece.text}</b> : <span key={index}>{piece.text}</span>,
+      )}
+      {text.actionLabel !== null && (
+        <>
+          {' '}
+          <span className="text-link underline">{text.actionLabel}</span>
+        </>
+      )}
+    </span>
+  );
+}
+
+/**
+ * The words of the row: the sentence, the quote and the time.
  *
  * @returns the row's text
  */
@@ -53,42 +85,46 @@ function RowWords({
   const { t, i18n } = useNotificationsTranslation();
   return (
     <>
-      <span className="type-body leading-normal text-ink">
-        <b>{text.who}</b> {text.what}
-      </span>
+      <Sentence text={text} notification={notification} />
       {text.quote !== null && text.quote !== '' && (
-        <span className="type-body leading-[1.55] text-ink-muted">“{text.quote}”</span>
+        <span className="font-story type-body text-ink-muted italic">“{text.quote}”</span>
       )}
-      <span className="flex flex-wrap items-center gap-x-3 gap-y-2 type-meta text-ink-muted">
+      <span className="flex flex-wrap items-center gap-x-3 gap-y-2 type-meta">
         <time dateTime={notification.at}>{timeAgo(notification.at, i18n.language)}</time>
-        {text.grouped !== null && <StateWord>{text.grouped}</StateWord>}
         {/* The rank just reached, in the same pill as on the profile (IDEAS-3a). */}
         {notification.writerRank !== null && <RankChip rank={notification.writerRank} />}
-        {notification.isRequired && (
-          <StateWord>
-            <ActionIcon name="lock" size={14} />
-            {t('alwaysOn')}
-          </StateWord>
-        )}
-        {text.actionLabel !== null && (
-          <span className="font-semibold text-link underline">{text.actionLabel}</span>
-        )}
+        {!notification.isRead && <span className="sr-only">{t('unread')}</span>}
       </span>
     </>
   );
 }
 
 /**
- * The start of the row: the first person's avatar, or the category icon when the row names nobody
- * or comes from staff (staff decisions never show who made them).
+ * The plum circle with the product's first letter, for rows from the team (board E11's "g").
+ *
+ * @returns the decorative circle
+ */
+function BrandInitial() {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex size-9 flex-none items-center justify-center rounded-full bg-primary type-meta font-semibold text-on-primary"
+    >
+      {brand.productName.slice(0, 1)}
+    </span>
+  );
+}
+
+/**
+ * The start of the row: the team's circle, the first person's avatar, or the category icon when
+ * the row names nobody (staff decisions never show who made them).
  *
  * @returns the decorative avatar or icon
  */
 function RowStart({ notification }: { notification: AppNotification }) {
   const firstActor = notification.actors[0];
-  if (notification.category === 'staff' || firstActor === undefined) {
-    return <NotificationIcon category={notification.category} />;
-  }
+  if (notification.category === 'staff') return <BrandInitial />;
+  if (firstActor === undefined) return <NotificationIcon category={notification.category} />;
   return <PersonAvatar name={firstActor.displayName} handle={firstActor.handle} size="medium" />;
 }
 
@@ -101,12 +137,14 @@ export function NotificationRow({ notification, ownHandle, onOpen }: Notificatio
   const { t } = useNotificationsTranslation();
   const text = notificationText(t, notification, ownHandle);
   const isUnread = !notification.isRead;
-  const wordsClasses = 'flex min-w-0 flex-1 flex-col gap-2 text-inherit no-underline';
+  const wordsClasses = 'flex min-w-0 flex-1 flex-col gap-1 text-inherit no-underline';
   return (
+    // Board E11: an unread row is tinted with a 2 px line down its left edge; a read row keeps a
+    // see-through line of the same width, so the words never move when it is read.
     <li
       className={cn(
-        'flex items-start gap-4 border-t border-hairline px-4 py-4 first:border-t-0',
-        isUnread ? 'bg-tint/40' : 'bg-surface',
+        'flex items-start gap-3 border-t border-l-2 border-hairline border-l-transparent p-4',
+        isUnread && 'border-l-ink-heading bg-tint',
       )}
     >
       <RowStart notification={notification} />
@@ -124,11 +162,6 @@ export function NotificationRow({ notification, ownHandle, onOpen }: Notificatio
         >
           <RowWords text={text} notification={notification} />
         </Link>
-      )}
-      {isUnread && (
-        <span className="mt-2 size-2.5 flex-none rounded-full bg-primary">
-          <span className="sr-only">{t('unread')}</span>
-        </span>
       )}
     </li>
   );

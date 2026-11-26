@@ -7,7 +7,6 @@
   "logIn": "Intră",
   "list": {
     "title": "Conversații",
-    "newChat": "Începe o conversație nouă",
     "tabsLabel": "Ce conversații",
     "all": "Conversații",
     "requests": "Cereri",
@@ -17,10 +16,11 @@
     "requestsHint": "Primele mesaje de la oameni care nu te urmăresc apar aici. Nu pot trimite altele până nu accepți.",
     "you": "Tu: {{text}}",
     "removed": "[Eliminat de echipa de moderare]",
-    "unread": "mesaje noi",
     "waiting": "Așteaptă să accepte",
     "loadFailed": "Nu ți-am putut încărca conversațiile. Încearcă din nou peste puțin timp.",
-    "saidNoThanks": "A spus „Nu, mulțumesc” deocamdată"
+    "saidNoThanks": "A spus „Nu, mulțumesc” deocamdată",
+    "yesterday": "ieri",
+    "new": "Nou"
   },
   "rules": {
     "minors": "Adulții nu pot scrie niciodată cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite până nu le pornești tu.",
@@ -36,7 +36,6 @@
     "newChat": "Conversație nouă",
     "notFound": "Nu există nimeni cu acest nume de utilizator căruia să-i poți scrie.",
     "loadFailed": "Nu am putut încărca această conversație. Încearcă din nou peste puțin timp.",
-    "back": "Conversații",
     "messagesLabel": "Mesaje cu {{name}}",
     "you": "Tu",
     "removed": "[Eliminat de echipa de moderare]",
@@ -48,7 +47,25 @@
     "reportLabel": "mesajul de la {{name}} de la ora {{time}}",
     "noThanksReply": "{{name}} a răspuns: „Mulțumesc că mi-ai scris, dar acum aș prefera să nu vorbim.”",
     "noThanksAgain": "Poți trimite o cerere nouă începând cu {{date}}.",
-    "missing": "Scrie mai întâi un mesaj."
+    "missing": "Scrie mai întâi un mesaj.",
+    "today": "Azi",
+    "moreFor": "Mai multe pentru mesajul de la {{name}} de la ora {{time}}",
+    "adultsOff": "Mesajele de la adulți sunt oprite în setările tale, așa că nu îi poți scrie lui {{name}}."
+  },
+  "bar": {
+    "back": "Înapoi la Mesaje",
+    "more": "Mai multe: blochează sau raportează"
+  },
+  "header": {
+    "kind": {
+      "fiction": "Scrie ficțiune",
+      "poetry": "Scrie poezie",
+      "nonfiction_essays": "Scrie eseuri",
+      "other": "Autor"
+    },
+    "story_one": "{{title}}, {{count}} capitol",
+    "story_few": "{{title}}, {{count}} capitole",
+    "story_other": "{{title}}, {{count}} de capitole"
   },
   "share": {
     "pick": "Alege o conversație sau începe una nouă ca să trimiți acest link.",
@@ -79,10 +96,10 @@
   "about": {
     "title": "Despre conversație",
     "viewProfile": "Vezi profilul lui {{name}}",
-    "followEachOther": "Vă urmăriți unul pe altul.",
-    "iFollow": "Tu urmărești această persoană.",
-    "theyFollow": "Această persoană te urmărește.",
-    "noFollow": "Nu vă urmăriți unul pe altul.",
+    "followEachOther": "vă urmăriți reciproc",
+    "iFollow": "o urmărești",
+    "theyFollow": "te urmărește",
+    "noFollow": "nu vă urmăriți",
     "whoTitle": "Cine îți poate scrie",
     "audience": {
       "everyone": "Oricine",
@@ -93,17 +110,18 @@
     "on": "Pornite",
     "off": "Oprite",
     "adultsHint": "Adulții nu pot scrie niciodată cuiva sub 16 ani. Dacă ai 16 sau 17 ani, mesajele de la adulți sunt oprite până nu le pornești tu. Doar tu le poți porni, din Setări.",
-    "privacyTitle": "Cine poate citi mesajele",
-    "privacy": "Mesajele nu sunt criptate end-to-end. Echipa noastră le citește doar dacă cineva le raportează sau dacă legea o cere."
+    "privacy": "Mesajele nu sunt criptate end-to-end. Echipa noastră le citește doar dacă cineva le raportează sau dacă legea o cere.",
+    "profile": "Profil",
+    "you": "Urmărire"
   },
   "newChat": {
     "eyebrow": "Mesaje",
     "title": "Începe o conversație nouă",
-    "label": "Nume de utilizator",
-    "hint": "Numele de după @ de pe profil.",
-    "open": "Deschide conversația",
     "close": "Închide",
-    "missing": "Scrie mai întâi un nume de utilizator."
+    "intro": "Oamenii pe care îi urmărești și care pot primi mesaje de la tine. Deschide unul ca să începi o conversație.",
+    "listLabel": "Oameni pe care îi urmărești",
+    "empty": "Nu ai încă cui să scrii. Urmărește scriitori, iar cei care pot primi mesaje de la tine apar aici.",
+    "loadFailed": "Nu am putut încărca oamenii pe care îi urmărești. Încearcă din nou peste puțin timp."
   },
   "failures": {
     "not_taking": "Această persoană nu primește mesaje acum.",
@@ -130,10 +148,8 @@
     "off": "Oprit"
   },
   "deleteChat": {
-    "eyebrow": "Ștergere",
     "button": "Șterge conversația",
     "title": "Ștergi această conversație?",
-    "explain": "Conversația dispare doar pentru tine. Când o ștergeți amândoi, mesajele se șterg definitiv.",
     "body": "Dispare imediat din mesajele tale. Când o șterge și {{name}}, mesajele dispar definitiv.",
     "confirm": "Șterge conversația",
     "deleting": "Se șterge…",

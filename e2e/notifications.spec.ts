@@ -6,8 +6,8 @@
  * - new followers, a comment on the reader's chapter and a moderation decision reach the reader
  *   through the real triggers and the notification job (criteria 1 and 4);
  * - in night mode the bell's count is near-black on a white badge (accessibility check, 6 Nov 2026);
- * - the bell's badge counts the unread ones, the filter chips narrow the list, a decision says
- *   "Always on", and "Mark as read" clears the badge (criteria 2 and 3);
+ * - the bell's badge counts the unread ones, the tabs narrow the list, and "Mark as read" clears
+ *   the badge (criteria 2 and 3; user story 4.1, board E11);
  * - the page has no serious axe issue and no sideways scroll at 390, 768 and 1440 px, in light
  *   and night, Romanian and English (CLAUDE.md rules 9 and 21), and no doodle is drawn.
  * Test data: a throwaway account of its own (so other specs' notifications never mix in) with a
@@ -100,7 +100,7 @@ test.describe('in-app notifications (S1-E7-01)', () => {
       .addInitScript(([key]) => localStorage.setItem(key, 'night'), [THEME_STORAGE_KEY] as const);
     await page.goto('/discover');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
-    const bell = page.getByRole('link', { name: /^Notifications, \d+ new$/ });
+    const bell = page.getByRole('link', { name: /^Notifications, (\d|9\+) new$/ });
     const name = (await bell.getAttribute('aria-label')) ?? '';
     const count = Number(/(\d+) new/.exec(name)?.[1] ?? '0');
     const badge = bell.locator('[data-count-badge]');
@@ -120,7 +120,7 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     const bell = page.getByRole('link', { name: 'Notifications, 3 new' });
     await expect(bell).toBeVisible();
     await bell.click();
-    await expect(page.getByRole('heading', { level: 1, name: 'What’s new' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Notifications' })).toBeVisible();
     await expect(page.getByText('3 new since you last looked.')).toBeVisible();
     // Step 2: the rows, under Today.
     const today = page.getByRole('region', { name: 'Today' });
@@ -128,20 +128,21 @@ test.describe('in-app notifications (S1-E7-01)', () => {
     await expect(today.getByText('commented on Chapter 1 of Clopoțelul.')).toBeVisible();
     await expect(today.getByText('“Ce început frumos.”')).toBeVisible();
     await expect(today.getByText('Moderation team:')).toBeVisible();
-    await expect(today.getByText('Always on')).toBeVisible();
-    // Step 3: a filter narrows the list; the chosen chip says so with aria-pressed.
-    const follows = page.getByRole('button', { name: /^Follows/ });
-    await follows.click();
-    await expect(follows).toHaveAttribute('aria-pressed', 'true');
+    // Step 3: a tab narrows the list; the tabs are a radio group, Everything first, each with
+    // its count (user story 4.1). The radio itself is hidden under its label (SegmentedControl),
+    // so the check is forced, as in the other segmented controls' specs.
+    const follows = page.getByRole('radio', { name: /^Follows · \d+$/ });
+    await follows.check({ force: true });
+    await expect(follows).toBeChecked();
     await expect(page.getByText('Moderation team:')).toHaveCount(0);
-    await page.getByRole('button', { name: /^All/ }).click();
+    await page.getByRole('radio', { name: /^Everything · \d+$/ }).check({ force: true });
     // Step 4: "Mark as read" clears the count and the badge.
     await page.getByRole('button', { name: 'Mark as read' }).click();
     await expect(page.getByText('You’re caught up.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Notifications', exact: true })).toBeVisible();
     await expectNoDoodles(page);
-    // Step 5: the header's Settings link opens Settings › Notifications (LOOK-5; board 6.2).
-    await page.getByRole('main').getByRole('link', { name: 'Settings', exact: true }).click();
+    // Step 5: "How you’re told" opens Settings › Notifications (board E11).
+    await page.getByRole('link', { name: 'Change notification settings' }).click();
     await expect(page).toHaveURL(/\/settings#notifications$/);
     await page.context().close();
   });

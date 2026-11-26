@@ -131,7 +131,7 @@ test.describe('epic check: notifications (S1-E7-QA)', () => {
     expect(error).toBeNull();
     runSql('select public.run_notification_jobs();');
     const reader = await openAs(browser, 'teacher', '/discover');
-    await reader.getByRole('link', { name: /^Notifications, \d+ new$/ }).click();
+    await reader.getByRole('link', { name: /^Notifications, (\d|9\+) new$/ }).click();
     const row = reader.getByRole('listitem').filter({ hasText: newChapterLine });
     await row.getByRole('link').click();
     await expect(reader).toHaveURL(new RegExp(`/s/${slug}/epicsev2$`));
@@ -147,7 +147,7 @@ test.describe('epic check: notifications (S1-E7-QA)', () => {
     runSql(`update public.stories set rating = '16_plus' where slug = '${slug}';`);
     for (const persona of ['kid_14_ok', 'kid_14_waiting'] as const) {
       const kid = await openAs(browser, persona, '/notifications');
-      await expect(kid.getByRole('heading', { level: 1, name: 'What’s new' })).toBeVisible();
+      await expect(kid.getByRole('heading', { level: 1, name: 'Notifications' })).toBeVisible();
       await expect(kid.getByText('Epica șapte', { exact: false })).toHaveCount(0);
       await kid.context().close();
     }

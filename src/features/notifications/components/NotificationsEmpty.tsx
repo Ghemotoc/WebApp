@@ -1,27 +1,21 @@
 /**
- * NotificationsEmpty: "You're all caught up", when a filter or the whole list has nothing to show
- * (story S1-E7-01; board 6.2).
+ * NotificationsEmpty: what the list says when a tab, or the whole list, has nothing to show
+ * (story S1-E7-01; user story 4.1: "Nothing new. Notifications about stories, replies and follows
+ * show here.").
  *
- * Board values: a glass card with 28 px corners, centred, a 24 px heading (no doodle since bundle
- * G4; glass since G8d).
+ * One plain line in the body style, muted, where the rows would be (board E11 draws no box).
  * Who uses it: NotificationList.
  */
-
 import { useNotificationsTranslation } from '../registerNotificationsTranslations';
 
 /**
  * Renders the empty state.
  *
- * @returns the card
+ * @returns the line
  */
 export function NotificationsEmpty() {
   const { t } = useNotificationsTranslation();
   return (
-    <div className="relative flex flex-col items-center gap-3 rounded-card border border-border bg-surface px-8 py-12 text-center shadow-card">
-      <h2 className="m-0 type-heading font-bold">{t('empty.title')}</h2>
-      <p className="m-0 max-w-[420px] type-body leading-relaxed text-ink-muted">
-        {t('empty.body')}
-      </p>
-    </div>
+    <p className="m-0 border-t border-hairline py-4 type-body text-ink-muted">{t('empty.body')}</p>
   );
 }

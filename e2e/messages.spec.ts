@@ -9,9 +9,11 @@
  *   waits and gets no box; the recipient finds it under Requests and accepts it, and both can
  *   write (criterion 2);
  * - "Delete request" takes it out of the recipient's lists, and the sender still only waits;
+ * - New chat lists only the people the member follows whom they may write to (not a
+ *   14-year-old), and pressing one opens the chat (user story 4.2);
  * - the profile shows Message only to someone who may write (S1-E9-03): not to an adult on a
  *   14-year-old's profile; each message from the other person has its own Report (rule 6);
- * - text only: the box says so (criterion 4);
+ * - text only: the box says so (criterion 4); a double click on Send sends once (BOOKS-4);
  * - a story link sent from a share dialog rides into the chat picked, is sent once and can be
  *   pressed there; anything else in the address, and other websites' links, stay inert (GAPS-7a);
  * - axe at 390, 768 and 1440 px, light and night, ro and en, on /messages and one chat, and no
@@ -66,6 +68,10 @@ function resetChats() {
     delete from public.rate_limit_events where action in ('message', 'new_conversation');
     delete from public.follows_users
       where user_id = (select id from public.profiles where handle = 'blocker');
+    delete from public.follows_users
+      where user_id = (select id from public.profiles where handle = 'adult_writer')
+        and followed_user_id in (select id from public.profiles
+          where handle in ('teacher', 'kid_14_waiting'));
     update public.profiles set locale = 'ro' where handle in ('adult_writer', 'teacher', 'blocker');`);
 }
 
@@ -113,9 +119,9 @@ test.describe('private messages (S1-E9-01)', () => {
     // adult_writer writes as their pen name, Lia Scrie.
     await teacher.locator('a[href="/messages/adult_writer"]').click();
     await expect(chatOn(teacher).getByText('Here are my answers for Friday.')).toBeVisible();
-    // The other person's message has its own Report (rule 6).
+    // The other person's message has its own Report, in its "…" (rule 6; user story 4.3).
     await expect(
-      teacher.getByRole('button', { name: /^Report the message from Lia Scrie/ }),
+      teacher.getByRole('button', { name: /^More for the message from Lia Scrie/ }),
     ).toHaveCount(2);
     await expect(teacher.getByRole('link', { name: 'Messages', exact: true })).toBeVisible();
   });
@@ -165,6 +171,39 @@ test.describe('private messages (S1-E9-01)', () => {
     await expect(blocker.getByText('No message requests.')).toBeVisible();
     await teacher.reload();
     await expect(teacher.getByText(/is waiting in blocker’s requests/)).toBeVisible();
+  });
+
+  test('New chat lists only followed people who can get messages, and opens the chat', async ({
+    browser,
+  }) => {
+    // Step 1: adult_writer follows teacher (an adult) and kid_14_waiting (a 14-year-old, whom no
+    // adult may write to: can_message(), S1-E9-03).
+    runSql(`
+      insert into public.follows_users (user_id, followed_user_id)
+      select me.id, other.id from public.profiles me, public.profiles other
+      where me.handle = 'adult_writer' and other.handle in ('teacher', 'kid_14_waiting')
+      on conflict do nothing;`);
+    const page = await openAs(browser, 'adult_writer', '/messages');
+    // Step 2: New chat opens the dialog with the one person the database allows.
+    await page.getByRole('button', { name: 'New chat' }).first().click();
+    const dialog = page.getByRole('dialog', { name: 'Start a new chat' });
+    const people = dialog.getByRole('list', { name: 'People you follow' });
+    await expect(people.getByRole('link')).toHaveCount(1);
+    await expect(people.getByRole('link', { name: /teacher/ })).toBeVisible();
+    await expect(dialog.getByText('kid_14_waiting')).toHaveCount(0);
+    // Step 3: pressing the person opens the chat with them and closes the dialog.
+    await people.getByRole('link', { name: /teacher/ }).click();
+    await expect(page).toHaveURL(/\/messages\/teacher$/);
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByLabel('Message to teacher')).toBeVisible();
+  });
+
+  test('a double click on Send sends the message once', async ({ browser }) => {
+    const page = await openAs(browser, 'adult_writer', '/messages/teacher');
+    await page.getByLabel('Message to teacher').fill('Only once, please.');
+    await page.getByRole('button', { name: 'Send', exact: true }).dblclick();
+    await expect(page.getByLabel('Message to teacher')).toHaveValue('');
+    await expect(chatOn(page).getByText('Only once, please.')).toHaveCount(1);
   });
 
   test('the profile offers Message only to someone who may write', async ({ browser }) => {

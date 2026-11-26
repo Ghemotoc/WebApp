@@ -3,10 +3,10 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - offline, the Saving box says "Saved on this device"; closing the tab and coming back online,
+ * - offline, the save line says "Saved on this device"; closing the tab and coming back online,
  *   the editor opens with those words and saves them;
- * - a refused save says "Could not save" with a Retry button that saves at once (design books
- *   item 13, "Small moments");
+ * - a refused save says "Not saved yet. Trying again" with a Retry button that saves at once
+ *   (design books item 13, "Small moments"; user story 5.5);
  * - two devices: the second save is a conflict with "Keep this version" and "Compare versions";
  *   Compare shows both versions side by side, "Keep this one" on the other device's loads it;
  *   "Keep this version" saves this device's words over the other's;
@@ -22,6 +22,7 @@ import { expect, test, type Browser, type BrowserContext, type Page } from '@pla
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser } from './support/personas';
+import { editorSaveStatus } from './support/chapterEditor';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
 const slug = 'statia-meteo-seed01';
@@ -59,9 +60,9 @@ async function openEditor(context: BrowserContext, code: string): Promise<Page> 
   return page;
 }
 
-/** The Saving box's status line. */
+/** The editor's save line (the hidden status a screen reader hears, shown when the writer must act). */
 function saveStatus(page: Page) {
-  return page.getByRole('region', { name: 'Saving' }).getByRole('status');
+  return editorSaveStatus(page);
 }
 
 /** Types at the end of the text, then leaves it so the save runs. */
@@ -106,7 +107,7 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
     await device.close();
   });
 
-  test('a refused save says “Could not save” and Retry saves at once', async ({ browser }) => {
+  test('a refused save says “Not saved yet” and Retry saves at once', async ({ browser }) => {
     const device = await newDevice(browser);
     const code = makeChapter('retry001', 'Început.');
     const page = await openEditor(device, code);
@@ -115,7 +116,11 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
       route.fulfill({ status: 500, body: '{"message":"broken on purpose"}' }),
     );
     await typeAndLeave(page, ' Din nou.');
-    await expect(saveStatus(page)).toHaveText(/^Could not save\./);
+    await expect(saveStatus(page)).toHaveText(/^Not saved yet\. Trying again/);
+    await expect(page.locator('[data-save-word="failed"]').filter({ visible: true })).toHaveText([
+      'Not saved yet. Trying again',
+      'Not saved yet. Trying again',
+    ]);
     await page.unroute('**/rest/v1/rpc/save_chapter_draft');
     await page.getByRole('button', { name: 'Retry' }).click();
     await expect(saveStatus(page)).toHaveText(/^Saved at /);
@@ -137,10 +142,13 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
     await expect(saveStatus(laptopPage)).toHaveText(/Saved at \d/);
     await typeAndLeave(phonePage, ' De pe telefon.');
     await expect(saveStatus(phonePage)).toHaveText(/changed on another device/);
-    const saving = phonePage.getByRole('region', { name: 'Saving' });
-    await expect(saving.getByRole('button', { name: 'Keep this version' })).toBeVisible();
-
-    await saving.getByRole('button', { name: 'Compare versions' }).click();
+    // Under the save line: Keep this version and Compare versions (the bar shows Compare too).
+    await expect(phonePage.getByRole('button', { name: 'Keep this version' })).toBeVisible();
+    await phonePage
+      .getByRole('button', { name: 'Compare versions' })
+      .filter({ visible: true })
+      .first()
+      .click();
     const dialog = phonePage.getByRole('dialog', { name: 'Compare versions' });
     const thisDevice = dialog.getByRole('region', { name: 'This device' });
     const otherDevice = dialog.getByRole('region', { name: 'The other device' });
@@ -171,7 +179,7 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
     const text = phonePage.getByRole('textbox', { name: 'Chapter text' });
     await expect(text).toContainText('De pe laptop.');
     await expect(text).not.toContainText('De pe telefon.');
-    await expect(saveStatus(phonePage)).toHaveText('Nothing to save yet.');
+    await expect(saveStatus(phonePage)).toHaveText('');
     expect(storedBody(code)).toBe('Început. De pe laptop.');
 
     // The phone carries on from the laptop's version without another conflict.
@@ -193,10 +201,7 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
     await typeAndLeave(phonePage, ' De pe telefon.');
     await expect(saveStatus(phonePage)).toHaveText(/changed on another device/);
 
-    await phonePage
-      .getByRole('region', { name: 'Saving' })
-      .getByRole('button', { name: 'Keep this version' })
-      .click();
+    await phonePage.getByRole('button', { name: 'Keep this version' }).click();
     await expect(saveStatus(phonePage)).toHaveText(/Saved at \d/);
     expect(storedBody(code)).toBe('Început. De pe telefon.');
     await laptop.close();

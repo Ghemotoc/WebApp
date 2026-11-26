@@ -1,35 +1,25 @@
 /**
- * SaveStatus: the "Saving" box in the editor's aside (story S1-E3-02a; board 4.3, "What the
- * status can say").
+ * SaveStatus: the sentence that tells a screen reader how the save went, and shows on screen
+ * when the writer must act (story S1-E3-02a; board D05, user story 5.5).
  *
- * Board values: a tinted box with an icon and one line; sage for saved, plum for saving,
- * gold for unsaved, offline or failed, red for the conflict. It is a role="status" region, so a screen
- * reader hears "Saved" without the writer leaving the text (WCAG 4.1.3). The words follow the
- * design books' item 13: Saving, Saved, "Saved on this device" while offline and "Could not save"
- * (EditorAside adds the Retry button under it).
- * Who uses it: EditorAside.
+ * It is a role="status" region, so a screen reader hears "Saved at 14:02." without the writer
+ * leaving the text (WCAG 4.1.3). Most states are only said: the save words in the editor's bar
+ * and at the foot of the paper show them (SaveWord). Four need the writer, so they also show as
+ * a tinted box above the paper: a conflict (the chapter changed on another device; the page adds
+ * Keep this version and Compare versions under it), a refused save (the page adds Retry), a rule
+ * the text breaks, and an account that can't save yet. The words follow the design books' item 13.
+ * Who uses it: ChapterEditorPage.
  */
 import type { TFunction } from 'i18next';
 
-import { CheckIcon } from '@/components/icons/CheckIcon';
 import { dateLocaleFor } from '@/lib/romania-time';
 import { MAXIMUM_CHAPTER_CHARACTERS, MAXIMUM_CHAPTER_TITLE_LENGTH } from '@/schemas/chapter';
 
 import type { SaveState } from '../hooks/useAutosave';
 import { useEditorTranslation } from '../registerEditorTranslations';
 
-/** The box's tone per state, written out so Tailwind finds the classes. */
-const toneClasses: Record<SaveState['kind'], string> = {
-  idle: 'bg-panel text-ink-muted',
-  unsaved: 'bg-(--warning-bg) text-(--warning-text)',
-  saving: 'bg-tint text-(--info-text)',
-  saved: 'bg-(--success-bg) text-(--success-text)',
-  conflict: 'bg-(--error-bg) text-(--error-text)',
-  offline: 'bg-(--warning-bg) text-(--warning-text)',
-  failed: 'bg-(--warning-bg) text-(--warning-text)',
-  notActive: 'bg-(--warning-bg) text-(--warning-text)',
-  invalid: 'bg-(--error-bg) text-(--error-text)',
-};
+/** The states the writer must act on: shown as a box, the rest only said. */
+const shownKinds = new Set<SaveState['kind']>(['conflict', 'failed', 'invalid', 'notActive']);
 
 /**
  * The line to show for a state.
@@ -62,21 +52,18 @@ function statusText(state: SaveState, t: TFunction<'editor'>, language: string):
 /**
  * Renders the status line.
  *
- * @returns the role="status" paragraph
+ * @returns the role="status" paragraph: a box when the writer must act, hidden otherwise
  */
 export function SaveStatus({ state }: { state: SaveState }) {
   const { t, i18n } = useEditorTranslation();
+  // Nothing to say before the first change; the region stays so later changes are announced.
+  const words = state.kind === 'idle' ? '' : statusText(state, t, i18n.language);
+  const looks = shownKinds.has(state.kind)
+    ? 'm-0 rounded-card bg-(--error-bg) px-4 py-3 type-body text-(--error-text)'
+    : 'sr-only';
   return (
-    <p
-      role="status"
-      className={`m-0 flex items-start gap-2 rounded-card px-4 py-3 type-body leading-normal ${toneClasses[state.kind]}`}
-    >
-      {state.kind === 'saved' && (
-        <span className="mt-1 flex-none" aria-hidden="true">
-          <CheckIcon size={16} />
-        </span>
-      )}
-      <span>{statusText(state, t, i18n.language)}</span>
+    <p role="status" data-testid="save-status" className={looks}>
+      {words}
     </p>
   );
 }

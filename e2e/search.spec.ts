@@ -9,6 +9,12 @@
  * - a 16+ story never appears for a visitor (criterion 3);
  * - more than 20 stories show 20 rows and "Show more results", sorted by best match, and a sort
  *   or filter applies at once and stays in the address (criterion 4; board A08);
+ * - Rating and Length narrow the list in the database, and a visitor asking for 16+ gets nothing
+ *   (board A08; CLAUDE.md rule 18);
+ * - the Spaces tab finds a seeded 16+ space by a word of its description, and never the seeded
+ *   under-16 space for a visitor (board A08);
+ * - before a search, the Spaces chip under the field makes the search open on the Spaces tab
+ *   (board A07);
  * - the Writers tab finds a writer by username and opens their profile;
  * - on a phone "Filter and sort" opens a sheet and counts the filters on, and writer rows have
  *   Follow (board A08);
@@ -120,6 +126,82 @@ test.describe('search (S1-E5-04)', () => {
     await expect(page.getByText('Sorted by Most read')).toBeVisible();
   });
 
+  test('Rating and Length narrow the list, and a visitor asking for 16+ gets nothing', async ({
+    page,
+  }) => {
+    // Board A08: Rating and Length apply at once, in the database, and stay in the address.
+    await page.goto(`/search?q=${foldedWord}`);
+    await page.getByRole('radio', { name: '16+' }).check();
+    await expect(page).toHaveURL(/rating=16_plus/);
+    // Rule 18: a rating above the reader's age never shows, whatever the filter asks for.
+    await expect(
+      page.getByRole('heading', { name: `No stories match “${foldedWord}”` }),
+    ).toBeVisible();
+    await page.getByRole('radio', { name: 'All ages' }).check();
+    await page.getByRole('radio', { name: 'Under 10 chapters' }).check();
+    await expect(page).toHaveURL(/length=short/);
+    await expect(
+      page.getByRole('heading', { name: `21 stories for “${foldedWord}”` }),
+    ).toBeVisible();
+    // Every story here has one chapter, so none is 10 chapters or more.
+    await page.getByRole('radio', { name: '10 chapters or more' }).check();
+    await expect(
+      page.getByRole('heading', { name: `No stories match “${foldedWord}”` }),
+    ).toBeVisible();
+    // The empty list has a Clear filters of its own; this is the one in the filter column.
+    await page
+      .getByRole('complementary', { name: 'Filter and sort' })
+      .getByRole('button', { name: 'Clear filters' })
+      .click();
+    await expect(page).not.toHaveURL(/rating=|length=/);
+    await expect(page.getByRole('radio', { name: 'Any rating' })).toBeChecked();
+    await expect(
+      page.getByRole('heading', { name: `21 stories for “${foldedWord}”` }),
+    ).toBeVisible();
+  });
+
+  test('the Spaces tab finds a space by its description, never an under-16 space for a visitor', async ({
+    page,
+  }) => {
+    // Board A08: the fourth tab. The seed's "Fantasy writers’ circle" mentions folklore.
+    await page.goto('/search?q=folklore&in=spaces');
+    await expect(page.getByRole('radio', { name: /^Spaces 1$/ })).toBeChecked();
+    await page
+      .getByRole('list', { name: 'Spaces' })
+      .getByRole('link', { name: 'Fantasy writers’ circle' })
+      .click();
+    await expect(page).toHaveURL(/\/spaces\/fantasy-writers-circle$/);
+    // The seed's "Young poets" is an under-16 space, so a visitor never finds it.
+    await page.goto('/search?q=young%20poets&in=spaces');
+    await expect(page.getByText('No spaces match “young poets”.')).toBeVisible();
+  });
+
+  test('before a search, the Spaces chip makes the search open on the Spaces tab', async ({
+    page,
+  }) => {
+    // Board A07: the four chips sit under the field, Stories chosen first.
+    await page.goto('/search');
+    const scope = page.getByRole('radiogroup', { name: 'Search in' });
+    await expect(scope.getByRole('radio', { name: 'Stories' })).toBeChecked();
+    await scope.getByRole('radio', { name: 'Spaces' }).click();
+    await expect(page).toHaveURL(/\/search\?in=spaces$/);
+    // The search then opens on the Spaces tab, and the chips give way to the results tabs.
+    await page
+      .getByRole('searchbox', { name: 'Search stories, writers and Together' })
+      .fill('folklore');
+    await page
+      .getByRole('searchbox', { name: 'Search stories, writers and Together' })
+      .press('Enter');
+    await expect(page).toHaveURL(/q=folklore&in=spaces/);
+    await expect(page.getByRole('radio', { name: /^Spaces 1$/ })).toBeChecked();
+    await expect(
+      page
+        .getByRole('list', { name: 'Spaces' })
+        .getByRole('link', { name: 'Fantasy writers’ circle' }),
+    ).toBeVisible();
+    await expect(page.getByRole('radiogroup', { name: 'Search in' })).toHaveCount(0);
+  });
+
   test('the Writers tab finds a writer by username and opens their profile', async ({ page }) => {
     await page.goto('/search?q=teacher');
     await page
@@ -182,7 +264,11 @@ test.describe('search (S1-E5-04)', () => {
     await expect(page.getByText('Check the spelling.')).toBeVisible();
   });
 
-  for (const view of everyView([`/search?q=${foldedWord}`, '/search/writers?q=teacher'])) {
+  for (const view of everyView([
+    '/search',
+    `/search?q=${foldedWord}`,
+    '/search/writers?q=teacher',
+  ])) {
     test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {

@@ -4,8 +4,9 @@
 -- - a token signed with the Vault secret and at most 10 minutes old gives the country; a forged,
 --   old or unsigned token gives none;
 -- - while invite_only and adults_only are on, a valid invite admits any country, unknown included;
--- - once sign-up is public: a closed or unknown country is refused, an under-16 in Australia is
---   refused, and nothing is stored;
+-- - once sign-up is public: without an invite, a closed or unknown country is refused, an under-16
+--   in Australia is refused, and nothing is stored (a working invite still lets someone in from a
+--   closed country: INVITE-MARKET, Robert 26 Nov 2026, tested in 415);
 -- - anyone reads the markets; nobody changes them through the API (allowed and denied).
 begin;
 
@@ -25,11 +26,13 @@ returns text language sql as $$
     || encode(extensions.hmac('v1.' || country || '.' || (extract(epoch from now())::bigint - seconds_ago)::text, secret, 'sha256'), 'hex');
 $$;
 
--- Sign-up data with the current legal versions, the working invite and a country token.
-create function pg_temp.sign_up_data(birth_year text, token text)
+-- Sign-up data with the current legal versions, an invite (the working one unless told otherwise;
+-- null for none) and a country token.
+create function pg_temp.sign_up_data(birth_year text, token text,
+  invite text default 'PERSONAS-TEST-INVITE')
 returns jsonb language sql as $$
   select jsonb_strip_nulls(jsonb_build_object(
-    'invite_code', 'PERSONAS-TEST-INVITE', 'birth_year', birth_year, 'signup_context', token,
+    'invite_code', invite, 'birth_year', birth_year, 'signup_context', token,
     'accepted_terms_version_id', (select versions.id from public.legal_document_versions as versions
       join public.legal_documents as documents on documents.id = versions.document_id
       where documents.slug = 'terms' and versions.language = 'en'),
@@ -72,13 +75,14 @@ select lives_ok($$ select pg_temp.sign_up('from.gb@example.com', pg_temp.sign_up
 select lives_ok($$ select pg_temp.sign_up('unknown@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), null)) $$,
   'while invite_only and adults_only are on, an invite admits an unknown country, VPN or Tor (Q6b)');
 
--- 4. Once sign-up is public. The waiting list is off here: with it on, a closed market waits on
+-- 4. Once sign-up is public, for someone without an invite (a working invite lets them in from a
+-- closed country: test 415). The waiting list is off here: with it on, a closed market waits on
 -- the list instead (MARKETS-2b, test 357).
 update public.feature_flags set is_enabled = false where key in ('invite_only', 'adults_only', 'waitlist');
-select throws_ok($$ select pg_temp.sign_up('closed@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), pg_temp.token_for('GB', 5))) $$,
-  '23514', null, 'once public, a closed market is refused');
-select throws_ok($$ select pg_temp.sign_up('unknown.public@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), null)) $$,
-  '23514', null, 'once public, an unknown country counts as closed');
+select throws_ok($$ select pg_temp.sign_up('closed@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), pg_temp.token_for('GB', 5), null)) $$,
+  '23514', null, 'once public, a closed market is refused without an invite');
+select throws_ok($$ select pg_temp.sign_up('unknown.public@example.com', pg_temp.sign_up_data(pg_temp.years_ago(30), null, null)) $$,
+  '23514', null, 'once public, an unknown country counts as closed without an invite');
 update public.markets set status = 'open', legal_check = 'done' where country_code = 'AU';  -- is_open follows the status (S1-E11-05)
 select is(public.sign_up_market_outcome('AU', pg_temp.years_ago(15)::integer), 'under_market_age',
   'once public and open, Australia refuses an under-16 (Q19)');

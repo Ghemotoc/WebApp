@@ -2,14 +2,15 @@
  * SearchResults: what a search found, under the search field (story S1-E5-04; user story 1.8,
  * board A08-SearchResults).
  *
- * Tabs, each with its count: Stories, Writers and Together; the open tab sits on the white
- * bubble (SegmentedControl) and lives in the address (?in=), so Back and a shared link keep it.
- * Stories: the filters column and the rows (SearchStoriesTab). Writers: avatar, pen name, what
- * they write and Follow. Together: threads and posts with their forum. Spaces joins the tabs once
- * spaces can be searched (board-fixes). The database leaves out what this reader may not see
- * (ratings, blocks, moderation), so the page adds no rules; the safety line says so.
- * Who uses it: SearchPage. What it calls: useStoryList(), useFoundWritersList() and
- * useForumSearch().
+ * Tabs, each with its count: Stories, Writers, Together and Spaces, as board A08 draws them; the
+ * open tab sits on the white bubble (SegmentedControl) and lives in the address (?in=), so Back
+ * and a shared link keep it. Stories: the filters column and the rows (SearchStoriesTab).
+ * Writers: avatar, pen name, what they write and Follow. Together: threads and posts with their
+ * forum. Spaces: the spaces whose name or description holds the term (search_spaces()). The
+ * database leaves out what this reader may not see (ratings, age groups, classes, blocks,
+ * moderation), so the page adds no rules; the safety line says so.
+ * Who uses it: SearchPage. What it calls: useStoryList(), useFoundWritersList(),
+ * useForumSearch() and useFoundSpaces().
  */
 import { useId, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router';
@@ -21,6 +22,7 @@ import type { ListRequest } from '@/features/discovery/api/storyLists';
 import { useStoryList } from '@/features/discovery/hooks/useStoryList';
 import { ForumSearchResultRow } from '@/features/forums/components/ForumSearchResultRow';
 import { useForumSearch } from '@/features/forums/hooks/useForumSearch';
+import { useFoundSpaces } from '@/features/spaces/hooks/useSpaces';
 
 import { useFoundWritersList } from '../hooks/useSearchGroupList';
 import {
@@ -34,6 +36,7 @@ import {
 import { useSearchTranslation } from '../registerSearchTranslations';
 
 import { SearchStoriesTab } from './SearchStoriesTab';
+import { SpaceResultRow } from './SpaceResultRow';
 import { WriterResultRow } from './WriterResultRow';
 
 /** What a list of rows with "Show more results" needs. */
@@ -115,6 +118,29 @@ function TogetherTab({ term, list }: { term: string; list: ReturnType<typeof use
   );
 }
 
+/** The Spaces tab: one row per space found (user story 1.8, board A08). */
+function SpacesTab({ term, list }: { term: string; list: ReturnType<typeof useFoundSpaces> }) {
+  const { t } = useSearchTranslation();
+  if (list.loadFailed) return <Notice tone="error">{t('page.loadFailed')}</Notice>;
+  if (list.spaces === null) return null;
+  return (
+    <MoreRows
+      label={t('tabs.spaces')}
+      hasMore={list.hasMore}
+      isLoadingMore={list.isLoadingMore}
+      onMore={list.showMore}
+      emptyText={list.spaces.length === 0 ? t('tabs.noneSpaces', { term }) : null}
+    >
+      {list.spaces.map((space) => (
+        <SpaceResultRow key={space.id} space={space} />
+      ))}
+    </MoreRows>
+  );
+}
+
+/** How many spaces a page of the Spaces tab holds, as many as the other tabs' rows. */
+const spacesPageSize = 20;
+
 /**
  * A tab's count: the total when the database gives one, the rows loaded so far with "+" while
  * more wait (Together pages without a total), or nothing while loading.
@@ -129,17 +155,18 @@ function countText(total: number | null, hasMore = false): string {
 }
 
 /**
- * Follows the three lists for one term, all at once, so every tab shows its count.
+ * Follows the four lists for one term, all at once, so every tab shows its count.
  *
  * @param term - the search term
  * @param request - the stories list with its filters
- * @returns the three lists
+ * @returns the four lists
  */
 function useSearchTabs(term: string, request: ListRequest) {
   const stories = useStoryList(request);
   const writers = useFoundWritersList(term);
   const together = useForumSearch({ term, forumSlug: null, authorHandle: null });
-  return { stories, writers, together };
+  const spaces = useFoundSpaces(term, spacesPageSize);
+  return { stories, writers, together, spaces };
 }
 
 /**
@@ -159,6 +186,7 @@ export function SearchResults({ term }: { term: string }) {
     stories: countText(lists.stories.total),
     writers: countText(lists.writers.total),
     together: countText(lists.together.results?.length ?? null, lists.together.hasMore),
+    spaces: countText(lists.spaces.total),
   };
   // A new filter or tab rewrites the address in place: no history entry per click.
   const changeStories = (next: ListRequest) => setParams(paramsFor(next, tab), { replace: true });
@@ -186,6 +214,7 @@ export function SearchResults({ term }: { term: string }) {
       )}
       {tab === 'writers' && <WritersTab term={term} list={lists.writers} />}
       {tab === 'together' && <TogetherTab term={term} list={lists.together} />}
+      {tab === 'spaces' && <SpacesTab term={term} list={lists.spaces} />}
       <p className="m-0 type-meta text-ink-muted">{t('groups.safetyNote')}</p>
     </div>
   );

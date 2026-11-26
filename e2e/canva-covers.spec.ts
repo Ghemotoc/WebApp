@@ -110,8 +110,10 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
     const tab = await pressDesignInCanva(page);
     await expect(tab.getByRole('heading', { name: /connect your account/ })).toBeVisible();
     await tab.getByRole('link', { name: 'Cancel' }).click();
+    // Board D11: the heading says it, the line under it says why.
+    await expect(tab.getByRole('heading', { level: 1, name: 'Nothing was shared' })).toBeVisible();
     await expect(tab.getByText('nothing was shared with Canva')).toBeVisible();
-    await expect(tab.getByRole('link', { name: 'Back to your story’s settings' })).toBeVisible();
+    await expect(tab.getByRole('link', { name: 'Back to story settings' })).toBeVisible();
     expect(
       runSql(`select count(*) from public.canva_connections where user_id = '${writerId}'`),
     ).toBe('0');
@@ -129,7 +131,8 @@ test.describe('design a cover in Canva (S1-E3-12)', () => {
     ).toBe('1');
     await tab.getByRole('link', { name: 'Return' }).click();
     // Criteria 2 and 3: back, uploaded through the picture check and saved as the cover.
-    await expect(tab.getByText('Canva cover saved.')).toBeVisible();
+    await expect(tab.getByRole('heading', { level: 1, name: 'The cover is saved' })).toBeVisible();
+    await expect(tab.getByText('Waiting for a check')).toBeVisible();
     // The seed story is All ages, so the cover waits for a moderator (ADMIN-2e1b).
     await expect(tab.getByText(/up to two days when a person/)).toBeVisible();
     expect(

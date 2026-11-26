@@ -70,9 +70,13 @@ test.describe('block and report inside messages (S1-E9-02)', () => {
     // Step 1: adult_writer reports teacher's last message from the chat.
     const page = await openAs(browser, 'adult_writer', '/messages/teacher');
     await expect(page.getByRole('button', { name: 'Report @teacher' })).toBeVisible();
+    // Each message's Report sits in its "…" (user story 4.3).
+    await chatOn(page)
+      .getByRole('button', { name: /^More for the message from teacher/ })
+      .last()
+      .click();
     await chatOn(page)
       .getByRole('button', { name: /^Report the message from teacher/ })
-      .last()
       .click();
     const dialog = page.getByRole('dialog', { name: 'Report this message' });
     await expect(

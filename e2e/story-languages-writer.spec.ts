@@ -88,12 +88,12 @@ test.describe('the writer adds and translates a language (TRANSLATE-1c)', () => 
 
     // A language needs a title: the form says so, then takes the answers.
     // The footer has a "Language" menu too (the interface's), so the form's is asked for by its card.
-    const form = page.getByRole('region', { name: 'A new edition of this story' });
+    const form = page.getByRole('region', { name: 'Add a language' });
     await form.getByLabel('Language', { exact: true }).selectOption('en');
     await page.getByRole('button', { name: 'Add the language' }).click();
     await expect(page.getByText('Add a title in that language.')).toBeVisible();
     await page.getByLabel('Title in that language').fill('The Weather Station');
-    await page.getByLabel('Description in that language').fill('A grandmother notes the weather.');
+    await page.getByLabel('Blurb in that language').fill('A grandmother notes the weather.');
     await page.getByRole('button', { name: 'Add the language' }).click();
     const englishRow = page.getByRole('row').filter({ hasText: 'The Weather Station' });
     await expect(englishRow).toContainText('0 of 2');

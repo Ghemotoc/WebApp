@@ -20,7 +20,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(20);
+select plan(21);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -32,10 +32,11 @@ grant execute on all functions in schema pg_temp to authenticated, anon;
 create temporary table kept (label text primary key, words jsonb) on commit drop;
 grant all on kept to authenticated, anon;
 
--- No other live landing page, so the test knows which house ad comes first.
+-- No other live landing page, so the test knows which house ad comes first. It is a campaign
+-- page: only contest and campaign pages are ads of ours (BOOKS-FOOTER).
 update public.landing_pages set archived_at = now() where archived_at is null;
 with page as (
-  insert into public.landing_pages (slug, page_type) values ('pagina-reclama', 'information') returning id
+  insert into public.landing_pages (slug, page_type) values ('pagina-reclama', 'campaign') returning id
 )
 insert into public.landing_page_versions (page_id, status, content, show_from, published_at)
 select page.id, 'published', jsonb_build_object('theme', 'gold', 'blocks', jsonb_build_array(
@@ -63,6 +64,8 @@ select ok((select count(*) from public.ad_slots) >= 16, 'allowed: ad_slots_selec
 select ok(exists (select 1 from public.ad_slots where slot_key = 'home_wide' and page_key = 'home' and position = 1 and format = 'wide'), 'the Home page has one wide slot, home_wide');
 -- Board A03: the Writers' hub has a side box in its right column.
 select ok(exists (select 1 from public.ad_slots where slot_key = 'hub_side' and page_key = 'hub' and position = 1 and format = 'side_box'), 'the Writers'' hub has one side box, hub_side');
+-- Board D01 (user story 5.1): the Write page has two wide banners, after the chart and after the comments.
+select ok((select count(*) from public.ad_slots where page_key = 'write' and format = 'wide' and slot_key in ('write_wide', 'write_lower')) = 2, 'the Write page has two wide slots, write_wide and write_lower');
 -- Board A03: below 1200 px, where side boxes are not drawn, the hub's advert is a wide banner.
 select ok(exists (select 1 from public.ad_slots where slot_key = 'hub_wide' and page_key = 'hub' and position = 2 and format = 'wide'), 'the Writers'' hub has one wide slot, hub_wide, for screens under 1200 px');
 reset role;
