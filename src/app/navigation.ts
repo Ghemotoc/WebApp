@@ -82,8 +82,10 @@ export interface FooterColumn {
  * The footer's three columns, exactly as every page's footer is drawn in the design files (NIGHT-2;
  * Robert, 23 Nov 2026: "the footer hasn't been updated", then "fix the footer" on his approved
  * canvas comments of 23 Nov 2026): Read, Write and talk (with Join a class), Help and legal.
- * Only links whose page exists are listed: the design's "About the apps", "For teachers" and
- * "For partners" wait for their pages (the partners link would only repeat Contact us).
+ * "About the apps" and "For partners" open two landing pages staff write in the page builder
+ * (/c/apps and /c/partners, seeded by …_books_footer_apps_partners_pages.sql; Robert, 25 Nov 2026:
+ * no widget missing, and editable from the back end). The design's "For teachers" is "Join a
+ * class", which opens the class page a teacher's students use.
  * "Legal" opens the Legal centre, whose document row reaches the terms, the privacy notice, the
  * company and legal contacts (S1-E14-02; DSA arts. 11 and 12) and the accessibility statement
  * (S1-E14-03) in one more tap; "Report without an account" is the one report form (S1-E10-02;
@@ -96,6 +98,8 @@ export const footerColumns: FooterColumn[] = [
       // The Discover shelves' See all pages (S1-E5-09): Trending and New writers ("rising").
       { href: '/discover/all/popular', labelKey: 'shell.footer.trending' },
       { href: '/discover/all/rising', labelKey: 'shell.footer.newWriters' },
+      // A landing page staff edit in Website › Landing pages.
+      { href: '/c/apps', labelKey: 'shell.footer.aboutApps' },
     ],
   },
   {
@@ -106,6 +110,8 @@ export const footerColumns: FooterColumn[] = [
       { href: '/forums', labelKey: 'nav.together' },
       // Joining a class with the teacher's code (S1-E8-11).
       { href: '/class', labelKey: 'shell.footer.joinClass' },
+      // A landing page staff edit in Website › Landing pages; it ends with a button to Contact us.
+      { href: '/c/partners', labelKey: 'shell.footer.forPartners' },
     ],
   },
   {

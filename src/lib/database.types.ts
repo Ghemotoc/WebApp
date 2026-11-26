@@ -13466,6 +13466,8 @@ export type Database = {
           page_size?: number;
           popular_in?: string;
           sort_order?: string;
+          story_length?: string;
+          story_rating?: Database['public']['Enums']['story_rating'];
         };
         Returns: Json;
       };
@@ -13810,6 +13812,7 @@ export type Database = {
       character_part_keys: { Args: { parts: string[] }; Returns: string[] };
       character_sheet_keys: { Args: Record<PropertyKey, never>; Returns: string[] };
       chat_cleared_at: { Args: { chat_id: string; person_id: string }; Returns: string };
+      chat_partner_story: { Args: { partner_id: string }; Returns: Json };
       check_bible_text: { Args: { body: string }; Returns: string };
       check_birthday: { Args: { wanted_month: number }; Returns: undefined };
       check_certificate_class: {
@@ -15971,6 +15974,10 @@ export type Database = {
       move_chapter: { Args: { chapter_code: string; direction: number }; Returns: Json };
       move_chapter_scene: { Args: { new_position: number; scene_id: string }; Returns: Json };
       my_account_deletion: { Args: Record<PropertyKey, never>; Returns: Json };
+      my_adults_switch_stops_chat: {
+        Args: { caller_id: string; partner_id: string };
+        Returns: boolean;
+      };
       my_age_check: { Args: Record<PropertyKey, never>; Returns: Json };
       my_archive_email_hash: { Args: Record<PropertyKey, never>; Returns: string };
       my_bible_entry: {
@@ -16361,6 +16368,7 @@ export type Database = {
       network_ads_barred: { Args: { context: Json }; Returns: boolean };
       new_certificate_code: { Args: Record<PropertyKey, never>; Returns: string };
       new_chapter_audience: { Args: { target_story_id: string }; Returns: string[] };
+      new_chat_people: { Args: Record<PropertyKey, never>; Returns: Json };
       next_chapter_json: { Args: { target_story_id: string }; Returns: Json };
       next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
       next_notice_reference: { Args: { notice_kind: string }; Returns: string };
@@ -17784,6 +17792,7 @@ export type Database = {
         Args: { haystack: string; title: string; wanted: string };
         Returns: string;
       };
+      search_spaces: { Args: { how_many?: number; skip?: number; term: string }; Returns: Json };
       search_story: { Args: { query: string; story_slug: string }; Returns: Json };
       search_tags: {
         Args: { page_offset?: number; page_size?: number; term: string };
@@ -18782,6 +18791,10 @@ export type Database = {
       story_like_state_of: { Args: { target_story_id: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };
+      story_list_row_extras: {
+        Args: { list_kind: string; target_story_id: string };
+        Returns: Json;
+      };
       story_listing_allows: {
         Args: {
           list_kind: string;
@@ -18793,6 +18806,15 @@ export type Database = {
         Returns: boolean;
       };
       story_marketing: { Args: { story_slug: string }; Returns: Json };
+      story_matches_list_filters: {
+        Args: {
+          story_row_id: string;
+          story_row_rating: Database['public']['Enums']['story_rating'];
+          wanted_length: string;
+          wanted_rating: Database['public']['Enums']['story_rating'];
+        };
+        Returns: boolean;
+      };
       story_matches_search: {
         Args: {
           target: Omit<

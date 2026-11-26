@@ -128,6 +128,11 @@ test.describe('epic S1-E9 journeys', () => {
   }) => {
     // Step 1: teen_17 reports adult_writer's message (S1-E9-02).
     const teen = await openAs(browser, 'teen_17', '/messages/adult_writer');
+    // Each message's Report sits in its "…" (user story 4.3).
+    await chatOn(teen)
+      .getByRole('button', { name: /^More for the message from Lia Scrie/ })
+      .last()
+      .click();
     await chatOn(teen)
       .getByRole('button', { name: /^Report the message from Lia Scrie/ })
       .click();

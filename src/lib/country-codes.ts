@@ -1,6 +1,10 @@
 /**
  * Every country and territory a person can say they live in: the ISO 3166-1 alpha-2 codes, plus
- * XK for Kosovo (bundle MARKETS-1, story S1-E2-20).
+ * XK for Kosovo (bundle MARKETS-1, story S1-E2-20). Places where nobody lives (Antarctica, Bouvet
+ * Island, Heard and McDonald Islands, South Georgia, the French Southern Territories, the British
+ * Indian Ocean Territory and the US Minor Outlying Islands) are left out, because nobody can say
+ * they live there (BUGS thread, Robert, 26 Nov 2026). Inhabited territories such as Puerto Rico or
+ * Guernsey stay: people live there and their age rules can differ.
  *
  * Who uses it: the country pickers at sign-up and in Settings (src/features/auth/,
  * src/features/settings/). Names come from the browser (Intl.DisplayNames, see countryName() in
@@ -19,7 +23,6 @@ export const countryCodes: readonly string[] = [
   'AL',
   'AM',
   'AO',
-  'AQ',
   'AR',
   'AS',
   'AT',
@@ -44,7 +47,6 @@ export const countryCodes: readonly string[] = [
   'BR',
   'BS',
   'BT',
-  'BV',
   'BW',
   'BY',
   'BZ',
@@ -100,13 +102,11 @@ export const countryCodes: readonly string[] = [
   'GP',
   'GQ',
   'GR',
-  'GS',
   'GT',
   'GU',
   'GW',
   'GY',
   'HK',
-  'HM',
   'HN',
   'HR',
   'HT',
@@ -116,7 +116,6 @@ export const countryCodes: readonly string[] = [
   'IL',
   'IM',
   'IN',
-  'IO',
   'IQ',
   'IR',
   'IS',
@@ -226,7 +225,6 @@ export const countryCodes: readonly string[] = [
   'SZ',
   'TC',
   'TD',
-  'TF',
   'TG',
   'TH',
   'TJ',
@@ -242,7 +240,6 @@ export const countryCodes: readonly string[] = [
   'TZ',
   'UA',
   'UG',
-  'UM',
   'US',
   'UY',
   'UZ',

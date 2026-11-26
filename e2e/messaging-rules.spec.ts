@@ -7,6 +7,8 @@
  * - an adult sees "<name> isn't taking messages right now" on a 14-year-old's profile and on a
  *   17-year-old's whose "Let adults message me" is off, and nothing on another adult's;
  * - once the 17-year-old turns the switch on and follows the adult, the note is gone;
+ * - in the chat, the 17-year-old is told it is their own switch, with Change, while the adult still
+ *   reads only the neutral note (user story 4.3, board E13);
  * - a signed-out visitor sees no note;
  * - the note never names an age: the same words appear for every reason;
  * - the profile with the note passes axe at 390, 768 and 1440 px, light and night, ro and en.
@@ -82,6 +84,26 @@ test.describe('who may message whom (S1-E9-03)', () => {
     await expect(page.getByText(/under 16|16 or 17|years old/i)).toHaveCount(0);
     await page.goto('/u/teacher');
     await expect(page.getByText(/isn’t taking messages/)).toHaveCount(0);
+  });
+
+  test('a 17-year-old whose adults switch is off is told why, with Change; the adult is not', async ({
+    browser,
+  }) => {
+    // User story 4.3: the box gives way to a line saying why, for the member who can change it.
+    const teen = await openAs(browser, 'teen_17', '/messages/adult_writer');
+    await expect(
+      teen.getByText(
+        'Messages from adults are off in your settings, so you can’t write to Lia Scrie.',
+      ),
+    ).toBeVisible();
+    await expect(teen.getByLabel('Message to Lia Scrie')).toHaveCount(0);
+    await teen.getByRole('link', { name: 'Change messages from adults' }).click();
+    await expect(teen).toHaveURL(/\/settings#messages$/);
+    // The adult on the other side reads only the neutral note (S1-E9-03).
+    const writer = await openAs(browser, 'adult_writer', '/messages/teen_17');
+    await expect(writer.getByText(noteFor('teen_17'))).toBeVisible();
+    await expect(writer.getByText(/Messages from adults are off/)).toHaveCount(0);
+    runSql(`update public.profiles set locale = 'ro' where handle = 'teen_17';`);
   });
 
   test('the note goes once the 17-year-old lets adults message them', async ({ browser }) => {

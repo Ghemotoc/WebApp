@@ -250,7 +250,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
 | `src/features/flags/` | The public feature flags for screens that change with them (`useFeatureFlags`) | S1-E2-01 |
-| `src/features/errors/` | Our own error log's browser side: the global handlers, the router's error page ("Something went wrong on our side") and the scrubbing before anything is sent; see its README | S1-E1-05 |
+| `src/features/errors/` | Our own error log's browser side: the global handlers, the router's error page ("Something went wrong on our side"), the one quiet reload when a tab still runs an older release, and the scrubbing before anything is sent; see its README | S1-E1-05 |
 | `src/features/maintenance/` | The maintenance page and the gate in AppLayout that shows it while `maintenance_mode` is on (staff and the log-in pages excepted) | S1-E1-05 |
 | `src/features/offline/` | The "You're offline" / "You're back online" banner under the top bar | S1-E1-05 |
 | `src/config/appVersion.ts` | The build's version for error reports: the short commit on Cloudflare, `local` elsewhere (set in `vite.config.ts`) | S1-E1-05 |
@@ -528,7 +528,18 @@ the other person: MessagesHeaderLink (useUnreadMessageCount → unread_message_c
   → opening the chat → mark_conversation_read()
 ```
 
-The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`. Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`, behind its "…" button (board E13). Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+
+Boards E12 and E13 (BOOKS-4) added three reads, all in `…_books_e12_e13_chat_partner_and_new_chat.sql` (tests `412`), none of them changing who may write to whom:
+
+```
+NewChatButton → useNewChatPeople → new_chat_people()
+  → the people the caller follows, live and not staff, kept only when conversation_can_send() says yes
+ChatHeader / ChatFocusBar → usePartnerLine(chat.latestStory)
+  → conversation_with().latest_story ← chat_partner_story(): their newest story the reader may open
+AboutChatPanel / ChatPanel → chat.adultsSwitchStops
+  → conversation_with().adults_switch_stops ← my_adults_switch_stops_chat(): a 16 or 17-year-old's own switch
+```
 
 ## Block and report inside messages (S1-E9-02)
 
@@ -1726,7 +1737,7 @@ post_comment() ────────┘ queues comment_posted            comm
                                              notifications (the person told reads only their own rows)
 NotificationsPage → hooks/useNotifications → api/notifications.ts → my_notifications()
 NotificationBell → hooks/useUnreadNotificationCount (every 60 s and on focus) → my_unread_notification_count()
-"Mark all as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
+"Mark as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
 ```
 
 Reading applies the reader's rules again (`notification_is_shown()`): a chapter they can no longer open (rating, block, moderation) or someone either side now blocks is left out, so the badge and the list always agree. A moderation decision is always shown and `is_required` (DSA art. 17). Answers carry usernames and display names, never a user ID. The words for each kind are picked in `lib/notificationText.ts`; the day headings in `lib/dayGroups.ts` (Romanian time).
@@ -2110,6 +2121,7 @@ A landing page is a page at its own address, `/c/<name>`, for a contest, a campa
 - **How one click travels:** Publish → `useLandingPageEditor().act({ kind: 'publish', draft })` → `admin_save_landing_page_draft()` then `admin_publish_landing_page()`, which asks `landing_page_problems()` for what is missing (a hero first, every required field in both languages, a contest's key dates and Rules link, dates in order) and refuses with the list as the hint, which `labelOfField()` turns into "Block 3: Rules, English: Link text". The limits live twice, in `src/schemas/landingPages.ts` (`landingFieldRules`) and `landing_block_field_rules()`, so the counters and the server agree. Each create, publish, restore and archive writes `landing_page.*` to `audit_log`.
 - **Tables:** `landing_pages` (address, type, archived) and `landing_page_versions` (one draft per page, published versions with "show from" and "take down on"). `c` is a reserved name, so no username can take the address.
 - **Tests:** `supabase/tests/database/261-landing-pages.test.sql`, `e2e/landing-pages.spec.ts`, `src/features/landing-pages/lib/blocks.test.ts`.
+- **The footer's pages:** "About the apps" (`/c/apps`) and "For partners" (`/c/partners`) in `footerColumns` (`src/app/navigation.ts`) are information landing pages seeded live by `supabase/migrations/20270205100553_books_footer_apps_partners_pages.sql`, which runs the same publish checks first; staff rewrite them like any other page. Tests: `412-footer-pages.test.sql`, `e2e/footer-pages.spec.ts`.
 
 ### Pictures and featured stories (CONTESTS-13a2a)
 
@@ -2195,8 +2207,8 @@ One search field finds stories, writers and tags, in Romanian and English, with 
 - **How a story matches:** `story_search_text()` folds the title, blurb, the writer's username and pen name, a classic's author and every language's name of its approved tags (lower case, no marks, ş and ţ corrected, as `normalise_tag()`). `story_matches_search()` takes a Romanian or English word match (`search_query()`, stemmed, so "povestea" finds "Povești") or a plain "contains" match for a word typed in part. `story_search_rank()` puts title matches first; the See all page (`/search/stories`, the shared `StoryListPage`) sorts by `relevance` ("Best match"), a sort only search accepts.
 - **Stored search rows (QA-2):** `story_search_text()` is no longer worked out for every story on every search. Each story's folded text and word index live in `story_search_documents` (one row per story, GIN indexes for words and for "contains"), kept up to date by triggers on `stories`, `profiles`, `story_tags`, `tags`, `tag_names` and `classic_authors` (`refresh_story_search_document()`). Only staff read the table directly; members search through `browse_stories()`. `rebuild_story_search_documents()` rebuilds every row and is safe to run again.
 - **How fast the lists are (QA-2):** `scripts/volume/run-volume-check.sh` copies the local schema into a scratch database, seeds 50,000 accounts and 20,000 stories (`seed-volume.sql`) and times Discover, See all pages, search, the story page, a chapter and notifications against their budgets (`time-read-paths.sql`). Run it after any change to `listed_stories()`, `browse_stories()` or `story_card_json()`.
+- **How the results show (user story 1.8, board A08):** tabs with their counts, Stories, Writers and Together, on a segmented control; the open tab is `?in=` in the address. The Stories tab (`SearchStoriesTab`) has Sort by, Status, Language, Rating and Length as radio groups (`SearchFilterFields`, `SearchRangeFilters`, each group a `FilterRadios`) in a left column from 1024 px with the one advert under them (a "Filter and sort · 1" sheet below), applied at once by rewriting the address in place, and one `StoryResultRow` per story with "Show more results"; a search's cards also carry the story's public reads (`browse_stories()` adds `story_list_row_extras()`), which the row shows with "updated 2 days ago" (`timeAgo()`). Writers are `WriterResultRow` with Follow; Together is `ForumSearchResultRow` from `useForumSearch()`; Spaces is `SpaceResultRow` from `useFoundSpaces()` → `fetchFoundSpaces()` → `search_spaces()`, which keeps the Spaces page's rule for who sees which card (`space_card_visible()`). Rating and Length are `?rating=` and `?length=` in the address and `story_rating` and `story_length` in `browse_stories()`, which keeps a story only when `story_matches_list_filters()` lets it through (one rating; under 10 readable chapters or 10 and more), before the list is counted and paged; a rating above the reader's age is already left out by `listed_stories()`.
 - **Before a search (user story 1.7, board A07):** Recent searches (this device only), then `TrendingTags` → `useTrendingTags()` → `fetchTrendingTags()` → `trending_tags()`, the approved tags read most in the last seven days over the stories the reader may see; Writers to try and the advert on the right.
-- **How the results show (user story 1.8, board A08):** tabs with their counts, Stories, Writers and Together, on a segmented control; the open tab is `?in=` in the address. The Stories tab (`SearchStoriesTab`) has Sort by, Status and Language as radio groups in a left column from 1024 px with the one advert under them (a "Filter and sort · 1" sheet below), applied at once by rewriting the address in place, and one `StoryResultRow` per story with "Show more results". Writers are `WriterResultRow` with Follow; Together is `ForumSearchResultRow` from `useForumSearch()`.
 - **The page before a search (user story 1.7, board A07):** the top bar's `HeaderSearch` is a round link after Write; `/search` itself shows the field, `RecentSearches` and, on the right, Writers to try (`RisingWritersList`) with the one advert. `SearchForm` searches as the member types: 300 ms after the last key a term of two letters or more replaces the address (`navigate(..., { replace: true })`); Search or Enter adds a history entry and keeps the term in `lib/recentSearches.ts`, the last five terms in this browser's localStorage only, never sent to the server (CLAUDE.md rule 12).
 - **Writers and tags:** `search_writers()` lists only writers with a story this reader may see, so a search never turns up a minor's account, and never answers a user ID. `search_tags()` finds approved tags by any of their names. Their See all pages are `/search/writers` and `/search/tags` (`SearchGroupPage`).
 - **Tests:** `supabase/tests/database/177-search.test.sql`, `e2e/search.spec.ts`, `src/features/search/lib/searchAddresses.test.ts`, `src/features/search/lib/recentSearches.test.ts`, `src/features/discovery/lib/listAddresses.test.ts`.
