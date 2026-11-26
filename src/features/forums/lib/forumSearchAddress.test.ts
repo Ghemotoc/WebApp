@@ -28,7 +28,20 @@ describe('the forum search address', () => {
       term: 'hărți',
       forumSlug: 'worldbuilding',
       authorHandle: '@teacher',
+      sort: 'best',
     });
+  });
+
+  it('keeps an order other than best match in the address (board F02)', () => {
+    const address = forumSearchAddress({
+      term: 'prolog',
+      forumSlug: null,
+      authorHandle: null,
+      sort: 'newest',
+    });
+    expect(address).toBe('/forums/search?q=prolog&sort=newest');
+    const parameters = new URL(address, 'https://example.org').searchParams;
+    expect(forumSearchFromAddress(parameters).sort).toBe('newest');
   });
 });
 

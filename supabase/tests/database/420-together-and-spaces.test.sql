@@ -18,7 +18,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(41);
+select plan(43);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -206,6 +206,16 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((select count(*)::integer from jsonb_array_elements(public.space_log('fantasy-writers-circle', 0, 'teacher') -> 'entries') as entry
            where entry -> 'actor' ->> 'handle' is distinct from 'teacher'),
   0, 'Who shows only the actions of the person picked');
+
+/* ---------- 7. The adverts the boards draw (F02, F03, F06, F08) ---------- */
+
+select is((select string_agg(slot_key || ':' || page_key || ':' || position, ',' order by slot_key)
+             from public.ad_slots
+            where slot_key in ('forum_search_wide', 'forum_side', 'forum_wide', 'spaces_wide', 'space_side')),
+  'forum_search_wide:forum_search:1,forum_side:forum:1,forum_wide:forum:2,space_side:space:2,spaces_wide:spaces:1',
+  'the forum search, a forum, the spaces list and a space each have the slots their boards draw');
+select is((select max(slot_count)::integer from (select count(*) as slot_count from public.ad_slots group by page_key) as per_page),
+  2, 'no page has more than two adverts (decided 17 Oct 2026, 11:53)');
 
 select * from finish();
 rollback;

@@ -4,12 +4,12 @@
  *
  * Who calls it: ForumSearchForm (to open a search and list the forums and spaces to filter by) and
  * ForumSearchPage (to read one). The search
- * lives in the address (/forums/search?q=…&forum=…&author=…) so the back button and a shared link
+ * lives in the address (/forums/search?q=…&forum=…&author=…&sort=…) so the back button and a shared link
  * both work.
  */
 import type { SelectOption } from '@/components/ui/Select';
 
-import type { ForumSearchQuery } from '../api/forumSearch';
+import { forumSearchSorts, type ForumSearchQuery } from '../api/forumSearch';
 
 import type { ForumEntry } from '../api/forumIndex';
 
@@ -29,6 +29,8 @@ export function forumSearchAddress(query: ForumSearchQuery): string {
   if (query.forumSlug !== null) parameters.set('forum', query.forumSlug);
   const author = query.authorHandle?.trim() ?? '';
   if (author !== '') parameters.set('author', author);
+  // Best match is the default, so only another order goes in the address.
+  if (query.sort !== undefined && query.sort !== 'best') parameters.set('sort', query.sort);
   return `${forumSearchPath}?${parameters.toString()}`;
 }
 
@@ -36,15 +38,18 @@ export function forumSearchAddress(query: ForumSearchQuery): string {
  * Reads a search from the address.
  *
  * @param parameters - the address's search parameters
- * @returns the term ('' when none) and the filters (null when not set)
+ * @returns the term ('' when none), the filters (null when not set) and the order (best match
+ *   when missing or unknown)
  */
 export function forumSearchFromAddress(parameters: URLSearchParams): ForumSearchQuery {
   const forum = parameters.get('forum') ?? '';
   const author = parameters.get('author') ?? '';
+  const sort = forumSearchSorts.find((known) => known === parameters.get('sort')) ?? 'best';
   return {
     term: parameters.get('q') ?? '',
     forumSlug: forum === '' ? null : forum,
     authorHandle: author === '' ? null : author,
+    sort,
   };
 }
 

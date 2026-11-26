@@ -71,14 +71,20 @@ async function openAs(
   return page;
 }
 
-/** The results' titles with their kind, top to bottom, keeping only this spec's threads. */
+/**
+ * The results' kind and title, top to bottom ("Thread …", "Post 3 Re: …"), keeping only this
+ * spec's threads. Board F02 (BOOKS-7): the title comes first, the kind leads the meta line under it.
+ */
 async function resultsShown(page: Page): Promise<string[]> {
-  const list = page.getByRole('region', { name: 'Results' }).getByRole('listitem');
-  await expect(list.first()).toBeVisible();
-  const rows = await list.allInnerTexts();
-  return rows
-    .filter((row) => row.includes('e2e search'))
-    .map((row) => row.split('\n').slice(0, 2).join(' '));
+  const rows = page.getByRole('region', { name: /results? for/ }).locator('ol > li');
+  await expect(rows.first()).toBeVisible();
+  const shown: string[] = [];
+  for (const row of await rows.all()) {
+    const title = await row.getByRole('link').innerText();
+    const kind = await row.locator('.meta-line li').first().innerText();
+    if (title.includes('e2e search')) shown.push(`${kind} ${title}`);
+  }
+  return shown;
 }
 
 test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
@@ -101,13 +107,13 @@ test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
     await expect(page).toHaveURL(/\/forums\/search\?q=dragoni$/);
     const shown = await resultsShown(page);
     expect(shown[0]).toBe(`Thread ${dragonTitle}`);
-    expect(shown).toContain(`Post #3 ${dragonTitle}`);
-    expect(shown).toContain(`Post #1 ${mapTitle}`);
+    expect(shown).toContain(`Post 3 Re: ${dragonTitle}`);
+    expect(shown).toContain(`Post 1 ${mapTitle}`);
     // A result opens the thread at its post.
     await page
-      .getByRole('listitem')
-      .filter({ hasText: 'Post #3' })
-      .getByRole('link', { name: dragonTitle })
+      .locator('ol > li')
+      .filter({ hasText: 'Post 3' })
+      .getByRole('link', { name: `Re: ${dragonTitle}` })
       .click();
     await expect(page.locator('#post-3')).toBeFocused();
     await page.context().close();
@@ -120,21 +126,21 @@ test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
     await page.getByLabel('Forum', { exact: true }).selectOption('worldbuilding');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/forum=worldbuilding/);
-    await expect.poll(() => resultsShown(page)).toEqual([`Post #1 ${mapTitle}`]);
+    await expect.poll(() => resultsShown(page)).toEqual([`Post 1 ${mapTitle}`]);
     await page.getByLabel('Forum', { exact: true }).selectOption('');
     await page.getByLabel('Author', { exact: true }).fill('@teacher');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/author=%40teacher/);
     await expect
       .poll(async () => (await resultsShown(page)).sort())
-      .toEqual([`Post #1 ${mapTitle}`, `Post #2 ${dragonTitle}`].sort());
+      .toEqual([`Post 1 ${mapTitle}`, `Post 2 Re: ${dragonTitle}`].sort());
     await page.context().close();
   });
 
   test('a post by someone who blocks the reader is not found', async ({ browser }) => {
     const page = await openAs(browser, 'blocked', '/forums/search?q=h%C4%83r%C8%9Bi');
     const shown = await resultsShown(page);
-    expect(shown).not.toContain(`Post #3 ${dragonTitle}`);
+    expect(shown).not.toContain(`Post 3 Re: ${dragonTitle}`);
     // The other thread's title has the word, so it is found as a thread.
     expect(shown).toContain(`Thread ${mapTitle}`);
     await page.context().close();

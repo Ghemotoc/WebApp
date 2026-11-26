@@ -4,7 +4,8 @@
  *
  * On the forum index it is the board's field and "Search". On the results page it also shows the
  * two filters the story asks for: a forum (its subforums included) or a space (FORUMS-2c), and an
- * author's username.
+ * author's username, then the order of the results (BOOKS-7, board F02: best match, newest or
+ * most replies).
  * Submitting opens /forums/search with the search in the address, so the back button and a
  * shared link both work.
  * Who uses it: ForumsPage and ForumSearchPage. What it calls: the router, useForumIndex and
@@ -19,7 +20,7 @@ import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
 import { useSpaceList } from '@/features/spaces/hooks/useSpaces';
 
-import type { ForumSearchQuery } from '../api/forumSearch';
+import { forumSearchSorts, type ForumSearchQuery } from '../api/forumSearch';
 import { useForumIndex } from '../hooks/useForumIndex';
 import {
   forumFilterOptions,
@@ -55,11 +56,53 @@ function useForumFilterOptions(chosenSlug: string | null) {
 }
 
 /**
- * The forum and author filters.
+ * The order drop-down: best match, newest or most replies first (board F02). Picking an order
+ * searches again at once, as a sort does everywhere else; the other filters wait for "Search".
  *
  * @param props.search - the search being written
  * @param props.onChange - called with the changed search
- * @returns the two fields
+ * @returns the drop-down
+ */
+function SearchSort({
+  search,
+  onChange,
+}: {
+  search: ForumSearchQuery;
+  onChange: (next: ForumSearchQuery) => void;
+}) {
+  const { t } = useForumsTranslation();
+  const navigate = useNavigate();
+  const id = useId();
+  const options = forumSearchSorts.map((sort) => ({
+    value: sort,
+    label: t(`search.sort.${sort}`),
+  }));
+
+  /** Keeps the order picked and opens the results in that order. */
+  function pick(value: string) {
+    const next = { ...search, sort: forumSearchSorts.find((sort) => sort === value) ?? 'best' };
+    onChange(next);
+    void navigate(forumSearchAddress(next));
+  }
+
+  return (
+    <Select
+      id={`${id}-sort`}
+      label={t('search.sortLabel')}
+      isLabelVisible
+      options={options}
+      value={search.sort ?? 'best'}
+      onChange={pick}
+    />
+  );
+}
+
+/**
+ * The forum and author filters and the order.
+ *
+ * @param props.search - the search being written
+ * @param props.onChange - called with the changed search
+ * @returns the three fields
  */
 function SearchFilters({
   search,
@@ -90,6 +133,7 @@ function SearchFilters({
           onChange={(event) => onChange({ ...search, authorHandle: event.target.value })}
         />
       </div>
+      <SearchSort search={search} onChange={onChange} />
     </div>
   );
 }

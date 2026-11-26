@@ -49,7 +49,16 @@
     "categoryNote": "Discuțiile se poartă în forumurile din această categorie.",
     "pinned": "Fixată",
     "locked": "Închisă",
-    "answered": "Are răspuns"
+    "answered": "Are răspuns",
+    "sortLabel": "Ordinea firelor",
+    "sort": {
+      "latest": "Activitate recentă",
+      "newest": "Cele mai noi",
+      "replies": "Cele mai multe răspunsuri"
+    },
+    "shownOf_one": "{{shown, number}} din {{count, number}} fir",
+    "shownOf_few": "{{shown, number}} din {{count, number}} fire",
+    "shownOf_other": "{{shown, number}} din {{count, number}} de fire"
   },
   "person": {
     "deleted": "Cont șters",
@@ -272,15 +281,28 @@
     "author": "Autor",
     "authorPlaceholder": "Nume de utilizator",
     "title": "Caută în forumuri",
-    "results": "Rezultate",
     "tooShort": "Scrie cel puțin 2 litere ca să cauți.",
     "none": "Nu am găsit nimic pentru „{{term}}”. Încearcă alt cuvânt sau caută în toate forumurile.",
     "loadFailed": "Nu am putut căuta în forumuri. Verifică-ți conexiunea și încearcă din nou.",
     "showMore": "Arată mai multe rezultate",
     "kindThread": "Discuție",
-    "kindPost": "Mesajul #{{number}}",
-    "where": "În {{forum}} · de {{name}} · {{date}}",
-    "spaceOption": "Spațiu: {{name}}"
+    "kindPost": "Mesajul {{number}}",
+    "spaceOption": "Spațiu: {{name}}",
+    "sortLabel": "Ordine",
+    "sort": {
+      "best": "Cele mai potrivite",
+      "newest": "Cele mai noi",
+      "replies": "Cele mai multe răspunsuri"
+    },
+    "resultsFor_one": "{{count, number}} rezultat pentru „{{term}}”",
+    "resultsFor_few": "{{count, number}} rezultate pentru „{{term}}”",
+    "resultsFor_other": "{{count, number}} de rezultate pentru „{{term}}”",
+    "orderNote": {
+      "best": "Întâi titlurile firelor, apoi postările",
+      "newest": "Cele mai noi întâi",
+      "replies": "Întâi firele cu cele mai multe răspunsuri"
+    },
+    "replyTitle": "Re: {{title}}"
   },
   "space": {
     "spaces": "Spații"

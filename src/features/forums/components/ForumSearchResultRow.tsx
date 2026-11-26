@@ -1,15 +1,16 @@
 /**
  * ForumSearchResultRow: one thread or post a forum search found (bundle FORUMS-1, part f;
- * S1-E8-10).
+ * S1-E8-10; drawn as board F02 in BOOKS-7).
  *
- * Shows whether it is a thread (its title matched) or a post, the thread's title as a link to the
- * post itself (?post=N, which the thread page scrolls to), where and by whom it was written, and
- * the start of its words. A deleted account shows as "Deleted account"; a user ID never.
- * CALM-9b (board simplified F02): no pill; "Thread" or "Post #3" is a bold word above the title,
- * the state that goes first in a meta line.
- * Who uses it: ForumSearchPage.
+ * Board F02: the thread's title as a link to the post itself (?post=N, which the thread page
+ * scrolls to), "Re: " before it for a reply (a post after the first), then one meta line ("Thread · First chapters ·
+ * inkwolf · 14 Oct · 23 replies", or "Post 3 · poppyverse · 14 Oct") and the start of the words.
+ * A deleted account shows as "Deleted account"; a user ID never.
+ * Who uses it: ForumSearchPage. What it calls: MetaLine and the forum address and date helpers.
  */
 import { Link } from 'react-router';
+
+import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 
 import type { ForumSearchResult } from '../api/forumSearch';
 import { postAddress } from '../lib/forumAddresses';
@@ -18,37 +19,58 @@ import { nameOf } from '../lib/forumPeople';
 import { useForumsTranslation } from '../registerForumsTranslations';
 
 /**
+ * The facts under the title: what was found, where, by whom, when, and a thread's replies.
+ *
+ * @param result - the thread or post found
+ * @returns the meta line's facts
+ */
+function useResultFacts(result: ForumSearchResult): MetaFact[] {
+  const { t, i18n } = useForumsTranslation();
+  const name = nameOf(result.author, t('person.deleted'));
+  const day = threadDay(result.createdAt, i18n.language);
+  if (result.kind === 'post') {
+    return [
+      { text: t('search.kindPost', { number: result.postNumber }), kind: 'state' },
+      { text: name },
+      { text: day },
+    ];
+  }
+  return [
+    { text: t('search.kindThread'), kind: 'state' },
+    { text: result.forumName },
+    { text: name },
+    { text: day },
+    { text: t('list.replies', { count: result.replyCount }) },
+  ];
+}
+
+/**
  * Renders the row.
  *
  * @param props.result - the thread or post found
  * @returns a list item
  */
 export function ForumSearchResultRow({ result }: { result: ForumSearchResult }) {
-  const { t, i18n } = useForumsTranslation();
-  const isThread = result.kind === 'thread';
+  const { t } = useForumsTranslation();
+  const facts = useResultFacts(result);
   // A thread opens at its start; a post at itself.
   const address = postAddress(result.forumSlug, result.threadNumber, result.postNumber);
+  // A reply's title reads "Re: …"; a thread's first post keeps the title itself.
+  const isReply = result.kind === 'post' && result.postNumber > 1;
+  const title = isReply
+    ? t('search.replyTitle', { title: result.threadTitle })
+    : result.threadTitle;
   return (
-    <li className="flex flex-col gap-2 border-t border-border px-4 py-4 first:border-t-0 md:px-6">
-      {/* A span, not a paragraph: the kind and the title read as two lines, not with a gap. */}
-      <span className="block type-meta font-semibold text-ink">
-        {isThread ? t('search.kindThread') : t('search.kindPost', { number: result.postNumber })}
-      </span>
+    <li className="flex flex-col gap-1 border-t border-border py-4">
       <Link
         to={address}
-        className="font-heading type-long leading-snug font-bold break-words text-ink-heading underline-offset-2 hover:underline"
+        className="type-label font-semibold break-words text-ink-heading no-underline underline-offset-2 hover:underline"
       >
-        {result.threadTitle}
+        {title}
       </Link>
-      <p className="m-0 type-meta text-ink-muted">
-        {t('search.where', {
-          forum: result.forumName,
-          name: nameOf(result.author, t('person.deleted')),
-          date: threadDay(result.createdAt, i18n.language),
-        })}
-      </p>
+      <MetaLine facts={facts} />
       {result.snippet !== '' && (
-        <p className="m-0 type-body leading-relaxed break-words text-ink-muted">{result.snippet}</p>
+        <p className="m-0 type-body break-words text-ink">{result.snippet}</p>
       )}
     </li>
   );
