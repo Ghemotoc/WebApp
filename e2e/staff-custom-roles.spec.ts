@@ -89,7 +89,12 @@ test.describe('custom staff roles (S1-E11-33)', () => {
     await card.getByLabel('Find the account').press('Enter');
     await card.getByRole('radio', { name: /@blocker/ }).check();
     await card.getByRole('button', { name: 'Give role' }).click();
-    await expect(card.getByText('@blocker')).toBeVisible();
+    // The holder's "Take back" button shows only once the database has given the role. "@blocker"
+    // alone is already on the card in the search result above, so waiting for it let the audit
+    // count below run before the grant had landed (CI, 25 Nov 2026: 1 row instead of 2).
+    await expect(
+      card.getByRole('button', { name: `Take ${roleName} back from @blocker` }),
+    ).toBeVisible();
     expect(
       runSql(`select count(distinct action) from public.audit_log
         where action in ('staff.custom_role_created', 'staff.custom_role_granted')

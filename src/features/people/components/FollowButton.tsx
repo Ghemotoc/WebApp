@@ -1,6 +1,7 @@
 /**
- * FollowButton: "Follow" / "Following" for a writer, or "Follow story" / "Following story" for a
- * story (story S1-E6-05; boards 6.1 Profile and 3.4 Story).
+ * FollowButton: "Follow" / "Following" for a writer, "Follow story" / "Following story" for a
+ * story (story S1-E6-05; boards 6.1 Profile and 3.4 Story), "Follow Fantasy" for a genre (board
+ * A06) and "Follow this tag" for a tag (board A09; BOOKS-A06 and BOOKS-A09).
  *
  * A toggle button: aria-pressed says whether the reader follows, and "Following" carries a tick
  * so the state never rests on colour alone (DoD pills and chips). It is always the quiet button;
@@ -33,12 +34,15 @@ export interface FollowButtonProps {
 /**
  * The words on the button for this kind of target and state.
  *
- * @param target - the writer or the story
+ * @param target - the writer, story, genre or tag
  * @param isFollowing - whether the reader follows
  * @returns the translation key
  */
 function buttonTextKey(target: FollowTarget, isFollowing: boolean): string {
   if (target.kind === 'story') return isFollowing ? 'follow.followingStory' : 'follow.followStory';
+  // Board A06 names the genre on the button itself: "Follow Fantasy".
+  if (target.kind === 'genre') return isFollowing ? 'follow.followingNamed' : 'follow.followNamed';
+  if (target.kind === 'tag') return isFollowing ? 'follow.followingTag' : 'follow.followTag';
   return isFollowing ? 'follow.following' : 'follow.follow';
 }
 
@@ -92,9 +96,10 @@ export function FollowButton({ target, targetLabel }: FollowButtonProps) {
         onClick={() => void press()}
       >
         {isFollowing && <CheckIcon />}
-        {t(buttonTextKey(target, isFollowing))}
-        {/* The name says what is followed and starts with the visible words (WCAG 2.5.3). */}
-        <span className="sr-only"> {targetLabel}</span>
+        {t(buttonTextKey(target, isFollowing), { name: targetLabel })}
+        {/* The name says what is followed and starts with the visible words (WCAG 2.5.3); a
+            genre's button already shows its name. */}
+        {target.kind !== 'genre' && <span className="sr-only"> {targetLabel}</span>}
       </Button>
       {follow.failure !== null && (
         <p role="alert" className="m-0 type-body text-destructive">

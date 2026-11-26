@@ -11,6 +11,7 @@ import type { PillTone } from '@/components/ui/InfoPill';
 import type { Enums } from '@/lib/database.types';
 
 import type { StaffStoryAudience, StaffStoryStatus } from '../api/staffStories';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The pill colour for each status (DoD pill system: no solid red, which is kept for urgent items). */
 const statusTones: Record<StaffStoryStatus, PillTone> = {
@@ -40,6 +41,8 @@ export function useStaffStoryWords() {
     audience: (audience: StaffStoryAudience) => t(`stories.audiences.${audience}`),
     // A date in the page's language, for example "24 Oct 2026".
     date: (isoTime: string) =>
-      new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(new Date(isoTime)),
+      new Intl.DateTimeFormat(dateLocaleFor(i18n.language), { dateStyle: 'medium' }).format(
+        new Date(isoTime),
+      ),
   };
 }

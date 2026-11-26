@@ -6,10 +6,11 @@
  * columns from 900 px. Left, the wider one: the lead contest, the prompt of the week (GAPS-12c),
  * the writing guides, the seven-day learning path (GAPS-12g), the live sessions (GAPS-12h), more
  * contests and the calls for submissions (GAPS-12d). Right: the writer of the week (GAPS-12e), the
- * advert (slot hub_side, a side box from 1200 px; 25 Nov 2026), the tools, this week's numbers (GAPS-12b) and the badges (GAPS-12f). Below 900 px the right column
- * follows the left.
- * Left out: the board's two adverts (728 × 90 and the column box), which need an ad slot of their
- * own (S1-E12-04; docs/board-fixes.md).
+ * advert (slot hub_side, a side box from 1200 px; 25 Nov 2026), the tools, this week's numbers
+ * (GAPS-12b) and the badges (GAPS-12f). Below 900 px the right column follows the left.
+ * The board's advert sits in one of two places: the side box from 1200 px, and below that a wide
+ * banner between the writing guides and the learning path (slot hub_wide, position 2), because
+ * side boxes are not drawn under 1200 px. So a member always sees one of the two, never both.
  * Signed out, it says to log in, as Notifications does.
  * Who shows it: the router, at /hub. What it calls: the Hub* sections below, PageAdSlot and useSession.
  */
@@ -52,6 +53,9 @@ function HubBody() {
           <HubLeadContest now={now} />
           <HubPrompt now={now} />
           <HubGuideRows />
+          {/* Board A03: below 1200 px the advert is a banner here instead of the side box
+              (slot hub_wide; staff turn it off or book it in Sponsors › Placements). */}
+          <PageAdSlot pageKey="hub" position={2} className="min-[1200px]:hidden" />
           <HubPath />
           <HubSessions />
           <HubMoreContests now={now} />

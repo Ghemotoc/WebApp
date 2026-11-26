@@ -75,7 +75,8 @@ test.describe('getting around as a writer (NAV-1)', () => {
     browser,
   }) => {
     const page = await openAsWriter(browser, '/library');
-    const mine = page.getByRole('region', { name: 'Written by you' });
+    // exact: the row inside is a region too ("Written by you, scrolls sideways"; board C01).
+    const mine = page.getByRole('region', { name: 'Written by you', exact: true });
     // The draft is there, marked Draft, and opens its chapters in the writing tools.
     const draftRow = mine.getByRole('listitem').filter({ hasText: 'Ciorna din raft' }).first();
     await expect(draftRow).toContainText('Draft');
@@ -101,7 +102,9 @@ test.describe('getting around as a writer (NAV-1)', () => {
         { address: '/library', width: 390, theme: 'light', language },
         async (screen) => {
           const sectionName = language === 'ro' ? 'Scrise de tine' : 'Written by you';
-          await expect(screen.getByRole('region', { name: sectionName })).toBeVisible();
+          await expect(
+            screen.getByRole('region', { name: sectionName, exact: true }),
+          ).toBeVisible();
           await expect(screen.getByRole('link', { name: /Ciorna din raft/ }).first()).toBeVisible();
         },
       );

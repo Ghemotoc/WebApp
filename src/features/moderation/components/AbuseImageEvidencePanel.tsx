@@ -19,6 +19,7 @@ import type { AbuseImageEvidence } from '../api/abuseImageEvidence';
 import { useAbuseImageEvidence } from '../hooks/useAbuseImageEvidence';
 
 import { EvidenceActions } from './EvidenceActions';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The label rows for the evidence.
@@ -71,7 +72,7 @@ export function AbuseImageEvidencePanel({ caseId }: { caseId: string }) {
     return <Notice tone="error">{t(`failures.${state.failure}`)}</Notice>;
   }
   if (state.evidence === null) return null;
-  const format = new Intl.DateTimeFormat(i18n.language, {
+  const format = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   });

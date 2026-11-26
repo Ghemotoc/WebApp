@@ -23,7 +23,7 @@
     "completed": "Încheiate",
     "completedEyebrow": "Citește până la capăt",
     "categoryEyebrow": "Categorie",
-    "tag": "Etichetate „{{tag}}”",
+    "tag": "#{{tag}}",
     "tagEyebrow": "Etichetă",
     "writer": "Povești de {{name}}",
     "writerEyebrow": "Scriitor",
@@ -90,7 +90,9 @@
     "ratingShort": "Clasificările peste vârsta ta nu apar",
     "nothingMatches": "Nimic nu se potrivește acestor filtre.",
     "mostReadIn": "Cele mai citite în {{genre}}",
-    "genreStories": "Povești din {{genre}}"
+    "genreStories": "Povești din {{genre}}",
+    "tagEmpty": "Încă nicio poveste nu folosește #{{tag}}",
+    "backToRead": "Înapoi la Citește"
   },
   "sort": {
     "relevance": "Cele mai potrivite",
@@ -181,5 +183,9 @@
     "whyMoreBy": "Alte povești ale autorului acesteia, pe care le poți citi.",
     "whyLikeThis": "Cel puțin 5 cititori care au terminat povestea asta le-au terminat și pe acestea. Se numără doar totalurile, niciodată cine.",
     "whyBecause": "Ai terminat {{title}}, iar cel puțin 5 cititori care au terminat-o le-au terminat și pe acestea. Poți opri asta din Setări › Confidențialitate, la Sugestii din lectură."
+  },
+  "topicTags": {
+    "top": "Etichete din acest gen",
+    "related": "Înrudite"
   }
 }

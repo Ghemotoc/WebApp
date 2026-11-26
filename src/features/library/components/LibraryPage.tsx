@@ -3,14 +3,21 @@
  * design/boards/simplified/New-Library.dc.html since bundle CALM-7c, the shelf page template).
  *
  * Who shows it: the router, at /library; the top bar's "Library" link leads here.
- * What it shows, top to bottom as on the board:
+ * What it shows, top to bottom as on the full canvas (board C01-Library; Robert, 25 Nov 2026,
+ * 09:50 UTC: no widget missing between the canvas and the live site):
  *   1. "Library", the line about the place being kept on every device, and the meta line saying
  *      who can see the library, with Change (S1-E4-03, third criterion; S1-E13-01).
- *   2. ContinueReading, the page's one glass hero.
- *   3. The ad slot (S1-E12-01), then LibraryShelves (Reading, Saved, Finished).
+ *   2. ContinueReading, the page's one hero.
+ *   3. LibraryShelves (Reading, Saved, Finished), then the first wide ad slot (S1-E12-01).
  *   4. ReadingListsCard, the bookshelves (GAPS-6, CALM-4).
- *   5. Two columns from 900 px: FollowingSection on the left; on the right MyStoriesShelf
- *      ("Written by you", NAV-1), OfflineReadingNote and ReadingHabitNote (IDEAS-1b).
+ *   5. FollowingSection, writers and stories side by side from 900 px, then the second wide ad
+ *      slot. The canvas draws a third, a box beside Reading days; a page holds at most two ad
+ *      slots (decided 17 Oct 2026, 11:53), so it is left out (docs/board-fixes.md).
+ *   6. MyStoriesShelf ("Written by you", NAV-1) as one row of covers, OfflineReadingNote and
+ *      ReadingHabitNote (IDEAS-1b), each across the page.
+ * A brand-new library (nothing read, saved, on a bookshelf or followed, board C08) shows only
+ * Continue reading with "Find a story", the bookshelves and the follows line, so a new member
+ * isn't met by a page of empty sections.
  * A signed-out visitor gets a card asking them to log in.
  * What it calls: useLibraryOverview → my_library(); the sections call their own reads.
  */
@@ -22,6 +29,7 @@ import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { LibraryVisibilityLine } from '@/features/privacy/components/LibraryVisibilityLine';
 
+import { useIsNewLibrary } from '../hooks/useIsNewLibrary';
 import { useLibraryOverview } from '../hooks/useLibraryOverview';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
@@ -62,17 +70,17 @@ function SignedOutLibrary() {
   );
 }
 
-/** The lower part of the page: what the reader follows, beside their own writing and notes. */
-function LibraryColumns() {
+/** The lower part of the page: what the reader follows, their own writing and the notes. */
+function LibraryLowerSections() {
   return (
-    <div className="grid grid-cols-1 items-start gap-12 min-[900px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] min-[900px]:gap-16">
+    <>
       <FollowingSection />
-      <div className="flex min-w-0 flex-col gap-12">
-        <MyStoriesShelf />
-        <OfflineReadingNote />
-        <ReadingHabitNote />
-      </div>
-    </div>
+      {/* The page's second ad slot, after the follows (board C01). */}
+      <PageAdSlot pageKey="library" position={2} />
+      <MyStoriesShelf />
+      <OfflineReadingNote />
+      <ReadingHabitNote />
+    </>
   );
 }
 
@@ -80,16 +88,27 @@ function LibraryColumns() {
 function SignedInLibrary() {
   const { t } = useLibraryTranslation();
   const { overview, loadFailed } = useLibraryOverview();
+  const isNew = useIsNewLibrary(overview);
   if (loadFailed) return <Notice tone="error">{t('loadFailed')}</Notice>;
-  if (overview === null) return null;
+  if (overview === null || isNew === null) return null;
+  // Board C08: a brand-new library keeps only the three sections that say how to start.
+  if (isNew) {
+    return (
+      <>
+        <ContinueReading items={overview.continueReading} />
+        <ReadingListsCard />
+        <FollowingSection />
+      </>
+    );
+  }
   return (
     <>
       <ContinueReading items={overview.continueReading} />
-      {/* The page's one ad slot; a library has no single category, so it sends no context. */}
-      <PageAdSlot pageKey="library" position={1} />
       <LibraryShelves overview={overview} />
+      {/* The page's first ad slot; a library has no single category, so it sends no context. */}
+      <PageAdSlot pageKey="library" position={1} />
       <ReadingListsCard />
-      <LibraryColumns />
+      <LibraryLowerSections />
     </>
   );
 }

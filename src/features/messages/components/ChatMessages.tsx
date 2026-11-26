@@ -20,17 +20,21 @@ import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { ChatMessage } from '../api/messages';
 import { useMessagesTranslation } from '../registerMessagesTranslations';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The hour and minute of a message. */
 function timeOf(iso: string, language: string): string {
-  return new Intl.DateTimeFormat(language, { hour: '2-digit', minute: '2-digit' }).format(
-    new Date(iso),
-  );
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(iso));
 }
 
 /** The day a message was sent, for the line between days. */
 function dayOf(iso: string, language: string): string {
-  return new Intl.DateTimeFormat(language, { dateStyle: 'medium' }).format(new Date(iso));
+  return new Intl.DateTimeFormat(dateLocaleFor(language), { dateStyle: 'medium' }).format(
+    new Date(iso),
+  );
 }
 
 /**

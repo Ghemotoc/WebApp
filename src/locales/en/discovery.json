@@ -23,7 +23,7 @@
     "completed": "Completed",
     "completedEyebrow": "Read to the end",
     "categoryEyebrow": "Category",
-    "tag": "Tagged “{{tag}}”",
+    "tag": "#{{tag}}",
     "tagEyebrow": "Tag",
     "writer": "Stories by {{name}}",
     "writerEyebrow": "Writer",
@@ -90,7 +90,9 @@
     "ratingShort": "Ratings above your age never show",
     "nothingMatches": "Nothing matches these filters.",
     "mostReadIn": "Most read in {{genre}}",
-    "genreStories": "{{genre}} stories"
+    "genreStories": "{{genre}} stories",
+    "tagEmpty": "No stories use #{{tag}} yet",
+    "backToRead": "Back to Read"
   },
   "sort": {
     "relevance": "Best match",
@@ -181,5 +183,9 @@
     "whyMoreBy": "Other stories by the writer of this one that you can read.",
     "whyLikeThis": "At least 5 readers who finished this story also finished these. Only totals are counted, never who.",
     "whyBecause": "You finished {{title}}, and at least 5 readers who finished it also finished these. Turn this off in Settings › Privacy, under Suggestions from reading."
+  },
+  "topicTags": {
+    "top": "Tags in this genre",
+    "related": "Related"
   }
 }

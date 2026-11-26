@@ -16,7 +16,7 @@
  * Test data: the editor and teen_17 personas, and adult_writer's story "Ceasul de nisip" with one
  * chapter. Everything is removed at the start and the end.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -38,12 +38,18 @@ function cleanUp() {
   runSql(`delete from public.reading_minutes where user_id in ('${editorId}', '${teenId}');
     delete from public.reading_habits where user_id in ('${editorId}', '${teenId}');
     delete from public.notifications where kind = 'reading_reminder' and user_id = '${editorId}';
+    delete from public.follows_stories
+      where story_id in (select id from public.stories where slug = '${storySlug}');
     delete from public.chapters where code = 'nisipun1';
     delete from public.stories where slug = '${storySlug}';
     update public.profiles set locale = 'ro' where handle = 'editor';`);
 }
 
-/** The story with one published chapter. */
+/**
+ * The story with one published chapter, followed by both readers: a Library with nothing in it
+ * shows only its first three parts (board C08, a new reader), and the streak's note is not one
+ * of them.
+ */
 function seedStory() {
   cleanUp();
   runSql(`insert into public.stories (user_id, slug, title, blurb, language_code, category_id,
@@ -53,7 +59,11 @@ function seedStory() {
     insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body,
       word_count, status, published_title, published_body, published_word_count, first_published_at)
     select id, user_id, 'nisipun1', 1, 'Capitol', 'x', 300, 'published', 'Primul minut', E'${longText}', 300, now()
-    from public.stories where slug = '${storySlug}';`);
+    from public.stories where slug = '${storySlug}';
+    insert into public.follows_stories (user_id, story_id)
+    select reader.id, story.id from public.stories as story
+    cross join (values ('${editorId}'::uuid), ('${teenId}'::uuid)) as reader (id)
+    where story.slug = '${storySlug}';`);
 }
 
 /** The editor's streak, as a SQL answer: "target reminders time minutes". */
@@ -67,15 +77,49 @@ function editorStreak(): string {
 /**
  * Opens an address as a persona, in English, on a device in Romania.
  *
+ * @param withFakeClock - true to put the page on Playwright's clock before it loads, so every
+ *   timer the page starts (the reading minute's interval) is one the test can move on; it then
+ *   returns only once the streak has loaded, so the minute's timer is running
  * @returns the page
  */
-async function openAs(browser: Browser, persona: SignInPersonaName, address: string) {
+async function openAs(
+  browser: Browser,
+  persona: SignInPersonaName,
+  address: string,
+  withFakeClock = false,
+) {
   const context = await browser.newContext({ timezoneId: 'Europe/Bucharest' });
   await useSessionInBrowser(context, (await signInPersona(persona)).session);
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   const page = await context.newPage();
+  // The clock goes in before the page loads: installed after, a timer the chapter started while
+  // loading would run on real time and never fire when the test moves the clock on.
+  if (!withFakeClock) {
+    await page.goto(address);
+    return page;
+  }
+  await page.clock.install();
+  // The reader holds the app's other requests until its first paragraph is painted, and on the
+  // fake clock that paint and the hold's own 1.5 s limit wait for the clock (src/lib/readerFirst.ts).
+  // The minute's timer starts only once the streak (my_reading_habit) has answered, so the page
+  // moves on past the hold and waits for that answer; a minute moved on before it never counted.
+  const streakLoaded = page.waitForResponse((response) =>
+    response.url().includes('my_reading_habit'),
+  );
   await page.goto(address);
+  await page.clock.runFor(1_600);
+  await streakLoaded;
   return page;
+}
+
+/**
+ * Closes the pages openAs() made, each with its own browser context. Left open, they kept running
+ * (sessions, counts, a chapter on a stopped clock) behind every later spec in the same worker.
+ *
+ * @param pages - the pages to close
+ */
+async function closeAll(...pages: Page[]) {
+  for (const page of pages) await page.context().close();
 }
 
 test.describe('the private reading streak (IDEAS-1 part b)', () => {
@@ -105,8 +149,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
       note.getByText('No reading counted yet this week.', { exact: false }),
     ).toBeVisible();
     // Step 2: a minute of active reading in a chapter (the page's clock is moved on a minute).
-    const chapter = await openAs(browser, 'editor', `/s/${storySlug}/nisipun1`);
-    await chapter.clock.install();
+    const chapter = await openAs(browser, 'editor', `/s/${storySlug}/nisipun1`, true);
     await expect(chapter.getByRole('heading', { level: 1, name: 'Primul minut' })).toBeVisible();
     await chapter.mouse.wheel(0, 300);
     const counted = chapter.waitForResponse((response) =>
@@ -119,6 +162,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
     await expect(note.getByText('You read on 1 day this week.')).toBeVisible();
     await expect(note.getByText('1 minute today')).toBeVisible();
     expect(editorStreak()).toBe('- false - 1');
+    await closeAll(library, chapter);
   });
 
   test('the reader picks any target and a reminder time', async ({ browser }) => {
@@ -132,6 +176,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
     await expect(note.getByText('1 of 17 minutes today')).toBeVisible();
     await expect(note.getByRole('progressbar', { name: 'Minutes read today' })).toBeVisible();
     expect(editorStreak()).toBe('17 true 20:15 1');
+    await closeAll(page);
   });
 
   test('the reminder reads gently and opens the Library’s note', async ({ browser }) => {
@@ -143,6 +188,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
     await page.getByRole('link', { name: 'Open the library' }).first().click();
     await expect(page).toHaveURL(/\/library#reading-days$/);
     await expect(page.getByRole('region', { name: 'Reading days' })).toBeVisible();
+    await closeAll(page);
   });
 
   test('an under-18 can’t pick a reminder in quiet hours', async ({ browser }) => {
@@ -158,6 +204,7 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
     expect(
       runSql(`select reminders_on from public.reading_habits where user_id = '${teenId}';`).trim(),
     ).toBe('f');
+    await closeAll(page);
   });
 
   for (const view of everyView(['/library#reading-days'])) {
@@ -182,5 +229,6 @@ test.describe('the private reading streak (IDEAS-1 part b)', () => {
     expect(
       runSql(`select count(*) from public.reading_minutes where user_id = '${editorId}';`).trim(),
     ).toBe('0');
+    await closeAll(page);
   });
 });

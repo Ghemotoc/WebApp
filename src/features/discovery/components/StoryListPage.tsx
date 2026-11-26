@@ -3,7 +3,8 @@
  * design/boards/SeeAll.dc.html).
  *
  * Who shows it: the router, at /discover/all/:listKind (a Discover shelf's "View more"),
- * /discover/c/:categorySlug (a category page), /discover/t/:tag (a tag on the story page) and
+ * /discover/c/:categorySlug (a category page), /discover/t/:tag (a tag on the story page; titled
+ * "#tag", user story 1.9, board A09) and
  * /u/:handle/stories (a writer's profile) and /search/stories?q= (every story a search finds,
  * S1-E5-04). The address decides the list (listFromParams()).
  * What it shows: StoryListHeader (with the rating line under the title), the "Filter and sort"
@@ -123,6 +124,15 @@ function ListResults({
     );
     // User story 1.5: "Nothing matches these filters", with Clear filters.
     return <EmptyState title={t('seeAll.nothingMatches')} action={clear} />;
+  }
+  // User story 1.9 (board A09): a tag nobody uses any more says so, with the way back to Read.
+  if (request.kind === 'tag') {
+    return (
+      <EmptyState
+        title={t('seeAll.tagEmpty', { tag: request.key ?? '' })}
+        action={<Link to="/discover">{t('seeAll.backToRead')}</Link>}
+      />
+    );
   }
   return <EmptyState title={t('seeAll.empty')} description={t('discover.empty')} />;
 }

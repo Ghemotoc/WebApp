@@ -147,7 +147,7 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     expect(await shownNotes(page)).toEqual(['Check the tide tables']);
     await pickSegment(page, 'Show', 'Done (1)');
     expect(await shownNotes(page)).toEqual(['Who put the light out?']);
-    const today = new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(new Date());
+    const today = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' }).format(new Date());
     await expect(page.getByTestId('atlas-idea-item')).toContainText(`Done on ${today}`);
     expect(savedIdea('Who put the light out?')).toBe('question|Who put the light out?||true');
     await pickSegment(page, 'Show', 'All (2)');

@@ -5,15 +5,15 @@
  * Who shows it: the router, at /search?q=…; the search button in the top bar leads here.
  * What it shows: the title "Search" on the left and the search field the width of the page.
  * Before a search (board A07): the scope chips under the field (Stories, Writers, Together,
- * Spaces), which choose the results tab the search opens on; Recent searches on the left (kept on this device only), and Writers
- * to try with one advert that fills the column on the right; no advert under the field (Robert,
+ * Spaces), which choose the results tab the search opens on; Recent searches and Trending tags
+ * on the left (the searches kept on this device only), and Writers to try with one advert that
+ * fills the column on the right; no advert under the field (Robert,
  * 20 Nov 2026, 17:44). With a term (board A08): the results tabs across the page (SearchResults),
  * with their own advert under the filters. A term under 2 letters says so instead of searching.
  * The term lives in the address, so a search can be shared; it follows what is typed
  * (SearchForm).
  * On phones the title is for screen readers only and the field sits at the top (bundle CALM-7c).
- * Not yet: Trending tags, which come with the genre's top tags (story 1.6, part b).
- * What it calls: SearchForm, SearchScopeChips, RecentSearches, SearchResults and
+ * What it calls: SearchForm, SearchScopeChips, RecentSearches, TrendingTags, SearchResults and
  * RisingWritersList.
  */
 import { useSearchParams } from 'react-router';
@@ -31,6 +31,7 @@ import { RecentSearches } from './RecentSearches';
 import { SearchForm } from './SearchForm';
 import { SearchResults } from './SearchResults';
 import { SearchScopeChips } from './SearchScopeChips';
+import { TrendingTags } from './TrendingTags';
 
 /**
  * What goes under the field once there is a term: "type at least 2 letters", or the results.
@@ -74,11 +75,12 @@ export function SearchPage() {
         )}
       </div>
       {term === '' ? (
-        // Left, the recent searches; right, Writers to try and the one advert that fills the
+        // Left, the recent searches and the trending tags; right, Writers to try and the one advert that fills the
         // column (board A07; Robert, 20 Nov 2026, 17:42).
         <div className="grid gap-12 min-[1024px]:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] min-[1024px]:items-start min-[1024px]:gap-16">
           <div className="flex min-w-0 flex-col gap-8">
             <RecentSearches />
+            <TrendingTags />
           </div>
           <aside aria-label={t('page.sideLabel')} className="flex min-w-0 flex-col gap-8">
             <RisingWritersList headingId="search-writers-heading" title={t('page.writersToTry')} />

@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import type { AgeCheckNumbers, SignUpsByAge } from '../../api/metricsOverview';
 
 import { MetricsCard } from './MetricsCard';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /** One tile: a label and its number (or a short text when there is no number). */
 interface Tile {
@@ -53,7 +54,7 @@ export function AgeNumbersCards({
   ageChecks: AgeCheckNumbers;
 }) {
   const { t, i18n } = useTranslation('staff');
-  const number = (value: number) => value.toLocaleString(i18n.language);
+  const number = (value: number) => value.toLocaleString(dateLocaleFor(i18n.language));
   const appealed =
     ageChecks.appealed === null ? t('metrics.overview.notCountedYet') : number(ageChecks.appealed);
   return (

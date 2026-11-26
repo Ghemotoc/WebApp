@@ -1,6 +1,9 @@
 /**
- * FollowingSection: "What you follow", the writers and stories the reader follows, each with its
- * Following button (story S1-E4-03; board New-Library, bundle CALM-7c; follows from S1-E6-05).
+ * FollowingSection: "What you follow", the writers, stories, genres and tags the reader follows,
+ * each with its Following button (story S1-E4-03; board New-Library, bundle CALM-7c; follows from
+ * S1-E6-05; genres and tags since BOOKS-A06, user story 1.6: "Library's What you follow lists
+ * them"). The genres and tags group shows only once something is in it, so a reader who follows
+ * none sees the board's two groups.
  *
  * Board values: the heading with "Notification settings" at the top right (Settings at its
  * notifications part, GAPS-6), the line "A notification comes when they publish something new.",
@@ -8,6 +11,9 @@
  * row: the avatar, the name and when they last published. A story row: a 48 px cover, the title,
  * a meta line with "New" in bold for a story updated in the last 7 days, the writer and the last
  * update. Each row ends with the shared FollowButton (which unfollows in place). No cards.
+ * Writers and stories sit side by side from 900 px, one above the other on narrower screens;
+ * when the reader follows nothing at all, one line under the heading says how to start (board
+ * C01 and C08; Robert, 25 Nov 2026, 09:50 UTC).
  * Who uses it: LibraryPage. What it calls: useMyFollows → my_follows().
  */
 import type { ReactNode } from 'react';
@@ -20,6 +26,8 @@ import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import type { ListedStory } from '@/features/discovery/api/storyLists';
 import { FollowButton } from '@/features/people/components/FollowButton';
+
+import type { FollowTarget } from '@/features/people/api/follows';
 
 import type { FollowedWriter } from '../api/library';
 import { useMyFollows } from '../hooks/useLibraryOverview';
@@ -104,6 +112,56 @@ function StoryRow({ story }: { story: ListedStory }) {
   );
 }
 
+/**
+ * One genre or tag row: its page's name as a link, then the shared Following button.
+ *
+ * @param props.target - the genre or the tag
+ * @param props.label - "Fiction" or "#mystery"
+ * @param props.address - the genre's or the tag's page
+ * @returns the row
+ */
+function TopicRow(props: { target: FollowTarget; label: string; address: string }) {
+  return (
+    <li className="flex items-center gap-4 border-t border-(--hairline) py-3">
+      <Link
+        to={props.address}
+        className="min-w-0 flex-1 font-semibold break-words text-ink-heading no-underline hover:underline"
+      >
+        {props.label}
+      </Link>
+      <FollowButton target={props.target} targetLabel={props.label} />
+    </li>
+  );
+}
+
+/**
+ * The genres, then the tags, as rows.
+ *
+ * @param props.genres - the genres' slugs
+ * @param props.tags - the tags' names
+ * @returns the rows
+ */
+function useTopicRows(genres: string[], tags: string[]): ReactNode[] {
+  const { t } = useLibraryTranslation();
+  const genreRows = genres.map((slug) => (
+    <TopicRow
+      key={`genre-${slug}`}
+      target={{ kind: 'genre', slug }}
+      label={t(`categories.${slug}`, { ns: 'writing' })}
+      address={`/discover/c/${encodeURIComponent(slug)}`}
+    />
+  ));
+  const tagRows = tags.map((name) => (
+    <TopicRow
+      key={`tag-${name}`}
+      target={{ kind: 'tag', name }}
+      label={`#${name}`}
+      address={`/discover/t/${encodeURIComponent(name)}`}
+    />
+  ));
+  return [...genreRows, ...tagRows];
+}
+
 /** A subheading and its rows, or the line that says how to fill them. */
 function FollowGroup(props: { heading: string; emptyText: string; children: ReactNode[] }) {
   return (
@@ -139,6 +197,31 @@ function FollowingHeading() {
   );
 }
 
+/** Writers and stories, side by side from 900 px. */
+function FollowGroups({ writers, stories }: { writers: FollowedWriter[]; stories: ListedStory[] }) {
+  const { t } = useLibraryTranslation();
+  return (
+    <div className="grid grid-cols-1 gap-x-8 gap-y-6 min-[900px]:grid-cols-2">
+      <FollowGroup
+        heading={t('following.writers', { count: writers.length })}
+        emptyText={t('following.noWriters')}
+      >
+        {writers.map((writer) => (
+          <WriterRow key={writer.handle} writer={writer} />
+        ))}
+      </FollowGroup>
+      <FollowGroup
+        heading={t('following.stories', { count: stories.length })}
+        emptyText={t('following.noStories')}
+      >
+        {stories.map((story) => (
+          <StoryRow key={story.slug} story={story} />
+        ))}
+      </FollowGroup>
+    </div>
+  );
+}
+
 /**
  * Renders the section, or nothing while it loads.
  *
@@ -147,26 +230,24 @@ function FollowingHeading() {
 export function FollowingSection() {
   const { t } = useLibraryTranslation();
   const { follows } = useMyFollows();
+  const topicRows = useTopicRows(follows?.genres ?? [], follows?.tags ?? []);
   if (follows === null) return null;
+  // Step 1: following no writer and no story gets one line instead of two empty groups; the
+  // genres and tags someone follows show under it either way (bundle 10, A06 to A09).
+  const followsNothing = follows.writers.length === 0 && follows.stories.length === 0;
   return (
     <section aria-labelledby="library-following-heading" className="flex min-w-0 flex-col gap-6">
       <FollowingHeading />
-      <FollowGroup
-        heading={t('following.writers', { count: follows.writers.length })}
-        emptyText={t('following.noWriters')}
-      >
-        {follows.writers.map((writer) => (
-          <WriterRow key={writer.handle} writer={writer} />
-        ))}
-      </FollowGroup>
-      <FollowGroup
-        heading={t('following.stories', { count: follows.stories.length })}
-        emptyText={t('following.noStories')}
-      >
-        {follows.stories.map((story) => (
-          <StoryRow key={story.slug} story={story} />
-        ))}
-      </FollowGroup>
+      {followsNothing ? (
+        <p className="m-0 type-body text-ink-muted">{t('following.empty')}</p>
+      ) : (
+        <FollowGroups writers={follows.writers} stories={follows.stories} />
+      )}
+      {topicRows.length > 0 && (
+        <FollowGroup heading={t('following.topics', { count: topicRows.length })} emptyText="">
+          {topicRows}
+        </FollowGroup>
+      )}
     </section>
   );
 }

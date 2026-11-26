@@ -98,5 +98,9 @@
   },
   "scope": {
     "label": "Caută în"
+  },
+  "trending": {
+    "heading": "Etichete în tendințe",
+    "tag": "#{{tag}}"
   }
 }

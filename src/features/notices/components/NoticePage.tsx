@@ -11,7 +11,6 @@
  */
 import { useTranslation } from 'react-i18next';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useNoticeForm } from '../hooks/useNoticeForm';
@@ -23,18 +22,20 @@ import { NoticeSideColumn } from './NoticeSideColumn';
 import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 
 /**
- * The page's title block: eyebrow, heading, intro and the contact-point line.
+ * The page's title block, as on board J11 (bundle 10): the heading and its lead with no eyebrow,
+ * then the contact-point line for authorities in the small meta size.
  *
  * @returns the header
  */
 function NoticeHeader() {
   const { t } = useTranslation('notices');
   return (
-    <div className="flex max-w-[760px] flex-col gap-3">
-      <Eyebrow>{t('eyebrow')}</Eyebrow>
-      <h1 className="m-0 type-title lg:type-display text-ink-heading">{t('heading')}</h1>
-      <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('intro')}</p>
-      <p className="m-0 text-ink-muted">{t('contactPoint')}</p>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="m-0 type-title lg:type-display text-ink-heading">{t('heading')}</h1>
+        <p className="m-0 type-body text-ink-muted">{t('intro')}</p>
+      </div>
+      <p className="m-0 max-w-none type-meta text-ink-muted">{t('contactPoint')}</p>
     </div>
   );
 }
@@ -54,8 +55,8 @@ export function NoticePage() {
     <PageContainer className="flex flex-col gap-8 pt-12 pb-6">
       <title>{t('documentTitle')}</title>
       <NoticeHeader />
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <div className="min-w-0 lg:flex-[999_1_620px]">
+      <div className="flex flex-wrap items-start gap-x-12 gap-y-8">
+        <div className="min-w-0 flex-[999_1_560px] lg:max-w-[720px]">
           {form.answer !== null && form.sent !== null ? (
             <NoticeReceived
               sent={form.sent}
@@ -72,7 +73,7 @@ export function NoticePage() {
             />
           )}
         </div>
-        <aside className="min-w-0 lg:max-w-[380px] lg:flex-[1_1_320px]">
+        <aside className="min-w-0 flex-[1_1_260px] lg:max-w-[360px]">
           <NoticeSideColumn />
         </aside>
       </div>

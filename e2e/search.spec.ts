@@ -19,6 +19,7 @@
  * - on a phone "Filter and sort" opens a sheet and counts the filters on, and writer rows have
  *   Follow (board A08);
  * - a search that finds nothing says so, with suggestions;
+ * - before a search, Trending tags lists a tag read this week and opens its page (board A07);
  * - the search pages pass axe at 390, 768 and 1440 px, light and night, ro and en.
  * Test data: 22 stories of the spec's own by teacher (one of them 16+), removed afterwards.
  */
@@ -33,11 +34,14 @@ import { signInPersona, useSessionInBrowser } from './support/personas';
 const word = 'Ciocârliasrche';
 const foldedWord = 'ciocarliasrche';
 const missingWord = 'zzqqsrche';
+// A tag of the spec's own, read this week, for Trending tags (board A07).
+const trendingTag = 'trendsrche';
 
 /** Removes the spec's stories and their chapters. */
 function cleanUp() {
   runSql(`delete from public.chapters where code like 'srche2%';
-    delete from public.stories where slug like 'search-e2e-%';`);
+    delete from public.stories where slug like 'search-e2e-%';
+    delete from public.tags where name = '${trendingTag}';`);
 }
 
 /** 21 readable stories for everyone and one 16+, all with the spec's word in the title. */
@@ -231,6 +235,25 @@ test.describe('search (S1-E5-04)', () => {
     await page.goto('/search?q=teacher&in=writers');
     const writers = page.getByRole('list', { name: 'Writers' });
     await expect(writers.getByText(/follow/i).first()).toBeVisible();
+  });
+
+  test('before a search, Trending tags lists a tag read this week and opens its page', async ({
+    page,
+  }) => {
+    // One of the spec's stories gets an approved tag and 1,000 reads today, so it trends.
+    runSql(`insert into public.tags (name, normalised_name, status)
+        values ('${trendingTag}', '${trendingTag}', 'approved') on conflict do nothing;
+      insert into public.story_tags (story_id, tag_id, user_id)
+        select stories.id, tags.id, stories.user_id from public.stories, public.tags
+        where stories.slug = 'search-e2e-1' and tags.name = '${trendingTag}'
+        on conflict do nothing;
+      insert into public.chapter_reads (chapter_id, read_on, total)
+        select chapters.id, current_date, 1000 from public.chapters where chapters.code = 'srche201'
+        on conflict do nothing;`);
+    await page.goto('/search');
+    const trending = page.getByRole('region', { name: 'Trending tags' });
+    await trending.getByRole('link', { name: `#${trendingTag}` }).click();
+    await expect(page).toHaveURL(new RegExp(`/discover/t/${trendingTag}$`));
   });
 
   test('a search that finds nothing says so, with suggestions', async ({ page }) => {

@@ -98,5 +98,9 @@
   },
   "scope": {
     "label": "Search in"
+  },
+  "trending": {
+    "heading": "Trending tags",
+    "tag": "#{{tag}}"
   }
 }

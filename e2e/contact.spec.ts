@@ -35,7 +35,8 @@ test('the contact page lists every contact point, the languages and the company 
     page.getByRole('heading', { name: 'Contact and company details', level: 2 }),
   ).toBeVisible();
 
-  // Every contact point, each with the languages accepted.
+  // Every contact point, each with the languages accepted. Section headings carry their number
+  // since bundle 10 (board J08: "1. For users").
   for (const heading of [
     'For users',
     'For authorities',
@@ -43,7 +44,9 @@ test('the contact page lists every contact point, the languages and the company 
     'Your personal data',
     'Company details',
   ]) {
-    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: new RegExp(`^\\d+\\. ${heading}$`) }),
+    ).toBeVisible();
   }
   await expect(page.getByText('Languages: Romanian and English.').first()).toBeVisible();
 
@@ -54,8 +57,16 @@ test('the contact page lists every contact point, the languages and the company 
     `mailto:${brand.authoritiesEmail}`,
   );
 
-  // The company details are still placeholders, shown highlighted.
-  await expect(page.locator('mark', { hasText: '[registered office]' }).first()).toBeVisible();
+  // The company details are still placeholders, shown highlighted. They sit in the section's
+  // full text, which starts folded since bundle 10 (board J08), so the reader opens it first.
+  const companyDetails = page
+    .locator('details')
+    .filter({ has: page.locator('mark', { hasText: '[registered office]' }) })
+    .first();
+  await companyDetails.locator('summary').click();
+  await expect(
+    companyDetails.locator('mark', { hasText: '[registered office]' }).first(),
+  ).toBeVisible();
 });
 
 test('a signed-in person reaches the contact page from Settings in one tap', async ({

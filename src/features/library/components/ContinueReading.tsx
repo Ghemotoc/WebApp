@@ -6,16 +6,35 @@
  * 900 px and one on narrower screens, 40 px apart. It is the page's one Hero (handover Step 2:
  * only the hero is glass). Only the first story's Continue is the main button; the others are
  * quiet, so the page keeps one main action (DoD: one main button a screen). With nothing to
- * continue, one line says how stories get here.
+ * continue, one line says how stories get here and "Find a story" leads to Discover (board C08;
+ * Robert, 25 Nov 2026, 09:50 UTC: no widget missing between the canvas and the live site).
  * Who uses it: LibraryPage, with the overview from my_library(). What it calls: Hero and
  * ContinueReadingCard.
  */
+import { Link } from 'react-router';
+
 import { Hero } from '@/components/ui/Hero';
 
 import type { ContinueReadingItem } from '../api/library';
 import { useLibraryTranslation } from '../registerLibraryTranslations';
 
 import { ContinueReadingCard } from './ContinueReadingCard';
+
+/** With nothing to continue: the line that says how stories get here, and the way to Discover. */
+function NothingToContinue() {
+  const { t } = useLibraryTranslation();
+  return (
+    <div className="flex flex-col items-start gap-4">
+      <p className="m-0 type-body text-ink-muted">{t('continue.empty')}</p>
+      <Link
+        to="/discover"
+        className="inline-flex h-11 items-center rounded-full button-main px-4 type-body font-semibold whitespace-nowrap no-underline"
+      >
+        {t('continue.findStory')}
+      </Link>
+    </div>
+  );
+}
 
 /**
  * Renders the section.
@@ -31,7 +50,7 @@ export function ContinueReading({ items }: { items: ContinueReadingItem[] }) {
         {t('continue.heading')}
       </h2>
       {items.length === 0 ? (
-        <p className="m-0 type-body text-ink-muted">{t('continue.empty')}</p>
+        <NothingToContinue />
       ) : (
         <ul className="m-0 grid list-none grid-cols-1 gap-8 p-0 min-[900px]:grid-cols-2">
           {items.map((item, index) => (

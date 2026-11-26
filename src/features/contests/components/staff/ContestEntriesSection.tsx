@@ -29,6 +29,7 @@ import { useContestTranslation } from '../../registerContestTranslations';
 import { ContestResultsPanel } from './ContestResultsPanel';
 import { DisqualifyForm } from './DisqualifyForm';
 import { PlacingControl, PrizeControl } from './EntryJudging';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /** The entries' state and actions from the hook. */
 type ContestEntries = ReturnType<typeof useContestEntries>;
@@ -76,7 +77,9 @@ function EntryRow({ entry, context }: { entry: StaffContestEntry; context: RowCo
           {entry.is_fan_fiction && <InfoPill tone="gold">{t('staff.entries.fanFiction')}</InfoPill>}
         </span>
       </td>
-      <td className="py-3 pr-4 text-body">{entry.words.toLocaleString(i18n.language)}</td>
+      <td className="py-3 pr-4 text-body">
+        {entry.words.toLocaleString(dateLocaleFor(i18n.language))}
+      </td>
       <td className="py-3 pr-4 text-body">
         {formatLocalDate(new Date(entry.entered_at), i18n.language)}
       </td>

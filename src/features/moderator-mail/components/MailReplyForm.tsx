@@ -1,8 +1,9 @@
 /**
  * MailReplyForm: one text box and a send button, for answering in a moderator mail thread
  * (story S1-E10-11). Staff get a second button for an internal note. The member's page passes a
- * hint ("Text only…"), which sits on the left of the buttons as board ModMailOne draws it (bundle
- * G8c); Send carries the paper plane icon.
+ * hint ("Text only…"), which sits under the box as board J24 draws it (user stories bundle 10);
+ * Send carries the paper plane icon. Send stays pressable: pressed with the box empty, it says so
+ * beside the box and puts the focus there (DoD, design books item 9).
  *
  * Who shows it: MailThreadPage and StaffMailThreadPage. What it calls: the onSend it is given;
  * the box empties once the message is saved.
@@ -17,6 +18,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { mailLimits, type MailFailure } from '../api/moderatorMail';
 import { useMailTranslation } from '../registerMailTranslations';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { useMissingField } from '@/lib/forms/useMissingField';
 
 /** What the form needs. */
 export interface MailReplyFormProps {
@@ -79,10 +81,12 @@ export function MailReplyForm({
 }: MailReplyFormProps) {
   const { t } = useMailTranslation();
   const [body, setBody] = useState('');
+  // Design books item 9: Send stays pressable and says what is missing beside the box.
+  const missing = useMissingField(body.trim() === '', id);
 
   /** Sends the words, as a reply or a note, and empties the box once saved. */
   async function send(isNote: boolean) {
-    if (body.trim() === '') return;
+    if (!missing.isReadyToSend()) return;
     await onSend(body.trim(), isNote)
       .then(() => setBody(''))
       .catch(errorShownByHook);
@@ -101,27 +105,18 @@ export function MailReplyForm({
         id={id}
         label={label}
         rows={5}
+        hint={hint}
         maxLength={mailLimits.body}
+        errorMessage={missing.isShown ? t('new.missingBody') : undefined}
         value={body}
         onChange={(event) => setBody(event.target.value)}
-        aria-describedby={hint === undefined ? undefined : `${id}-hint`}
       />
       <div aria-live="polite">
         {failure !== null && (
           <Notice tone="error">{t(`failures.${failure}`, { minutes: waitMinutes ?? 60 })}</Notice>
         )}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        {hint !== undefined && (
-          <p id={`${id}-hint`} className="m-0 type-meta text-ink-muted">
-            {hint}
-          </p>
-        )}
-        <ReplyButtons
-          isDisabled={isBusy || body.trim() === ''}
-          onNote={allowsNote ? () => void send(true) : null}
-        />
-      </div>
+      <ReplyButtons isDisabled={isBusy} onNote={allowsNote ? () => void send(true) : null} />
     </form>
   );
 }
