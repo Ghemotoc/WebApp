@@ -307,6 +307,7 @@
       "class_points_reported": "{{actor}} reported the points on a chapter by {{target}} as suspicious.",
       "class_points_removed": "The moderation team removed class points from a chapter by {{target}}.",
       "class_grade_set": "{{actor}} set the school year.",
+      "class_school_set": "{{actor}} changed the school.",
       "competition_started": "{{actor}} started a class competition.",
       "competition_changed": "{{actor}} changed the class competition.",
       "competition_ended": "{{actor}} ended the class competition.",
