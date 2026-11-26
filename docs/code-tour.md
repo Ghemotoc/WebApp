@@ -752,7 +752,9 @@ SetupProfileNotice ("Finish setting up your profile", AppLayout) → /setup
 Settings › What you like (LikesSettingsSection) → the same writes
 ```
 
-Tests: `202` in `supabase/tests/database/`, `e2e/onboarding.spec.ts`.
+The county list follows the country on the profile: `regionsOfCountry()` in `api/onboarding.ts` offers only that country's counties (none, and no field, for a country without), and `save_my_region()` refuses a county of another country (COUNTRY-2, trial bug, 26 Nov 2026).
+
+Tests: `202` in `supabase/tests/database/`, `e2e/onboarding.spec.ts`, `api/regionsOfCountry.test.ts`.
 
 ## Google, Apple, Microsoft and passkeys (S1-E2-09)
 
