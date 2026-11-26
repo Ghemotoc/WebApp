@@ -87,14 +87,23 @@ function linkComponent(slug: string, index: LinkIndex | null): Components['a'] {
  * Renders the text.
  *
  * @param props.text - the entry's text as stored
- * @returns the text as HTML, at the reading size
+ * @param props.readsLikePage - true on the writer's entry page (story 6.8, board E27: Literata at
+ *   17/28, as a page of the story); left out, the text keeps the body size
+ * @returns the text as HTML
  */
-export function BibleMarkdown({ text }: { text: string }) {
+export function BibleMarkdown({
+  text,
+  readsLikePage = false,
+}: {
+  text: string;
+  readsLikePage?: boolean;
+}) {
   // The links resolve against the open story's names (S1-E17-31), or on a readers' page
   // against its public items only (S1-E17-32).
   const { slug, index, isLoaded } = useCrossLinks();
+  const textStyle = readsLikePage ? 'type-long font-story' : 'type-body leading-[1.6]';
   return (
-    <div className="flex flex-col gap-3 type-body leading-[1.6] break-words text-ink">
+    <div className={`flex flex-col gap-3 break-words text-ink ${textStyle}`}>
       <SafeMarkdown
         text={withCrossLinks(text)}
         elements={safeMarkdownElements.storyWorldEntry}

@@ -1,31 +1,33 @@
 /**
- * StorySummary: "The story" card at the top of the at-a-glance page (story S1-E17-06: "it shows
- * the title, logline, genre, audience and publishing route"; bundle G10a, board AtlasStory).
+ * StorySummary: the story card at the top of the at-a-glance page (story S1-E17-06; redrawn as
+ * board E21 in user stories bundle 6).
  *
- * The cover on the left (the uploaded picture, the drawn cover the writer chose, or the automatic
- * one), then the "The story" eyebrow, the title, the logline and pills for the genre, the audience,
- * the publishing route and the writing status. It shows what is saved, so it follows the details
- * below as each one saves. On a phone the cover sits above the words.
- * Who uses it: AtAGlance. What it calls: StoryCoverArt and DrawnCover, InfoPill and
- * WritingStatusPill.
+ * One box with two halves. Left: the 120 px cover, the title, the logline and a meta line with the
+ * writer's own writing status first in bold, then the genre, the audience and the publishing
+ * route ("Drafting · Fiction · 13+ · Chapter by chapter"). Right: Words (the numbers, a bar and
+ * the percentage) and Chapters (the count, how many are out and Manage chapters). On a phone the
+ * halves stack.
+ * Who uses it: AtAGlance. What it calls: StoryCoverArt and DrawnCover for the cover, MetaLine,
+ * WordsProgress and ChaptersAtAGlance.
  */
 import { useTranslation } from 'react-i18next';
 
 import { resolveCoverChoice } from '@/components/covers/automaticCover';
 import { DrawnCover } from '@/components/covers/DrawnCover';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import type { MyStory } from '@/features/writing/api/stories';
 
 import type { StoryPlanPage } from '../api/storyPlans';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { WritingStatusPill } from './WritingStatusPill';
+import { ChaptersAtAGlance } from './ChaptersAtAGlance';
+import { WordsProgress } from './WordsProgress';
 
 /** The cover, once the writer's story list has loaded (it holds the cover's choice). */
 function SummaryCover({ story }: { story: MyStory | undefined }) {
   if (story === undefined) return null;
-  const coverClasses = 'w-28 shrink-0 self-start sm:w-[140px]';
+  const coverClasses = 'w-24 shrink-0 self-start sm:w-[120px]';
   return (
     <StoryCoverArt
       story={story}
@@ -43,51 +45,59 @@ function SummaryCover({ story }: { story: MyStory | undefined }) {
   );
 }
 
+/** The title, the logline and the meta line beside the cover. */
+function SummaryText({ page }: { page: StoryPlanPage }) {
+  const { t } = useAtlasTranslation();
+  const { t: tWriting } = useTranslation('writing');
+  const { plan } = page;
+  return (
+    <div className="flex min-w-0 flex-1 flex-col gap-2">
+      <h2 id="atlas-summary-title" className="m-0 type-heading break-words text-ink-heading">
+        {page.story.title}
+      </h2>
+      <p className="m-0 type-body break-words text-ink-muted">
+        {plan.logline === '' ? t('summary.noLogline') : plan.logline}
+      </p>
+      <MetaLine
+        facts={[
+          { text: t(`writingStatus.${plan.writingStatus}`), kind: 'state' },
+          {
+            text: tWriting(`categories.${page.story.categorySlug}`, {
+              defaultValue: page.story.categorySlug,
+            }),
+          },
+          { text: tWriting(`rating.${page.story.rating}`) },
+          { text: t(`publishingRoute.${plan.publishingRoute}`) },
+        ]}
+      />
+    </div>
+  );
+}
+
 /**
  * Renders the card.
  *
  * @param props.page - the plan, from story_plan()
  * @param props.story - the same story from the writer's list (for the cover); undefined while loading
- * @returns the card with the cover, the title, the logline and the pills
+ * @returns the box with the story on the left and its words and chapters on the right
  */
 export function StorySummary({ page, story }: { page: StoryPlanPage; story: MyStory | undefined }) {
   const { t } = useAtlasTranslation();
-  const { t: tWriting } = useTranslation('writing');
-  const { plan } = page;
   return (
     <section
-      aria-labelledby="atlas-summary-heading"
-      className="flex min-w-0 flex-col gap-6 rounded-card border border-border bg-surface p-6 shadow-card sm:flex-row sm:p-6"
+      aria-label={t('summary.heading')}
+      className="grid min-w-0 items-center gap-8 rounded-card border border-border bg-surface p-6 shadow-card md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-12 lg:p-8"
     >
-      <SummaryCover story={story} />
-      <div className="flex min-w-0 flex-1 flex-col gap-3">
-        <p id="atlas-summary-heading" className="eyebrow m-0">
-          {t('summary.heading')}
-        </p>
-        <h2 id="atlas-summary-title" className="m-0 type-heading break-words text-ink-heading">
-          {page.story.title}
-        </h2>
-        <p className="m-0 type-long leading-normal break-words text-ink-muted">
-          {plan.logline === '' ? t('summary.noLogline') : plan.logline}
-        </p>
-        <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
-          <li>
-            <InfoPill tone="neutral">
-              {tWriting(`categories.${page.story.categorySlug}`, {
-                defaultValue: page.story.categorySlug,
-              })}
-            </InfoPill>
-          </li>
-          <li>
-            <InfoPill tone="neutral">{tWriting(`rating.${page.story.rating}`)}</InfoPill>
-          </li>
-          <li>
-            <InfoPill tone="neutral">{t(`publishingRoute.${plan.publishingRoute}`)}</InfoPill>
-          </li>
-          <li>
-            <WritingStatusPill status={plan.writingStatus} />
-          </li>
-        </ul>
+      <div className="flex min-w-0 flex-col gap-4 sm:flex-row">
+        <SummaryCover story={story} />
+        <SummaryText page={page} />
+      </div>
+      <div className="flex min-w-0 flex-col gap-4">
+        <WordsProgress
+          wordsWritten={page.chapters.wordsWritten}
+          wordTarget={page.plan.wordTarget}
+        />
+        <ChaptersAtAGlance page={page} />
       </div>
     </section>
   );

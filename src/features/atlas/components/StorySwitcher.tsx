@@ -3,9 +3,9 @@
  * story I write (drafts and published) by title").
  *
  * The shared drop-down (DoD drop-down rule), listing the writer's live stories (deleted ones are
- * in Your writing's "Recently deleted"). Its label ("Story") is for screen readers only: the glass
- * top bar shows the story's title in the pill itself (bundle G10a, board AtlasStory). Picking a story opens its plan; nothing from the other
- * stories shows, because each page reads only its own story's plan.
+ * in Your writing's "Recently deleted"). Its label ("Story") shows beside it, as board E21 draws
+ * it (user stories bundle 6). Picking a story opens its plan; nothing from the other stories
+ * shows, because each page reads only its own story's plan.
  * Who uses it: AtlasTopBar. What it calls: useMyStories (the same list as Your writing).
  */
 import { useNavigate } from 'react-router';
@@ -31,6 +31,7 @@ export function StorySwitcher({ currentSlug }: { currentSlug: string }) {
     <Select
       id="atlas-story-switcher"
       label={t('switcher.label')}
+      isLabelVisible
       options={liveStories.map((story) => ({ value: story.slug, label: story.title }))}
       value={currentSlug}
       onChange={(slug) => void navigate(`/plan/s/${slug}`)}

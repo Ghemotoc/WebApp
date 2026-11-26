@@ -1,16 +1,15 @@
 /**
  * CharacterSheet: one character's sheet on the Characters page (stories S1-E17-09 to S1-E17-11,
- * S1-E17-13 and S1-E17-14; bundle G10a, board AtlasCharacterSheet).
+ * S1-E17-13 and S1-E17-14; user stories bundle 6, story 6.4, board E23).
  *
- * Two columns on a wide screen, one on a phone. The main column: the header card (the name, the
- * role and first appearance pills, the line, and the picture on the right), then the four groups
- * (Basics with the name, role and line first; Look and voice; Inside; In the story with the first
- * appearance), each with the writer's details placed in it and "Add detail"; then the writer's
- * own groups of details, the fields with no place and "Add a group of details" (bundle GAPS-1).
- * The side column: the relationships (S1-E17-14), where
- * the character appears and is mentioned, what readers see of them (S1-E17-32) and Delete. Every
- * field saves by itself. Basics stays open; every other card folds shut with a short hint beside
- * its title (CALM-9, board E23).
+ * One column, as board E23 draws it: the header (the name, a meta line of role, point of view and
+ * first appearance, the face and "Choose a picture"), then the four groups (Basics with the name,
+ * role and line first; Look and voice; Inside; In the story with the first appearance), each with
+ * the writer's details placed in it and "Add detail"; then the writer's own groups of details, the
+ * character fields with no place and "Add a group of details" (bundle GAPS-1); then the
+ * relationships (S1-E17-14), where the character appears and is mentioned, what readers see of
+ * them (S1-E17-32) and Delete. Every section sits flat under a fine line and folds; Basics is
+ * open at first (story 6.4). Every field saves by itself.
  * The caller gives it a key per character, so switching characters saves what was waiting and
  * starts the next sheet fresh.
  * Who uses it: CharactersPage. What it calls: useStoryCast's changers (through the props),
@@ -78,16 +77,15 @@ function FirstAppearanceField({
   );
 }
 
-/** The side column: relationships, appears in, mentioned in, what readers see and Delete. */
-function SheetSideColumn({
+/** The sheet's lower sections: relationships, appears in, mentioned in, what readers see, Delete. */
+function SheetStorySections({
   slug,
   cast,
   character,
   onDelete,
 }: Pick<CharacterSheetProps, 'slug' | 'cast' | 'character' | 'onDelete'>) {
-  const { t } = useAtlasTranslation();
   return (
-    <aside aria-label={t('characters.sideColumn')} className="flex min-w-0 flex-col gap-4">
+    <>
       <CharacterRelationshipsSection slug={slug} cast={cast} characterId={character.id} />
       <CharacterAppearancesSection slug={slug} characterId={character.id} />
       <CharacterMentionsList slug={slug} characterId={character.id} />
@@ -98,7 +96,7 @@ function SheetSideColumn({
         fields={cast.fields}
       />
       <DeleteCharacterSection name={character.name} onDelete={onDelete} />
-    </aside>
+    </>
   );
 }
 
@@ -160,26 +158,21 @@ function SheetGroups({ slug, cast, character, saveChange }: CharacterSheetProps)
 /**
  * Renders the sheet.
  *
- * @returns the header, the groups and the side column
+ * @returns the header and every section, in one column
  */
 export function CharacterSheet(props: CharacterSheetProps) {
   const { slug, cast, character, saveChange } = props;
   return (
-    <article
-      aria-labelledby="atlas-character-heading"
-      className="grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]"
-    >
-      <div className="flex min-w-0 flex-col gap-4">
-        <CharacterSheetHeader
-          cast={cast}
-          character={character}
-          saveChange={saveChange}
-          uploadPicture={props.uploadPicture}
-          removePicture={props.removePicture}
-        />
-        <SheetGroups {...props} />
-      </div>
-      <SheetSideColumn slug={slug} cast={cast} character={character} onDelete={props.onDelete} />
+    <article aria-labelledby="atlas-character-heading" className="flex min-w-0 flex-col gap-6">
+      <CharacterSheetHeader
+        cast={cast}
+        character={character}
+        saveChange={saveChange}
+        uploadPicture={props.uploadPicture}
+        removePicture={props.removePicture}
+      />
+      <SheetGroups {...props} />
+      <SheetStorySections slug={slug} cast={cast} character={character} onDelete={props.onDelete} />
     </article>
   );
 }

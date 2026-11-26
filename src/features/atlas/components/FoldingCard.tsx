@@ -1,7 +1,9 @@
 /**
- * FoldingCard: a card of the character sheet that folds shut and opens on a click (CALM-9,
+ * FoldingCard: a section of the character sheet that folds shut and opens on a click (CALM-9,
  * board E23 AtlasCharacter: "Basics stays open. Every other section folds shut and opens on
- * click, with a chevron and a short hint beside the title").
+ * click, with a chevron and a short hint beside the title"; user stories bundle 6, story 6.4:
+ * "Sections fold; Basics is open by default"). Flat under a fine line, like AtlasFlatSection:
+ * the sheet is one column of sections, not cards (board E23).
  *
  * The heading holds one button (aria-expanded, aria-controls) with the title, the hint and a
  * chevron that turns when the card is open; the button is at least 44 px tall. The card's
@@ -50,7 +52,7 @@ function Chevron({ isOpen }: { isOpen: boolean }) {
 }
 
 /**
- * Renders the card.
+ * Renders the section.
  *
  * @returns a region with a heading button and its (possibly hidden) contents
  */
@@ -71,7 +73,7 @@ export function FoldingCard({
   return (
     <section
       aria-labelledby={titleId}
-      className="flex min-w-0 flex-col rounded-card border border-border bg-surface px-4 py-4 shadow-card md:px-6"
+      className="flex min-w-0 flex-col border-t border-hairline pt-4"
     >
       <Heading className="m-0">
         {/* One button opens and shuts the card; the hint is read after the title. */}

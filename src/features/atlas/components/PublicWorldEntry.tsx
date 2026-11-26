@@ -3,16 +3,16 @@
  * S1-E17-33; bundle GAPS-4, board AtlasPreviewArea: "one world entry per page with 'More from
  * the world' beside it").
  *
- * A link back to the world, then the entry (its section's name as a quiet line, the title, the
- * tags, the text with [[Name]] links that open only public items, and Report), and beside it the
- * other public entries to read next. The preview leaves Report out and marks an entry waiting
- * for a chapter (S1-E17-35). Who uses it: PublicPlanView. What it calls: BibleMarkdown,
- * useBibleSectionName, ReportButton, PlanGuardPill and lib/worldEntries.ts.
+ * The entry reads like a page (user stories bundle 6, story 6.17, board E36): its section's name
+ * as a quiet line, the title, the text in the story's font with [[Name]] links that open only
+ * public items, and Report; the writer's tags stay on the writer's side. Beside it, "More from the
+ * world" lists the other public entries as rows. The preview leaves Report out and marks an entry
+ * waiting for a chapter (S1-E17-35). Who uses it: PublicPlanView. What it calls: BibleMarkdown,
+ * MetaLine, useBibleSectionName, ReportButton, PlanGuardPill and lib/worldEntries.ts.
  */
 import { Link } from 'react-router';
 
-import { ChevronRightIcon } from '@/components/icons/ChevronRightIcon';
-import { InfoPill } from '@/components/ui/InfoPill';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { PublicPlan } from '../api/publicPlan';
@@ -32,7 +32,7 @@ export interface PublicWorldEntryProps {
   isPreview: boolean;
 }
 
-/** "More from the world": the other entries, each a link to its own page. */
+/** "More from the world": the other entries, each a row with its title and its section. */
 function MoreFromWorld({
   plan,
   entryId,
@@ -47,23 +47,23 @@ function MoreFromWorld({
   const others = moreFromWorld(plan, entryId);
   if (others.length === 0) return null;
   return (
-    <aside aria-labelledby="atlas-world-more-heading" className="flex min-w-0 flex-col gap-3">
-      <h2 id="atlas-world-more-heading" className="m-0 eyebrow">
+    <aside aria-labelledby="atlas-world-more-heading" className="flex min-w-0 flex-col gap-4">
+      <h2
+        id="atlas-world-more-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
         {t('publicPlan.world.more')}
       </h2>
-      <ul className="m-0 flex list-none flex-col rounded-card border border-border bg-surface p-0 shadow-card">
+      <ul className="m-0 flex list-none flex-col p-0">
         {others.map(({ entry, section }) => (
-          <li key={entry.id} className="border-t border-hairline first:border-t-0">
+          <li key={entry.id} className="flex min-w-0 flex-col gap-1 border-t border-hairline py-3">
             <Link
               to={`${base}/world/${entry.id}`}
-              className="flex min-h-11 items-center justify-between gap-3 px-4 py-3 text-ink-heading no-underline hover:bg-tint"
+              className="self-start type-label font-semibold wrap-anywhere text-ink-heading no-underline hover:underline"
             >
-              <span className="flex min-w-0 flex-col gap-1">
-                <b className="break-words">{entry.title}</b>
-                <span className="type-body break-words text-ink-muted">{nameOf(section)}</span>
-              </span>
-              <ChevronRightIcon className="flex-none text-ink-muted" />
+              {entry.title}
             </Link>
+            <MetaLine facts={[{ text: nameOf(section) }]} />
           </li>
         ))}
       </ul>
@@ -74,59 +74,40 @@ function MoreFromWorld({
 /**
  * Renders the page.
  *
- * @returns the back link, the entry's article and "More from the world"
+ * @returns the entry's article and "More from the world" beside it
  */
 export function PublicWorldEntry({ plan, placed, base, isPreview }: PublicWorldEntryProps) {
-  const { t } = useAtlasTranslation();
   const nameOf = useBibleSectionName();
   const { entry, section } = placed;
+  // Board E36: the entry reads like a page (about 680 px wide), "More from the world" beside it
+  // on wide screens (1.6 to 1); the tabs above lead back to the world, so no back link.
   return (
-    <div className="flex min-w-0 flex-col gap-4">
-      <Link
-        to={`${base}/world`}
-        className="inline-flex h-9 items-center gap-2 self-start rounded-full border border-control-border bg-surface px-4 type-meta font-semibold text-ink-heading no-underline hover:bg-tint"
+    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-12">
+      <article
+        aria-labelledby="atlas-world-entry-heading"
+        data-testid="atlas-public-entry"
+        className="flex max-w-[680px] min-w-0 flex-col gap-3"
       >
-        <span aria-hidden="true">←</span>
-        {t('publicPlan.world.back')}
-      </Link>
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <article
-          aria-labelledby="atlas-world-entry-heading"
-          data-testid="atlas-public-entry"
-          className="flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-6 shadow-card md:px-8 md:py-8"
+        <p className="m-0 type-meta wrap-anywhere text-ink-muted">{nameOf(section)}</p>
+        <h2
+          id="atlas-world-entry-heading"
+          className="m-0 font-heading type-title font-bold wrap-anywhere text-ink-heading"
         >
-          <div className="flex min-w-0 flex-col gap-2">
-            <p className="m-0 type-body break-words text-ink-muted">{nameOf(section)}</p>
-            <h2
-              id="atlas-world-entry-heading"
-              className="m-0 type-title break-words text-ink-heading"
-            >
-              {entry.title}
-            </h2>
+          {entry.title}
+        </h2>
+        {entry.showFrom !== null && (
+          <div className="self-start">
+            <PlanGuardPill guard={entry.showFrom} />
           </div>
-          {(entry.tags.length > 0 || entry.showFrom !== null) && (
-            <div className="flex flex-wrap gap-2">
-              {entry.tags.map((tag) => (
-                <InfoPill key={tag} tone="neutral">
-                  {tag}
-                </InfoPill>
-              ))}
-              <PlanGuardPill guard={entry.showFrom} />
-            </div>
-          )}
-          <BibleMarkdown text={entry.body} />
-          {!isPreview && (
-            <div className="self-start">
-              <ReportButton
-                itemType="atlas_item"
-                itemReference={entry.id}
-                itemLabel={entry.title}
-              />
-            </div>
-          )}
-        </article>
-        <MoreFromWorld plan={plan} entryId={entry.id} base={base} />
-      </div>
+        )}
+        <BibleMarkdown text={entry.body} readsLikePage />
+        {!isPreview && (
+          <div className="self-start">
+            <ReportButton itemType="atlas_item" itemReference={entry.id} itemLabel={entry.title} />
+          </div>
+        )}
+      </article>
+      <MoreFromWorld plan={plan} entryId={entry.id} base={base} />
     </div>
   );
 }

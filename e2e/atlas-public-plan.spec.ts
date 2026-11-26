@@ -130,7 +130,7 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: 'What readers can see' }),
     ).toBeVisible();
-    const areas = page.getByRole('group', { name: 'Areas readers see' });
+    const areas = page.getByRole('region', { name: 'Areas readers see' });
     await areas.getByRole('switch', { name: 'Characters' }).click();
     await expect(areas.getByRole('switch', { name: 'Characters' })).toBeChecked();
     await areas.getByRole('switch', { name: 'Timeline' }).click();
@@ -151,15 +151,16 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
   });
 
   test('“Keep private” and the sheet’s parts decide what a reader sees', async ({ browser }) => {
-    // "What readers can see" lists every character with what readers see of it; "Change" opens
-    // the same controls the sheet has (board AtlasReaders, G10c4).
+    // "What readers can see" lists every character with its role and what readers see of it;
+    // "Change" opens the same controls the sheet has (story 6.14, board E33).
     const page = await openAs(browser, 'adult_writer', settingsAddress);
     const cezar = page.getByTestId('atlas-reader-character').filter({ hasText: 'Cezar' });
-    await expect(cezar).toContainText('Readers see it from the start');
+    await expect(cezar).toContainText('From the start');
     await cezar.getByRole('button', { name: 'Change what readers see of Cezar' }).click();
     await cezar.getByRole('checkbox', { name: 'Keep private: Cezar' }).check();
     await expect(cezar).toContainText('Kept private');
-    await expect(page.getByRole('heading', { name: 'Spoilers stay safe' })).toBeVisible();
+    // "Preview as a reader" is the page's one main button.
+    await expect(page.getByRole('link', { name: 'Preview as a reader' })).toBeVisible();
     await page.context().close();
     expect(await publicCharacterNames(browser, null)).toEqual(['Ana']);
 
@@ -167,6 +168,12 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
     const visitor = await openAs(browser, null, `${readerBase}/characters/${anaId}`);
     await expect(visitor.getByText('Morăriță')).toBeVisible();
     await expect(visitor.getByText('Știe de foc')).toHaveCount(0);
+    // Board E37 (story 6.18): the facts sit under a "Basics" heading, with a way back to the cast.
+    await expect(visitor.getByRole('heading', { name: 'Basics' })).toBeVisible();
+    await expect(
+      visitor.getByRole('article').getByRole('link', { name: 'Characters' }),
+    ).toBeVisible();
+    await expect(visitor.getByRole('heading', { name: 'Inside' })).toHaveCount(0);
     // A private character's own address shows nothing of them.
     await visitor.goto(`${readerBase}/characters/${cezarId}`);
     await expect(visitor.getByRole('heading', { name: 'Cezar' })).toHaveCount(0);
@@ -182,10 +189,12 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
       'adult_writer',
       `/plan/s/${storySlug}/storyline?view=timeline`,
     );
-    const fire = page.getByTestId('atlas-timeline-item').filter({ hasText: 'Incendiul' });
-    await fire.getByRole('button', { name: 'Edit Incendiul' }).click();
-    await fire.getByLabel('Readers see it from').selectOption({ label: 'Chapter 2: Focul' });
-    await expect(fire.getByLabel('Readers see it from')).toHaveValue('e2e32bbb');
+    // The row's "More" menu opens the edit form (story 6.10, board E29).
+    await page.getByRole('button', { name: 'More for Incendiul' }).click();
+    await page.getByRole('menuitem', { name: 'Edit' }).click();
+    const showFrom = page.getByLabel('Readers see it from');
+    await showFrom.selectOption({ label: 'Chapter 2: Focul' });
+    await expect(showFrom).toHaveValue('e2e32bbb');
     // The preview shows it with the chapter it waits for.
     await page.goto(`/plan/s/${storySlug}/preview/timeline`);
     const previewed = page.getByTestId('atlas-public-event').filter({ hasText: 'Incendiul' });
@@ -259,7 +268,7 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
 
   test('turning an area off takes it away from readers at once', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', settingsAddress);
-    const areas = page.getByRole('group', { name: 'Areas readers see' });
+    const areas = page.getByRole('region', { name: 'Areas readers see' });
     await areas.getByRole('switch', { name: 'Timeline' }).click();
     await expect(areas.getByRole('switch', { name: 'Timeline' })).not.toBeChecked();
     await page.context().close();
@@ -270,11 +279,11 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
   test('the band shows the cover and the writer, and a world entry has its own page', async ({
     browser,
   }) => {
-    // The writer turns World on.
+    // The writer turns Story world on.
     const page = await openAs(browser, 'adult_writer', settingsAddress);
-    const areas = page.getByRole('group', { name: 'Areas readers see' });
-    await areas.getByRole('switch', { name: 'World' }).click();
-    await expect(areas.getByRole('switch', { name: 'World' })).toBeChecked();
+    const areas = page.getByRole('region', { name: 'Areas readers see' });
+    await areas.getByRole('switch', { name: 'Story world' }).click();
+    await expect(areas.getByRole('switch', { name: 'Story world' })).toBeChecked();
     // The preview opens an entry on its own page, with no Report button.
     await page.goto(`/plan/s/${storySlug}/preview/world/${millEntryId}`);
     await expect(page.getByRole('heading', { level: 2, name: 'Moara' })).toBeVisible();
@@ -291,14 +300,16 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
     await expect(visitor.getByTestId('atlas-public-entry-row')).toHaveCount(3);
     await expect(visitor.getByText('Moara macină noaptea.', { exact: false })).toHaveCount(0);
 
-    // One entry's page: its section, its text with a link to a public character, and the rest
-    // of the world beside it, the same section's entry first.
+    // One entry's page (board E36): its section, its text with a link to a public character, and
+    // the rest of the world beside it, the same section's entry first.
     await visitor.getByRole('link', { name: 'Moara', exact: true }).click();
     await expect(visitor).toHaveURL(new RegExp(`/atlas/world/${millEntryId}$`));
     await expect(visitor).toHaveTitle(/^Moara: Moara de pe deal/);
     const entry = visitor.getByTestId('atlas-public-entry');
     await expect(entry.getByRole('heading', { level: 2, name: 'Moara' })).toBeVisible();
     await expect(entry.getByText('World and places')).toBeVisible();
+    // Story 6.17: the page reads like the story, so the writer's tags stay on the writer's side.
+    await expect(entry.getByText('deal', { exact: true })).toHaveCount(0);
     await expect(entry.getByRole('link', { name: 'Ana' })).toHaveAttribute(
       'href',
       `${readerBase}/characters/${anaId}`,

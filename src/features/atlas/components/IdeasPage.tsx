@@ -1,10 +1,12 @@
 /**
  * IdeasPage: /plan/s/:storySlug/ideas, a story's questions and ideas in Story Atlas (stories
- * S1-E17-27 and S1-E17-28).
+ * S1-E17-27 and S1-E17-28; redrawn by user stories bundle 6, story 6.12, board E31).
  *
- * The Story Atlas top bar, the heading, the quick-add card, then the notes, newest first, in a
- * glass list under the Open, Done and All switch (each with its count; board AtlasIdeas, G10c3). Ticked notes keep their "Action or
- * outcome", so Done reads as a log of decisions. Only the writer sees any of it.
+ * The Story Atlas top bar and the heading, then two sections between hairlines, 32 px apart (the
+ * spacing scale's step for board E31's 40): "Jot it down" and "Notes". Notes has the Show switch,
+ * Open, Done or Both with each count (Both first, as the board presses it), then the notes, newest
+ * first, as plain rows. Ticked notes keep their "Action or outcome", so Done reads as a log of
+ * decisions. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryIdeas → story_ideas() and the changers; IdeaQuickAdd and IdeaItem; lib/ideaFilters.ts;
  * useScrollToHash for a note opened from a search result; useMyStories for the top bar.
@@ -29,31 +31,41 @@ import { AtlasFrame } from './AtlasFrame';
 import { IdeaItem } from './IdeaItem';
 import { IdeaQuickAdd } from './IdeaQuickAdd';
 
-/** The filter, then the notes it shows, or a plain line when there are none. */
+/** The list's id, so the focus can land on it once a note is deleted. */
+const listId = 'atlas-ideas-list';
+
+/** The filter a link asks for ("?show=open"), or Both, as board E31 opens. */
+function useStartingFilter(): IdeaFilter {
+  const [searchParams] = useSearchParams();
+  const asked = ideaFilters.find((option) => option === searchParams.get('show'));
+  return asked ?? 'all';
+}
+
+/** The Show switch, then the notes it shows, or a plain line when there are none. */
 function IdeaList({ slug, ideas }: { slug: string; ideas: StoryIdeas }) {
   const { t } = useAtlasTranslation();
-  const { save, remove } = useStoryIdeas(slug);
-  // "?show=all" (from a search result or a mention) opens on All, so a ticked note is there too.
-  const [searchParams] = useSearchParams();
-  const [filter, setFilter] = useState<IdeaFilter>(
-    searchParams.get('show') === 'all' ? 'all' : 'open',
-  );
+  const { save, remove, putBack } = useStoryIdeas(slug);
+  const [filter, setFilter] = useState<IdeaFilter>(useStartingFilter());
   const shown = filterIdeas(ideas.items, filter);
   // "#atlas-idea-<id>" brings that note into view once the list is drawn.
   useScrollToHash(true);
   return (
-    <section aria-labelledby="atlas-ideas-list-heading" className="flex min-w-0 flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2
-          id="atlas-ideas-list-heading"
-          className="m-0 font-heading type-heading font-bold text-ink-heading"
-        >
-          {t('ideas.listHeading')}
-        </h2>
+    <section
+      aria-labelledby="atlas-ideas-list-heading"
+      className="flex min-w-0 flex-col gap-4 border-t border-hairline pt-6"
+    >
+      <h2
+        id="atlas-ideas-list-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
+        {t('ideas.listHeading')}
+      </h2>
+      <div className="flex min-w-0 flex-col gap-3">
         <SegmentedControl
           legend={t('ideas.filterLabel')}
           isLegendVisible={false}
           name="atlas-ideas-filter"
+          columns={3}
           options={ideaFilters.map((option) => ({
             value: option,
             label: t(`ideas.filters.${option}`, {
@@ -63,14 +75,15 @@ function IdeaList({ slug, ideas }: { slug: string; ideas: StoryIdeas }) {
           value={filter}
           onChange={setFilter}
         />
-      </div>
-      {shown.length === 0 && (
-        <p className="m-0 type-body text-ink-muted">{t(`ideas.empty.${filter}`)}</p>
-      )}
-      {shown.length > 0 && (
+        {shown.length === 0 && (
+          <p className="m-0 type-body text-ink-muted">{t(`ideas.empty.${filter}`)}</p>
+        )}
+        {/* The list takes the focus once a note is deleted, so it never falls to the page. */}
         <ul
-          aria-labelledby="atlas-ideas-list-heading"
-          className="m-0 flex list-none flex-col overflow-hidden rounded-card border border-border bg-surface p-0 shadow-card"
+          id={listId}
+          tabIndex={-1}
+          aria-label={t('ideas.heading')}
+          className="m-0 flex list-none flex-col p-0 outline-none"
         >
           {shown.map((idea) => (
             <IdeaItem
@@ -78,10 +91,12 @@ function IdeaList({ slug, ideas }: { slug: string; ideas: StoryIdeas }) {
               idea={idea}
               save={async (change) => save(idea.id, change)}
               remove={async () => remove(idea.id)}
+              putBack={putBack}
+              onRemoved={() => document.getElementById(listId)?.focus()}
             />
           ))}
         </ul>
-      )}
+      </div>
     </section>
   );
 }
@@ -116,8 +131,10 @@ export function IdeasPage() {
       {ideas !== undefined && ideas !== null && (
         <>
           <AtlasPageHeading title={t('ideas.heading')} />
-          <IdeaQuickAdd onAdd={add} />
-          <IdeaList slug={storySlug} ideas={ideas} />
+          <div className="flex min-w-0 flex-col gap-8">
+            <IdeaQuickAdd onAdd={add} />
+            <IdeaList slug={storySlug} ideas={ideas} />
+          </div>
         </>
       )}
     </AtlasFrame>
