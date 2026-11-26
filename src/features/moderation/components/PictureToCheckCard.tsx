@@ -15,6 +15,7 @@ import { LabelRows } from '@/components/ui/LabelRows';
 import type { PictureDecision, PictureToCheck } from '../api/picturesToCheck';
 
 import { PictureDecisionButtons } from './PictureDecisionButtons';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** What the card needs. */
 export interface PictureToCheckCardProps {
@@ -69,7 +70,7 @@ export function PictureToCheckCard(props: PictureToCheckCardProps) {
   const { t, i18n } = useTranslation('moderation');
   const { picture } = props;
   const headingId = `picture-${picture.caseId}-heading`;
-  const waitingSince = new Intl.DateTimeFormat(i18n.language, {
+  const waitingSince = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(picture.waitingSince));

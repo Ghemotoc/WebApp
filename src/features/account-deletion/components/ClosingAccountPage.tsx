@@ -7,7 +7,8 @@
  * (GDPR art. 15 and 20; bundle INACTIVE-2): downloading doesn't keep the account. An account
  * that closed because nobody used it for 5 years reads its own first lines, which say so.
  * Nothing else of the app is shown: the account can't write, and its profile, stories and
- * comments are hidden from everyone.
+ * comments are hidden from everyone. Drawn as board J18 (bundle 10): one centred card
+ * (NoticeCard), with the data download under it.
  * Who shows it: AccountClosingGate. What it calls: useCancelAccountDeletion, signOutHere
  * (features/auth) for "Log out", which then goes to the home page, and DownloadMyDataSection
  * (features/data-export), loaded only here so the first load of every other page stays small.
@@ -17,7 +18,7 @@ import { useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { PageContainer } from '@/components/ui/PageContainer';
+import { NoticeCard } from '@/components/ui/NoticeCard';
 import { requireClient } from '@/features/account/hooks/useMyNames';
 import { signOutHere } from '@/features/auth/api/signIn';
 import { formatLocalDate } from '@/lib/local-time';
@@ -57,14 +58,19 @@ export function ClosingAccountPage({ deleteAfter, reason }: ClosingAccountPagePr
     void navigate('/');
   };
   return (
-    <PageContainer className="flex max-w-[640px] flex-col gap-4 pt-12 pb-6">
-      <h1 className="m-0 font-heading type-title font-bold text-ink-heading">
-        {t('closing.heading')}
-      </h1>
-      <p className="m-0 text-ink-muted">
+    <NoticeCard
+      heading={t('closing.heading')}
+      headingId="closing-heading"
+      below={
+        <Suspense fallback={null}>
+          <DownloadMyDataSection hidesStoriesBlock />
+        </Suspense>
+      }
+    >
+      <p className="m-0 type-body text-ink-muted">
         {t(isUnused ? 'closing.unusedBody' : 'closing.body', { date })}
       </p>
-      <p className="m-0 text-ink-muted">
+      <p className="m-0 type-body text-ink-muted">
         {t(isUnused ? 'closing.unusedChoices' : 'closing.changeMind')}
       </p>
       {keep.isError && <Notice tone="error">{t('closing.keepFailed')}</Notice>}
@@ -76,9 +82,6 @@ export function ClosingAccountPage({ deleteAfter, reason }: ClosingAccountPagePr
           {t('closing.logOut')}
         </Button>
       </div>
-      <Suspense fallback={null}>
-        <DownloadMyDataSection hidesStoriesBlock />
-      </Suspense>
-    </PageContainer>
+    </NoticeCard>
   );
 }

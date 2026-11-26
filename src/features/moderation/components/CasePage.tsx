@@ -49,6 +49,7 @@ import { MoveToSafeguarding } from './MoveToSafeguarding';
 import { RemovalOrderPanel } from './RemovalOrderPanel';
 import { SafeguardingPanel } from './SafeguardingPanel';
 import { TierPill } from './TierPill';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * The one-line summary under the heading: what, how many reports, when it was received.
@@ -59,7 +60,7 @@ import { TierPill } from './TierPill';
  * @returns the sentence
  */
 function summaryText(theCase: QueueCase, t: TFunction<'moderation'>, language: string): string {
-  const when = new Intl.DateTimeFormat(language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(theCase.receivedAt));

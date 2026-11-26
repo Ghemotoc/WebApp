@@ -269,7 +269,8 @@
       "library_wide": "Banner lat în Bibliotecă",
       "library_lower_wide": "Banner lat de jos în Bibliotecă",
       "home_wide": "Banner lat pe Acasă",
-      "hub_side": "Casetă laterală în Spațiul scriitorilor"
+      "hub_side": "Casetă laterală în Spațiul scriitorilor",
+      "hub_wide": "Banner lat în Spațiul scriitorilor"
     },
     "formats": {
       "wide": "banner lat",

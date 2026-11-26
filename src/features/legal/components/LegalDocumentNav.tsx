@@ -1,53 +1,48 @@
 /**
  * LegalDocumentNav: the row of documents at the top of the Legal centre (story S1-E14-01).
  *
- * Board 7.2 draws these as tabs. They are links here, one web address per document, so the
- * sign-up form, Settings and the footer can link straight to "the privacy notice" and the browser's
- * back button works; the current one carries aria-current="page" (board mismatch noted in the pull
- * request). Each looks like a chip: 36 px tall, plum when current with a tick (DoD pill system).
+ * Board J08 (user stories, bundle 10) draws the documents as a tinted track, the current one on a
+ * raised white bubble, like the top bar's track. They are links, one web address per document, so
+ * the sign-up form, Settings and the footer can link straight to "the privacy notice" and the
+ * browser's back button works; the current one carries aria-current="page" and bold text, so it
+ * shows by shape and weight, not colour alone (WCAG 2.2, 1.4.1). Each link is 40 px tall (24 px
+ * minimum, CLAUDE.md rule 9). On a narrow screen the track scrolls sideways inside its own box
+ * (no scrollbar, as everywhere; the links inside take keyboard focus).
  * Who uses it: LegalCentrePage.
  */
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 
-import { CheckIcon } from '@/components/icons/CheckIcon';
-
 import { legalDocumentSlugs } from '../lib/legalDocumentList';
 
 /**
- * The classes of one link: white with a plum border, or filled plum when it is the current page.
+ * The classes of one link: plain on the track, or on the white bubble when it is the current page.
  *
  * @param isActive - whether this link is the page on screen
- * @returns the class names
+ * @returns the link's classes
  */
 function linkClasses({ isActive }: { isActive: boolean }): string {
   const shared =
-    'inline-flex h-9 items-center justify-center gap-2 rounded-full border px-4 type-body leading-none font-semibold no-underline';
+    'inline-flex min-h-10 items-center justify-center rounded-full px-4 type-body whitespace-nowrap no-underline';
   return isActive
-    ? `${shared} border-heading bg-heading text-on-primary`
-    : `${shared} border-control-border bg-surface text-ink-heading hover:bg-tint`;
+    ? `${shared} bg-surface font-semibold text-ink-heading shadow-card`
+    : `${shared} font-normal text-ink hover:text-ink-heading`;
 }
 
 /**
- * Renders the documents as a wrapping row of links (it never scrolls sideways at 390 px).
+ * Renders the row.
  *
- * @returns the navigation
+ * @returns the documents' navigation
  */
 export function LegalDocumentNav() {
   const { t } = useTranslation('legal');
   return (
-    <nav aria-label={t('documentsNavLabel')}>
-      <ul className="m-0 flex list-none flex-wrap gap-2 rounded-card border border-border bg-surface p-2">
+    <nav aria-label={t('documentsNavLabel')} className="max-w-full overflow-x-auto">
+      <ul className="m-0 inline-flex list-none gap-1 rounded-full bg-tint p-1">
         {legalDocumentSlugs.map((slug) => (
-          // Each link is 36 px tall, well above the 24 px minimum target (WCAG 2.2, 2.5.8).
           <li key={slug} className="flex">
             <NavLink to={`/legal/${slug}`} className={linkClasses}>
-              {({ isActive }) => (
-                <>
-                  {isActive && <CheckIcon />}
-                  {t(`documents.${slug}.tab`)}
-                </>
-              )}
+              {t(`documents.${slug}.tab`)}
             </NavLink>
           </li>
         ))}

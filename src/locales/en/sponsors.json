@@ -269,7 +269,8 @@
       "library_wide": "Library wide banner",
       "library_lower_wide": "Library lower wide banner",
       "home_wide": "Home wide banner",
-      "hub_side": "Writers’ hub side box"
+      "hub_side": "Writers’ hub side box",
+      "hub_wide": "Writers’ hub wide banner"
     },
     "formats": {
       "wide": "wide banner",

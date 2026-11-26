@@ -24,6 +24,8 @@ export interface SupportReplyFormProps {
   id: string;
   label: string;
   sendLabel: string;
+  /** A short line under the box, such as "Text only. Files can’t be sent here." (bundle 10). */
+  hint?: string;
   isBusy: boolean;
   failure: SupportFailure | null;
   waitMinutes: number | null;
@@ -100,6 +102,7 @@ export function SupportReplyForm(props: SupportReplyFormProps) {
         id={props.id}
         label={props.label}
         rows={5}
+        hint={props.hint}
         maxLength={supportLimits.body}
         errorMessage={missing.isShown ? t('reply.missing') : undefined}
         value={body}

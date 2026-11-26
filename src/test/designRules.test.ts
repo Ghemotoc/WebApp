@@ -151,7 +151,6 @@ const infoPillUsers = new Set([
   '/src/features/moderation/components/CaseRow.tsx',
   '/src/features/moderation/components/CaseSignals.tsx',
   '/src/features/moderation/components/TierPill.tsx',
-  '/src/features/moderator-mail/components/MailStatusPill.tsx',
   '/src/features/moderator-mail/components/StaffMailInboxPage.tsx',
   '/src/features/reading/components/TeaserStoryCard.tsx',
   '/src/features/safety/components/SafetyChecksPanel.tsx',

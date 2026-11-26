@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import type { WaitingPerson } from '@/features/waitlist/api/waitlist';
 
 import { countryName } from './countryName';
+import { dateLocaleFor } from '../../../../lib/romania-time';
 
 /** What the table needs. */
 interface WaitlistPeopleTableProps {
@@ -39,7 +40,7 @@ function usePersonTexts(person: WaitingPerson) {
       : t('waitlist.table.countryClosed', {
           country: countryName(person.country, i18n.language, t),
         }),
-    joined: new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
+    joined: new Intl.DateTimeFormat(dateLocaleFor(i18n.language), { dateStyle: 'medium' }).format(
       new Date(person.joined_at),
     ),
     email: person.email_confirmed

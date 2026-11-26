@@ -1,5 +1,4 @@
 {
-  "eyebrow": "Help",
   "signedOut": "Log in to see your support requests. Without an account, use the Contact us form.",
   "logIn": "Get in",
   "contactUs": "Contact us",
@@ -28,13 +27,7 @@
     "write": "Ask for help",
     "empty": "You haven’t asked for help yet.",
     "loadFailed": "We couldn’t load your requests. Check your connection and try again.",
-    "backToSettings": "Settings",
     "requestNumber": "Request {{number}}",
-    "columns": {
-      "subject": "Subject",
-      "status": "Status",
-      "lastUpdate": "Last update"
-    },
     "states": {
       "answered": "We answered",
       "new": "New",
@@ -77,7 +70,8 @@
     "notFound": "We couldn’t find this request on your account.",
     "loadFailed": "We couldn’t load this request. Check your connection and try again.",
     "mergedInto": "This request continues as #{{number}}: we joined it with another one about the same thing.",
-    "reopenNote": "Answering a solved request opens it again."
+    "reopenNote": "Answering a solved request opens it again.",
+    "replyHint": "Text only. Files can’t be sent here."
   },
   "failures": {
     "refused": "Fill in every field.",
@@ -312,5 +306,9 @@
   },
   "reply": {
     "missing": "Write something first."
+  },
+  "breadcrumb": {
+    "label": "Where you are",
+    "settings": "Settings"
   }
 }

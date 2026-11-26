@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ChevronDownIcon } from '@/components/icons/ChevronDownIcon';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** What the field needs. */
 interface MonthOfBirthFieldProps {
@@ -28,7 +29,10 @@ interface MonthOfBirthFieldProps {
  * @returns January to December, as words
  */
 function monthNames(language: string): string[] {
-  const format = new Intl.DateTimeFormat(language, { month: 'long', timeZone: 'UTC' });
+  const format = new Intl.DateTimeFormat(dateLocaleFor(language), {
+    month: 'long',
+    timeZone: 'UTC',
+  });
   return Array.from({ length: 12 }, (_unused, index) =>
     format.format(new Date(Date.UTC(2000, index, 1))),
   );

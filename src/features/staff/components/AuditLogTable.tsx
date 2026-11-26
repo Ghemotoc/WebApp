@@ -20,6 +20,7 @@ import { LabelRows } from '@/components/ui/LabelRows';
 import type { Json } from '@/lib/database.types';
 
 import type { AuditLogEntry } from '../api/auditLog';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Values as one line of text, for a cell.
@@ -93,9 +94,10 @@ function actorAsText(entry: AuditLogEntry, systemLabel: string): string {
  * @returns for example "23 Oct 2026, 14:02"
  */
 function timeAsText(isoTime: string, language: string): string {
-  return new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'short' }).format(
-    new Date(isoTime),
-  );
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(isoTime));
 }
 
 /**

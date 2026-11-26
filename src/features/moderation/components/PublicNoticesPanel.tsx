@@ -23,6 +23,7 @@ import { useAcknowledgeAlert } from '../hooks/useRemovalOrder';
 
 import { ReasonForm } from './ReasonForm';
 import { errorShownByHook } from '@/lib/errorShownByHook';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** How far back the orders list looks. */
 const recentOrderDays = 7;
@@ -37,7 +38,7 @@ type QueueNotices = ReturnType<typeof useQueueNotices>;
  */
 function useLocalTime() {
   const { i18n } = useTranslation();
-  const format = new Intl.DateTimeFormat(i18n.language, {
+  const format = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   });
