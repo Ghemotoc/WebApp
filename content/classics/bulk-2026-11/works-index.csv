@@ -1,0 +1,269 @@
+id,title,author,author_died,language,first_published,kind,rating,chapters,characters,source
+en-pride-and-prejudice,Pride and Prejudice,Jane Austen,1817,en,1813,novel,all_ages,61,684640,Standard Ebooks (CC0)
+en-emma,Emma,Jane Austen,1817,en,1815,novel,all_ages,55,880894,Standard Ebooks (CC0)
+en-sense-and-sensibility,Sense and Sensibility,Jane Austen,1817,en,1811,novel,all_ages,50,668988,Standard Ebooks (CC0)
+en-persuasion,Persuasion,Jane Austen,1817,en,1817,novel,all_ages,24,464736,Standard Ebooks (CC0)
+en-northanger-abbey,Northanger Abbey,Jane Austen,1817,en,1817,novel,all_ages,31,431693,Standard Ebooks (CC0)
+en-jane-eyre,Jane Eyre,Charlotte Brontë,1855,en,1847,novel,13_plus,38,1017022,Standard Ebooks (CC0)
+en-wuthering-heights,Wuthering Heights,Emily Brontë,1848,en,1847,novel,13_plus,34,645282,Standard Ebooks (CC0)
+en-agnes-grey,Agnes Grey,Anne Brontë,1849,en,1847,novel,all_ages,25,373365,Standard Ebooks (CC0)
+en-the-tenant-of-wildfell-hall,The Tenant of Wildfell Hall,Anne Brontë,1849,en,1848,novel,13_plus,53,909567,Standard Ebooks (CC0)
+en-great-expectations,Great Expectations,Charles Dickens,1870,en,1861,novel,all_ages,59,992272,Standard Ebooks (CC0)
+en-oliver-twist,Oliver Twist,Charles Dickens,1870,en,1838,novel,13_plus,53,882746,Standard Ebooks (CC0)
+en-a-tale-of-two-cities,A Tale of Two Cities,Charles Dickens,1870,en,1859,novel,13_plus,45,753660,Standard Ebooks (CC0)
+en-david-copperfield,David Copperfield,Charles Dickens,1870,en,1850,novel,all_ages,64,1926458,Standard Ebooks (CC0)
+en-frankenstein-1818-text,Frankenstein,Mary Shelley,1851,en,1818,novel,13_plus,29,420386,Standard Ebooks (CC0)
+en-strange-case-of-dr-jekyll-and-mr-hyde,Strange Case of Dr Jekyll and Mr Hyde,Robert Louis Stevenson,1894,en,1886,novel,13_plus,10,138368,Standard Ebooks (CC0)
+en-treasure-island,Treasure Island,Robert Louis Stevenson,1894,en,1883,novel,all_ages,34,359098,Standard Ebooks (CC0)
+en-kidnapped,Kidnapped,Robert Louis Stevenson,1894,en,1886,novel,all_ages,30,408989,Standard Ebooks (CC0)
+en-the-picture-of-dorian-gray,The Picture of Dorian Gray,Oscar Wilde,1900,en,1890,novel,16_plus,20,426502,Standard Ebooks (CC0)
+en-a-study-in-scarlet,A Study in Scarlet,Arthur Conan Doyle,1930,en,1887,novel,13_plus,14,237809,Standard Ebooks (CC0)
+en-the-hound-of-the-baskervilles,The Hound of the Baskervilles,Arthur Conan Doyle,1930,en,1902,novel,13_plus,15,299036,Standard Ebooks (CC0)
+en-the-lost-world,The Lost World,Arthur Conan Doyle,1930,en,1912,novel,all_ages,16,418581,Standard Ebooks (CC0)
+en-alice-s-adventures-in-wonderland,Alice's Adventures in Wonderland,Lewis Carroll,1898,en,1865,novel,all_ages,12,143242,Standard Ebooks (CC0)
+en-through-the-looking-glass,Through the Looking-Glass,Lewis Carroll,1898,en,1871,novel,all_ages,13,160186,Standard Ebooks (CC0)
+en-anne-of-green-gables,Anne of Green Gables,L. M. Montgomery,1942,en,1908,novel,all_ages,38,557416,Standard Ebooks (CC0)
+en-anne-of-avonlea,Anne of Avonlea,L. M. Montgomery,1942,en,1909,novel,all_ages,30,484483,Standard Ebooks (CC0)
+en-the-blue-castle,The Blue Castle,L. M. Montgomery,1942,en,1926,novel,all_ages,45,388024,Standard Ebooks (CC0)
+en-little-women,Little Women,Louisa May Alcott,1888,en,1868,novel,all_ages,47,1011534,Standard Ebooks (CC0)
+en-the-adventures-of-tom-sawyer,The Adventures of Tom Sawyer,Mark Twain,1910,en,1876,novel,all_ages,35,385037,Standard Ebooks (CC0)
+en-adventures-of-huckleberry-finn,Adventures of Huckleberry Finn,Mark Twain,1910,en,1884,novel,13_plus,43,561351,Standard Ebooks (CC0)
+en-the-call-of-the-wild,The Call of the Wild,Jack London,1916,en,1903,novel,13_plus,7,174849,Standard Ebooks (CC0)
+en-white-fang,White Fang,Jack London,1916,en,1906,novel,13_plus,25,395834,Standard Ebooks (CC0)
+en-the-age-of-innocence,The Age of Innocence,Edith Wharton,1937,en,1920,novel,all_ages,34,577100,Standard Ebooks (CC0)
+en-ethan-frome,Ethan Frome,Edith Wharton,1937,en,1911,novel,13_plus,11,188357,Standard Ebooks (CC0)
+en-the-great-gatsby,The Great Gatsby,F. Scott Fitzgerald,1940,en,1925,novel,13_plus,9,268532,Standard Ebooks (CC0)
+en-this-side-of-paradise,This Side of Paradise,F. Scott Fitzgerald,1940,en,1920,novel,13_plus,10,152678,Standard Ebooks (CC0)
+en-mrs-dalloway,Mrs Dalloway,Virginia Woolf,1941,en,1925,novel,13_plus,4,359633,Standard Ebooks (CC0)
+en-to-the-lighthouse,To the Lighthouse,Virginia Woolf,1941,en,1927,novel,all_ages,42,382577,Standard Ebooks (CC0)
+en-a-portrait-of-the-artist-as-a-young-man,A Portrait of the Artist as a Young Man,James Joyce,1941,en,1916,novel,13_plus,6,462278,Standard Ebooks (CC0)
+en-the-wind-in-the-willows,The Wind in the Willows,Kenneth Grahame,1932,en,1908,novel,all_ages,12,324274,Standard Ebooks (CC0)
+en-peter-and-wendy-peter-pan-novel,Peter and Wendy,J. M. Barrie,1937,en,1911,novel,all_ages,17,254020,Standard Ebooks (CC0)
+en-kim,Kim,Rudyard Kipling,1936,en,1901,novel,all_ages,15,578020,Standard Ebooks (CC0)
+en-the-time-machine,The Time Machine,H. G. Wells,1946,en,1895,novel,all_ages,13,178604,Standard Ebooks (CC0)
+en-the-war-of-the-worlds,The War of the Worlds,H. G. Wells,1946,en,1898,novel,13_plus,27,335548,Standard Ebooks (CC0)
+en-the-invisible-man,The Invisible Man,H. G. Wells,1946,en,1897,novel,13_plus,29,270899,Standard Ebooks (CC0)
+en-dracula,Dracula,Bram Stoker,1912,en,1897,novel,16_plus,28,841894,Standard Ebooks (CC0)
+en-moby-dick,Moby-Dick,Herman Melville,1891,en,1851,novel,13_plus,136,1175599,Standard Ebooks (CC0)
+en-the-scarlet-letter,The Scarlet Letter,Nathaniel Hawthorne,1864,en,1850,novel,13_plus,24,394239,Standard Ebooks (CC0)
+en-the-awakening,The Awakening,Kate Chopin,1904,en,1899,novel,16_plus,39,279932,Standard Ebooks (CC0)
+en-the-secret-garden,The Secret Garden,Frances Hodgson Burnett,1924,en,1911,novel,all_ages,27,427116,Standard Ebooks (CC0)
+en-a-little-princess,A Little Princess,Frances Hodgson Burnett,1924,en,1905,novel,all_ages,19,361871,Standard Ebooks (CC0)
+en-middlemarch,Middlemarch,George Eliot,1880,en,1871,novel,13_plus,87,1776146,Standard Ebooks (CC0)
+en-heart-of-darkness,Heart of Darkness,Joseph Conrad,1924,en,1899,novel,16_plus,3,210384,Standard Ebooks (CC0)
+en-gulliver-s-travels,Gulliver's Travels,Jonathan Swift,1745,en,1726,novel,all_ages,39,564518,Standard Ebooks (CC0)
+en-robinson-crusoe,Robinson Crusoe,Daniel Defoe,1731,en,1719,novel,13_plus,20,619897,Standard Ebooks (CC0)
+en-tess-of-the-d-urbervilles,Tess of the d'Urbervilles,Thomas Hardy,1928,en,1891,novel,16_plus,59,831604,Standard Ebooks (CC0)
+en-uncle-tom-s-cabin,Uncle Tom's Cabin,Harriet Beecher Stowe,1896,en,1852,novel,16_plus,45,997718,Standard Ebooks (CC0)
+en-the-turn-of-the-screw,The Turn of the Screw,Henry James,1916,en,1898,novel,13_plus,25,228698,Standard Ebooks (CC0)
+en-the-wonderful-wizard-of-oz,The Wonderful Wizard of Oz,L. Frank Baum,1919,en,1900,novel,all_ages,24,204403,Standard Ebooks (CC0)
+en-black-beauty,Black Beauty,Anna Sewell,1878,en,1877,novel,all_ages,49,300279,Standard Ebooks (CC0)
+en-the-railway-children,The Railway Children,E. Nesbit,1924,en,1906,novel,all_ages,14,324876,Standard Ebooks (CC0)
+en-herland,Herland,Charlotte Perkins Gilman,1935,en,1915,novel,all_ages,12,296464,Standard Ebooks (CC0)
+en-the-adventures-of-sherlock-holmes,The Adventures of Sherlock Holmes,Arthur Conan Doyle,1930,en,1892,short_story,13_plus,14,561193,Standard Ebooks (CC0)
+en-dubliners,Dubliners,James Joyce,1941,en,1914,short_story,13_plus,15,369772,Standard Ebooks (CC0)
+en-the-four-million-incl-the-gift-of-the-magi,The Four Million,O. Henry,1910,en,1906,short_story,all_ages,25,288846,Standard Ebooks (CC0)
+en-the-jungle-book,The Jungle Book,Rudyard Kipling,1936,en,1894,short_story,all_ages,7,271972,Standard Ebooks (CC0)
+en-just-so-stories,Just So Stories,Rudyard Kipling,1936,en,1902,short_story,all_ages,12,156584,Standard Ebooks (CC0)
+en-the-call-of-cthulhu,The Call of Cthulhu,H. P. Lovecraft,1937,en,1928,short_story,16_plus,4,69872,Standard Ebooks (CC0)
+en-leaves-of-grass,Leaves of Grass,Walt Whitman,1892,en,1855,poem,16_plus,115,713912,Standard Ebooks (CC0)
+en-shakespeare-s-sonnets,Shakespeare's Sonnets,William Shakespeare,1616,en,1609,poem,all_ages,4,99555,Standard Ebooks (CC0)
+en-poems-published-in-1820,Poems Published in 1820,John Keats,1821,en,1820,poem,all_ages,15,131404,Standard Ebooks (CC0)
+en-lyrical-ballads,Lyrical Ballads,William Wordsworth and S. T. Coleridge,1850,en,1798,poem,all_ages,30,237898,Standard Ebooks (CC0)
+en-a-shropshire-lad,A Shropshire Lad,A. E. Housman,1936,en,1896,poem,all_ages,2,47736,"Wikisource, CC BY-SA 4.0; formatting adapted"
+en-sonnets-from-the-portuguese,Sonnets from the Portuguese,Elizabeth Barrett Browning,1861,en,1850,poem,all_ages,1,28486,Standard Ebooks (CC0)
+en-verses-1889-1896,The Seven Seas,Rudyard Kipling,1936,en,1896,poem,all_ages,6,152086,"Wikisource, CC BY-SA 4.0; formatting adapted"
+en-the-book-of-nonsense,The Book of Nonsense,Edward Lear,1888,en,1846,poem,all_ages,1,19130,Standard Ebooks (CC0)
+en-wessex-poems,Wessex Poems and Other Verses,Thomas Hardy,1928,en,1898,poem,all_ages,3,86670,"Wikisource, CC BY-SA 4.0; formatting adapted"
+en-romeo-and-juliet,Romeo and Juliet,William Shakespeare,1616,en,1597,play,13_plus,26,148349,Standard Ebooks (CC0)
+en-hamlet,Hamlet,William Shakespeare,1616,en,1603,play,13_plus,20,185545,Standard Ebooks (CC0)
+en-macbeth,Macbeth,William Shakespeare,1616,en,1623,play,13_plus,5,108495,Standard Ebooks (CC0)
+en-a-midsummer-night-s-dream,A Midsummer Night's Dream,William Shakespeare,1616,en,1600,play,all_ages,9,99200,Standard Ebooks (CC0)
+en-othello,Othello,William Shakespeare,1616,en,1622,play,13_plus,15,161806,Standard Ebooks (CC0)
+en-king-lear,King Lear,William Shakespeare,1616,en,1608,play,13_plus,26,162331,Standard Ebooks (CC0)
+en-the-tempest,The Tempest,William Shakespeare,1616,en,1623,play,all_ages,10,102616,Standard Ebooks (CC0)
+en-twelfth-night,Twelfth Night,William Shakespeare,1616,en,1623,play,all_ages,18,118750,Standard Ebooks (CC0)
+en-julius-caesar,Julius Caesar,William Shakespeare,1616,en,1623,play,13_plus,18,121288,Standard Ebooks (CC0)
+en-much-ado-about-nothing,Much Ado About Nothing,William Shakespeare,1616,en,1600,play,all_ages,17,126383,Standard Ebooks (CC0)
+en-the-merchant-of-venice,The Merchant of Venice,William Shakespeare,1616,en,1600,play,13_plus,20,125156,Standard Ebooks (CC0)
+en-the-importance-of-being-earnest,The Importance of Being Earnest,Oscar Wilde,1900,en,1895,play,all_ages,3,120414,Standard Ebooks (CC0)
+en-an-ideal-husband,An Ideal Husband,Oscar Wilde,1900,en,1895,play,all_ages,4,176317,Standard Ebooks (CC0)
+en-lady-windermere-s-fan,Lady Windermere's Fan,Oscar Wilde,1900,en,1893,play,all_ages,4,112542,Standard Ebooks (CC0)
+en-doctor-faustus,Doctor Faustus,Christopher Marlowe,1593,en,1604,play,13_plus,3,74330,Standard Ebooks (CC0)
+en-the-school-for-scandal,The School for Scandal,Richard Brinsley Sheridan,1816,en,1777,play,all_ages,16,163925,Standard Ebooks (CC0)
+en-the-rivals,The Rivals,Richard Brinsley Sheridan,1816,en,1775,play,all_ages,10,162540,"Wikisource, CC BY-SA 4.0; formatting adapted"
+en-she-stoops-to-conquer,She Stoops to Conquer,Oliver Goldsmith,1774,en,1773,play,all_ages,4,84631,Standard Ebooks (CC0)
+en-volpone,Volpone,Ben Jonson,1637,en,1607,play,13_plus,22,176834,"Wikisource, CC BY-SA 4.0; formatting adapted"
+en-pygmalion,Pygmalion,George Bernard Shaw,1950,en,1913,play,all_ages,6,185188,Standard Ebooks (CC0)
+en-arms-and-the-man,Arms and the Man,George Bernard Shaw,1950,en,1894,play,all_ages,3,135227,Standard Ebooks (CC0)
+en-mrs-warren-s-profession,Mrs Warren's Profession,George Bernard Shaw,1950,en,1902,play,16_plus,4,138466,Standard Ebooks (CC0)
+en-man-and-superman,Man and Superman,George Bernard Shaw,1950,en,1903,play,all_ages,5,326830,Standard Ebooks (CC0)
+en-saint-joan,Saint Joan,George Bernard Shaw,1950,en,1924,play,13_plus,7,205826,Standard Ebooks (CC0)
+en-the-playboy-of-the-western-world,The Playboy of the Western World,J. M. Synge,1909,en,1907,play,13_plus,4,110112,Standard Ebooks (CC0)
+en-the-hairy-ape,The Hairy Ape,Eugene O'Neill,1953,en,1922,play,13_plus,8,88205,Standard Ebooks (CC0)
+en-a-doll-s-house-tr-r-farquharson-sharp-d-1945,A Doll's House,Henrik Ibsen,1906,en,1879,play,13_plus,3,147281,Standard Ebooks (CC0)
+ro-povestea-lui-harap-alb,Povestea lui Harap-Alb,Ion Creangă,1889,ro,1877,fairy_tale,all_ages,2,98583,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-soacra-cu-trei-nurori,Soacra cu trei nurori,Ion Creangă,1889,ro,1875,fairy_tale,all_ages,1,13290,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-povestea-porcului,Povestea porcului,Ion Creangă,1889,ro,1876,fairy_tale,all_ages,1,30300,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-ivan-turbinca,Ivan Turbincă,Ion Creangă,1889,ro,1878,fairy_tale,all_ages,1,27350,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-povestea-lui-stan-patitul,Povestea lui Stan Pățitul,Ion Creangă,1889,ro,1877,fairy_tale,all_ages,1,40730,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-amintiri-din-copilarie,Amintiri din copilărie,Ion Creangă,1889,ro,1881,novel,all_ages,4,140830,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-mos-nichifor-cotcariul,Moș Nichifor Coțcariul,Ion Creangă,1889,ro,1877,short_story,13_plus,1,31604,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-scrisoarea-i,Scrisoarea I,Mihai Eminescu,1889,ro,1881,poem,all_ages,1,8083,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-scrisoarea-iii,Scrisoarea III,Mihai Eminescu,1889,ro,1881,poem,all_ages,1,13906,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-glossa,Glossă,Mihai Eminescu,1889,ro,1883,poem,all_ages,1,2181,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-oda-in-metru-antic,Odă (în metru antic),Mihai Eminescu,1889,ro,1883,poem,all_ages,1,656,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-mai-am-un-singur-dor,Mai am un singur dor,Mihai Eminescu,1889,ro,1883,poem,all_ages,1,805,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-dorinta,Dorința,Mihai Eminescu,1889,ro,1876,poem,all_ages,1,714,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-rugaciunea-unui-dac,Rugăciunea unui dac,Mihai Eminescu,1889,ro,1879,poem,all_ages,1,2188,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-revedere,Revedere,Mihai Eminescu,1889,ro,1879,poem,all_ages,1,988,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-epigonii,Epigonii,Mihai Eminescu,1889,ro,1870,poem,all_ages,1,5897,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-venere-si-madona,Venere și Madonă,Mihai Eminescu,1889,ro,1870,poem,all_ages,1,2454,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-calin-file-din-poveste,Călin,Mihai Eminescu,1889,ro,1876,poem,all_ages,1,13814,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-fat-frumos-din-lacrima,Făt-Frumos din lacrimă,Mihai Eminescu,1889,ro,1870,fairy_tale,all_ages,1,39894,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-sarmanul-dionis,Sărmanul Dionis,Mihai Eminescu,1889,ro,1872,short_story,all_ages,1,85306,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-cezara,Cezara,Mihai Eminescu,1889,ro,1876,short_story,13_plus,8,59728,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-geniu-pustiu,Geniu pustiu,Mihai Eminescu,1889,ro,1904,novel,13_plus,3,172240,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-o-scrisoare-pierduta,O scrisoare pierdută,Ion Luca Caragiale,1912,ro,1884,play,all_ages,4,133386,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-o-noapte-furtunoasa,O noapte furtunoasă,Ion Luca Caragiale,1912,ro,1879,play,all_ages,1,73805,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-d-ale-carnavalului,D'ale carnavalului,Ion Luca Caragiale,1912,ro,1885,play,all_ages,1,89621,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-conu-leonida-fata-cu-reactiunea,Conu Leonida față cu reacțiunea,Ion Luca Caragiale,1912,ro,1880,play,all_ages,1,17828,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-napasta,Năpasta,Ion Luca Caragiale,1912,ro,1890,play,13_plus,1,57648,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-vizita,Vizită...,Ion Luca Caragiale,1912,ro,1900,short_story,all_ages,1,7541,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-la-hanul-lui-manjoala,La hanul lui Mânjoală,Ion Luca Caragiale,1912,ro,1898,short_story,13_plus,1,16292,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-kir-ianulea,Kir Ianulea,Ion Luca Caragiale,1912,ro,1909,short_story,13_plus,1,54328,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-calul-dracului,Calul dracului,Ion Luca Caragiale,1912,ro,1909,short_story,all_ages,1,16181,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-o-faclie-de-paste,O făclie de Paște,Ion Luca Caragiale,1912,ro,1889,short_story,16_plus,1,27398,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-doua-loturi,Două loturi,Ion Luca Caragiale,1912,ro,1901,short_story,all_ages,1,27526,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-lantul-slabiciunilor,Lanțul slăbiciunilor,Ion Luca Caragiale,1912,ro,1899,short_story,all_ages,1,7159,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-moara-cu-noroc,Moara cu noroc,Ioan Slavici,1925,ro,1881,short_story,16_plus,17,207393,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-padureanca,Pădureanca,Ioan Slavici,1925,ro,1884,short_story,13_plus,22,204412,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-budulea-taichii,Budulea Taichii,Ioan Slavici,1925,ro,1880,short_story,all_ages,8,97437,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-popa-tanda,Popa Tanda,Ioan Slavici,1925,ro,1875,short_story,all_ages,3,37052,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-mara,Mara,Ioan Slavici,1925,ro,1906,novel,13_plus,21,512004,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-zana-zorilor,Zâna Zorilor,Ioan Slavici,1925,ro,1872,fairy_tale,all_ages,1,71714,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-florita-din-codru,Florița din codru,Ioan Slavici,1925,ro,1872,fairy_tale,all_ages,1,38702,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-chirita-in-provincie,Chirița în provincie,Vasile Alecsandri,1890,ro,1852,play,all_ages,2,85937,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-chirita-in-iasi,Chirița în Iași,Vasile Alecsandri,1890,ro,1850,play,all_ages,1,85553,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-despot-voda,Despot Vodă,Vasile Alecsandri,1890,ro,1879,play,all_ages,7,143347,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-iorgu-de-la-sadagura,Iorgu de la Sadagura,Vasile Alecsandri,1890,ro,1844,play,all_ages,1,78492,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-rusaliile,Rusaliile,Vasile Alecsandri,1890,ro,1852,play,all_ages,2,43414,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-sanziana-si-pepelea,Sânziana și Pepelea,Vasile Alecsandri,1890,ro,1881,play,all_ages,2,114876,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-piatra-din-casa,Piatra din casă,Vasile Alecsandri,1890,ro,1847,play,all_ages,2,44061,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-cinel-cinel,Cinel-Cinel,Vasile Alecsandri,1890,ro,1857,play,all_ages,2,33122,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-paracliserul-sau-florin-si-florica,Paracliserul sau Florin și Florica,Vasile Alecsandri,1890,ro,1850,play,all_ages,2,41091,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-miorita-alecsandri-s-text,Miorița,Vasile Alecsandri,1890,ro,1852,poem,all_ages,1,2480,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-penes-curcanul,Peneș Curcanul,Vasile Alecsandri,1890,ro,1878,poem,all_ages,1,5284,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-dan-capitan-de-plai,"Dan, căpitan de plai",Vasile Alecsandri,1890,ro,1875,poem,all_ages,1,17454,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-dumbrava-rosie,Dumbrava roșie,Vasile Alecsandri,1890,ro,1872,poem,all_ages,7,33024,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-malul-siretului,Malul Siretului,Vasile Alecsandri,1890,ro,1867,poem,all_ages,1,807,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-iarna,Iarna,Vasile Alecsandri,1890,ro,1868,poem,all_ages,1,798,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-legenda-ciocarliei,Legenda ciocârliei,Vasile Alecsandri,1890,ro,1875,poem,all_ages,1,15019,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-sergentul,Sergentul,Vasile Alecsandri,1890,ro,1878,poem,all_ages,1,1969,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-apus-de-soare,Apus de soare,Barbu Ștefănescu Delavrancea,1918,ro,1909,play,all_ages,4,99386,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-viforul,Viforul,Barbu Ștefănescu Delavrancea,1918,ro,1910,play,13_plus,4,138367,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-luceafarul-delavrancea,Luceafărul,Barbu Ștefănescu Delavrancea,1918,ro,1910,play,13_plus,5,163296,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-hagi-tudose,Hagi-Tudose,Barbu Ștefănescu Delavrancea,1918,ro,1892,short_story,all_ages,6,30451,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-bunicul,Bunicul,Barbu Ștefănescu Delavrancea,1918,ro,1893,short_story,all_ages,1,4056,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-bunica,Bunica,Barbu Ștefănescu Delavrancea,1918,ro,1893,short_story,all_ages,1,5315,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-sultanica,Sultănica,Barbu Ștefănescu Delavrancea,1918,ro,1885,short_story,13_plus,2,40337,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-noaptea-de-mai,Noaptea de mai,Alexandru Macedonski,1920,ro,1886,poem,all_ages,1,5555,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-noaptea-de-decembrie,Noaptea de decembrie,Alexandru Macedonski,1920,ro,1890,poem,all_ages,1,9066,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-lewki,Lewki,Alexandru Macedonski,1920,ro,1881,poem,all_ages,1,3693,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-excelsior,Excelsior,Alexandru Macedonski,1920,ro,1895,poem,all_ages,1,498,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-thalassa,Thalassa,Alexandru Macedonski,1920,ro,1916,novel,16_plus,12,168168,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-nunta-zamfirei,Nunta Zamfirei,George Coșbuc,1918,ro,1889,poem,all_ages,1,4716,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-moartea-lui-fulger,Moartea lui Fulger,George Coșbuc,1918,ro,1889,poem,all_ages,1,6821,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-el-zorab,El-Zorab,George Coșbuc,1918,ro,1891,poem,all_ages,1,4489,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-mama,Mama,George Coșbuc,1918,ro,1896,poem,all_ages,1,1766,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-noi-vrem-pamant,Noi vrem pământ!,George Coșbuc,1918,ro,1894,poem,all_ages,1,2033,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-viata-la-tara,Viața la țară,Duiliu Zamfirescu,1922,ro,1894,novel,all_ages,23,274590,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-tanase-scatiu,Tănase Scatiu,Duiliu Zamfirescu,1922,ro,1896,novel,13_plus,12,153832,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-in-razboi,În război,Duiliu Zamfirescu,1922,ro,1898,novel,13_plus,18,245602,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-indreptari,Îndreptări,Duiliu Zamfirescu,1922,ro,1902,novel,13_plus,1,64101,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-lume-noua-si-lume-veche,Lume nouă și lume veche,Duiliu Zamfirescu,1922,ro,1895,play,all_ages,1,16325,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-ion,Ion,Liviu Rebreanu,1944,ro,1920,novel,16_plus,15,889780,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-padurea-spanzuratilor,Pădurea spânzuraților,Liviu Rebreanu,1944,ro,1922,novel,16_plus,7,496736,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-adam-si-eva,Adam și Eva,Liviu Rebreanu,1944,ro,1925,novel,16_plus,9,486085,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-ciuleandra,Ciuleandra,Liviu Rebreanu,1944,ro,1927,novel,16_plus,31,219996,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-in-muntii-neamtului,În Munții Neamțului,Calistrat Hogaș,1917,ro,1912,short_story,all_ages,5,289712,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-amintiri-dintr-o-calatorie,Amintiri dintr-o călătorie,Calistrat Hogaș,1917,ro,1912,short_story,all_ages,10,264041,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-cucoana-marieta,Cucoana Marieta,Calistrat Hogaș,1917,ro,1912,short_story,all_ages,1,35989,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-doamna-chiajna,Doamna Chiajna,Alexandru Odobescu,1895,ro,1860,short_story,13_plus,4,84755,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-mihnea-voda-cel-rau,Mihnea Vodă cel Rău,Alexandru Odobescu,1895,ro,1857,short_story,16_plus,4,45954,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-pseudo-kynegetikos,Pseudo-Kynegetikos,Alexandru Odobescu,1895,ro,1874,essay,all_ages,13,227224,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-tigrul-pacalit,Tigrul păcălit,Alexandru Odobescu,1895,ro,1874,fairy_tale,all_ages,1,12098,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-jupan-ranica-vulpoiul,Jupân Rănică Vulpoiul,Alexandru Odobescu,1895,ro,1874,fairy_tale,all_ages,1,17877,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-alexandru-lapusneanul,Alexandru Lăpușneanul,Costache Negruzzi,1868,ro,1840,short_story,16_plus,4,38606,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-sobieski-si-romanii,Sobieski și românii,Costache Negruzzi,1868,ro,1845,short_story,all_ages,1,10809,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-ciocoii-vechi-si-noi,Ciocoii vechi și noi,Nicolae Filimon,1865,ro,1863,novel,13_plus,35,414982,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-razvan-si-vidra,Răzvan și Vidra,Bogdan Petriceicu Hasdeu,1907,ro,1867,play,13_plus,6,135378,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-ursita,Ursita,Bogdan Petriceicu Hasdeu,1907,ro,1864,novel,13_plus,16,136960,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-craii-de-curtea-veche,Craii de Curtea-Veche,Mateiu Caragiale,1936,ro,1929,novel,16_plus,4,207355,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-remember,Remember,Mateiu Caragiale,1936,ro,1924,short_story,16_plus,1,37305,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-bratul-andromedei,Brațul Andromedei,Gib Mihăescu,1935,ro,1930,short_story,16_plus,4,358512,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-povestea-vorbei,Povestea vorbei,Anton Pann,1854,ro,1847,poem,all_ages,38,298047,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-nazdravaniile-lui-nastratin-hogea,Năzdrăvăniile lui Nastratin Hogea,Anton Pann,1854,ro,1853,poem,all_ages,1,16288,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-legende-sau-basmele-romanilor,Legende sau basmele românilor,Petre Ispirescu,1887,ro,1882,fairy_tale,all_ages,33,627847,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-tinerete-fara-batranete-si-viata-fara-de-moarte,Tinerețe fără bătrânețe și viață fără de moarte,Petre Ispirescu,1887,ro,1862,fairy_tale,all_ages,1,18222,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-praslea-cel-voinic-si-merele-de-aur,Prâslea cel voinic și merele de aur,Petre Ispirescu,1887,ro,1872,fairy_tale,all_ages,1,24003,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-greuceanu,Greuceanu,Petre Ispirescu,1887,ro,1872,fairy_tale,all_ages,1,19720,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-aleodor-imparat,Aleodor împărat,Petre Ispirescu,1887,ro,1872,fairy_tale,all_ages,1,12470,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-balaurul-cel-cu-sapte-capete,Balaurul cel cu șapte capete,Petre Ispirescu,1887,ro,1872,fairy_tale,all_ages,1,10132,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-rugaciune,Rugăciune,Octavian Goga,1938,ro,1905,poem,all_ages,1,1458,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-oltul,Oltul,Octavian Goga,1938,ro,1905,poem,all_ages,1,2159,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-clacasii,Clăcașii,Octavian Goga,1938,ro,1905,poem,all_ages,1,4626,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-rapsodii-de-toamna,Rapsodii de toamnă,George Topîrceanu,1937,ro,1916,poem,all_ages,1,3830,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-rapsodii-de-primavara,Rapsodii de primăvară,George Topîrceanu,1937,ro,1916,poem,all_ages,1,1958,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-balada-mortii,Balada morții,George Topîrceanu,1937,ro,1916,poem,all_ages,1,1133,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-celei-care-pleaca,Celei care pleacă,Ion Minulescu,1944,ro,1913,poem,all_ages,1,863,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-cantec-de-drum,Cântec de drum,Ion Minulescu,1944,ro,1913,poem,all_ages,1,455,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-acuarela,Acuarelă,Ion Minulescu,1944,ro,1908,poem,all_ages,1,763,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-la-medeleni,La Medeleni: Hotarul nestatornic,Ionel Teodoreanu,1954,ro,1925,novel,13_plus,8,419756,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-ulita-copilariei,Ulița copilăriei,Ionel Teodoreanu,1954,ro,1923,short_story,all_ages,1,14058,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-palnia-si-stamate,Pâlnia și Stamate,Urmuz,1923,ro,1930,short_story,all_ages,1,8410,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+ro-fuchsiada,Fuchsiada,Urmuz,1923,ro,1930,short_story,all_ages,1,13897,"Wikisource, CC BY-SA 4.0; formatare adaptată"
+da-den-lille-havfrue,Den lille Havfrue,Hans Christian Andersen,1875,da,1837,fairy_tale,all_ages,1,44161,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+da-nattergalen,Nattergalen,Hans Christian Andersen,1875,da,1843,fairy_tale,all_ages,1,18157,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+da-grantret,Grantræet,Hans Christian Andersen,1875,da,1844,fairy_tale,all_ages,1,16022,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+da-iisjomfruen,Iisjomfruen,Hans Christian Andersen,1875,da,1862,fairy_tale,all_ages,1,90049,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-peer-gynt,Peer Gynt,Henrik Ibsen,1906,nb,1867,play,13_plus,5,203952,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-et-dukkehjem,Et dukkehjem,Henrik Ibsen,1906,nb,1879,play,13_plus,3,141230,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+sv-roda-rummet,Röda rummet,August Strindberg,1912,sv,1879,novel,13_plus,30,537892,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-froken-julie,Fröken Julie,August Strindberg,1912,sv,1888,play,16_plus,1,68931,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+da-lykke-per,Lykke-Per,Henrik Pontoppidan,1943,da,1898,novel,13_plus,28,1453614,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+sv-gosta-berlings-saga,Gösta Berlings saga,Selma Lagerlöf,1940,sv,1891,novel,13_plus,38,733035,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-jerusalem,Jerusalem,Selma Lagerlöf,1940,sv,1901,novel,13_plus,36,884709,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-nils-holgerssons-underbara-resa,Nils Holgerssons underbara resa,Selma Lagerlöf,1940,sv,1906,novel,all_ages,57,1095007,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-kejsarn-av-portugallien,Kejsarn av Portugallien,Selma Lagerlöf,1940,sv,1914,novel,13_plus,46,337080,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-lowenskoldska-ringen,Löwensköldska ringen,Selma Lagerlöf,1940,sv,1925,novel,13_plus,11,166182,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+no-sult,Sult,Knut Hamsun,1952,nb,1890,novel,13_plus,5,332828,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-pan,Pan,Knut Hamsun,1952,nb,1894,novel,13_plus,8,208944,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-victoria,Victoria,Knut Hamsun,1952,nb,1898,novel,13_plus,13,162842,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-markens-grde,Markens grøde,Knut Hamsun,1952,nb,1917,novel,13_plus,32,641862,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+sv-historietter,Historietter,Hjalmar Söderberg,1941,sv,1898,short_story,13_plus,20,114134,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-martin-bircks-ungdom,Martin Bircks ungdom,Hjalmar Söderberg,1941,sv,1901,novel,13_plus,33,217485,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-doktor-glas,Doktor Glas,Hjalmar Söderberg,1941,sv,1905,novel,16_plus,45,228989,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-den-allvarsamma-leken,Den allvarsamma leken,Hjalmar Söderberg,1941,sv,1912,novel,13_plus,7,340564,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+no-synnve-solbakken,Synnøve Solbakken,Bjørnstjerne Bjørnson,1910,nb,1857,novel,all_ages,9,171549,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-skipper-worse,Skipper Worse,Alexander Kielland,1906,nb,1882,novel,13_plus,15,297644,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-gift,Gift,Alexander Kielland,1906,nb,1883,novel,13_plus,13,275000,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-den-fremsynte,Den Fremsynte,Jonas Lie,1908,nb,1870,novel,13_plus,16,182671,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-familjen-paa-gilje,Familjen paa Gilje,Jonas Lie,1908,nb,1883,novel,13_plus,14,283002,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-professor-hieronimus,Professor Hieronimus,Amalie Skram,1905,nb,1895,novel,13_plus,36,305223,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+no-haugtussa,Haugtussa,Arne Garborg,1924,nb,1895,poem,13_plus,4,110311,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+da-brudstykker-af-en-landsbydegns-dagbog,Brudstykker af en Landsbydegns Dagbog,Steen Steensen Blicher,1848,da,1824,short_story,13_plus,1,56313,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+da-enten-eller,Enten – Eller,Søren Kierkegaard,1855,da,1843,essay,13_plus,26,1631941,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+da-kongens-fald,Kongens Fald,Johannes V. Jensen,1950,da,1900,novel,13_plus,42,389150,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+da-to-tidsaldre,To Tidsaldre,Thomasine Gyllembourg,1856,da,1845,novel,13_plus,6,355681,"Wikisource, CC BY-SA 4.0; tilpasset formatering"
+sv-nya-dikter-froding,Nya dikter,Gustaf Fröding,1911,sv,1894,poem,13_plus,3,67078,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-stank-och-flikar,Stänk och flikar,Gustaf Fröding,1911,sv,1896,poem,13_plus,2,41721,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-vallfart-och-vandringsar,Vallfart och vandringsår,Verner von Heidenstam,1940,sv,1888,poem,13_plus,6,144371,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-det-gar-an,Det går an,Carl Jonas Love Almqvist,1866,sv,1838,novel,13_plus,9,197358,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-children-of-the-lords-supper,Nattvardsbarnen,Esaias Tegnér,1846,sv,1820,poem,13_plus,1,20538,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-axel,Axel,Esaias Tegnér,1846,sv,1822,poem,13_plus,1,29010,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-frithiofs-saga,Frithiofs saga,Esaias Tegnér,1846,sv,1825,poem,13_plus,24,133228,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-bacchi-tempel,Bacchi tempel,Carl Michael Bellman,1795,sv,1783,poem,13_plus,1,12306,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-fredmans-epistlar,Fredmans epistlar,Carl Michael Bellman,1795,sv,1790,poem,13_plus,7,191964,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-fredmans-sanger,Fredmans sånger,Carl Michael Bellman,1795,sv,1791,poem,13_plus,4,110223,"Wikisource, CC BY-SA 4.0; anpassad formatering"
+sv-moln,Moln,Karin Boye,1941,sv,1922,poem,13_plus,1,21726,"Wikisource, CC BY-SA 4.0; anpassad formatering"
