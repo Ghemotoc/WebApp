@@ -22,6 +22,7 @@ export type ClassPointsFailure =
   | 'budget'
   | 'range'
   | 'not_teacher'
+  | 'reason'
   | 'note_off'
   | 'note_too_long'
   | 'note_html'
@@ -48,6 +49,7 @@ const failureForHint: Record<string, ClassPointsFailure> = {
   'points:budget': 'budget',
   'points:range': 'range',
   'points:not_teacher': 'not_teacher',
+  'report:reason': 'reason',
   'note:off': 'note_off',
   'note:too_long': 'note_too_long',
   'note:html': 'note_html',

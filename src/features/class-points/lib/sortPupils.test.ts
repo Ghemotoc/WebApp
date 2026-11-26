@@ -14,7 +14,7 @@ import { sortedPupils } from './sortPupils';
  * @returns the pupil
  */
 function pupil(handle: string, classPoints: number, teacherPoints: number): TablePupil {
-  return { handle, displayName: handle, classPoints, teacherPoints, chapters: [] };
+  return { handle, displayName: handle, classPoints, teacherPoints, notes: 0, chapters: [] };
 }
 
 const byName = [pupil('ana', 3, 9), pupil('bogdan', 5, 2), pupil('carmen', 3, 9)];

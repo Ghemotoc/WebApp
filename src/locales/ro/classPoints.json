@@ -121,7 +121,8 @@
     "not_class": "Doar o clasă are puncte în clasă.",
     "archived": "Clasa este arhivată.",
     "not_allowed": "Doar profesorul schimbă asta.",
-    "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou."
+    "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou.",
+    "reason": "Alege de ce par ciudate punctele."
   },
   "reply": {
     "open": "Puncte de la profesor",
@@ -222,5 +223,55 @@
     "reportedValue_few": "{{count}}, în verificare",
     "reportedValue_other": "{{count}}, în verificare",
     "off": "Punctele în clasă sunt oprite. Pornește-le din setările clasei."
+  },
+  "pupils": {
+    "intro": "Punctele de la profesor și punctele în clasă, alăturate. Doar tu vezi pagina aceasta. Cine a dat puncte în clasă rămâne privat, chiar și pentru tine.",
+    "sortLabel": "Sortează",
+    "sort": {
+      "name": "Pseudonim, de la A la Z",
+      "teacher": "Puncte de la profesor",
+      "class": "Puncte în clasă"
+    },
+    "region": "Puncte în clasă pe elev",
+    "columns": {
+      "pupil": "Elev",
+      "teacher": "Puncte de la profesor",
+      "class": "Puncte în clasă",
+      "notes": "Note",
+      "odd": "Ceva ciudat?"
+    },
+    "reportButton": "Raportează punctele",
+    "reportButtonFor": "Raportează punctele: {{name}}",
+    "shown": {
+      "name": "Sortat după pseudonim. Fără numere de loc: tabelul e un ghid, nu un clasament. Se văd {{shown}} din {{count}} elevi.",
+      "teacher": "Sortat după punctele de la profesor. Fără numere de loc: tabelul e un ghid, nu un clasament. Se văd {{shown}} din {{count}} elevi.",
+      "class": "Sortat după punctele în clasă. Fără numere de loc: tabelul e un ghid, nu un clasament. Se văd {{shown}} din {{count}} elevi."
+    },
+    "showMore": "Arată încă {{count}}"
+  },
+  "pupilReport": {
+    "title": "Raportează punctele · {{name}}",
+    "intro": "Nu vezi cine a dat puncte. Dacă punctele în clasă ale unui elev par ciudate, raportează-le: un moderator verifică cine le-a dat și poate șterge darurile. Raportul apare în jurnalul clasei.",
+    "why": "De ce",
+    "reasons": {
+      "swapped": "Schimbate între prieteni",
+      "not_writing": "Date pentru altceva decât scrisul",
+      "other": "Altceva"
+    },
+    "note": "Ce ai observat? (opțional)",
+    "notePlaceholder": "Câteva cuvinte",
+    "send": "Trimite raportul",
+    "cancel": "Renunță",
+    "sent": "Trimis. Un moderator verifică punctele primite de {{name}}.",
+    "nothing": "{{name}} n-a primit puncte în clasă, deci nu ai ce raporta."
+  },
+  "pointsSettings": {
+    "title": "Setări",
+    "switchLabel": "Puncte în clasă",
+    "switchHint": "Oprite pentru fiecare clasă nouă până le pornește profesorul.",
+    "perWeek": "Puncte pe săptămână pentru fiecare elev",
+    "perChapter": "Cele mai multe puncte unui capitol într-o săptămână",
+    "weekStarts": "Săptămâna începe",
+    "weekStartsValue": "Luni la 00:00"
   }
 }

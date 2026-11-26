@@ -121,7 +121,8 @@
     "not_class": "Only a class has class points.",
     "archived": "This class is archived.",
     "not_allowed": "Only the teacher changes this.",
-    "unreachable": "We couldn’t save that. Check the connection and try again."
+    "unreachable": "We couldn’t save that. Check the connection and try again.",
+    "reason": "Pick why the points look odd."
   },
   "reply": {
     "open": "Teacher points",
@@ -222,5 +223,55 @@
     "off": "Class points are off. Turn them on in class settings.",
     "chaptersValue_few": "{{count}} since Monday",
     "reportedValue_few": "{{count}}, being checked"
+  },
+  "pupils": {
+    "intro": "Teacher points and class points side by side. Only you see this page. Who gave class points stays private, even from you.",
+    "sortLabel": "Sort",
+    "sort": {
+      "name": "Pen name, A to Z",
+      "teacher": "Teacher points",
+      "class": "Class points"
+    },
+    "region": "Class points by pupil",
+    "columns": {
+      "pupil": "Pupil",
+      "teacher": "Teacher points",
+      "class": "Class points",
+      "notes": "Notes",
+      "odd": "Something odd?"
+    },
+    "reportButton": "Report points",
+    "reportButtonFor": "Report points: {{name}}",
+    "shown": {
+      "name": "Sorted by pen name. No rank numbers: the table is a guide, not a ranking. {{shown}} of {{count}} pupils shown.",
+      "teacher": "Sorted by teacher points. No rank numbers: the table is a guide, not a ranking. {{shown}} of {{count}} pupils shown.",
+      "class": "Sorted by class points. No rank numbers: the table is a guide, not a ranking. {{shown}} of {{count}} pupils shown."
+    },
+    "showMore": "Show {{count}} more"
+  },
+  "pupilReport": {
+    "title": "Report points · {{name}}",
+    "intro": "You don’t see who gave points. If a pupil’s class points look odd, report them: a moderator checks who gave them and can remove gifts. The report goes to the class log.",
+    "why": "Why",
+    "reasons": {
+      "swapped": "Swapped between friends",
+      "not_writing": "Given for something other than the writing",
+      "other": "Anything else"
+    },
+    "note": "What did you notice? (optional)",
+    "notePlaceholder": "A few words",
+    "send": "Send report",
+    "cancel": "Cancel",
+    "sent": "Sent. A moderator checks the points {{name}} received.",
+    "nothing": "{{name}} hasn’t received class points, so there is nothing to report."
+  },
+  "pointsSettings": {
+    "title": "Settings",
+    "switchLabel": "Class points",
+    "switchHint": "Off for every new class until the teacher turns it on.",
+    "perWeek": "Points a week for each pupil",
+    "perChapter": "Most points to one chapter in a week",
+    "weekStarts": "The week starts",
+    "weekStartsValue": "Monday at 00:00"
   }
 }

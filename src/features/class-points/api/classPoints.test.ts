@@ -77,6 +77,27 @@ describe('classPointsSummaryFrom', () => {
     expect(summary?.receivedTotal).toBeNull();
   });
 
+  it('gives the teacher this week’s totals for the whole class (BOOKS-8b)', () => {
+    const summary = classPointsSummaryFrom({
+      enabled: true,
+      role: 'teacher',
+      can_switch: true,
+      week: { given: 2, possible: 20, notes: 1, chapters_shared: 1, reported: 0 },
+    });
+    expect(summary?.classWeek).toEqual({
+      given: 2,
+      possible: 20,
+      notes: 1,
+      chaptersShared: 1,
+      reported: 0,
+    });
+  });
+
+  it('gives a pupil no class totals', () => {
+    const summary = classPointsSummaryFrom({ enabled: true, role: 'pupil', week: null });
+    expect(summary?.classWeek).toBeNull();
+  });
+
   it('is null for someone outside the class', () => {
     expect(classPointsSummaryFrom(null)).toBeNull();
   });
@@ -130,7 +151,7 @@ describe('threadTeacherPointsFrom', () => {
 });
 
 describe('classPointsTableFrom', () => {
-  it('reads each pupil’s two numbers and chapters, with no rank and no giver', () => {
+  it('reads each pupil’s two numbers, notes and chapters, with no rank and no giver', () => {
     const pupils = classPointsTableFrom({
       pupils: [
         {
@@ -138,6 +159,7 @@ describe('classPointsTableFrom', () => {
           display_name: 'Ana',
           class_points: 5,
           teacher_points: 7,
+          notes: 2,
           chapters: [
             {
               chapter_id: 'chapter-1',
@@ -154,7 +176,12 @@ describe('classPointsTableFrom', () => {
       ],
     });
     expect(pupils).toHaveLength(1);
-    expect(pupils?.[0]).toMatchObject({ handle: 'ana', classPoints: 5, teacherPoints: 7 });
+    expect(pupils?.[0]).toMatchObject({
+      handle: 'ana',
+      classPoints: 5,
+      teacherPoints: 7,
+      notes: 2,
+    });
     expect(pupils?.[0]?.chapters[0]).toMatchObject({ teacherPoints: null, isReported: true });
     expect(Object.keys(pupils?.[0] ?? {})).not.toContain('rank');
   });

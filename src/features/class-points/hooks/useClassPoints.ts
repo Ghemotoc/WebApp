@@ -21,7 +21,11 @@ import {
   setTeacherPoints,
   type TeacherPointsRequest,
 } from '../api/classPoints';
-import { fetchClassPointsTable, reportClassPoints } from '../api/classPointsTable';
+import {
+  fetchClassPointsTable,
+  type PointsReportReason,
+  reportPupilClassPoints,
+} from '../api/classPointsTable';
 
 /** The cache key every class points read starts with. */
 export const classPointsKey = ['class-points'] as const;
@@ -159,20 +163,22 @@ export function useClassPointsTable(slug: string) {
 }
 
 /**
- * The teacher reports a chapter's points as suspicious.
+ * The teacher reports one pupil's class points as odd (BOOKS-8b, board G09).
  *
- * @returns report({chapterId, why}), the failure and isRunning
+ * @param slug - the class's address
+ * @returns report({handle, reason, note}), the failure and isRunning
  */
-export function useReportClassPoints() {
+export function useReportPupilPoints(slug: string) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: async (request: { chapterId: string; why: string }) =>
-      reportClassPoints(await requireClient(), request),
+    mutationFn: async (request: { handle: string; reason: PointsReportReason; note: string }) =>
+      reportPupilClassPoints(await requireClient(), { slug, ...request }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: classPointsKey }),
   });
   return {
     report: mutation.mutateAsync,
     failure: classPointsFailureOf(mutation.error),
     isRunning: mutation.isPending,
+    reset: mutation.reset,
   };
 }
