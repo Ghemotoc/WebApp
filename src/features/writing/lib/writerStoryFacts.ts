@@ -6,7 +6,8 @@
  * It replaces the story card's pills (DoD pills: on the simplified pages information pills become
  * words in a meta line). The state comes first and in bold: "Not published yet" until the first
  * chapter is out (then "Only you" ends the line, as board D01 draws it), "Ongoing" while it is being
- * written, plain "Completed" after.
+ * written, plain "Completed" once the writer marks it so (that wins even before a chapter is out,
+ * so the card agrees with the Show filter).
  * Staff's "AI-written, not disclosed" label wins over the writer's answer (Q24) and is bold too.
  * The story's language is left out, as on the board: a language name in another language needs its
  * own lang attribute, which a meta line can't give, and story settings show it.
@@ -19,18 +20,21 @@ import type { MetaFact } from '@/components/ui/MetaLine';
 import type { MyStory } from '../api/stories';
 
 /**
- * The story's state: not published yet, ongoing (bold) or completed.
+ * The story's state: completed, not published yet (bold) or ongoing (bold).
  *
  * @param story - the writer's story
  * @param t - the writing translations
  * @returns one fact
  */
 function stateFact(story: MyStory, t: TFunction<'writing'>): MetaFact {
+  // Step 1: the writer's own "Completed" wins, even before a chapter is out, so the card agrees
+  // with the Show filter, which sorts by that setting (S1-E3-05).
+  if (story.completionStatus === 'completed') return { text: t('status.completed') };
+  // Step 2: otherwise an unpublished story says so (board D01), and a published one is ongoing.
   if (story.firstPublishedAt === null) {
     return { text: t('storyCard.notPublishedYet'), kind: 'state' };
   }
-  if (story.completionStatus === 'ongoing') return { text: t('status.ongoing'), kind: 'state' };
-  return { text: t('status.completed') };
+  return { text: t('status.ongoing'), kind: 'state' };
 }
 
 /**
