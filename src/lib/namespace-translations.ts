@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 /** The two things a feature needs for its text: a one-time register and a hook. */
 export type NamespaceTranslations<Namespace extends string> = {
-  /** Adds the feature's ro and en text to an i18n instance once; calling it again does nothing. */
+  /** Adds the feature's ro text (and its en text, when given) once; calling it again does nothing. */
   register: (i18n: I18nInstance) => void;
   /** useTranslation(namespace), after making sure the text is registered. */
   useNamespaceTranslation: () => ReturnType<typeof useTranslation<Namespace>>;
@@ -27,20 +27,23 @@ export type NamespaceTranslations<Namespace extends string> = {
  * @param namespace - the namespace name, the same as the locale file name ("comments" for
  *   src/locales/ro/comments.json)
  * @param romanianText - the parsed src/locales/ro/<namespace>.json
- * @param englishText - the parsed src/locales/en/<namespace>.json
+ * @param englishText - the parsed src/locales/en/<namespace>.json; left out for a namespace the
+ *   chapter reader shows, whose English loads with the rest of the English text instead
+ *   (readerFeatureNamespaces in src/lib/i18n-loading.ts), so it stays out of the reader's first load
  * @returns register and useNamespaceTranslation, which the feature re-exports under its own names
  */
 export function createNamespaceTranslations<Namespace extends string>(
   namespace: Namespace,
   romanianText: ResourceKey,
-  englishText: ResourceKey,
+  englishText?: ResourceKey,
 ): NamespaceTranslations<Namespace> {
   function register(i18n: I18nInstance): void {
     // Step 1: once the Romanian text is in, both languages are, so there is nothing to do.
     if (i18n.hasResourceBundle('ro', namespace)) return;
-    // Step 2: add the file text for both languages.
+    // Step 2: add the Romanian file text, and the English one when the feature brings it (a
+    // reader namespace's English arrives through i18n-loading instead).
     i18n.addResourceBundle('ro', namespace, romanianText);
-    i18n.addResourceBundle('en', namespace, englishText);
+    if (englishText !== undefined) i18n.addResourceBundle('en', namespace, englishText);
   }
 
   function useNamespaceTranslation() {
