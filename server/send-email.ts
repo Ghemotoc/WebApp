@@ -9,6 +9,10 @@
  * src/locales/<lang>/email.json, fills the locked placeholders (the link or the code Supabase made;
  * we never make or store a code) and sends it through the SendEmail it is given: Brevo on
  * Cloudflare, Mailpit locally.
+ * Links point at our own site (options.siteUrl), never at email_data.site_url: Supabase fills that
+ * with its own Auth address, where /reset-password answers "No API key found" (ADMIN thread,
+ * 26 Nov 2026, before the 27 Nov trial). Our pages /auth/confirm and /reset-password hand the
+ * token hash to Auth with verifyOtp().
  * Errors: a bad signature is 401; an unknown email type 400; a failed send 500, so Auth tells the
  * person the email couldn't be sent and offers to try again. Never logged: the address, the code,
  * the link or the text (CLAUDE.md rule 12).
@@ -39,6 +43,7 @@ export interface SendEmailHookPayload {
   email_data: {
     token: string;
     token_hash: string;
+    /** Only for a change of email: the code for the NEW address (Supabase's names are reversed). */
     token_new?: string;
     email_action_type: string;
     site_url: string;
@@ -69,6 +74,8 @@ const authEmailKinds: Record<string, AuthEmailKind> = {
     linkFor: (site, hash) => `${site}/reset-password?token_hash=${hash}&type=recovery`,
   },
   email_change: { group: 'emailChange' },
+  // A code to confirm it's really them before a sensitive change (only with secure_password_change).
+  reauthentication: { group: 'reauthentication' },
   password_changed_notification: {
     group: 'passwordChanged',
     linkFor: (site) => `${site}/forgot-password`,
@@ -80,6 +87,8 @@ const authEmailKinds: Record<string, AuthEmailKind> = {
 export interface SendEmailHookOptions {
   /** "v1,whsec_<base64>", from the Supabase dashboard. */
   hookSecret: string;
+  /** Our own website ("https://ghemotoc.tech"), which every link in the email opens. */
+  siteUrl: string;
   sender: EmailSender;
   productName: string;
   companyName: string;
@@ -185,27 +194,57 @@ export function composeAuthEmail(
   return { subject: read(`${kind.group}.subject`), text: lines.join('\n') };
 }
 
+/** One email to send: where it goes, and the link or the code it carries. */
+interface AuthEmailRecipient {
+  to: string;
+  link?: string;
+  code?: string;
+}
+
+/**
+ * The codes a change of email sends. Supabase's field names are reversed for backward
+ * compatibility: `token` is the CURRENT address's code and `token_new` the NEW address's
+ * (Supabase docs, Send Email Hook, "email_change"). With double_confirm_changes on
+ * (supabase/config.toml) both come and each address gets its own; with it off only one comes and
+ * it belongs to the new address.
+ *
+ * @param payload - Supabase Auth's call
+ * @returns one email per address
+ */
+function emailChangeRecipientsOf(payload: SendEmailHookPayload): AuthEmailRecipient[] {
+  const currentCode = payload.email_data.token;
+  const newCode = payload.email_data.token_new ?? '';
+  const newAddress = payload.user.new_email ?? '';
+  // Step 1: both codes, so each address gets the one Auth will check against it.
+  if (currentCode !== '' && newCode !== '') {
+    const emails: AuthEmailRecipient[] = [{ to: payload.user.email, code: currentCode }];
+    if (newAddress !== '') emails.push({ to: newAddress, code: newCode });
+    return emails;
+  }
+  // Step 2: one code only, which proves the new address; without a new address there is no one
+  // to send it to, and the current one would hold a code it can't use.
+  const onlyCode = newCode === '' ? currentCode : newCode;
+  return newAddress === '' ? [] : [{ to: newAddress, code: onlyCode }];
+}
+
 /**
  * The emails one hook call sends: one, or two for a change of email (a code to each address).
  *
+ * @param payload - Supabase Auth's call
+ * @param kind - which email
+ * @param siteUrl - our own website, for the links
  * @returns each email's address and its link or code
  */
 function recipientsOf(
   payload: SendEmailHookPayload,
   kind: AuthEmailKind,
-): { to: string; link?: string; code?: string }[] {
+  siteUrl: string,
+): AuthEmailRecipient[] {
   const data = payload.email_data;
   if (kind.linkFor !== undefined)
-    return [{ to: payload.user.email, link: kind.linkFor(data.site_url, data.token_hash) }];
-  const emails = [{ to: payload.user.email, code: data.token }];
-  if (
-    payload.user.new_email !== undefined &&
-    data.token_new !== undefined &&
-    data.token_new !== ''
-  ) {
-    emails.push({ to: payload.user.new_email, code: data.token_new });
-  }
-  return emails;
+    return [{ to: payload.user.email, link: kind.linkFor(siteUrl, data.token_hash) }];
+  if (data.email_action_type === 'email_change') return emailChangeRecipientsOf(payload);
+  return [{ to: payload.user.email, code: data.token }];
 }
 
 /**
@@ -266,7 +305,8 @@ export async function handleSendEmailHook(
   const read = (path: string) => textOf(defaultTexts[locale], overrides, path, options);
   // Step 3: send, and tell Auth plainly when it couldn't be sent.
   try {
-    for (const recipient of recipientsOf(payload, kind)) {
+    const siteUrl = options.siteUrl.replace(/\/+$/, '');
+    for (const recipient of recipientsOf(payload, kind, siteUrl)) {
       const email = composeAuthEmail(kind, recipient, read);
       await options.sendEmail(
         { to: recipient.to, subject: email.subject, text: email.text },
