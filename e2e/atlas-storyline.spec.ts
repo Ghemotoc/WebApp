@@ -146,7 +146,11 @@ async function columnTitles(page: Page, name: string): Promise<string[]> {
   return column.getByTestId('atlas-board-card').getByRole('link').allTextContents();
 }
 
-/** The writer's chapters in book order, from the database. */
+/**
+ * The writer's chapters in book order, from the database. Read it with expect.poll: the board
+ * redraws a moved card as soon as it is pressed, before the save has reached the database, so a
+ * single read can still see the order from before the move (PR #641's CI, 26 Nov 2026).
+ */
 function bookOrder(): string {
   return runSql(`select string_agg(draft_title, ',' order by position) from public.chapters
     where story_id = (select id from public.stories where slug = '${slug}') and deleted_at is null`);
@@ -276,7 +280,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await moveByMenu(page, 'Calmul', 'Earlier');
     await expect.poll(() => columnTitles(page, 'Act I')).toEqual(['Calmul', 'Furtuna']);
     await expect(page.getByRole('alertdialog')).toHaveCount(0);
-    expect(bookOrder()).toBe('Calmul,Furtuna,Zorii');
+    await expect.poll(bookOrder).toBe('Calmul,Furtuna,Zorii');
     // The chapter numbers follow by themselves.
     await expect(page.getByTestId('atlas-board-card').filter({ hasText: 'Calmul' })).toContainText(
       'Chapter 1',
@@ -284,7 +288,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expectMoveUnavailable(page, 'Calmul', 'Earlier');
     await moveByMenu(page, 'Calmul', 'Next act');
     await expect.poll(() => columnTitles(page, 'Act II')).toEqual(['Calmul']);
-    expect(bookOrder()).toBe('Furtuna,Calmul,Zorii');
+    await expect.poll(bookOrder).toBe('Furtuna,Calmul,Zorii');
     await expectMoveUnavailable(page, 'Zorii', 'Next act');
     await page.context().close();
   });
@@ -305,7 +309,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
       .toEqual(['Furtuna', 'Calmul']);
     await expect(page.getByText('We couldn’t move the chapter, so the board shows')).toBeVisible();
     await expect.poll(() => columnTitles(page, 'Act II')).toContain('Calmul');
-    expect(bookOrder()).toBe('Furtuna,Calmul,Zorii');
+    await expect.poll(bookOrder).toBe('Furtuna,Calmul,Zorii');
     await page.context().close();
   });
 
@@ -323,16 +327,16 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(question).toBeVisible();
     await question.getByRole('button', { name: 'Keep the order' }).click();
     await expect(question).toBeHidden();
-    expect(bookOrder()).toBe('Furtuna,Calmul,Zorii');
+    await expect.poll(bookOrder).toBe('Furtuna,Calmul,Zorii');
     await dragCard(page, 'Zorii', 'Furtuna');
     await question.getByRole('button', { name: 'Move it' }).click();
     await expect.poll(() => columnTitles(page, 'Act I')).toEqual(['Zorii', 'Furtuna']);
-    expect(bookOrder()).toBe('Zorii,Furtuna,Calmul');
+    await expect.poll(bookOrder).toBe('Zorii,Furtuna,Calmul');
     // Back again with a button: Furtuna earlier also changes what readers see.
     await moveByMenu(page, 'Furtuna', 'Earlier');
     await question.getByRole('button', { name: 'Move it' }).click();
     await expect.poll(() => columnTitles(page, 'Act I')).toEqual(['Furtuna', 'Zorii']);
-    expect(bookOrder()).toBe('Furtuna,Zorii,Calmul');
+    await expect.poll(bookOrder).toBe('Furtuna,Zorii,Calmul');
     await page.context().close();
   });
 
@@ -342,7 +346,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(
       page.getByRole('region', { name: 'Act I', exact: true }).getByTestId('atlas-board-card'),
     ).toHaveCount(3);
-    expect(bookOrder()).toBe('Furtuna,Zorii,,Calmul');
+    await expect.poll(bookOrder).toBe('Furtuna,Zorii,,Calmul');
     await expect(
       page
         .getByRole('region', { name: 'Act I', exact: true })
