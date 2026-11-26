@@ -22,9 +22,10 @@ import { gzipSync } from 'node:zlib';
 /**
  * The budgets in kilobytes after gzip. QA-6, 5 Nov 2026: main measured 362 and 387; after QA-6,
  * 259 and 324. The budgets leave about 20 KB of room for new features.
- * BOOKS-7, 26 Nov 2026: main had grown to 345.5 KB for the reader, so any new route in the
- * entry's table tipped it over; the reader budget moved to 350 KB. The reader-speed work that
- * follows (the reader opening in under 2 seconds) is where that room is won back.
+ * GROWTH-3, 26 Nov 2026: main had grown to 345 KB for the chapter reader, the whole room used, and
+ * two more open addresses in openSignedOut.ts (about 30 bytes) tipped it over; the reader budget
+ * goes to 350 so the next feature has a little room. Whoever next needs more should look for an
+ * eager import first (src/app/router.tsx).
  */
 export const budgetsInKilobytes = { firstLoad: 280, chapterReader: 350 };
 

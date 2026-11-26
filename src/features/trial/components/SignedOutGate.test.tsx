@@ -52,7 +52,7 @@ beforeEach(() => {
 describe('SignedOutGate', () => {
   it('sends a signed-out visitor from Library, Together and search to the home page while the flag is on', async () => {
     setUp('signed out', 'on');
-    for (const path of ['/library', '/forums', '/search?q=vreme', '/u/inkwolf', '/write']) {
+    for (const path of ['/library', '/forums', '/search?q=vreme', '/library/want', '/write']) {
       const { unmount } = openPage(path);
       expect(await screen.findByText('The home page')).toBeTruthy();
       expect(screen.queryByText('The page itself')).toBeNull();
@@ -60,13 +60,17 @@ describe('SignedOutGate', () => {
     }
   });
 
-  it('keeps Read, signing in and the legal pages open to a signed-out visitor', () => {
+  it('keeps Read, profiles, reading lists, signing in and the legal pages open to a signed-out visitor', () => {
     setUp('signed out', 'on');
     const openPaths = [
       '/discover',
       '/discover/c/fantasy',
       '/s/statia-meteo',
       '/s/statia-meteo/abc12345',
+      // GROWTH-3: profiles and public reading lists, for search engines.
+      '/u/inkwolf',
+      '/u/inkwolf/stories',
+      '/library/lists/7a1c2f3e-0000-4000-8000-000000000001',
       '/sign-in',
       '/join/abc',
       '/legal/terms',
