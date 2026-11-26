@@ -77545,12 +77545,12 @@ REVOKE ALL ON FUNCTION "public"."space_is_member"("target_space_id" "uuid") FROM
 
 
 
+REVOKE ALL ON FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") FROM PUBLIC;
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."space_members" TO "service_role";
 GRANT SELECT ON TABLE "public"."space_members" TO "authenticated";
-
-
-
-REVOKE ALL ON FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") FROM PUBLIC;
 
 
 
