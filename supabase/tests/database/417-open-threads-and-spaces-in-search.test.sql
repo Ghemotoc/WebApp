@@ -12,7 +12,7 @@
 -- - the sitemap lists an open thread, a fully public space and its threads, and leaves them out
 --   once the space is for under-16s;
 -- - space_is_searchable() is closed to visitors and members (internal).
--- Personas: adult_writer (…01, owner of fantasy-writers-circle), teacher (…07), moderator (…10).
+-- Personas: adult_writer (…01, owner of fantasy-writers-circle), teacher (…07), blocker (…15).
 -- Rolled back.
 begin;
 
@@ -54,12 +54,12 @@ insert into named select 'space', ((public.start_forum_thread('space-fantasy-wri
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select public.reply_to_forum_thread(pg_temp.named('long'), 'A doua.');
 select public.reply_to_forum_thread(pg_temp.named('short'), 'A doua.');
-select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000015');
 select public.reply_to_forum_thread(pg_temp.named('long'), 'A treia.');
 select public.reply_to_forum_thread(pg_temp.named('short'), 'A treia.');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select public.reply_to_forum_thread(pg_temp.named('long'), 'A patra.');
-select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000015');
 select public.reply_to_forum_thread(pg_temp.named('long'), 'A cincea.');
 
 /* ---------- 1. A visitor reads three posts ---------- */
