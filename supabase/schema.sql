@@ -78078,14 +78078,14 @@ GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "te
 
 
 
-REVOKE ALL ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") TO "authenticated";
-
-
-
 REVOKE ALL ON FUNCTION "public"."trending_tags"("how_many" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."trending_tags"("how_many" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."trending_tags"("how_many" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") TO "authenticated";
 
 
 
