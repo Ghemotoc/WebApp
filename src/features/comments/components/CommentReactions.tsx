@@ -5,7 +5,7 @@
  * - A chip for every kind someone picked, in the board's order: its icon and count. The reader's
  *   own is filled plum with a tick and aria-pressed (DoD pill system: never colour alone). Its
  *   name is read out as "Heart, 4, your reaction".
- * - "Add a reaction" (the dashed + button) opens a group of the six; picking one sets it, picking
+ * - "Add a reaction" (a plain round + button, board B05-ReaderEnd) opens a group of the six; picking one sets it, picking
  *   the reader's own again takes it away (one per person, criterion 1). Escape closes the group.
  * - A visitor sees the counts only. The database refuses a read-only account, and the reason
  *   shows under the row.
@@ -28,6 +28,7 @@ import { useReactToComment } from '../hooks/useReactToComment';
 import { useCommentsTranslation } from '../registerCommentsTranslations';
 
 import { ReactionIcon } from './ReactionIcon';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The chip's shape: 36 px tall, its ::after layer making the touch target 44 px (DoD). */
 const chipShape =
@@ -51,7 +52,7 @@ function ReactionChip(props: {
 }) {
   const { t, i18n } = useCommentsTranslation();
   const name = t(`reactions.names.${props.kind}`);
-  const count = props.count.toLocaleString(i18n.language);
+  const count = props.count.toLocaleString(dateLocaleFor(i18n.language));
   const label = props.isMine
     ? t('reactions.chipMine', { name, count })
     : t('reactions.chip', { name, count });
@@ -156,7 +157,7 @@ export function CommentReactions({
     addButton.current?.focus();
   };
   return (
-    <div className="flex basis-full flex-col items-start sm:basis-auto">
+    <div className="flex flex-col items-start">
       <div className="flex flex-wrap items-center gap-2">
         {pickedKinds(reactions).map((kind) => (
           <ReactionChip
@@ -174,7 +175,7 @@ export function CommentReactions({
             aria-label={t('reactions.add')}
             aria-expanded={isPickerOpen}
             onClick={() => setIsPickerOpen(!isPickerOpen)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-control-border text-ink-muted hover:bg-tint"
+            className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ink-muted hover:bg-tint"
           >
             <PlusIcon />
           </button>

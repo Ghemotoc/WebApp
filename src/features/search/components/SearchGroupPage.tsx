@@ -45,7 +45,7 @@ function GroupListLayout({ term, view }: { term: string; view: GroupListView }) 
       </Link>
       <header className="flex flex-col gap-2">
         <Eyebrow>{view.eyebrow}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,5vw,52px)] leading-[1.05] font-bold break-words text-ink-heading">
+        <h1 className="m-0 type-title lg:type-display break-words text-ink-heading">
           {view.title}
         </h1>
         <p aria-live="polite" className="m-0 min-h-6 type-body text-ink-muted">

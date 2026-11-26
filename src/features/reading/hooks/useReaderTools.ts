@@ -1,17 +1,21 @@
 /**
- * useReaderTools: which of the reader's two panels is open, Reading settings or a paragraph's
- * comments (story S1-E6-06 for the comments, S1-E4-02 for the settings; bundle CALM-5, design
- * handover Step 4, point 8).
+ * useReaderTools: which of the reader's panels is open: Contents, Reading settings or a
+ * paragraph's comments (story S1-E6-06 for the comments, S1-E4-02 for the settings, user story
+ * 2.2 for Contents; bundle CALM-5, design handover Step 4, point 8; board B02).
  *
- * Both are closed when a chapter opens. Reading settings open from Aa in the chapter bar and a
- * paragraph's comments from its count; opening one closes the other, so the side column (from
- * 1280 px) or the bottom sheet (below that) holds one panel at a time. A link such as a
+ * All are closed when a chapter opens. Contents and Reading settings open from the chapter bar
+ * and a paragraph's comments from its count; opening one closes the others, so the side column
+ * (from 1280 px) or the bottom sheet (below that) holds one panel at a time. A link such as a
  * notification's "#paragraph-4" is the one way a thread starts open (IDEAS-1e).
+ * READER-SELECT (boards B12 to B14): a stanza's panel can also open at chosen words, from the
+ * Comment button on a selection or from underlined words; pointing at a part is shared too.
  * Who calls it: ChapterReading in ChapterReaderPage.
  * What it calls: useParagraphCommentCounts → paragraph_comment_counts() and
  * useLinkedParagraphThread.
  */
 import { useCallback, useMemo, useState } from 'react';
+
+import type { CommentQuote } from '@/features/comments/api/comments';
 
 import type { ReaderChapter } from '../api/chapter';
 import type { ParagraphPlace } from '../api/paragraphComments';
@@ -30,6 +34,77 @@ export interface ReaderTools {
   toggleSettings: () => void;
   /** Closes Reading settings. */
   closeSettings: () => void;
+  /** True while Contents (the chapter list) is open. */
+  isContentsOpen: boolean;
+  /** Opens Contents (closing the other panels), or closes it when open. */
+  toggleContents: () => void;
+  /** Closes Contents. */
+  closeContents: () => void;
+}
+
+/**
+ * Which panel is open: a stanza's (and at which words), Reading settings or Contents. Opening
+ * one closes the others (handover point 8; board B02).
+ *
+ * @param linkedPlace - the thread a link asked to open (IDEAS-1e), or null
+ * @returns the panels' state and the ways to change it
+ */
+function usePanelState(linkedPlace: ParagraphPlace | null) {
+  const [openPlace, setOpenPlaceNow] = useState<ParagraphPlace | null>(linkedPlace);
+  // READER-SELECT: the words the open panel is on (null: the whole stanza), and the part pointed at.
+  const [panelQuote, setPanelQuote] = useState<CommentQuote | null>(null);
+  const [hoverKey, setHoverKey] = useState<string | null>(null);
+  // Whether the reader opened the thread themselves (not a link), so a thread in the side column
+  // takes focus: it sits away from its button (WCAG 2.4.3).
+  const [isOpenedByReader, setIsOpenedByReader] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isContentsOpen, setIsContentsOpen] = useState(false);
+
+  // Opening one panel closes the others (handover point 8; board B02).
+  const setOpenPlace = useCallback((place: ParagraphPlace | null) => {
+    setIsOpenedByReader(true);
+    setOpenPlaceNow(place);
+    setPanelQuote(null);
+    if (place === null) return;
+    setIsSettingsOpen(false);
+    setIsContentsOpen(false);
+  }, []);
+  // READER-SELECT: a stanza's panel at some words (or the whole stanza with null).
+  const openPanel = useCallback((block: number, quote: CommentQuote | null) => {
+    setIsOpenedByReader(true);
+    setOpenPlaceNow(block);
+    setPanelQuote(quote);
+    setIsSettingsOpen(false);
+    setIsContentsOpen(false);
+  }, []);
+  const toggleSettings = useCallback(() => {
+    setIsSettingsOpen((isOpen) => !isOpen);
+    setIsContentsOpen(false);
+    setOpenPlaceNow(null);
+  }, []);
+  const closeSettings = useCallback(() => setIsSettingsOpen(false), []);
+  const toggleContents = useCallback(() => {
+    setIsContentsOpen((isOpen) => !isOpen);
+    setIsSettingsOpen(false);
+    setOpenPlaceNow(null);
+  }, []);
+  const closeContents = useCallback(() => setIsContentsOpen(false), []);
+
+  return {
+    openPlace,
+    setOpenPlace,
+    panelQuote,
+    openPanel,
+    hoverKey,
+    setHoverKey,
+    isOpenedByReader,
+    isSettingsOpen,
+    toggleSettings,
+    closeSettings,
+    isContentsOpen,
+    toggleContents,
+    closeContents,
+  };
 }
 
 /**
@@ -38,7 +113,7 @@ export interface ReaderTools {
  * @param chapter - the chapter being read
  * @param hasText - false while there is no text (no counts are read then)
  * @param sidePanel - the side column's slot for a thread, or null below 1280 px
- * @returns the markers' facts and the settings' state
+ * @returns the markers' facts and the panels' state
  */
 export function useReaderTools(
   chapter: ReaderChapter,
@@ -51,33 +126,51 @@ export function useReaderTools(
     [chapter.story.slug, chapter.code],
   );
   const counts = useParagraphCommentCounts(address, hasText);
-  // Step 2: which thread is open, starting with the one a link asked for (IDEAS-1e).
+  // Step 2: which panel is open, starting with the thread a link asked for (IDEAS-1e).
   const linkedPlace = useLinkedParagraphThread(counts !== null);
-  const [openPlace, setOpenPlaceNow] = useState<ParagraphPlace | null>(linkedPlace);
-  // Whether the reader opened the thread themselves (not a link), so a thread in the side column
-  // takes focus: it sits away from its button (WCAG 2.4.3).
-  const [isOpenedByReader, setIsOpenedByReader] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const panels = usePanelState(linkedPlace);
+  const { openPlace, setOpenPlace, panelQuote, openPanel, hoverKey, setHoverKey } = panels;
+  const { isOpenedByReader } = panels;
 
-  // Step 3: opening a thread closes Reading settings, and the other way round (handover point 8).
-  const setOpenPlace = useCallback((place: ParagraphPlace | null) => {
-    setIsOpenedByReader(true);
-    setOpenPlaceNow(place);
-    if (place !== null) setIsSettingsOpen(false);
-  }, []);
-  const toggleSettings = useCallback(() => {
-    setIsSettingsOpen((isOpen) => !isOpen);
-    setOpenPlaceNow(null);
-  }, []);
-  const closeSettings = useCallback(() => setIsSettingsOpen(false), []);
-
-  // Step 4: the context the markers read, or null when there are no markers.
-  const paragraphComments = useMemo(
-    () =>
-      counts === null
-        ? null
-        : { address, counts, openPlace, setOpenPlace, sidePanel, isOpenedByReader },
-    [address, counts, openPlace, setOpenPlace, sidePanel, isOpenedByReader],
-  );
-  return { paragraphComments, isSettingsOpen, toggleSettings, closeSettings };
+  // Step 3: the context the markers read, or null when there are no markers.
+  const isPoem = chapter.isPoem;
+  const language = chapter.story.languageCode;
+  const paragraphComments = useMemo(() => {
+    if (counts === null) return null;
+    return {
+      address,
+      counts,
+      openPlace,
+      setOpenPlace,
+      sidePanel,
+      isOpenedByReader,
+      isPoem,
+      language,
+      panelQuote,
+      openPanel,
+      hoverKey,
+      setHoverKey,
+    };
+  }, [
+    address,
+    counts,
+    openPlace,
+    setOpenPlace,
+    sidePanel,
+    isOpenedByReader,
+    isPoem,
+    language,
+    panelQuote,
+    openPanel,
+    hoverKey,
+  ]);
+  return {
+    paragraphComments,
+    isSettingsOpen: panels.isSettingsOpen,
+    toggleSettings: panels.toggleSettings,
+    closeSettings: panels.closeSettings,
+    isContentsOpen: panels.isContentsOpen,
+    toggleContents: panels.toggleContents,
+    closeContents: panels.closeContents,
+  };
 }

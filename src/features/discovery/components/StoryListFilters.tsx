@@ -1,20 +1,27 @@
 /**
  * StoryListFilters: the filters on a See all, category or tag page (story S1-E5-09; board 3.10;
- * liquid glass layout from bundle G7c, boards DiscoverGenre, DiscoverTag and DiscoverAll).
+ * user story 1.5, board A05-ReadList).
  *
- * Category is a row of chips (one choice, "Any" first). Status is a segmented control, Ongoing,
- * Completed or Both, as the boards draw it; language is a drop-down of the story languages, each
- * written in its own language; "Sort by" is a drop-down of the six sorts (S1-E5-02), on the right
- * of the same row from 640 px. A filter the page already is (the category on a category page, the
- * status on Completed) isn't offered. Every change goes into the address, so the filtered list
- * can be shared (S1-E5-09, fourth criterion).
- * Board difference: the boards fold category and language into a "Filters" button; they stay on
- * the page here so nothing that worked before needs an extra click (decisions log, G7c).
- * Who uses it: StoryListPage. What it calls: useStoryFormOptions (categories and languages).
+ * On the page there is one quiet "Filter and sort" button and a short line saying what is in use
+ * ("Ongoing and completed · Sorted by: Popular"). The button opens one panel, as on a shop (user
+ * story 1.5, which replaces the G7c choice of keeping the filters on the page): the sort first,
+ * then Ongoing, Completed or Both, the language, "Popular in" on the Popular list, and the
+ * category chips. A filter the page already is (the category on a category page, the status on
+ * Completed) isn't offered. Every change applies at once and goes into the address, so the
+ * filtered list can be shared (S1-E5-09, fourth criterion); Done closes the panel.
+ * Not yet in the panel: rating up to the reader's age, length and content labels to leave out,
+ * which need new browse_stories() filters (a follow-up of user story 1.5).
+ * Who uses it: StoryListPage. What it calls: Sheet, useStoryFormOptions (categories and
+ * languages).
  */
+import { useState } from 'react';
+
+import { Button } from '@/components/ui/Button';
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { ChoiceChips, type ChoiceOption } from '@/components/ui/ChoiceChips';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Select } from '@/components/ui/Select';
+import { Sheet } from '@/components/ui/Sheet';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 import {
@@ -152,16 +159,26 @@ function SortSelect({ request, sortOrder, onChange }: StoryListFiltersProps) {
 }
 
 /**
- * Renders the filters: category chips first (when the page isn't a category), then one row with
- * the status and language on the left and the sort on the right.
+ * The fields inside the panel, top to bottom: sort, status, language, "Popular in", category.
  *
  * @returns the group of filters
  */
-export function StoryListFilters({ request, sortOrder, onChange }: StoryListFiltersProps) {
+function FilterFields({ request, sortOrder, onChange }: StoryListFiltersProps) {
   const { t } = useDiscoveryTranslation();
   const categoryOptions = useCategoryOptions();
   return (
-    <div role="group" aria-label={t('seeAll.filtersLabel')} className="flex flex-col gap-4">
+    <div role="group" aria-label={t('seeAll.filtersLabel')} className="flex flex-col gap-6">
+      <SortSelect request={request} sortOrder={sortOrder} onChange={onChange} />
+      {request.kind !== 'completed' && <StatusSegments request={request} onChange={onChange} />}
+      <LanguageSelect request={request} onChange={onChange} />
+      {/* MARKETS-2d: Popular can be ranked by one country. */}
+      {request.kind === 'popular' && (
+        <PopularInSelect
+          id="story-list-popular-in"
+          value={request.popularIn ?? ''}
+          onChange={(value) => onChange({ ...request, popularIn: value })}
+        />
+      )}
       {request.kind !== 'category' && categoryOptions.length > 1 && (
         <ChoiceChips
           label={t('seeAll.category')}
@@ -173,21 +190,51 @@ export function StoryListFilters({ request, sortOrder, onChange }: StoryListFilt
           }
         />
       )}
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
-          {request.kind !== 'completed' && <StatusSegments request={request} onChange={onChange} />}
-          <LanguageSelect request={request} onChange={onChange} />
-          {/* MARKETS-2d: Popular can be ranked by one country. */}
-          {request.kind === 'popular' && (
-            <PopularInSelect
-              id="story-list-popular-in"
-              value={request.popularIn ?? ''}
-              onChange={(value) => onChange({ ...request, popularIn: value })}
-            />
-          )}
-        </div>
-        <SortSelect request={request} sortOrder={sortOrder} onChange={onChange} />
-      </div>
+    </div>
+  );
+}
+
+/**
+ * The short line beside the button: the status in use, then the sort ("Ongoing and completed ·
+ * Sorted by: Popular", board A05).
+ *
+ * @returns the line's text
+ */
+function useFilterSummary({ request, sortOrder }: Omit<StoryListFiltersProps, 'onChange'>) {
+  const { t } = useDiscoveryTranslation();
+  const parts: string[] = [];
+  // Step 1: the status, unless the list is Completed already.
+  if (request.kind !== 'completed') {
+    parts.push(
+      request.completion === null ? t('seeAll.bothStatuses') : t(`seeAll.${request.completion}`),
+    );
+  }
+  // Step 2: the sort, always.
+  parts.push(t('seeAll.sortedBy', { sort: t(`sort.${sortOrder}`) }));
+  return parts.join(' · ');
+}
+
+/**
+ * Renders the button, the line saying what is in use, and the panel.
+ *
+ * @returns the filter bar
+ */
+export function StoryListFilters({ request, sortOrder, onChange }: StoryListFiltersProps) {
+  const { t } = useDiscoveryTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const summary = useFilterSummary({ request, sortOrder });
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button variant="secondary" aria-haspopup="dialog" onClick={() => setIsOpen(true)}>
+        {t('seeAll.filterAndSort')}
+      </Button>
+      <p className="m-0 type-meta text-ink-muted">{summary}</p>
+      <Sheet isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('seeAll.filterAndSort')}>
+        <FilterFields request={request} sortOrder={sortOrder} onChange={onChange} />
+        <ButtonRow>
+          <Button onClick={() => setIsOpen(false)}>{t('seeAll.done')}</Button>
+        </ButtonRow>
+      </Sheet>
     </div>
   );
 }

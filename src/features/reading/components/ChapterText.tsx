@@ -18,8 +18,13 @@
  * A picture readers may share gets the Share button the reader passes in (pictureShare).
  * Paragraph comments (S1-E6-06): when the reader passes paragraphAddon, each top-level paragraph
  * sits in a row (.tmc-paragraph-row) with the addon (the comment marker) placed over its edge
- * (CALM-5: in the left margin from 1024 px, at the top right corner below that).
+ * (in the right margin from 1024 px since Robert, 24 Nov 2026, at the top right corner below that).
  * Poems (MUST-2): with isPoem, lib/poemStanzas.ts draws stanzas and lines, styled by `.tmc-poem`.
+ * First screenful (the reader speed check, 25 Nov 2026; S1-E4-01's "readable within 2 seconds"):
+ * with firstDrawBlocks, the first draw holds only that many blocks and the rest follows one frame
+ * after the first paint (lib/firstScreenful.ts). Reading the whole of a 2,000-word chapter's
+ * Markdown took about 280 ms on a phone with the CPU four times slower, all of it in front of
+ * the first paragraph. The blocks keep their numbers, so links to a spot and comments still match.
  * Look: the shared `.tmc-chapter-text` styles (src/styles/index.css), board 4.3 and 3.5.
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.
  */
@@ -29,7 +34,9 @@ import {
   createContext,
   Suspense,
   useContext,
+  useEffect,
   useMemo,
+  useState,
   type ComponentPropsWithoutRef,
   type ComponentType,
 } from 'react';
@@ -46,6 +53,7 @@ import { embedIdFromAddress } from '@/lib/chapter-embeds';
 import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
+import { firstScreenful } from '../lib/firstScreenful';
 import { numberBlocks } from '../lib/numberBlocks';
 import { poemStanzas } from '../lib/poemStanzas';
 
@@ -117,6 +125,11 @@ export interface ChapterTextProps {
    * paragraph's block number; left out, paragraphs are drawn on their own.
    */
   paragraphAddon?: ComponentType<{ block: number }>;
+  /**
+   * How many blocks the first draw holds; the rest follows one frame after the first paint (the
+   * reader speed check, 25 Nov 2026). Left out, the whole text is drawn at once.
+   */
+  firstDrawBlocks?: number;
 }
 
 /** What a picture's Share button is given. */
@@ -254,6 +267,56 @@ function useChapterPlugins(markdown: string, spot: SpotRange | null, isPoem: boo
 }
 
 /**
+ * The elements a chapter may hold. A poem's lines are spans the plugin makes (raw HTML is never
+ * drawn, so none come from the text).
+ *
+ * @param isPoem - true for a poem
+ * @returns the element names SafeMarkdown keeps
+ */
+function chapterElements(isPoem: boolean): string[] {
+  return isPoem
+    ? [...safeMarkdownElements.chapter, 'h1', 'span']
+    : [...safeMarkdownElements.chapter, 'h1'];
+}
+
+/**
+ * The Markdown to draw now: the first blocks on the first draw when firstDrawBlocks is given,
+ * then, from the frame after the first paint, the whole text.
+ *
+ * @param markdown - the chapter body
+ * @param firstDrawBlocks - how many blocks the first draw holds, or undefined for all of them
+ * @returns the Markdown to draw, and whether it leaves part of the chapter out for now
+ */
+function useDrawnMarkdown(
+  markdown: string,
+  firstDrawBlocks: number | undefined,
+): { drawnMarkdown: string; isPartial: boolean } {
+  const [isWhole, setIsWhole] = useState(firstDrawBlocks === undefined);
+  useEffect(() => {
+    if (isWhole) return undefined;
+    // Step 1: the first frame callback runs just before the browser paints the first blocks.
+    let secondFrame = 0;
+    const firstFrame = requestAnimationFrame(() => {
+      // Step 2: the second runs after that paint, so the rest is drawn in the next pass.
+      secondFrame = requestAnimationFrame(() => setIsWhole(true));
+    });
+    // Step 3: leaving the text before then cancels both.
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      cancelAnimationFrame(secondFrame);
+    };
+  }, [isWhole]);
+  return useMemo(() => {
+    // Step 4: once the first paint is done (or no first draw was asked for), the whole text.
+    if (isWhole || firstDrawBlocks === undefined)
+      return { drawnMarkdown: markdown, isPartial: false };
+    // Step 5: before it, the first blocks only; a short chapter is whole already.
+    const firstBlocks = firstScreenful(markdown, firstDrawBlocks);
+    return { drawnMarkdown: firstBlocks, isPartial: firstBlocks.length < markdown.length };
+  }, [isWhole, markdown, firstDrawBlocks]);
+}
+
+/**
  * Renders the text.
  *
  * @returns the chapter's words as HTML, with its pictures and cards where they sit
@@ -270,6 +333,7 @@ export function ChapterText({
   spot = null,
   pictureShare,
   paragraphAddon,
+  firstDrawBlocks,
 }: ChapterTextProps) {
   // The media for the drawers, kept the same object while nothing in it changes.
   const media = useMemo(
@@ -283,22 +347,41 @@ export function ChapterText({
     }),
     [pictures, embeds, writerName, canReportMedia, pictureShare, paragraphAddon],
   );
-  const rehypePlugins = useChapterPlugins(markdown, spot, isPoem);
-  // A poem's lines are spans the plugin makes (raw HTML is never drawn, so none come from the text).
-  const elements = isPoem
-    ? [...safeMarkdownElements.chapter, 'h1', 'span']
-    : [...safeMarkdownElements.chapter, 'h1'];
+  // The first screenful first, when the caller asks for it; then the whole text.
+  const { drawnMarkdown, isPartial } = useDrawnMarkdown(markdown, firstDrawBlocks);
+  const rehypePlugins = useChapterPlugins(drawnMarkdown, spot, isPoem);
+  // The words themselves, read from the Markdown again only when the text, the spot or poem mode
+  // changes. react-markdown reads the whole text on every draw, and the reader draws again for
+  // each small change around the text (the progress, the settings, the comment counts): each of
+  // those read a 2,000-word chapter again, about 100 ms on a phone with the CPU four times slower
+  // (the reader speed check, 25 Nov 2026).
+  const words = useMemo(
+    () => (
+      <SafeMarkdown
+        text={drawnMarkdown}
+        elements={chapterElements(isPoem)}
+        keepAddress={isKeptAddress}
+        rehypePlugins={rehypePlugins}
+        components={chapterComponents}
+      />
+    ),
+    [drawnMarkdown, isPoem, rehypePlugins],
+  );
+  // data-story-text marks the reader's own text size (Aa), which the look check leaves out
+  // (e2e/support/lookCheck.ts; design books look rules, Section 1).
   return (
-    <div lang={language} className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}>
-      <ChapterMediaContext.Provider value={media}>
-        <SafeMarkdown
-          text={markdown}
-          elements={elements}
-          keepAddress={isKeptAddress}
-          rehypePlugins={rehypePlugins}
-          components={chapterComponents}
-        />
-      </ChapterMediaContext.Provider>
+    <div
+      lang={language}
+      data-story-text=""
+      className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}
+    >
+      <ChapterMediaContext.Provider value={media}>{words}</ChapterMediaContext.Provider>
+      {/* While only the first blocks are drawn, an empty block holds the rest's place for that one
+          frame, so the end of the chapter stays far below the screen: without it the end row
+          would come within reach for a moment and fetch the Share button and the comments, which
+          wait until the reader is near the end (ShareButtonWhenNear; the reader's script budget,
+          e2e/reader-performance.spec.ts). */}
+      {isPartial && <div aria-hidden="true" style={{ height: '200vh' }} />}
     </div>
   );
 }

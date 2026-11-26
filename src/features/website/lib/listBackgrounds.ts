@@ -23,8 +23,8 @@ export function pageNameFor(place: Pick<BackgroundPlace, 'kind' | 'key'>, t: TFu
 }
 
 /**
- * The colour a page shows now in a market: the admin's choice, or the default (a genre's own
- * accent; plum for a tag, which has no band until one is chosen).
+ * The colour the editor starts on: the admin's choice, or a suggestion (a genre's own accent;
+ * plum for a tag). Without a choice the page itself has no band (user story 1.6).
  *
  * @param place - the genre or tag
  * @param inMarket - the choices saved for that market

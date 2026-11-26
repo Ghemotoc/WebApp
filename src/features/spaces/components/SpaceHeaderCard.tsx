@@ -86,7 +86,7 @@ function SpaceTitle({ space }: { space: Space }) {
         <Eyebrow>{t('space.eyebrow')}</Eyebrow>
         <h1
           id="space-title"
-          className="m-0 font-heading type-title leading-[1.02] font-bold tracking-[-0.025em] break-words text-ink-heading md:text-[clamp(36px,4.4vw,56px)]"
+          className="m-0 type-title break-words text-ink-heading lg:type-display"
         >
           {space.name}
         </h1>

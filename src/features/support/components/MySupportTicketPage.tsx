@@ -6,15 +6,15 @@
  * internal note), then a box to answer: answering a solved request, or one waiting for the
  * person, opens it again (criterion 7). A closed request says to ask again; one staff merged
  * into another links to it (part h4a, criterion 9). A number that isn't theirs reads as "not
- * found". In the liquid glass look (bundle G11c, the canvas's SupportRequest board) the page opens
- * with a link back to the list, the request number above the subject and a status pill beside it,
- * then the messages as a chat and the answer box in a glass card.
+ * found". Since user stories bundle 10 (board J21) the page opens with the trail "Settings /
+ * Support requests / Request 2041", then the subject as the title with one meta line under it (the
+ * state in bold, the request number, what it is about), the messages as blocks (the team's
+ * tinted), and the answer box straight on the page with "Text only. Files can’t be sent here."
  * Who shows it: the router. What it calls: useMyTicket, ticketStatusPill.
  */
 import { Link, useParams } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { StateWord } from '@/components/ui/StateWord';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 
@@ -23,7 +23,7 @@ import { useMyTicket } from '../hooks/useMySupport';
 import { ticketStatusPill } from '../lib/ticketStatusPill';
 import { useSupportTranslation } from '../registerSupportTranslations';
 
-import { SupportBackLink } from './SupportBackLink';
+import { SupportBreadcrumb } from './SupportBreadcrumb';
 import { SupportReplyForm } from './SupportReplyForm';
 import { TicketMessageList, type TicketMessageItem } from './TicketMessageList';
 
@@ -59,17 +59,20 @@ function LoadedTicket({
   const lastFromTeam = ticket.messages.at(-1)?.fromTeam ?? false;
   const pill = ticketStatusPill(ticket.status, lastFromTeam);
   return (
-    <div className="flex max-w-[760px] flex-col gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-2">
-          <Eyebrow>{t('list.requestNumber', { number: ticket.number })}</Eyebrow>
-          <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-bold break-words text-ink-heading">
-            {ticket.subject}
-          </h1>
-        </div>
-        <StateWord>{t(`list.states.${pill.state}`)}</StateWord>
-      </div>
-      <TicketMessageList messages={items} label={t('ticket.messagesLabel')} layout="chat" />
+    <div className="flex max-w-[760px] flex-col gap-8">
+      <header className="flex min-w-0 flex-col gap-2">
+        <h1 className="m-0 type-title break-words text-ink-heading lg:type-display">
+          {ticket.subject}
+        </h1>
+        <MetaLine
+          facts={[
+            { text: t(`list.states.${pill.state}`), kind: 'state' },
+            { text: t('list.requestNumber', { number: ticket.number }) },
+            { text: t(`categories.${ticket.category}`) },
+          ]}
+        />
+      </header>
+      <TicketMessageList messages={items} label={t('ticket.messagesLabel')} layout="blocks" />
       {ticket.mergedInto !== null && (
         <p className="m-0 text-ink-muted">
           <Link to={`/support/${String(ticket.mergedInto)}`}>
@@ -86,25 +89,24 @@ function LoadedTicket({
 }
 
 /**
- * The answer box in its glass card, with the line that says answering opens a solved request.
+ * The answer box, with the line that says answering opens a solved request.
  *
- * @returns the card
+ * @returns the box and the line
  */
 function ReplyCard({ ticket, state }: { ticket: MyTicket; state: ReturnType<typeof useMyTicket> }) {
   const { t } = useSupportTranslation();
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-card border border-border bg-surface p-4 shadow-card">
-        <SupportReplyForm
-          id="support-reply"
-          label={t('ticket.replyLabel')}
-          sendLabel={t('ticket.send')}
-          isBusy={state.isReplying}
-          failure={state.failure}
-          waitMinutes={state.waitMinutes}
-          onSend={(body) => state.reply(body)}
-        />
-      </div>
+      <SupportReplyForm
+        id="support-reply"
+        label={t('ticket.replyLabel')}
+        hint={t('ticket.replyHint')}
+        sendLabel={t('ticket.send')}
+        isBusy={state.isReplying}
+        failure={state.failure}
+        waitMinutes={state.waitMinutes}
+        onSend={(body) => state.reply(body)}
+      />
       {ticket.status === 'solved' && (
         <p className="m-0 type-body text-ink-muted">{t('ticket.reopenNote')}</p>
       )}
@@ -136,9 +138,9 @@ export function MySupportTicketPage() {
   const ticketNumber = Number(useParams().number ?? '0');
   const state = useMyTicket(ticketNumber);
   return (
-    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
+    <PageContainer className="flex flex-col gap-8 pt-8 pb-16">
       <title>{t('ticket.documentTitle', { number: ticketNumber })}</title>
-      <SupportBackLink to="/support" label={t('list.title')} />
+      <SupportBreadcrumb current={t('list.requestNumber', { number: ticketNumber })} />
       <TicketBody state={state} />
     </PageContainer>
   );

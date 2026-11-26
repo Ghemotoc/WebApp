@@ -4,10 +4,12 @@
  *
  * What it is about, a subject and a message; once sent, the ticket number and a link to it. A
  * line points to 112 and to Report, because a ticket never replaces a report (the story's legal
- * note: the report form stays the contact point for illegal content). In the liquid glass look
- * (bundle G11c, the canvas's SupportNew board) a link back to the list sits on top, the form is a
- * glass card with Cancel beside Send, and the 112 and Report line is a card of its own beside the
- * form on wide screens (under it on narrow ones).
+ * note: the report form stays the contact point for illegal content). Since user stories bundle 10
+ * (board J20) the trail "Settings / Support requests / Ask for help" sits on top, the form stands
+ * straight on the page with each label above its field, and the 112 and Report note is a warm
+ * tinted box beside the form on wide screens (under it on narrow ones). Send comes first and
+ * Cancel after it, on the left (DoD, design books item 8; the board's right-hand row is in
+ * docs/board-fixes.md).
  * Who shows it: the router. What it calls: useNewSupportRequest.
  */
 import { useState, type FormEvent } from 'react';
@@ -15,7 +17,6 @@ import { Link } from 'react-router';
 
 import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { Select } from '@/components/ui/Select';
@@ -29,7 +30,7 @@ import { useNewSupportRequest } from '../hooks/useMySupport';
 import { useSupportTranslation } from '../registerSupportTranslations';
 
 import { SignedOutLine } from './SignedOutLine';
-import { SupportBackLink } from './SupportBackLink';
+import { SupportBreadcrumb } from './SupportBreadcrumb';
 
 /**
  * What shows once the request is sent: the number and the way to the ticket.
@@ -98,12 +99,13 @@ function NewRequestForm() {
     <form
       noValidate
       onSubmit={handleSubmit}
-      className="flex min-w-0 flex-1 flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:p-8"
+      className="flex min-w-0 flex-[999_1_560px] flex-col gap-4 lg:max-w-[720px]"
     >
       <Select
         id="support-category"
         label={t('new.category')}
         isLabelVisible
+        isLabelAbove
         placement="form"
         value={category}
         onChange={(value) => setCategory(value as TicketCategory)}
@@ -140,7 +142,7 @@ function NewRequestForm() {
 }
 
 /**
- * The card beside the form: 112 for danger, and the report form for anything to report.
+ * The warm note beside the form: 112 for danger, and the report form for anything to report.
  *
  * @returns the aside
  */
@@ -149,13 +151,13 @@ function SafetyCard() {
   return (
     <aside
       aria-labelledby="support-safety-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4 shadow-card lg:w-[320px] lg:flex-none"
+      className="flex min-w-0 flex-[1_1_280px] flex-col gap-2 rounded-card border border-(--warning-border) bg-(--warning-bg) px-4 py-4 text-(--warning-text) lg:max-w-[360px]"
     >
-      <h2 id="support-safety-heading" className="m-0 type-body font-bold text-ink-heading">
+      <h2 id="support-safety-heading" className="m-0 type-body font-semibold">
         {t('new.safetyHeading')}
       </h2>
-      <p className="m-0 type-body text-ink-muted">{t('new.safety')}</p>
-      <Link to="/report" className="w-fit type-body font-semibold text-link underline">
+      <p className="m-0 type-body">{t('new.safety')}</p>
+      <Link to="/report" className="w-fit type-body font-semibold text-(--warning-text) underline">
         {t('list.reportLink')}
       </Link>
     </aside>
@@ -171,18 +173,15 @@ export function NewSupportRequestPage() {
   const { t } = useSupportTranslation();
   const { userId, isKnown } = useSession();
   return (
-    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
+    <PageContainer className="flex flex-col gap-8 pt-8 pb-16">
       <title>{t('new.documentTitle')}</title>
-      <SupportBackLink to="/support" label={t('list.title')} />
+      <SupportBreadcrumb current={t('new.title')} />
       <header className="flex max-w-[720px] flex-col gap-4">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.025em]">
-          {t('new.title')}
-        </h1>
+        <h1 className="m-0 type-title lg:type-display">{t('new.title')}</h1>
         <p className="m-0 type-long leading-relaxed text-ink-muted">{t('new.intro')}</p>
       </header>
       {isKnown && userId === null && <SignedOutLine />}
-      <div className="flex flex-col items-start gap-6 lg:flex-row">
+      <div className="flex flex-wrap items-start gap-x-12 gap-y-8">
         {isKnown && userId !== null && <NewRequestForm />}
         <SafetyCard />
       </div>

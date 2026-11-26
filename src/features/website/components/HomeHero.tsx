@@ -101,11 +101,11 @@ function HeroPoints({ points }: { points: string[] }) {
  */
 export function HomeHero({ page, language }: HomeHeroProps) {
   return (
-    <header lang={language} className="flex flex-wrap items-center gap-[clamp(40px,5vw,72px)]">
+    <header lang={language} className="flex flex-wrap items-center gap-8 lg:gap-16">
       {/* Step 1: the words, on the left (or on top on narrow screens). */}
       <div className="flex min-w-0 flex-[1_1_440px] flex-col gap-6">
         <Eyebrow>{withBrand(page.eyebrow)}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(46px,6vw,92px)] leading-[0.94] font-bold tracking-[-0.025em] break-words text-ink-heading">
+        <h1 className="m-0 type-title lg:type-display break-words text-ink-heading">
           <HeadlineLines
             first={withBrand(page.headlineFirst)}
             second={withBrand(page.headlineSecond)}

@@ -139,13 +139,10 @@ const infoPillUsers = new Set([
   '/src/features/discovery/lib/categoryAccents.ts',
   '/src/features/errors/components/ErrorPage.tsx',
   '/src/features/forums/components/staff/ForumAdminRow.tsx',
-  '/src/features/hub/components/HubCalls.tsx',
-  '/src/features/hub/components/HubSpotlight.tsx',
   '/src/features/hub/components/staff/CallItem.tsx',
   '/src/features/hub/components/staff/SessionItem.tsx',
   '/src/features/hub/components/staff/SpotlightItem.tsx',
   '/src/features/landing-pages/components/staff/BlockListRow.tsx',
-  '/src/features/library/components/ReadingListPage.tsx',
   '/src/features/moderation/components/AccountSanctions.tsx',
   '/src/features/moderation/components/AppealCard.tsx',
   '/src/features/moderation/components/AppealOwnerReview.tsx',
@@ -154,9 +151,7 @@ const infoPillUsers = new Set([
   '/src/features/moderation/components/CaseRow.tsx',
   '/src/features/moderation/components/CaseSignals.tsx',
   '/src/features/moderation/components/TierPill.tsx',
-  '/src/features/moderator-mail/components/MailStatusPill.tsx',
   '/src/features/moderator-mail/components/StaffMailInboxPage.tsx',
-  '/src/features/reading/components/RankingPlacePill.tsx',
   '/src/features/reading/components/TeaserStoryCard.tsx',
   '/src/features/safety/components/SafetyChecksPanel.tsx',
   '/src/features/sponsors/components/staff/BlockedCategoriesSection.tsx',
@@ -305,6 +300,9 @@ describe('the design rules are the defaults', () => {
     const ownSize =
       /(^|[\s"'`:])text-(\[\d+(\.\d+)?(px|rem)\]|xs|sm|base|lg|xl|[2-9]xl)(?=[\s"'`}]|$)/m;
     expect(memberOffenders(ownSize)).toEqual([]);
+    // A size that grows with the screen (clamp) is a size of its own too (user stories Section 1).
+    const growingSize = /(^|[\s"'`:])text-\[(clamp|calc|min|max)\(/m;
+    expect(memberOffenders(growingSize)).toEqual([]);
   });
 
   it('a member screen uses Inter at 400 and 600 and Funnel Display at 700 only', () => {
@@ -321,6 +319,9 @@ describe('the design rules are the defaults', () => {
       'm',
     );
     expect(memberOffenders(offScale)).toEqual([]);
+    // Spacing that grows with the screen (clamp) lands between the steps (user stories Section 1).
+    const growingSpacing = new RegExp(`(^|[\\s"'\`:])-?${spacing}-\\[(calc\\()?clamp\\(`, 'm');
+    expect(memberOffenders(growingSpacing)).toEqual([]);
   });
 
   it('a member screen writes text in ink, ink-muted, ink-heading, link or a state colour', () => {

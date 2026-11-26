@@ -27,10 +27,7 @@ export function NoPreviewNotice({ preview }: { preview: HiddenStoryPreview }) {
   return (
     <div className="flex flex-col gap-6">
       <title>{preview.title}</title>
-      <h1
-        lang={preview.languageCode}
-        className="m-0 text-[clamp(32px,3.6vw,48px)] leading-[1.02] font-bold tracking-[-0.025em] break-words"
-      >
+      <h1 lang={preview.languageCode} className="m-0 type-title lg:type-display break-words">
         {preview.title}
       </h1>
       {preview.writerName === null ? null : (

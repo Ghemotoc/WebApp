@@ -11,7 +11,6 @@
     "labelsHeading": "Labels from the writer",
     "languageLabel": "Language",
     "firstPublishedLabel": "First published",
-    "statusLabel": "Status",
     "commentsLabel": "Comments",
     "commentsOn": "On",
     "commentsOff": "Off",
@@ -35,6 +34,9 @@
     "seeProfile": "See profile",
     "copiedWorkNote": "Moderators found that parts of this story copy a published work.",
     "statsLabel": "Story numbers",
+    "reads_one": "{{value}} read",
+    "reads_few": "{{value}} reads",
+    "reads_other": "{{value}} reads",
     "likes_one": "{{value}} like",
     "likes_other": "{{value}} likes",
     "comments_one": "{{value}} comment",
@@ -85,7 +87,25 @@
     "showAllChapters_one": "Show {{count}} chapter",
     "showAllChapters_few": "Show all {{count}} chapters",
     "showAllChapters_other": "Show all {{count}} chapters",
-    "showFewerChapters": "Show fewer chapters"
+    "showFewerChapters": "Show fewer chapters",
+    "numberedChapter": "{{number}}. {{title}}",
+    "showChapterRange": "Show chapters {{from}} to {{to}}",
+    "lastChapterOut": "last chapter out {{date}}",
+    "tagLink": "#{{tag}}",
+    "getInToSave": "Get in to follow, like or save",
+    "writerHeading": "The writer",
+    "writesOne": "Writes {{first}}",
+    "writesTwo": "Writes {{first}} and {{second}}",
+    "writerFollowers_one": "{{value}} follower",
+    "writerFollowers_other": "{{value}} followers",
+    "writerReads_one": "{{value}} read",
+    "writerReads_other": "{{value}} reads",
+    "writingRankLabel": "Writing rank:",
+    "reportThisStory": "Report this story",
+    "readOnWebAndApps": "On the web, and in the apps once they launch",
+    "webAndApp": "Web and app",
+    "writerFollowers_few": "{{value}} followers",
+    "writerReads_few": "{{value}} reads"
   },
   "reader": {
     "documentTitle": "{{chapter}} · {{story}}",
@@ -102,9 +122,16 @@
     "edited": "edited {{date}}",
     "untitled": "Untitled chapter",
     "endOfChapter": "End of chapter {{number}}",
+    "endOfChapterOf": "End of chapter {{number}} of {{total}}",
     "readNext": "Next: chapter {{number}}",
     "latestChapter": "That’s the latest chapter so far.",
     "endOfStory": "That’s the end of the story.",
+    "completedChapters_one": "Completed · {{count}} chapter",
+    "completedChapters_few": "Completed · {{count}} chapters",
+    "completedChapters_other": "Completed · {{count}} chapters",
+    "moreBy": "More by {{name}}",
+    "whatNext": "What next",
+    "storyComplete": "{{story}} is complete. It moves to Finished in the Library, and readers who follow it get one last notification.",
     "nextChapterDay": "Next chapter {{day}}",
     "lastChapterDay": "Last chapter {{day}}",
     "chapterDay": {
@@ -155,6 +182,15 @@
       "words_one": "word so far",
       "words_few": "words so far",
       "words_other": "words so far"
+    },
+    "partComments": {
+      "button_one": "{{count}} comment on: {{words}}",
+      "button_few": "{{count}} comments on: {{words}}",
+      "button_other": "{{count}} comments on: {{words}}",
+      "comment": "Comment",
+      "tooLong": "Select less to comment",
+      "tooLongHint": "Up to {{limit}} characters. These words have {{count}}.",
+      "barLabel": "Comment on the chosen words"
     }
   },
   "teaser": {
@@ -181,6 +217,8 @@
   },
   "likes": {
     "like": "Like this chapter",
+    "likeWord": "Like",
+    "likeRest": "this chapter",
     "liked": "Liked",
     "logIn": "Get in to like",
     "count_one": "{{count}} like",
@@ -189,19 +227,32 @@
     "readOnly": "This account can’t like chapters yet.",
     "failed": "We couldn’t save the like, so it’s back as it was. Try again."
   },
+  "storyLikes": {
+    "like": "Like",
+    "liked": "Liked",
+    "readOnly": "This account can’t like stories yet."
+  },
   "settings": {
     "button": "Reading settings",
     "buttonSample": "Aa",
     "title": "Reading settings",
     "close": "Close reading settings",
-    "font": "Font",
-    "fonts": {
-      "sans": "Inter",
-      "serif": "Serif",
-      "dyslexia_friendly": "Dyslexia-friendly",
-      "atkinson_hyperlegible": "Atkinson Hyperlegible"
+    "paper": "Paper",
+    "papers": {
+      "white": "White",
+      "sepia": "Sepia",
+      "grey": "Grey",
+      "black": "Black"
     },
-    "fontHint": "Fonts that work in every browser: OpenDyslexic, which many readers with dyslexia find easier, and Atkinson Hyperlegible, made so letters that look alike are easy to tell apart.",
+    "nightMode": "Night mode",
+    "nightModeHint": "Turns the whole page dark, paper included.",
+    "typeface": "Typeface",
+    "typefaces": {
+      "serif": "Literata",
+      "sans": "Inter",
+      "dyslexia_friendly": "OpenDyslexic",
+      "atkinson_hyperlegible": "Atkinson"
+    },
     "textSize": "Text size",
     "textSizeValue": "{{size}} px",
     "textSizeFromDevice": "{{size}} px, from the device",
@@ -218,25 +269,20 @@
       "medium": "Medium",
       "wide": "Wide"
     },
-    "theme": "Theme",
-    "themes": {
-      "light": "Light",
-      "sepia": "Sepia",
-      "night": "Night"
-    },
     "nightByClock": "Night by the clock",
-    "nightByClockHint": "Chapters open in Night between two times you choose, on this device’s clock.",
+    "nightByClockHint": "Chapters open on Black paper between two times you choose, on this device’s clock.",
     "nightFrom": "From",
     "nightUntil": "Until",
     "nightWaiting": "Pick both times. Nothing changes until you do.",
-    "nightNextChapter": "Chapters you open between these times show in Night. A theme you pick yourself wins until the next chapter.",
+    "nightNextChapter": "Chapters you open between these times show on Black paper. A paper you pick yourself stays until the next chapter.",
     "ruler": "Reading ruler",
     "rulerHint": "A soft band follows the line you’re reading. Move the pointer over the text, or use the Up and Down arrow keys.",
-    "saved": "Saved to your account, so they apply on all your devices. Text size starts from your device’s own setting.",
     "saveFailed": "We couldn’t save your reading settings. They still apply here; check your connection and change one again to retry.",
     "timeLeft": "Time left",
     "timeLeftBar": "In the bar",
-    "timeLeftPage": "On the page"
+    "timeLeftPage": "On the page",
+    "timeLeftHint": "Minutes left in this chapter",
+    "moreOptions": "More options"
   },
   "embed": {
     "removed": "[Removed by the moderation team]",
@@ -300,5 +346,13 @@
     "pageTitlePlain": "{{title}} by {{writer}}, {{site}}",
     "breadcrumbRead": "Read",
     "label": "About this story"
+  },
+  "contents": {
+    "button": "Contents",
+    "title": "Contents",
+    "close": "Close contents",
+    "youAreHere": "You are here",
+    "loading": "Loading the chapters…",
+    "row": "{{number}}. {{title}}"
   }
 }

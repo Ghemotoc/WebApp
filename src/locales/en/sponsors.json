@@ -254,11 +254,11 @@
       "chapter_end": "Chapter end banner",
       "story_wide": "Story page wide banner",
       "discover_wide": "Discover wide banner",
-      "discover_card": "Discover sponsored card",
+      "discover_card": "Read banner lower down",
       "search_wide": "Search wide banner",
       "search_portrait": "Search portrait",
       "classics_wide": "Classics wide banner",
-      "see_all_card": "See all card",
+      "see_all_card": "See all wide banner",
       "teaser_wide": "Shared-link page banner",
       "forums_wide": "Forums wide banner",
       "forums_side": "Forums side box",
@@ -266,7 +266,11 @@
       "thread_side": "Thread side box",
       "space_wide": "Space wide banner",
       "profile_wide": "Profile wide banner",
-      "library_wide": "Library wide banner"
+      "library_wide": "Library wide banner",
+      "library_lower_wide": "Library lower wide banner",
+      "home_wide": "Home wide banner",
+      "hub_side": "Writers’ hub side box",
+      "hub_wide": "Writers’ hub wide banner"
     },
     "formats": {
       "wide": "wide banner",

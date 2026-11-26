@@ -93,6 +93,10 @@ test.describe('Website pages by country and language (LOCALISE-1)', () => {
     page,
   }) => {
     await page.goto('/ro/ro');
+    // Wait for the page's own words first: the address and the language settle as the page loads,
+    // and a pick made before that is undone by it (24 Nov 2026).
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ro');
     await page.getByRole('contentinfo').getByRole('combobox', { name: 'Limbă' }).selectOption('en');
     await expect(page).toHaveURL(/\/ro\/en$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');

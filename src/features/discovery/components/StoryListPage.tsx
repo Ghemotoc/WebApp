@@ -3,11 +3,15 @@
  * design/boards/SeeAll.dc.html).
  *
  * Who shows it: the router, at /discover/all/:listKind (a Discover shelf's "View more"),
- * /discover/c/:categorySlug (a category page), /discover/t/:tag (a tag on the story page) and
+ * /discover/c/:categorySlug (a category page), /discover/t/:tag (a tag on the story page; titled
+ * "#tag", user story 1.9, board A09) and
  * /u/:handle/stories (a writer's profile) and /search/stories?q= (every story a search finds,
  * S1-E5-04). The address decides the list (listFromParams()).
- * What it shows: StoryListHeader, the filters, the rating note, then the stories as a grid with
- * "Load more" (StoryGrid), with the list's ad high up and after every 10 stories (bundle G7e). Filters and the sort live in the address, so a list can be shared;
+ * What it shows: StoryListHeader (with the rating line under the title), the "Filter and sort"
+ * button and its panel, then the stories as a grid with "Show 20 more" (StoryGrid), with the
+ * list's banner across the grid after every two rows (bundle G7e; Robert, 20 Nov 2026; user
+ * stories 1.5 and 1.9, boards A05, A06 and A09). Filters
+ * and the sort live in the address, so a list can be shared;
  * the sort is also kept for the rest of the visit (S1-E5-02).
  * Nothing on the page depends on what the reader has read (S1-E5-09's legal note); the database
  * leaves out what this reader may not see (ratings, blocks, drafts, moderation).
@@ -37,6 +41,7 @@ import {
 import { rememberedSort, rememberSort } from '../lib/sortMemory';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
+import { DiscoverShelf } from './DiscoverShelf';
 import { StoryGrid, type StoryGridAd } from './StoryGrid';
 import { PopularInNote } from './PopularInNote';
 import { StoryListFilters } from './StoryListFilters';
@@ -117,11 +122,15 @@ function ListResults({
         {t('seeAll.clearFilters')}
       </Button>
     );
+    // User story 1.5: "Nothing matches these filters", with Clear filters.
+    return <EmptyState title={t('seeAll.nothingMatches')} action={clear} />;
+  }
+  // User story 1.9 (board A09): a tag nobody uses any more says so, with the way back to Read.
+  if (request.kind === 'tag') {
     return (
       <EmptyState
-        title={t('seeAll.empty')}
-        description={t('seeAll.emptyFiltered')}
-        action={clear}
+        title={t('seeAll.tagEmpty', { tag: request.key ?? '' })}
+        action={<Link to="/discover">{t('seeAll.backToRead')}</Link>}
       />
     );
   }
@@ -129,14 +138,16 @@ function ListResults({
 }
 
 /**
- * The list's ad slot (S1-E12-01), as the grid places it: a wide banner on the classics list, a
- * card the size of a story card on every other list. It is chosen from the list's category, tag
- * and language only; the search term and anyone's username are never sent.
+ * The list's ad slot (S1-E12-01): a wide banner on every list, as boards A05, A06 and A09 draw it.
+ * It is chosen from the list's category, tag and language only; the search term and anyone's
+ * username are never sent.
  *
  * @param request - the list with its filters
+ * @param isSpaceReserved - true to hold the banner's height while it loads (the classics banner
+ *   above the stories); false inside the grid, where a slot that never fills must leave no gap
  * @returns the slot (it draws nothing for a visitor or when there is no ad)
  */
-function listAdSlot(request: ListRequest): ReactNode {
+function listAdSlot(request: ListRequest, isSpaceReserved: boolean): ReactNode {
   const isClassics = request.kind === 'classics';
   const context = {
     category: request.kind === 'category' ? request.key : request.categorySlug,
@@ -149,30 +160,96 @@ function listAdSlot(request: ListRequest): ReactNode {
       pageKey={isClassics ? 'classics' : 'see_all'}
       position={1}
       context={context}
-      isSpaceReserved={isClassics}
+      isSpaceReserved={isSpaceReserved}
     />
   );
 }
 
 /**
- * Where the list's ad goes (bundle G7e; Robert's design rules, 7 Nov 2026, "Content rules": the
- * first ad sits high, near the top, and long grids carry one after every 10 stories).
- * The classics list opens with its wide banner above the stories, then repeats it across a row
- * after every 10th story; every other list puts its card-sized ad after the 4th story (in the
- * first rows) and again after every 10 more, or after the last story of a list of 4 or fewer.
+ * The list's banner inside the grid (bundle G7e; Robert, 20 Nov 2026: "a banner every two rows").
+ * StoryGrid puts it across a whole row after every two rows of cards (lib/gridAdPlaces.ts). The
+ * classics list already opens with its banner above the stories, so a short classics list has no
+ * second one; any other short list ends on its banner, which is still near the top.
  *
  * @param request - the list with its filters
- * @returns the ad's places in the grid
+ * @returns the banner and the short-list rule
  */
 function gridAdFor(request: ListRequest): StoryGridAd {
-  const isClassics = request.kind === 'classics';
   return {
-    slot: listAdSlot(request),
-    firstAfter: isClassics ? 10 : 4,
-    spansRow: isClassics,
-    // The classics banner already sits above a short list; any other short list ends on its ad.
-    isShortListAdded: !isClassics,
+    slot: listAdSlot(request, false),
+    isShortListAdded: request.kind !== 'classics',
   };
+}
+
+/**
+ * A genre page's top (user story 1.6, board A06): "Most read in Fiction" as a row with arrows,
+ * then the heading "Fiction stories" over the filtered list. The row ignores the filters below
+ * it: it is always the genre's most read, in the reader's languages.
+ *
+ * @param props.request - the genre's list
+ * @param props.genreName - the genre's name, as the title shows it
+ * @returns the row and the list's heading
+ */
+function GenreTop({ request, genreName }: { request: ListRequest; genreName: string }) {
+  const { t } = useDiscoveryTranslation();
+  const mostRead: ListRequest = {
+    kind: 'category',
+    key: request.key,
+    categorySlug: null,
+    completion: null,
+    languageCode: null,
+    sortOrder: 'popular',
+  };
+  return (
+    <>
+      <DiscoverShelf title={t('seeAll.mostReadIn', { genre: genreName })} request={mostRead} />
+      <h2 className="m-0 type-heading text-ink-heading">
+        {t('seeAll.genreStories', { genre: genreName })}
+      </h2>
+    </>
+  );
+}
+
+/**
+ * Everything under the header once the list can show: a genre's top, the filter bar, the
+ * "Popular in" note, the classics banner and the stories.
+ *
+ * @param props.request - the list with its filters
+ * @param props.sortOrder - the sort in use
+ * @param props.list - what useStoryList() answered
+ * @param props.genreName - the list's title, used on a genre page
+ * @param props.onChange - applies a new set of filters
+ * @returns the list's body
+ */
+function ListBody({
+  request,
+  sortOrder,
+  list,
+  genreName,
+  onChange,
+}: {
+  request: ListRequest;
+  sortOrder: SortOrder;
+  list: ReturnType<typeof useStoryList>;
+  genreName: string;
+  onChange: (next: ListRequest) => void;
+}) {
+  return (
+    <>
+      {request.kind === 'category' && <GenreTop request={request} genreName={genreName} />}
+      <StoryListFilters request={request} sortOrder={sortOrder} onChange={onChange} />
+      <PopularInNote request={request} rankedCountry={list.popularIn} />
+      {/* The classics list's wide banner sits high, above the stories (G7e). */}
+      {request.kind === 'classics' && listAdSlot(request, true)}
+      <ListResults
+        request={request}
+        list={list}
+        onClearFilters={() =>
+          onChange({ ...request, categorySlug: null, completion: null, languageCode: null })
+        }
+      />
+    </>
+  );
 }
 
 /**
@@ -216,25 +293,13 @@ function KnownListPage({ kind, listKey }: { kind: ListRequest['kind']; listKey: 
           <Link to="/sign-in">{t('seeAll.logIn')}</Link>
         </Notice>
       ) : (
-        <>
-          <StoryListFilters request={request} sortOrder={sortOrder} onChange={changeRequest} />
-          <PopularInNote request={request} rankedCountry={list.popularIn} />
-          <p className="m-0 type-body text-ink-muted">{t('seeAll.ratingNote')}</p>
-          {/* The classics list's wide banner sits high, above the stories (G7e). */}
-          {request.kind === 'classics' && listAdSlot(request)}
-          <ListResults
-            request={request}
-            list={list}
-            onClearFilters={() =>
-              changeRequest({
-                ...request,
-                categorySlug: null,
-                completion: null,
-                languageCode: null,
-              })
-            }
-          />
-        </>
+        <ListBody
+          request={request}
+          sortOrder={sortOrder}
+          list={list}
+          genreName={heading.title}
+          onChange={changeRequest}
+        />
       )}
     </>
   );

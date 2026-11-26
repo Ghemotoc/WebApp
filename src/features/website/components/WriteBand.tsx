@@ -33,7 +33,7 @@ export function WriteBand({ band, language }: { band: HomeBand; language: string
       id="write"
       aria-labelledby="write-band-heading"
       lang={language}
-      className="grid scroll-mt-6 gap-8 rounded-card bg-primary glass-band-deep p-[clamp(24px,4vw,56px)] lg:grid-cols-2"
+      className="grid scroll-mt-6 gap-8 rounded-card bg-primary glass-band-deep p-6 lg:p-12 lg:grid-cols-2"
     >
       <div className="flex flex-col gap-6">
         <BandText band={band} headingId="write-band-heading" tone="dark" />

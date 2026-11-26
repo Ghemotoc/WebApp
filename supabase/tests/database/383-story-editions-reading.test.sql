@@ -156,12 +156,13 @@ select is(public.get_chapter('the-weather-station-ed01', 'rostab02') ->> 'transl
 select is(public.get_chapter('the-weather-station-ed01', 'enstab02'), null, 'the draft translation itself can''t be read');
 select is(public.get_chapter('statia-meteo-seed01', 'enstaa01'), null, 'a translation''s code under the first edition''s address answers null');
 
--- 6. Likes: one total per story.
+-- 6. Likes: one total per story. A story's Likes sit on the first edition (bundle 2, board B01),
+-- so both editions show the same count; chapter likes stay on their chapters.
 reset role;
-insert into public.chapter_likes (user_id, chapter_id) values
-  ('00000000-0000-4000-8000-000000000007', '00000000-0000-4000-a000-000000000b01'),
-  ('00000000-0000-4000-8000-000000000007', '00000000-0000-4000-a000-000000000c01'),
-  ('00000000-0000-4000-8000-000000000002', '00000000-0000-4000-a000-000000000c03');
+insert into public.story_likes (user_id, story_id) values
+  ('00000000-0000-4000-8000-000000000007', '00000000-0000-4000-9000-000000000001'),
+  ('00000000-0000-4000-8000-000000000005', '00000000-0000-4000-9000-000000000001'),
+  ('00000000-0000-4000-8000-000000000015', '00000000-0000-4000-9000-000000000001');
 select is(public.story_like_total('00000000-0000-4000-9000-000000000001'), 3, 'likes in both languages add up on the first edition');
 select is(public.story_like_total('00000000-0000-4000-9000-0000000000e1'), 3, 'and the edition shows the same total');
 

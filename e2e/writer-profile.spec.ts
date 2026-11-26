@@ -80,9 +80,10 @@ test.describe('writer profile and blocks (S1-E5-05)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Lia Scrie' })).toBeVisible();
     await expect(page.getByText(/@adult_writer · Joined \w+ \d{4}/)).toBeVisible();
     await expect(page.getByText(seedBio)).toBeVisible();
-    const numbers = page.locator('dl');
-    await expect(numbers).toContainText('Chapter published');
-    await expect(numbers).toContainText('only Lia Scrie sees who');
+    // The numbers are the description list with Chapters published; "Also on" is another one.
+    const numbers = page.locator('dl').filter({ hasText: 'Chapter published' });
+    await expect(numbers).toContainText('Following');
+    await expect(page.getByText(/only Lia Scrie sees who they are/)).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Stories by Lia Scrie' })).toBeVisible();
     await expect(page.getByRole('link', { name: /Stația meteo/ })).toBeVisible();
     // The year of birth (30 years ago by the seed), the email and the user ID appear nowhere.

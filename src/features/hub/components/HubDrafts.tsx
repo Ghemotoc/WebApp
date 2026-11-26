@@ -1,23 +1,23 @@
 /**
- * HubDrafts: "Drafts" on the Home page (bundle CALM-7c; board New-Home: rows of a small cover, the
- * title and a meta line such as "**Draft** · Chapter 8 · edited 2 hours ago", with "Write" at the
- * top right).
+ * HubDrafts: "Drafts" on the Home page (bundle CALM-7c; since user story 1.1 board A01: a row of
+ * covers, each with the title and a line such as "Draft · Chapter 8 · edited 2 hours ago", with
+ * "Write" at the top right).
  *
- * The first row is the chapter the writer saved last (my_discover_cards()), opening the editor.
- * Then up to two more of the writer's own stories, each with its state first in bold
- * (Scheduled, Draft for a story not yet out, else who can read it) and its chapters. A writer
- * with no stories gets one line pointing to Write.
- * Who shows it: WritersHubPage. What it calls: useDiscoverCards, useMyStories, liveOwnStories,
- * DrawnCover, StoryCoverArt and MetaLine.
+ * The first cover is the story with the chapter the writer saved last (my_discover_cards()),
+ * opening the editor. Then the writer's other stories, each with its state first (Scheduled,
+ * Draft for a story not yet out, else who can read it) and its chapters. A writer with no
+ * stories gets one line pointing to Write.
+ * Who shows it: MemberHomePage. What it calls: useDiscoverCards, useMyStories, liveOwnStories,
+ * Shelf, StoryCard and StoryCoverArt.
  */
 import { Link } from 'react-router';
 
 import { automaticCoverFor, designsForRow } from '@/components/covers/automaticCover';
-import type { DrawnCoverChoice } from '@/components/covers/coverDesigns';
-import { DrawnCover } from '@/components/covers/DrawnCover';
 import { buttonClassName } from '@/components/ui/buttonStyles';
-import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
+import type { MetaFact } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
+import { Shelf } from '@/components/ui/Shelf';
+import { StoryCard } from '@/components/ui/StoryCard';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import type { DraftCardData } from '@/features/discovery/api/discoverCards';
 import { useDiscoverCards } from '@/features/discovery/hooks/useDiscoverCards';
@@ -28,8 +28,8 @@ import { useMyStories } from '@/features/writing/hooks/useMyStories';
 
 import { useHubTranslation } from '../registerHubTranslations';
 
-/** How many rows the section shows (board New-Home: three). */
-const rowLimit = 3;
+/** How many covers the row shows (board A01 draws three; a writer may have up to 20). */
+const rowLimit = 20;
 
 type Translate = ReturnType<typeof useHubTranslation>['t'];
 
@@ -70,34 +70,13 @@ function draftFacts(draft: DraftCardData, t: Translate, language: string): MetaF
 }
 
 /**
- * One row: the small cover, the title as the link and the meta line.
+ * The facts as the one line under a cover ("Draft · Chapter 8 · edited 2 hours ago").
  *
- * @returns the list item
+ * @param facts - the facts, the state first
+ * @returns the line
  */
-function DraftRow(props: {
-  story: MyStory;
-  cover: DrawnCoverChoice;
-  href: string;
-  facts: MetaFact[];
-}) {
-  const { story, cover, href, facts } = props;
-  const drawn = (
-    <DrawnCover title={story.title} choice={cover} size="tile" isDecorative className="w-14" />
-  );
-  return (
-    <li className="flex items-start gap-4 border-b border-hairline py-3 last:border-b-0">
-      <StoryCoverArt story={story} drawn={drawn} className="w-14 shrink-0" />
-      <div className="flex min-w-0 flex-col gap-1">
-        <Link
-          to={href}
-          className="font-semibold break-words text-ink-heading no-underline hover:underline"
-        >
-          {story.title}
-        </Link>
-        <MetaLine facts={facts} />
-      </div>
-    </li>
-  );
+function factsLine(facts: MetaFact[]): string {
+  return facts.map((fact) => fact.text).join(' · ');
 }
 
 /**
@@ -115,9 +94,10 @@ function storiesInOrder(stories: MyStory[], draft: DraftCardData | null): MyStor
 }
 
 /**
- * Renders the section.
+ * Renders the row.
  *
- * @returns the section, a plain message when the stories can't be read, or nothing while loading
+ * @returns the row, one line pointing to Write when there is no story, a plain message when the
+ *   stories can't be read, or nothing while loading
  */
 export function HubDrafts() {
   const { t, i18n } = useHubTranslation();
@@ -126,38 +106,45 @@ export function HubDrafts() {
   const draft = cards?.draft ?? null;
   if (loadFailed) return <Notice tone="error">{t('hub.drafts.loadFailed')}</Notice>;
   if (!isKnown) return null;
-  // Step 1: the rows, with covers worked out per list so neighbours never share a design.
+  // Step 1: the stories, with covers worked out per row so neighbours never share a design.
   const shown = storiesInOrder(liveOwnStories(stories), draft);
   const covers = designsForRow(shown);
-  return (
-    <section aria-labelledby="hub-drafts" className="flex flex-col">
-      <div className="mb-2 flex items-center justify-between gap-4">
-        <h2 id="hub-drafts" className="m-0 type-heading">
-          {t('hub.drafts.heading')}
-        </h2>
-        <Link to="/write" className={buttonClassName({ variant: 'text' })}>
-          {t('hub.drafts.write')}
-        </Link>
-      </div>
-      {shown.length === 0 && <p className="m-0 text-ink-muted">{t('hub.drafts.none')}</p>}
-      <ul className="m-0 list-none p-0">
-        {/* Step 2: the latest draft opens the editor; the other stories open their chapters. */}
-        {shown.map((story, index) => {
-          const isLatest = draft !== null && story.slug === draft.storySlug;
-          const slug = encodeURIComponent(story.slug);
-          return (
-            <DraftRow
-              key={story.slug}
-              story={story}
-              cover={covers[index] ?? automaticCoverFor(story.id)}
-              href={
-                isLatest ? `/write/s/${slug}/c/${draft.chapterCode}` : `/write/s/${slug}/chapters`
-              }
-              facts={isLatest ? draftFacts(draft, t, i18n.language) : storyFacts(story, t)}
-            />
-          );
-        })}
-      </ul>
-    </section>
+  const writeLink = (
+    <Link to="/write" className={buttonClassName({ variant: 'text' })}>
+      {t('hub.drafts.write')}
+    </Link>
   );
+  // Step 2: no story yet, so one line points to Write.
+  if (shown.length === 0) {
+    return (
+      <section aria-labelledby="hub-drafts" className="flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-4">
+          <h2 id="hub-drafts" className="m-0 type-heading">
+            {t('hub.drafts.heading')}
+          </h2>
+          {writeLink}
+        </div>
+        <p className="m-0 text-ink-muted">{t('hub.drafts.none')}</p>
+      </section>
+    );
+  }
+  // Step 3: one cover each; the latest draft opens the editor, the others open their chapters.
+  const items = shown.map((story, index) => {
+    const isLatest = draft !== null && story.slug === draft.storySlug;
+    const slug = encodeURIComponent(story.slug);
+    const facts = isLatest ? draftFacts(draft, t, i18n.language) : storyFacts(story, t);
+    return {
+      key: story.slug,
+      content: (
+        <StoryCard
+          title={story.title}
+          metaLine={factsLine(facts)}
+          cover={covers[index] ?? automaticCoverFor(story.id)}
+          href={isLatest ? `/write/s/${slug}/c/${draft.chapterCode}` : `/write/s/${slug}/chapters`}
+          wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
+        />
+      ),
+    };
+  });
+  return <Shelf title={t('hub.drafts.heading')} items={items} headerAction={writeLink} />;
 }

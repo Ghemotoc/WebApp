@@ -124,8 +124,13 @@ select is(jsonb_array_length(public.browse_stories('rising') -> 'stories'), 0,
 
 /* ---------- 5. The story page and the policy ---------- */
 
-select is(public.get_story_page('statia-meteo-seed01') -> 'stats',
-  jsonb_build_object('likes', 3, 'comments', 1), 'the story page''s stats row gets its likes and comments');
+-- The stats row's likes are the story's own Likes (story_likes, bundle 2, board B01), not its
+-- chapters' likes; reads are checked in 400-story-likes.
+insert into public.story_likes (user_id, story_id) values
+  ('00000000-0000-4000-8000-000000000007', '00000000-0000-4000-9000-000000000001'),
+  ('00000000-0000-4000-8000-000000000015', '00000000-0000-4000-9000-000000000001');
+select is((public.get_story_page('statia-meteo-seed01') -> 'stats') - 'reads',
+  jsonb_build_object('likes', 2, 'comments', 1), 'the story page''s stats row gets its likes and comments');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 select ok((select count(*) from public.story_scores) >= 2,

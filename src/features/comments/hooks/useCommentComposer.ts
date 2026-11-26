@@ -13,6 +13,8 @@ import { useState, type FormEvent, type RefObject } from 'react';
 
 import { usePersonalDetailsCheck } from '@/features/privacy/hooks/usePersonalDetailsCheck';
 import type { ChapterAddress } from '@/features/reading/api/likes';
+
+import type { CommentQuote } from '../api/comments';
 import { useRulesWalkthrough } from '@/features/safety/hooks/useRulesWalkthrough';
 
 import { usePostComment } from './useCommentActions';
@@ -25,6 +27,8 @@ export interface ComposerTarget {
   replyToId?: string;
   /** For a comment on one paragraph (S1-E6-06): its number, from 1. */
   paragraph?: number;
+  /** For a comment on chosen words (READER-SELECT): the words and where they are. */
+  quote?: CommentQuote;
   /** Called after a successful post. */
   onDone?: () => void;
   /** The text box, so "Edit" can put the focus back in it. */
@@ -39,7 +43,7 @@ export interface ComposerTarget {
  *   editAgain() and the post's progress
  */
 export function useCommentComposer(target: ComposerTarget) {
-  const { address, replyToId, paragraph, onDone, textBoxRef } = target;
+  const { address, replyToId, paragraph, quote, onDone, textBoxRef } = target;
   const [text, setTextState] = useState('');
   const [isSpoiler, setIsSpoiler] = useState(false);
   const [justPosted, setJustPosted] = useState(false);
@@ -51,7 +55,11 @@ export function useCommentComposer(target: ComposerTarget) {
   /** Posts the text as it is; on success the box empties and the list reads again. */
   async function postNow() {
     try {
-      const where = paragraph === undefined ? {} : { paragraph };
+      // On chosen words, or on a paragraph, or (neither) on the chapter or a reply.
+      const where = {
+        ...(paragraph === undefined ? {} : { paragraph }),
+        ...(quote === undefined ? {} : { quote }),
+      };
       await posting.post({ body: text, isSpoiler, replyTo: replyToId ?? null, ...where });
       setTextState('');
       setIsSpoiler(false);

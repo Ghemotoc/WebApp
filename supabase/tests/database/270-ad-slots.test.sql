@@ -10,6 +10,7 @@
 --   same ads, and "Why this ad?" echoes only category, tag and language;
 -- - the reader has its two slots, the 728 × 90 banner and the 300 × 250 side box, and the side box
 --   never carries the ad network (CALM-5);
+-- - Read (page key discover) has two wide banners (board A04, user story 1.4);
 -- - a class space, a class-only story (its page and its chapters) and an unknown page get no slot
 --   (Q70).
 -- Personas: adult_writer (…01), teen_17 (…02), teacher (…07).
@@ -19,7 +20,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(20);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -58,6 +59,12 @@ insert into kept (label, words) select 'class_story', to_jsonb(shared.slug) from
 
 select set_config('role', 'anon', true), set_config('request.jwt.claims', '{"role": "anon"}', true);
 select ok((select count(*) from public.ad_slots) >= 16, 'allowed: ad_slots_select_all (a signed-out visitor can read the slot catalogue)');
+-- Board A01 (25 Nov 2026): Home has its wide banner after "Open for entries now".
+select ok(exists (select 1 from public.ad_slots where slot_key = 'home_wide' and page_key = 'home' and position = 1 and format = 'wide'), 'the Home page has one wide slot, home_wide');
+-- Board A03: the Writers' hub has a side box in its right column.
+select ok(exists (select 1 from public.ad_slots where slot_key = 'hub_side' and page_key = 'hub' and position = 1 and format = 'side_box'), 'the Writers'' hub has one side box, hub_side');
+-- Board A03: below 1200 px, where side boxes are not drawn, the hub's advert is a wide banner.
+select ok(exists (select 1 from public.ad_slots where slot_key = 'hub_wide' and page_key = 'hub' and position = 2 and format = 'wide'), 'the Writers'' hub has one wide slot, hub_wide, for screens under 1200 px');
 reset role;
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select throws_ok($$ insert into public.ad_slots (slot_key, page_key, position, format) values ('extra_slot', 'discover', 2, 'wide') $$,
@@ -97,6 +104,13 @@ select is(
 select ok(
   (select coalesce(words -> 1 -> 'ad' ->> 'kind', '') <> 'network' from kept where label = 'chapter'),
   'the reader''s side box never carries the ad network');
+
+-- Board A04 (user story 1.4): Read's second slot is a banner between two rows, not a card.
+select is(
+  (select string_agg((slot ->> 'slot_key') || ':' || (slot ->> 'format'), ' ' order by (slot ->> 'position')::integer)
+   from kept, jsonb_array_elements(words) as slot where label = 'anon'),
+  'discover_wide:wide discover_card:wide',
+  'Read has two wide banners: one after the first row and one lower down');
 
 /* ---------- 3. Only the page's context (criterion 2) ---------- */
 

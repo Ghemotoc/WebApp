@@ -18,7 +18,7 @@ export function LegalLinksSection() {
   return (
     <section
       aria-labelledby="settings-legal-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="settings-legal-heading"
@@ -27,26 +27,27 @@ export function LegalLinksSection() {
         {t('settings.legalHeading')}
       </h2>
       <p className="m-0 text-ink-muted">{t('settings.legalText')}</p>
-      <Link
-        to="/legal/terms"
-        className="inline-flex min-h-11 items-center self-start text-link underline"
-      >
-        {t('settings.legalLink')}
-      </Link>
-      {/* Contact us, the form, one tap from Settings (S1-E14-04). */}
-      <Link
-        to="/contact"
-        className="inline-flex min-h-11 items-center self-start text-link underline"
-      >
-        {t('settings.contactUsLink')}
-      </Link>
-      {/* The contact points one tap from Settings (S1-E14-02; DSA art. 11 and 12). */}
-      <Link
-        to="/legal/contact"
-        className="inline-flex min-h-11 items-center self-start text-link underline"
-      >
-        {t('settings.contactLink')}
-      </Link>
+      {/* The board's row (bundle 10, J14): the Legal centre as a quiet button, then the two
+          contact links as underlined text beside it. */}
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <Link to="/legal/terms" className="button-glass no-underline">
+          {t('settings.legalLink')}
+        </Link>
+        {/* The contact points one tap from Settings (S1-E14-02; DSA art. 11 and 12). */}
+        <Link
+          to="/legal/contact"
+          className="inline-flex min-h-11 items-center font-semibold text-ink-heading underline"
+        >
+          {t('settings.contactLink')}
+        </Link>
+        {/* Contact us, the form, one tap from Settings (S1-E14-04). */}
+        <Link
+          to="/contact"
+          className="inline-flex min-h-11 items-center font-semibold text-ink-heading underline"
+        >
+          {t('settings.contactUsLink')}
+        </Link>
+      </div>
     </section>
   );
 }

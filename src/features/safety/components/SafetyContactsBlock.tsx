@@ -10,8 +10,10 @@
  * the two international directories (country code ZZ: Child Helpline International and INHOPE,
  * Q9c, checked by the CTO on 24 Oct 2026), and the gap is noted for staff (useSafetyContacts). Numbers come only from the database, seeded
  * from the researched file (the story's legal note). No doodles: it sits on reporting screens.
- * Who shows it: ReportDialog (S1-E10-01) and the contact page (/legal/contact, Q9d); later the
- * public report form (S1-E10-02) and the safeguarding panel (S1-E10-10).
+ * Two looks: the full warm box with each contact's kind, hours and official site (ReportDialog,
+ * S1-E10-01, and the contact page, /legal/contact, Q9d), and the compact list straight on the page,
+ * one line per contact ("112 · Emergency number"), as board J11 draws it on the public report
+ * form's side column (isCompact; user stories bundle 10).
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,29 +25,68 @@ import { registerSafetyTranslations } from '../registerSafetyTranslations';
 import { countryName } from '../lib/countries';
 
 import { CountryPicker } from './CountryPicker';
-import { SafetyContactRow } from './SafetyContactRow';
+import { SafetyContactCompactRow, SafetyContactRow } from './SafetyContactRow';
+import { dateLocaleFor } from '../../../lib/romania-time';
+
+/**
+ * The country's contacts: the full rows under "Contacts for Romania…", or the compact lines with
+ * that note under them in the small meta size, as on board J11.
+ *
+ * @returns the note and the list
+ */
+function CountryContactList({
+  contacts,
+  countryCode,
+  isCompact,
+}: {
+  contacts: ReturnType<typeof useSafetyContacts>['contacts'];
+  countryCode: string;
+  isCompact: boolean;
+}) {
+  const { t, i18n } = useTranslation('safety');
+  const note = t('block.forCountry', { country: countryName(countryCode, i18n.language) });
+  if (isCompact) {
+    return (
+      <>
+        <ul className="m-0 flex list-none flex-col gap-2 p-0">
+          {contacts.map((contact) => (
+            <SafetyContactCompactRow key={contact.id} contact={contact} />
+          ))}
+        </ul>
+        <p className="m-0 type-meta text-ink-muted">{note}</p>
+      </>
+    );
+  }
+  return (
+    <>
+      <p className="m-0 type-body text-ink-muted">{note}</p>
+      <ul className="m-0 list-none p-0">
+        {contacts.map((contact) => (
+          <SafetyContactRow key={contact.id} contact={contact} />
+        ))}
+      </ul>
+    </>
+  );
+}
 
 /**
  * The list for the country, the fallback, or a short wait.
  *
  * @returns the block's body
  */
-function ContactsForCountry({ countryCode }: { countryCode: string | null }) {
-  const { t, i18n } = useTranslation('safety');
+function ContactsForCountry({
+  countryCode,
+  isCompact,
+}: {
+  countryCode: string | null;
+  isCompact: boolean;
+}) {
+  const { t } = useTranslation('safety');
   const { contacts, isLoading, hasNone, loadFailed } = useSafetyContacts(countryCode);
   if (isLoading) return <p className="m-0 type-body text-ink-muted">{t('block.loading')}</p>;
   if (countryCode !== null && contacts.length > 0) {
     return (
-      <>
-        <p className="m-0 type-body text-ink-muted">
-          {t('block.forCountry', { country: countryName(countryCode, i18n.language) })}
-        </p>
-        <ul className="m-0 list-none p-0">
-          {contacts.map((contact) => (
-            <SafetyContactRow key={contact.id} contact={contact} />
-          ))}
-        </ul>
-      </>
+      <CountryContactList contacts={contacts} countryCode={countryCode} isCompact={isCompact} />
     );
   }
   // No row for this country (or no country, or the read failed): the fallback.
@@ -77,9 +118,9 @@ function InternationalDirectories() {
   const firstContact = contacts[0];
   if (firstContact === undefined) return null;
   // The check date comes from the rows themselves, so it stays right when they are re-checked.
-  const checkedOn = new Intl.DateTimeFormat(i18n.language, { dateStyle: 'long' }).format(
-    new Date(`${firstContact.lastCheckedOn}T12:00:00`),
-  );
+  const checkedOn = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    dateStyle: 'long',
+  }).format(new Date(`${firstContact.lastCheckedOn}T12:00:00`));
   return (
     <>
       <p className="m-0 mt-3 type-body text-ink-muted">
@@ -94,12 +135,18 @@ function InternationalDirectories() {
   );
 }
 
+/** The two looks of the block's box. */
+const fullBoxClasses =
+  'flex flex-col gap-4 rounded-card border border-(--warning-border) bg-(--warning-bg) p-4';
+const compactClasses = 'flex flex-col gap-2';
+
 /**
  * Renders the block.
  *
+ * @param props.isCompact - true for the one-line rows straight on the page (board J11)
  * @returns the section with its heading, the contacts and the country picker
  */
-export function SafetyContactsBlock() {
+export function SafetyContactsBlock({ isCompact = false }: { isCompact?: boolean }) {
   const { i18n } = useTranslation();
   registerSafetyTranslations(i18n);
   const { t } = useTranslation('safety');
@@ -110,7 +157,7 @@ export function SafetyContactsBlock() {
   return (
     <section
       aria-labelledby="safety-contacts-heading"
-      className="flex flex-col gap-4 rounded-card border border-(--warning-border) bg-(--warning-bg) p-4"
+      className={isCompact ? compactClasses : fullBoxClasses}
     >
       <h2
         id="safety-contacts-heading"
@@ -119,7 +166,9 @@ export function SafetyContactsBlock() {
         {t('block.heading')}
       </h2>
       <p className="m-0 type-body text-ink-muted">{t('block.intro')}</p>
-      {visitor.isKnown ? <ContactsForCountry countryCode={countryCode} /> : null}
+      {visitor.isKnown ? (
+        <ContactsForCountry countryCode={countryCode} isCompact={isCompact} />
+      ) : null}
       <CountryPicker chosen={chosenCountry} onChoose={setChosenCountry} />
     </section>
   );

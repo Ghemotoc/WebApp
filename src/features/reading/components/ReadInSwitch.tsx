@@ -3,21 +3,28 @@
  * TRANSLATE-1b; boards TrStory and TrReader; Robert, 16 Nov 2026).
  *
  * What it shows: a glass pill with a globe, "Read in: <language>" and a chevron. It opens a
- * short list, one link per language the story can be read in: the language's own name, under it
- * "Translated by <name>" (a classic) or "Original", and a tick on the one being read. In the
- * reader the list ends with "You stay on chapter n.", because each link leads to the same chapter
- * in that language.
+ * short list, one link per language the story can be read in, on one line as board B07 draws it:
+ * a tick on the one being read, the language's own name, then "· Translated by <name>" (a
+ * classic) or "· Original". In the reader each link leads to the same chapter in that language
+ * and carries the paragraph the reader was on (lib/languageSwitchPlace.ts); the new page says
+ * "You stay on chapter n. Your choice is remembered for this story." (LanguageSwitchNote,
+ * BOOKS B07, user story 2.7).
  * Robert's rule (16 Nov 2026, 12:23 UTC): it shows only when a story has more than one language.
  * For a story in one language the database sends no editions and this draws nothing.
  * The choice is remembered for the story in this browser (lib/rememberedEdition.ts) and, for a
  * signed-in reader, in the account, so every device opens the same language (design books item 17).
+ * Two looks: the glass pill (the reader's chapter bar and the teaser), and on the story page since
+ * BOOKS B09 (user story 2.9, board B09-StoryLanguages) a "Read in" label beside a drop-down-like
+ * field showing the language. It stays a button with a list of links, not a native select,
+ * because picking a language opens another page, and a select that navigates on change breaks
+ * WCAG 3.2.2 (On input).
  * Accessibility: the pill is a button with aria-expanded; the list is a navigation of real links
  * (each opens a page), the current one marked with aria-current; Escape closes it and puts the
  * focus back on the pill; 44 px rows.
  * Who uses it: StoryHeader directly; ChapterBar and TeaserPage through LazyReadInSwitch.
  */
-import { useEffect, useId, useRef, useState } from 'react';
-import { Link } from 'react-router';
+import { useEffect, useId, useRef, useState, type MouseEvent, type RefObject } from 'react';
+import { Link, useNavigate } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { ChevronDownIcon } from '@/components/icons/ChevronDownIcon';
@@ -25,6 +32,7 @@ import { languageOwnName } from '@/lib/language-names';
 import { useRememberedPlace } from '@/lib/remembered/useRememberedPlace';
 
 import type { StoryEdition } from '../api/editions';
+import { firstBlockInView, type LanguageSwitchState } from '../lib/languageSwitchPlace';
 import { saveRememberedEdition } from '../lib/rememberedEdition';
 import { useEditionsTranslation } from '../registerEditionsTranslations';
 
@@ -35,8 +43,76 @@ const LIST_WIDTH = 280;
 export interface ReadInSwitchProps {
   /** The story's editions, the first edition first; fewer than two draws nothing. */
   editions: StoryEdition[];
-  /** In the reader: the chapter's number, for "You stay on chapter n."; null on the story page. */
+  /** In the reader: the chapter's number (the link then keeps the paragraph); null on the story page. */
   chapterNumber: number | null;
+  /** 'pill' (default) or 'field', the story page's "Read in [English ▾]" (board B09). */
+  look?: 'pill' | 'field';
+}
+
+/** What the button that opens the list needs. */
+interface ReadInButtonProps {
+  look: 'pill' | 'field';
+  languageCode: string;
+  isOpen: boolean;
+  listId: string;
+  onToggle: () => void;
+  buttonRef: RefObject<HTMLButtonElement | null>;
+}
+
+/**
+ * The button that opens the list, in either look. Its name is always "Read in: <language>", so
+ * both looks read the same to a screen reader and include the visible words (WCAG 2.5.3).
+ *
+ * @returns the pill, or the "Read in" label and its field
+ */
+function ReadInButton({
+  look,
+  languageCode,
+  isOpen,
+  listId,
+  onToggle,
+  buttonRef,
+}: ReadInButtonProps) {
+  const { t } = useEditionsTranslation();
+  const language = languageOwnName(languageCode);
+  const shared = {
+    ref: buttonRef,
+    type: 'button' as const,
+    'aria-expanded': isOpen,
+    'aria-controls': listId,
+    onClick: onToggle,
+  };
+  if (look === 'pill') {
+    return (
+      <button
+        {...shared}
+        className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full button-glass px-4 type-body font-semibold whitespace-nowrap text-ink-heading"
+      >
+        <ActionIcon name="globe" size={15} className="flex-none" />
+        <span>{t('readIn', { language })}</span>
+        <ChevronDownIcon />
+      </button>
+    );
+  }
+  // Board B09: "Read in" in the label type, then a field as wide as its words, the drop-down
+  // rule's chevron 14 px from the right edge and 36 px right padding (DoD, drop-downs).
+  return (
+    <span className="flex items-center gap-3">
+      <span aria-hidden="true" className="type-label font-semibold text-ink-heading">
+        {t('readInList')}
+      </span>
+      <button
+        {...shared}
+        aria-label={t('readIn', { language })}
+        className="relative inline-flex h-11 cursor-pointer items-center field-box pr-9 pl-4 type-body whitespace-nowrap"
+      >
+        <span lang={languageCode}>{language}</span>
+        <span className="pointer-events-none absolute top-1/2 right-[14px] -translate-y-1/2">
+          <ChevronDownIcon />
+        </span>
+      </button>
+    </span>
+  );
 }
 
 /** Where one edition's link leads: its story page, or the same chapter in that language. */
@@ -45,38 +121,36 @@ function editionAddress(edition: StoryEdition): string {
   return edition.chapterCode === null ? storyAddress : `${storyAddress}/${edition.chapterCode}`;
 }
 
-/** The small line under a language: who translated it, or that it is the original. */
+/** What follows the language's name: "· Original", "· Translated by …", or nothing. */
 function EditionNote({ edition }: { edition: StoryEdition }) {
   const { t } = useEditionsTranslation();
-  if (edition.isOriginal) {
-    return <span className="type-meta text-ink-muted">{t('original')}</span>;
-  }
+  if (edition.isOriginal) return <span> · {t('original')}</span>;
   if (edition.translatorName === null) return null;
-  return (
-    <span className="type-meta break-words text-ink-muted">
-      {t('translatedBy', { name: edition.translatorName })}
-    </span>
-  );
+  return <span> · {t('translatedBy', { name: edition.translatorName })}</span>;
 }
 
-/** One row of the list: a link to that language, ticked when it is the one on screen. */
-function EditionLink(props: { edition: StoryEdition; onPick: (edition: StoryEdition) => void }) {
+/**
+ * One row of the list (board B07): a tick on the one on screen, then the language and its note on
+ * one line, wrapping only when a translator's name is long.
+ */
+function EditionLink(props: {
+  edition: StoryEdition;
+  onPick: (edition: StoryEdition, event: MouseEvent<HTMLAnchorElement>) => void;
+}) {
   const { edition, onPick } = props;
   return (
     <li>
       <Link
         to={editionAddress(edition)}
         aria-current={edition.isCurrent ? 'true' : undefined}
-        onClick={() => onPick(edition)}
-        className={`flex min-h-[52px] items-center justify-between gap-3 rounded-field px-4 py-2 text-ink-heading no-underline hover:bg-tint ${edition.isCurrent ? 'bg-tint' : ''}`}
+        onClick={(event) => onPick(edition, event)}
+        className="flex min-h-11 items-center gap-2 rounded-field px-3 py-2 type-body font-semibold break-words text-ink-heading no-underline hover:bg-tint"
       >
-        <span className="flex min-w-0 flex-col">
-          <span lang={edition.languageCode} className="type-body font-semibold">
-            {languageOwnName(edition.languageCode)}
-          </span>
+        {edition.isCurrent && <ActionIcon name="check" size={16} className="flex-none" />}
+        <span className="min-w-0">
+          <span lang={edition.languageCode}>{languageOwnName(edition.languageCode)}</span>
           <EditionNote edition={edition} />
         </span>
-        {edition.isCurrent && <ActionIcon name="check" size={16} className="flex-none" />}
       </Link>
     </li>
   );
@@ -134,9 +208,9 @@ function useRememberLanguage(editions: StoryEdition[]): (languageCode: string) =
 /**
  * Renders the switch.
  *
- * @returns the pill and its list, or nothing for a story in one language
+ * @returns the pill (or field) and its list, or nothing for a story in one language
  */
-export function ReadInSwitch({ editions, chapterNumber }: ReadInSwitchProps) {
+export function ReadInSwitch({ editions, chapterNumber, look = 'pill' }: ReadInSwitchProps) {
   const { t } = useEditionsTranslation();
   const [isOpen, setIsOpen] = useState(false);
   // Which edge of the pill the list hangs from, so it never leaves the screen (rule 21).
@@ -149,40 +223,49 @@ export function ReadInSwitch({ editions, chapterNumber }: ReadInSwitchProps) {
   });
 
   const rememberLanguage = useRememberLanguage(editions);
+  const navigate = useNavigate();
 
   // Robert, 16 Nov 2026: no switch for a story in one language.
   if (editions.length < 2) return null;
   const current = editions.find((edition) => edition.isCurrent) ?? editions[0];
   if (current === undefined) return null;
 
-  /** Remembers the language picked for this story, then lets the link open it. */
-  function pick(edition: StoryEdition) {
+  /**
+   * Remembers the language picked for this story, then opens it. In the reader the paragraph on
+   * screen travels with it in the navigation's state (BOOKS B07); on the story page the link
+   * simply opens.
+   */
+  function pick(edition: StoryEdition, event: MouseEvent<HTMLAnchorElement>) {
     rememberLanguage(edition.languageCode);
     setIsOpen(false);
+    // A new tab or window (Ctrl, Cmd, Shift or the middle button) opens the link as it is.
+    const opensElsewhere = event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0;
+    if (chapterNumber === null || opensElsewhere) return;
+    event.preventDefault();
+    const state: LanguageSwitchState = { languageSwitch: { block: firstBlockInView() } };
+    void navigate(editionAddress(edition), { state });
   }
 
   /** Opens or closes the list; on opening, picks the side that keeps it on screen. */
   function toggle() {
     const pill = buttonRef.current;
     // A list hung from the pill's right edge needs its width (280 px + a 16 px gutter) to the left.
-    if (pill !== null) setHangsFromLeft(pill.getBoundingClientRect().right < LIST_WIDTH + 16);
+    // The field look sits at the start of the line, so its list always hangs from the left.
+    if (look === 'field') setHangsFromLeft(true);
+    else if (pill !== null) setHangsFromLeft(pill.getBoundingClientRect().right < LIST_WIDTH + 16);
     setIsOpen((open) => !open);
   }
 
   return (
-    <div ref={wrapperRef} className="relative flex-none">
-      <button
-        ref={buttonRef}
-        type="button"
-        aria-expanded={isOpen}
-        aria-controls={listId}
-        onClick={toggle}
-        className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full button-glass px-4 type-body font-semibold whitespace-nowrap text-ink-heading"
-      >
-        <ActionIcon name="globe" size={15} className="flex-none" />
-        <span>{t('readIn', { language: languageOwnName(current.languageCode) })}</span>
-        <ChevronDownIcon />
-      </button>
+    <div ref={wrapperRef} className="relative flex-none self-start">
+      <ReadInButton
+        look={look}
+        languageCode={current.languageCode}
+        isOpen={isOpen}
+        listId={listId}
+        onToggle={toggle}
+        buttonRef={buttonRef}
+      />
       {/* Painted fully solid (not the 92% glass of other pop-overs): it opens inside the reader's
           glass bar, where a blur can't reach the page behind, so text under it would show through. */}
       <nav
@@ -196,11 +279,6 @@ export function ReadInSwitch({ editions, chapterNumber }: ReadInSwitchProps) {
             <EditionLink key={edition.slug} edition={edition} onPick={pick} />
           ))}
         </ul>
-        {chapterNumber !== null && (
-          <p className="m-0 px-4 pt-2 pb-1 type-meta text-ink-muted">
-            {t('staysOnChapter', { number: chapterNumber })}
-          </p>
-        )}
       </nav>
     </div>
   );

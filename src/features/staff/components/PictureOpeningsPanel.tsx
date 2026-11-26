@@ -14,6 +14,7 @@ import { Link } from 'react-router';
 import { LabelRows } from '@/components/ui/LabelRows';
 
 import { usePictureOpenings } from '../hooks/usePictureOpenings';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Renders the panel, or nothing for someone who isn't alerted.
@@ -24,7 +25,7 @@ export function PictureOpeningsPanel() {
   const { t, i18n } = useTranslation('staff');
   const openings = usePictureOpenings();
   if (openings === null) return null;
-  const dateFormat = new Intl.DateTimeFormat(i18n.language, {
+  const dateFormat = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   });

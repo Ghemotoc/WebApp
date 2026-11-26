@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
 import { TeacherStep } from '@/features/teacher-badge/components/TeacherStep';
+import { takePathAfterSignUp } from '@/features/auth/lib/pathAfterSignUp';
 
 import type { MyOnboarding } from '../api/onboarding';
 import type { useMyOnboarding } from '../hooks/useMyOnboarding';
@@ -87,10 +88,13 @@ export function OnboardingSteps(props: {
   const headingId = `onboarding-step-${step}`;
   useFocusOnStepChange(step, headingId);
 
-  /** Marks setup done, then opens Discover with the new "Picked for you" shelf. */
+  /**
+   * Marks setup done, then opens Discover with the new "Picked for you" shelf, or the page the
+   * member joined from (a campaign's landing page remembers its own, BOOKS-A10).
+   */
   async function finish() {
     await props.state.save({ kind: 'finish' });
-    await navigate('/discover');
+    await navigate(takePathAfterSignUp('/discover'));
   }
   const onFinish = () => void finish().catch(errorShownByHook);
 

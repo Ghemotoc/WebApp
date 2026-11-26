@@ -1,3 +1,4 @@
+import { dateLocaleFor } from '../../../lib/romania-time';
 /**
  * Dates as the forums show them (bundle FORUMS-1, part b; S1-E8-02; board 5.2: "14 Oct, 19:02",
  * "on 14 October").
@@ -16,7 +17,7 @@
  * @returns for example "14 Oct, 19:02"
  */
 export function postTime(isoDate: string, language: string): string {
-  return new Intl.DateTimeFormat(language, {
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
@@ -32,7 +33,7 @@ export function postTime(isoDate: string, language: string): string {
  * @returns for example "14 October"
  */
 export function threadDay(isoDate: string, language: string): string {
-  return new Intl.DateTimeFormat(language, {
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
     day: 'numeric',
     month: 'long',
   }).format(new Date(isoDate));

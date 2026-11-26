@@ -143,7 +143,7 @@ export function AgeCheckReturnPage() {
   return (
     <PageContainer className="tmc-rise flex justify-center pt-12 pb-6">
       <title>{t('ageCheck.return.documentTitle')}</title>
-      <section className="flex w-full max-w-[560px] flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card">
+      <section className="flex w-full max-w-[560px] flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card">
         {isKnown && userId === null ? (
           <p className="m-0 text-ink-muted">{t('ageCheck.signedOut')}</p>
         ) : null}

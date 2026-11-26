@@ -1,41 +1,41 @@
 /**
- * SearchPage: search stories, writers and tags, screen 3.2 (story S1-E5-04;
- * design/boards/Search.dc.html).
+ * SearchPage: search stories, writers and Together, screen 3.2 (story S1-E5-04; user stories 1.7
+ * and 1.8, boards A07-Search and A08-SearchResults).
  *
- * Who shows it: the router, at /search?q=…; the search field on Discover leads here.
- * What it shows: the eyebrow and "Results for “…”" (or "Search" with no term), the search field
- * with the diacritics hint, then SearchResults. A term under 2 letters says so instead of
- * searching. The term lives in the address, so a search can be shared.
- * Look (bundle G7c; board Search): the title and the search bar sit centred above the results.
- * On phones the title is for screen readers only and the field sits at the top (bundle CALM-7c;
- * board simplified/New-PhoneSearch).
- * Board differences: the board's Forum posts group waits for the forums (S1-E8-10); its ad slot
- * waits for S1-E12; tags take the third group (the story's criteria: stories, writers, tags). The
- * board's Stories, People, Forums and Spaces switch and its recent searches are not built (the
- * results already come in groups, and recent searches would keep what a person typed).
- * What it calls: SearchForm and SearchResults.
+ * Who shows it: the router, at /search?q=…; the search button in the top bar leads here.
+ * What it shows: the title "Search" on the left and the search field the width of the page.
+ * Before a search (board A07): Recent searches and Trending tags on the left (the searches kept
+ * on this device only), and Writers to try with one advert that fills the column on the right; no advert under the field (Robert,
+ * 20 Nov 2026, 17:44). With a term (board A08): the results tabs across the page (SearchResults),
+ * with their own advert under the filters. A term under 2 letters says so instead of searching.
+ * The term lives in the address, so a search can be shared; it follows what is typed
+ * (SearchForm).
+ * On phones the title is for screen readers only and the field sits at the top (bundle CALM-7c).
+ * What it calls: SearchForm, RecentSearches, TrendingTags, SearchResults and RisingWritersList.
  */
 import { useSearchParams } from 'react-router';
 
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
 import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
+import { RisingWritersList } from '@/features/discovery/components/RisingWritersList';
 
 import { isSearchable } from '../lib/searchAddresses';
 import { useSearchTranslation } from '../registerSearchTranslations';
 
+import { RecentSearches } from './RecentSearches';
 import { SearchForm } from './SearchForm';
 import { SearchResults } from './SearchResults';
+import { TrendingTags } from './TrendingTags';
 
 /**
- * What goes under the field: a prompt, "type at least 2 letters", or the results.
+ * What goes under the field once there is a term: "type at least 2 letters", or the results.
  *
  * @param props.term - the term from the address
  * @returns the block
  */
 function SearchBody({ term }: { term: string }) {
   const { t } = useSearchTranslation();
-  if (term === '') return <p className="m-0 type-body text-ink-muted">{t('page.start')}</p>;
   if (!isSearchable(term))
     return <p className="m-0 type-body text-ink-muted">{t('page.tooShort')}</p>;
   return <SearchResults term={term} />;
@@ -50,27 +50,32 @@ export function SearchPage() {
   const { t } = useSearchTranslation();
   const [search] = useSearchParams();
   const term = (search.get('q') ?? '').trim();
-  const heading = term === '' ? t('page.heading') : t('page.resultsFor', { term });
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-12 max-md:gap-4 max-md:pt-4">
+    <PageContainer className="tmc-rise flex flex-col gap-12 pt-8 pb-16 max-md:gap-4 max-md:pt-4">
       <title>{t('page.documentTitle', { productName: brand.productName })}</title>
-      {/* The title and the glass search bar, centred (board Search, bundle G7c). */}
-      <div className="mx-auto flex w-full max-w-[900px] flex-col gap-6 max-md:gap-3">
-        <header className="flex flex-col items-center gap-3 text-center max-md:sr-only">
-          <h1 className="m-0 min-w-0 break-words type-display">{heading}</h1>
-        </header>
-        {/* A new term starts the field afresh, so the key is the term. */}
-        <SearchForm key={term} initialTerm={term} showsHint />
+      <div className="flex flex-col gap-8 max-md:gap-3">
+        <h1 className="m-0 min-w-0 break-words type-title lg:type-display max-md:sr-only">
+          {t('page.heading')}
+        </h1>
+        <SearchForm initialTerm={term} />
       </div>
-      {/* The results with the portrait ad beside them from 1200 px; the wide ad comes after
-          the results, never above them (S1-E12-01; board AdFormats). */}
-      <div className="grid gap-8 min-[1200px]:grid-cols-[minmax(0,1fr)_300px] min-[1200px]:items-start">
-        <div className="flex min-w-0 flex-col gap-8">
-          <SearchBody term={term} />
-          <PageAdSlot pageKey="search" position={1} />
+      {term === '' ? (
+        // Left, the recent searches and the trending tags; right, Writers to try and the one advert that fills the
+        // column (board A07; Robert, 20 Nov 2026, 17:42).
+        <div className="grid gap-12 min-[1024px]:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] min-[1024px]:items-start min-[1024px]:gap-16">
+          <div className="flex min-w-0 flex-col gap-8">
+            <RecentSearches />
+            <TrendingTags />
+          </div>
+          <aside aria-label={t('page.sideLabel')} className="flex min-w-0 flex-col gap-8">
+            <RisingWritersList headingId="search-writers-heading" title={t('page.writersToTry')} />
+            <PageAdSlot pageKey="search" position={2} isSpaceReserved={false} />
+          </aside>
         </div>
-        <PageAdSlot pageKey="search" position={2} isSpaceReserved={false} />
-      </div>
+      ) : (
+        // The results take the page's width; their advert sits under the filters (board A08).
+        <SearchBody term={term} />
+      )}
     </PageContainer>
   );
 }

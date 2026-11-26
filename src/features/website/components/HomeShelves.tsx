@@ -6,8 +6,9 @@
  *
  * The rows are the shared Discover shelves, which already keep to ratings, blocks and removed
  * content (S1-E5-01) and end with "View more" (S1-E5-09, CLAUDE.md rule 20). The chips are one
- * radio group: "All" or one category; the row keeps its stories while the next ones load, so the
- * chips never move. Titles are interface text.
+ * radio group: "Every genre" or one category, under the row as board A01 draws them (Robert's
+ * review of 25 Nov 2026; the copy rule allows no "All"); the row keeps its stories while the next
+ * ones load, so the chips never move. Titles are interface text.
  * Who shows it: WebsiteHomePage. What it calls: DiscoverShelf, ChoiceChips.
  */
 import { useState } from 'react';
@@ -18,7 +19,7 @@ import type { ListRequest } from '@/features/discovery/api/storyLists';
 import { DiscoverShelf } from '@/features/discovery/components/DiscoverShelf';
 import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
-/** The value of the "All" chip. */
+/** The value of the "Every genre" chip. */
 const allGenres = '';
 
 /**
@@ -41,7 +42,7 @@ function TrendingShelf() {
   const { t } = useTranslation();
   const { categories } = useStoryFormOptions();
   const [genre, setGenre] = useState(allGenres);
-  // Step 1: "All", then every category in the categories table's order.
+  // Step 1: "Every genre", then every category in the categories table's order.
   const options = [
     { value: allGenres, label: t('website.allGenres') },
     ...categories.map((category) => ({
@@ -57,6 +58,7 @@ function TrendingShelf() {
       title={t('website.trending')}
       request={shelfRequest('popular', genre === allGenres ? null : genre)}
       emptyNote={t('website.noTrending')}
+      toolbarPlacement="below"
       toolbar={
         categories.length === 0 ? undefined : (
           <ChoiceChips

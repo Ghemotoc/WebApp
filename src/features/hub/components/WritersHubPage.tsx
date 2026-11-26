@@ -1,56 +1,44 @@
 /**
- * WritersHubPage: the Home page at /hub, the signed-in home the logo opens (bundle G9 WRITING;
- * since CALM-7c the simplified board New-Home; design rulebook: "When signed in, the logo goes to
- * the Writers' hub").
+ * WritersHubPage: the Writers' hub at /hub (user story 1.3, board A03-WritersHub; until 25 Nov 2026
+ * /hub was also the signed-in Home, which now lives at /, MemberHomePage).
  *
- * Top to bottom, as on the board: the hero with the writing month; the writer's own invitations
- * (writer of the week, GAPS-12e; a home-page comment, GAPS-13) when there are any; Continue
- * reading beside Drafts; Open for entries now (the contests); Tools for the next chapter (the
- * prompt of the week, GAPS-12c, and the guides); New from writers you follow beside Talk about
- * stories. Then the hub's other parts, which the board leaves out but which stay (Robert, 20 Nov
- * 2026: the redesign keeps every feature): the writer of the week, the learning path (GAPS-12g)
- * and the live sessions (GAPS-12h), with the badges (GAPS-12f), this week's numbers (GAPS-12b),
- * the tools and the calls for submissions (GAPS-12d) beside them on a wide screen.
- * Each pair sits in two columns from 900 px and stacks below that.
- * Left out: the board's 970 × 90 advert, which needs an ad slot of its own (S1-E12-04).
+ * As on the board: the hero (title, Start writing and the words written this month), then two
+ * columns from 900 px. Left, the wider one: the lead contest, the prompt of the week (GAPS-12c),
+ * the writing guides, the seven-day learning path (GAPS-12g), the live sessions (GAPS-12h), more
+ * contests and the calls for submissions (GAPS-12d). Right: the writer of the week (GAPS-12e), the
+ * advert (slot hub_side, a side box from 1200 px; 25 Nov 2026), the tools, this week's numbers
+ * (GAPS-12b) and the badges (GAPS-12f). Below 900 px the right column follows the left.
+ * The board's advert sits in one of two places: the side box from 1200 px, and below that a wide
+ * banner between the writing guides and the learning path (slot hub_wide, position 2), because
+ * side boxes are not drawn under 1200 px. So a member always sees one of the two, never both.
  * Signed out, it says to log in, as Notifications does.
- * Who shows it: the router, at /hub; the logo links here when someone is signed in.
- * What it calls: the Hub* sections below and useSession.
+ * Who shows it: the router, at /hub. What it calls: the Hub* sections below, PageAdSlot and useSession.
  */
 import { Link } from 'react-router';
 
 import { PageContainer } from '@/components/ui/PageContainer';
 import { brand } from '@/config/brand';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { useSession } from '@/features/auth/hooks/useSession';
 
 import { useHubTranslation } from '../registerHubTranslations';
 
 import { HubCalls } from './HubCalls';
-import { HubContests } from './HubContests';
-import { HubContinueReading } from './HubContinueReading';
-import { HubDrafts } from './HubDrafts';
-import { HubFollowingRow } from './HubFollowingRow';
-import { HubHero } from './HubHero';
-import { HubHomeCommentInvitations } from './HubHomeCommentInvitations';
+import { HubGuideRows } from './HubGuideRows';
+import { HubLeadContest } from './HubLeadContest';
 import { HubMonth } from './HubMonth';
+import { HubMoreContests } from './HubMoreContests';
 import { HubPath } from './HubPath';
+import { HubPrompt } from './HubPrompt';
 import { HubSessions } from './HubSessions';
 import { HubSpotlight } from './HubSpotlight';
-import { HubSpotlightInvitations } from './HubSpotlightInvitations';
-import { HubTalk } from './HubTalk';
 import { HubTools } from './HubTools';
-import { HubToolsSection } from './HubToolsSection';
 import { HubWeek } from './HubWeek';
+import { HubWritersHero } from './HubWritersHero';
 
 /**
- * Two parts side by side from 900 px (board New-Home: the wider one first), stacked below it; a
- * part that has nothing to show leaves the other the whole width.
- */
-const twoColumnClasses =
-  'grid items-start gap-12 min-[900px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] [&>*:only-child]:col-span-full';
-
-/**
- * The hub for someone signed in.
+ * The hub for someone signed in: the hero, then the two columns of board A03 (1.7 : 1, 64 px
+ * apart from 900 px; 48 px between parts).
  *
  * @returns the sections, top to bottom
  */
@@ -59,43 +47,29 @@ function HubBody() {
   const now = new Date();
   return (
     <div className="flex flex-col gap-12 pt-8 pb-16">
-      <HubHero now={now} />
-      <HubSpotlightInvitations />
-      <HubHomeCommentInvitations />
-      <div className={twoColumnClasses}>
-        <HubContinueReading />
-        <HubDrafts />
-      </div>
-      <HubContests now={now} />
-      <HubToolsSection now={now} />
-      <div className={twoColumnClasses}>
-        <HubFollowingRow />
-        <HubTalk />
-      </div>
-      <HubMoreForWriters now={now} />
-    </div>
-  );
-}
-
-/**
- * The hub's other parts, in two columns from a wide screen.
- *
- * @param props.now - today, for the calls' days left
- * @returns the two columns
- */
-function HubMoreForWriters({ now }: { now: Date }) {
-  return (
-    <div className="flex flex-wrap items-start gap-6">
-      <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
-        <HubSpotlight />
-        <HubPath />
-        <HubSessions />
-      </div>
-      <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-6">
-        <HubMonth />
-        <HubWeek />
-        <HubTools />
-        <HubCalls now={now} />
+      <HubWritersHero now={now} />
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-12 min-[900px]:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] min-[900px]:gap-16">
+        <div className="flex min-w-0 flex-col gap-12">
+          <HubLeadContest now={now} />
+          <HubPrompt now={now} />
+          <HubGuideRows />
+          {/* Board A03: below 1200 px the advert is a banner here instead of the side box
+              (slot hub_wide; staff turn it off or book it in Sponsors › Placements). */}
+          <PageAdSlot pageKey="hub" position={2} className="min-[1200px]:hidden" />
+          <HubPath />
+          <HubSessions />
+          <HubMoreContests now={now} />
+          <HubCalls now={now} />
+        </div>
+        <div className="flex min-w-0 flex-col gap-12">
+          <HubSpotlight />
+          {/* Board A03: the hub's one advert, a side box under the writer of the week (slot
+              hub_side; staff turn it off or book it in Sponsors › Placements). */}
+          <PageAdSlot pageKey="hub" position={1} isSpaceReserved={false} />
+          <HubTools />
+          <HubWeek />
+          <HubMonth />
+        </div>
       </div>
     </div>
   );

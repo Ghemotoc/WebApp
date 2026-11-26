@@ -254,11 +254,11 @@
       "chapter_end": "Banner la finalul capitolului",
       "story_wide": "Banner lat pe pagina poveștii",
       "discover_wide": "Banner lat în Descoperă",
-      "discover_card": "Card sponsorizat în Descoperă",
+      "discover_card": "Banner mai jos în Citește",
       "search_wide": "Banner lat în Căutare",
       "search_portrait": "Portret în Căutare",
       "classics_wide": "Banner lat în Clasici",
-      "see_all_card": "Card în Vezi tot",
+      "see_all_card": "Banner lat în Vezi tot",
       "teaser_wide": "Banner pe pagina linkului distribuit",
       "forums_wide": "Banner lat în Forumuri",
       "forums_side": "Casetă laterală în Forumuri",
@@ -266,7 +266,11 @@
       "thread_side": "Casetă laterală în discuție",
       "space_wide": "Banner lat în spațiu",
       "profile_wide": "Banner lat pe profil",
-      "library_wide": "Banner lat în Bibliotecă"
+      "library_wide": "Banner lat în Bibliotecă",
+      "library_lower_wide": "Banner lat de jos în Bibliotecă",
+      "home_wide": "Banner lat pe Acasă",
+      "hub_side": "Casetă laterală în Spațiul scriitorilor",
+      "hub_wide": "Banner lat în Spațiul scriitorilor"
     },
     "formats": {
       "wide": "banner lat",

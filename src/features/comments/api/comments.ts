@@ -1,7 +1,9 @@
 /**
  * Comments on a chapter: reading a page, posting, replying and deleting (story S1-E6-01). A
  * comment can also be on one paragraph (S1-E6-06): it carries which one, and postComment sends
- * it through post_paragraph_comment().
+ * it through post_paragraph_comment(). Since READER-SELECT (boards B12 to B14) a comment can be on
+ * words the reader chose: it carries them as its quote, and postComment sends it through
+ * post_passage_comment().
  * Each comment also carries its reactions (S1-E6-02, api/reactions.ts) and whether the reader
  * downvoted it (S1-E6-04, api/downvotes.ts). A page also says when a pause of new comments ends
  * while one runs (CALM-8, api/commentPause.ts), and a refused comment says until when.
@@ -18,6 +20,21 @@ import type { ChapterAddress } from '@/features/reading/api/likes';
 
 import { commentPauseFrom, type CommentPause, type CommentPauseRow } from './commentPause';
 import type { CommentReactions, ReactionsRow } from './reactions';
+
+/**
+ * The words a comment is on (READER-SELECT, boards B12 to B14): what they say and where they are,
+ * as when the comment was posted. Offsets count characters (UTF-16, as the browser counts them) in
+ * the paragraph's text as the reader draws it; the end may be in a later paragraph.
+ */
+export interface CommentQuote {
+  text: string;
+  /** The paragraph the words start in, from 1. */
+  startBlock: number;
+  startOffset: number;
+  /** The paragraph they end in: the same one, or a later one. */
+  endBlock: number;
+  endOffset: number;
+}
 
 /** What the reader sees in a comment's place (comment_state_for_caller()). */
 export type CommentState = 'live' | 'hidden' | 'removed' | 'deleted';
@@ -46,6 +63,8 @@ export interface ChapterComment {
    * changed that paragraph, or null for the whole chapter (and inside a paragraph's own thread).
    */
   paragraph: number | 'earlier' | null;
+  /** The words it is on (READER-SELECT), or null for a whole paragraph or the chapter. */
+  quote: CommentQuote | null;
 }
 
 /** One page of comments, newest first. */
@@ -73,6 +92,8 @@ export type CommentFailure =
   | 'too_many'
   | 'too_many_links'
   | 'too_long'
+  | 'quote_too_long'
+  | 'quote_gone'
   | 'comments_off'
   | 'paused'
   | 'followers_only'
@@ -109,6 +130,33 @@ export interface CommentRow {
   downvoted_by_me?: boolean;
   replies?: CommentRow[];
   paragraph?: number | 'earlier' | null;
+  quote?: QuoteRow | null;
+}
+
+/** The JSON a comment's chosen words arrive as (comment_quote_json()). */
+export interface QuoteRow {
+  text: string;
+  start_block: number;
+  start_offset: number;
+  end_block: number;
+  end_offset: number;
+}
+
+/**
+ * Turns the chosen words' JSON into a CommentQuote.
+ *
+ * @param row - the words as the database sends them, or nothing
+ * @returns the quote, or null when the comment has none
+ */
+function quoteFrom(row: QuoteRow | null | undefined): CommentQuote | null {
+  if (row === null || row === undefined) return null;
+  return {
+    text: row.text,
+    startBlock: row.start_block,
+    startOffset: row.start_offset,
+    endBlock: row.end_block,
+    endOffset: row.end_offset,
+  };
 }
 
 /**
@@ -145,7 +193,18 @@ export function commentFrom(row: CommentRow): ChapterComment {
     isDownvotedByMe: row.downvoted_by_me ?? false,
     replies: (row.replies ?? []).map(commentFrom),
     paragraph: row.paragraph ?? null,
+    quote: quoteFrom(row.quote),
   };
+}
+
+/** The order a chapter's comments are listed in (BOOKS B05: the heading's choice). */
+export type CommentOrder = 'newest' | 'oldest';
+
+/** Which page to read: where it starts and in which order. */
+export interface CommentsPageRequest {
+  /** null for the first page; the last shown comment's createdAt for the next. */
+  pageAfter: string | null;
+  order: CommentOrder;
 }
 
 /**
@@ -153,19 +212,20 @@ export function commentFrom(row: CommentRow): ChapterComment {
  *
  * @param client - the shared Supabase client
  * @param address - the chapter
- * @param olderThan - null for the first page; the last shown comment's createdAt for the next
+ * @param page - where the page starts and the order (newest or oldest first)
  * @returns the page, or null when the reader may not read the chapter
  * Errors: throws with Supabase's message when the database can't be reached.
  */
 export async function fetchCommentsPage(
   client: AppSupabaseClient,
   address: ChapterAddress,
-  olderThan: string | null,
+  page: CommentsPageRequest,
 ): Promise<CommentsPage | null> {
   const { data, error } = await client.rpc('chapter_comments', {
     story_slug: address.storySlug,
     chapter_code: address.chapterCode,
-    ...(olderThan === null ? {} : { older_than: olderThan }),
+    oldest_first: page.order === 'oldest',
+    ...(page.pageAfter === null ? {} : { page_after: page.pageAfter }),
   });
   if (error !== null) throw new Error(`Could not read the comments: ${error.message}`);
   if (data === null) return null;
@@ -191,6 +251,9 @@ export async function fetchCommentsPage(
 function refusedErrorFrom(hint: string | null | undefined): CommentError {
   if (hint === 'too_many_links') return new CommentError('too_many_links');
   if (hint?.startsWith('paragraph_too_long') === true) return new CommentError('too_long');
+  // READER-SELECT: more than 1,000 chosen characters, or words no longer in the chapter.
+  if (hint === 'quote_too_long') return new CommentError('quote_too_long');
+  if (hint === 'quote_not_found') return new CommentError('quote_gone');
   return new CommentError('refused');
 }
 
@@ -229,7 +292,8 @@ function closedErrorFrom(hint: string | null | undefined): CommentError {
  *   "wait_minutes:n"), paused (55000 with the hint "paused_until:<end>", CALM-8), comments_off
  *   (55000), too_many_links (23514 with the hint
  *   "too_many_links": a new account's comment with more than one link, S1-E10-12), too_long
- *   (23514 with the hint "paragraph_too_long:<limit>"), refused (23514: the text), gone (P0002), or
+ *   (23514 with the hint "paragraph_too_long:<limit>"), quote_too_long and quote_gone (23514 with
+ *   the hints "quote_too_long" and "quote_not_found", READER-SELECT), refused (23514: the text), gone (P0002), or
  *   unreachable
  */
 export function commentErrorFrom(error: { code?: string; hint?: string | null }): CommentError {
@@ -252,6 +316,40 @@ export interface NewComment {
   replyTo: string | null;
   /** The paragraph it is on (S1-E6-06), counted from 1; left out for the whole chapter. */
   paragraph?: number;
+  /** The words it is on (READER-SELECT); its startBlock is then the paragraph. */
+  quote?: CommentQuote;
+}
+
+/**
+ * Posts a comment on words the reader chose (READER-SELECT, boards B12 to B14).
+ *
+ * @param client - the shared Supabase client
+ * @param address - the chapter
+ * @param comment - the text and the spoiler mark
+ * @param quote - the chosen words and where they are
+ * @returns the new comment's ID
+ * Errors: throws CommentError (see commentErrorFrom): quote_too_long over 1,000 characters,
+ *   quote_gone when the words aren't in the chapter (any more), gone when a paragraph is missing.
+ */
+async function postPassageComment(
+  client: AppSupabaseClient,
+  address: ChapterAddress,
+  comment: NewComment,
+  quote: CommentQuote,
+): Promise<string> {
+  const { data, error } = await client.rpc('post_passage_comment', {
+    story_slug: address.storySlug,
+    chapter_code: address.chapterCode,
+    start_block: quote.startBlock,
+    start_offset: quote.startOffset,
+    end_block: quote.endBlock,
+    end_offset: quote.endOffset,
+    quote: quote.text,
+    body: comment.body,
+    is_spoiler: comment.isSpoiler,
+  });
+  if (error !== null) throw commentErrorFrom(error);
+  return (data as unknown as { id: string }).id;
 }
 
 /**
@@ -295,8 +393,11 @@ export async function postComment(
   address: ChapterAddress,
   comment: NewComment,
 ): Promise<string> {
-  // A comment on a paragraph has its own call; a reply goes through post_comment() and takes
-  // its comment's paragraph in the database.
+  // A comment on chosen words or on a paragraph has its own call; a reply goes through
+  // post_comment() and takes its comment's paragraph and words in the database.
+  if (comment.quote !== undefined && comment.replyTo === null) {
+    return postPassageComment(client, address, comment, comment.quote);
+  }
   if (comment.paragraph !== undefined && comment.replyTo === null) {
     return postParagraphComment(client, address, comment, comment.paragraph);
   }

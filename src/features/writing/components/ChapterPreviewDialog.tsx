@@ -63,7 +63,7 @@ export function ChapterPreviewDialog({
       ref={dialogRef}
       aria-labelledby="chapter-preview-heading"
       onClose={onClose}
-      className="m-auto w-[min(94vw,820px)] rounded-card border border-border bg-surface p-[clamp(20px,4vw,48px)] text-ink shadow-card backdrop:bg-ink/40"
+      className="m-auto w-[min(94vw,820px)] rounded-card border border-border bg-surface p-4 lg:p-12 text-ink shadow-card backdrop:bg-ink/40"
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -75,10 +75,7 @@ export function ChapterPreviewDialog({
           </Button>
         </div>
         <p className="m-0 type-meta text-ink-muted">{t('preview.note')}</p>
-        <h2
-          lang={language}
-          className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] font-bold text-ink-heading"
-        >
+        <h2 lang={language} className="m-0 type-title text-ink-heading">
           {title}
         </h2>
         <ChapterText

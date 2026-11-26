@@ -120,7 +120,7 @@ export function PublicCharacter({ plan, character, base, isPreview }: PublicChar
           <div className="flex min-w-0 flex-col gap-2">
             <h2
               id="atlas-public-character-heading"
-              className="m-0 font-heading text-[clamp(28px,3vw,40px)] leading-[1.05] font-bold break-words text-ink-heading"
+              className="m-0 type-title break-words text-ink-heading"
             >
               {character.name}
             </h2>

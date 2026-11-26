@@ -6,7 +6,7 @@
  * - teacher follows adult_writer on the profile: the button turns to "Following" (pressed, with
  *   a tick) and the follower count goes from 1 to 2; unfollowing takes it back (first criterion);
  * - teacher follows the story from the story page, and unfollows it;
- * - the count is public, the list isn't: a visitor sees "only Lia Scrie sees who" and a
+ * - the count is public, the list isn't: a visitor sees "only Lia Scrie sees who they are" and a
  *   log-in link instead of Follow; adult_writer opens "See who follows you" on their own profile
  *   and sees teen_17 (second criterion, Q50);
  * - a read-only account (kid_14_ok) is told it can't follow yet;
@@ -66,8 +66,11 @@ test.describe('follows (S1-E6-05)', () => {
 
   test('teacher follows and unfollows adult_writer; the count follows', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', '/u/adult_writer');
-    // The followers number: the <dd> beside the label that says who sees the list.
-    const followerCount = page.locator('dl > div', { hasText: 'sees who' }).locator('dd');
+    // The followers number: the <dd> beside the "Follower" or "Followers" label (board C04).
+    const followerCount = page
+      .locator('dl > div')
+      .filter({ has: page.locator('dt', { hasText: /^Followers?$/ }) })
+      .locator('dd');
     await expect(followerCount).toHaveText('1');
     const follow = page.getByRole('button', { name: 'Follow Lia Scrie' });
     await expect(follow).toHaveAttribute('aria-pressed', 'false');
@@ -96,9 +99,12 @@ test.describe('follows (S1-E6-05)', () => {
     await page.getByRole('button', { name: 'Follow story Stația meteo' }).click();
     const following = page.getByRole('button', { name: 'Following story Stația meteo' });
     await expect(following).toHaveAttribute('aria-pressed', 'true');
-    expect(
-      runSql(`select count(*) from public.follows_stories where user_id = '${teacherId}'`),
-    ).toBe('1');
+    // The button turns pressed as soon as it is clicked, before the save lands, so wait for it.
+    await expect
+      .poll(() =>
+        runSql(`select count(*) from public.follows_stories where user_id = '${teacherId}'`),
+      )
+      .toBe('1');
     await following.click();
     await expect(page.getByRole('button', { name: 'Follow story Stația meteo' })).toBeVisible();
     await page.context().close();
@@ -106,7 +112,9 @@ test.describe('follows (S1-E6-05)', () => {
 
   test('a visitor sees the count and a log-in link, never the list', async ({ browser }) => {
     const page = await openAs(browser, null, '/u/adult_writer');
-    await expect(page.locator('dl')).toContainText('only Lia Scrie sees who');
+    await expect(
+      page.getByText('Followers are counted publicly; only Lia Scrie sees who they are.'),
+    ).toBeVisible();
     await expect(page.getByRole('link', { name: 'Get in to follow' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'See who follows you' })).toHaveCount(0);
     await page.context().close();

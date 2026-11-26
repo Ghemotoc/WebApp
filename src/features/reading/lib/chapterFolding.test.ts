@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { StoryPageChapter } from '../api/storyPage';
-import { foldedChapterCodes } from './chapterFolding';
+import { foldedChapterCodes, phoneFoldedChapters } from './chapterFolding';
 
 /** A list of chapters numbered 1 to count, with codes "c1", "c2" and so on. */
 function chaptersUpTo(count: number): StoryPageChapter[] {
@@ -25,5 +25,21 @@ describe('folding a long chapter list', () => {
 
   it("the reader's own chapter stays in sight", () => {
     expect(foldedChapterCodes(chaptersUpTo(15), 'c12').has('c12')).toBe(false);
+  });
+});
+
+describe('folding a long chapter list on a phone', () => {
+  it('a story with 8 chapters or fewer shows every chapter', () => {
+    expect(phoneFoldedChapters(chaptersUpTo(8), null).range).toBeNull();
+  });
+
+  it('a story with 15 chapters shows the first 4 and the last 3', () => {
+    const fold = phoneFoldedChapters(chaptersUpTo(15), null);
+    expect(fold.range).toEqual({ from: 5, to: 12 });
+    expect([...fold.codes]).toEqual(['c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12']);
+  });
+
+  it("the reader's own chapter stays in sight on a phone", () => {
+    expect(phoneFoldedChapters(chaptersUpTo(15), 'c9').codes.has('c9')).toBe(false);
   });
 });

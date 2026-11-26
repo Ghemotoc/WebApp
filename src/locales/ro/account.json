@@ -44,7 +44,6 @@
   },
   "settings": {
     "documentTitle": "Setări · {{productName}}",
-    "eyebrow": "Cont",
     "heading": "Setări",
     "signedInAs": "Contul conectat: {{name}} · @{{handle}}",
     "accountHeading": "Cont",

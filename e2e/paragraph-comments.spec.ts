@@ -158,6 +158,37 @@ test.describe('comments on a paragraph (S1-E6-06)', () => {
     await page.context().close();
   });
 
+  test('on a wide screen the marker sits in the right margin, clear of the text and the side column', async ({
+    browser,
+  }) => {
+    // Robert, 24 Nov 2026: the comment mark goes on the right of the paragraph, not the left.
+    const page = await openAs(browser, 'teacher');
+    for (const width of [1024, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      const marker = markerOf(page, 2);
+      await expect(marker).toBeVisible();
+      const markerBox = await marker.boundingBox();
+      const textBox = await page.locator('p[data-block="2"]').boundingBox();
+      expect(markerBox, `${width} px`).not.toBeNull();
+      expect(textBox, `${width} px`).not.toBeNull();
+      if (markerBox === null || textBox === null) continue;
+      // Right of the text, and still on the screen.
+      expect(markerBox.x, `${width} px`).toBeGreaterThanOrEqual(textBox.x + textBox.width);
+      expect(markerBox.x + markerBox.width, `${width} px`).toBeLessThanOrEqual(width);
+      // The side column (from 1280 px) starts to the right of the marker.
+      const side = page.getByRole('complementary', { name: 'Reading tools' });
+      if (width >= 1280) {
+        await expect(side).toBeVisible();
+        const sideBox = await side.boundingBox();
+        expect(sideBox).not.toBeNull();
+        if (sideBox !== null) {
+          expect(markerBox.x + markerBox.width, `${width} px`).toBeLessThanOrEqual(sideBox.x);
+        }
+      }
+    }
+    await page.context().close();
+  });
+
   test('below 1280 px the thread opens in the bottom sheet, with no side column', async ({
     browser,
   }) => {

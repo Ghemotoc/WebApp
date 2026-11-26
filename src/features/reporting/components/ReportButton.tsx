@@ -34,16 +34,22 @@ export interface ReportButtonProps {
   itemType: ReportableType;
   itemReference: string;
   itemLabel: string;
-  /** How it looks: underlined words (the default), a glass pill, or a round icon button. */
+  /**
+   * How it looks: underlined words (the default), underlined words after a flag (the story page,
+   * board B01), a glass pill, or a round icon button.
+   */
   look?: ReportButtonLook;
+  /** The visible words, when they say more than "Report" ("Report this story", board B01). */
+  visibleLabel?: string;
 }
 
-/** The three looks of the button (bundle G8c). */
-export type ReportButtonLook = 'text' | 'pill' | 'icon';
+/** The looks of the button (bundle G8c; flaggedText from board B01, bundle 2). */
+export type ReportButtonLook = 'text' | 'flaggedText' | 'pill' | 'icon';
 
 /** The Button variant and extra classes for each look. */
 const lookStyles: Record<ReportButtonLook, { variant: 'text' | 'secondary'; className: string }> = {
   text: { variant: 'text', className: '' },
+  flaggedText: { variant: 'text', className: '' },
   pill: { variant: 'secondary', className: 'h-9 px-4 type-meta' },
   icon: { variant: 'secondary', className: 'size-9 shrink-0 px-0' },
 };
@@ -71,6 +77,7 @@ export function ReportButton({
   itemReference,
   itemLabel,
   look = 'text',
+  visibleLabel,
 }: ReportButtonProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -97,7 +104,11 @@ export function ReportButton({
         variant={lookStyles[look].variant}
         className={lookStyles[look].className}
         aria-haspopup="dialog"
-        aria-label={t('actions.reportItem', { item: itemLabel })}
+        // Visible words that already say what is reported ("Report this story") are the name, so
+        // the name and the label always match (WCAG 2.5.3).
+        aria-label={
+          visibleLabel === undefined ? t('actions.reportItem', { item: itemLabel }) : undefined
+        }
         onPointerDown={() => {
           passageAtPointerDown.current = readSelectedPassage();
         }}
@@ -105,7 +116,7 @@ export function ReportButton({
       >
         {/* The flag is decorative: the accessible name says what is reported. */}
         {look !== 'text' && <NavIcon name="flag" size={look === 'icon' ? 16 : 14} />}
-        {look !== 'icon' && t('actions.report')}
+        {look !== 'icon' && (visibleLabel ?? t('actions.report'))}
       </Button>
       {hasOpened && (
         <Suspense fallback={null}>

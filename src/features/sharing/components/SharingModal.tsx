@@ -81,7 +81,7 @@ export function SharingModal(props: SharingModalProps) {
       aria-labelledby={titleId}
       aria-describedby={props.description === undefined ? undefined : descriptionId}
       style={{ maxWidth: `min(100% - 32px, ${props.width ?? 560}px)` }}
-      className="m-auto w-full rounded-card border border-border bg-surface p-[clamp(20px,5vw,28px)] text-ink shadow-card backdrop:bg-ink/50"
+      className="m-auto w-full rounded-card border border-border bg-surface p-4 lg:p-6 text-ink shadow-card backdrop:bg-ink/50"
     >
       {props.isOpen && (
         <div className="flex flex-col gap-4">

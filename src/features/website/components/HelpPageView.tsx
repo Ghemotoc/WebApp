@@ -86,9 +86,7 @@ function HelpArticle({ page }: { page: ParsedEntry<HelpPageContent> }) {
         lang={page.languageCode}
         className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card sm:p-8 lg:px-12 lg:py-12"
       >
-        <h1 className="m-0 font-heading text-[clamp(28px,3.4vw,40px)] font-bold text-ink-heading">
-          {title}
-        </h1>
+        <h1 className="m-0 type-title text-ink-heading">{title}</h1>
         <p className="m-0 type-body text-ink-muted" lang={i18n.language}>
           {t('website.help.updatedLine', { date: updated, count: minutes })}
         </p>
@@ -111,7 +109,8 @@ export function HelpPageView() {
   const { entries, isLoaded, readFailed } = useWebsiteContent('help_page', helpPageContentSchema);
   const page = entries.find((entry) => entry.entryKey === slug);
   return (
-    <PageContainer className="flex max-w-[960px] flex-col gap-4 pt-8 pb-16">
+    // Board J26: the breadcrumb and the article sit on the page's left edge, at most 960 px wide.
+    <PageContainer className="flex flex-col items-start gap-4 pt-8 pb-16 [&>*]:w-full [&>*]:max-w-[960px]">
       {page !== undefined && <HelpArticle page={page} />}
       {page === undefined && readFailed && <Notice tone="error">{t('website.readFailed')}</Notice>}
       {page === undefined && isLoaded && !readFailed && (

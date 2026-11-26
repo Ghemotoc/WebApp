@@ -15,6 +15,11 @@
  *   at 1440, 768 and 390 px (DoD design rules);
  * - with a writer and a story followed, the Following cards stay inside a 390 px screen (the
  *   accessibility check of 6 Nov 2026 found them 19 px too wide; WCAG 1.4.10, CLAUDE.md rule 21).
+ * - the Library comes in board C01's order (Continue reading, the shelves, a banner, Bookshelves,
+ *   What you follow, the second banner, Written by you), and a new reader's Library is the short
+ *   one of board C08: Continue reading with "Find a story", Bookshelves and What you follow, with
+ *   no banner (Robert, 25 Nov 2026, 09:50 UTC: no widget missing between the canvas and the live
+ *   site).
  * Test data: adult_writer's story "Raftul bibliotecii" with two chapters (the first long enough to
  *   scroll); teen_17 reads it. All removed afterwards.
  */
@@ -120,8 +125,17 @@ test.describe('library and continue reading (S1-E4-03)', () => {
       'href',
       `/s/${storySlug}/libre2e1`,
     );
+    // Home's hero carries the story read last beside the writing month (board A01, story 1.1).
+    await again.goto('/');
+    const heroCard = again.getByRole('region', { name: 'Continue reading' }).first();
+    await expect(heroCard.getByRole('meter')).toBeVisible();
+    await expect(
+      heroCard.getByRole('link', { name: 'Continue reading Raftul bibliotecii' }),
+    ).toHaveAttribute('href', `/s/${storySlug}/libre2e1`);
     await again.goto(`/s/${storySlug}`);
     await expect(again.getByRole('link', { name: 'Continue chapter 1' })).toBeVisible();
+    // Bundle 2 (board B01): the drop-down sits in the sheet "In library" opens.
+    await again.getByRole('button', { name: 'In library' }).click();
     await expect(again.getByLabel('Library')).toHaveValue('reading');
   });
 
@@ -129,6 +143,7 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'teen_17', `/s/${storySlug}`);
+    await page.getByRole('button', { name: /^(Add to|In) library$/ }).click();
     await page.getByLabel('Library').selectOption('saved');
     await expect
       .poll(() =>
@@ -198,6 +213,46 @@ test.describe('library and continue reading (S1-E4-03)', () => {
     await expect(page.getByRole('heading', { level: 3, name: 'Writers · 1' })).toBeVisible();
     const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(pageWidth).toBeLessThanOrEqual(390);
+    await page.context().close();
+  });
+
+  test('the Library comes in board C01’s order, with the second banner after What you follow', async ({
+    browser,
+  }) => {
+    // teen_17 has a story on a shelf and follows from the tests above, so every section shows.
+    const page = await openAs(browser, 'teen_17', '/library');
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await expect(page.getByRole('heading', { level: 2, name: 'Written by you' })).toBeVisible();
+    await expect(page.locator('[data-ad]')).toHaveCount(2);
+    // Each section's heading and each banner, in the order they come down the page.
+    const order = await page
+      .locator('main h2, main [data-ad]')
+      .evaluateAll((parts) =>
+        parts.map((part) => (part.hasAttribute('data-ad') ? 'banner' : (part.textContent ?? ''))),
+      );
+    const wanted = ['Continue reading', 'banner', 'Bookshelves', 'What you follow', 'banner'];
+    const found = order.filter((part) => wanted.includes(part));
+    expect(found).toEqual(wanted);
+    expect(order.indexOf('Written by you')).toBeGreaterThan(order.lastIndexOf('banner'));
+    await page.context().close();
+  });
+
+  test('a new reader’s Library is the short one, with Find a story and no banner', async ({
+    browser,
+  }) => {
+    // support keeps no library: nothing shelved, no bookshelf, nobody followed (board C08).
+    const page = await openAs(browser, 'support', '/library');
+    await expect(page.getByRole('heading', { level: 2, name: 'What you follow' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Bookshelves' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Find a story' })).toHaveAttribute(
+      'href',
+      '/discover',
+    );
+    await expect(
+      page.getByText('Follow writers and stories to hear when something new is out.'),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Written by you' })).toHaveCount(0);
+    await expect(page.locator('[data-ad]')).toHaveCount(0);
     await page.context().close();
   });
 

@@ -11,13 +11,15 @@
  * heading is empty is left out. Shelf titles, the footer's columns and the top bar are interface
  * text from the locale files. The shelves keep to ratings, blocks and removed content
  * (S1-E5-01) and end with "View more" (S1-E5-09).
- * A signed-in member is sent to the Writers' hub instead (TRIAL-WALL, 23 Nov 2026).
+ * A signed-in member sees their own Home here instead, MemberHomePage (board A01, user story 1.1;
+ * until 25 Nov 2026 they were sent to /hub, TRIAL-WALL, 23 Nov 2026). Its code loads only for them.
  * Who shows it: the router for "/". What it calls: useWebsiteContent for the home page and the
  * questions, HomeShelves and the four bands; the shared footer follows (NIGHT-2).
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link, Navigate } from 'react-router';
+import { lazy, Suspense } from 'react';
+import { Link } from 'react-router';
 
 import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
@@ -115,10 +117,7 @@ function HomeQuestions({
       {/* The heading and "Something else?" on one side, the questions on the other (board). */}
       <div className="flex flex-col gap-4">
         <Eyebrow>{t('website.questionsEyebrow')}</Eyebrow>
-        <h2
-          id="questions-heading"
-          className="m-0 font-heading text-[clamp(28px,3vw,40px)] font-bold text-ink-heading"
-        >
+        <h2 id="questions-heading" className="m-0 type-title text-ink-heading">
           {withBrand(page.questionsHeading)}
         </h2>
         <MoreHelpLinks />
@@ -186,19 +185,41 @@ function homeDocumentTitle(searchTitle: string, t: TFunction): string {
 }
 
 /**
- * Renders the page.
+ * Home for a signed-in member (board A01), loaded only when someone signed in opens "/", so a
+ * visitor's page carries none of its code.
+ */
+const MemberHomePage = lazy(async () => ({
+  default: (await import('@/features/hub/components/MemberHomePage')).MemberHomePage,
+}));
+
+/**
+ * Renders the page: the member's Home when signed in, the public home page otherwise (Robert,
+ * 23 Nov 2026: "when people are signed in and they go to [the site], they don't go to their signed
+ * out page, they go to the signed in page for home"; user story 1.1 puts that page at "/").
  *
  * @returns the page
  */
 export function WebsiteHomePage() {
+  const { userId } = useSession();
+  if (userId !== null) {
+    return (
+      <Suspense fallback={null}>
+        <MemberHomePage />
+      </Suspense>
+    );
+  }
+  return <PublicHomePage />;
+}
+
+/**
+ * Renders the public home page.
+ *
+ * @returns the page
+ */
+function PublicHomePage() {
   const { t } = useTranslation();
   const { entries, readFailed } = useWebsiteContent('home_page', homePageContentSchema);
   const homePage = entries.find((entry) => entry.entryKey === 'home');
-  const { userId } = useSession();
-  // A signed-in member who opens the site's address goes to their own home, the Writers' hub
-  // (Robert, 23 Nov 2026: "when people are signed in and they go to [the site], they don't go to
-  // their signed out page, they go to the signed in page for home").
-  if (userId !== null) return <Navigate to="/hub" replace />;
   return (
     <PageContainer className="tmc-rise flex flex-col gap-12 pt-12 pb-16">
       <title>{homeDocumentTitle(homePage?.content.search?.title ?? '', t)}</title>

@@ -36,7 +36,7 @@ export function MaintenancePage({ onCheckAgain, isChecking }: MaintenancePagePro
       <title>{t('maintenance.documentTitle', { productName: brand.productName })}</title>
       <section
         aria-labelledby="maintenance-heading"
-        className="flex w-full max-w-[560px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+        className="flex w-full max-w-[560px] flex-col items-start gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
       >
         <h1 id="maintenance-heading" className="m-0 font-heading type-heading font-bold text-ink">
           {t('maintenance.heading', { productName: brand.productName })}

@@ -59,8 +59,11 @@ select results_eq(
        ('ad_bookings', 0::bigint),
        -- The ad slot catalogue: which slots exist, no personal data (SPONSORS-a1, S1-E12-01).
        ('ad_blocked_categories', (select count(*) from public.ad_blocked_categories)),
-       -- 17 since CALM-5 added the reader's side box (chapter_side).
-       ('ad_slots', 17::bigint),
+       -- 22: CALM-5 added the reader's side box (chapter_side), BOOKS-A01 the home and hub slots,
+       -- BOOKS-A03 the hub's wide banner under 1200 px (hub_wide), bundle 3 the profile's side
+       -- box (board C04, profile_side) and the Library's lower banner (board C01,
+       -- library_lower_wide).
+       ('ad_slots', 22::bigint),
        ('age_check_attempts', 0::bigint),
        ('age_check_sessions', 0::bigint),
        ('appeals', 0::bigint),
@@ -191,6 +194,8 @@ select results_eq(
        ('library_entries', 0::bigint),
        -- Genre and tag page backgrounds: staff choices read through list_page_background() (G12b).
        ('list_page_backgrounds', 0::bigint),
+       -- The line under a genre or tag page's title: website staff only; visitors read list_page_line() (BOOKS-A06).
+       ('list_page_lines', 0::bigint),
        -- Live sessions: staff content read through a function; a member's own reminders (GAPS-12h).
        ('live_session_reminders', 0::bigint),
        ('live_sessions', 0::bigint),
@@ -278,6 +283,7 @@ select results_eq(
        ('story_country_scores', 0::bigint),
        ('story_events', 0::bigint),
        ('story_ideas', 0::bigint),
+       ('story_likes', 0::bigint),
        ('story_marketing', 0::bigint),
        -- Pairs of stories finished by the same readers: totals for suggestions, staff only (S1-E15-06).
        ('story_pairs', 0::bigint),
@@ -302,10 +308,14 @@ select results_eq(
        ('tag_names', (select count(*) from public.tag_names)),
        ('tags', (select count(*) from public.tags where status = 'approved')),
        ('teacher_checks', 0::bigint),
+       -- Followed genres and tags: the member's own (BOOKS-A06).
+       ('topic_follows', 0::bigint),
        ('username_approvals', 0::bigint),
        ('username_word_lists', 0::bigint),
        -- The waiting list: each person's own entry and owner and admin (WAITLIST-1).
        ('waitlist_entries', 0::bigint),
+       -- To follow this week: staff with the Featured area only; visitors read writers_to_follow_now() (user story 1.4).
+       ('writer_follow_picks', 0::bigint),
        ('writer_ranks', 0::bigint),
        -- Writer of the week: the picked writer and contest staff only, members through writers_hub_spotlight() (GAPS-12e).
        ('writer_spotlights', 0::bigint),

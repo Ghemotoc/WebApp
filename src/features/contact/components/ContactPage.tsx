@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useContactForm } from '../hooks/useContactForm';
@@ -36,7 +35,7 @@ function MessageSent({ reference, onAgain }: { reference: string; onAgain: () =>
     <section
       role="status"
       aria-labelledby="contact-sent-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="contact-sent-heading"
@@ -68,25 +67,23 @@ export function ContactPage() {
   return (
     <PageContainer className="flex flex-col gap-8 pt-12 pb-6">
       <title>{t('documentTitle')}</title>
-      <div className="flex max-w-[720px] flex-col gap-3">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 font-heading text-[clamp(32px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.02em] text-ink-heading">
-          {t('heading')}
-        </h1>
-        <p className="m-0 type-long leading-[1.6] text-ink-muted">{t('intro')}</p>
-        {/* Reports of content go to the Report button, not here (Q10h). */}
-        <p className="m-0 text-ink-muted">
-          {t('reportInstead')}{' '}
-          <Link to="/legal/contact" className="text-link underline">
-            {t('reportInsteadLink')}
-          </Link>
-          .
-        </p>
+      {/* The board's header (J10, bundle 10): the heading and its lead, with no eyebrow. */}
+      <div className="flex flex-col gap-2">
+        <h1 className="m-0 type-title lg:type-display text-ink-heading">{t('heading')}</h1>
+        <p className="m-0 type-body text-ink-muted">{t('intro')}</p>
       </div>
+      {/* Reports of content go to the Report button, not here (Q10h); a small note, as drawn. */}
+      <p className="m-0 type-meta text-ink-muted">
+        {t('reportInstead')}{' '}
+        <Link to="/legal/contact" className="text-link underline">
+          {t('reportInsteadLink')}
+        </Link>
+        .
+      </p>
       {/* The form, with "Other ways to reach us" beside it on a wide screen and under it on a
           phone (G5b, board Contact). */}
-      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,760px)_minmax(0,320px)]">
-        <div className="min-w-0">
+      <div className="flex flex-wrap items-start gap-x-12 gap-y-8">
+        <div className="min-w-0 flex-[999_1_560px] lg:max-w-[720px]">
           {form.reference !== null ? (
             <MessageSent reference={form.reference} onAgain={form.reset} />
           ) : (

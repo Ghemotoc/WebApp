@@ -6,7 +6,7 @@
 
 ## Pe scurt
 
-- Utilizatori: hello@themagiccoffin.com sau Scrie-ne, din Setări.
+- Utilizatori: hello@ghemotoc.tech sau Scrie-ne, din Setări.
 - Autorități: un singur punct de contact, prin email sau prin formularul de raportare.
 - Ordine de eliminare a conținutului terorist: prin formularul de raportare; acționăm în cel mult o oră.
 - Datele tale: [emailul pentru confidențialitate].
@@ -16,7 +16,7 @@
 
 **Pe scurt** (ca pe planșă)
 
-- Întrebări, probleme sau reclamații: hello@themagiccoffin.com.
+- Întrebări, probleme sau reclamații: hello@ghemotoc.tech.
 - Ești conectat? Folosește Scrie-ne din Setări, din Ajutor sau din subsolul paginii. Fiecare mesaj primește un număr de referință și un email care confirmă că l-am primit.
 - Limbi: română și engleză.
 
@@ -24,7 +24,7 @@
 
 Acesta este punctul nostru de contact pentru toți cei care folosesc ghemotoc.
 
-Întrebări, probleme sau reclamații: scrie la hello@themagiccoffin.com. Nu ai nevoie de cont.
+Întrebări, probleme sau reclamații: scrie la hello@ghemotoc.tech. Nu ai nevoie de cont.
 
 Ești conectat? Folosește Scrie-ne din Setări, din Ajutor sau din subsolul paginii. Fiecare mesaj primește un număr de referință și un email care confirmă că l-am primit. Păstrează referința în caz că ne scrii din nou despre același lucru.
 

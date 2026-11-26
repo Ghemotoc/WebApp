@@ -15,24 +15,51 @@ export interface LabelRow {
   value: ReactNode;
 }
 
+/** The class names of one look: the row, the label and the value. */
+const LOOKS = {
+  // A 140 px label column, the value beside it (settings, staff panels).
+  columns: {
+    row: 'grid grid-cols-[minmax(0,140px)_minmax(0,1fr)] gap-4 py-3',
+    label: 'type-body text-ink-muted',
+    value: 'm-0 type-body text-ink',
+  },
+  // The label in the label type at the left, the value at the right edge, a line above every
+  // row (board B09-StoryLanguages, "About this edition").
+  spread: {
+    row: 'flex items-start justify-between gap-4 border-t border-border py-3',
+    label: 'type-label font-semibold text-ink-heading',
+    value: 'm-0 min-w-0 type-body text-right break-words text-ink',
+  },
+} as const;
+
 /**
- * Renders the rows. The first row has no line above it.
+ * Renders the rows. In the columns look the first row has no line above it.
  *
  * @param props.rows - the label and value pairs, in order
+ * @param props.look - 'columns' (default) or 'spread'
  * @returns the description list
  */
-export function LabelRows({ rows }: { rows: LabelRow[] }) {
+export function LabelRows({
+  rows,
+  look = 'columns',
+}: {
+  rows: LabelRow[];
+  look?: keyof typeof LOOKS;
+}) {
+  const classes = LOOKS[look];
   return (
     <dl className="m-0">
-      {rows.map((row, index) => (
-        <div
-          key={row.label}
-          className={`grid grid-cols-[minmax(0,140px)_minmax(0,1fr)] gap-4 py-3 ${index === 0 ? 'pt-0' : 'border-t border-border'}`}
-        >
-          <dt className="type-body text-ink-muted">{row.label}</dt>
-          <dd className="m-0 type-body text-ink">{row.value}</dd>
-        </div>
-      ))}
+      {rows.map((row, index) => {
+        // Step 1: the columns look leaves out the line (and top padding) above the first row.
+        const firstRowClass = index === 0 ? 'pt-0' : 'border-t border-border';
+        const rowClass = look === 'columns' ? `${classes.row} ${firstRowClass}` : classes.row;
+        return (
+          <div key={row.label} className={rowClass}>
+            <dt className={classes.label}>{row.label}</dt>
+            <dd className={classes.value}>{row.value}</dd>
+          </div>
+        );
+      })}
     </dl>
   );
 }

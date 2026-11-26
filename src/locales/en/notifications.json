@@ -68,6 +68,7 @@
     "storiesExportReady": "your stories are ready to download.",
     "readingReminder": "a few minutes of reading today?",
     "storyFinished": "finished {{story}} and says thank you for writing it.",
+    "storyCompleted": "finished {{story}}.",
     "spaceJoinRequest_one": "asked to join {{space}}.",
     "spaceJoinRequest_few": "asked to join {{space}}.",
     "spaceJoinRequest_other": "asked to join {{space}}.",
@@ -260,7 +261,6 @@
   },
   "unsubscribe": {
     "documentTitle": "Unsubscribe",
-    "eyebrow": "Emails",
     "heading": "Stop notification emails",
     "intro": "This turns off every notification email we send you: replies, new chapters, comments and new followers. Emails about your account, safety and legal matters still arrive.",
     "button": "Stop these emails",

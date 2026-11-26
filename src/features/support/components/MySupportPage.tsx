@@ -1,21 +1,22 @@
 /**
  * MySupportPage: /support, "Support requests" (story S1-E11-13 criterion 2; bundle ADMIN-2h1;
- * the liquid glass look of the canvas's Support board, bundle G11c).
+ * user stories bundle 10, board J15).
  *
- * A link back to Settings, the heading with "Ask for help" beside it, then the person's tickets
- * as a table in a glass card (subject and request number, a status pill, the last update) and a
- * card that sends anyone who wants to report something to the report form instead. Signed-out
- * visitors are asked to log in, or to use Contact us. No doodles: it is a help screen read with
- * care.
- * Who shows it: the router; Settings links here. What it calls: useMyTickets, ticketStatusPill.
+ * Board J15: the trail "Settings / Support requests", the title and intro, "Ask for help" under
+ * them, then the person's requests as rows straight on the page (the subject, then one meta line:
+ * the state in bold, the request number and the last update), with "To report a story…" beside
+ * them, which sends anyone who wants to report something to the report form instead. Signed-out
+ * visitors are asked to log in, or to use Contact us.
+ * Who shows it: the router; Settings links here. What it calls: useMyTickets, ticketStatusPill,
+ * dayAndTime.
  */
 import { Link } from 'react-router';
 
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { StateWord } from '@/components/ui/StateWord';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useSession } from '@/features/auth/hooks/useSession';
+import { dayAndTime } from '@/lib/dayAndTime';
 
 import type { MyTicketSummary } from '../api/supportTickets';
 import { useMyTickets } from '../hooks/useMySupport';
@@ -24,47 +25,41 @@ import { useSupportTranslation } from '../registerSupportTranslations';
 
 import { ReportInsteadCard } from './ReportInsteadCard';
 import { SignedOutLine } from './SignedOutLine';
-import { SupportBackLink } from './SupportBackLink';
+import { SupportBreadcrumb } from './SupportBreadcrumb';
 
 /**
- * One ticket in the table.
+ * One request in the list: its subject as the link, then its state, number and last update.
  *
- * @returns a table row
+ * @returns a list item
  */
 function TicketRow({ ticket }: { ticket: MyTicketSummary }) {
   const { t, i18n } = useSupportTranslation();
-  // Step 1: the last update in the reader's language, day and time.
-  const when = new Intl.DateTimeFormat(i18n.language, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(ticket.lastMessageAt));
-  // Step 2: the words and colour of the status pill.
+  // Step 1: the state in words ("We answered" when the team wrote last).
   const pill = ticketStatusPill(ticket.status, ticket.teamRepliedLast);
   return (
-    <tr className="border-b border-border last:border-b-0">
-      <td className="px-4 py-4 align-top">
-        <Link
-          to={`/support/${String(ticket.number)}`}
-          className="font-semibold break-words text-link underline"
-        >
-          {ticket.subject}
-        </Link>
-        <div className="type-meta text-ink-muted">
-          {t('list.requestNumber', { number: ticket.number })}
-        </div>
-      </td>
-      <td className="px-4 py-4 align-top">
-        <StateWord>{t(`list.states.${pill.state}`)}</StateWord>
-      </td>
-      <td className="px-4 py-4 align-top type-body text-ink-muted">{when}</td>
-    </tr>
+    <li className="flex flex-col gap-1 border-b border-hairline py-4">
+      <Link
+        to={`/support/${String(ticket.number)}`}
+        className="w-fit font-semibold break-words text-ink-heading no-underline hover:underline"
+      >
+        {ticket.subject}
+      </Link>
+      {/* Step 2: the meta line, the state first and bold. */}
+      <MetaLine
+        facts={[
+          { text: t(`list.states.${pill.state}`), kind: 'state' },
+          { text: t('list.requestNumber', { number: ticket.number }) },
+          { text: dayAndTime(ticket.lastMessageAt, i18n.language) },
+        ]}
+      />
+    </li>
   );
 }
 
 /**
- * The table for a signed-in person.
+ * The requests of a signed-in person.
  *
- * @returns the table, a wait or an error
+ * @returns the list, a wait or an error
  */
 function SignedInList() {
   const { t } = useSupportTranslation();
@@ -73,51 +68,29 @@ function SignedInList() {
   if (tickets.isPending) return null;
   if (tickets.data.length === 0) return <p className="m-0 text-ink-muted">{t('list.empty')}</p>;
   return (
-    <div className="overflow-x-auto rounded-card border border-border bg-surface p-2 shadow-card">
-      <table aria-label={t('list.title')} className="w-full border-collapse text-left">
-        <thead>
-          <tr className="border-b border-border type-meta text-ink-muted">
-            <th scope="col" className="px-4 py-3 font-semibold">
-              {t('list.columns.subject')}
-            </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
-              {t('list.columns.status')}
-            </th>
-            <th scope="col" className="px-4 py-3 font-semibold">
-              {t('list.columns.lastUpdate')}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {tickets.data.map((ticket) => (
-            <TicketRow key={ticket.number} ticket={ticket} />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <ul aria-label={t('list.title')} className="m-0 list-none border-t border-hairline p-0">
+      {tickets.data.map((ticket) => (
+        <TicketRow key={ticket.number} ticket={ticket} />
+      ))}
+    </ul>
   );
 }
 
 /**
- * The heading row: the eyebrow, title and intro, with "Ask for help" beside them once signed in.
+ * The title and intro, with "Ask for help" under them once signed in.
  *
  * @returns the header
  */
 function SupportHeader({ isSignedIn }: { isSignedIn: boolean }) {
   const { t } = useSupportTranslation();
   return (
-    <header className="flex flex-wrap items-end justify-between gap-4">
-      <div className="flex max-w-[720px] flex-col gap-4">
-        <Eyebrow>{t('eyebrow')}</Eyebrow>
-        <h1 className="m-0 text-[clamp(36px,4.4vw,64px)] leading-[0.98] font-bold tracking-[-0.025em]">
-          {t('list.title')}
-        </h1>
-        <p className="m-0 type-long leading-relaxed text-ink-muted">{t('list.intro')}</p>
-      </div>
+    <header className="flex max-w-[720px] flex-col gap-4">
+      <h1 className="m-0 type-title lg:type-display">{t('list.title')}</h1>
+      <p className="m-0 type-long leading-relaxed text-ink-muted">{t('list.intro')}</p>
       {isSignedIn && (
         <Link
           to="/support/new"
-          className="inline-flex h-11 w-fit items-center rounded-full button-main px-4 type-body font-semibold no-underline"
+          className="mt-2 inline-flex h-11 w-fit items-center rounded-full button-main px-4 type-body font-semibold no-underline"
         >
           {t('list.write')}
         </Link>
@@ -136,13 +109,19 @@ export function MySupportPage() {
   const { userId, isKnown } = useSession();
   const isSignedIn = isKnown && userId !== null;
   return (
-    <PageContainer className="flex flex-col gap-6 pt-8 pb-16">
+    <PageContainer className="flex flex-col gap-8 pt-8 pb-16">
       <title>{t('list.documentTitle')}</title>
-      {isSignedIn && <SupportBackLink to="/settings#support" label={t('list.backToSettings')} />}
+      {isSignedIn && <SupportBreadcrumb />}
       <SupportHeader isSignedIn={isSignedIn} />
       {isKnown && userId === null && <SignedOutLine />}
-      {isSignedIn && <SignedInList />}
-      <ReportInsteadCard />
+      <div className="flex flex-wrap items-start gap-x-12 gap-y-8">
+        <div className="flex min-w-0 flex-[999_1_560px] flex-col">
+          {isSignedIn && <SignedInList />}
+        </div>
+        <div className="flex min-w-0 flex-[1_1_280px] flex-col">
+          <ReportInsteadCard />
+        </div>
+      </div>
     </PageContainer>
   );
 }

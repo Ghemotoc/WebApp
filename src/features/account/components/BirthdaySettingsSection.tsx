@@ -28,7 +28,7 @@ export function BirthdaySettingsSection() {
   return (
     <section
       aria-labelledby="settings-birthday-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-[clamp(20px,5vw,32px)] shadow-card"
+      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
       <h2
         id="settings-birthday-heading"

@@ -308,6 +308,31 @@
       "no_list": "There is no approved tag with that name. Check the spelling.",
       "no_market": "That market doesn’t exist any more. Reload the page.",
       "unreachable": "We couldn’t reach the database. Check your connection and try again."
+    },
+    "plainDefault": "Default: plain heading"
+  },
+  "listLines": {
+    "heading": "Lines under the title",
+    "note": "One short sentence under a genre or tag page’s title. A language without its own line shows the English one.",
+    "savedLabel": "Saved lines",
+    "place": "{{name}} · {{language}}",
+    "setBy": "Written by @{{handle}}",
+    "editLabel": "Edit the line for {{place}}",
+    "page": "Page",
+    "anotherTag": "Another tag",
+    "tagName": "Tag",
+    "language": "Language",
+    "line": "Line",
+    "lineHint": "Up to {{count}} characters. Save it empty to take the line off.",
+    "save": "Save line",
+    "saved": "Saved. The page shows the new line.",
+    "cleared": "The line is off the page.",
+    "failures": {
+      "not_allowed": "Only the owner and admins can change the lines.",
+      "no_list": "There is no genre or approved tag with that name. Check the spelling.",
+      "no_language": "That language isn’t on the list any more. Reload the page.",
+      "too_long": "The line is longer than 200 characters. Shorten it and save again.",
+      "unreachable": "We couldn’t reach the database. Check your connection and try again."
     }
   },
   "search": {

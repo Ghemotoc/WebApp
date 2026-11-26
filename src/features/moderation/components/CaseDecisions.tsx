@@ -7,6 +7,7 @@
 import { useTranslation } from 'react-i18next';
 
 import type { CaseAction } from '../api/moderationQueue';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Renders the section.
@@ -17,9 +18,10 @@ import type { CaseAction } from '../api/moderationQueue';
 export function CaseDecisions({ actions }: { actions: CaseAction[] }) {
   const { t, i18n } = useTranslation('moderation');
   const whenText = (isoTime: string) =>
-    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(
-      new Date(isoTime),
-    );
+    new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(isoTime));
   return (
     <section aria-labelledby="case-decisions-heading" className="flex flex-col gap-4">
       <h2

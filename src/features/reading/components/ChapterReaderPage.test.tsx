@@ -186,6 +186,9 @@ describe('a chapter that isn’t in the chosen language yet', () => {
       'href',
       '/s/the-weather-station/enfour44',
     );
+    // Board B08: the meta line names the chapter, and nothing else sits above the notice.
+    expect(container.querySelector('.meta-line')?.textContent).toContain('Chapter 5');
+    expect(screen.queryByRole('button', { name: /Read in/ })).toBeNull();
     // No chapter text and no ad on a page with nothing to read.
     expect(container.querySelector('.tmc-chapter-text')).toBeNull();
     expect(container.querySelector('[data-ad]')).toBeNull();

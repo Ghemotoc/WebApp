@@ -68,6 +68,7 @@
     "storiesExportReady": "poveștile tale sunt gata de descărcat.",
     "readingReminder": "câteva minute de citit azi?",
     "storyFinished": "a terminat {{story}} și îți mulțumește că ai scris-o.",
+    "storyCompleted": "a terminat {{story}}.",
     "spaceJoinRequest_one": "a cerut să intre în {{space}}.",
     "spaceJoinRequest_few": "au cerut să intre în {{space}}.",
     "spaceJoinRequest_other": "au cerut să intre în {{space}}.",
@@ -260,7 +261,6 @@
   },
   "unsubscribe": {
     "documentTitle": "Dezabonare",
-    "eyebrow": "Emailuri",
     "heading": "Oprește emailurile de notificare",
     "intro": "Astfel oprești toate emailurile de notificare pe care ți le trimitem: răspunsuri, capitole noi, comentarii și urmăritori noi. Emailurile despre cont, siguranță și aspecte legale vin în continuare.",
     "button": "Oprește aceste emailuri",
