@@ -14,9 +14,9 @@
 -- - chat_partner_story and my_adults_switch_stops_chat are internal: members can't call them;
 -- - signed out, both member functions are refused.
 -- No rule is loosened: the tests read can_message(), blocks and the under-18 defaults as they are.
--- Personas: adult_writer (…01, writes The Salt Mine Choir), teen_17 (…02, follows adult_writer),
--- kid_14_waiting (…04), teacher (…07, in the seeded chat with adult_writer), support (…11),
--- blocker (…15). adults_only is switched off, as when minors join.
+-- Personas: adult_writer (…01; this file gives them The Salt Mine Choir), teen_17 (…02, follows
+-- adult_writer), kid_14_waiting (…04), teacher (…07, in the seeded chat with adult_writer),
+-- support (…11), blocker (…15). adults_only is switched off, as when minors join.
 begin;
 
 create extension if not exists pgtap with schema extensions;
@@ -56,6 +56,27 @@ insert into public.follows_users (user_id, followed_user_id)
   values ('00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000001')
   on conflict do nothing;
 
+-- adult_writer's story for the writer line: 13+, fiction, seven published chapters, and the
+-- newest chapter of any of their stories, so it is the one the line names.
+insert into public.stories (id, user_id, slug, title, blurb, language_code, category_id,
+  cover_kind, rating, ai_disclosure)
+values ('00000000-0000-4000-9000-000000000412', '00000000-0000-4000-8000-000000000001',
+  'salt-mine-choir-412', 'The Salt Mine Choir', 'A choir sings under the ground.', 'en',
+  (select id from public.categories where slug = 'fiction'), 'automatic', '13_plus', 'no_ai');
+insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body, word_count,
+  status, published_title, published_body, published_word_count, first_published_at)
+select '00000000-0000-4000-9000-000000000412', '00000000-0000-4000-8000-000000000001',
+  'smc412' || lpad(number::text, 2, '0'), number, 'Part ' || number, 'x', 1, 'published',
+  'Part ' || number, 'Text.', 1, now()
+from generate_series(1, 7) as number;
+update public.stories set last_chapter_published_at = now() + interval '1 minute'
+  where id = '00000000-0000-4000-9000-000000000412';
+-- adult_writer's other stories count as unpublished here, so a story some other test or a local
+-- look check left behind never stands in for this one (the whole file is rolled back).
+update public.stories set last_chapter_published_at = null
+  where user_id = '00000000-0000-4000-8000-000000000001'
+    and id <> '00000000-0000-4000-9000-000000000412';
+
 /* ---------- 1. The writer line in the chat header ---------- */
 
 select pg_temp.sign_in('02');
@@ -64,7 +85,7 @@ select is(public.conversation_with('adult_writer') -> 'latest_story' ->> 'title'
 select is((public.conversation_with('adult_writer') -> 'latest_story' ->> 'chapter_count')::integer, 7,
   'with the number of chapters the reader can open');
 select pg_temp.as_owner();
-update public.stories set rating = '18_plus' where slug = 'salt-mine-choir-look';
+update public.stories set rating = '18_plus' where slug = 'salt-mine-choir-412';
 select pg_temp.sign_in('02');
 select is(public.conversation_with('adult_writer') -> 'latest_story', 'null'::jsonb,
   'an 18+ story is never named to a 17-year-old');
@@ -72,12 +93,12 @@ select pg_temp.sign_in('07');
 select is(public.conversation_with('adult_writer') -> 'latest_story' ->> 'title', 'The Salt Mine Choir',
   'an adult still sees the 18+ story named');
 select pg_temp.as_owner();
-update public.stories set rating = '13_plus', visibility = 'private' where slug = 'salt-mine-choir-look';
+update public.stories set rating = '13_plus', visibility = 'private' where slug = 'salt-mine-choir-412';
 select pg_temp.sign_in('07');
 select is(public.conversation_with('adult_writer') -> 'latest_story', 'null'::jsonb,
   'a private story is never named');
 select pg_temp.as_owner();
-update public.stories set visibility = 'public' where slug = 'salt-mine-choir-look';
+update public.stories set visibility = 'public' where slug = 'salt-mine-choir-412';
 select pg_temp.sign_in('01');
 select is(public.conversation_with('teacher') -> 'latest_story', 'null'::jsonb,
   'someone with no readable story gets no writer line');
