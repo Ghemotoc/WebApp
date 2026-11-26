@@ -18,7 +18,6 @@
     "quote": "Quote",
     "list": "List",
     "link": "Link",
-    "sceneBreak": "Scene break",
     "withShortcut": "{{name}} ({{keys}})",
     "keys": {
       "bold": "Ctrl+B",
@@ -26,9 +25,10 @@
       "heading": "Ctrl+Alt+2",
       "quote": "Ctrl+Shift+9",
       "list": "Ctrl+Shift+8",
-      "link": "Ctrl+K",
-      "sceneBreak": "Ctrl+Enter"
-    }
+      "link": "Ctrl+K"
+    },
+    "undo": "Undo",
+    "plan": "Chapter plan"
   },
   "wordCount_one": "{{count}} word",
   "wordCount_few": "{{count}} words",
@@ -37,15 +37,13 @@
   "rights": "Your work stays yours. You can publish it anywhere, any time.",
   "rightsLink": "How rights work here",
   "saving": {
-    "heading": "Saving",
-    "explain": "We save every 10 seconds and when you click away from the text.",
     "idle": "Nothing to save yet.",
     "unsaved": "Unsaved changes.",
     "saving": "Saving…",
     "savedJustNow": "Saved now.",
     "savedAt": "Saved at {{time}}.",
     "conflict": "This chapter was changed on another device. Saving has stopped so nothing is overwritten. Choose which version to keep.",
-    "failed": "Could not save. We’ll try again in 10 seconds.",
+    "failed": "Not saved yet. Trying again in 10 seconds; the text stays on this device.",
     "notActive": "This account can’t save chapters yet.",
     "offline": "Saved on this device. It saves online when the connection is back.",
     "retry": "Retry"
@@ -60,20 +58,19 @@
     "cancel": "Cancel"
   },
   "publish": {
-    "heading": "Publish",
+    "heading": "Publish chapter",
     "whenLabel": "When to publish",
-    "now": "Publish now",
-    "later": "Schedule for later",
-    "date": "Date",
-    "time": "Time",
-    "zoneNote": "Local time on this device. It goes live within 5 minutes of this time.",
+    "now": "Now",
+    "later": "Later",
+    "date": "Day",
+    "time": "Time, your local time",
+    "zoneNote": "It goes live within 5 minutes of this time.",
     "skippedHourNote": "That time does not exist on that day because the clocks go forward. It will run at {{time}}.",
     "preview": "Preview",
     "publishButton": "Publish chapter",
     "scheduleButton": "Schedule chapter",
     "publishNumbered": "Publish chapter {{number}}",
     "scheduleNumbered": "Schedule chapter {{number}}",
-    "goLiveNote": "When this chapter goes live, your story becomes public and your followers get a notification.",
     "scheduledFor": "Scheduled for {{when}}, local time.",
     "cancelSchedule": "Cancel schedule",
     "published": "Published {{when}}.",
@@ -96,17 +93,25 @@
     "lastSwitch": "This is the last chapter",
     "lastHint": "Readers see “of {{number}}”, and the story turns Completed when this chapter is out.",
     "lastMarked": "This is the last chapter.",
-    "markedBefore": "Chapter {{number}} is marked as the last. Publishing this one takes that mark off."
+    "markedBefore": "Chapter {{number}} is marked as the last. Publishing this one takes that mark off.",
+    "chapterLine": "Chapter {{number}} · {{title}}",
+    "chapterLineUntitled": "Chapter {{number}}",
+    "tellSwitch": "Tell followers",
+    "tellHint_one": "{{formatted}} follower gets a notification when it goes out.",
+    "tellHint_few": "{{formatted}} followers get a notification when it goes out.",
+    "tellHint_other": "{{formatted}} followers get a notification when it goes out.",
+    "tellHintNone": "No followers yet, so nobody gets a notification.",
+    "staysCompleted": "Readers see “Chapter {{number}} of {{number}}”, and the story stays Completed.",
+    "backToOngoing": "The story goes back to Ongoing, and readers see “Chapter {{number}}”.",
+    "saveDraft": "Save draft"
   },
   "details": {
     "heading": "Story details",
-    "intro": "These apply to every chapter.",
-    "category": "Category",
-    "rating": "Rating",
-    "tags": "Tags",
-    "noTags": "None yet",
-    "change": "Change in story settings",
-    "plan": "Plan this story"
+    "settings": "Story settings",
+    "completion": {
+      "ongoing": "Ongoing",
+      "completed": "Completed"
+    }
   },
   "notFound": "We can’t find this chapter on this account.",
   "signedOut": "Log in to write.",
@@ -145,19 +150,19 @@
     "close": "Close"
   },
   "insert": {
-    "button": "Insert",
+    "button": "Insert a picture, video link or scene break",
     "menuLabel": "Insert",
-    "pictureButton": "Insert a picture",
-    "videoButton": "Insert a video link (YouTube, Vimeo or Loom)",
     "picture": "Picture",
-    "pictureNote": "Upload a picture. Alt text is required.",
+    "pictureNote": "A drawing, checked before readers see it",
     "drawing": "Drawing",
     "drawingNote": "Draw a sketch. Saved as a picture.",
     "music": "Music",
     "musicNote": "A link from Spotify or Apple Music.",
-    "video": "Video",
-    "videoNote": "A link from YouTube, Vimeo or Loom.",
-    "embedFootnote": "Links from approved services only. Nothing loads from them until a reader presses play."
+    "video": "Video link",
+    "videoNote": "YouTube, Vimeo or Loom",
+    "embedFootnote": "Links from approved services only. Nothing loads from them until a reader presses play.",
+    "sceneBreak": "Scene break",
+    "sceneBreakNote": "A small diamond between scenes"
   },
   "pictureDialog": {
     "heading": "Add a picture",
@@ -281,15 +286,29 @@
     "cancel": "Cancel"
   },
   "poemMode": {
-    "label": "Poem mode",
     "hint": "Enter starts a new line and a second Enter a new stanza. Spaces at the start of a line stay, and readers see each line as you wrote it.",
-    "failed": "We couldn’t change poem mode. Try again."
+    "failed": "We couldn’t change poem mode. Try again.",
+    "button": "Poem"
   },
   "saveWord": {
     "saved": "Saved",
     "saving": "Saving…",
     "unsaved": "Not saved yet",
     "onDevice": "Saved on this device",
-    "notSaved": "Not saved"
+    "notSaved": "Not saved",
+    "savedAt": "Saved at {{time}}",
+    "retrying": "Not saved yet. Trying again"
+  },
+  "pageHeading": "Chapter editor",
+  "manageChapters": "Manage chapters",
+  "bar": {
+    "label": "Chapter editor",
+    "back": "Back to chapters",
+    "focusMode": "Focus mode",
+    "preview": "Preview",
+    "publish": "Publish"
+  },
+  "plan": {
+    "open": "Plan for this chapter"
   }
 }

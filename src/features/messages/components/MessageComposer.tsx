@@ -1,6 +1,8 @@
 /**
  * MessageComposer: the box at the bottom of a chat and "Send" (story S1-E9-01, criterion 4;
- * board Messages 5.5). The "Text only…" line under the box was removed in CALM-9 (board E13).
+ * user story 4.3, board E13-Chat: "the field with Send inside is the one main button"). A pill
+ * field that grows with the words, with the round main Send button inside it at the right. No
+ * "Text only" line on the page (user story 4.3).
  *
  * Text only: images in messages are OPEN and off (the story's proposal), so the box has no file
  * button. The box takes at most
@@ -16,7 +18,6 @@
 import { useEffect, useRef, useState, type RefObject } from 'react';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
-import { Button } from '@/components/ui/Button';
 import { FieldProblem } from '@/components/ui/FieldProblem';
 import { Notice } from '@/components/ui/Notice';
 import { PersonalDetailsGateNote } from '@/features/privacy/components/PersonalDetailsNote';
@@ -56,6 +57,46 @@ function useCaretAfterStartingWords(
 }
 
 /**
+ * The round main Send button inside the field, at the right (board E13).
+ *
+ * @returns the submit button
+ */
+function SendButton({ label, isSending }: { label: string; isSending: boolean }) {
+  return (
+    <button
+      type="submit"
+      disabled={isSending}
+      aria-label={label}
+      className="button-main absolute right-1 bottom-1 inline-flex size-9 cursor-pointer items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <ActionIcon name="send" size={16} />
+    </button>
+  );
+}
+
+/**
+ * Sends a message at most once at a time. A double click fires two submits before Send can turn
+ * off, so a ref (which changes at once, unlike state) lets only the first through until it settles.
+ *
+ * @param onSend - saves the words; rejects when the save fails (the hook shows why)
+ * @param onSent - empties the box once the words are saved
+ * @returns the function that sends
+ */
+function useSendOnce(onSend: (words: string) => Promise<unknown>, onSent: () => void) {
+  const isInFlight = useRef(false);
+  return (words: string) => {
+    if (isInFlight.current) return;
+    isInFlight.current = true;
+    void onSend(words)
+      .then(onSent)
+      .catch(errorShownByHook)
+      .finally(() => {
+        isInFlight.current = false;
+      });
+  };
+}
+
+/**
  * Renders the form.
  *
  * @returns the form
@@ -75,12 +116,9 @@ export function MessageComposer({
   // Design books item 9: Send stays pressable and says what is missing beside the box.
   const missing = useMissingField(body.trim() === '', 'message-body');
 
+  const sendOnce = useSendOnce(onSend, () => setBody(''));
   /** Sends the words and empties the box once saved; a failure keeps them for another try. */
-  function sendNow() {
-    void onSend(body.trim())
-      .then(() => setBody(''))
-      .catch(errorShownByHook);
-  }
+  const sendNow = () => sendOnce(body.trim());
   // MUST-1b: asks "Post anyway?" before words that look like contact details go out.
   const gate = usePersonalDetailsGate({ text: body, sendNow });
 
@@ -88,9 +126,10 @@ export function MessageComposer({
     <form
       noValidate
       onSubmit={missing.submitWhenReady(gate.submit)}
-      className="flex flex-col gap-2 border-t border-border p-4"
+      className="flex flex-col gap-2"
     >
-      <div className="flex items-end gap-3">
+      {/* Board E13: one pill field with the round Send inside at the right, the one main button. */}
+      <div className="relative">
         <label htmlFor="message-body" className="sr-only">
           {t('chat.composerLabel', { name: otherName })}
         </label>
@@ -104,12 +143,9 @@ export function MessageComposer({
           onChange={(event) => gate.whileEditing(setBody)(event.target.value)}
           aria-describedby={missing.isShown ? 'message-body-missing' : undefined}
           aria-invalid={missing.isShown ? true : undefined}
-          className="min-h-11 min-w-0 flex-1 resize-y rounded-card border border-control-border bg-surface px-4 py-3 type-body text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
+          className="block max-h-40 min-h-11 w-full resize-none rounded-[22px] border border-control-border bg-surface py-2 pr-12 pl-4 type-body text-ink [field-sizing:content] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--focus-ring)"
         />
-        <Button type="submit" disabled={isSending}>
-          <ActionIcon name="send" size={16} />
-          {t('chat.send')}
-        </Button>
+        <SendButton label={t('chat.send')} isSending={isSending} />
       </div>
       <FieldProblem id="message-body-missing" isShown={missing.isShown}>
         {t('chat.missing')}

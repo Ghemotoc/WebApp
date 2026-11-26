@@ -310,6 +310,19 @@ function calendarDayNumber(instant: Date, timeZone?: string): number {
 }
 
 /**
+ * How many of the viewer's calendar days lie between two moments: 0 on the same day, 1 when the
+ * later one is the next day, and so on (bundle 5, board D03: "today", "27 days left").
+ *
+ * @param earlier - the first moment
+ * @param later - the second moment
+ * @param timeZone - an IANA zone for tests; left out, the browser's own zone is used
+ * @returns the number of days, negative when "later" comes first
+ */
+export function localDaysBetween(earlier: Date, later: Date, timeZone?: string): number {
+  return calendarDayNumber(later, timeZone) - calendarDayNumber(earlier, timeZone);
+}
+
+/**
  * Says the day a scheduled chapter comes out, for "Next chapter Thursday" and "Last chapter
  * tomorrow" (CALM-6, design handover "The last chapter"): "today", "tomorrow", the weekday for 2
  * to 6 days ahead or the date from 7 days ("27 November"). Counted on the viewer's own calendar:

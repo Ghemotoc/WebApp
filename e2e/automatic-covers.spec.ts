@@ -81,7 +81,7 @@ test.describe('automatic covers (S1-E3-13)', () => {
     // The title changes nothing: the same design is named after typing a long title.
     await page.getByRole('button', { name: 'Change The basics' }).click();
     await page.getByRole('textbox', { name: 'Title' }).fill(title);
-    await page.getByRole('radio', { name: 'Română' }).click();
+    await page.getByLabel('Language of the story').selectOption('ro');
     await goToNewStoryStep(page, 'Cover');
     await expect(
       page.getByText(`Right now: ${namedDesign ?? ''}, picked for you automatically.`),

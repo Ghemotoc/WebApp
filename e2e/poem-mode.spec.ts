@@ -3,7 +3,7 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves (the idea's three criteria):
- * 1. the writer ticks "Poem mode"; Enter starts a new line, a second Enter a new stanza, and the
+ * 1. the writer presses "Poem" in the toolbar (a toggle button, board D05); Enter starts a new line, a second Enter a new stanza, and the
  *    spaces a line starts with are kept: the stored Markdown holds hard breaks and non-breaking
  *    spaces exactly where they were typed; a long line wraps under a hanging indent;
  * 2. a reader on a 390 px phone sees the stanzas apart and nothing scrolls sideways;
@@ -18,6 +18,7 @@ import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessib
 import { runSql } from './support/database';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
+import { editorSaveStatus } from './support/chapterEditor';
 
 const storyId = '00000000-0000-4000-9000-000000000002';
 const slug = 'the-girl-who-fixed-radios-seed02';
@@ -70,10 +71,11 @@ test.describe('poem mode (MUST-2)', () => {
     browser,
   }) => {
     const page = await openAsPersona(browser, 'adult_writer', `/write/s/${slug}/c/${code}`);
-    const poemSwitch = page.getByRole('checkbox', { name: 'Poem mode' });
-    await expect(poemSwitch).not.toBeChecked();
-    await poemSwitch.check();
-    await expect(poemSwitch).toBeChecked();
+    // A text button that stays pressed while the chapter is a poem (board D05, user story 5.5).
+    const poemSwitch = page.getByRole('button', { name: 'Poem', exact: true });
+    await expect(poemSwitch).toHaveAttribute('aria-pressed', 'false');
+    await poemSwitch.click();
+    await expect(poemSwitch).toHaveAttribute('aria-pressed', 'true');
     await expect
       .poll(() => runSql(`select is_poem from public.chapters where code = '${code}'`))
       .toBe('t');
@@ -88,9 +90,7 @@ test.describe('poem mode (MUST-2)', () => {
     await page.keyboard.press('Enter');
     await page.keyboard.type('Apoi tace.');
     await page.getByRole('textbox', { name: 'Chapter title' }).focus();
-    await expect(page.getByRole('region', { name: 'Saving' }).getByRole('status')).toHaveText(
-      /Saved at \d/,
-    );
+    await expect(editorSaveStatus(page)).toHaveText(/Saved at \d/);
     expect(storedDraft()).toBe(`Plouă pe acoperiș,  \n${NBSP.repeat(4)}încet,\n\nApoi tace.`);
     await expectNoDoodles(page);
   });

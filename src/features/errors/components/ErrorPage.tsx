@@ -9,6 +9,9 @@
  * is (GDPR art. 13, transparency; board 7.4).
  * Board differences: no storm-cloud picture (the app has no doodles), and
  * the code shows only when the report was stored.
+ * A page whose code file belongs to an older release (a tab opened before a release) reloads once
+ * by itself instead, through hooks/useStaleBuildReload.ts, and nothing is reported (BUGS thread,
+ * 26 Nov 2026). If the reload doesn't help, this page shows as usual.
  */
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useParams, useRouteError } from 'react-router';
@@ -18,6 +21,7 @@ import { InfoPill } from '@/components/ui/InfoPill';
 import { PageContainer } from '@/components/ui/PageContainer';
 
 import { useReportedErrorCode } from '../hooks/useReportedErrorCode';
+import { useStaleBuildReload } from '../hooks/useStaleBuildReload';
 import { routePattern } from '../lib/routePattern';
 
 /**
@@ -29,7 +33,11 @@ export function ErrorPage() {
   const { t } = useTranslation();
   const thrown = useRouteError();
   const pattern = routePattern(useLocation().pathname, useParams());
-  const errorCode = useReportedErrorCode(thrown, pattern);
+  // Step 1: an older release's missing file reloads the page once, and draws nothing meanwhile.
+  const isReloading = useStaleBuildReload(thrown);
+  // Step 2: any other error is reported, and its code shown to quote to support.
+  const errorCode = useReportedErrorCode(thrown, pattern, isReloading);
+  if (isReloading) return null;
 
   return (
     <PageContainer className="flex justify-center pt-12 pb-6">

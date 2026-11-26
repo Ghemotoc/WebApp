@@ -6,6 +6,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
+import { brand } from '@/config/brand';
 import { createI18n } from '@/lib/i18n';
 
 import type { AppNotification } from '../api/notifications';
@@ -175,7 +176,7 @@ describe('notificationText', () => {
       isRequired: true,
     };
     const text = notificationText(englishT(), decision, null);
-    expect(text.actionLabel).toBe('Read why');
+    expect(text.actionLabel).toBe('Read the reasons');
     expect(text.href).toBe('/my-reports#S-000007');
   });
 
@@ -279,7 +280,7 @@ describe('notificationText', () => {
     };
     const text = notificationText(englishT(), approvedRow, null);
     expect(`${text.who} ${text.what}`).toBe(
-      'Account: you’re in Fantasy writers’ circle. You can now post there.',
+      `${brand.productName}: you’re in Fantasy writers’ circle. You can now post there.`,
     );
     expect(text.href).toBe('/spaces/fantasy-writers-circle');
   });
@@ -451,7 +452,7 @@ describe('notificationText', () => {
       dataRequest: { reference: 'D-000007', deadline: '2027-02-28', extensionReason: null },
     };
     const text = notificationText(englishT(), askRow, null);
-    expect(text.who).toBe('Account:');
+    expect(text.who).toBe(`${brand.productName}:`);
     expect(text.what).toContain('(D-000007)');
     expect(text.what).toContain('Was it you?');
     expect(text.actionLabel).toBe('Answer');
@@ -493,7 +494,7 @@ describe('notificationText', () => {
       dataRequest: { reference: 'D-000009', deadline: '2027-02-28', extensionReason: null },
     };
     const text = notificationText(englishT(), readyRow, null);
-    expect(text.who).toBe('Account:');
+    expect(text.who).toBe(`${brand.productName}:`);
     expect(text.what).toContain('D-000009');
     expect(text.what).toContain('within seven days');
     expect(text.actionLabel).toBe('Download it');
@@ -623,7 +624,7 @@ describe('notificationText', () => {
       chapter: null,
     };
     const text = notificationText(englishT(), invitedRow, null);
-    expect(text.who).toBe('The team:');
+    expect(text.who).toBe(`${brand.productName}:`);
     expect(text.what).toContain('home page');
     expect(text.href).toBe('/#home-comment-invitation');
     expect(text.actionLabel).toBe('See the invitation');
@@ -659,7 +660,7 @@ describe('notificationText', () => {
       story: { slug: 'the-salt-mine-choir', title: 'The Salt Mine Choir' },
     };
     const text = notificationText(englishT(), featuredRow, 'corbu');
-    expect(text.who).toBe('The team:');
+    expect(text.who).toBe(`${brand.productName}:`);
     expect(text.what).toBe('your story “The Salt Mine Choir” is in Featured this week on Read.');
     expect(text.actionLabel).toBe('Open the story');
     expect(text.href).toBe('/s/the-salt-mine-choir');
@@ -710,7 +711,7 @@ describe('notificationText', () => {
       story: null,
     };
     const agreed = notificationText(englishT(), spotlightRow, 'ana');
-    expect(agreed.who).toBe('Account:');
+    expect(agreed.who).toBe(`${brand.productName}:`);
     expect(agreed.what).toBe(
       'your parent or guardian agreed that we may suggest you and your stories to other readers.',
     );

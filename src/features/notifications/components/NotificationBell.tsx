@@ -17,8 +17,16 @@ import { NavLink } from 'react-router';
 
 import { NavIcon } from '@/components/icons/NavIcon';
 import { CountBadge } from '@/components/ui/CountBadge';
+import { badgeLinkName } from '@/components/ui/countBadgeText';
 
 import { useUnreadNotificationCount } from '../hooks/useUnreadNotificationCount';
+
+/** The link's name, which always says what the badge shows ("Notifications, 9+ new"). */
+const linkNameKeys = {
+  none: 'nav.notifications',
+  some: 'nav.notificationsUnread',
+  many: 'nav.notificationsManyUnread',
+};
 
 /**
  * Renders the bell.
@@ -32,11 +40,7 @@ export function NotificationBell() {
   return (
     <NavLink
       to="/notifications"
-      aria-label={
-        unreadCount > 0
-          ? t('nav.notificationsUnread', { count: unreadCount })
-          : t('nav.notifications')
-      }
+      aria-label={badgeLinkName(t, linkNameKeys, unreadCount)}
       className="relative inline-flex size-11 items-center justify-center rounded-full text-ink hover:bg-ink/5"
     >
       <NavIcon name="bell" size={22} />

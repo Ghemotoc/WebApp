@@ -2,13 +2,14 @@
  * StepWizard: a long form as numbered steps, one open at a time (CALM-9, the rule for every page:
  * "Long forms are wizards"; boards D02 New story and H08 Waitlist).
  *
- * How each step looks:
- * - The open step: a filled number circle in the main action colour, its title, its fields, then
- *   a row with "Skip this step" on the left (only when the step is optional) and "Next: [next
- *   step]" on the right. The last step shows the page's own buttons instead. It carries
- *   aria-current="step".
- * - A done step folds to a check circle, its title, a one-line summary ("The Weather Station ·
- *   English") and a Change button that opens it again.
+ * How each step looks (the boards' `.wz` steps, user story 5.2): every step is a box (the one box
+ * surface with its 1 px edge), its fields indented under the title.
+ * - The open step: a filled number circle in the main action colour, its title at 24 px, its
+ *   fields, then a row over a hairline with "Back" on the left (from the second step) and "Skip
+ *   this step" (only when the step is optional) and "Next: [next step]" on the right. The last
+ *   step shows "Back" and the page's own buttons instead. It carries aria-current="step".
+ * - A done step folds to a check in a tinted circle, its title, a one-line summary ("The Weather
+ *   Station · English") and a Change text button that opens it again.
  * - A later step shows only its number and title, in muted text.
  * Keyboard: every button is a real button; when a step opens, focus moves to its title, so a
  * keyboard or screen reader user lands at the start of the new step.
@@ -49,7 +50,10 @@ export interface StepWizardProps {
   onNext: () => void;
   /** "Skip this step": moves on without checking. */
   onSkip: () => void;
-  /** The last step's buttons (Create and Cancel on the new story form). */
+  /** "Back": opens the step before, without checking (shown from the second step). */
+  onBack: () => void;
+  /** The last step's own buttons, before its Back; null when the page puts them elsewhere (the
+   * new story form keeps Create and Cancel under every step, board D02). */
   lastStepActions: ReactNode;
 }
 
@@ -61,7 +65,7 @@ function StepNumber({ number, state }: { number: number; state: 'open' | 'done' 
       className={cn(
         'inline-flex size-8 shrink-0 items-center justify-center rounded-full type-body font-semibold',
         state === 'open' && 'button-main',
-        state === 'done' && 'border border-control-border text-ink',
+        state === 'done' && 'bg-tint text-accent',
         state === 'later' && 'border border-border text-ink-muted',
       )}
     >
@@ -70,36 +74,75 @@ function StepNumber({ number, state }: { number: number; state: 'open' | 'done' 
   );
 }
 
-/** The row at the end of an open step: Skip on the left, Next on the right. */
+/**
+ * The next step's title as "Next: cover" says it: its first letter small, because it follows a
+ * colon in the middle of a sentence (board D02).
+ *
+ * @param title - the next step's title ("Cover")
+ * @returns the title with a small first letter ("cover")
+ */
+function inSentence(title: string): string {
+  return title.charAt(0).toLocaleLowerCase() + title.slice(1);
+}
+
+/** "Back" on the left of an open step's row, or an empty space on the first step. */
+function BackButton({ isShown, onBack }: { isShown: boolean; onBack: () => void }) {
+  const { t } = useTranslation('common');
+  // An empty space keeps the other buttons on the right when there is no step before.
+  if (!isShown) return <span />;
+  return (
+    <Button type="button" variant="text" onClick={onBack}>
+      {t('wizard.back')}
+    </Button>
+  );
+}
+
+/** The row at the end of an open step: Back on the left, Skip and Next on the right. */
 function StepActions({
   step,
   nextTitle,
+  hasBack,
   onNext,
   onSkip,
+  onBack,
 }: {
   step: WizardStep;
   nextTitle: string;
+  hasBack: boolean;
   onNext: () => void;
   onSkip: () => void;
+  onBack: () => void;
 }) {
   const { t } = useTranslation('common');
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-4">
-      {step.isOptional ? (
-        <Button type="button" variant="text" onClick={onSkip}>
-          {t('wizard.skip')}
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-2">
+      <BackButton isShown={hasBack} onBack={onBack} />
+      <div className="ml-auto flex flex-wrap items-center gap-3">
+        {step.isOptional && (
+          <Button type="button" variant="text" onClick={onSkip}>
+            {t('wizard.skip')}
+          </Button>
+        )}
+        <Button
+          type="button"
+          className="h-auto min-h-11 py-2 text-left whitespace-normal"
+          onClick={onNext}
+        >
+          {t('wizard.next', { step: inSentence(nextTitle) })}
         </Button>
-      ) : (
-        // An empty space keeps Next on the right when there is nothing to skip.
-        <span />
-      )}
-      <Button
-        type="button"
-        className="ml-auto h-auto min-h-11 py-2 text-left whitespace-normal"
-        onClick={onNext}
-      >
-        {t('wizard.next', { step: nextTitle })}
-      </Button>
+      </div>
+    </div>
+  );
+}
+
+/** The last step's row: Back on the left, the page's own buttons after it. */
+function LastStepActions({ actions, onBack }: { actions: ReactNode; onBack: () => void }) {
+  return (
+    <div className="flex flex-col gap-4">
+      {actions}
+      <div className="border-t border-hairline pt-2">
+        <BackButton isShown onBack={onBack} />
+      </div>
     </div>
   );
 }
@@ -118,16 +161,16 @@ function DoneStep({
   return (
     <div className="flex items-center gap-4">
       <StepNumber number={number} state="done" />
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <h2 className="m-0 font-heading type-long leading-6 font-bold text-ink-heading">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <h2 className="m-0 font-heading type-long leading-[26px] font-bold text-ink-heading">
           {step.title}
           <span className="sr-only">{t('wizard.done')}</span>
         </h2>
-        <p className="m-0 type-body break-words text-ink-muted">{step.summary}</p>
+        <p className="m-0 type-meta break-words">{step.summary}</p>
       </div>
       <Button
         type="button"
-        variant="secondary"
+        variant="text"
         aria-label={t('wizard.changeStep', { step: step.title })}
         onClick={onChange}
       >
@@ -137,12 +180,15 @@ function DoneStep({
   );
 }
 
+/** The box every step sits in: the one box surface with its edge (the boards' `.wz-step`). */
+const stepBox = 'rounded-card border border-border bg-surface';
+
 /** A later step: only its number and title, muted. */
 function LaterStep({ step, number }: { step: WizardStep; number: number }) {
   return (
-    <li className="flex items-center gap-4 px-6 py-3">
+    <li className={cn(stepBox, 'flex items-center gap-4 px-6 py-4')}>
       <StepNumber number={number} state="later" />
-      <h2 className="m-0 font-heading type-long leading-6 font-bold text-ink-muted">
+      <h2 className="m-0 font-heading type-long leading-[26px] font-semibold text-ink-muted">
         {step.title}
       </h2>
     </li>
@@ -162,10 +208,7 @@ function OpenStep({
   actions: ReactNode;
 }) {
   return (
-    <li
-      aria-current="step"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
-    >
+    <li aria-current="step" className={cn(stepBox, 'flex flex-col gap-4 px-6 pt-4 pb-6')}>
       <div className="flex items-center gap-4">
         <StepNumber number={number} state="open" />
         <h2
@@ -176,8 +219,11 @@ function OpenStep({
           {step.title}
         </h2>
       </div>
-      {step.content}
-      {actions}
+      {/* The fields sit under the title, past the number, from 768 px (the boards' indent). */}
+      <div className="flex flex-col gap-4 md:pl-12">
+        {step.content}
+        {actions}
+      </div>
     </li>
   );
 }
@@ -215,6 +261,7 @@ export function StepWizard({
   onOpenStep,
   onNext,
   onSkip,
+  onBack,
   lastStepActions,
 }: StepWizardProps) {
   const openTitleRef = useFocusOpenStep(openIndex);
@@ -226,18 +273,25 @@ export function StepWizard({
         // A done step, folded.
         if (index !== openIndex) {
           return (
-            <li key={step.key} className="rounded-card border border-border bg-surface px-6 py-4">
+            <li key={step.key} className={cn(stepBox, 'px-6 py-4')}>
               <DoneStep step={step} number={number} onChange={() => onOpenStep(index)} />
             </li>
           );
         }
-        // The open step ends with Skip and Next, or with the page's own buttons on the last one.
+        // The open step ends with Back, Skip and Next, or Back and the page's own buttons.
         const nextStep = steps[index + 1];
         const actions =
           nextStep === undefined ? (
-            lastStepActions
+            <LastStepActions actions={lastStepActions} onBack={onBack} />
           ) : (
-            <StepActions step={step} nextTitle={nextStep.title} onNext={onNext} onSkip={onSkip} />
+            <StepActions
+              step={step}
+              nextTitle={nextStep.title}
+              hasBack={index > 0}
+              onNext={onNext}
+              onSkip={onSkip}
+              onBack={onBack}
+            />
           );
         return (
           <OpenStep

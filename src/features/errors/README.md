@@ -4,6 +4,7 @@ Our own simple error log, and the page shown when a page fails to draw. Built by
 
 - `lib/installGlobalErrorHandlers.ts`: started by `src/main.tsx`; reports errors nothing caught and promises that failed without a `.catch`.
 - `components/ErrorPage.tsx`: the router's error element (board 7.4, card 4): "Something went wrong on our side", Try again, Go to Home, Contact us, and the code to quote.
+- `lib/staleBuild.ts` and `hooks/useStaleBuildReload.ts` (BUGS thread, 26 Nov 2026): a tab opened before a release asks for page files that no longer exist. Instead of the error page, the page reloads once by itself (from the error page, or on Vite's `vite:preloadError`), guarded by a 30-second mark in session storage so it can never loop; nothing is reported.
 - `lib/errorReporter.ts`: the one way to report. At most 5 reports per page load, never the same error twice (a repeat gets the first code). It never throws.
 - `lib/buildErrorReport.ts`: keeps only the error's name, a scrubbed message, the route pattern, the app version and the browser family.
 - `lib/scrubErrorText.ts`, `lib/routePattern.ts`, `lib/browserFamily.ts`: how each field is made safe. The database scrubs again (`public.scrub_error_text`, `public.scrub_route_path`).

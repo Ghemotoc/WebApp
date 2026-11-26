@@ -80,7 +80,7 @@ function firstPlanLink(page: Page) {
 /** Fills New story's required answers and creates the story. */
 async function createStory(page: Page, title: string) {
   await page.getByRole('textbox', { name: 'Title' }).fill(title);
-  await page.getByRole('radio', { name: 'Română' }).click();
+  await page.getByLabel('Language of the story').selectOption('ro');
   // The form is a five-step wizard (CALM-9, board D02): the category is step 2, the rating step 5.
   await goToNewStoryStep(page, 'Category, tags and setting');
   await page.getByRole('radio', { name: 'Fiction' }).click();
@@ -163,6 +163,10 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
   test('the switcher moves between stories, and /plan puts the newest edit first', async ({
     browser,
   }) => {
+    // A card shows "Story Atlas" and its Atlas line once the story is out (board D01, user story
+    // 5.1); before that it offers only "Write chapter one" and "Story settings".
+    runSql(`update public.stories set first_published_at = now()
+      where title = 'Atlas test: harta nopții';`);
     const page = await openAs(browser, 'adult_writer', '/write');
     // "Story Atlas" sits on each story card, and its Atlas line links straight to each part.
     const card = page.getByRole('article').filter({ hasText: 'Atlas test: harta nopții' });
@@ -211,9 +215,10 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
       .click();
     const deleteSection = page.getByRole('region', { name: 'Delete this story' });
     await deleteSection.getByRole('button', { name: 'Delete story' }).click();
-    await deleteSection.getByRole('button', { name: 'Yes, delete story' }).click();
-    await expect(deleteSection.getByText('Last check.')).toBeVisible();
-    await deleteSection.getByRole('button', { name: 'Delete story' }).click();
+    // Board D12: the dialog asks for the title before it deletes.
+    const dialog = page.getByRole('dialog', { name: 'Delete Atlas test: harta nopții?' });
+    await dialog.getByLabel('Type the title to delete it').fill('Atlas test: harta nopții');
+    await dialog.getByRole('button', { name: 'Delete the story' }).click();
     await expect(deleteSection.getByRole('button', { name: 'Undo' })).toBeVisible();
     await page.context().close();
   });

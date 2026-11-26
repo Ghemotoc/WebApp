@@ -16,8 +16,16 @@ import { NavLink } from 'react-router';
 
 import { NavIcon } from '@/components/icons/NavIcon';
 import { CountBadge } from '@/components/ui/CountBadge';
+import { badgeLinkName } from '@/components/ui/countBadgeText';
 
 import { useUnreadMessageCount } from '../hooks/useUnreadMessageCount';
+
+/** The link's name, which always says what the badge shows ("Messages, 9+ new"). */
+const linkNameKeys = {
+  none: 'nav.messages',
+  some: 'nav.messagesUnread',
+  many: 'nav.messagesManyUnread',
+};
 
 /**
  * Renders the link.
@@ -31,9 +39,7 @@ export function MessagesHeaderLink() {
   return (
     <NavLink
       to="/messages"
-      aria-label={
-        unreadCount > 0 ? t('nav.messagesUnread', { count: unreadCount }) : t('nav.messages')
-      }
+      aria-label={badgeLinkName(t, linkNameKeys, unreadCount)}
       className="relative inline-flex size-11 items-center justify-center rounded-full text-ink hover:bg-ink/5"
     >
       <NavIcon name="messages" size={22} />

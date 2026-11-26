@@ -88,19 +88,3 @@ export function LinkIcon() {
     </Frame>
   );
 }
-
-/**
- * Four small diamonds set as a larger diamond: the scene break, drawn the same way in the
- * chapter text (the .tmc-chapter-text hr rule in src/styles/index.css; liquid glass
- * ChapterEditor board, G9e).
- */
-export function SceneBreakIcon() {
-  return (
-    <Frame fill="currentColor" stroke="none">
-      <path d="M12 4.2 14.4 6.6 12 9 9.6 6.6Z" />
-      <path d="M8.6 9.6 11 12 8.6 14.4 6.2 12Z" />
-      <path d="M15.4 9.6 17.8 12 15.4 14.4 13 12Z" />
-      <path d="M12 15 14.4 17.4 12 19.8 9.6 17.4Z" />
-    </Frame>
-  );
-}

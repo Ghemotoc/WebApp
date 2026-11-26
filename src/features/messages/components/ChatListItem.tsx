@@ -1,12 +1,15 @@
 /**
- * ChatListItem: one row of the Chats list: the person, when, and the last message's first words
- * (story S1-E9-01; board Messages 5.5).
+ * ChatListItem: one row of the chats: the person, when, the last message's first words and
+ * "New" while unread (story S1-E9-01; user story 4.2, boards E12-Messages and E13-Chat).
  *
- * The open chat sits on a soft tint and has aria-current="page" (no side bar; NO-BARS, Robert,
- * 23 Nov 2026). Unread chats are
- * bold with a plum dot and say "new messages" to screen readers, so colour is never the only
- * sign. A removed last message reads "[Removed by the moderation team]". The online dot follows
- * the name while the other person shows as online to the reader (S1-E13-01).
+ * As the boards draw it: a hairline above each row, the 36 px avatar, the name in the label
+ * style with the time at the right in the meta style, the last line on one line with an ellipsis
+ * under it, and a bold "New" at the far right while the chat has unread messages. Story 4.2:
+ * "Chats are newest first, with the last line and New in bold when unread", so the last line is
+ * bold then too and the word, not the weight alone, says it. The open chat sits on a soft tint
+ * and has aria-current="page" (no side bar; NO-BARS, Robert, 23 Nov 2026). A removed last
+ * message reads "[Removed by the moderation team]". The online dot follows the name while the
+ * other person shows as online to the reader (S1-E13-01).
  * A story link being sent into a chat (GAPS-7a) stays in the address while the reader picks one.
  * Who shows it: ChatList. Where it goes: /messages/:handle.
  */
@@ -21,18 +24,35 @@ import { useMessagesTranslation } from '../registerMessagesTranslations';
 import { ChatAvatar } from './ChatAvatar';
 import { dateLocaleFor } from '../../../lib/romania-time';
 
+/** A day in milliseconds, for "yesterday" and the last week. */
+const oneDay = 24 * 60 * 60 * 1000;
+
+/** How many whole calendar days lie between a time and today (0 today, 1 yesterday). */
+function daysAgo(date: Date): number {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const startOfThatDay = new Date(date);
+  startOfThatDay.setHours(0, 0, 0, 0);
+  return Math.round((startOfToday.getTime() - startOfThatDay.getTime()) / oneDay);
+}
+
 /**
- * The time beside a chat: the hour today, the date before that.
+ * The time beside a chat, as the boards write it: "12:40" today, "yesterday", the weekday in the
+ * last week ("Mon"), and the date before that ("12 Nov").
  *
- * @returns the formatted time
+ * @returns the time words
  */
-function shortTime(iso: string, language: string): string {
+function useShortTime(iso: string): string {
+  const { t, i18n } = useMessagesTranslation();
   const date = new Date(iso);
-  const isToday = date.toDateString() === new Date().toDateString();
-  const options: Intl.DateTimeFormatOptions = isToday
-    ? { hour: '2-digit', minute: '2-digit' }
-    : { day: 'numeric', month: 'short' };
-  return new Intl.DateTimeFormat(dateLocaleFor(language), options).format(date);
+  const locale = dateLocaleFor(i18n.language);
+  const days = daysAgo(date);
+  if (days <= 0) {
+    return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(date);
+  }
+  if (days === 1) return t('list.yesterday');
+  if (days < 7) return new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
+  return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' }).format(date);
 }
 
 /**
@@ -62,46 +82,32 @@ export function ChatListItem(props: {
   isOnline: boolean;
 }) {
   const { chat, isOpen, isOnline } = props;
-  const { t, i18n } = useMessagesTranslation();
+  const { t } = useMessagesTranslation();
   const preview = usePreview(chat);
+  const time = useShortTime(chat.lastMessageAt);
   // A link being shared travels with the reader into the chat they pick (GAPS-7a).
   const shared = useSharedLink();
   const openStyle = isOpen ? 'bg-tint' : '';
+  const previewStyle = chat.hasUnread ? 'font-semibold text-ink' : '';
   return (
-    <li className="border-b border-border last:border-b-0">
+    <li className="border-t border-hairline">
       <Link
         to={`/messages/${chat.otherHandle}${shared.query}`}
         aria-current={isOpen ? 'page' : undefined}
-        className={`flex min-h-[64px] items-center gap-3 px-4 py-3 text-ink no-underline hover:bg-tint ${openStyle}`}
+        className={`-mx-3 flex items-center gap-3 rounded-field px-3 py-3 text-ink no-underline hover:bg-tint ${openStyle}`}
       >
         <ChatAvatar name={chat.otherDisplayName} handle={chat.otherHandle} />
-        <span className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className="flex items-baseline gap-2">
-            <span className="min-w-0 flex-1 truncate type-body font-semibold text-ink-heading">
-              {chat.otherDisplayName}
-              <span className="ml-2 inline-flex align-middle">
-                <OnlineDot isOnline={isOnline} />
-              </span>
-              {chat.hasUnread && (
-                <>
-                  <span
-                    aria-hidden="true"
-                    className="ml-2 inline-block size-2 rounded-full bg-primary"
-                  />
-                  <span className="sr-only">, {t('list.unread')}</span>
-                </>
-              )}
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className="flex items-baseline justify-between gap-2">
+            <span className="flex min-w-0 items-center gap-2 type-label text-ink-heading">
+              <span className="truncate">{chat.otherDisplayName}</span>
+              <OnlineDot isOnline={isOnline} />
             </span>
-            <span className="flex-none type-meta text-ink-muted">
-              {shortTime(chat.lastMessageAt, i18n.language)}
-            </span>
+            <span className="flex-none type-meta">{time}</span>
           </span>
-          <span
-            className={`truncate type-body ${chat.hasUnread ? 'font-semibold text-ink' : 'text-ink-muted'}`}
-          >
-            {preview}
-          </span>
+          <span className={`block truncate type-meta ${previewStyle}`}>{preview}</span>
         </span>
+        {chat.hasUnread && <span className="type-label text-ink">{t('list.new')}</span>}
       </Link>
     </li>
   );

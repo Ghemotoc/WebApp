@@ -417,6 +417,45 @@
   }
 }
 
+/*
+ * bug-tab: the quiet "Report a bug" tab on the window's right edge (TRIAL-FEEDBACK; Robert, DESIGN
+ * thread, 26 Nov 2026, 10:53 to 10:54 UTC: "slightly smaller ... thinner in the background colour.
+ * The outline is the purple, the writing inside is purple, and it has the bug icon"; "And use
+ * Inter for the font"). The page colour inside, a 1 px edge and text in the theme's main colour,
+ * no edge on the window side, 8 px outer corners. About 20 px drawn, with an invisible strip that
+ * keeps the press area 24 px wide (WCAG 2.2, 2.5.8). Hover and focus take the soft buttons' fill
+ * (--tint, the fill behind "Start a new story"; Robert, 10:54:53 UTC). At night the edge stays the
+ * main colour (Valentino) and the words take the light accent, which reads on the dark page.
+ */
+@utility bug-tab {
+  position: fixed;
+  background-color: var(--paper);
+  color: var(--plum-to);
+  border: 1px solid var(--plum-to);
+  /* The tab is turned half a circle (BugReportTab), so its left side ends up on the window's
+     edge: no edge there, and the rounded corners on its right end up facing the page. */
+  border-left-width: 0;
+  border-radius: 0 8px 8px 0;
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 500;
+  transition: background-color 120ms ease-out;
+  &::before {
+    content: '';
+    position: absolute;
+    /* Turned with the tab, so the strip widens it towards the page (left side after turning). */
+    inset: 0 -4px 0 0;
+  }
+  &:hover,
+  &:focus-visible {
+    background-color: var(--tint);
+  }
+  [data-theme='night'] & {
+    color: var(--accent);
+  }
+}
+
 @utility button-glass {
   background-color: var(--tint);
   background-image: none;
@@ -747,6 +786,9 @@ dialog.bg-surface,
  * at rest, 10 px and 8 px once the page has scrolled 12 px, in 300 ms). At rest the pill is the
  * website's see-through .lg-light glass; scrolled, glass-float's near-solid glass takes over.
  * Reduce motion makes the change jump.
+ *
+ * The tight bar is 14 px shorter and in the page's flow, so usePageScrolled tightens it only past
+ * 26 px and relaxes it at 12 px: the 14 px the browser scrolls back never flip it again.
  */
 .top-bar {
   padding-top: 16px;
@@ -1578,6 +1620,35 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 .tmc-chapter-text .ProseMirror p.is-empty::before {
   content: '';
+}
+
+/* The editor's paper (board D05, user story 5.5): the story's own type, Literata 20/34 (17/28 on
+   phones), 16 px between paragraphs, the title in Literata 700 32/38 (24/32 on phones) over a
+   1 px control line. The paper itself is the story paper, 48 px by 64 px inside from 1024 px,
+   48 by 32 on tablets and 32 by 16 on phones (EditorPaper). */
+.tmc-chapter-text.tmc-chapter-text--editor {
+  font-family: var(--font-story);
+  font-size: 20px;
+  line-height: 34px;
+}
+.tmc-chapter-text--editor .ProseMirror > * + * {
+  margin-top: 16px;
+}
+.tmc-editor-title {
+  font-family: var(--font-story);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 38px;
+}
+@media (max-width: 599px) {
+  .tmc-chapter-text.tmc-chapter-text--editor {
+    font-size: 17px;
+    line-height: 28px;
+  }
+  .tmc-editor-title {
+    font-size: 24px;
+    line-height: 32px;
+  }
 }
 
 /* The chapter reader's text (story S1-E4-01a; board 3.5): Inter 19 px with 1.7 line height and

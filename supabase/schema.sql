@@ -13014,6 +13014,7 @@ CREATE TABLE IF NOT EXISTS "public"."chapters" (
     "is_poem" boolean DEFAULT false NOT NULL,
     "translation_of_chapter_id" "uuid",
     "is_last" boolean DEFAULT false NOT NULL,
+    "tell_followers" boolean DEFAULT true NOT NULL,
     CONSTRAINT "chapters_code_shape" CHECK (("code" ~ '^[a-z0-9]{8}$'::"text")),
     CONSTRAINT "chapters_draft_title_length" CHECK (("char_length"("draft_title") <= 120)),
     CONSTRAINT "chapters_draft_version_positive" CHECK (("draft_version" >= 1)),
@@ -13061,6 +13062,10 @@ COMMENT ON COLUMN "public"."chapters"."translation_of_chapter_id" IS 'For a chap
 
 
 COMMENT ON COLUMN "public"."chapters"."is_last" IS 'The writer marked this as the story''s last chapter when publishing or scheduling it (CALM-6; Robert, 20 Nov 2026, 12:43 UTC). Readers see "of N" only while a marked chapter is published or scheduled.';
+
+
+
+COMMENT ON COLUMN "public"."chapters"."tell_followers" IS 'Whether followers hear when this chapter goes out (board D06 "Tell followers"); set by publish_chapter() and schedule_chapter().';
 
 
 
@@ -17206,6 +17211,36 @@ COMMENT ON FUNCTION "public"."chapter_embed_states"("body" "text", "owner_id" "u
 
 
 
+CREATE OR REPLACE FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") RETURNS integer
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  chapter_story_id uuid;
+begin
+  -- Only the writer of the chapter learns the number (it is their own followers). A plain read,
+  -- not my_live_chapter(): that one locks the row, and the API runs a stable function in a
+  -- read-only transaction, where a lock is refused.
+  select chapters.story_id into chapter_story_id
+  from public.chapters
+  where chapters.code = chapter_code
+    and chapters.user_id = (select auth.uid())
+    and chapters.deleted_at is null;
+  if chapter_story_id is null then
+    return null;
+  end if;
+  return (select count(*)::integer from public.new_chapter_audience(chapter_story_id));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") IS 'How many people a new chapter tells, for the caller''s own chapter; null for anyone else (board D06 "Tell followers").';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."chapter_gate_outcome"("chapter" "public"."chapters") RETURNS "text"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -17606,8 +17641,10 @@ begin
   end if;
   insert into public.chapter_revisions (chapter_id, user_id, created_by_user_id, reason, title, body)
   values (chapter.id, chapter.user_id, chapter.user_id, 'published', chapter.draft_title, chapter.draft_body);
+  -- Board D06: the job says whether followers are told.
   insert into public.jobs (kind, payload) values ('chapter_published',
-    jsonb_build_object('chapter_id', chapter.id, 'story_id', chapter.story_id));
+    jsonb_build_object('chapter_id', chapter.id, 'story_id', chapter.story_id,
+      'tell_followers', (select chapters.tell_followers from public.chapters where chapters.id = chapter.id)));
 end;
 $$;
 
@@ -17615,7 +17652,7 @@ $$;
 ALTER FUNCTION "public"."chapter_publish_now"("chapter" "public"."chapters") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."chapter_publish_now"("chapter" "public"."chapters") IS 'Internal: puts a chapter live, stamps the story, writes a revision and queues chapter_published (S1-E3-03).';
+COMMENT ON FUNCTION "public"."chapter_publish_now"("chapter" "public"."chapters") IS 'Internal: puts a chapter live, stamps the story, writes a revision and queues chapter_published with the writer''s Tell followers choice (S1-E3-03, board D06).';
 
 
 
@@ -18067,6 +18104,36 @@ ALTER FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "uuid") 
 
 
 COMMENT ON FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "uuid") IS 'Internal: when a person last deleted a chat, or null; a signed-in caller is answered about themselves only (S1-E9-04; FINAL-2).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."chat_partner_story"("partner_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object('title', card ->> 'title', 'category_slug', card ->> 'category_slug',
+    'chapter_count', (card ->> 'chapter_count')::integer)
+  from (
+    -- Step 1: the writer's first editions, newest chapter first, that the caller may open.
+    select public.story_card_json(stories.id) as card, stories.last_chapter_published_at
+    from public.stories
+    where stories.user_id = partner_id
+      and stories.deleted_at is null
+      and stories.edition_of_story_id is null
+      and stories.last_chapter_published_at is not null
+      and exists (select 1 from public.reader_visible_story(stories.slug))
+  ) as candidates
+  -- Step 2: only a story with a chapter the caller can read counts.
+  where (card ->> 'chapter_count')::integer > 0
+  order by candidates.last_chapter_published_at desc
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."chat_partner_story"("partner_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chat_partner_story"("partner_id" "uuid") IS 'Internal: the other person''s latest story the caller may read, for the chat header (user story 4.3, board E13).';
 
 
 
@@ -22536,6 +22603,7 @@ declare
   other public.profiles := public.messaging_partner(other_handle);
   chat public.conversations;
   said_no_thanks boolean;
+  can_send boolean;
 begin
   -- Step 1: someone the caller may see in Messages.
   if other.id is null then
@@ -22544,6 +22612,7 @@ begin
   -- Step 2: their chat, if they have one, and whether it closed with "No thanks" to the caller.
   chat := public.conversation_between(caller_id, other.id);
   said_no_thanks := chat.user_id = caller_id and public.no_thanks_pause_ends(chat) is not null;
+  can_send := public.conversation_can_send(chat, caller_id, other.id);
   -- Step 3: the answer.
   return jsonb_build_object(
     'handle', other.handle,
@@ -22553,7 +22622,10 @@ begin
     'is_waiting', chat.status in ('request', 'declined') and chat.user_id = caller_id and not coalesce(said_no_thanks, false),
     'said_no_thanks', coalesce(said_no_thanks, false),
     'ask_again_from', case when said_no_thanks then public.no_thanks_pause_ends(chat) end,
-    'can_send', public.conversation_can_send(chat, caller_id, other.id),
+    'can_send', can_send,
+    -- User story 4.3: the caller's own adults switch is the one reason a chat may say.
+    'adults_switch_stops', not can_send and public.my_adults_switch_stops_chat(caller_id, other.id),
+    'latest_story', public.chat_partner_story(other.id),
     'i_follow', exists (select 1 from public.follows_users
                         where follows_users.user_id = caller_id and follows_users.followed_user_id = other.id),
     'they_follow', exists (select 1 from public.follows_users
@@ -22567,7 +22639,7 @@ $$;
 ALTER FUNCTION "public"."conversation_with"("other_handle" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."conversation_with"("other_handle" "text") IS 'One chat by the other person''s username, as the caller sees it; never says why sending is off (S1-E9-01, IDEAS-2 idea 7).';
+COMMENT ON FUNCTION "public"."conversation_with"("other_handle" "text") IS 'One chat by the other person''s username, as the caller sees it; says why sending is off only when the caller''s own adults switch stops it (S1-E9-01, IDEAS-2 idea 7, user story 4.3).';
 
 
 
@@ -29060,13 +29132,15 @@ CREATE OR REPLACE FUNCTION "public"."house_ad_candidates"("page_key" "text") RET
     SET "search_path" TO ''
     AS $$
   with landing as (
-    -- Our live landing pages, with the hero block's title in each language (S1-E11-14).
+    -- Our live contest and campaign landing pages, with the hero block's title in each language
+    -- (S1-E11-14). Information pages are reference pages, not promotions (BOOKS-FOOTER).
     select 'landing:' || pages.slug as ad_key, 'landing' as kind, pages.slug as page_slug,
       live.content #>> '{blocks,0,ro,title}' as title_ro, live.content #>> '{blocks,0,en,title}' as title_en,
       0 as tier
     from public.landing_pages as pages
     cross join lateral public.landing_page_live_version(pages.id) as live
     where pages.archived_at is null and live.id is not null
+      and pages.page_type in ('contest', 'campaign')
   ), built_in as (
     -- The three built-in house ads; their words live in the ads locale files.
     select 'house:' || built.kind, built.kind, null::text, null::text, null::text, 1
@@ -29084,7 +29158,7 @@ $$;
 ALTER FUNCTION "public"."house_ad_candidates"("page_key" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."house_ad_candidates"("page_key" "text") IS 'Internal: our own ads for a page, ordered by day and page, never by reader (S1-E12-01).';
+COMMENT ON FUNCTION "public"."house_ad_candidates"("page_key" "text") IS 'Internal: our own ads for a page (contest and campaign pages, then the built-in ones), ordered by day and page, never by reader (S1-E12-01, BOOKS-FOOTER).';
 
 
 
@@ -33255,6 +33329,26 @@ COMMENT ON FUNCTION "public"."my_account_deletion"() IS 'The caller''s account d
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_adults_switch_stops_chat"("caller_id" "uuid", "partner_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((
+    select public.message_age_group(caller) = 'teen'
+      and not coalesce(caller.adults_may_message, false)
+      and public.message_age_group(partner) = 'adult'
+    from public.profiles as caller, public.profiles as partner
+    where caller.id = caller_id and partner.id = partner_id), false);
+$$;
+
+
+ALTER FUNCTION "public"."my_adults_switch_stops_chat"("caller_id" "uuid", "partner_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_adults_switch_stops_chat"("caller_id" "uuid", "partner_id" "uuid") IS 'Internal: true when the caller''s own adults switch (16 and 17) is what stops a chat with an adult (user story 4.3).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."my_age_check"() RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -34406,6 +34500,8 @@ CREATE OR REPLACE FUNCTION "public"."my_onboarding"() RETURNS "jsonb"
       'is_due', public.onboarding_is_due(profiles.id),
       'has_handle', profiles.handle is not null,
       'age_band', public.age_band(),
+      -- COUNTRY-2: the profile's country, so only its counties are offered.
+      'country_code', profiles.country_code,
       'region_code', profiles.region_code,
       'adults_may_message', profiles.adults_may_message,
       'read_categories', coalesce((
@@ -34429,7 +34525,7 @@ $$;
 ALTER FUNCTION "public"."my_onboarding"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_onboarding"() IS 'The signed-in person''s onboarding: whether it is due, their county, likes and the adult messages switch (S1-E2-06).';
+COMMENT ON FUNCTION "public"."my_onboarding"() IS 'The signed-in person''s onboarding: whether it is due, their country and county, likes and the adult messages switch (S1-E2-06, COUNTRY-2).';
 
 
 
@@ -35689,6 +35785,78 @@ COMMENT ON FUNCTION "public"."new_certificate_code"() IS 'Internal: a fresh uniq
 
 
 
+CREATE OR REPLACE FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") RETURNS SETOF "uuid"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with story as (
+    select stories.* from public.stories
+    where stories.id = target_story_id and stories.visibility <> 'private'
+  ),
+  followers as (
+    select follows_users.user_id from public.follows_users, story
+    where follows_users.followed_user_id = story.user_id and story.visibility = 'public'
+      and story.edition_of_story_id is null
+    union
+    select follows_stories.user_id from public.follows_stories, story
+    where follows_stories.story_id = story.id
+    union
+    select follows_stories.user_id from public.follows_stories, story
+    where story.edition_of_story_id is not null
+      and follows_stories.story_id in (select public.story_family_ids(story.id))
+  )
+  select followers.user_id from followers, story
+  where followers.user_id <> story.user_id
+    and (not story.class_only or exists (
+      select 1 from public.space_members
+      where space_members.space_id = story.class_space_id
+        and space_members.user_id = followers.user_id
+        and space_members.status = 'active'));
+$$;
+
+
+ALTER FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") IS 'Internal: the people a new chapter of a story tells (S1-E7-01, NEW-1, TRANSLATE-1a, S1-E8-11; board D06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."new_chat_people"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_messaging_caller();
+begin
+  return (
+    select coalesce(jsonb_agg(jsonb_build_object('handle', found.handle,
+      'display_name', found.display_name) order by lower(found.display_name), found.handle), '[]'::jsonb)
+    from (
+      -- Step 1: the people the caller follows, still live and not moderated away.
+      select profiles.handle, public.display_name(profiles.handle, profiles.pen_name) as display_name
+      from public.follows_users
+      join public.profiles on profiles.id = follows_users.followed_user_id
+      where follows_users.user_id = caller_id
+        and profiles.deleted_at is null
+        and profiles.handle is not null
+        and not public.is_moderated_away('profile', profiles.id)
+        and public.account_state(profiles.id) <> 'staff_account'
+        -- Step 2: only those the caller may write to now (the same check as the message box).
+        and public.conversation_can_send(public.conversation_between(caller_id, profiles.id),
+                                         caller_id, profiles.id)
+    ) as found);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."new_chat_people"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."new_chat_people"() IS 'The people the caller follows whom they may write to now, for New chat (user story 4.2, board E12).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."next_chapter_json"("target_story_id" "uuid") RETURNS "jsonb"
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -36488,9 +36656,12 @@ declare
   follower_id uuid;
   wanted_kind public.notification_kind := 'new_chapter';
 begin
+  -- Board D06: the writer chose not to tell followers about this chapter.
+  if coalesce((payload ->> 'tell_followers')::boolean, true) = false then
+    return;
+  end if;
   select * into story from public.stories where stories.id = (payload ->> 'story_id')::uuid;
-  -- NEW-1: a private story tells nobody.
-  if story.id is null or story.visibility = 'private' then
+  if story.id is null then
     return;
   end if;
   -- BOOKS B06: the chapter the writer marked as the last ends the story, so followers hear
@@ -36500,31 +36671,8 @@ begin
                and chapters.status = 'published' and chapters.deleted_at is null) then
     wanted_kind := 'story_completed';
   end if;
-  for follower_id in
-    -- NEW-1: the writer's followers hear only of public stories; an unlisted story tells only
-    -- the people who follow that story.
-    select follows_users.user_id from public.follows_users
-    where follows_users.followed_user_id = story.user_id and story.visibility = 'public'
-      -- TRANSLATE-1a: not again for a translation.
-      and story.edition_of_story_id is null
-    union
-    select follows_stories.user_id from public.follows_stories where follows_stories.story_id = story.id
-    union
-    -- TRANSLATE-1a: a translation also tells whoever follows the story in another language.
-    select follows_stories.user_id from public.follows_stories
-    where story.edition_of_story_id is not null
-      and follows_stories.story_id in (select public.story_family_ids(story.id))
-  loop
-    -- S1-E8-11: a chapter of a class-only story tells only followers who are in that class, so
-    -- nobody else learns its title.
-    if story.class_only and not exists (
-      select 1 from public.space_members
-      where space_members.space_id = story.class_space_id
-        and space_members.user_id = follower_id
-        and space_members.status = 'active'
-    ) then
-      continue;
-    end if;
+  -- Everyone the chapter tells, by the rules in new_chapter_audience().
+  for follower_id in select public.new_chapter_audience(story.id) loop
     perform public.notify(follower_id, wanted_kind, story.user_id,
       jsonb_build_object('story_id', story.id, 'chapter_id', payload ->> 'chapter_id'));
   end loop;
@@ -36535,7 +36683,7 @@ $$;
 ALTER FUNCTION "public"."notify_chapter_published"("payload" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."notify_chapter_published"("payload" "jsonb") IS 'Internal: a new chapter notifies the followers of its writer and of its story (S1-E7-01); the chapter that ends the story sends story_completed instead (BOOKS B06).';
+COMMENT ON FUNCTION "public"."notify_chapter_published"("payload" "jsonb") IS 'Internal: a new chapter notifies the followers of its writer and of its story (S1-E7-01); the chapter that ends the story sends story_completed instead (BOOKS B06); nobody when the writer switched Tell followers off (board D06).';
 
 
 
@@ -38999,7 +39147,7 @@ COMMENT ON FUNCTION "public"."public_plan_relationships"("target_story_id" "uuid
 
 
 
-CREATE OR REPLACE FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean DEFAULT false) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean DEFAULT false, "tell_followers" boolean DEFAULT true) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -39031,19 +39179,22 @@ begin
     end if;
     perform public.mark_chapter_last(chapter);
   end if;
-  -- Step 3: out now; a marked chapter turns the story Completed (chapter_publish_now()).
+  -- Step 3 (board D06): the writer's "Tell followers" choice, read by chapter_publish_now().
+  update public.chapters set tell_followers = coalesce(publish_chapter.tell_followers, true)
+  where chapters.id = chapter.id;
+  -- Step 4: out now; a marked chapter turns the story Completed (chapter_publish_now()).
   perform public.chapter_publish_now(chapter);
-  -- Step 4 (CALM-6, step 7): a chapter out after the marked one takes that mark off.
+  -- Step 5 (CALM-6, step 7): a chapter out after the marked one takes that mark off.
   perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok', 'published_at', now());
 end;
 $$;
 
 
-ALTER FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) OWNER TO "postgres";
+ALTER FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean, "tell_followers" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) IS 'Puts the caller''s own chapter live now, as the last when as_last: {outcome: ok | not_active | not_found | empty | wrong_state | original_not_published | not_last} (S1-E3-03, CALM-6).';
+COMMENT ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean, "tell_followers" boolean) IS 'Puts the caller''s own chapter live now, as the last when as_last, telling followers unless tell_followers is false: {outcome: ok | not_active | not_found | empty | wrong_state | original_not_published | not_last} (S1-E3-03, CALM-6, board D06).';
 
 
 
@@ -45741,9 +45892,14 @@ CREATE OR REPLACE FUNCTION "public"."save_my_region"("wanted_region" "text" DEFA
 declare
   caller uuid := public.require_live_profile();
 begin
-  if wanted_region is not null and not exists (select 1 from public.regions where code = wanted_region) then
+  -- Step 1: a county must be on the list and in the country on the caller's profile.
+  if wanted_region is not null and not exists (
+    select 1 from public.regions
+    join public.profiles on profiles.id = caller
+    where regions.code = wanted_region and regions.country_code = profiles.country_code) then
     raise exception 'Pick a county from the list.' using errcode = 'check_violation', hint = 'unknown_region';
   end if;
+  -- Step 2: store it, or clear it.
   update public.profiles set region_code = wanted_region where id = caller;
 end;
 $$;
@@ -45752,7 +45908,7 @@ $$;
 ALTER FUNCTION "public"."save_my_region"("wanted_region" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."save_my_region"("wanted_region" "text") IS 'Sets or clears the caller''s county (S1-E2-06).';
+COMMENT ON FUNCTION "public"."save_my_region"("wanted_region" "text") IS 'Sets or clears the caller''s county, which must be in their own country (S1-E2-06, COUNTRY-2).';
 
 
 
@@ -45942,7 +46098,7 @@ COMMENT ON FUNCTION "public"."say_no_thanks_to_request"("sender_handle" "text") 
 
 
 
-CREATE OR REPLACE FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean DEFAULT false) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean DEFAULT false, "tell_followers" boolean DEFAULT true) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -45977,8 +46133,10 @@ begin
     end if;
     perform public.mark_chapter_last(chapter);
   end if;
-  -- Step 3: scheduled.
-  update public.chapters set status = 'scheduled', scheduled_for = publish_at where chapters.id = chapter.id;
+  -- Step 3: scheduled, with the "Tell followers" choice kept for publish_due_chapters().
+  update public.chapters set status = 'scheduled', scheduled_for = publish_at,
+    tell_followers = coalesce(schedule_chapter.tell_followers, true)
+  where chapters.id = chapter.id;
   -- Step 4 (CALM-6, step 7): a chapter scheduled after the marked one takes that mark off.
   perform public.check_last_chapter_mark(chapter.story_id);
   return jsonb_build_object('outcome', 'ok', 'scheduled_for', publish_at);
@@ -45986,10 +46144,10 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) OWNER TO "postgres";
+ALTER FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean, "tell_followers" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) IS 'Schedules the caller''s own draft chapter, as the last when as_last: {outcome: ok | not_active | not_found | empty | wrong_state | bad_time | original_not_published | not_last} (S1-E3-03, CALM-6).';
+COMMENT ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean, "tell_followers" boolean) IS 'Schedules the caller''s own draft chapter, as the last when as_last, keeping the Tell followers choice: {outcome: ok | not_active | not_found | empty | wrong_state | bad_time | original_not_published | not_last} (S1-E3-03, CALM-6, board D06).';
 
 
 
@@ -72480,6 +72638,11 @@ REVOKE ALL ON FUNCTION "public"."chapter_embed_states"("body" "text", "owner_id"
 
 
 
+REVOKE ALL ON FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."chapter_followers_to_tell"("chapter_code" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."chapter_gate_outcome"("chapter" "public"."chapters") FROM PUBLIC;
 
 
@@ -72611,6 +72774,10 @@ REVOKE ALL ON FUNCTION "public"."character_sheet_keys"() FROM PUBLIC;
 
 REVOKE ALL ON FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."chat_partner_story"("partner_id" "uuid") FROM PUBLIC;
 
 
 
@@ -74701,6 +74868,10 @@ GRANT ALL ON FUNCTION "public"."my_account_deletion"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."my_adults_switch_stops_chat"("caller_id" "uuid", "partner_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."my_age_check"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_age_check"() TO "authenticated";
 
@@ -75078,6 +75249,15 @@ REVOKE ALL ON FUNCTION "public"."network_ads_barred"("context" "jsonb") FROM PUB
 
 
 REVOKE ALL ON FUNCTION "public"."new_certificate_code"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."new_chat_people"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."new_chat_people"() TO "authenticated";
 
 
 
@@ -75537,8 +75717,8 @@ REVOKE ALL ON FUNCTION "public"."public_plan_relationships"("target_story_id" "u
 
 
 
-REVOKE ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean, "tell_followers" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."publish_chapter"("chapter_code" "text", "as_last" boolean, "tell_followers" boolean) TO "authenticated";
 
 
 
@@ -76433,8 +76613,8 @@ GRANT ALL ON FUNCTION "public"."say_no_thanks_to_request"("sender_handle" "text"
 
 
 
-REVOKE ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean, "tell_followers" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."schedule_chapter"("chapter_code" "text", "publish_at" timestamp with time zone, "as_last" boolean, "tell_followers" boolean) TO "authenticated";
 
 
 

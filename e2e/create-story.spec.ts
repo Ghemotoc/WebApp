@@ -75,7 +75,7 @@ test.describe('create a story (S1-E3-01)', () => {
     // The basics.
     await page.getByRole('textbox', { name: 'Title' }).fill(longTitle);
     await page.getByLabel('Blurb').fill('O vară în atelierul bunicului din Ploiești.');
-    await page.getByRole('radio', { name: 'Română' }).click();
+    await page.getByLabel('Language of the story').selectOption('ro');
     await expect(page.locator('li[aria-current="step"] h2')).toHaveText('The basics');
 
     // Step 2: category, tags and setting. The basics fold to their summary with a Change button.
@@ -145,7 +145,9 @@ test.describe('create a story (S1-E3-01)', () => {
     await page.goto('/write');
     const card = page.getByRole('article', { name: longTitle });
     await expect(card).toBeVisible();
-    await expect(card.getByText('Fantasy', { exact: true })).toBeVisible();
+    // The card's meta line names the category; tags live on the story page and in settings
+    // since board D01 (user story 5.1), and the one tag is checked in the database below.
+    await expect(card.getByText('Fiction', { exact: true })).toBeVisible();
     await expect(
       card.getByText('Only you can see this story until you publish its first chapter.'),
     ).toBeVisible();
@@ -194,7 +196,7 @@ test.describe('create a story (S1-E3-01)', () => {
   test('the form refuses an empty title before asking the database', async ({ browser }) => {
     const page = await openAsPersona(browser, 'adult_writer', '/write/new');
     // The wizard's first step won't move on without a title (CALM-9, board D02).
-    await page.getByRole('button', { name: 'Next: Category, tags and setting' }).click();
+    await page.getByRole('button', { name: 'Next: category, tags and setting' }).click();
     await expect(page.getByText('Give the story a title.')).toBeVisible();
     await expect(page.locator('li[aria-current="step"] h2')).toHaveText('The basics');
     await expect(page.getByRole('textbox', { name: 'Title' })).toHaveAttribute(
