@@ -54,8 +54,9 @@ describe('LanguagesTable', () => {
     expect(
       within(original).getByRole('link', { name: 'Open the chapters of Stația meteo' }),
     ).toHaveAttribute('href', '/write/s/statia-meteo/chapters');
-    // Only the writer translates their story (Robert, 16 Nov 2026, 12:20 UTC).
-    expect(within(english).getByText('You')).toBeInTheDocument();
+    // Board D08: no "Translated by" column; only the writer translates their own story, and
+    // that credit shows on classics only (Robert, 16 Nov 2026).
+    expect(screen.queryByRole('columnheader', { name: 'Translated by' })).toBeNull();
     expect(within(english).getByText('Draft')).toBeInTheDocument();
     expect(within(english).getByRole('link', { name: 'Translate into English' })).toHaveAttribute(
       'href',

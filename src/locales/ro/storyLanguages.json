@@ -1,12 +1,9 @@
 {
   "breadcrumb": {
-    "label": "Calea paginii",
-    "write": "Scrie",
     "languages": "Limbi"
   },
   "page": {
     "documentTitle": "Limbi · {{story}}",
-    "eyebrow": "Setările poveștii",
     "heading": "Limbi",
     "intro": "Originalul și fiecare traducere a acestei povești.",
     "signedOut": "Intră în cont pentru a gestiona limbile unei povești.",
@@ -17,13 +14,10 @@
     "caption": "Limbile acestei povești",
     "language": "Limbă",
     "title": "Titlu",
-    "translatedBy": "Tradus de",
     "chapters": "Capitole",
     "status": "Stare",
     "actions": "Acțiuni",
     "original": "Original",
-    "you": "Tu",
-    "nobody": "Nu este o traducere",
     "chaptersOf": "{{count}} din {{total}}",
     "published": "Publicată",
     "draft": "Ciornă",
@@ -34,14 +28,12 @@
     "translateOnBiggerScreen": "Tradu pe o tabletă sau pe un calculator"
   },
   "add": {
-    "eyebrow": "Adaugă o limbă",
-    "heading": "O ediție nouă a acestei povești",
+    "heading": "Adaugă o limbă",
     "language": "Limbă",
     "chooseLanguage": "Alege o limbă",
     "title": "Titlul în acea limbă",
-    "blurb": "Descrierea în acea limbă",
-    "translateYourself": "O traduci chiar tu, cu originalul alături. Alți membri nu îți pot traduce povestea.",
-    "chaptersAppear": "Capitolele apar în această limbă pe măsură ce le publici. Până atunci, cititorii primesc un link către original.",
+    "blurb": "Descrierea scurtă în acea limbă",
+    "note": "O traduci chiar tu, cu originalul alături; alți membri nu pot traduce povestea. Capitolele apar în această limbă pe măsură ce le publici; până atunci, cititorii primesc un link către original.",
     "cancel": "Renunță",
     "submit": "Adaugă limba",
     "adding": "Se adaugă…",
@@ -57,7 +49,7 @@
   },
   "side": {
     "heading": "O poveste, mai multe limbi",
-    "body": "Fiecare limbă este o ediție a aceleiași povești: aprecierile, salvările și citirile se adună, iar cititorii pot schimba limba la orice capitol. Doar tu îți poți traduce povestea."
+    "body": "Fiecare limbă este o ediție a aceleiași povești: aprecierile și citirile se adună într-un singur total, iar cititorii pot schimba limba la orice capitol. Comutatorul de limbă apare doar după ce povestea are două limbi."
   },
   "chapters": {
     "documentTitle": "Tradu · {{story}}",

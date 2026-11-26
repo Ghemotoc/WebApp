@@ -5,7 +5,8 @@
  * Every step but the last is a link in the muted ink, underlined; the last is the page itself,
  * marked aria-current and not a link. The steps sit in a list, so a screen reader hears how many
  * there are; the slashes between them are drawn only.
- * Who shows it: NewStoryPage, ManageChaptersPage and StorySettingsPage. What it calls: nothing.
+ * Who shows it: NewStoryPage, ManageChaptersPage, StorySettingsHeader and, for the Languages
+ * screens (board D08), LanguagesBreadcrumb. What it calls: nothing.
  */
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -14,6 +15,8 @@ import { Link } from 'react-router';
 export interface WritingCrumb {
   label: string;
   to?: string;
+  /** The step's language, when it is a title in another language than the interface. */
+  lang?: string;
 }
 
 /** A linked step: muted and underlined, at least 24 px tall (CLAUDE.md rule 9). */
@@ -36,11 +39,15 @@ export function WritingBreadcrumb({ crumbs }: { crumbs: WritingCrumb[] }) {
             {/* The slash before every step but the first. */}
             {index > 0 && <span aria-hidden="true">/</span>}
             {crumb.to === undefined ? (
-              <span aria-current="page" className="min-w-0 [overflow-wrap:anywhere]">
+              <span
+                aria-current="page"
+                lang={crumb.lang}
+                className="min-w-0 [overflow-wrap:anywhere]"
+              >
                 {crumb.label}
               </span>
             ) : (
-              <Link to={crumb.to} className={crumbLink}>
+              <Link to={crumb.to} lang={crumb.lang} className={crumbLink}>
                 {crumb.label}
               </Link>
             )}

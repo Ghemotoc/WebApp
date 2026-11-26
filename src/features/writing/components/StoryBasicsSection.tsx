@@ -67,6 +67,7 @@ export function StoryBasicsSection({ answers, errors, languages, set }: StoryBas
         id="story-language"
         label={t('newStory.language')}
         isLabelVisible
+        isLabelAbove
         placement="form"
         options={languages.map((language) => ({
           value: language.code,

@@ -56,7 +56,9 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
     const page = await openAsPersona(browser, 'adult_writer', '/write');
     const card = page.getByRole('article', { name: 'Stația meteo' });
     await card.getByRole('link', { name: 'Story settings' }).click();
-    await expect(page.getByRole('heading', { level: 1, name: 'Stația meteo' })).toBeVisible();
+    // Board D07: "Story settings" is the heading; the story's title opens the line under it.
+    await expect(page.getByRole('heading', { level: 1, name: 'Story settings' })).toBeVisible();
+    await expect(page.getByText('Stația meteo. Readers see the changes')).toBeVisible();
 
     await page.getByRole('radio', { name: 'Completed' }).click();
     // MUST-1a: "Who can comment" is one setting; Nobody is the old switch turned off.

@@ -299,19 +299,17 @@
   },
   "settings": {
     "documentTitle": "Story settings · {{productName}}",
-    "eyebrow": "Write · story settings",
     "heading": "Story settings",
     "save": "Save changes",
     "saving": "Saving…",
     "saved": "Saved.",
     "saveFailed": "We couldn’t save the changes. Check your connection and try again.",
     "notFound": "We can’t find this story on this account.",
-    "intro": "Change anything here. Readers see the changes as soon as you save.",
+    "intro": "{{title}}. Readers see the changes as soon as you save.",
     "unsaved": "You have unsaved changes.",
     "cancel": "Cancel"
   },
   "deleteStory": {
-    "eyebrow": "The whole story",
     "heading": "Delete this story",
     "intro": "We ask you twice. The story and all its chapters are hidden straight away and deleted for good after 30 days.",
     "button": "Delete story",
@@ -524,7 +522,7 @@
     }
   },
   "rankBadges": {
-    "legend": "Rank badges on the cover",
+    "legend": "Badges on the cover",
     "intro": "Your cover shows where the story stands in its tags, like “#4 in Fantasy”, counted the same way as the tag pages. It shows the 3 best ranks unless you pick up to 3 tags here. A tag shows a rank once the story has readers and the tag holds a few stories.",
     "pickLabel": "Tags to show as badges",
     "rankOf": "{{tag}} · #{{rank}} of {{count}}",

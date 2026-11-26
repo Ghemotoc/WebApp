@@ -25,13 +25,11 @@
  * StoryPreviewAside (the preview).
  */
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { ButtonRow } from '@/components/ui/ButtonRow';
 import { coverLookOf } from '@/components/covers/automaticCover';
-import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
@@ -50,9 +48,11 @@ import { CategoryTagsSection } from './CategoryTagsSection';
 import { CoverLookPicker } from './CoverLookPicker';
 import { CoverSection } from './CoverSection';
 import { DeleteStoryControl } from './DeleteStoryControl';
+import { FlatFormSections, flatGroupClassName } from './FormSection';
 import { StoryBasicsSection } from './StoryBasicsSection';
 import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryPreviewAside } from './StoryPreviewAside';
+import { StorySettingsHeader } from './StorySettingsHeader';
 import { StoryStatusSection } from './StoryStatusSection';
 import { StoryWhereItShowsSection } from './StoryWhereItShowsSection';
 import { StoryWhoCanReadSection } from './StoryWhoCanReadSection';
@@ -66,15 +66,11 @@ function SaveOutcome({ outcome }: { outcome: ReturnType<typeof useStorySettingsF
   return <Notice tone="error">{t('settings.saveFailed')}</Notice>;
 }
 
-/** The card at the bottom: delete the story (DeleteStoryControl). */
+/** The last group: delete the story (DeleteStoryControl), a flat group like the rest (D07). */
 function DeleteStoryCard({ story }: { story: MyStory }) {
   const { t } = useTranslation('writing');
   return (
-    <section
-      aria-labelledby="delete-story-heading"
-      className="flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-card"
-    >
-      <Eyebrow>{t('deleteStory.eyebrow')}</Eyebrow>
+    <section aria-labelledby="delete-story-heading" className={flatGroupClassName}>
       <h2
         id="delete-story-heading"
         className="m-0 font-heading type-heading font-bold text-ink-heading"
@@ -116,13 +112,18 @@ function SaveBar({ form }: { form: ReturnType<typeof useStorySettingsForm> }) {
   );
 }
 
-/** The form for one story, with the preview beside it on wide screens (below it on phones). */
+/**
+ * The form for one story, with the preview beside it from 1024 px (below it on smaller screens).
+ * Board D07: the form takes 1.7 parts of the width and the preview 1, 64 px apart.
+ */
 function SettingsForm({ story, penName }: { story: MyStory; penName: string }) {
   const form = useStorySettingsForm(story);
   return (
-    <div className="flex flex-col gap-8 md:flex-row md:items-start">
-      <SettingsFields story={story} penName={penName} form={form} />
-      <div className="w-full flex-[1_1_320px] md:max-w-[400px]">
+    <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-16">
+      <FlatFormSections>
+        <SettingsFields story={story} penName={penName} form={form} />
+      </FlatFormSections>
+      <div className="w-full">
         <StoryPreviewAside answers={form.answers} penName={penName} hasDeleteNote={false} />
       </div>
     </div>
@@ -177,7 +178,7 @@ function SettingsFields({
   const options = useStoryFormOptions();
   return (
     <form
-      className="flex min-w-0 flex-[999_1_560px] flex-col gap-4"
+      className="flex min-w-0 flex-col gap-8"
       onSubmit={(event) => {
         event.preventDefault();
         form.submit();
@@ -234,49 +235,6 @@ function SettingsBody({
   return <SettingsForm story={story} penName={penName} />;
 }
 
-/** The header: back link, eyebrow, the story's title, the line under it and the three links. */
-function SettingsHeader({ story }: { story: MyStory | undefined }) {
-  const { t } = useTranslation('writing');
-  return (
-    <header className="flex flex-wrap items-end justify-between gap-6">
-      <div className="flex max-w-[760px] flex-col gap-2">
-        <Link
-          to="/write"
-          className="inline-flex min-h-11 items-center gap-2 self-start type-body font-semibold no-underline hover:underline"
-        >
-          <ChevronLeftIcon />
-          {t('newStory.back')}
-        </Link>
-        <Eyebrow>{t('settings.eyebrow')}</Eyebrow>
-        <h1 className="m-0 type-title lg:type-display break-words">
-          {story?.title ?? t('settings.heading')}
-        </h1>
-        {story !== undefined && (
-          <p className="m-0 type-long leading-relaxed text-ink-muted">{t('settings.intro')}</p>
-        )}
-      </div>
-      {story !== undefined && (
-        <div className="flex flex-wrap items-center gap-3">
-          <Link to={`/write/s/${story.slug}/chapters`} className={headerLinkClass}>
-            {t('storyCard.manageChapters')}
-          </Link>
-          {/* One story in several languages (TRANSLATE-1c): the languages and their translations. */}
-          <Link to={`/write/s/${story.slug}/languages`} className={headerLinkClass}>
-            {t('storyCard.languages')}
-          </Link>
-          <Link to={`/s/${story.slug}`} className={headerLinkClass}>
-            {t('storyCard.seePage')}
-          </Link>
-        </div>
-      )}
-    </header>
-  );
-}
-
-/** The glass pills in the header (the board's clear pills). */
-const headerLinkClass =
-  'inline-flex h-12 items-center rounded-full button-glass px-6 type-body font-semibold no-underline';
-
 /**
  * Renders the page.
  *
@@ -291,9 +249,10 @@ export function StorySettingsPage() {
   const story = writing.stories.find((candidate) => candidate.slug === storySlug);
 
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-12 pb-6">
+    // Board D07's spacing: 32 px between the header and the form on a phone, 48 from 768 px.
+    <PageContainer className="tmc-rise flex flex-col gap-8 pt-6 pb-6 md:gap-12 lg:pt-12">
       <title>{t('settings.documentTitle')}</title>
-      <SettingsHeader story={story} />
+      <StorySettingsHeader story={story} />
       <SettingsBody writing={writing} story={story} penName={penName} />
     </PageContainer>
   );

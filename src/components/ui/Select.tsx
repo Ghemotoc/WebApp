@@ -38,6 +38,11 @@ export interface SelectProps {
   /** The label. Always present for screen readers; shown on screen when isLabelVisible. */
   label: string;
   isLabelVisible?: boolean;
+  /**
+   * The visible label above the drop-down, in the same type as a text field's label, as the
+   * boards draw a form's fields one under another (D07, D08). Beside it when false.
+   */
+  isLabelAbove?: boolean;
   options: SelectOption[];
   /** When given, the choices are drawn in these named groups instead of `options`. */
   groups?: SelectGroup[];
@@ -62,6 +67,23 @@ function SelectOptions({ options }: { options: SelectOption[] }) {
   ));
 }
 
+/** The label beside the drop-down (bars, filters) and above it (form fields, D07 and D08). */
+const besideRowClass = 'inline-flex max-w-full min-w-0 flex-wrap items-center gap-2';
+const stackedRowClass = 'flex max-w-full min-w-0 flex-col items-start gap-2';
+
+/**
+ * The label's classes: hidden, small beside the drop-down, or a field label above it.
+ *
+ * @param isVisible - whether the label shows on screen
+ * @param isAbove - whether it sits above the drop-down
+ * @returns the class names
+ */
+function labelClassName(isVisible: boolean, isAbove: boolean): string {
+  if (!isVisible) return 'sr-only';
+  if (isAbove) return 'type-body font-semibold wrap-anywhere text-ink';
+  return 'type-meta font-semibold text-ink-muted';
+}
+
 /**
  * Renders a labelled drop-down.
  *
@@ -71,6 +93,7 @@ export function Select({
   id,
   label,
   isLabelVisible = false,
+  isLabelAbove = false,
   options,
   groups,
   value,
@@ -86,11 +109,8 @@ export function Select({
   return (
     // max-w-full and min-w-0: a very long option (a story title without spaces) shortens with an
     // ellipsis inside the row, and never pushes the page sideways (rule 21; G10c4 break test).
-    <span className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-2">
-      <label
-        htmlFor={id}
-        className={isLabelVisible ? 'type-meta font-semibold text-ink-muted' : 'sr-only'}
-      >
+    <span className={isLabelAbove ? stackedRowClass : besideRowClass}>
+      <label htmlFor={id} className={labelClassName(isLabelVisible, isLabelAbove)}>
         {label}
       </label>
       <span className="tmc-sel relative inline-flex w-fit max-w-full items-center align-middle">
