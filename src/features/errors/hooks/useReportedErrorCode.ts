@@ -15,12 +15,19 @@ import { reportError } from '../lib/errorReporter';
  *
  * @param thrown - what the page threw
  * @param routePath - the route pattern of the page that failed
+ * @param isSkipped - true while the page reloads itself for a newer release (nothing is sent)
  * @returns the error code ("E-4F7A2C"), or null while sending or when nothing was stored
  */
-export function useReportedErrorCode(thrown: unknown, routePath: string): string | null {
+export function useReportedErrorCode(
+  thrown: unknown,
+  routePath: string,
+  isSkipped = false,
+): string | null {
   const [errorCode, setErrorCode] = useState<string | null>(null);
 
   useEffect(() => {
+    // A page that reloads itself has nothing to report.
+    if (isSkipped) return;
     let isCurrent = true;
     void reportError(thrown, routePath).then((code) => {
       if (isCurrent) setErrorCode(code);
@@ -28,7 +35,7 @@ export function useReportedErrorCode(thrown: unknown, routePath: string): string
     return () => {
       isCurrent = false;
     };
-  }, [thrown, routePath]);
+  }, [thrown, routePath, isSkipped]);
 
   return errorCode;
 }
