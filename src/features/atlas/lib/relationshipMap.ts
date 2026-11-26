@@ -1,28 +1,30 @@
 /**
- * Where the relationship map draws each card and each line (story S1-E17-15: "characters show as
- * nodes and relationships as labelled lines"; bundle G10 ATLAS, part b2, board AtlasConnections).
+ * Where the relationship map draws each card and each line (story S1-E17-15; user stories bundle
+ * 6, story 6.6, board E25: "the map places people by family and circle").
  *
  * - Only characters with at least one relationship get a card; the rest are "Not on the map yet".
- * - A card the writer moved stays where they dropped it (MapPlace); the others sit on a circle,
- *   in the cast's name order, so every line can be seen.
- * - Lines stop at the cards' edges. Two characters with more than one relationship get curved
- *   lines that bend apart, so each line and its label stay readable.
- * Who calls it: RelationshipMap and useCardDrag. What it calls: nothing.
+ * - Family first, on the left, one row per generation: parents a row above their children,
+ *   partners, siblings and cousins on the same row (the family category of relationshipCategories).
+ * - Then the circle, on the right: everyone else, on the row of the people they are linked to, so
+ *   a friend of the youngest sits beside the youngest (board E25: Teo Stan beside Mara Rus).
+ * - With no family at all, the circle fills rows of four.
+ * - Lines run from card centre to card centre, under the cards. Two characters with more than one
+ *   relationship get curved lines that bend apart, so each one can be seen.
+ * Who calls it: RelationshipMap. What it calls: categoryOf.
  */
-import type { CharacterRelationship, MapPlace } from '../api/characters';
+import type { CharacterRelationship } from '../api/characters';
 
-/** A card's size on the map, in map pixels. */
-export const cardWidth = 150;
-export const cardHeight = 120;
-/** The room left round the cards, and the largest place the database keeps (4,000). */
-const margin = 40;
-const largestPlace = 4000;
+import { categoryOf } from './relationshipCategories';
 
-/** One card going onto the map: the character and where the writer put it, if anywhere. */
-export interface MapCardInput {
-  id: string;
-  mapPlace: MapPlace | null;
-}
+/** A card's size on the map, in map pixels (board E25's .mapnode: 15/18 name and meta, 8 px). */
+export const cardWidth = 160;
+export const cardHeight = 52;
+/** The step from one column to the next and one row to the next, and the room round the edge. */
+const columnStep = 190;
+const rowStep = 130;
+const margin = 20;
+/** How many cards a row holds when nobody on the map is family. */
+const circleOnlyColumns = 4;
 
 /** One card's top-left corner on the map. */
 export interface MapNode {
@@ -31,12 +33,10 @@ export interface MapNode {
   y: number;
 }
 
-/** One relationship's line: its curve and where its label sits. */
+/** One relationship's line. */
 export interface MapEdge {
   relationship: CharacterRelationship;
   path: string;
-  labelX: number;
-  labelY: number;
 }
 
 /** The whole map: its size, the cards and the lines. */
@@ -52,85 +52,140 @@ function round(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
-/**
- * Keeps a place inside the map the database allows (0 to 4,000 each way).
- *
- * @param place - where a card was dropped
- * @returns the same place, pulled inside the edges
- */
-export function clampPlace(place: MapPlace): MapPlace {
-  return {
-    x: Math.round(Math.min(Math.max(place.x, 0), largestPlace)),
-    y: Math.round(Math.min(Math.max(place.y, 0), largestPlace)),
-  };
+/** How a family relationship moves a generation: a parent's child is one row lower. */
+function generationStep(relationship: CharacterRelationship): number {
+  return relationship.kind === 'parent_of' ? 1 : 0;
+}
+
+/** The other end of a relationship from one character, or null when it doesn't touch them. */
+function otherEnd(link: CharacterRelationship, id: string): string | null {
+  if (link.fromId === id) return link.toId;
+  if (link.toId === id) return link.fromId;
+  return null;
 }
 
 /**
- * The places the map gives cards the writer hasn't moved: round a circle big enough for them.
+ * Walks one family from its first member: a row down for a child, a row up for a parent.
  *
- * @param ids - the cards, in the order they go round
+ * @param start - the first member met
+ * @param family - the family relationships only
+ * @returns each member's row, relative to the first, in the order they were met
+ */
+function walkFamily(start: string, family: CharacterRelationship[]): Map<string, number> {
+  const found = new Map<string, number>([[start, 0]]);
+  const queue = [start];
+  while (queue.length > 0) {
+    const id = queue.shift() as string;
+    const row = found.get(id) as number;
+    for (const link of family) {
+      const next = otherEnd(link, id);
+      if (next === null || found.has(next)) continue;
+      // A parent's child is one row lower; seen from the child, the parent is one row higher.
+      const step = generationStep(link);
+      found.set(next, link.fromId === id ? row + step : row - step);
+      queue.push(next);
+    }
+  }
+  return found;
+}
+
+/**
+ * Each family member's generation, counted from the oldest in their own family (0 at the top).
+ *
+ * @param ids - the characters on the map, in the cast's order
+ * @param family - the family relationships only
+ * @returns each family member's row and the order they were met in (partners side by side)
+ */
+function familyGenerations(
+  ids: string[],
+  family: CharacterRelationship[],
+): { rows: Map<string, number>; order: string[] } {
+  const rows = new Map<string, number>();
+  const order: string[] = [];
+  const inFamily = ids.filter((id) => family.some((link) => otherEnd(link, id) !== null));
+  for (const start of inFamily) {
+    if (rows.has(start)) continue;
+    // Each family's oldest generation becomes row 0.
+    const found = walkFamily(start, family);
+    const top = Math.min(...found.values());
+    for (const [id, row] of found) {
+      rows.set(id, row - top);
+      order.push(id);
+    }
+  }
+  return { rows, order };
+}
+
+/**
+ * The circle's rows: each person on the rounded average row of those they link to who already
+ * have one, met in waves out from the family, so friends of friends follow too.
+ *
+ * @returns each circle member's row
+ */
+function circleRows(
+  circle: string[],
+  relationships: CharacterRelationship[],
+  rows: Map<string, number>,
+): Map<string, number> {
+  const placed = new Map(rows);
+  let waiting = [...circle];
+  while (waiting.length > 0) {
+    const stillWaiting: string[] = [];
+    for (const id of waiting) {
+      const linkedRows = relationships
+        .map((link) => otherEnd(link, id))
+        .map((other) => (other === null ? undefined : placed.get(other)))
+        .filter((row): row is number => row !== undefined);
+      if (linkedRows.length === 0) stillWaiting.push(id);
+      else placed.set(id, Math.round(linkedRows.reduce((a, b) => a + b, 0) / linkedRows.length));
+    }
+    // Nobody new found a row this wave: the first left over starts on the top row.
+    if (stillWaiting.length === waiting.length) placed.set(stillWaiting.shift() as string, 0);
+    waiting = stillWaiting;
+  }
+  for (const id of rows.keys()) placed.delete(id);
+  return placed;
+}
+
+/**
+ * Where every card sits: family on the left by generation, the circle to its right.
+ *
+ * @param ids - the characters on the map, in the cast's order
+ * @param relationships - every relationship (the hidden categories too, so cards stay put)
  * @returns each card's top-left corner
  */
-function circlePlaces(ids: string[]): Map<string, MapPlace> {
-  const radius = ids.length <= 1 ? 0 : Math.max(220, ids.length * 52);
-  const centre = { x: margin + radius + cardWidth / 2, y: margin + radius + cardHeight / 2 };
-  const places = new Map<string, MapPlace>();
-  ids.forEach((id, index) => {
-    // The first card at the top, then clockwise.
-    const angle = -Math.PI / 2 + (2 * Math.PI * index) / Math.max(ids.length, 1);
-    places.set(id, {
-      x: round(centre.x + radius * Math.cos(angle) - cardWidth / 2),
-      y: round(centre.y + radius * Math.sin(angle) - cardHeight / 2),
-    });
-  });
-  return places;
-}
-
-/**
- * How far from a card's centre a line leaves its edge, going in one direction.
- *
- * @param along - the line's direction, as a unit vector
- * @returns the distance from the centre to the card's edge
- */
-function toEdge(along: MapPlace): number {
-  const across = along.x === 0 ? Infinity : cardWidth / 2 / Math.abs(along.x);
-  const down = along.y === 0 ? Infinity : cardHeight / 2 / Math.abs(along.y);
-  return Math.min(across, down);
-}
-
-/**
- * One line from a card to another, bent sideways by `bend` pixels at its middle.
- *
- * @param from - where it starts (a card's top-left corner)
- * @param to - where it ends, at the arrow
- * @param bend - how far the middle moves to the side; 0 is straight
- * @returns the SVG path and the label's place
- */
-function curve(from: MapNode, to: MapNode, bend: number): Omit<MapEdge, 'relationship'> {
-  // Step 1: the cards' centres, the direction from one to the other, and the side direction.
-  const fromCentre = { x: from.x + cardWidth / 2, y: from.y + cardHeight / 2 };
-  const toCentre = { x: to.x + cardWidth / 2, y: to.y + cardHeight / 2 };
-  const length = Math.hypot(toCentre.x - fromCentre.x, toCentre.y - fromCentre.y) || 1;
-  const along = {
-    x: (toCentre.x - fromCentre.x) / length,
-    y: (toCentre.y - fromCentre.y) / length,
-  };
-  const side = { x: -along.y, y: along.x };
-  // Step 2: start and end at the cards' edges, a little further out at the arrow's end.
-  const edge = toEdge(along);
-  const start = { x: fromCentre.x + along.x * (edge + 2), y: fromCentre.y + along.y * (edge + 2) };
-  const end = { x: toCentre.x - along.x * (edge + 8), y: toCentre.y - along.y * (edge + 8) };
-  // Step 3: a quadratic curve whose middle sits `bend` to the side, with the label there.
-  const middle = {
-    x: (start.x + end.x) / 2 + side.x * bend,
-    y: (start.y + end.y) / 2 + side.y * bend,
-  };
-  const control = { x: middle.x + side.x * bend, y: middle.y + side.y * bend };
-  return {
-    path: `M ${round(start.x)} ${round(start.y)} Q ${round(control.x)} ${round(control.y)} ${round(end.x)} ${round(end.y)}`,
-    labelX: round(middle.x),
-    labelY: round(middle.y),
-  };
+function placeCards(ids: string[], relationships: CharacterRelationship[]): MapNode[] {
+  const family = relationships.filter((link) => categoryOf(link.kind) === 'family');
+  const { rows, order } = familyGenerations(ids, family);
+  const circle = ids.filter((id) => !rows.has(id));
+  // Step 1: no family at all, so the circle fills rows of four in the cast's order.
+  if (rows.size === 0) {
+    return circle.map((id, index) => ({
+      id,
+      x: margin + (index % circleOnlyColumns) * columnStep,
+      y: margin + Math.floor(index / circleOnlyColumns) * rowStep,
+    }));
+  }
+  // Step 2: each family row in the order its people were met; the widest row sets the circle's start.
+  const columnsUsed = new Map<number, number>();
+  const nodes: MapNode[] = [];
+  const put = (id: string, row: number, column: number) =>
+    nodes.push({ id, x: margin + column * columnStep, y: margin + row * rowStep });
+  for (const id of order) {
+    const row = rows.get(id) as number;
+    const column = columnsUsed.get(row) ?? 0;
+    put(id, row, column);
+    columnsUsed.set(row, column + 1);
+  }
+  const familyWidth = Math.max(...columnsUsed.values());
+  // Step 3: the circle on the right, each on the row of the people they are linked to.
+  const circleColumns = new Map<number, number>();
+  for (const [id, row] of circleRows(circle, relationships, rows)) {
+    const column = circleColumns.get(row) ?? 0;
+    put(id, row, familyWidth + column);
+    circleColumns.set(row, column + 1);
+  }
+  return nodes;
 }
 
 /** The same key for both directions between two characters. */
@@ -139,7 +194,25 @@ function pairKey(relationship: CharacterRelationship): string {
 }
 
 /**
- * One curve per relationship, spread apart when two characters have several.
+ * One line from a card's centre to another's, bent sideways by `bend` pixels at its middle.
+ *
+ * @returns the SVG path
+ */
+function line(from: MapNode, to: MapNode, bend: number): string {
+  const start = { x: from.x + cardWidth / 2, y: from.y + cardHeight / 2 };
+  const end = { x: to.x + cardWidth / 2, y: to.y + cardHeight / 2 };
+  const length = Math.hypot(end.x - start.x, end.y - start.y) || 1;
+  // The side direction, at right angles to the line, for the bend.
+  const side = { x: -(end.y - start.y) / length, y: (end.x - start.x) / length };
+  const control = {
+    x: (start.x + end.x) / 2 + side.x * bend * 2,
+    y: (start.y + end.y) / 2 + side.y * bend * 2,
+  };
+  return `M ${round(start.x)} ${round(start.y)} Q ${round(control.x)} ${round(control.y)} ${round(end.x)} ${round(end.y)}`;
+}
+
+/**
+ * One line per relationship, spread apart when two characters have several.
  *
  * @returns the lines between cards that are both on the map
  */
@@ -152,7 +225,7 @@ function edgesFor(nodes: MapNode[], relationships: CharacterRelationship[]): Map
     pairs.set(key, [...(pairs.get(key) ?? []), relationship]);
   }
   // Step 2: each line, measured on the pair's own sorted direction, so opposite lines still
-  // bend apart.
+  // bend apart; a pair's only line is straight.
   const edges: MapEdge[] = [];
   for (const group of pairs.values()) {
     group.forEach((relationship, index) => {
@@ -160,8 +233,8 @@ function edgesFor(nodes: MapNode[], relationships: CharacterRelationship[]): Map
       const to = nodeById.get(relationship.toId);
       if (from === undefined || to === undefined) return;
       const sameWay = [relationship.fromId, relationship.toId].sort()[0] === relationship.fromId;
-      const spread = (index - (group.length - 1) / 2) * 46;
-      edges.push({ relationship, ...curve(from, to, sameWay ? spread : -spread) });
+      const spread = (index - (group.length - 1) / 2) * 24;
+      edges.push({ relationship, path: line(from, to, sameWay ? spread : -spread) });
     });
   }
   return edges;
@@ -189,21 +262,18 @@ export function splitMapCast(
 /**
  * Lays out the map.
  *
- * @param cards - the characters on the map, in name order, with any place the writer chose
- * @param relationships - the lines to draw (switched-off categories already left out)
+ * @param ids - the characters on the map, in the cast's order
+ * @param relationships - every relationship, which places the cards
+ * @param shown - the lines to draw (switched-off categories already left out)
  * @returns the size, cards and lines
  */
 export function layoutRelationshipMap(
-  cards: MapCardInput[],
+  ids: string[],
   relationships: CharacterRelationship[],
+  shown: CharacterRelationship[],
 ): MapLayout {
-  // Step 1: a place for every card: the writer's, or one round the circle.
-  const circle = circlePlaces(cards.map((card) => card.id));
-  const nodes = cards.map((card) => ({
-    id: card.id,
-    ...(card.mapPlace ?? circle.get(card.id) ?? { x: margin, y: margin }),
-  }));
-  // Step 2: big enough for every card, with room round the edge.
+  const nodes = placeCards(ids, relationships);
+  // Big enough for every card, with room round the edge.
   const width = Math.max(
     cardWidth + 2 * margin,
     ...nodes.map((node) => node.x + cardWidth + margin),
@@ -212,41 +282,5 @@ export function layoutRelationshipMap(
     cardHeight + 2 * margin,
     ...nodes.map((node) => node.y + cardHeight + margin),
   );
-  return { width, height, nodes, edges: edgesFor(nodes, relationships) };
-}
-
-/**
- * The card a dragged card was dropped onto: the one whose box holds the dragged card's centre.
- *
- * @param nodes - the cards where they are now
- * @param draggedId - the card being dragged
- * @param place - where the dragged card was let go (top-left corner)
- * @returns the other card's ID, or null when it landed on empty map
- */
-export function cardUnder(nodes: MapNode[], draggedId: string, place: MapPlace): string | null {
-  const centre = { x: place.x + cardWidth / 2, y: place.y + cardHeight / 2 };
-  const target = nodes.find(
-    (node) =>
-      node.id !== draggedId &&
-      centre.x >= node.x &&
-      centre.x <= node.x + cardWidth &&
-      centre.y >= node.y &&
-      centre.y <= node.y + cardHeight,
-  );
-  return target?.id ?? null;
-}
-
-/** The zoom steps the − and + buttons move through. */
-export const zoomLevels = [0.4, 0.6, 0.8, 1, 1.2, 1.4] as const;
-
-/**
- * The zoom that fits the whole map into a region's width, never larger than full size.
- *
- * @param mapWidth - the map's width at full size
- * @param regionWidth - the room the region has
- * @returns a zoom between 0.4 and 1
- */
-export function fitZoom(mapWidth: number, regionWidth: number): number {
-  if (mapWidth <= 0 || regionWidth <= 0) return 1;
-  return Math.min(1, Math.max(zoomLevels[0], regionWidth / mapWidth));
+  return { width, height, nodes, edges: edgesFor(nodes, shown) };
 }

@@ -191,6 +191,41 @@ test('a password reset by email logs other devices out and sends a "password cha
   }
 });
 
+test("a reset through Supabase's own verify link, which lands on the home page, still asks for the new password", async ({
+  browser,
+}) => {
+  // Supabase's dashboard template opens Auth's verify address, which signs the person in and goes
+  // on to the "redirect to" address; before 26 Nov 2026 that was the home page and no form showed.
+  const account = newAccount();
+  createTestAccount(account.email, firstPassword, account.handle);
+  try {
+    const page = await openSignIn(browser);
+    await page.getByRole('link', { name: 'Forgot the password?' }).click();
+    await expect(page.getByRole('heading', { name: 'Reset password' })).toBeVisible();
+    await page.getByLabel('Email', { exact: true }).fill(account.email);
+    await page.getByRole('button', { name: 'Send reset link' }).click();
+    await expect(page.getByRole('heading', { name: 'Check email' })).toBeVisible();
+
+    // The token hash from the email, opened the way Supabase's own template opens it.
+    const resetEmail = await waitForEmail(account.email, 15_000, 'Reset');
+    const tokenHash = new URL(
+      appPathFromEmail(resetEmail.HTML),
+      'http://app.test',
+    ).searchParams.get('token_hash');
+    const home = new URL('/', page.url()).toString();
+    const verifyAddress = new URL('/auth/v1/verify', process.env.VITE_SUPABASE_URL ?? '');
+    verifyAddress.searchParams.set('token', tokenHash ?? '');
+    verifyAddress.searchParams.set('type', 'recovery');
+    verifyAddress.searchParams.set('redirect_to', home);
+    await page.goto(verifyAddress.toString());
+
+    await expect(page).toHaveURL(/\/reset-password/);
+    await expect(page.getByRole('heading', { name: 'Choose a new password' })).toBeVisible();
+  } finally {
+    removeTestAccount(account.email);
+  }
+});
+
 for (const view of everyView(['/sign-in', '/forgot-password', '/reset-password'])) {
   test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
     page,

@@ -1,7 +1,8 @@
 /**
  * ChapterBoard: the chapters as cards in act columns (story S1-E17-19).
  *
- * One column per act, then "No act"; on a phone the columns stack. A move (a drag, or a card's
+ * One column per act, then "No act", side by side in a box that scrolls sideways when they don't
+ * fit (story 6.9, board E28: "The board scrolls sideways inside its box on tablets and phones"). A move (a drag, or a card's
  * "…" menu) shows at once and saves, and the chapter numbers follow (a failed save puts it back); a move that would renumber published
  * chapters asks first (BoardMoveDialog). After a move, focus goes back to the moved card, so a
  * keyboard user can keep moving it. While a card is dragged (CALM-9, board E28), a lifted copy
@@ -10,7 +11,7 @@
  * lib/boardDrag.ts, BoardColumnSection and BoardCardFace.
  */
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 import { Notice } from '@/components/ui/Notice';
 
@@ -71,6 +72,26 @@ function LiftedCard(props: { slug: string; storyline: Storyline; code: string | 
 }
 
 /**
+ * The box the columns sit in (board E28, .board): columns of at least 220 px that share the width
+ * and scroll sideways inside the box when they don't fit. It is a focusable, named region, so a
+ * keyboard can scroll it too (WCAG 2.1.1).
+ */
+function BoardRegion({ children }: { children: ReactNode }) {
+  const { t } = useAtlasTranslation();
+  return (
+    <div
+      role="region"
+      aria-label={t('storyline.board.regionLabel')}
+      tabIndex={0}
+      data-testid="atlas-board-region"
+      className="tmc-focus grid min-w-0 auto-cols-[minmax(220px,1fr)] grid-flow-col items-start gap-4 overflow-x-auto pb-2"
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
  * Renders the board.
  *
  * @returns the columns, the failure message, the dragged card's copy and the question dialog
@@ -111,7 +132,7 @@ export function ChapterBoard({
         {gapLabel}
       </p>
       <DndContext {...drag.contextProps}>
-        <div className="grid min-w-0 items-start gap-x-4 gap-y-8 md:grid-cols-2 xl:grid-cols-4">
+        <BoardRegion>
           {columns.map((column, columnIndex) => (
             <BoardColumnSection
               key={column.actId ?? 'no-act'}
@@ -127,7 +148,7 @@ export function ChapterBoard({
               addChapter={addChapter}
             />
           ))}
-        </div>
+        </BoardRegion>
         <DragOverlay>
           <LiftedCard slug={slug} storyline={storyline} code={drag.draggedCode} />
         </DragOverlay>

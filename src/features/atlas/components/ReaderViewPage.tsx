@@ -1,16 +1,17 @@
 /**
  * ReaderViewPage: /plan/s/:storySlug/readers, "What readers can see" in Story Atlas (story
- * S1-E17-32).
+ * S1-E17-32; redrawn by user stories bundle 6, story 6.14, board E33).
  *
- * The Story Atlas top bar, the heading and a short line on how it works, whether the story is
- * published yet, then two columns from large screens (board AtlasReaders, G10c4): the five area
- * switches and every character with what readers see of it on the left; "Spoilers stay safe" and
- * "Preview as a reader" on the right. Only the writer sees it.
+ * The Story Atlas top bar and the heading, then one column, as board E33 draws it: a line on how
+ * sharing works with "Preview as a reader" (the page's one main button), a plain note while the
+ * story isn't published, "Areas readers see" (the five switches) and "Characters" (what readers
+ * see of each). Only the writer sees it.
  * Who calls it: src/app/router.tsx. What it calls: usePlanVisibility, usePlanPreview (whether
  * the story is published), PublicAreaSwitches, ReaderCharactersList and AtlasFrame.
  */
 import { Link, useParams } from 'react-router';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
@@ -24,54 +25,37 @@ import { AtlasFrame } from './AtlasFrame';
 import { PublicAreaSwitches } from './PublicAreaSwitches';
 import { ReaderCharactersList } from './ReaderCharactersList';
 
-/** "Spoilers stay safe": how the chapter guard works, with the way to the preview. */
-function SpoilerAside({ slug }: { slug: string }) {
+/** How sharing works, with "Preview as a reader" under it (board E33). */
+function ReaderIntro({ slug }: { slug: string }) {
   const { t } = useAtlasTranslation();
   return (
-    <aside
-      aria-labelledby="atlas-reader-spoilers"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-4 py-4 shadow-card md:px-6 lg:sticky lg:top-24"
-    >
-      <h2
-        id="atlas-reader-spoilers"
-        className="m-0 font-heading type-heading font-bold text-ink-heading"
-      >
-        {t('readers.spoilers.heading')}
-      </h2>
-      <p className="m-0 type-body text-ink-muted">{t('readers.spoilers.body')}</p>
-      <p className="m-0 type-body text-ink-muted">{t('readers.introItems')}</p>
+    <div className="flex flex-col gap-4">
+      <p className="m-0 type-body text-ink">{t('readers.intro')}</p>
       <Link
         to={`/plan/s/${slug}/preview`}
-        className="inline-flex h-11 items-center self-start rounded-full button-main px-6 font-semibold no-underline"
+        className="inline-flex h-11 items-center gap-2 self-start rounded-full button-main px-6 font-semibold no-underline"
       >
+        <ActionIcon name="eye" size={18} />
         {t('readers.previewLink')}
       </Link>
-    </aside>
+    </div>
   );
 }
 
-/** The page's text, switches, characters and aside, once the settings have loaded. */
-function ReaderViewBody({ slug, title }: { slug: string; title: string }) {
+/** The page's heading, line, switches and characters, once the settings have loaded. */
+function ReaderViewBody({ slug }: { slug: string }) {
   const { t } = useAtlasTranslation();
   const { visibility, saveAreas } = usePlanVisibility(slug);
   const { preview } = usePlanPreview(slug);
   if (!visibility) return null;
   return (
-    <>
-      <header className="flex flex-col gap-2">
-        <h1 className="m-0 type-title lg:type-display break-words">{t('readers.heading')}</h1>
-        <p className="m-0 type-body break-words text-ink-muted">{title}</p>
-        <p className="m-0 max-w-[70ch] text-ink-muted">{t('readers.intro')}</p>
-      </header>
+    <div className="flex min-w-0 flex-col gap-8">
+      <h1 className="m-0 type-title lg:type-display break-words">{t('readers.heading')}</h1>
+      <ReaderIntro slug={slug} />
       {preview && !preview.isPublished && <Notice tone="info">{t('readers.notPublished')}</Notice>}
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex min-w-0 flex-col gap-8">
-          <PublicAreaSwitches savedAreas={visibility.areas} save={saveAreas} />
-          <ReaderCharactersList slug={slug} visibility={visibility} />
-        </div>
-        <SpoilerAside slug={slug} />
-      </div>
-    </>
+      <PublicAreaSwitches savedAreas={visibility.areas} save={saveAreas} />
+      <ReaderCharactersList slug={slug} visibility={visibility} />
+    </div>
   );
 }
 
@@ -101,7 +85,7 @@ export function ReaderViewPage() {
       {userId === null && <p className="m-0 text-ink-muted">{t('signedOut')}</p>}
       {loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
       {visibility === null && <Notice tone="error">{t('notFound')}</Notice>}
-      {visibility && <ReaderViewBody slug={storySlug} title={storyTitle} />}
+      {visibility && <ReaderViewBody slug={storySlug} />}
     </AtlasFrame>
   );
 }

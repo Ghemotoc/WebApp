@@ -24642,12 +24642,15 @@ begin
   if (select auth.uid()) is null then
     raise exception 'Sign in to change your timeline.' using errcode = 'insufficient_privilege';
   end if;
+  -- Step 1: only the caller's own event.
   target_event := public.my_story_event(event_id);
   if target_event.id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
   delete from public.story_events where story_events.id = target_event.id;
-  return jsonb_build_object('outcome', 'ok');
+  -- Step 2: hand the row back for Undo; the owner's id and the story's id stay on the server.
+  return jsonb_build_object('outcome', 'ok',
+    'event', to_jsonb(target_event) - 'user_id' - 'story_id');
 end;
 $$;
 
@@ -24655,7 +24658,7 @@ $$;
 ALTER FUNCTION "public"."delete_story_event"("event_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."delete_story_event"("event_id" "uuid") IS 'Deletes one of the caller''s timeline events (S1-E17-20).';
+COMMENT ON FUNCTION "public"."delete_story_event"("event_id" "uuid") IS 'Deletes one of the caller''s timeline events and returns it for Undo (S1-E17-20; story 6.10).';
 
 
 
@@ -24669,12 +24672,15 @@ begin
   if (select auth.uid()) is null then
     raise exception 'Sign in to change your notes.' using errcode = 'insufficient_privilege';
   end if;
+  -- Step 1: only the caller's own note.
   target_idea := public.my_story_idea(idea_id);
   if target_idea.id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
   delete from public.story_ideas where story_ideas.id = target_idea.id;
-  return jsonb_build_object('outcome', 'ok');
+  -- Step 2: hand the row back for Undo; the owner's id and the story's id stay on the server.
+  return jsonb_build_object('outcome', 'ok',
+    'idea', to_jsonb(target_idea) - 'user_id' - 'story_id');
 end;
 $$;
 
@@ -24682,7 +24688,7 @@ $$;
 ALTER FUNCTION "public"."delete_story_idea"("idea_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."delete_story_idea"("idea_id" "uuid") IS 'Deletes one of the caller''s questions or ideas (S1-E17-28).';
+COMMENT ON FUNCTION "public"."delete_story_idea"("idea_id" "uuid") IS 'Deletes one of the caller''s questions or ideas and returns it for Undo (S1-E17-28; story 6.12).';
 
 
 
@@ -35089,22 +35095,35 @@ begin
     raise exception 'Sign in to see your plans.' using errcode = 'insufficient_privilege';
   end if;
 
-  -- Step 2: the caller's live stories and their plans; the words come from the chapters' own
-  -- counts, the same sum the at-a-glance page shows (story_plan_chapters()).
+  -- Step 2: the caller's live stories and their plans. The words come from the chapters' own
+  -- counts, the same sum the at-a-glance page shows (story_plan_chapters()); a chapter counts as
+  -- out once it is published; the edit time is the newest of the plan, the story and its chapters.
   return coalesce((
     select jsonb_agg(jsonb_build_object(
-             'slug', stories.slug,
-             'logline', plans.logline,
-             'writing_status', plans.writing_status,
-             'word_target', plans.word_target,
-             'words_written', coalesce((
-               select sum(chapters.word_count) from public.chapters
-               where chapters.story_id = stories.id and chapters.deleted_at is null
-             ), 0))
-           order by greatest(plans.updated_at, stories.updated_at) desc)
-    from public.stories
-    join public.story_plans as plans on plans.story_id = stories.id
-    where stories.user_id = caller_id and stories.deleted_at is null
+             'slug', listed.slug,
+             'logline', listed.logline,
+             'writing_status', listed.writing_status,
+             'word_target', listed.word_target,
+             'words_written', listed.words_written,
+             'published_chapters', listed.published_chapters,
+             'edited_at', listed.edited_at)
+           order by listed.edited_at desc)
+    from (
+      select stories.slug, plans.logline, plans.writing_status, plans.word_target,
+        coalesce(chapter_totals.words_written, 0) as words_written,
+        coalesce(chapter_totals.published_chapters, 0) as published_chapters,
+        greatest(plans.updated_at, stories.updated_at, chapter_totals.last_chapter_edit) as edited_at
+      from public.stories
+      join public.story_plans as plans on plans.story_id = stories.id
+      left join lateral (
+        select sum(chapters.word_count) as words_written,
+          count(*) filter (where chapters.status = 'published') as published_chapters,
+          max(chapters.updated_at) as last_chapter_edit
+        from public.chapters
+        where chapters.story_id = stories.id and chapters.deleted_at is null
+      ) as chapter_totals on true
+      where stories.user_id = caller_id and stories.deleted_at is null
+    ) as listed
   ), '[]'::jsonb);
 end;
 $$;
@@ -35113,7 +35132,7 @@ $$;
 ALTER FUNCTION "public"."my_story_plans"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_story_plans"() IS 'The caller''s story plans for the /plan list: slug, logline, writing status, word target and words written (G10a).';
+COMMENT ON FUNCTION "public"."my_story_plans"() IS 'The caller''s story plans for the /plan list, newest edit first: slug, logline, writing status, word target, words written, published chapters and the last edit (G10a; bundle 6, board E20).';
 
 
 
@@ -38959,7 +38978,10 @@ begin
         'style', shown.cover_style, 'title_font', shown.cover_title_font),
       -- The pen name, else the username; never the user ID (rule 15).
       'writer_name', (select public.story_writer_name(shown.id, profiles.handle, profiles.pen_name)
-                      from public.profiles where profiles.id = shown.user_id)),
+                      from public.profiles where profiles.id = shown.user_id),
+      -- Story 6.16: the byline links to the writer's profile; a classic's real author has none.
+      'writer_handle', (select profiles.handle from public.profiles
+                        where profiles.id = shown.user_id and shown.classic_author_id is null)),
     'areas', to_jsonb(areas),
     'characters', public.public_plan_characters(shown.id, areas, as_preview),
     'fields', public.public_plan_fields(shown.id, areas, as_preview),
@@ -38978,7 +39000,7 @@ $$;
 ALTER FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) IS 'Internal: what readers see of a story''s plan, with the story''s cover and writer''s name (S1-E17-33; GAPS-4).';
+COMMENT ON FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) IS 'Internal: what readers see of a story''s plan, with the story''s cover, writer''s name and username (S1-E17-33; GAPS-4; story 6.16).';
 
 
 
@@ -38987,13 +39009,14 @@ CREATE OR REPLACE FUNCTION "public"."public_plan_relationships"("target_story_id
     SET "search_path" TO ''
     AS $$
   select coalesce(jsonb_agg(public.relationship_json(links, false)
+        || jsonb_build_object('show_from', public.plan_guard_json(links.show_from_chapter_id, as_preview))
       order by links.created_at, links.id), '[]'::jsonb)
   from public.story_character_relationships as links
   join public.story_characters as from_character on from_character.id = links.from_character_id
   join public.story_characters as to_character on to_character.id = links.to_character_id
   where links.story_id = target_story_id
     and areas && array['relationship_map', 'family_tree']
-    and public.plan_item_shows(links.id, links.is_private, null, as_preview)
+    and public.plan_item_shows(links.id, links.is_private, links.show_from_chapter_id, as_preview)
     and public.plan_item_shows(from_character.id, from_character.is_private, from_character.show_from_chapter_id, as_preview)
     and public.plan_item_shows(to_character.id, to_character.is_private, to_character.show_from_chapter_id, as_preview);
 $$;
@@ -39002,7 +39025,7 @@ $$;
 ALTER FUNCTION "public"."public_plan_relationships"("target_story_id" "uuid", "areas" "text"[], "as_preview" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."public_plan_relationships"("target_story_id" "uuid", "areas" "text"[], "as_preview" boolean) IS 'Internal: the relationships readers see, without the writer''s notes (S1-E17-33).';
+COMMENT ON FUNCTION "public"."public_plan_relationships"("target_story_id" "uuid", "areas" "text"[], "as_preview" boolean) IS 'Internal: the relationships readers see, without the writer''s notes, each from its chapter (S1-E17-33; story 6.14).';
 
 
 
@@ -42345,6 +42368,7 @@ CREATE TABLE IF NOT EXISTS "public"."story_character_relationships" (
     "reverse_label" "text" DEFAULT ''::"text" NOT NULL,
     "cousin_degree" smallint,
     "cousin_removed" smallint,
+    "show_from_chapter_id" "uuid",
     CONSTRAINT "story_character_relationships_cousin" CHECK (((("kind" = 'cousin_of'::"text") AND COALESCE((("cousin_degree" >= 1) AND ("cousin_degree" <= 3)), false) AND COALESCE((("cousin_removed" >= 0) AND ("cousin_removed" <= 3)), false)) OR (("kind" <> 'cousin_of'::"text") AND ("cousin_degree" IS NULL) AND ("cousin_removed" IS NULL)))),
     CONSTRAINT "story_character_relationships_custom_label" CHECK (((("kind" = 'custom'::"text") AND (("char_length"("btrim"("custom_label")) >= 1) AND ("char_length"("btrim"("custom_label")) <= 60))) OR (("kind" <> 'custom'::"text") AND ("custom_label" = ''::"text")))),
     CONSTRAINT "story_character_relationships_kind_known" CHECK (("kind" = ANY (ARRAY['parent_of'::"text", 'sibling_of'::"text", 'partner_of'::"text", 'cousin_of'::"text", 'loves'::"text", 'made'::"text", 'friend_of'::"text", 'ally_of'::"text", 'mentors'::"text", 'works_for'::"text", 'enemy_of'::"text", 'resents'::"text", 'killed'::"text", 'custom'::"text"]))),
@@ -42383,6 +42407,10 @@ COMMENT ON COLUMN "public"."story_character_relationships"."cousin_degree" IS 'F
 
 
 COMMENT ON COLUMN "public"."story_character_relationships"."cousin_removed" IS 'For cousin_of only: how many generations apart, 0 (not removed) to 3 (G10b).';
+
+
+
+COMMENT ON COLUMN "public"."story_character_relationships"."show_from_chapter_id" IS 'The spoiler guard: readers see the relationship only once they reached this chapter (story 6.14).';
 
 
 
@@ -44381,6 +44409,7 @@ CREATE OR REPLACE FUNCTION "public"."restore_character_relationship"("removed" "
 declare
   from_character public.story_characters;
   to_character public.story_characters;
+  waits_for uuid;
   removed_kind text := removed ->> 'kind';
   reads_both_ways boolean := (removed ->> 'kind') in
     ('sibling_of', 'partner_of', 'cousin_of', 'friend_of', 'ally_of', 'enemy_of');
@@ -44409,16 +44438,22 @@ begin
     raise exception 'That relationship is already there.'
       using errcode = 'check_violation', hint = 'already_there';
   end if;
-  -- Step 3: the row as it was; a second Undo of the same row changes nothing.
+  -- Step 3: the chapter it waited for, only while it is still a chapter of this story.
+  select chapters.id into waits_for
+  from public.chapters
+  where chapters.id = (removed ->> 'show_from_chapter_id')::uuid
+    and chapters.story_id = from_character.story_id
+    and chapters.deleted_at is null;
+  -- Step 4: the row as it was; a second Undo of the same row changes nothing.
   insert into public.story_character_relationships
     (id, story_id, user_id, from_character_id, to_character_id, kind, custom_label,
-     reverse_label, note, cousin_degree, cousin_removed, is_private, created_at)
+     reverse_label, note, cousin_degree, cousin_removed, is_private, show_from_chapter_id, created_at)
   values ((removed ->> 'id')::uuid, from_character.story_id, from_character.user_id,
     from_character.id, to_character.id, removed_kind,
     coalesce(removed ->> 'custom_label', ''), coalesce(removed ->> 'reverse_label', ''),
     coalesce(removed ->> 'note', ''), (removed ->> 'cousin_degree')::smallint,
     (removed ->> 'cousin_removed')::smallint, coalesce((removed ->> 'is_private')::boolean, false),
-    coalesce((removed ->> 'created_at')::timestamptz, now()))
+    waits_for, coalesce((removed ->> 'created_at')::timestamptz, now()))
   on conflict (id) do nothing;
   return jsonb_build_object('outcome', 'ok');
 end;
@@ -44428,7 +44463,7 @@ $$;
 ALTER FUNCTION "public"."restore_character_relationship"("removed" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."restore_character_relationship"("removed" "jsonb") IS 'Puts back a relationship the caller just deleted, with the same id and privacy (design books item 14).';
+COMMENT ON FUNCTION "public"."restore_character_relationship"("removed" "jsonb") IS 'Puts back a relationship the caller just deleted, with the same id, privacy and chapter (design books item 14; story 6.14).';
 
 
 
@@ -44570,6 +44605,90 @@ ALTER FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "ar
 
 
 COMMENT ON FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uuid", "archive_email_hash" "text", "new_user_id" "uuid") IS 'Internal: restores every archived story of one closed account to a new owner, each on its own (ARCHIVE-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  waits_for uuid;
+begin
+  -- Step 1: a signed-in writer and one of their own stories.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change your timeline.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the same limit as adding an event.
+  if (select count(*) from public.story_events where story_events.story_id = target_story_id) >= 500 then
+    raise exception 'A timeline can hold at most 500 events.' using errcode = 'check_violation', hint = 'too_many_events';
+  end if;
+  -- Step 3: the chapter it waited for, only if it is still a chapter of this story.
+  select chapters.id into waits_for
+  from public.chapters
+  where chapters.id = (removed ->> 'show_from_chapter_id')::uuid
+    and chapters.story_id = target_story_id
+    and chapters.deleted_at is null;
+  -- Step 4: the row as it was; a second Undo of the same row changes nothing.
+  insert into public.story_events (id, story_id, user_id, title, display_date, sort_value,
+    description, is_private, show_from_chapter_id, created_at)
+  values ((removed ->> 'id')::uuid, target_story_id, (select auth.uid()),
+    public.plan_text(removed ->> 'title'), public.plan_text(coalesce(removed ->> 'display_date', '')),
+    (removed ->> 'sort_value')::numeric, public.plan_text(coalesce(removed ->> 'description', '')),
+    coalesce((removed ->> 'is_private')::boolean, false), waits_for,
+    coalesce((removed ->> 'created_at')::timestamptz, now()))
+  on conflict (id) do nothing;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") IS 'Puts back a timeline event the caller just deleted, with the same id and privacy (story 6.10; design books item 14).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+begin
+  -- Step 1: a signed-in writer and one of their own stories.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to add a note.' using errcode = 'insufficient_privilege';
+  end if;
+  target_story_id := public.my_planned_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  -- Step 2: the same limit as adding a note.
+  if (select count(*) from public.story_ideas where story_ideas.story_id = target_story_id) >= 1000 then
+    raise exception 'A story can hold at most 1,000 notes.' using errcode = 'check_violation', hint = 'too_many_ideas';
+  end if;
+  -- Step 3: the row as it was; a second Undo of the same row changes nothing.
+  insert into public.story_ideas (id, story_id, user_id, kind, body, outcome, done_at, created_at)
+  values ((removed ->> 'id')::uuid, target_story_id, (select auth.uid()), removed ->> 'kind',
+    public.plan_text(removed ->> 'body'), public.plan_text(coalesce(removed ->> 'outcome', '')),
+    (removed ->> 'done_at')::timestamptz, coalesce((removed ->> 'created_at')::timestamptz, now()))
+  on conflict (id) do nothing;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") IS 'Puts back a question or idea the caller just deleted, with the same id, outcome and Done date (story 6.12; design books item 14).';
 
 
 
@@ -46108,6 +46227,28 @@ COMMENT ON FUNCTION "public"."search_query"("term" "text") IS 'Internal: a searc
 
 
 
+CREATE OR REPLACE FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case
+    when coalesce(title, '') <> ''
+      and left(public.atlas_fold(haystack), char_length(title)) = public.atlas_fold(title)
+      and strpos(public.atlas_fold(regexp_replace(substr(haystack, char_length(title) + 1), '\s+', ' ', 'g')),
+                 public.atlas_fold(wanted)) > 0
+      then btrim(substr(haystack, char_length(title) + 1))
+    else haystack
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") IS 'Internal: a search result''s text without its own title when the match is also elsewhere (story 6.15).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."search_story"("story_slug" "text", "query" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -46117,6 +46258,7 @@ declare
   -- One space between words, as atlas_snippet() reads the text.
   wanted text := left(btrim(regexp_replace(coalesce(query, ''), '\s+', ' ', 'g')), 200);
 begin
+  -- Step 1: a signed-in writer and their own story.
   if (select auth.uid()) is null then
     raise exception 'Sign in to search your story.' using errcode = 'insufficient_privilege';
   end if;
@@ -46124,14 +46266,20 @@ begin
   if target_story_id is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  -- One letter would match nearly everything; the screen asks for two.
+  -- Step 2: one letter would match nearly everything; the screen asks for two.
   if char_length(wanted) < 2 then
     return jsonb_build_object('outcome', 'ok', 'results', '[]'::jsonb);
   end if;
+  -- Step 3: every match, grouped by kind, with a chapter's number and a snippet that doesn't
+  -- repeat the title.
   return jsonb_build_object('outcome', 'ok', 'results', coalesce((
     select jsonb_agg(jsonb_build_object('kind', ranked.kind, 'ref', ranked.ref,
         'title', ranked.title, 'chapter', ranked.chapter,
-        'snippet', public.atlas_snippet(ranked.haystack, wanted))
+        'number', case when ranked.kind = 'chapter' then (
+          select chapters.position from public.chapters
+          where chapters.code = ranked.ref and chapters.story_id = target_story_id) end,
+        'snippet', public.atlas_snippet(
+          public.search_snippet_source(ranked.haystack, ranked.title, wanted), wanted))
       order by array_position(array['character', 'entry', 'chapter', 'scene', 'idea', 'event',
         'marketing'], ranked.kind), ranked.place)
     from (
@@ -46150,7 +46298,7 @@ $$;
 ALTER FUNCTION "public"."search_story"("story_slug" "text", "query" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."search_story"("story_slug" "text", "query" "text") IS 'One search across the caller''s story: characters, bible, chapters, scenes, ideas, events, marketing (S1-E17-30).';
+COMMENT ON FUNCTION "public"."search_story"("story_slug" "text", "query" "text") IS 'One search across the caller''s story: characters, bible, chapters, scenes, ideas, events, marketing, with a chapter''s number (S1-E17-30; story 6.15).';
 
 
 
@@ -48304,13 +48452,14 @@ begin
   if item_kind is null then
     return jsonb_build_object('outcome', 'not_found');
   end if;
-  if item_kind not in ('character', 'entry', 'event') then
-    raise exception 'Only characters, entries and events wait for a chapter.'
+  if item_kind not in ('character', 'relationship', 'entry', 'event') then
+    raise exception 'Only characters, relationships, entries and events wait for a chapter.'
       using errcode = 'check_violation', hint = 'no_guard';
   end if;
   -- Step 2: the chapter, one of the same story's.
   select coalesce(
       (select story_id from public.story_characters where id = item_id),
+      (select story_id from public.story_character_relationships where id = item_id),
       (select story_id from public.story_bible_entries where id = item_id),
       (select story_id from public.story_events where id = item_id))
     into item_story_id;
@@ -48325,6 +48474,7 @@ begin
   -- Step 3: save it.
   case item_kind
     when 'character' then update public.story_characters set show_from_chapter_id = guard_chapter_id where id = item_id;
+    when 'relationship' then update public.story_character_relationships set show_from_chapter_id = guard_chapter_id where id = item_id;
     when 'entry' then update public.story_bible_entries set show_from_chapter_id = guard_chapter_id where id = item_id;
     when 'event' then update public.story_events set show_from_chapter_id = guard_chapter_id where id = item_id;
   end case;
@@ -48336,7 +48486,7 @@ $$;
 ALTER FUNCTION "public"."set_plan_item_show_from"("item_id" "uuid", "chapter_code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_plan_item_show_from"("item_id" "uuid", "chapter_code" "text") IS 'Sets or clears the chapter a public character, entry or event waits for (S1-E17-35).';
+COMMENT ON FUNCTION "public"."set_plan_item_show_from"("item_id" "uuid", "chapter_code" "text") IS 'Sets or clears the chapter a public character, relationship, entry or event waits for (S1-E17-35; story 6.14).';
 
 
 
@@ -53398,7 +53548,7 @@ begin
       from (
         select id, is_private, show_from_chapter_id as show_from from public.story_characters where story_id = target_story_id
         union all
-        select id, is_private, null from public.story_character_relationships where story_id = target_story_id
+        select id, is_private, show_from_chapter_id from public.story_character_relationships where story_id = target_story_id
         union all
         select id, is_private, null from public.story_bible_sections where story_id = target_story_id
         union all
@@ -53421,7 +53571,7 @@ $$;
 ALTER FUNCTION "public"."story_plan_visibility"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") IS 'The writer''s own "What readers can see" switches for one story (S1-E17-32).';
+COMMENT ON FUNCTION "public"."story_plan_visibility"("story_slug" "text") IS 'The writer''s own "What readers can see" switches for one story (S1-E17-32; story 6.14).';
 
 
 
@@ -64376,6 +64526,10 @@ CREATE INDEX "story_character_relationships_from_idx" ON "public"."story_charact
 
 
 
+CREATE INDEX "story_character_relationships_show_from_chapter_id_fk_idx" ON "public"."story_character_relationships" USING "btree" ("show_from_chapter_id");
+
+
+
 CREATE INDEX "story_character_relationships_story_id_idx" ON "public"."story_character_relationships" USING "btree" ("story_id");
 
 
@@ -67672,6 +67826,11 @@ ALTER TABLE ONLY "public"."story_character_fields"
 
 ALTER TABLE ONLY "public"."story_character_relationships"
     ADD CONSTRAINT "story_character_relationships_from_character_id_fkey" FOREIGN KEY ("from_character_id") REFERENCES "public"."story_characters"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."story_character_relationships"
+    ADD CONSTRAINT "story_character_relationships_show_from_chapter_id_fkey" FOREIGN KEY ("show_from_chapter_id") REFERENCES "public"."chapters"("id") ON DELETE SET NULL;
 
 
 
@@ -76051,6 +76210,16 @@ REVOKE ALL ON FUNCTION "public"."restore_story_archives_of"("closed_user_id" "uu
 
 
 
+REVOKE ALL ON FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."restore_story_event"("story_slug" "text", "removed" "jsonb") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."restore_story_idea"("story_slug" "text", "removed" "jsonb") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."retention_periods"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."retention_periods"() TO "authenticated";
 
@@ -76228,6 +76397,10 @@ REVOKE ALL ON FUNCTION "public"."search_like_pattern"("term" "text") FROM PUBLIC
 
 
 REVOKE ALL ON FUNCTION "public"."search_query"("term" "text") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") FROM PUBLIC;
 
 
 

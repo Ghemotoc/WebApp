@@ -16,7 +16,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(18);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -81,7 +81,15 @@ select is(pg_temp.found('stefan'), 'chapter:Furtuna',
   'accents are ignored, and a chapter''s manuscript is searched');
 select is((select result ->> 'snippet' from jsonb_array_elements(
     public.search_story('statia-meteo-seed01', 'stefan') -> 'results') as result),
-  'Furtuna Ștefan o vede pe [[ANA]] în ploaie.', 'the snippet shows the original text, accents and all');
+  'Ștefan o vede pe [[ANA]] în ploaie.',
+  'the snippet shows the original text, accents and all, without repeating the title (story 6.15)');
+select is((select (result ->> 'number')::int from jsonb_array_elements(
+    public.search_story('statia-meteo-seed01', 'stefan') -> 'results') as result), 1,
+  'a chapter comes with its number, for "Chapter 1: Furtuna" (story 6.15)');
+select is((select result ->> 'snippet' from jsonb_array_elements(
+    public.search_story('statia-meteo-seed01', 'furtuna') -> 'results') as result
+    where result ->> 'kind' = 'chapter'),
+  'Furtuna Ștefan o vede pe [[ANA]] în ploaie.', 'a match only in the title keeps the title in the snippet');
 select is(pg_temp.found('pescar'), 'character:Bogdan', 'a character''s sheet fields are searched');
 select is(pg_temp.found('vecinul'), 'character:Bogdan', 'the writer''s own fields are searched too');
 select is((select (result ->> 'kind') || ':' || (result ->> 'chapter') from jsonb_array_elements(

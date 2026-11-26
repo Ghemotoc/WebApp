@@ -6,8 +6,8 @@
  * The board's layout: a six-dot grip on the left, which says the card can be dragged; a meta line
  * with the planning status in bold and the label ("Drafting · Chapter 3"); the title as a link to
  * the chapter in the writing view; the round "…" menu on the right; then one grey line of facts
- * ("POV: Ana · 4 words · Published") that never wraps, where "Published" is the word itself, so it
- * is never confused with the planning status. The same face is drawn twice while a card is
+ * ("POV: Ana · 4 words · Published"), where "Published" or "Draft" is the word itself, so it is
+ * never confused with the planning status (story 6.9). The same face is drawn twice while a card is
  * dragged: on the board, and as the lifted copy that follows the pointer (isCopy), which has no
  * link and no menu, so a keyboard or a screen reader never meets it.
  * Who uses it: BoardCard and ChapterBoard (the lifted copy). What it calls: MetaLine and the menu
@@ -52,23 +52,19 @@ function useWordsText(chapter: StorylineChapter): string {
   });
 }
 
-/** The grey line of facts: who tells it, the words and, when it is out, "Published". */
+/** The grey line of facts: who tells it, the words, and Published or Draft. */
 function CardFacts({ chapter, povName }: { chapter: StorylineChapter; povName: string | null }) {
   const { t } = useAtlasTranslation();
   const words = useWordsText(chapter);
   const teller =
     povName === null ? t('storyline.board.noPov') : t('storyline.board.pov', { name: povName });
-  const published = chapter.status === 'published' ? ` · ${t('storyline.board.published')}` : '';
-  // Board E28: the line never wraps; a very long name is cut with an ellipsis instead.
+  // Story 6.9: the card says Published or Draft in words, so it is never confused with the
+  // planning status at the top. The in-world date lives on the Timeline, not on the card.
+  const readersState =
+    chapter.status === 'published' ? t('storyline.board.published') : t('storyline.board.draft');
+  // Board E28: the line wraps on a narrow card rather than cutting the words off.
   return (
-    <>
-      <p className="m-0 truncate type-meta">{`${teller} · ${words}${published}`}</p>
-      {chapter.worldDate !== '' && (
-        <p className="m-0 truncate type-meta">
-          {t('storyline.board.worldDate', { date: chapter.worldDate })}
-        </p>
-      )}
-    </>
+    <p className="m-0 type-meta break-words text-ink-muted">{`${teller} · ${words} · ${readersState}`}</p>
   );
 }
 
@@ -100,15 +96,17 @@ function CardTitle({
 export function BoardCardFace({ slug, chapter, label, povName, menu, isCopy }: BoardCardFaceProps) {
   const { t } = useAtlasTranslation();
   return (
-    <div className="flex flex-col gap-2 p-4">
+    // Board E28 (.acard): 12 px above and below, 16 px at the sides, 4 px between the lines.
+    <div className="relative flex flex-col gap-1 px-4 py-3">
+      {/* The grip only shows that the card can be dragged: the whole card is the handle. It sits
+          in the card's left padding, so the words keep the full width board E28 gives them. */}
+      <span
+        aria-hidden="true"
+        className="absolute top-3 left-0 grid h-8 w-4 cursor-grab place-items-center text-ink-muted"
+      >
+        <ActionIcon name="grip" size={16} />
+      </span>
       <div className="flex items-start gap-2">
-        {/* The grip only shows that the card can be dragged: the whole card is the handle. */}
-        <span
-          aria-hidden="true"
-          className="-ml-2 grid h-8 w-6 flex-none cursor-grab place-items-center text-ink-muted"
-        >
-          <ActionIcon name="grip" size={16} />
-        </span>
         <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1">
           <MetaLine
             facts={[
