@@ -117,7 +117,6 @@ const infoPillUsers = new Set([
   '/src/features/atlas/components/PlanGuardPill.tsx',
   '/src/features/atlas/components/PublicCharacter.tsx',
   '/src/features/atlas/components/PublicWorld.tsx',
-  '/src/features/atlas/components/PublicWorldEntry.tsx',
   '/src/features/atlas/components/WritingStatusPill.tsx',
   '/src/features/class-points/components/staff/StaffFlagCard.tsx',
   '/src/features/contests/components/staff/ContestEntriesSection.tsx',
