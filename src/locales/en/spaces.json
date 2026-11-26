@@ -87,12 +87,15 @@
     "ageChanged": "{{name}} is no longer in this space’s age group, so the request was removed.",
     "loadFailed": "We couldn’t load the requests.",
     "noteLabel": "Note from {{name}}",
-    "noteReportLabel": "the note from {{name}}"
+    "noteReportLabel": "the note from {{name}}",
+    "waitingTitle": "Waiting to join",
+    "waitingIntro_one": "{{count}} request. The owner and moderators with the members power can answer.",
+    "waitingIntro_few": "{{count}} requests. The owner and moderators with the members power can answer.",
+    "waitingIntro_other": "{{count}} requests. The owner and moderators with the members power can answer."
   },
   "form": {
     "eyebrow": "New space",
     "title": "Create a space",
-    "editEyebrow": "Space settings",
     "intro16": "Anyone can create a space, and you become its owner. Because you’re 16 or over, your space is for members 16 and over, and anyone, with or without an account, can read it. You can change everything below later.",
     "introUnder16": "Anyone can create a space, and you become its owner. Because you’re under 16, your space is for members under 16, and you choose who can read it. You can change everything below later.",
     "introUnknown": "We need to know your age group before you can start a space.",
@@ -153,7 +156,8 @@
     "bannerHint": "One of the colours, or your own picture. Picture size: 2800 × 400 px (7 to 1). Keep words and the main shapes inside the middle box: cards and phones show only that part.",
     "bannerGuide": "Shows on every screen and on cards",
     "bannerChosen": "Chosen: {{name}}",
-    "editIntro": "Only the owner, a moderator given the settings power and our moderation team can change these."
+    "editIntro": "Only the owner, a moderator given the settings power and our moderation team can change these.",
+    "aboutTitle": "About"
   },
   "newThread": {
     "eyebrow": "New thread",
@@ -211,7 +215,9 @@
     "handover_missing": "This offer isn’t open any more.",
     "handover_not_moderator": "Only one of the space’s moderators can take it over.",
     "handover_age": "This person is in another age group, so they can’t run this space.",
-    "handover_not_teacher": "A class can only be handed to a teacher with the Teacher badge."
+    "handover_not_teacher": "A class can only be handed to a teacher with the Teacher badge.",
+    "blocked": "This space blocked your account, so you can’t ask to join.",
+    "invite_missing": "That invitation was taken back or already answered."
   },
   "moderators": {
     "eyebrow": "Space settings",
@@ -219,7 +225,6 @@
     "intro": "Moderators help you run the space. Choose what each one can do. Only you can add or remove moderators, and our moderation team can still act in any space.",
     "none": "No moderators yet.",
     "loadFailed": "We couldn’t load the moderators.",
-    "appointed": "{{name}} is now a moderator.",
     "changed": "{{name}}’s powers are saved.",
     "removed": "{{name}} is no longer a moderator, but stays in the space.",
     "powersOf": "What {{name}} can do",
@@ -231,7 +236,7 @@
     "addTitle": "Add a moderator",
     "username": "Username",
     "usernameHint": "They must already be a member of this space.",
-    "add": "Make moderator",
+    "add": "Invite as moderator",
     "powers": {
       "posts": "Threads",
       "members": "Members",
@@ -248,7 +253,10 @@
       "settings": "Change the name, description, rules and who can post or join."
     },
     "missingUsername": "Type a username first.",
-    "missingPowers": "Pick at least one thing they can do."
+    "missingPowers": "Pick at least one thing they can do.",
+    "invited": "{{name}} is invited. Their powers start when they accept.",
+    "inviteCancelled": "The invitation to {{name}} is taken back.",
+    "invitedNote": "Invited: {{powers}}. Waiting for them to accept."
   },
   "members": {
     "title": "Members",
@@ -263,14 +271,45 @@
     "confirmLabel": "Yes, remove {{name}}",
     "removed": "{{name}} is no longer in the space.",
     "loadFailed": "We couldn’t load the members.",
-    "notAllowed": "You can’t manage this space’s members."
+    "notAllowed": "You can’t manage this space’s members.",
+    "introCount_one": "{{count}} member: the owner first, then moderators with their powers, then members by when they joined.",
+    "introCount_few": "{{count}} members: the owner first, then moderators with their powers, then members by when they joined.",
+    "introCount_other": "{{count}} members: the owner first, then moderators with their powers, then members by when they joined.",
+    "moderator": "Moderator",
+    "started": "started the space, {{month}}",
+    "joinedMonth": "joined {{month}}",
+    "invitedFact": "invited as moderator: {{powers}}",
+    "find": "Find a member",
+    "noMatch": "Nobody here by that name.",
+    "more": "More for {{name}}",
+    "choices": {
+      "remove": "Remove",
+      "block": "Block",
+      "invite": "Make a moderator",
+      "cancelInvite": "Take the invitation back"
+    },
+    "blockReason": "Why block {{name}}? (optional)",
+    "blockHint": "Goes in the space’s moderation log. They leave the space and can’t ask to join again until unblocked.",
+    "blockConfirm": "Yes, block",
+    "blockConfirmLabel": "Yes, block {{name}}",
+    "blocked": "{{name}} is blocked from the space.",
+    "inviteLegend": "What {{name}} can do once they accept",
+    "inviteLabel": "Invite {{name}} as moderator",
+    "showMore": "Show 50 more",
+    "footnote": "Removing someone is logged. They can ask to join again unless they are blocked.",
+    "blockedTitle": "Blocked",
+    "blockedIntro": "They can’t ask to join until they are unblocked.",
+    "blockedOn": "blocked {{date}}",
+    "unblock": "Unblock",
+    "unblockLabel": "Unblock {{name}}",
+    "unblocked": "Unblocked. They can ask to join again."
   },
   "log": {
     "title": "Moderation log",
     "intro": "Everything the owner, the moderators and our moderation team have done in this space, newest first. Only the owner and our moderation team can read it.",
     "empty": "Nothing has happened yet.",
     "loadFailed": "We couldn’t load the log.",
-    "showMore": "Show more",
+    "showMore": "Show 50 older",
     "notAllowed": "Only the space’s owner can read its moderation log.",
     "team": "The moderation team",
     "reason": "Reason: “{{reason}}”",
@@ -322,8 +361,18 @@
       "post_hidden": "{{actor}} hid a post.",
       "post_shown": "{{actor}} showed a hidden post again.",
       "post_moved": "{{actor}} moved a post to another thread.",
-      "certificate_crest_changed": "{{actor}} changed the certificate crest."
-    }
+      "certificate_crest_changed": "{{actor}} changed the certificate crest.",
+      "moderator_invited": "{{actor}} invited {{target}} to moderate: {{powers}}.",
+      "moderator_invite_cancelled": "{{actor}} took back the invitation to {{target}}.",
+      "moderator_invite_accepted": "{{actor}} accepted the invitation to moderate: {{powers}}.",
+      "moderator_invite_declined": "{{actor}} declined the invitation to moderate.",
+      "member_blocked": "{{actor}} blocked {{target}}.",
+      "member_unblocked": "{{actor}} unblocked {{target}}."
+    },
+    "anyone": "Anyone",
+    "who": "Who",
+    "when": "When",
+    "what": "What happened"
   },
   "bannerPicture": {
     "title": "Banner picture",
@@ -652,5 +701,20 @@
     "askLabel": "Ask to join {{name}}",
     "asked": "Asked",
     "askedLabel": "Asked to join {{name}}. Press to take back the request."
+  },
+  "invite": {
+    "title": "Help run {{name}}?",
+    "body": "The owner asked you to help run this space: {{powers}}. Your powers start when you accept, and every action is logged.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "accepted": "You’re a moderator now.",
+    "declined": "You said no. Nothing changed."
+  },
+  "sections": {
+    "label": "Pages of {{name}}",
+    "threads": "Threads",
+    "settings": "Settings",
+    "members": "Members",
+    "log": "Moderation log"
   }
 }

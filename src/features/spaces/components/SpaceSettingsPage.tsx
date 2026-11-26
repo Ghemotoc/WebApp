@@ -37,13 +37,13 @@ import { ClassInviteCard } from './ClassInviteCard';
 import { ClassLockCard } from './ClassLockCard';
 import { ClassWaitingCard } from './ClassWaitingCard';
 import { SpaceBannerPictureCard } from './SpaceBannerPictureCard';
-import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
 import { SpaceFormCard } from './SpaceFormCard';
 import { SpaceHandoverCard } from './SpaceHandoverCard';
 import { SpaceLogoCard } from './SpaceLogoCard';
 import { SpaceModeratorsCard } from './SpaceModeratorsCard';
 import { SpaceNotFound } from './SpaceNotFound';
+import { SpaceToolsHeader } from './SpaceToolsHeader';
 import { SpaceWelcomeNoteCard } from './SpaceWelcomeNoteCard';
 
 /**
@@ -83,7 +83,7 @@ function SettingsForm({ space }: { space: Space }) {
   }
 
   return (
-    <SpaceFormCard eyebrow={space.name} title={t('form.editEyebrow')} intro={t('form.editIntro')}>
+    <SpaceFormCard title={t('form.aboutTitle')} headingLevel="h2" headingId="space-about-heading">
       <div aria-live="polite">{isSaved && <Notice tone="success">{t('form.saved')}</Notice>}</div>
       <SpaceForm
         initial={settingsOf(space)}
@@ -175,12 +175,13 @@ export function SpaceSettingsPage() {
   const read = useSpace(spaceSlug);
   const space = read.data;
   return (
-    <PageContainer className="flex flex-col gap-6 py-8">
+    <PageContainer className="flex flex-col gap-12 pt-8 pb-20">
       {read.isError && <Notice tone="error">{t('space.loadFailed')}</Notice>}
       {space === null && <SpaceNotFound />}
       {space !== undefined && space !== null && (
         <>
-          <SpaceBreadcrumb space={space} current={t('space.settings')} />
+          {/* Board F10 (bundle BOOKS-7): the shared header with the row of the space's pages. */}
+          <SpaceToolsHeader space={space} title={t('space.settings')} intro={t('form.editIntro')} />
           <SettingsCards space={space} />
         </>
       )}

@@ -59638,7 +59638,7 @@ CREATE TABLE IF NOT EXISTS "public"."forums" (
     CONSTRAINT "forums_only_categories_pinned" CHECK (((NOT "is_pinned") OR ("parent_id" IS NULL))),
     CONSTRAINT "forums_position_range" CHECK ((("position" >= 0) AND ("position" <= 10000))),
     CONSTRAINT "forums_slug_format" CHECK ((("slug" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::"text") AND (("char_length"("slug") >= 2) AND ("char_length"("slug") <= 60)))),
-    CONSTRAINT "forums_slug_not_search" CHECK (("slug" <> 'search'::"text")),
+    CONSTRAINT "forums_slug_not_reserved" CHECK (("slug" <> ALL (ARRAY['search'::"text", 'new'::"text"]))),
     CONSTRAINT "forums_space_slug" CHECK ((("space_id" IS NULL) = ("slug" !~ '^space-'::"text")))
 );
 

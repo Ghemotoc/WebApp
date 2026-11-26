@@ -34,7 +34,13 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
 - `components/SpaceModeratorsCard.tsx` on the settings page (`SpaceModeratorRow`,
   `SpaceAddModerator`, `SpacePowerChoices`); `SpaceToolLinks` on the header;
   `SpaceMembersPage.tsx` (`/spaces/:spaceSlug/members`, with `SpaceMemberRow`) and
-  `SpaceLogPage.tsx` (`/spaces/:spaceSlug/log`, with `SpaceLogLine`).
+  `SpaceLogPage.tsx` (`/spaces/:spaceSlug/log`, with `SpaceLogTable`, `SpaceLogLine` and
+  `SpaceLogWhoSelect`). Bundle BOOKS-7 (boards F10 to F12) adds `SpaceToolsHeader` and
+  `SpaceSectionNav` at the top of each page that runs a space, the members page's
+  `SpaceMembersList`, `SpaceMemberMore`, `SpaceMemberReasonForm`, `SpaceMemberInviteForm`,
+  `hooks/useMemberFacts.ts`, `hooks/useSpaceMemberChanges.ts` and `SpaceBlockedList` (blocks in `api/spaceBlocks.ts`,
+  `hooks/useSpaceBlocks.ts`), and `SpaceModeratorInviteNote` on the space's page, where an invited
+  member accepts or declines.
 - `api/spaceBanner.ts` and `hooks/useSpaceBanner.ts` (part c): choosing an uploaded banner or the
   colour (`set_space_banner_picture()`) and the picture's signed address; `SpaceBannerBand` on the
   header and `SpaceBannerPictureCard` on the settings page. The join notifications are written by

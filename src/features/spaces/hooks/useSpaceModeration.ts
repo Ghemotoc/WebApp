@@ -59,21 +59,28 @@ export function useSpaceMembers(slug: string, mayRead: boolean) {
  *
  * @param slug - the space's address
  * @param mayRead - whether the caller may read it (the owner and our moderation team)
- * @returns the lines so far (null while loading), hasMore, showMore(), isLoadingMore and loadFailed
+ * @param who - only one person's actions (a username), 'platform' for our moderation team's, or
+ *   null for everyone's (board F12's Who filter)
+ * @returns the lines so far (null while loading), the people Who offers, whether our moderation
+ *   team acted, hasMore, showMore(), isLoadingMore and loadFailed
  */
-export function useSpaceLog(slug: string, mayRead: boolean) {
+export function useSpaceLog(slug: string, mayRead: boolean, who: string | null = null) {
   const log = useInfiniteQuery({
-    queryKey: [...spacesQueryKey, 'log', slug],
+    queryKey: [...spacesQueryKey, 'log', slug, who],
     queryFn: async ({ pageParam }: { pageParam: number }) =>
-      fetchSpaceLog(await requireClient(), slug, pageParam),
+      fetchSpaceLog(await requireClient(), slug, pageParam, who),
     initialPageParam: 0,
     getNextPageParam: (lastPage: SpaceLogPage, pages: SpaceLogPage[]) =>
       lastPage.hasMore ? pages.length * logPageSize : null,
     enabled: mayRead,
   });
   const pages = log.data?.pages ?? null;
+  // Who's choices come with every page; the first one is enough.
+  const firstPage = pages?.[0] ?? null;
   return {
     entries: pages === null ? null : pages.flatMap((page) => page.entries),
+    people: firstPage === null ? [] : firstPage.people,
+    platformActed: firstPage !== null && firstPage.platformActed,
     hasMore: log.hasNextPage,
     showMore: () => void log.fetchNextPage(),
     isLoadingMore: log.isFetchingNextPage,

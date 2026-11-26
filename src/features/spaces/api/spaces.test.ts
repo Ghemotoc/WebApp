@@ -63,7 +63,20 @@ describe('spaceFrom', () => {
       showWelcome: true,
       canHandOver: false,
       handover: null,
+      moderatorInvite: null,
+      isBlocked: false,
     });
+  });
+
+  it('reads an invitation to moderate and a block from the viewer (BOOKS-7)', () => {
+    const viewer = {
+      ...memberAnswer.viewer,
+      moderator_invite: ['posts', 'members'],
+      is_blocked: true,
+    };
+    const space = spaceFrom({ ...memberAnswer, viewer });
+    expect(space.viewer.moderatorInvite).toEqual(['posts', 'members']);
+    expect(space.viewer.isBlocked).toBe(true);
   });
 
   it('leaves the age group out when the database hides it from a reader outside the group', () => {

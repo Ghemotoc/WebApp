@@ -97,6 +97,13 @@ export interface SpaceViewer {
   canHandOver: boolean;
   /** The open offer, for the owner and the moderator it is for (IDEAS-3e); null otherwise. */
   handover: SpaceHandover | null;
+  /**
+   * The powers the owner invited the reader to take, waiting for their answer (BOOKS-7, user
+   * stories 7.7 and 7.10); null when no invitation waits.
+   */
+  moderatorInvite: SpacePower[] | null;
+  /** The space blocked the reader: they can't ask to join again (BOOKS-7, user story 7.11). */
+  isBlocked: boolean;
 }
 
 /** An open offer to hand a space over (IDEAS-3e, idea IDEA-20261102-7). */
@@ -225,6 +232,9 @@ export type SpaceFailure =
   | 'handover_not_moderator'
   | 'handover_age'
   | 'handover_not_teacher'
+  // BOOKS-7: the space blocked the caller, or the invitation to moderate is gone.
+  | 'blocked'
+  | 'invite_missing'
   | 'unreachable';
 
 /** A field the database found a problem with ("name:taken", "rules:too_long"…). */
@@ -260,6 +270,8 @@ const privilegeHints: Record<string, SpaceFailure> = {
   // S1-E8-11: a class space takes its teacher's code; only teachers start one.
   'space:class': 'class_only',
   'space:not_teacher': 'not_teacher',
+  // BOOKS-7 (user story 7.11): someone the space blocked can't ask to join again.
+  'space:blocked': 'blocked',
 };
 
 /** The 23514 and P0002 hints that aren't about a form field, and what they mean. */
@@ -276,6 +288,8 @@ const otherHints: Record<string, SpaceFailure> = {
   'handover:not_moderator': 'handover_not_moderator',
   'handover:age': 'handover_age',
   'handover:not_teacher': 'handover_not_teacher',
+  // BOOKS-7: an invitation to moderate that was taken back or already answered.
+  'invite:missing': 'invite_missing',
 };
 
 /**
@@ -358,6 +372,10 @@ function viewerFrom(value: Json | undefined): SpaceViewer {
     showWelcome: viewer['show_welcome'] === true,
     canHandOver: viewer['can_hand_over'] === true,
     handover: handoverFrom(viewer['handover']),
+    moderatorInvite: Array.isArray(viewer['moderator_invite'])
+      ? powersFrom(viewer['moderator_invite'])
+      : null,
+    isBlocked: viewer['is_blocked'] === true,
   };
 }
 

@@ -40,6 +40,7 @@ import { ClassAssignmentsCard } from './ClassAssignmentsCard';
 import { ClassStoriesCard } from './ClassStoriesCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceHeaderCard } from './SpaceHeaderCard';
+import { SpaceModeratorInviteNote } from './SpaceModeratorInviteNote';
 import { SpaceNotFound } from './SpaceNotFound';
 import { SpaceRequestsCard } from './SpaceRequestsCard';
 import { SpaceRulesCard } from './SpaceRulesCard';
@@ -116,6 +117,7 @@ function SpaceContent({ space }: { space: Space }) {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,2.4fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
         <div className="flex min-w-0 flex-col gap-8">
           <SpaceHandoverOffer space={space} />
+          <SpaceModeratorInviteNote space={space} />
           <SpaceWelcomeNote space={space} />
           {space.isLocked && (
             <Notice
