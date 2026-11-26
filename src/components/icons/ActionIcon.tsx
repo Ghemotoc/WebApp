@@ -10,12 +10,12 @@
  * only needed on the pages that show them, so they travel with those pages instead.
  * Same drawing rules as NavIcon: a 24 px grid, a 1.8 px stroke in the current text colour, hidden
  * from screen readers because the button or link beside it carries the words.
- * Who uses it: ChatHeader, MessageComposer, MessagesPage, NewChatButton, MailReplyForm, MyMailPage,
- * NewMailPage, and in notifications NotificationsPage, NotificationIcon, NotificationRow and
- * DecisionsCard; the class and teacher check pages (G8e); and, since NO-DOODLES replaced the old
- * hand-drawn icon set, every screen that used it (the home page hero and safety lines, sign-up,
- * log-in ways, story stats, the writer dashboard, the chapter editor's insert buttons, forum
- * locks, the messages rules note, export status and the profile's safety card); and the forum
+ * Who uses it: ChatFocusBar, ChatMessages, MessageComposer, NewChatButton, MailReplyForm,
+ * MyMailPage, NewMailPage, and in notifications NotificationIcon; the class and teacher check
+ * pages (G8e); and, since NO-DOODLES replaced the old hand-drawn icon set, every screen that used
+ * it (the home page hero and safety lines, sign-up, log-in ways, story stats, the writer
+ * dashboard, the chapter editor's insert buttons, forum locks, export status and the profile's
+ * safety card); and the forum
  * reply's formatting toolbar (GAPS-16b: link, quote, list); Story Atlas's "Category colours"
  * (palette, CALM-9, board E25); and a landing page's steps (target, pen, book; CALM-9, board A10);
  * and Story Atlas's Delete on a note (bin, user stories bundle 6, board E31); and the Marketing

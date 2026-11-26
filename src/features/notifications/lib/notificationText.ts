@@ -106,7 +106,7 @@ function decisionWhat(t: TFunction, notification: AppNotification): string {
 
 /**
  * A moderation decision's words: what was decided about which kind of item (DSA art. 17: the
- * person hears about every decision), and "Read why", which opens the statement of reasons on My
+ * person hears about every decision), and "Read the reasons", which opens the statement of reasons on My
  * reports and decisions (S1-E10-04). A decision outside a case (a sanction from the account page,
  * a raised rating) has no item, so its words come from the statement's action.
  *
@@ -159,7 +159,7 @@ function reportOutcomeText(t: TFunction, notification: AppNotification): Notific
 
 /**
  * An appeal's outcome (S1-E10-07; DSA art. 20(5)): whether the decision stands or was changed,
- * with "Read why", which opens the statement on My reports and decisions.
+ * with "Read the reasons", which opens the statement on My reports and decisions.
  *
  * @param t - the notifications translation function
  * @param notification - an appeal_decided row

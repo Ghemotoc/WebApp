@@ -1,12 +1,13 @@
 /**
- * DeleteChatControl: "Delete chat" in About this chat, with a confirmation (story S1-E9-04; board
- * Messages 5.5: "This removes the chat for you. When both of you delete it, the messages are
- * deleted for good.").
+ * DeleteChatControl: "Delete chat" in About this chat, a text button that opens a confirmation
+ * (story S1-E9-04; user story 4.3, board E13-Chat: "Delete chat opens a confirm popup").
  *
- * The confirmation is CALM-9 board E13's popup: an alertdialog titled "Delete this chat?", the
- * line "It goes from your messages straight away. When [name] deletes it too, the messages are
- * gone for good." and the buttons "Keep the chat" and "Delete the chat" (danger colour). It is a
- * native <dialog> opened with showModal(), so focus moves inside and Escape keeps the chat;
+ * The confirmation is board E13's popup: an alertdialog titled "Delete this chat?" with a corner
+ * ×, the line "It goes from your messages straight away. When [name] deletes it too, the
+ * messages are gone for good." and the buttons "Delete the chat" (danger colour) and "Keep the
+ * chat". The board puts Keep first; the main action comes first here (design books item 8;
+ * docs/board-fixes.md). It is a native <dialog> opened with showModal(), so focus moves inside
+ * and Escape keeps the chat;
  * focus starts on "Keep the chat", the safe choice, put there after showModal() because the
  * main button comes first (design books item 8).
  *
@@ -22,7 +23,6 @@ import { useNavigate } from 'react-router';
 
 import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 
 import { useDeleteChat } from '../hooks/useMessageSettings';
@@ -59,17 +59,10 @@ export function DeleteChatControl({ handle, name }: { handle: string; name: stri
   }
 
   return (
-    <div className="flex flex-col gap-2 border-b border-border py-3">
-      <Eyebrow>{t('deleteChat.eyebrow')}</Eyebrow>
-      <Button
-        variant="destructive"
-        className="w-fit"
-        aria-haspopup="dialog"
-        onClick={() => setIsOpen(true)}
-      >
+    <>
+      <Button variant="text" aria-haspopup="dialog" onClick={() => setIsOpen(true)}>
         {t('deleteChat.button')}
       </Button>
-      <p className="m-0 type-body text-ink-muted">{t('deleteChat.explain')}</p>
       <DeleteChatDialog
         isOpen={isOpen}
         name={name}
@@ -78,7 +71,7 @@ export function DeleteChatControl({ handle, name }: { handle: string; name: stri
         onClose={close}
         onConfirm={() => void confirm()}
       />
-    </div>
+    </>
   );
 }
 
@@ -91,6 +84,36 @@ interface DeleteChatDialogProps {
   isDeleting: boolean;
   onClose: () => void;
   onConfirm: () => void;
+}
+
+/**
+ * Board E13's corner × on the popup: keeps the chat, as Escape does.
+ *
+ * @returns the round 44 px button with a line cross
+ */
+function CloseButton({ label, onClose }: { label: string; onClose: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClose}
+      className="-mt-2 -mr-2 inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full text-ink-heading hover:bg-tint"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        aria-hidden="true"
+      >
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+    </button>
+  );
 }
 
 /**
@@ -126,12 +149,12 @@ function DeleteChatDialog(props: DeleteChatDialogProps) {
       className="m-auto w-[min(480px,calc(100vw-32px))] rounded-card border border-border bg-surface p-6 text-ink shadow-card backdrop:bg-ink/45"
     >
       <div className="flex flex-col gap-4">
-        <h2
-          id="delete-chat-heading"
-          className="m-0 font-heading type-heading leading-[1.15] font-bold text-ink-heading"
-        >
-          {t('deleteChat.title')}
-        </h2>
+        <div className="flex items-start justify-between gap-3">
+          <h2 id="delete-chat-heading" className="m-0 type-subheading">
+            {t('deleteChat.title')}
+          </h2>
+          <CloseButton label={t('deleteChat.close')} onClose={props.onClose} />
+        </div>
         <p id="delete-chat-body" className="m-0 type-body leading-relaxed text-ink-muted">
           {t('deleteChat.body', { name: props.name })}
         </p>

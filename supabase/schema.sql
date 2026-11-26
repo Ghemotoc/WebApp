@@ -18093,6 +18093,36 @@ COMMENT ON FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "uu
 
 
 
+CREATE OR REPLACE FUNCTION "public"."chat_partner_story"("partner_id" "uuid") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object('title', card ->> 'title', 'category_slug', card ->> 'category_slug',
+    'chapter_count', (card ->> 'chapter_count')::integer)
+  from (
+    -- Step 1: the writer's first editions, newest chapter first, that the caller may open.
+    select public.story_card_json(stories.id) as card, stories.last_chapter_published_at
+    from public.stories
+    where stories.user_id = partner_id
+      and stories.deleted_at is null
+      and stories.edition_of_story_id is null
+      and stories.last_chapter_published_at is not null
+      and exists (select 1 from public.reader_visible_story(stories.slug))
+  ) as candidates
+  -- Step 2: only a story with a chapter the caller can read counts.
+  where (card ->> 'chapter_count')::integer > 0
+  order by candidates.last_chapter_published_at desc
+  limit 1;
+$$;
+
+
+ALTER FUNCTION "public"."chat_partner_story"("partner_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chat_partner_story"("partner_id" "uuid") IS 'Internal: the other person''s latest story the caller may read, for the chat header (user story 4.3, board E13).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."check_bible_text"("body" "text") RETURNS "text"
     LANGUAGE "plpgsql" STABLE
     SET "search_path" TO ''
@@ -22559,6 +22589,7 @@ declare
   other public.profiles := public.messaging_partner(other_handle);
   chat public.conversations;
   said_no_thanks boolean;
+  can_send boolean;
 begin
   -- Step 1: someone the caller may see in Messages.
   if other.id is null then
@@ -22567,6 +22598,7 @@ begin
   -- Step 2: their chat, if they have one, and whether it closed with "No thanks" to the caller.
   chat := public.conversation_between(caller_id, other.id);
   said_no_thanks := chat.user_id = caller_id and public.no_thanks_pause_ends(chat) is not null;
+  can_send := public.conversation_can_send(chat, caller_id, other.id);
   -- Step 3: the answer.
   return jsonb_build_object(
     'handle', other.handle,
@@ -22576,7 +22608,10 @@ begin
     'is_waiting', chat.status in ('request', 'declined') and chat.user_id = caller_id and not coalesce(said_no_thanks, false),
     'said_no_thanks', coalesce(said_no_thanks, false),
     'ask_again_from', case when said_no_thanks then public.no_thanks_pause_ends(chat) end,
-    'can_send', public.conversation_can_send(chat, caller_id, other.id),
+    'can_send', can_send,
+    -- User story 4.3: the caller's own adults switch is the one reason a chat may say.
+    'adults_switch_stops', not can_send and public.my_adults_switch_stops_chat(caller_id, other.id),
+    'latest_story', public.chat_partner_story(other.id),
     'i_follow', exists (select 1 from public.follows_users
                         where follows_users.user_id = caller_id and follows_users.followed_user_id = other.id),
     'they_follow', exists (select 1 from public.follows_users
@@ -22590,7 +22625,7 @@ $$;
 ALTER FUNCTION "public"."conversation_with"("other_handle" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."conversation_with"("other_handle" "text") IS 'One chat by the other person''s username, as the caller sees it; never says why sending is off (S1-E9-01, IDEAS-2 idea 7).';
+COMMENT ON FUNCTION "public"."conversation_with"("other_handle" "text") IS 'One chat by the other person''s username, as the caller sees it; says why sending is off only when the caller''s own adults switch stops it (S1-E9-01, IDEAS-2 idea 7, user story 4.3).';
 
 
 
@@ -33280,6 +33315,26 @@ COMMENT ON FUNCTION "public"."my_account_deletion"() IS 'The caller''s account d
 
 
 
+CREATE OR REPLACE FUNCTION "public"."my_adults_switch_stops_chat"("caller_id" "uuid", "partner_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((
+    select public.message_age_group(caller) = 'teen'
+      and not coalesce(caller.adults_may_message, false)
+      and public.message_age_group(partner) = 'adult'
+    from public.profiles as caller, public.profiles as partner
+    where caller.id = caller_id and partner.id = partner_id), false);
+$$;
+
+
+ALTER FUNCTION "public"."my_adults_switch_stops_chat"("caller_id" "uuid", "partner_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."my_adults_switch_stops_chat"("caller_id" "uuid", "partner_id" "uuid") IS 'Internal: true when the caller''s own adults switch (16 and 17) is what stops a chat with an adult (user story 4.3).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."my_age_check"() RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -35750,6 +35805,41 @@ ALTER FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") OWNER T
 
 
 COMMENT ON FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") IS 'Internal: the people a new chapter of a story tells (S1-E7-01, NEW-1, TRANSLATE-1a, S1-E8-11; board D06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."new_chat_people"() RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := public.require_messaging_caller();
+begin
+  return (
+    select coalesce(jsonb_agg(jsonb_build_object('handle', found.handle,
+      'display_name', found.display_name) order by lower(found.display_name), found.handle), '[]'::jsonb)
+    from (
+      -- Step 1: the people the caller follows, still live and not moderated away.
+      select profiles.handle, public.display_name(profiles.handle, profiles.pen_name) as display_name
+      from public.follows_users
+      join public.profiles on profiles.id = follows_users.followed_user_id
+      where follows_users.user_id = caller_id
+        and profiles.deleted_at is null
+        and profiles.handle is not null
+        and not public.is_moderated_away('profile', profiles.id)
+        and public.account_state(profiles.id) <> 'staff_account'
+        -- Step 2: only those the caller may write to now (the same check as the message box).
+        and public.conversation_can_send(public.conversation_between(caller_id, profiles.id),
+                                         caller_id, profiles.id)
+    ) as found);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."new_chat_people"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."new_chat_people"() IS 'The people the caller follows whom they may write to now, for New chat (user story 4.2, board E12).';
 
 
 
@@ -72576,6 +72666,10 @@ GRANT ALL ON FUNCTION "public"."chat_cleared_at"("chat_id" "uuid", "person_id" "
 
 
 
+REVOKE ALL ON FUNCTION "public"."chat_partner_story"("partner_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."check_bible_text"("body" "text") FROM PUBLIC;
 
 
@@ -74663,6 +74757,10 @@ GRANT ALL ON FUNCTION "public"."my_account_deletion"() TO "authenticated";
 
 
 
+REVOKE ALL ON FUNCTION "public"."my_adults_switch_stops_chat"("caller_id" "uuid", "partner_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."my_age_check"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."my_age_check"() TO "authenticated";
 
@@ -75044,6 +75142,11 @@ REVOKE ALL ON FUNCTION "public"."new_certificate_code"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."new_chapter_audience"("target_story_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."new_chat_people"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."new_chat_people"() TO "authenticated";
 
 
 
