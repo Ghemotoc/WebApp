@@ -172,7 +172,20 @@
     "heading": "Discuție nouă",
     "post": "Publică discuția",
     "cancel": "Renunță",
-    "logIn": "Intră ca să începi o discuție."
+    "logIn": "Intră ca să începi o discuție.",
+    "forum": "Forum",
+    "pickForum": "Alege un forum",
+    "missingForum": "Alege un forum.",
+    "titleHint": "Spune în câteva cuvinte despre ce e firul.",
+    "missingTitle": "Adaugă un titlu.",
+    "missingBody": "Scrie prima postare.",
+    "firstPost": "Prima postare",
+    "leave": {
+      "title": "Pleci fără să postezi?",
+      "body": "Titlul și postarea rămân pe acest dispozitiv până le postezi.",
+      "keep": "Scrie mai departe",
+      "leave": "Pleacă"
+    }
   },
   "failures": {
     "signed_out": "Intră mai întâi în cont.",
@@ -214,7 +227,7 @@
   "unread": {
     "new": "Postări noi de la ultima vizită",
     "none": "Nicio postare nouă",
-    "markAll": "Marchează ca citit",
+    "markAll": "Marchează tot ca citit",
     "mark": "Marchează ca citit",
     "markLabel": "Marchează ca citit: {{name}}",
     "markFailed": "Nu am putut marca drept citit. Încearcă din nou."
@@ -446,5 +459,9 @@
   "beforePost": {
     "title": "Înainte să postezi",
     "text": "Comentează textul, nu persoana care l-a scris. Păstrează pentru tine adresa, școala și numărul de telefon. Fiecare mesaj are un buton de raportare."
+  },
+  "header": {
+    "newThread": "Fir nou",
+    "getIn": "Intră ca să postezi"
   }
 }

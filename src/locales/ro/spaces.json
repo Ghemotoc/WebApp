@@ -1,7 +1,7 @@
 {
   "eyebrow": "Conduse de membri",
   "title": "Spații",
-  "intro": "Membrii creează și conduc spațiile. Cine a creat spațiul decide cine poate posta.",
+  "intro": "Membrii creează și conduc spațiile. Cine a creat spațiul decide cine poate citi și cine poate posta.",
   "create": "Creează un spațiu",
   "seeAll_one": "Vezi {{count, number}} spațiu",
   "seeAll_few": "Vezi {{count, number}} spații",
@@ -613,5 +613,44 @@
     "members_other": "{{count, number}} de membri",
     "private": "Privat",
     "classOnly": "îl văd doar membrii clasei"
+  },
+  "list": {
+    "joined": "Te-ai alăturat",
+    "joinedLabel": "Spații în care ești membru",
+    "more": "Alte spații",
+    "emptyMore": "Încă nu există alte spații. Creează unul.",
+    "line": {
+      "16_plus": {
+        "latest": "Spații pentru membrii de 16 ani și peste, întâi cele cu activitate recentă",
+        "members": "Spații pentru membrii de 16 ani și peste, întâi cele cu cei mai mulți membri",
+        "newest": "Spații pentru membrii de 16 ani și peste, întâi cele mai noi"
+      },
+      "under_16": {
+        "latest": "Spații pentru membrii sub 16 ani, întâi cele cu activitate recentă",
+        "members": "Spații pentru membrii sub 16 ani, întâi cele cu cei mai mulți membri",
+        "newest": "Spații pentru membrii sub 16 ani, întâi cele mai noi"
+      },
+      "anyone": {
+        "latest": "Întâi cele cu activitate recentă",
+        "members": "Întâi cele cu cei mai mulți membri",
+        "newest": "Întâi cele mai noi"
+      }
+    },
+    "sortLabel": "Ordonează spațiile",
+    "sort": {
+      "latest": "Activitate recentă",
+      "members": "Cei mai mulți membri",
+      "newest": "Cele mai noi"
+    },
+    "showMore": "Arată încă {{count, number}}",
+    "private": "Privat",
+    "classOnly": "îl văd doar membrii clasei",
+    "latestPost": "ultima postare {{when}}",
+    "join": "Intră",
+    "joinLabel": "Intră în {{name}}",
+    "ask": "Cere să intri",
+    "askLabel": "Cere să intri în {{name}}",
+    "asked": "Cerere trimisă",
+    "askedLabel": "Ai cerut să intri în {{name}}. Apasă ca să retragi cererea."
   }
 }

@@ -23,6 +23,7 @@ import {
   joinSpace,
   leaveSpace,
   updateSpace,
+  type SpaceListFilter,
   type SpaceListPage,
   type SpaceSettings,
 } from '../api/spaces';
@@ -45,15 +46,19 @@ export function spaceFailureOf(error: Error | null): SpaceError | null {
  * Reads the spaces the caller may see, a page at a time.
  *
  * @param pageSize - how many a page holds (4 for the forum index's card, 20 for /spaces)
+ * @param filter - the order, and joined (true), the others (false) or every space (null)
  * @returns the spaces so far (null while loading), the total, hasMore, showMore() and loadFailed
  */
-export function useSpaceList(pageSize: number) {
+export function useSpaceList(
+  pageSize: number,
+  filter: SpaceListFilter = { sort: 'latest', joined: null },
+) {
   // Which spaces show depends on who is reading (the age rules), so signing in reads again.
   const { userId } = useSession();
   const list = useInfiniteQuery({
-    queryKey: [...spacesQueryKey, 'list', pageSize, userId],
+    queryKey: [...spacesQueryKey, 'list', pageSize, filter.sort, filter.joined, userId],
     queryFn: async ({ pageParam }: { pageParam: number }) =>
-      fetchSpaceList(await requireClient(), pageParam, pageSize),
+      fetchSpaceList(await requireClient(), pageParam, pageSize, filter),
     initialPageParam: 0,
     getNextPageParam: (lastPage: SpaceListPage, pages: SpaceListPage[]) =>
       lastPage.hasMore ? pages.length * pageSize : null,

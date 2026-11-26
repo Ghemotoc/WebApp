@@ -19,8 +19,10 @@
  * Since CALM-7c (board simplified/New-Together): a meta line with the thread count over the
  * display title, no cards around the categories (a heading row and hairline rows, like a shelf),
  * and a 300 px side column 56 px away whose sections sit on the page, only New for you on a box.
+ * Board F01 (BOOKS-7, user story 7.1) puts "Mark all as read" and "New thread" (NewThreadLink,
+ * the page's one plum button, opening New thread with the forum to pick) under the intro.
  * What it calls: useForumIndex → forum_index(); lib/forumTree.ts puts it in order;
- * MarkReadButton, UnreadLegend and NewForYou.
+ * MarkReadButton, NewThreadLink, UnreadLegend and NewForYou.
  */
 import { Fragment } from 'react';
 
@@ -40,21 +42,23 @@ import { ForumRulesCard } from './ForumRulesCard';
 import { ForumSearchForm } from './ForumSearchForm';
 import { MarkReadButton } from './MarkReadButton';
 import { NewForYou } from './NewForYou';
+import { NewThreadLink } from './NewThreadLink';
 import { UnreadCircle } from './UnreadDot';
 
 /** The heading block: the thread count, the title and the intro (board New-Together). */
 function ForumsHeader({ threadCount }: { threadCount: number }) {
   const { t } = useForumsTranslation();
   return (
-    <header className="flex flex-wrap items-end justify-between gap-6">
+    <header className="flex flex-col gap-6">
       <div className="flex max-w-[640px] flex-col">
         <p className="m-0 mb-2 type-meta">{t('eyebrow', { count: threadCount })}</p>
         <h1 className="m-0 type-display">{t('title')}</h1>
-        <p className="m-0 mt-3 text-ink-muted">{t('intro')}</p>
+        <p className="m-0 mt-2 text-ink-muted">{t('intro')}</p>
       </div>
-      {/* The board puts the page's actions at the right of the heading on a wide screen. */}
-      <div className="shrink-0">
+      {/* Board F01: "Mark all as read" and "New thread" under the intro, from the left. */}
+      <div className="flex flex-wrap items-center gap-3">
         <MarkReadButton forumSlug={null} />
+        <NewThreadLink />
       </div>
     </header>
   );

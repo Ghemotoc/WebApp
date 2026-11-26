@@ -19,6 +19,9 @@
  * ad_slots, turns a slot off and books it (S1-E12-05, admin_* functions that write the audit log).
  * Who reads it: src/features/ads (PageAdSlot) on ForumSearchPage, ForumPage, SpacesPage and
  * SpacePage.
+ * It also keeps the address /forums/new free: New thread on Together opens it with the forum to
+ * pick first (board F04, user story 7.4), so no forum may take "new" as its address, as none may
+ * take "search" (forums_slug_not_search, FORUMS-1f). The two checks become one.
  * Tests: supabase/tests/database/420-together-and-spaces.test.sql.
  */
 insert into public.ad_slots (slot_key, page_key, position, format) values
@@ -28,3 +31,7 @@ insert into public.ad_slots (slot_key, page_key, position, format) values
   ('spaces_wide', 'spaces', 1, 'wide'),
   ('space_side', 'space', 2, 'side_box')
 on conflict (slot_key) do nothing;
+
+alter table public.forums drop constraint forums_slug_not_search;
+alter table public.forums
+  add constraint forums_slug_not_reserved check (slug not in ('search', 'new'));

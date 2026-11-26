@@ -154,6 +154,21 @@ export interface Space {
   viewer: SpaceViewer;
 }
 
+/** The orders the Spaces page offers under "More spaces" (board F06, user story 7.6). */
+export const spaceSorts = ['latest', 'members', 'newest'] as const;
+
+/** One of them: latest activity, most members or newest. */
+export type SpaceSort = (typeof spaceSorts)[number];
+
+/**
+ * Which spaces a list asks for: the ones the caller joined ("Joined"), the others ("More
+ * spaces", never a class), or every space (null, as the Together page's card shows them).
+ */
+export interface SpaceListFilter {
+  sort: SpaceSort;
+  joined: boolean | null;
+}
+
 /** One page of the spaces the caller may see. */
 export interface SpaceListPage {
   spaces: Space[];
@@ -456,11 +471,12 @@ export function spaceFrom(value: Json | undefined): Space {
 }
 
 /**
- * Reads the spaces the caller may see, busiest first.
+ * Reads the spaces the caller may see, in the order picked.
  *
  * @param client - the Supabase client
  * @param skip - how many the page already shows
  * @param howMany - how many to read (at most 50)
+ * @param filter - the order, and whether to read the joined spaces, the others or every one
  * @returns the page
  * @throws Error in plain words when the database can't be reached
  */
@@ -468,8 +484,16 @@ export async function fetchSpaceList(
   client: AppSupabaseClient,
   skip: number,
   howMany: number,
+  filter: SpaceListFilter = { sort: 'latest', joined: null },
 ): Promise<SpaceListPage> {
-  const { data, error } = await client.rpc('space_list', { skip, how_many: howMany });
+  // The database takes null for "every space"; the generated type leaves the argument out then.
+  const joined = filter.joined === null ? undefined : filter.joined;
+  const { data, error } = await client.rpc('space_list', {
+    skip,
+    how_many: howMany,
+    sort: filter.sort,
+    joined,
+  });
   if (error) throw new Error(`Could not read the spaces: ${error.message}`);
   const page = objectOf(data);
   const spaces = Array.isArray(page['spaces']) ? page['spaces'].map(spaceFrom) : [];

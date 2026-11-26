@@ -172,7 +172,20 @@
     "heading": "New thread",
     "post": "Post the thread",
     "cancel": "Cancel",
-    "logIn": "Get in to start a thread."
+    "logIn": "Get in to start a thread.",
+    "forum": "Forum",
+    "pickForum": "Pick a forum",
+    "missingForum": "Pick a forum.",
+    "titleHint": "Say what the thread is about in a few words.",
+    "missingTitle": "Add a title.",
+    "missingBody": "Write the first post.",
+    "firstPost": "First post",
+    "leave": {
+      "title": "Leave without posting?",
+      "body": "The title and the post stay on this device until you post them.",
+      "keep": "Keep writing",
+      "leave": "Leave"
+    }
   },
   "failures": {
     "signed_out": "Log in first.",
@@ -214,7 +227,7 @@
   "unread": {
     "new": "New posts since the last visit",
     "none": "No new posts",
-    "markAll": "Mark as read",
+    "markAll": "Mark all as read",
     "mark": "Mark as read",
     "markLabel": "Mark as read: {{name}}",
     "markFailed": "We couldn’t mark that as read. Try again."
@@ -446,5 +459,9 @@
   "beforePost": {
     "title": "Before you post",
     "text": "Comment on the writing, not the writer. Keep your address, school and phone number private. Every post has Report."
+  },
+  "header": {
+    "newThread": "New thread",
+    "getIn": "Get in to post"
   }
 }

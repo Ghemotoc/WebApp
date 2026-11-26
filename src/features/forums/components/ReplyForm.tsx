@@ -25,6 +25,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { useSession } from '@/features/auth/hooks/useSession';
@@ -132,7 +133,7 @@ function PickedQuotes({
 function NoBumpBox({ checked, onChange }: { checked: boolean; onChange: (next: boolean) => void }) {
   const { t } = useForumsTranslation();
   return (
-    <div className="flex min-h-11 flex-[1_1_320px] items-start gap-3">
+    <div className="flex min-h-11 items-start gap-3">
       <input
         id="no-bump"
         type="checkbox"
@@ -210,8 +211,12 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
       <PersonalDetailsGateNote gate={gate} isSending={replying.isRunning} />
       {isPreviewing && <ReplyPreview text={body} />}
       {messages.general !== null && <Notice tone="error">{messages.general}</Notice>}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-        <NoBumpBox checked={noBump} onChange={setNoBump} />
+      <NoBumpBox checked={noBump} onChange={setNoBump} />
+      {/* Board F05: "Post reply" first, then "Preview", from the left (design books item 8). */}
+      <ButtonRow>
+        <Button type="submit" disabled={replying.isRunning}>
+          {t('reply.post')}
+        </Button>
         <Button
           variant="secondary"
           aria-expanded={isPreviewing}
@@ -220,10 +225,7 @@ function ReplyFields({ target }: { target: ReplyTarget }) {
         >
           {isPreviewing ? t('reply.previewHide') : t('reply.preview')}
         </Button>
-        <Button type="submit" disabled={replying.isRunning}>
-          {t('reply.post')}
-        </Button>
-      </div>
+      </ButtonRow>
     </form>
   );
 }

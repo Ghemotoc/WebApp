@@ -141,7 +141,7 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
     addReply('Fifth post.');
     await page.goto('/forums');
     await expect(forumRow(page).getByText('New posts since the last visit')).toBeAttached();
-    await page.getByRole('button', { name: 'Mark as read', exact: true }).click();
+    await page.getByRole('button', { name: 'Mark all as read', exact: true }).click();
     await expect(forumRow(page).getByText('No new posts')).toBeAttached();
     await expect(
       page.getByRole('region', { name: 'New for you' }).getByText('You’re up to date.'),
@@ -153,7 +153,7 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
     const page = await openAs(browser, null, '/forums');
     await expect(forumRow(page)).toBeVisible();
     await expect(page.getByText('New posts since the last visit')).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Mark as read' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Mark (all )?as read/ })).toHaveCount(0);
     await expect(page.getByRole('region', { name: 'New for you' })).toHaveCount(0);
     await page.context().close();
   });

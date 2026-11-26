@@ -18,7 +18,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(43);
+select plan(44);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -216,6 +216,10 @@ select is((select string_agg(slot_key || ':' || page_key || ':' || position, ','
   'the forum search, a forum, the spaces list and a space each have the slots their boards draw');
 select is((select max(slot_count)::integer from (select count(*) as slot_count from public.ad_slots group by page_key) as per_page),
   2, 'no page has more than two adverts (decided 17 Oct 2026, 11:53)');
+
+reset role;
+select throws_ok($$insert into public.forums (slug, level) values ('new', 0)$$, '23514', null,
+  'no forum may take "new" as its address: /forums/new is New thread with the forum to pick');
 
 select * from finish();
 rollback;

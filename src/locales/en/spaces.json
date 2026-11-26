@@ -1,7 +1,7 @@
 {
   "eyebrow": "Run by members",
   "title": "Spaces",
-  "intro": "Members create and run spaces. The owner decides who can post.",
+  "intro": "Members create and run spaces. The owner decides who can read and who can post.",
   "create": "Create a space",
   "seeAll_one": "See {{count, number}} space",
   "seeAll_few": "See {{count, number}} spaces",
@@ -613,5 +613,44 @@
     "members_other": "{{count, number}} members",
     "private": "Private",
     "classOnly": "only class members see it"
+  },
+  "list": {
+    "joined": "Joined",
+    "joinedLabel": "Spaces joined",
+    "more": "More spaces",
+    "emptyMore": "No other spaces yet. Start one.",
+    "line": {
+      "16_plus": {
+        "latest": "Spaces for members 16 and over, the latest activity first",
+        "members": "Spaces for members 16 and over, the most members first",
+        "newest": "Spaces for members 16 and over, the newest first"
+      },
+      "under_16": {
+        "latest": "Spaces for members under 16, the latest activity first",
+        "members": "Spaces for members under 16, the most members first",
+        "newest": "Spaces for members under 16, the newest first"
+      },
+      "anyone": {
+        "latest": "The latest activity first",
+        "members": "The most members first",
+        "newest": "The newest first"
+      }
+    },
+    "sortLabel": "Sort spaces",
+    "sort": {
+      "latest": "Latest activity",
+      "members": "Most members",
+      "newest": "Newest"
+    },
+    "showMore": "Show {{count, number}} more",
+    "private": "Private",
+    "classOnly": "only class members see it",
+    "latestPost": "latest post {{when}}",
+    "join": "Join",
+    "joinLabel": "Join {{name}}",
+    "ask": "Ask to join",
+    "askLabel": "Ask to join {{name}}",
+    "asked": "Asked",
+    "askedLabel": "Asked to join {{name}}. Press to take back the request."
   }
 }
