@@ -17,8 +17,13 @@
  * lists open too (GROWTH-3; Robert, 26 Nov 2026, 15:13 UTC: "Profile for adults, read lists,
  * categories, writers, chapters. Yes."), so search engines can reach them: each still shows only
  * what its owner lets everyone see (profile_is_open_to(), reading_list_is_visible()), and an
- * under-18's profile tells search engines not to list it (server/profile-head.ts). The rest of the
- * Library, Together, search and the rest stay closed.
+ * under-18's profile tells search engines not to list it (server/profile-head.ts). Together's
+ * forums and threads open too, with a space's own page (GROWTH-4; Robert, 26 Nov 2026, 19:45 UTC:
+ * "after the 2nd reply to the poster they need to log in to read the rest"): forum_thread() sends
+ * a visitor the opening post and 2 replies, space_may_read() keeps classes and members' spaces
+ * closed, and a space that isn't fully public tells search engines not to list it
+ * (server/space-head.ts). A space's tools, "Start a space", the rest of the Library, search and the
+ * rest stay closed.
  */
 import { pathWithoutPlace } from '@/lib/websitePlace';
 
@@ -47,17 +52,26 @@ const openPathPrefixes = [
   // reading list.
   '/u/',
   '/library/lists/',
+  // GROWTH-4: the forums, their threads and forum search (posts only from what visitors may read).
+  '/forums',
 ];
+
+/**
+ * The spaces list and one space's own page ("/spaces", "/spaces/cercul"), but not "Start a space"
+ * or a space's tools below its page (GROWTH-4).
+ */
+const openSpacePage = /^\/spaces(\/(?!new$)[^/]+)?\/?$/;
 
 /**
  * Says whether a signed-out visitor may open this page while the site is for members only.
  *
  * @param pathname - the address's path, with or without its country and language
- * @returns true for the home page, the pages above and Read
+ * @returns true for the home page, the pages above, Read and a space's own page
  */
 export function isOpenSignedOut(pathname: string): boolean {
   const pagePath = pathWithoutPlace(pathname);
   // The home page, at "/" or at its country and language ("/ro/ro").
   if (pagePath === '/') return true;
+  if (openSpacePage.test(pagePath)) return true;
   return openPathPrefixes.some((prefix) => pagePath.startsWith(prefix));
 }

@@ -36,6 +36,12 @@ describe('sitemapXml', () => {
   });
 });
 
+/** The lines of one group: from the line naming the crawler to the next blank line. */
+function groupFor(text: string, crawler: string): string[] {
+  const groups = text.split('\n\n').map((group) => group.split('\n'));
+  return groups.find((lines) => lines.includes(`User-agent: ${crawler}`)) ?? [];
+}
+
 describe('robotsTxt', () => {
   it('keeps crawlers out of private screens and points to the sitemap', () => {
     const text = robotsTxt('https://example.test', 'example.test');
@@ -43,8 +49,32 @@ describe('robotsTxt', () => {
     expect(text).toContain('Disallow: /staff');
     expect(text).toContain('Disallow: /write');
     expect(text).toContain('Disallow: /settings');
-    expect(text).not.toContain('Disallow: /s/');
     expect(text).toContain('Sitemap: https://example.test/sitemap.xml');
+  });
+
+  it('lets search engines read stories, chapters and a public reading list (GROWTH-3 and 4)', () => {
+    const general = groupFor(robotsTxt('https://example.test', 'example.test'), '*');
+    expect(general).not.toContain('Disallow: /s/');
+    expect(general).not.toContain('Disallow: /s/*/');
+    expect(general).toContain('Allow: /library/lists/');
+    expect(general).toContain('Disallow: /library');
+    expect(general).toContain('Disallow: /spaces/*/settings');
+    expect(general).not.toContain('Disallow: /forums');
+  });
+
+  it('lets AI crawlers read story pages, Discover and the forums, and nothing else (GROWTH-4)', () => {
+    const text = robotsTxt('https://example.test', 'example.test');
+    for (const crawler of ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended', 'CCBot']) {
+      const group = groupFor(text, crawler);
+      expect(group).toContain('Allow: /s/');
+      expect(group).toContain('Disallow: /s/*/');
+      expect(group).toContain('Allow: /discover');
+      expect(group).toContain('Allow: /forums');
+      expect(group).toContain('Allow: /spaces/');
+      expect(group).toContain('Disallow: /staff');
+      expect(group).toContain('Disallow: /spaces/new');
+      expect(group.at(-1)).toBe('Disallow: /');
+    }
   });
 
   it('keeps every crawler out of a pull request’s preview copy', () => {
@@ -75,7 +105,21 @@ describe('handleSitemapFiles', () => {
     expect(response?.headers.get('Retry-After')).toBe('3600');
   });
 
-  it('answers /robots.txt as plain text without the database', async () => {
+  it("opens each classic's chapters to AI crawlers, found from the sitemap (GROWTH-4)", async () => {
+    const response = await handleSitemapFiles(new Request('https://example.test/robots.txt'), {
+      findEntries: async () => [
+        { path: '/s/amintiri-din-copilarie', changed_on: null },
+        { path: '/s/amintiri-din-copilarie/ab12cd34', changed_on: null },
+        { path: '/s/amintiri-din-copilarie/ef56gh78', changed_on: null },
+        { path: '/s/statia-meteo', changed_on: null },
+      ],
+    });
+    const group = groupFor((await response?.text()) ?? '', 'GPTBot');
+    expect(group.filter((line) => line === 'Allow: /s/amintiri-din-copilarie/')).toHaveLength(1);
+    expect(group).not.toContain('Allow: /s/statia-meteo/');
+  });
+
+  it("still answers /robots.txt when the database can't be reached", async () => {
     const response = await handleSitemapFiles(new Request('https://example.test/robots.txt'), {
       findEntries: async () => {
         throw new Error('not needed');

@@ -27749,19 +27749,39 @@ declare
   wanted integer;
   page jsonb;
   last_number integer;
+  -- GROWTH-4: a visitor who isn't logged in reads the opening post and 2 replies, then is asked
+  -- to log in (Robert, 26 Nov 2026, 19:45 UTC: "after the 2nd reply to the poster they need to
+  -- log in to read the rest").
+  is_visitor boolean := (select auth.uid()) is null;
+  visitor_post_limit constant integer := 3;
+  visitor_last integer;
+  more_after boolean;
 begin
   -- Step 1: the thread, if the caller may open it.
   select * into thread from public.forum_threads where forum_threads.thread_number = forum_thread.thread_number;
   if thread.id is null or not public.forum_thread_is_shown(thread) then
     return null;
   end if;
-  -- Step 2: how far to read: a page, or as far as the permalink's post.
+  -- Step 2: for a visitor, the number of the last post they may read: the third post they can
+  -- see. Null when the thread has three visible posts or fewer, so there is nothing to hold back.
+  if is_visitor then
+    select visible.post_number into visitor_last
+    from (select forum_posts.post_number from public.forum_posts
+          where forum_posts.thread_id = thread.id
+            and public.forum_post_state_for_caller(forum_posts) is not null
+          order by forum_posts.post_number
+          offset visitor_post_limit - 1
+          limit 1) as visible;
+  end if;
+  -- Step 3: how far to read: a page, or as far as the permalink's post.
   wanted := greatest(page_size, coalesce(up_to_post, 0) - coalesce(after_post, 0));
-  -- Step 3: the posts after after_post, in number order, without the ones the caller can't see.
+  -- Step 4: the posts after after_post, in number order, without the ones the caller can't see,
+  -- and for a visitor none after visitor_last.
   with listed as (
     select forum_posts.* from public.forum_posts
     where forum_posts.thread_id = thread.id
       and forum_posts.post_number > coalesce(after_post, 0)
+      and (visitor_last is null or forum_posts.post_number <= visitor_last)
       and public.forum_post_state_for_caller(forum_posts) is not null
     order by forum_posts.post_number
     limit wanted
@@ -27770,14 +27790,23 @@ begin
          max(listed.post_number)
   into page, last_number
   from listed;
-  -- Step 4: more when a visible post comes after the last one read.
+  -- Step 5: is there a visible post after the last one read? For a member that is "Show more
+  -- replies". For a visitor, posts up to visitor_last still page as before; the posts after it
+  -- are never sent, and more_for_members tells the page to ask them to log in.
+  more_after := exists (select 1 from public.forum_posts
+                        where forum_posts.thread_id = thread.id
+                          and forum_posts.post_number > coalesce(last_number, coalesce(after_post, 0))
+                          and (visitor_last is null or forum_posts.post_number <= visitor_last)
+                          and public.forum_post_state_for_caller(forum_posts) is not null);
   return jsonb_build_object(
     'thread', public.forum_thread_header_json(thread),
     'posts', page,
-    'has_more', exists (select 1 from public.forum_posts
-                        where forum_posts.thread_id = thread.id
-                          and forum_posts.post_number > coalesce(last_number, coalesce(after_post, 0))
-                          and public.forum_post_state_for_caller(forum_posts) is not null));
+    'has_more', more_after,
+    'more_for_members', visitor_last is not null and exists (
+      select 1 from public.forum_posts
+      where forum_posts.thread_id = thread.id
+        and forum_posts.post_number > visitor_last
+        and public.forum_post_state_for_caller(forum_posts) is not null));
 end;
 $$;
 
@@ -27785,7 +27814,7 @@ $$;
 ALTER FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) IS 'A thread with its numbered posts in order, for the thread page; never a user ID (S1-E8-02).';
+COMMENT ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) IS 'A thread with its numbered posts in order, for the thread page; a visitor gets the first three only (S1-E8-02, GROWTH-4).';
 
 
 
@@ -50178,9 +50207,10 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       -- CALM-9s: a story hidden in any country stays out, as search engines list worldwide.
       and cardinality(stories.hidden_in_countries) = 0
     union all
-    -- Step 5 (GROWTH-2): each readable chapter of a story listed in step 4 that visitors get
-    -- text from: the whole chapter for a classic, the teaser for a writer's story. 16+ and 18+
-    -- chapters show visitors no text, so they stay out.
+    -- Step 5 (GROWTH-2, narrowed by GROWTH-4): each readable chapter of a public-domain classic
+    -- listed in step 4. A writer's chapters stay out of search (Robert, 26 Nov 2026, 19:45 UTC:
+    -- "the chapters of user generated content should not be crawlable, just the book page").
+    -- 16+ and 18+ chapters show visitors no text, so they stay out too.
     select '/s/' || stories.slug || '/' || chapters.code,
       coalesce(chapters.edited_at, chapters.first_published_at)::date
     from public.stories
@@ -50191,6 +50221,7 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       and not public.story_app_only_applies(stories.is_app_only)
       and not public.is_moderated_away('story', stories.id)
       and cardinality(stories.hidden_in_countries) = 0
+      and stories.classic_author_id is not null
       and public.chapter_is_readable(chapters.id)
     union all
     -- Step 6 (GROWTH-3): the profile of each adult who shows it to everyone and has a story in
@@ -50215,6 +50246,22 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
     from public.categories
     where exists (select 1 from public.stories
                   where stories.category_id = categories.id and public.story_is_searchable(stories.id))
+    union all
+    -- Step 9 (GROWTH-4): each live thread in a staff forum or in a fully public space (Robert,
+    -- 26 Nov 2026, 19:47 and 19:48 UTC: "public forum threads"; "fully public spaces can be
+    -- crawlable and indexable"). Private spaces and classes never appear.
+    select '/forums/' || forums.slug || '/' || forum_threads.thread_number,
+      forum_threads.last_post_at::date
+    from public.forum_threads
+    join public.forums on forums.id = forum_threads.forum_id and forums.deleted_at is null
+    where forum_threads.deleted_at is null
+      and not public.is_moderated_away('forum_thread', forum_threads.id)
+      and (forums.space_id is null or public.space_is_searchable(forums.space_id))
+    union all
+    -- Step 10 (GROWTH-4): each fully public space's own page.
+    select '/spaces/' || spaces.slug, spaces.updated_at::date
+    from public.spaces
+    where public.space_is_searchable(spaces.id)
   )
   limit 50000;
 $$;
@@ -50594,6 +50641,28 @@ ALTER FUNCTION "public"."space_is_member"("target_space_id" "uuid") OWNER TO "po
 
 
 COMMENT ON FUNCTION "public"."space_is_member"("target_space_id" "uuid") IS 'Internal: whether the caller is an active member of a space (S1-E8-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.spaces
+    where spaces.id = target_space_id
+      and spaces.kind = 'open'
+      and spaces.age_group = '16_plus'
+      and spaces.deleted_at is null
+      and spaces.archived_at is null
+      and not public.is_moderated_away('space', spaces.id));
+$$;
+
+
+ALTER FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") IS 'Internal: whether search engines may list a space and its threads: open, for 16+, live (GROWTH-4).';
 
 
 
@@ -51226,6 +51295,24 @@ ALTER FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") OWN
 
 
 COMMENT ON FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") IS 'Internal: the caller''s powers in a space (S1-E8-07).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."space_search_head"("wanted_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object('indexable', coalesce((
+    select public.space_is_searchable(spaces.id) from public.spaces
+    where spaces.slug = wanted_slug and spaces.deleted_at is null
+    limit 1), false));
+$$;
+
+
+ALTER FUNCTION "public"."space_search_head"("wanted_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_search_head"("wanted_slug" "text") IS 'Whether a space''s pages may be listed by search engines, by slug (GROWTH-4).';
 
 
 
@@ -77499,6 +77586,10 @@ REVOKE ALL ON FUNCTION "public"."space_is_member"("target_space_id" "uuid") FROM
 
 
 
+REVOKE ALL ON FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") FROM PUBLIC;
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."space_members" TO "service_role";
 GRANT SELECT ON TABLE "public"."space_members" TO "authenticated";
 
@@ -77598,6 +77689,12 @@ REVOKE ALL ON FUNCTION "public"."space_post_for_moderation"("post_id" "uuid", "r
 
 
 REVOKE ALL ON FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."space_search_head"("wanted_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."space_search_head"("wanted_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."space_search_head"("wanted_slug" "text") TO "authenticated";
 
 
 

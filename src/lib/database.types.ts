@@ -18206,6 +18206,7 @@ export type Database = {
         Returns: boolean;
       };
       space_is_member: { Args: { target_space_id: string }; Returns: boolean };
+      space_is_searchable: { Args: { target_space_id: string }; Returns: boolean };
       space_join_note_for: {
         Args: {
           request: Omit<
@@ -18438,6 +18439,7 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['space_power'][];
       };
+      space_search_head: { Args: { wanted_slug: string }; Returns: Json };
       space_show_forum_post: { Args: { post_id: string; reason: string }; Returns: undefined };
       space_slug_for: { Args: { name: string }; Returns: string };
       space_viewer_json: {

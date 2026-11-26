@@ -163,7 +163,7 @@ describe('the preview card', () => {
 });
 
 describe('the page a shared link serves', () => {
-  it('puts the Open Graph tags into a chapter page and lets search engines list it (GROWTH-2)', async () => {
+  it("puts the Open Graph tags into a chapter page and keeps a writer's chapter out of search engines (GROWTH-4)", async () => {
     const { response, html } = await open('/s/statia-meteo/ab12cd34?utm_source=x', chapterPreview);
     expect(html).toContain('<title>Stația meteo · Caietele bunicii</title>');
     expect(html).toContain('<meta property="og:title" content="Stația meteo · Caietele bunicii">');
@@ -172,12 +172,20 @@ describe('the page a shared link serves', () => {
       '<meta property="og:url" content="https://example.com/s/statia-meteo/ab12cd34">',
     );
     expect(html).toContain('content="https://example.com/link-previews/sky.png"');
-    // Visitors get the chapter's text (a classic whole, a writer's teaser), so it may be listed;
-    // the structured data describes the story, so only the story's page carries it.
+    // A writer's chapter stays out of search engines; only the story's page is listed (Robert,
+    // 26 Nov 2026, 19:45 UTC). The structured data describes the story, so the chapter has none.
+    expect(html).toContain('<meta name="robots" content="noindex">');
+    expect(html).not.toContain('application/ld+json');
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
+    expect(response.headers.get('ETag')).toBeNull();
+  });
+
+  it("lets search engines list a classic's chapter, which visitors read whole (GROWTH-2 and 4)", async () => {
+    const classic = { ...chapterPreview, writerHandle: null };
+    const { response, html } = await open('/s/statia-meteo/ab12cd34', classic);
     expect(html).not.toContain('noindex');
     expect(html).not.toContain('application/ld+json');
     expect(response.headers.get('X-Robots-Tag')).toBeNull();
-    expect(response.headers.get('ETag')).toBeNull();
   });
 
   it('keeps a 16+ or 18+ chapter out of search engines, as visitors get no text from it', async () => {
