@@ -43,7 +43,7 @@ drop function public.create_class_space(text, text, text, public.space_banner);
  * Errors: insufficient_privilege (space:not_teacher) for anyone without the badge; check_violation
  *   (grade:range) for a grade outside 1 to 13, (school:length) for a long school name, and the
  *   name errors of insert_class_space().
- * Flow: NewClassSpaceForm → useCreateClassSpace → here; the class page opens next.
+ * Flow: NewClassSpaceForm → useStartClass → here; the class page opens next.
  */
 create function public.create_class_space(
   name text,
