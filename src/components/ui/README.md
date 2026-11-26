@@ -21,7 +21,7 @@ The shared building blocks every screen uses, one component per file. Built by S
 | `Tabs` | A tablist whose chosen tab is bold in the link colour, no underline bar; long rows wrap (G3) |
 | `StoryCard` | One story in a row: the cover at its column's width, then the title and meta line, all one link; an optional 2 px progress line for Continue reading (CALM-4) |
 | `Hero` and `Meter` | The one glass panel at the top of a page (padding 40 px, 24 px under 900 px) and its 2 px progress line, a `role="meter"` with the value in words (CALM-4) |
-| `Sheet` | A glass panel for one short task: a native dialog with a title and Close ×, hairline rows, a bottom sheet on phones and beside the page from 600 px (CALM-4) |
+| `Sheet` | A glass panel for one short task: a native dialog with a title and Close ×, hairline rows, a bottom sheet on phones and beside the page from 600 px (CALM-4), or centred with `placement="centre"` and a `subtitle` line (board D06, Publish chapter) |
 | `Switch` | The one on and off switch: `role="switch"`, a 52 × 32 px track, a 26 px knob, primary when on; `SwitchButton` draws it (CALM-4) |
 | `Shelf` (+ `useShelfScroll`, `ShelfArrows`, `ViewMoreCard`) | One sideways line of at most 20 stories: 5 whole covers from 1024 px, 4 from 600 px, 2.3 on phones, no fade, no scrollbar; Previous and Next beside "View 54" only when it overflows, aria-disabled at the ends; phones swipe and snap (CALM-4) |
 | `AdSlot` | Banner, portrait, side box and in-list card ad slots, labelled "Ad" or "Sponsored" |

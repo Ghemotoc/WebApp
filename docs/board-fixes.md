@@ -401,7 +401,13 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | D05-Chapter editor, chapter list (user story 5.5) | Chapter names and states | Kept: New chapter at its foot (S1-E17-24) and each chapter's words against its target (S1-E17-26), on the state line |
 | D05-Chapter editor, under the paper (user story 5.5) | Nothing | The words against the chapter's target, the long-chapter warning, the paste note and the rights line stay under the paper (S1-E17-23, S1-E3-02b, S1-E3-12) |
 | D05-Chapter editor, Focus mode (user story 5.5) | Paper only | The bar and the toolbar stay, so the writer can leave Focus mode and still format; the chapter list and the plan go |
-| D05-Chapter editor, Publish (user story 5.5) | Opens the publish dialog (D06) | Opens the existing publish panel in a sheet until D06 redraws it |
+| D05-Chapter editor, Publish (user story 5.5) | Opens the publish dialog (D06) | Opens the publish dialog in a sheet, redrawn as D06 |
 | D05-Chapter editor, a refused save (user story 5.5) | "Not saved yet. Trying again" only | The same in the bar and at the foot of the paper, plus a box above the paper with Retry, which saves at once (design books item 13, approved 23 Nov 2026) |
 | D05-Chapter editor, Story details (user story 5.5) | Folded "Story details" | Read-only, with "Story settings" as the one place to change them (ratings and labels have one place to be set) |
 | D05-Chapter editor, footnotes (user story 5.5) | A footnote button in the toolbar | Not built yet: nothing in the editor, the stored Markdown or the reader knows footnotes today, so they come as their own step (D05b) |
+| D06-Publish, Day and Time (user story 5.6) | Two drop-downs, Day and Time | The shared `DateTimeField` with the labels Day and “Time, your local time”: every date and time a member types uses it (DoD, CALM-1c) |
+| D06-Publish, footer order (user story 5.6) | Save draft, then Publish chapter on the right | Publish chapter first, then Save draft, on the left through `ButtonRow` (design books item 8) |
+| D06-Publish, Preview (user story 5.6) | No Preview in the dialog | From 1024 px Preview stays in the editor's bar; under 1024 px the bar holds only Publish, so the dialog keeps a Preview button there |
+| D06-Publish, the web reading note (user story 5.6) | Not drawn | Kept under the buttons: S1-E4-06a's acceptance criterion says the writer is told readers are on the web |
+| D06-Publish, the time note (user story 5.6) | Not drawn | Kept from S1-E3-03 under the time: “It goes live within 5 minutes of this time.” (“Local time on this device” moved into the Time label) |
+| D06-Publish, Unpublish (user story 5.6) | Not drawn on a draft | Hidden on a draft (nothing to unpublish); a scheduled or published chapter keeps “Unpublish chapter” (S1-E3-03) |

@@ -114,7 +114,7 @@ async function expectNoSeriousAxeIssue(page: Page) {
  */
 async function checkPreviewDialog(page: Page) {
   const preview = page.getByRole('button', { name: /^(Preview|Previzualizare)$/ });
-  const publishSheet = page.getByRole('dialog', { name: /^(Publish|Publicare)$/ });
+  const publishSheet = page.getByRole('dialog', { name: /^(Publish chapter|Publică capitolul)$/ });
   const throughSheet = (await preview.count()) === 0;
   if (throughSheet) {
     await page
@@ -200,9 +200,12 @@ test.describe('epic S1-E3 journeys', () => {
     await page.getByRole('button', { name: 'New chapter' }).click();
     await writeChapter(page, 'Seara', 'Vântul se întoarce spre seară.');
     publishPanel = await openPublishSheet(page);
-    await publishPanel.getByRole('radio', { name: 'Schedule for later' }).check();
-    await publishPanel.getByLabel('Date').fill(`${new Date().getFullYear() + 1}-01-01`);
-    await publishPanel.getByLabel('Time').fill('09:30');
+    // "When to publish" › Later; the segment's radio is hidden, so the click goes to its words.
+    await publishPanel.getByText('Later', { exact: true }).click();
+    await publishPanel
+      .getByLabel('Day', { exact: true })
+      .fill(`${new Date().getFullYear() + 1}-01-01`);
+    await publishPanel.getByLabel('Time, your local time').fill('09:30');
     await publishPanel.getByRole('button', { name: 'Schedule chapter' }).click();
     await expect(publishPanel.getByText(/^Scheduled for /)).toBeVisible();
     expect(await readerTitles(browser, slug)).toEqual(['Dimineața']);

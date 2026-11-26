@@ -1,24 +1,29 @@
 /**
- * PublishPanel: the controls inside the editor's "Publish" panel (story S1-E3-03; board 4.3,
- * "Publish", "Scheduled" and "Published" states).
+ * PublishPanel: the controls inside the editor's Publish dialog (story S1-E3-03; board D06, user
+ * story 5.6, "Publish chapter").
  *
- * Board values: a draft shows "When to publish" (Publish now | Schedule for later; native radio
- * buttons), the Date and Time fields with the local time note when scheduling, Preview and the
- * dark "Publish chapter" / "Schedule chapter" button, and the line about followers. A scheduled
- * chapter shows "Scheduled for …, local time." with "Cancel schedule". A published one shows
- * "Published …" with "Update chapter" (Q10). Under all three: "Unpublish chapter", red, usable
- * only when published, with its note.
- * CALM-6 (the last chapter): "This is the last chapter" (LastChapterSwitch) under the date and
- * time of a draft and under "Scheduled for …"; on the latest published chapter the switch until it
- * is on, then the plain line "This is the last chapter.". A chapter after a marked one says so
- * above the main button, and the main button names the chapter: "Publish chapter 15".
- * Who uses it: ChapterEditorPage, in the sheet Publish opens (board D05; D06 redraws it), with
- * the state and actions useChapterPublishing gives. Problems show under the buttons in a role="alert" line.
+ * Board D06: under the heading "Chapter 16 · Epilogue: Spring"; a draft then shows "When to
+ * publish" as Now | Later (SegmentedControl), the day and time on the writer's own clock when
+ * Later (DateTimeField, as the DoD asks, not the board's two selects), "This is the last chapter",
+ * "Tell followers" with how many hear (TellFollowersSwitch), what happens to the story when an
+ * earlier chapter holds the mark, then the main button ("Publish chapter 16" or "Schedule chapter
+ * 16"), Save draft and, under 1024 px where the bar has none, Preview. A draft has nothing to
+ * unpublish, so its dialog ends there (the board draws no Unpublish).
+ * A scheduled chapter shows "Scheduled for …, local time." with "Cancel schedule"; a published
+ * one "Published …" with "Update chapter" (Q10); both keep "Unpublish chapter", red, usable only
+ * when published, with its note.
+ * CALM-6 (the last chapter): "This is the last chapter" (LastChapterSwitch) on a draft and under
+ * "Scheduled for …"; on the latest published chapter the switch until it is on, then the plain
+ * line "This is the last chapter.".
+ * Who uses it: ChapterEditorPage, in the sheet Publish opens, with the state and actions
+ * useChapterPublishing gives. Problems show under the buttons in a role="alert" line.
  */
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { DateTimeField } from '@/components/ui/DateTimeField';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { defaultScheduleFields, formatLocalDateTime, localTimeToInstant } from '@/lib/local-time';
 
 import type { ChapterLastState } from '../api/lastChapter';
@@ -26,19 +31,29 @@ import type { PublishAction, PublishingState, PublishProblem } from '../hooks/us
 import { useEditorTranslation } from '../registerEditorTranslations';
 
 import { LastChapterSwitch } from './LastChapterSwitch';
+import { TellFollowersSwitch } from './TellFollowersSwitch';
 
 /** What the panel needs. */
 export interface PublishPanelProps {
   state: PublishingState;
   /** CALM-6: the last-chapter mark; null while it loads (the switch then waits). */
   lastState: ChapterLastState | null;
+  /** Board D06: how many followers hear when it goes out; null while it loads. */
+  followersToTell: number | null;
   problem: PublishProblem | null;
   isBusy: boolean;
   onAction: (action: PublishAction) => void;
   onPreview: () => void;
+  /** Board D06: "Save draft" saves now and closes the dialog. */
+  onSaveDraft: () => void;
+  /** Manage chapters' "Schedule" item opens the dialog on Later (`?publish=later`, board D03). */
+  startsLater?: boolean;
 }
 
-/** The two native radio buttons: "Publish now" and "Schedule for later". */
+/**
+ * "When to publish": the words on the left, Now | Later on the right (board D06). The words are
+ * the group's name too, so a screen reader hears them once, from the legend.
+ */
 function WhenChoice({
   isLater,
   onChange,
@@ -48,28 +63,24 @@ function WhenChoice({
 }) {
   const { t } = useEditorTranslation();
   const options = [
-    { value: false, label: t('publish.now') },
-    { value: true, label: t('publish.later') },
-  ];
+    { value: 'now', label: t('publish.now') },
+    { value: 'later', label: t('publish.later') },
+  ] as const;
   return (
-    <fieldset className="m-0 flex flex-col gap-1 border-0 p-0">
-      <legend className="sr-only">{t('publish.whenLabel')}</legend>
-      {options.map((option) => (
-        <label
-          key={option.label}
-          className="flex min-h-11 cursor-pointer items-center gap-3 type-body text-ink"
-        >
-          <input
-            type="radio"
-            name="chapter-publish-when"
-            checked={isLater === option.value}
-            onChange={() => onChange(option.value)}
-            className="m-0 size-5 accent-(--link)"
-          />
-          {option.label}
-        </label>
-      ))}
-    </fieldset>
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <span aria-hidden="true" className="type-label text-ink-heading">
+        {t('publish.whenLabel')}
+      </span>
+      <SegmentedControl
+        legend={t('publish.whenLabel')}
+        isLegendVisible={false}
+        name="chapter-publish-when"
+        columns={2}
+        options={options}
+        value={isLater ? 'later' : 'now'}
+        onChange={(value) => onChange(value === 'later')}
+      />
+    </div>
   );
 }
 
@@ -90,65 +101,112 @@ function mainButtonText(
     : t('publish.publishNumbered', { number });
 }
 
-/** A draft: when, the date and time, the last-chapter switch, Preview and the publish button. */
-function DraftControls({
+/**
+ * CALM-6 and board D06: when an earlier chapter holds the mark, say so and what happens to the
+ * story: it stays Completed when this chapter takes the mark, else it goes back to Ongoing.
+ */
+function MarkedBeforeLines({
   lastState,
-  isBusy,
-  onAction,
-  onPreview,
-}: Omit<PublishPanelProps, 'state' | 'problem'>) {
+  asLast,
+}: {
+  lastState: ChapterLastState | null;
+  asLast: boolean;
+}) {
   const { t } = useEditorTranslation();
-  const [isLater, setLater] = useState(false);
+  if (lastState === null || lastState.markedNumber === null) return null;
+  const number = lastState.number;
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="m-0 type-meta leading-normal text-ink-muted">
+        {t('publish.markedBefore', { number: lastState.markedNumber })}
+      </p>
+      <p className="m-0 type-meta leading-normal text-ink-muted">
+        {asLast ? t('publish.staysCompleted', { number }) : t('publish.backToOngoing', { number })}
+      </p>
+    </div>
+  );
+}
+
+/** A draft's choices as the writer makes them: when, the date and time, and the two switches. */
+function useDraftChoices(lastState: ChapterLastState | null, startsLater: boolean) {
+  const [isLater, setLater] = useState(startsLater);
   const [fields, setFields] = useState(() => defaultScheduleFields(new Date()));
   // CALM-6: off each time the panel opens, except in a later language edition whose original
   // chapter is marked. Null until the writer presses it, so a late answer can still set it.
   const [pickedLast, setPickedLast] = useState<boolean | null>(null);
+  // Board D06: followers are told unless the writer switches it off.
+  const [tellFollowers, setTellFollowers] = useState(true);
   const canMark = lastState?.canMark === true;
   const asLast = canMark && (pickedLast ?? lastState.originalIsLast);
+  return {
+    ...{ isLater, setLater, fields, setFields, canMark, asLast, tellFollowers },
+    toggleLast: () => setPickedLast(!asLast),
+    toggleTell: () => setTellFollowers((current) => !current),
+  };
+}
+
+/**
+ * A draft (board D06): when (Now | Later), the day and time, "This is the last chapter", "Tell
+ * followers", the lines about an earlier mark, then the main button, Save draft and (where the
+ * bar has no Preview, under 1024 px) Preview.
+ */
+function DraftControls(props: Omit<PublishPanelProps, 'state' | 'problem'>) {
+  const { lastState, isBusy, onAction } = props;
+  const { t } = useEditorTranslation();
+  const choices = useDraftChoices(lastState, props.startsLater === true);
 
   /** Publish now, or schedule the date and time on the writer's own clock (Robert, 20 Nov 2026, 18:19 UTC); a bad date asks again. */
   function submit() {
-    if (!isLater) return onAction({ kind: 'publish', asLast });
-    const at = localTimeToInstant(fields.date, fields.time);
-    onAction({ kind: 'schedule', at: at ?? new Date(0), asLast });
+    const { asLast, tellFollowers } = choices;
+    if (!choices.isLater) return onAction({ kind: 'publish', asLast, tellFollowers });
+    const at = localTimeToInstant(choices.fields.date, choices.fields.time);
+    onAction({ kind: 'schedule', at: at ?? new Date(0), asLast, tellFollowers });
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <WhenChoice isLater={isLater} onChange={setLater} />
-      {isLater && (
+    <div className="flex flex-col gap-4">
+      <WhenChoice isLater={choices.isLater} onChange={choices.setLater} />
+      {choices.isLater && (
         <DateTimeField
           id="chapter-publish"
-          value={fields}
-          onChange={setFields}
+          value={choices.fields}
+          onChange={choices.setFields}
           dateLabel={t('publish.date')}
           timeLabel={t('publish.time')}
           note={t('publish.zoneNote')}
           skippedHourNote={(time) => t('publish.skippedHourNote', { time })}
         />
       )}
-      {canMark && (
-        <LastChapterSwitch
-          isOn={asLast}
-          onToggle={() => setPickedLast(!asLast)}
-          number={lastState.number}
+      {/* Board D06: a hairline above each switch row, as the Sheet's rows are split. */}
+      {choices.canMark && lastState !== null && (
+        <div className="border-t border-border pt-4">
+          <LastChapterSwitch
+            isOn={choices.asLast}
+            onToggle={choices.toggleLast}
+            number={lastState.number}
+          />
+        </div>
+      )}
+      <div className="border-t border-border pt-4">
+        <TellFollowersSwitch
+          isOn={choices.tellFollowers}
+          onToggle={choices.toggleTell}
+          followerCount={props.followersToTell}
         />
-      )}
-      {/* CALM-6: a chapter after the marked one takes the mark off when it goes out. */}
-      {lastState !== null && lastState.markedNumber !== null && (
-        <p className="m-0 type-meta leading-normal text-ink-muted">
-          {t('publish.markedBefore', { number: lastState.markedNumber })}
-        </p>
-      )}
-      <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" onClick={onPreview}>
+      </div>
+      <MarkedBeforeLines lastState={lastState} asLast={choices.asLast} />
+      <ButtonRow>
+        <Button onClick={submit} disabled={isBusy}>
+          {mainButtonText(t, choices.isLater, lastState)}
+        </Button>
+        <Button variant="secondary" onClick={props.onSaveDraft}>
+          {t('publish.saveDraft')}
+        </Button>
+        {/* The bar shows Preview from 1024 px; below that it holds only Publish (board D05). */}
+        <Button variant="secondary" onClick={props.onPreview} className="lg:hidden">
           {t('publish.preview')}
         </Button>
-        <Button onClick={submit} disabled={isBusy}>
-          {mainButtonText(t, isLater, lastState)}
-        </Button>
-      </div>
-      <p className="m-0 type-meta leading-normal text-ink-muted">{t('publish.goLiveNote')}</p>
+      </ButtonRow>
       {/* Readers are on the web until the apps exist (S1-E4-06a; Q9: "makes copying harder"). */}
       <p className="m-0 type-meta leading-normal text-ink-muted">{t('publish.webReadingNote')}</p>
     </div>
@@ -272,30 +330,25 @@ function UnpublishControls({
 }
 
 /**
- * Renders the panel's controls for the chapter's state.
+ * Renders the panel's controls for the chapter's state. A draft has nothing to unpublish, so its
+ * dialog ends at the buttons (board D06); scheduled and published chapters keep "Unpublish".
  *
  * @returns the controls
  */
 export function PublishPanel(props: PublishPanelProps) {
   const { t } = useEditorTranslation();
+  const { state, problem, ...draftProps } = props;
   return (
     <div className="flex flex-col gap-4">
-      {props.state.status === 'draft' && (
-        <DraftControls
-          lastState={props.lastState}
-          isBusy={props.isBusy}
-          onAction={props.onAction}
-          onPreview={props.onPreview}
-        />
-      )}
-      {props.state.status === 'scheduled' && <ScheduledControls {...props} />}
-      {props.state.status === 'published' && <PublishedControls {...props} />}
-      {props.problem !== null && (
+      {state.status === 'draft' && <DraftControls {...draftProps} />}
+      {state.status === 'scheduled' && <ScheduledControls {...props} />}
+      {state.status === 'published' && <PublishedControls {...props} />}
+      {problem !== null && (
         <p role="alert" className="m-0 type-body text-destructive">
-          {t(`publish.problems.${props.problem}`)}
+          {t(`publish.problems.${problem}`)}
         </p>
       )}
-      <UnpublishControls {...props} />
+      {state.status !== 'draft' && <UnpublishControls {...props} />}
     </div>
   );
 }

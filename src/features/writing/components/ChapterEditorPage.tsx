@@ -67,6 +67,7 @@ import { EditorToolbarDock } from './EditorToolbarDock';
 import { LinkDialog } from './LinkDialog';
 import { NewChapterButton } from './NewChapterButton';
 import { PublishPanel } from './PublishPanel';
+import { publishChapterLine } from '../lib/publishChapterLine';
 import { SaveStatus } from './SaveStatus';
 
 /** Counts words the way the database does: runs of letters, digits or apostrophes. */
@@ -233,6 +234,8 @@ function usePanels() {
   const [searchParams] = useSearchParams();
   const [isPreviewOpen, setPreviewOpen] = useState(searchParams.has('preview'));
   const [isPublishOpen, setPublishOpen] = useState(searchParams.has('publish'));
+  // "?publish=later" (the Schedule item) opens the dialog on Later.
+  const startsLater = searchParams.get('publish') === 'later';
   const [isPlanOpen, setPlanOpen] = useState(true);
   const [isPlanSheetOpen, setPlanSheetOpen] = useState(false);
   const [isFocusMode, setFocusMode] = useState(false);
@@ -241,6 +244,7 @@ function usePanels() {
     setPreviewOpen,
     isPublishOpen,
     setPublishOpen,
+    startsLater,
     isPlanOpen,
     setPlanOpen,
     isPlanSheetOpen,
@@ -407,15 +411,24 @@ function EditorSheets(props: {
         language={props.language}
         onClose={() => panels.setPreviewOpen(false)}
       />
+      {/* Board D06: a dialog in the middle of the screen, the chapter named under its heading. */}
       <Sheet
         isOpen={panels.isPublishOpen}
         onClose={() => panels.setPublishOpen(false)}
         title={t('publish.heading')}
+        subtitle={publishChapterLine(t, publishing.lastState?.number ?? null, loaded.title)}
+        placement="centre"
       >
         <PublishPanel
           {...publishing}
           onAction={publishing.run}
           onPreview={() => panels.setPreviewOpen(true)}
+          onSaveDraft={() => {
+            // Board D06: "Save draft" saves at once and closes the dialog.
+            void loaded.autosave.saveNow();
+            panels.setPublishOpen(false);
+          }}
+          startsLater={panels.startsLater}
         />
       </Sheet>
       {/* Tablets and phones: the plan rises from the bottom (board D05). */}

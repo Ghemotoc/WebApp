@@ -9,14 +9,15 @@
  * - edits after publishing save as a draft; readers see them only after "Update chapter", with an
  *   "Edited" date (Q10);
  * - "Unpublish chapter" takes it away from readers (the story is private again);
- * - "Schedule for later" takes the time on the writer's own clock (a browser in Stockholm here;
+ * - the dialog (board D06) names the chapter and has "Tell followers", on by default;
+ * - "When to publish" › Later takes the time on the writer's own clock (a browser in Stockholm here;
  *   CALM-8b, Robert, 20 Nov 2026, 18:19 UTC) and shows "Scheduled for …, local time.";
  *   "Cancel schedule" undoes it; a time in the past is refused; when its time comes (the job, run here directly) it is published;
  * - the panel's states and the story page's chapter list pass axe at 390 and 1440 px.
  * Test data: chapters made in SQL on the seed story "Stația meteo"; deleted after.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { expect, test, type Browser, type Locator, type Page } from '@playwright/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -68,7 +69,15 @@ async function openEditor(
 
 /** The Publish panel: a sheet the editor's bar opens since board D05 (user story 5.5). */
 function publishPanel(page: Page) {
-  return page.getByRole('dialog', { name: 'Publish', exact: true });
+  return page.getByRole('dialog', { name: 'Publish chapter', exact: true });
+}
+
+/** "When to publish" › Later: the segment's radio is hidden, so the click goes to its words. */
+async function pickLater(panel: Locator) {
+  await panel
+    .getByRole('group', { name: 'When to publish' })
+    .getByText('Later', { exact: true })
+    .click();
 }
 
 /** axe on the page as it is now, at two widths. */
@@ -112,11 +121,26 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     const page = await openEditor(browser, 'publish1');
     await expectAccessibleAt(page, [390, 1440]);
 
-    await publishPanel(page).getByRole('button', { name: 'Preview' }).click();
+    // Board D06: the dialog names the chapter and says how many followers hear.
+    await expect(publishPanel(page).getByText(/^Chapter \d+ · Caietele bunicii$/)).toBeVisible();
+    const tellSwitch = publishPanel(page).getByRole('switch', { name: 'Tell followers' });
+    await expect(tellSwitch).toBeChecked();
+    // The number comes from the database (chapter_followers_to_tell()), read through the API.
+    await expect(tellSwitch).toHaveAccessibleDescription(
+      /^(\d[\d,]* followers? gets? a notification when it goes out\.|No followers yet, so nobody gets a notification\.)$/,
+    );
+    // From 1024 px Preview is in the editor's bar, not the dialog (board D06).
+    await page.keyboard.press('Escape');
+    await page
+      .getByRole('navigation', { name: 'Chapter editor' })
+      .getByRole('button', { name: 'Preview', exact: true })
+      .filter({ visible: true })
+      .click();
     const preview = page.getByRole('dialog', { name: 'Preview' });
     await expect(preview.getByRole('heading', { name: 'Caietele bunicii' })).toBeVisible();
     await expect(preview.locator('strong')).toHaveText('notează');
     await preview.getByRole('button', { name: 'Close' }).click();
+    await openPublishSheet(page);
 
     await publishPanel(page)
       .getByRole('button', { name: /^Publish chapter \d+$/ })
@@ -185,11 +209,11 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
   }) => {
     const page = await openEditor(browser, 'publish1', { timezoneId: 'Europe/Stockholm' });
     const panel = publishPanel(page);
-    await panel.getByRole('radio', { name: 'Schedule for later' }).check();
-    await expect(panel.getByText('Local time on this device.', { exact: false })).toBeVisible();
+    await pickLater(panel);
+    await expect(panel.getByText('It goes live within 5 minutes of this time.')).toBeVisible();
 
     // A date in the past is refused.
-    await panel.getByLabel('Date').fill('2020-01-01');
+    await panel.getByLabel('Day', { exact: true }).fill('2020-01-01');
     await panel.getByRole('button', { name: 'Schedule chapter' }).click();
     await expect(panel.getByRole('alert')).toHaveText(
       'Pick a date and time in the future, at most a year ahead.',
@@ -197,8 +221,8 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
 
     // 1 January next year at 09:30 on the writer's clock in Stockholm (UTC+1 in winter).
     const nextYear = new Date().getUTCFullYear() + 1;
-    await panel.getByLabel('Date').fill(`${nextYear}-01-01`);
-    await panel.getByLabel('Time').fill('09:30');
+    await panel.getByLabel('Day', { exact: true }).fill(`${nextYear}-01-01`);
+    await panel.getByLabel('Time, your local time').fill('09:30');
     await panel.getByRole('button', { name: 'Schedule chapter' }).click();
     await expect(panel.getByText(/^Scheduled for .*1 January.*09:30, local time\.$/)).toBeVisible();
     expect(
@@ -212,7 +236,7 @@ test.describe('publish, update, unpublish and schedule (S1-E3-03)', () => {
     await expect(panel.getByRole('button', { name: /^Publish chapter \d+$/ })).toBeVisible();
 
     // Schedule again, then let its time come and run the every-minute job.
-    await panel.getByRole('radio', { name: 'Schedule for later' }).check();
+    await pickLater(panel);
     await panel.getByRole('button', { name: 'Schedule chapter' }).click();
     await expect(panel.getByText(/^Scheduled for /)).toBeVisible();
     runSql(

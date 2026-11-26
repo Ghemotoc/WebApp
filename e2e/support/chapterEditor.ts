@@ -28,9 +28,9 @@ export function editorSaveStatus(page: Page): Locator {
  * @returns the open sheet, so the spec can press Publish now or Schedule inside it
  */
 export async function openPublishSheet(page: Page, language: 'en' | 'ro' = 'en'): Promise<Locator> {
-  // The bar's button says "Publică"; the sheet's heading says "Publicare" in Romanian.
+  // The bar's button says "Publică"; the dialog's heading says "Publică capitolul" (board D06).
   const name = language === 'en' ? 'Publish' : 'Publică';
-  const sheetName = language === 'en' ? 'Publish' : 'Publicare';
+  const sheetName = language === 'en' ? 'Publish chapter' : 'Publică capitolul';
   // Step 1: the bar's Publish button; two bars exist (wide and narrow), only one is shown.
   const bar = page.getByRole('navigation', {
     name: language === 'en' ? 'Chapter editor' : 'Editorul capitolului',

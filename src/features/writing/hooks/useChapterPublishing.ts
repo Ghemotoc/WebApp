@@ -5,7 +5,7 @@
  * Who calls it: ChapterEditorPage. What it calls: api/chapters.ts → publish_chapter(),
  * schedule_chapter(), cancel_schedule(), update_published_chapter() and unpublish_chapter();
  * api/lastChapter.ts → the "This is the last chapter" switch and what the panel shows about it
- * (CALM-6).
+ * (CALM-6); api/followersToTell.ts → the number beside "Tell followers" (board D06).
  * Before publishing, scheduling or updating, it asks the autosave to save and checks that
  * everything is saved, so what goes live is exactly what the writer sees (decided 23 Oct 2026,
  * Q10: edits reach readers only through "Update chapter").
@@ -27,6 +27,7 @@ import {
   type ChapterStatus,
   type MyChapter,
 } from '../api/chapters';
+import { fetchFollowersToTell } from '../api/followersToTell';
 import {
   fetchChapterLastState,
   publishChapter,
@@ -38,8 +39,9 @@ import { myStoriesKey } from './useMyStories';
 
 /** What the panel can do. */
 export type PublishAction =
-  | { kind: 'publish'; asLast: boolean }
-  | { kind: 'schedule'; at: Date; asLast: boolean }
+  // Board D06: tellFollowers is the "Tell followers" switch.
+  | { kind: 'publish'; asLast: boolean; tellFollowers: boolean }
+  | { kind: 'schedule'; at: Date; asLast: boolean; tellFollowers: boolean }
   // CALM-6: the switch on a chapter already scheduled or out.
   | { kind: 'setLast'; isLast: boolean }
   | { kind: 'cancelSchedule' }
@@ -95,8 +97,15 @@ function problemFor(outcome: ChapterActionOutcome): PublishProblem {
 /** Sends one action to the database. */
 async function send(code: string, action: PublishAction): Promise<ChapterActionOutcome> {
   const client = await requireClient();
-  if (action.kind === 'schedule') return scheduleChapter(client, code, action.at, action.asLast);
-  if (action.kind === 'publish') return publishChapter(client, code, action.asLast);
+  if (action.kind === 'schedule') {
+    return scheduleChapter(client, code, action.at, {
+      asLast: action.asLast,
+      tellFollowers: action.tellFollowers,
+    });
+  }
+  if (action.kind === 'publish') {
+    return publishChapter(client, code, action.asLast, action.tellFollowers);
+  }
   if (action.kind === 'setLast') return setChapterLast(client, code, action.isLast);
   const functionName = {
     cancelSchedule: 'cancel_schedule',
@@ -111,8 +120,8 @@ async function send(code: string, action: PublishAction): Promise<ChapterActionO
  *
  * @param chapter - the chapter as the editor loaded it
  * @param autosave - saveNow and isAllSaved from useAutosave
- * @returns state, lastState (the mark, CALM-6; null while it loads), problem (or null), isBusy
- *   and run(action)
+ * @returns state, lastState (the mark, CALM-6; null while it loads), followersToTell (board D06;
+ *   null while it loads), problem (or null), isBusy and run(action)
  */
 export function useChapterPublishing(chapter: MyChapter, autosave: AutosaveForPublishing) {
   const [state, setState] = useState<PublishingState>(() => ({
@@ -128,6 +137,11 @@ export function useChapterPublishing(chapter: MyChapter, autosave: AutosaveForPu
   const lastState = useQuery({
     queryKey: lastStateKey,
     queryFn: async () => fetchChapterLastState(await requireClient(), chapter.code),
+  });
+  // Board D06: how many followers hear when it goes out, for the line under "Tell followers".
+  const followersToTell = useQuery({
+    queryKey: ['chapterFollowersToTell', chapter.code] as const,
+    queryFn: async () => fetchFollowersToTell(await requireClient(), chapter.code),
   });
 
   const mutation = useMutation({
@@ -162,6 +176,7 @@ export function useChapterPublishing(chapter: MyChapter, autosave: AutosaveForPu
   return {
     state,
     lastState: (lastState.data ?? null) satisfies ChapterLastState | null,
+    followersToTell: followersToTell.data ?? null,
     problem,
     isBusy: mutation.isPending,
     run: (action: PublishAction) => mutation.mutate(action),
