@@ -388,7 +388,8 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
     // The Finalist: the Winner's pen name and chapter, their own result, no numbers.
     const teen = await openAs(browser, 'teen_17', `/spaces/${classSlug}`);
     const teenCard = teen.getByRole('region', { name: competitionName });
-    await expect(teenCard.getByText(kidName, { exact: true }).first()).toBeVisible();
+    // The Winner card says "by" and the pen name (board G03).
+    await expect(teenCard.getByText(`by ${kidName}`, { exact: true })).toBeVisible();
     await expect(teenCard.getByRole('link', { name: 'Scara, in Casa din copac' })).toBeVisible();
     await expect(teenCard.getByText('Result: Finalist')).toBeVisible();
     await expect(teenCard.getByText('Also Readers’ choice')).toBeVisible();

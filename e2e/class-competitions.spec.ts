@@ -341,7 +341,7 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     await expect(teacher.getByText('2 pupils joined')).toBeVisible();
     await teacher.getByRole('button', { name: 'End the competition now' }).click();
     await teacher.getByRole('button', { name: 'End it' }).click();
-    await expect(teacher.getByText('Ended. The teacher is assessing the entries.')).toBeVisible();
+    await expect(teacher.getByText('The teacher is assessing the entries.')).toBeVisible();
     await teacher.getByRole('link', { name: 'Assess the entries' }).click();
 
     const writerCard = teacher.getByRole('form', { name: writerName });
