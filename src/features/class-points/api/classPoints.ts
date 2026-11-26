@@ -123,6 +123,42 @@ export interface ClassPointsSummary {
   week: { left: number; resetsOn: string } | null;
   /** The points the pupil's own chapters received in this class. Null for a teacher. */
   receivedTotal: number | null;
+  /** The chapters the pupil gave points to this week, newest first (BOOKS-8). Empty for a teacher. */
+  given: GivenPoints[];
+}
+
+/** One chapter a pupil gave points to this week: only ever their own gifts (board G03). */
+export interface GivenPoints {
+  storySlug: string;
+  storyTitle: string;
+  chapterCode: string;
+  chapterPosition: number;
+  writerName: string;
+  points: number;
+}
+
+/**
+ * Reads the 'given' list of class_points_summary().
+ *
+ * @param value - the list, or null for a teacher
+ * @returns the gifts; empty when there are none
+ */
+function givenPointsFrom(value: Json | undefined): GivenPoints[] {
+  if (!Array.isArray(value)) return [];
+  const gifts: GivenPoints[] = [];
+  for (const item of value) {
+    const row = objectFrom(item);
+    if (row === null) continue;
+    gifts.push({
+      storySlug: String(row['story_slug']),
+      storyTitle: String(row['story_title']),
+      chapterCode: String(row['chapter_code']),
+      chapterPosition: numberFrom(row['chapter_position']),
+      writerName: String(row['writer_name']),
+      points: numberFrom(row['points']),
+    });
+  }
+  return gifts;
 }
 
 /**
@@ -143,6 +179,7 @@ export function classPointsSummaryFrom(data: Json): ClassPointsSummary | null {
     cap: numberFrom(row['cap']),
     week: isPupil ? { left: numberFrom(row['left']), resetsOn: String(row['resets_on']) } : null,
     receivedTotal: isPupil ? numberFrom(row['received_total']) : null,
+    given: givenPointsFrom(row['given']),
   };
 }
 

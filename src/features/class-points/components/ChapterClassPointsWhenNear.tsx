@@ -5,17 +5,18 @@
  * Why: most chapters aren't shared with a class, so the section's code and its question to the
  * database wait until the reader is nearly through the text. It also fits the rule that points
  * follow reading: the database notes that a classmate opened the chapter when this asks.
- * Who shows it: ChapterEnd in the chapter reader. What it shows: ChapterClassPoints.
+ * Who shows it: ChapterEnd in the chapter reader. What it shows: ChapterClassPoints, through
+ * ChapterClassPointsLoader, which keeps the reader's own download small.
  */
 import { lazy, Suspense, useRef } from 'react';
 
 import { useSession } from '@/features/auth/hooks/useSession';
 import { useIsNear } from '@/lib/use-is-near';
 
-/** The section, in its own file. */
-const ChapterClassPoints = lazy(async () => {
-  const module = await import('./ChapterClassPoints');
-  return { default: module.ChapterClassPoints };
+/** The section's loader, in its own file; it fetches the section itself (see its header). */
+const ChapterClassPointsLoader = lazy(async () => {
+  const module = await import('./ChapterClassPointsLoader');
+  return { default: module.ChapterClassPointsLoader };
 });
 
 /** How near the reader must be before the section is fetched. */
@@ -37,7 +38,7 @@ export function ChapterClassPointsWhenNear({ chapterId }: { chapterId: string })
     <div ref={marker}>
       {isNear && userId !== null && (
         <Suspense fallback={null}>
-          <ChapterClassPoints chapterId={chapterId} />
+          <ChapterClassPointsLoader chapterId={chapterId} />
         </Suspense>
       )}
     </div>

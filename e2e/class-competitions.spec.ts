@@ -304,10 +304,15 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
   }) => {
     const pupil = await openAs(browser, 'pending_check', `/spaces/${classSlug}`);
     const card = pupil.getByRole('region', { name: competitionName });
-    await expect(card.getByText('Open until')).toBeVisible();
-    // Every criterion with its description and outcomes, from the start (criterion 5).
+    await expect(card.getByText('Closes', { exact: false })).toBeVisible();
+    // Every criterion with its description and outcomes, from the start (criterion 5); the
+    // outcomes sit behind "What each criterion needs" (board G03, user story 8.3).
     await expect(card.getByText('Limbaj')).toBeVisible();
-    await expect(card.getByText('(20 points)')).toBeVisible();
+    await expect(card.getByText('20 points', { exact: true })).toBeVisible();
+    const outcomesToggle = card.getByRole('button', { name: 'What each criterion needs' });
+    await expect(outcomesToggle).toHaveAttribute('aria-expanded', 'false');
+    await outcomesToggle.click();
+    await expect(outcomesToggle).toHaveAttribute('aria-expanded', 'true');
     await expect(card.getByText('folosește dialogul pentru personaje')).toBeVisible();
     await expect(card.getByText('are început, mijloc și final')).toBeVisible();
     // Nobody is added automatically, and a pupil never sees how many joined.
@@ -336,7 +341,7 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     await expect(teacher.getByText('2 pupils joined')).toBeVisible();
     await teacher.getByRole('button', { name: 'End the competition now' }).click();
     await teacher.getByRole('button', { name: 'End it' }).click();
-    await expect(teacher.getByText('Ended. The teacher is assessing the entries.')).toBeVisible();
+    await expect(teacher.getByText('The teacher is assessing the entries.')).toBeVisible();
     await teacher.getByRole('link', { name: 'Assess the entries' }).click();
 
     const writerCard = teacher.getByRole('form', { name: writerName });
@@ -416,7 +421,8 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     const writer = await openAs(browser, 'pending_check', `/spaces/${classSlug}`);
     const card = writer.getByRole('region', { name: competitionName });
     await expect(card.getByText(classmateName)).toBeVisible();
-    await expect(card.getByRole('link', { name: 'Malul, in Lacul din nord' })).toBeVisible();
+    await expect(card.getByRole('link', { name: 'Lacul din nord' })).toBeVisible();
+    await expect(card.getByRole('link', { name: 'Read the chapter' })).toBeVisible();
     await expect(card.getByText('Readers’ choice:', { exact: true })).toBeVisible();
     await expect(card.getByText('Result: Finalist')).toBeVisible();
     await expect(card.getByText('Also Readers’ choice')).toBeVisible();

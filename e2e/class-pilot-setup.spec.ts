@@ -100,7 +100,7 @@ test.describe('class pilot set-up (CLASSES-d, S1-E8-11)', () => {
 
     await page.goto(`/spaces/${classSlug}`);
     await expect(page.getByText('This class is archived.')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Start a thread' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'New thread' })).toHaveCount(0);
     await page.context().close();
   });
 
