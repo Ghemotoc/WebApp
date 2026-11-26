@@ -46,11 +46,12 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  /* Surfaces. The page: one flat colour, Isabelline #F4F0EC (Robert, 23 Nov 2026, 18:09 UTC: no
-     gradients in any theme; design system v25). Content sits straight on it. */
-  --paper: #f4f0ec;
-  /* The card colour the contrast test measures text on (the box surface below is a hair warmer). */
-  --surface: #f9f7fd;
+  /* Surfaces. The page: one flat white (Robert, DESIGN card, 26 Nov 2026, 20:55 UTC: white page,
+     Isabelline boxes; it reverses the white boxes on the Isabelline page of 10:48 UTC). No
+     gradients in any theme (Robert, 23 Nov 2026, 18:09 UTC). Content sits straight on it. */
+  --paper: #ffffff;
+  /* The card colour the contrast test measures text on: the box surface itself, Isabelline. */
+  --surface: #f4f0ec;
   /* What bg-surface paints: the one solid box surface, never see-through (no glass outside the
      nav bars, the flat themes bundle, Robert, 23 Nov 2026, 19:26 UTC). */
   --surface-glass: var(--surface-box);
@@ -173,12 +174,15 @@
   --quiet-pressed-hover: var(--plum-hover-to);
   --quiet-pressed-text: var(--on-plum);
   /* The one box surface (CALM-1c; rules doc "Defaults from the full-canvas review", Robert, 21 Nov
-     2026): every card and tinted band on a member page is white with a soft warm-grey edge, in
-     every day look. index.css paints the cards and bands with these. White since 26 Nov 2026
-     (Robert, DESIGN card, 10:48 UTC: the cream #faf6ee sat badly with the warm grey page and the
-     lilac buttons); the reader's sepia story paper is a separate token and stays. */
-  --surface-box: #ffffff;
-  --line-box: #e8e4e0;
+     2026): every card and tinted band on a member page paints these (index.css). In Lilac mist the
+     box is Isabelline #f4f0ec on the white page with a warm-grey edge that still shows on white
+     (Robert, DESIGN card, 26 Nov 2026, 20:55 UTC). The other day looks keep white boxes with the
+     #e8e4e0 edge (the block after the looks below). A card inside a box (the Hub hero's Continue
+     reading and Writing month) is white with the same edge: --surface-box-inner. The reader's
+     sepia story paper is a separate token and stays. */
+  --surface-box: #f4f0ec;
+  --surface-box-inner: #ffffff;
+  --line-box: #e4dcd3;
   --dashed-border: #b3a5c8;
   /* Focus ring: 3 px plum with a 6 px soft white halo, so it shows on any glass (handoff). */
   --focus-ring: #48125d;
@@ -286,13 +290,14 @@
   /* Story Atlas relationship colours (S1-E17-15; CALM-9, board E25): the eight swatches a writer
      picks from for each category. Pink, yellow, aqua and orange are darker than the board's by
      day, so every swatch stands at least 3:1 off a light card on its own (WCAG 2.2, 1.4.11;
-     Robert's pick, 23 Nov 2026: "Darker shades by day"). Each category also keeps its own line
-     style. */
+     Robert's pick, 23 Nov 2026: "Darker shades by day"). One step darker again since the boxes
+     turned Isabelline #f4f0ec (26 Nov 2026), so the 3:1 still holds on them. Each category also
+     keeps its own line style. */
   --atlas-swatch-blue: #2a78d6;
-  --atlas-swatch-pink: #e35f91;
-  --atlas-swatch-yellow: #bd8000;
-  --atlas-swatch-aqua: #19a06f;
-  --atlas-swatch-orange: #ea632d;
+  --atlas-swatch-pink: #d55181;
+  --atlas-swatch-yellow: #b37a00;
+  --atlas-swatch-aqua: #179568;
+  --atlas-swatch-orange: #d95926;
   --atlas-swatch-violet: #6250d6;
   --atlas-swatch-green: #008300;
   --atlas-swatch-red: #e34948;
@@ -403,6 +408,7 @@
   /* The box surface at night: solid #18181B with a #2A2A2F edge (NIGHT-2; was dark glass). */
   --surface-box: #18181b;
   --surface-box-solid: #18181b;
+  --surface-box-inner: var(--surface-box);
   --line-box: #2a2a2f;
   --dashed-border: #5c5c63;
   --focus-ring: #ffffff;
@@ -538,9 +544,35 @@
  * own (a tile in night mode would otherwise take the night colours).
  */
 [data-look-swatch='lilac'] {
-  --paper: #f4f0ec;
+  --paper: #ffffff;
   --accent: #672786;
   --plum-to: #48125d;
+}
+
+/*
+ * The nav bars in Lilac mist by day (the top bar, focus bar, phone header, tab bar and the reader's
+ * chapter bar, every glass-float): Isabelline #FAF8F6 at 85% over the blur, so the bar stands apart
+ * from the white page and stays frosted glass (Robert, DESIGN cards, 26 Nov 2026, 21:03 UTC). Only
+ * Lilac mist by day, never in high contrast or on staff pages; glass-float falls back to
+ * --lg-float-bg everywhere else.
+ */
+:root:not([data-theme='night'], [data-contrast='more']):is(:not([data-look]), [data-look='lilac']) {
+  --nav-bar-bg: linear-gradient(rgb(250 248 246 / 0.85), rgb(250 248 246 / 0.85));
+}
+
+:root [data-area='staff'] {
+  --nav-bar-bg: var(--lg-float-bg);
+}
+
+/*
+ * The other day looks keep white boxes with the #e8e4e0 edge on their tinted pages (only Lilac mist
+ * moved to Isabelline boxes on a white page; Robert, DESIGN card, 26 Nov 2026, 20:55 UTC).
+ */
+[data-theme='light'][data-look]:not([data-look='lilac']),
+[data-look-swatch]:not([data-look-swatch='lilac']) {
+  --surface-box: #ffffff;
+  --surface-box-inner: #ffffff;
+  --line-box: #e8e4e0;
 }
 
 /* Peach sorbet: page #fdeee7, button #c2412d (coral). */
@@ -855,6 +887,7 @@
   --surface-glass: #161616;
   --surface-box: #161616;
   --surface-box-solid: #161616;
+  --surface-box-inner: var(--surface-box);
   --line-box: #3a3a3a;
   --tint: #242424;
   --panel: #121212;
@@ -988,6 +1021,7 @@
   /* High contrast boxes are the plain page surface with its dark edge (CALM-1c). */
   --surface-box: var(--surface);
   --surface-box-solid: var(--surface);
+  --surface-box-inner: var(--surface-box);
   --line-box: var(--border);
   /* Surfaces: plain white, solid (Robert, 13 Nov 2026). */
   --paper: #ffffff;
@@ -1134,6 +1168,7 @@
   /* High contrast boxes are the plain page surface with its dark edge (CALM-1c). */
   --surface-box: var(--surface);
   --surface-box-solid: var(--surface);
+  --surface-box-inner: var(--surface-box);
   --line-box: var(--border);
   --paper: #000000;
   /* No galaxy in high contrast, so the phone's bars stay plain black (CALM-1). */
