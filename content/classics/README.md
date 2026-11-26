@@ -6,6 +6,7 @@ What this folder holds:
 | --- | --- |
 | `G5_romanian-classics.csv`, `G5_english-classics.csv` | The candidate works (research G5): title, author, the author's death year, kind, and public-domain status in Romania, the UK/EU and the US for 2026, with notes. A title is used only when `pd_romania_2026` is `yes` |
 | `texts/` | The full texts actually published, one Markdown file each, with their source and credit line. How they were fetched and formatted is in `texts/README.md` |
+| `bulk-2026-11/` | The bulk load Robert asked for on 26 Nov 2026: about 270 works free in all 11 launch markets (English, Romanian, Swedish, Danish, Norwegian), compressed, loaded by the "Load classics" workflow. What is in it, where each text comes from and what was left out is in `bulk-2026-11/README.md` |
 
 The rule behind every title: in Romania copyright lasts for the author's life plus 70 years, counted from 1 January after the death (Law 8/1996 art. 28(1) and 34), so in 2026 authors who died in 1955 or earlier are free. A newer edition, translation or editor's notes can carry their own copyright, so the text we take must be the free original (S1-E5-06).
 
