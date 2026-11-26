@@ -72928,6 +72928,8 @@ REVOKE ALL ON FUNCTION "public"."close_unused_account"("target_user_id" "uuid") 
 
 REVOKE ALL ON FUNCTION "public"."close_unused_accounts"() FROM PUBLIC;
 
+
+
 REVOKE ALL ON FUNCTION "public"."closed_market_age_outcome"("country_code" "text", "birth_year" integer, "birth_month" integer, "region_code" "text") FROM PUBLIC;
 
 
@@ -74039,6 +74041,8 @@ REVOKE ALL ON FUNCTION "public"."investor_months"("months" integer) FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."invite_new_adults_to_age_check"() FROM PUBLIC;
+
+
 
 REVOKE ALL ON FUNCTION "public"."invite_opens_closed_market"("code" "text") FROM PUBLIC;
 
