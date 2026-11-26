@@ -1,37 +1,37 @@
 /**
- * TimelineRow: one line of the storyline's timeline (story S1-E17-20; bundle G10 ATLAS, part c1,
- * board AtlasTimeline): the date as the writer shows it and the number it sorts by, a dot on the
- * timeline's rail, then a glass card with whatever the event or chapter shows.
+ * TimelineRow: one line of the storyline's timeline (story S1-E17-20; redrawn by user stories
+ * bundle 6, story 6.10, board E29).
  *
- * On a phone the date sits above the card and the rail is left out, so nothing is squeezed
- * (rule 21). The dot is decoration: the card's pill says "Event" or "Chapter" in words, so the
- * kind is never told by colour alone (WCAG 1.4.1).
- * Who uses it: TimelineView (chapters) and TimelineEventItem (events). What it calls: nothing.
+ * A plain row between hairlines: a 96 px column with the date as the writer wrote it
+ * ("October", "1974") over the number it sorts by ("sort 2026.76"), then the kind as a word
+ * ("Event" or "Chapter", never a colour alone; WCAG 1.4.1), the title and one meta line, and at
+ * the end whatever the row holds (an event's "…" More menu).
+ * Who uses it: TimelineChapterItem and TimelineEventItem. What it calls: nothing.
  */
 import type { ReactNode } from 'react';
-
-import { cn } from '@/lib/utils';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 /** What the row needs. */
 export interface TimelineRowProps {
-  /** Which kind of line it is; only the dot's colour follows it. */
+  /** The kind, said in words on the row's first line. */
   kind: 'event' | 'chapter';
   /** The date as the writer wrote it ("Spring 2055"); may be empty. */
   date: string;
   /** The number that places it on the timeline. */
   sortValue: number | null;
-  /** The card's content. */
+  /** The title, the meta line and, while editing, the fields. */
   children: ReactNode;
+  /** What sits at the end of the row, such as the More menu. */
+  end?: ReactNode;
 }
 
 /**
  * Renders the row as a list item.
  *
- * @returns the <li> with the date, the dot and the glass card
+ * @returns the <li> with the date column, the text and the end
  */
-export function TimelineRow({ kind, date, sortValue, children }: TimelineRowProps) {
+export function TimelineRow({ kind, date, sortValue, children, end }: TimelineRowProps) {
   const { t, i18n } = useAtlasTranslation();
   // The number in the reader's own format, without rounding what the writer typed.
   const sortText =
@@ -44,25 +44,21 @@ export function TimelineRow({ kind, date, sortValue, children }: TimelineRowProp
   return (
     <li
       data-testid="atlas-timeline-item"
-      className="relative flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-4"
+      className="flex items-start gap-4 border-t border-hairline py-3"
     >
-      <p className="m-0 type-body break-words text-ink-muted sm:w-[120px] sm:shrink-0 sm:pt-4 sm:text-right">
-        {date !== '' && <b className="font-semibold text-ink-heading">{date}</b>}
-        {date !== '' && sortText !== null && <span className="sm:hidden"> · </span>}
+      <p className="m-0 w-24 flex-none break-words">
+        {date !== '' && <b className="block type-label font-semibold text-ink-heading">{date}</b>}
         {sortText !== null && (
-          <span className="sm:block">{t('storyline.timeline.sortLine', { value: sortText })}</span>
+          <span className="block type-meta text-ink-muted">
+            {t('storyline.timeline.sortLine', { value: sortText })}
+          </span>
         )}
       </p>
-      <span
-        aria-hidden="true"
-        className={cn(
-          'relative z-[1] mt-4 hidden size-[18px] shrink-0 rounded-full ring-4 ring-surface-solid sm:block',
-          kind === 'event' ? 'bg-gold' : 'bg-primary',
-        )}
-      />
-      <div className="flex min-w-0 flex-1 flex-col gap-2 rounded-card border border-border bg-surface px-4 py-4 shadow-card">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <p className="m-0 type-meta font-semibold text-ink">{t(`storyline.timeline.${kind}`)}</p>
         {children}
       </div>
+      {end}
     </li>
   );
 }

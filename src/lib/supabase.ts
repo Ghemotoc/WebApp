@@ -20,6 +20,8 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { RESET_PASSWORD_PATH, shouldOpenResetPage } from '@/features/auth/lib/passwordRecovery';
+
 import { AUTH_SESSION_STORAGE_KEY } from './auth-session-key';
 import type { Database } from './database.types';
 import { requestAddress, waitForReaderTurn } from './readerFirst';
@@ -70,7 +72,7 @@ async function makeClient(): Promise<AppSupabaseClient | null> {
   // a fixed name and refreshes it before it expires. Every request carries the page's language,
   // the connection's country and, once given, a visitor's "I'm 18 or over" answer (CALM-9m).
   const { createClient } = await import('@supabase/supabase-js');
-  return createClient<Database>(supabaseUrl, anonKey, {
+  const client = createClient<Database>(supabaseUrl, anonKey, {
     auth: { storageKey: AUTH_SESSION_STORAGE_KEY, persistSession: true, autoRefreshToken: true },
     global: {
       fetch: (input: RequestInfo | URL, init?: RequestInit) =>
@@ -79,6 +81,14 @@ async function makeClient(): Promise<AppSupabaseClient | null> {
         ),
     },
   });
+  // Step 6: a reset link that lands on any other page (an older email, or a "redirect to"
+  // Supabase didn't allow) still ends on the page that asks for the new password.
+  client.auth.onAuthStateChange((event) => {
+    if (event === 'PASSWORD_RECOVERY' && shouldOpenResetPage(window.location.pathname)) {
+      window.location.replace(RESET_PASSWORD_PATH);
+    }
+  });
+  return client;
 }
 
 /**

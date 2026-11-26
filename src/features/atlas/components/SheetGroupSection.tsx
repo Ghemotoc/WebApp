@@ -9,14 +9,12 @@
  * (bundle G10a, board AtlasCharacterSheet) and one on a phone.
  * Under the group's own fields come the writer's details placed in this group and "Add detail"
  * (bundle GAPS-1, same board).
- * Basics stays an open card; Look and voice, Inside and In the story fold shut, each with a short
- * hint beside its title (CALM-9, board E23).
+ * Every group folds; Basics is open at first, and Look and voice, Inside and In the story start
+ * shut, each with a short hint beside its title (CALM-9, board E23; story 6.4).
  * Who uses it: CharacterSheet. What it calls: PlanTextField with the save it is given,
  * OwnDetailBoxes, AddDetailForm and FoldingCard.
  */
 import type { ReactNode } from 'react';
-
-import { FormSection } from '@/features/writing/components/FormSection';
 
 import {
   sheetGroups,
@@ -102,8 +100,15 @@ export function SheetGroupSection(props: SheetGroupSectionProps) {
       />
     </>
   );
-  // Basics stays open as it was; the other three groups fold shut (CALM-9, board E23).
-  if (group === 'basics') return <FormSection legend={groupLabel}>{contents}</FormSection>;
+  // Basics opens at first; the other three groups start shut (story 6.4: "Sections fold; Basics
+  // is open by default").
+  if (group === 'basics') {
+    return (
+      <FoldingCard title={groupLabel} isOpenAtFirst>
+        {contents}
+      </FoldingCard>
+    );
+  }
   return (
     <FoldingCard title={groupLabel} hint={t(`characters.foldHints.${group}`)}>
       {contents}

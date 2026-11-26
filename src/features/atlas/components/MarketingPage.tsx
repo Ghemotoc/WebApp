@@ -1,16 +1,18 @@
 /**
  * MarketingPage: /plan/s/:storySlug/marketing, a story's marketing notes in Story Atlas (story
- * S1-E17-29).
+ * S1-E17-29; redrawn by user stories bundle 6, story 6.13, board E32).
  *
- * The Story Atlas top bar, the heading, the fields (each saving by itself), then "Back cover",
- * the preview of the title, logline, blurb and comparable titles. The logline, genre, audience
- * and publishing route are the same fields as At a glance (one place for both); the rest are the
- * marketing notes. Only the writer sees any of it.
+ * The Story Atlas top bar and the heading, then two columns from 1024 px, as board E32 draws
+ * them: on the left "The pitch" and "Getting it out" (the writer's notes, each saving by itself),
+ * on the right "Back cover" (the title, logline, blurb and comparable titles) and "QR code". On
+ * smaller screens the columns stack in that order. The logline and publishing route are written
+ * on At a glance and the genre and audience in the story's settings, so they are only read here,
+ * for the back cover. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
- * useStoryPlan → story_plan() and its savers; useStoryMarketing → story_marketing() and
- * update_story_marketing(); MarketingFields and BackCoverPreview (signed with the writer's name
- * from useMyNames); useScrollToHash for a field opened from a search result; useMyStories for the
- * top bar.
+ * useStoryPlan → story_plan() (the title and logline); useStoryMarketing → story_marketing() and
+ * update_story_marketing(); MarketingFields, BackCoverPreview (signed with the writer's name from
+ * useMyNames) and StoryQrCard; useScrollToHash for a field opened from a search result;
+ * useMyStories for the top bar.
  */
 import { useParams } from 'react-router';
 
@@ -44,7 +46,6 @@ function MarketingBody({
   notes: MarketingNotes;
 }) {
   const { t } = useAtlasTranslation();
-  const { savePlan, saveStory } = useStoryPlan(slug);
   const { save } = useStoryMarketing(slug);
   // The name the back cover is signed with: the pen name, or the username without one.
   const { names } = useMyNames();
@@ -54,21 +55,13 @@ function MarketingBody({
   return (
     <>
       <AtlasPageHeading title={t('marketing.heading')} />
-      {/* Board AtlasMarketing: the fields and the QR code on the left, the back cover beside
-          them from 1024 px and under them on smaller screens. */}
-      <div className="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start">
-        <div className="flex min-w-0 flex-1 flex-col gap-4">
-          <MarketingFields
-            slug={slug}
-            page={page}
-            notes={notes}
-            savePlan={savePlan}
-            saveStory={saveStory}
-            saveNote={save}
-          />
-          <StoryQrCard slug={slug} />
+      {/* Board E32: two columns (1.2 to 1) 48 px apart from 1024 px, the sections in each
+          32 px apart; one column, 32 px apart, on smaller screens. */}
+      <div className="grid min-w-0 grid-cols-1 items-start gap-8 lg:gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <div className="flex min-w-0 flex-col gap-8">
+          <MarketingFields slug={slug} notes={notes} saveNote={save} />
         </div>
-        <aside className="flex min-w-0 flex-col lg:w-[420px] lg:shrink-0">
+        <div className="flex min-w-0 flex-col gap-8">
           <BackCoverPreview
             text={{
               title: page.story.title,
@@ -78,7 +71,8 @@ function MarketingBody({
               writerName,
             }}
           />
-        </aside>
+          <StoryQrCard slug={slug} />
+        </div>
       </div>
     </>
   );

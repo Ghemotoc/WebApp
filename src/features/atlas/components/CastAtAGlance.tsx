@@ -1,52 +1,90 @@
 /**
- * CastAtAGlance: the characters on the at-a-glance page (story S1-E17-06: "the cast count and the
- * recently edited chapters and entries show, each linking to its item"; bundle G10a, board
- * AtlasStory: "Characters · edited recently").
+ * CastAtAGlance: "Characters" on the at-a-glance page: the five characters edited last, then
+ * "Open characters" (story S1-E17-06; redrawn as board E21 in user stories bundle 6).
  *
- * A glass list of the five characters edited last, each with its role and its line, opening its
- * sheet; then "Open characters" as a grey glass pill. With no characters yet it says so.
- * Who uses it: AtAGlance. What it calls: GlassList and GlassListRow.
+ * Flat under a fine line with "Edited recently" under the heading. Each row: the character's face
+ * (picture or initials), the name as a link to the sheet, and a meta line with the role in bold
+ * and the character's one-line summary.
+ * Who uses it: AtAGlance. What it calls: useStoryCast (the cached cast, for the pictures),
+ * AtlasFlatSection, CharacterFace and MetaLine.
  */
 import { Link } from 'react-router';
 
-import type { StoryPlanPage } from '../api/storyPlans';
+import { buttonClassName } from '@/components/ui/buttonStyles';
+import { MetaLine } from '@/components/ui/MetaLine';
+
+import type { RecentCharacter, StoryPlanPage } from '../api/storyPlans';
+import { useStoryCast } from '../hooks/useStoryCast';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { GlassList } from './GlassList';
-import { GlassListRow } from './GlassListRow';
+import { AtlasFlatSection } from './AtlasFlatSection';
+import { CharacterFace } from './CharacterFace';
+
+/** One character's row. */
+function CastRow({
+  character,
+  address,
+  full,
+}: {
+  character: RecentCharacter;
+  address: string;
+  full: Parameters<typeof CharacterFace>[0]['character'];
+}) {
+  const { t } = useAtlasTranslation();
+  return (
+    <li className="flex items-start gap-4 border-t border-hairline py-3">
+      <CharacterFace id={character.id} name={character.name} character={full} />
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <Link
+          to={address}
+          className="type-body font-semibold break-words text-ink-heading no-underline hover:underline"
+        >
+          {character.name}
+        </Link>
+        <MetaLine
+          facts={[
+            { text: t(`characters.role.${character.role}`), kind: 'state' },
+            { text: character.summary },
+          ]}
+        />
+      </div>
+    </li>
+  );
+}
 
 /**
- * Renders the list and the link to every character.
+ * Renders the section.
  *
+ * @param props.page - the plan, from story_plan()
  * @returns the recent characters (or a plain note) and "Open characters"
  */
 export function CastAtAGlance({ page }: { page: StoryPlanPage }) {
   const { t } = useAtlasTranslation();
+  const { cast } = useStoryCast(page.story.slug);
   const castAddress = `/plan/s/${page.story.slug}/characters`;
   return (
-    <div className="flex min-w-0 flex-col gap-3">
+    <AtlasFlatSection
+      headingId="atlas-cast-glance-heading"
+      heading={t('characters.heading')}
+      note={t('glance.editedRecently')}
+    >
       {page.cast.recent.length === 0 ? (
-        <p className="m-0 px-4 text-ink-muted">{t('characters.glance.none')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('characters.glance.none')}</p>
       ) : (
-        <GlassList id="atlas-cast-glance" label={t('characters.glance.recentList')}>
+        <ul aria-label={t('characters.glance.recentList')} className="m-0 list-none p-0">
           {page.cast.recent.map((character) => (
-            <GlassListRow
+            <CastRow
               key={character.id}
-              to={`${castAddress}/${character.id}`}
-              title={character.name}
-              line={[t(`characters.role.${character.role}`), character.summary]
-                .filter((part) => part !== '')
-                .join(' · ')}
+              character={character}
+              address={`${castAddress}/${character.id}`}
+              full={cast?.characters.find((candidate) => candidate.id === character.id) ?? null}
             />
           ))}
-        </GlassList>
+        </ul>
       )}
-      <Link
-        to={castAddress}
-        className="inline-flex h-11 items-center self-start rounded-full button-glass px-4 type-body font-semibold no-underline"
-      >
+      <Link to={castAddress} className={`${buttonClassName({ variant: 'text' })} self-start`}>
         {t('characters.glance.open', { count: page.cast.count })}
       </Link>
-    </div>
+    </AtlasFlatSection>
   );
 }

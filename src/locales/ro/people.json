@@ -162,5 +162,17 @@
     "openLabel": "Deschide raftul {{name}}",
     "none": "{{name}} nu are încă niciun raft public.",
     "loadFailed": "Nu am putut încărca rafturile. Verifică conexiunea și încearcă din nou."
+  },
+  "stories": {
+    "documentTitle": "Povești de {{name}} · {{productName}}",
+    "statusLegend": "Ce povești",
+    "ongoing": "În curs",
+    "completed": "Terminate",
+    "both": "Ambele",
+    "noneOngoing": "{{name}} nu are nicio poveste în curs.",
+    "noneCompleted": "{{name}} nu are încă nicio poveste terminată.",
+    "loadMore": "Arată încă {{count}}",
+    "loadingMore": "Se încarcă…",
+    "loadFailed": "Nu am putut încărca poveștile. Verifică conexiunea și încearcă din nou."
   }
 }

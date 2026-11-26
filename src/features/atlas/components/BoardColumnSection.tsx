@@ -1,10 +1,10 @@
 /**
  * BoardColumnSection: one act's column on the chapter board (story S1-E17-19), or "No act".
  *
- * No box of its own (bundle G10 ATLAS, part c1; board AtlasStoryline): the act's name as a heading
- * with its chapter count, its chapters as cards in book order, then "Add chapter", which adds a
- * draft at the end of this act. An act (never "No act") also has "Edit act", to rename or delete
- * it (bundle GAPS-2a). The column is a drop zone too (CALM-9, board E28): while a card is dragged
+ * A tinted box (story 6.9, board E28, .acol): the act's name as a label with its chapter count,
+ * its chapters as cards in book order, then the text button "Add chapter", which adds a draft at
+ * the end of this act. An act (never "No act") also has a pen button, "Edit act", to rename or
+ * delete it (bundle GAPS-2a). The column is a drop zone too (CALM-9, board E28): while a card is dragged
  * over it, it gets a ring in the main colour, and a dashed gap saying "Becomes chapter N" opens
  * where the card will land; a card dropped on its empty space goes to the column's end.
  * Who uses it: ChapterBoard. What it calls: BoardCard, EditActForm, dnd-kit and the handlers it
@@ -70,15 +70,15 @@ function AddChapterButton({ name, onAdd }: { name: string; onAdd: () => Promise<
   return (
     <div className="flex flex-col gap-2">
       <Button
-        variant="secondary"
-        className="h-9 self-start px-4 type-meta"
+        variant="text"
+        className="gap-2 self-start"
         aria-label={t('storyline.board.addChapterIn', { name })}
         onClick={() => {
           setFailed(false);
           onAdd().catch(() => setFailed(true));
         }}
       >
-        <ActionIcon name="plus" size={14} />
+        <ActionIcon name="plus" size={16} />
         {t('storyline.board.addChapter')}
       </Button>
       {failed && <Notice tone="error">{t('storyline.board.addFailed')}</Notice>}
@@ -155,9 +155,9 @@ function ColumnCardSlot(props: { showGap: boolean; gapLabel: string; children: R
 
 /** The column's drop zone look: a ring in the main colour while a card would land in it. */
 function columnClasses(isTargeted: boolean): string {
-  // Board E28 (.acol.is-over): an inset 2 px ring in the main colour; the negative margin keeps
-  // the padding that makes room for the ring from moving the column.
-  const base = '-m-2 flex h-full flex-col gap-3 rounded-card p-2';
+  // Board E28 (.acol): a tinted box with 16 px inside; while a card would land in it
+  // (.acol.is-over), an inset 2 px ring in the main colour.
+  const base = 'flex h-full flex-col gap-3 rounded-card bg-tint p-4';
   return isTargeted ? `${base} shadow-[inset_0_0_0_2px_var(--plum-to)]` : base;
 }
 
@@ -180,26 +180,29 @@ export function BoardColumnSection(props: BoardColumnSectionProps) {
   return (
     <section aria-labelledby={headingId} data-testid="atlas-board-column" className="min-w-0">
       <div ref={setNodeRef} className={columnClasses(isTargeted)}>
-        <div className="flex items-baseline justify-between gap-2">
-          <h2 id={headingId} className="m-0 min-w-0 type-subheading break-words text-ink-heading">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2
+            id={headingId}
+            className="m-0 min-w-0 flex-1 type-label font-semibold break-words text-ink-heading"
+          >
             {name}
           </h2>
           {/* How many chapters the act holds; the list below says the same to a screen reader. */}
-          <span aria-hidden="true" className="type-meta">
+          <span aria-hidden="true" className="type-meta text-ink-muted">
             {column.chapters.length}
           </span>
+          {column.actId !== null && (
+            <EditActForm
+              // A fresh form for each name, so a rename closes it and shows the new name.
+              key={name}
+              slug={props.slug}
+              act={{ id: column.actId, name }}
+              chapterCount={column.chapters.length}
+            />
+          )}
         </div>
-        {column.actId !== null && (
-          <EditActForm
-            // A fresh form for each name, so a rename closes it and shows the new name.
-            key={name}
-            slug={props.slug}
-            act={{ id: column.actId, name }}
-            chapterCount={column.chapters.length}
-          />
-        )}
         {column.chapters.length === 0 && !isTargeted && (
-          <p className="m-0 type-body text-ink-muted">{t('storyline.board.empty')}</p>
+          <p className="m-0 type-meta text-ink-muted">{t('storyline.board.empty')}</p>
         )}
         <ColumnCards {...props} column={column} />
         <AddChapterButton name={name} onAdd={async () => props.addChapter(column.actId)} />
