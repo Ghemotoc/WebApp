@@ -75,6 +75,28 @@ function SendButton({ label, isSending }: { label: string; isSending: boolean })
 }
 
 /**
+ * Sends a message at most once at a time. A double click fires two submits before Send can turn
+ * off, so a ref (which changes at once, unlike state) lets only the first through until it settles.
+ *
+ * @param onSend - saves the words; rejects when the save fails (the hook shows why)
+ * @param onSent - empties the box once the words are saved
+ * @returns the function that sends
+ */
+function useSendOnce(onSend: (words: string) => Promise<unknown>, onSent: () => void) {
+  const isInFlight = useRef(false);
+  return (words: string) => {
+    if (isInFlight.current) return;
+    isInFlight.current = true;
+    void onSend(words)
+      .then(onSent)
+      .catch(errorShownByHook)
+      .finally(() => {
+        isInFlight.current = false;
+      });
+  };
+}
+
+/**
  * Renders the form.
  *
  * @returns the form
@@ -94,12 +116,9 @@ export function MessageComposer({
   // Design books item 9: Send stays pressable and says what is missing beside the box.
   const missing = useMissingField(body.trim() === '', 'message-body');
 
+  const sendOnce = useSendOnce(onSend, () => setBody(''));
   /** Sends the words and empties the box once saved; a failure keeps them for another try. */
-  function sendNow() {
-    void onSend(body.trim())
-      .then(() => setBody(''))
-      .catch(errorShownByHook);
-  }
+  const sendNow = () => sendOnce(body.trim());
   // MUST-1b: asks "Post anyway?" before words that look like contact details go out.
   const gate = usePersonalDetailsGate({ text: body, sendNow });
 

@@ -13,7 +13,7 @@
  *   14-year-old), and pressing one opens the chat (user story 4.2);
  * - the profile shows Message only to someone who may write (S1-E9-03): not to an adult on a
  *   14-year-old's profile; each message from the other person has its own Report (rule 6);
- * - text only: the box says so (criterion 4);
+ * - text only: the box says so (criterion 4); a double click on Send sends once (BOOKS-4);
  * - a story link sent from a share dialog rides into the chat picked, is sent once and can be
  *   pressed there; anything else in the address, and other websites' links, stay inert (GAPS-7a);
  * - axe at 390, 768 and 1440 px, light and night, ro and en, on /messages and one chat, and no
@@ -196,6 +196,14 @@ test.describe('private messages (S1-E9-01)', () => {
     await expect(page).toHaveURL(/\/messages\/teacher$/);
     await expect(dialog).toHaveCount(0);
     await expect(page.getByLabel('Message to teacher')).toBeVisible();
+  });
+
+  test('a double click on Send sends the message once', async ({ browser }) => {
+    const page = await openAs(browser, 'adult_writer', '/messages/teacher');
+    await page.getByLabel('Message to teacher').fill('Only once, please.');
+    await page.getByRole('button', { name: 'Send', exact: true }).dblclick();
+    await expect(page.getByLabel('Message to teacher')).toHaveValue('');
+    await expect(chatOn(page).getByText('Only once, please.')).toHaveCount(1);
   });
 
   test('the profile offers Message only to someone who may write', async ({ browser }) => {
