@@ -55156,6 +55156,43 @@ COMMENT ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text
 
 
 
+CREATE OR REPLACE FUNCTION "public"."trending_tags"("how_many" integer DEFAULT 6) RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(jsonb_agg(ranked.name order by ranked.week_reads desc, ranked.name), '[]'::jsonb)
+  from (
+    -- Step 1: this week's reads of each story the caller may see.
+    with week_reads as (
+      select story.id as story_id, sum(chapter_reads.total) as reads
+      from public.listed_stories('popular', null, null, null, null) as story
+      join public.chapters on chapters.story_id = story.id
+      join public.chapter_reads on chapter_reads.chapter_id = chapters.id
+      where chapter_reads.read_on > current_date - 7
+        and public.chapter_is_readable(chapters.id)
+      group by story.id
+    )
+    -- Step 2: each approved tag's share of them, the most read first.
+    select tags.name, sum(week_reads.reads) as week_reads
+    from week_reads
+    join public.story_tags on story_tags.story_id = week_reads.story_id
+    join public.tags on tags.id = story_tags.tag_id
+    where tags.status = 'approved'
+    group by tags.id, tags.name
+    having sum(week_reads.reads) > 0
+    order by week_reads desc, tags.name
+    limit least(greatest(coalesce(how_many, 6), 1), 20)
+  ) as ranked;
+$$;
+
+
+ALTER FUNCTION "public"."trending_tags"("how_many" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."trending_tags"("how_many" integer) IS 'The approved tags whose stories the caller may see were read most in the last seven days (user story 1.7, board A07).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."undo_decision_for_appeal"("statement" "public"."statements_of_reasons", "appeal_reference" "text") RETURNS "void"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -77270,6 +77307,12 @@ REVOKE ALL ON FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" 
 REVOKE ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."trending_tags"("how_many" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."trending_tags"("how_many" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."trending_tags"("how_many" integer) TO "authenticated";
 
 
 

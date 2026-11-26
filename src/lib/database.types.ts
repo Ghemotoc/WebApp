@@ -18991,6 +18991,7 @@ export type Database = {
         Args: { how_many?: number; topic_key: string; topic_kind: string };
         Returns: Json;
       };
+      trending_tags: { Args: { how_many?: number }; Returns: Json };
       undo_decision_for_appeal: {
         Args: {
           appeal_reference: string;
