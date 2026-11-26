@@ -126,7 +126,7 @@ export function PublicCharacter({ plan, character, base, isPreview }: PublicChar
             </h2>
             <div className="flex flex-wrap gap-2">
               <InfoPill tone="plum">{t(`characters.role.${character.role}`)}</InfoPill>
-              <PlanGuardPill guard={plan.characterGuards[character.id]} />
+              <PlanGuardPill guard={plan.itemGuards[character.id]} />
             </div>
           </div>
           {rows.length > 0 && <LabelRows rows={rows} />}

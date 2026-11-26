@@ -5,8 +5,8 @@
  * Top to bottom, as the board draws it: "Show categories", the map and its key ("Category colours"
  * under it, where the writer picks each category's colour, saved on the story), then
  * "Relationships" with the count and every relationship in words (each with Delete, which offers
- * "Removed. Undo" for 8 seconds, and "Keep private"), then "Add a relationship" with the form side
- * by side (the page's one main button). The category switches filter the map and the list
+ * "Removed. Undo" for 8 seconds, "Keep private" and "Readers see it from", story 6.14), then
+ * "Add a relationship" with the form side by side (the page's one main button). The category switches filter the map and the list
  * together. The hint above the form shows for the first three visits, then folds away.
  * Who uses it: ConnectionsPage. What it calls: RelationshipMap, RelationshipList,
  * ItemVisibilityControls, AddRelationshipForm, useRelationshipChangers and useRelationshipColour.
@@ -71,7 +71,7 @@ function RelationshipsSection({
             slug={slug}
             itemId={relationship.id}
             itemName={sentence}
-            allowsGuard={false}
+            allowsGuard
           />
         )}
       />

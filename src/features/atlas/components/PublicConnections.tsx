@@ -7,7 +7,8 @@
  * relationship with the shared Report button (S1-E17-34; the preview leaves it out); a node or
  * box opens the character's public page while Characters is public, and is just the name
  * otherwise. Who uses it: PublicPlanView. What it calls: RelationshipMap, FamilyTreeView,
- * useRelationshipWords and ReportButton.
+ * useRelationshipWords, PlanGuardPill (the preview's mark for a relationship that waits for a
+ * chapter, story 6.14) and ReportButton.
  */
 import { useState } from 'react';
 
@@ -20,6 +21,7 @@ import { categoryOf, type RelationshipCategory } from '../lib/relationshipCatego
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { FamilyTreeView } from './FamilyTreeView';
+import { PlanGuardPill } from './PlanGuardPill';
 import { RelationshipMap } from './RelationshipMap';
 
 /** What the area needs. */
@@ -34,10 +36,12 @@ export interface PublicConnectionsProps {
 function PublicRelationshipList({
   relationships,
   words,
+  guards,
   isPreview,
 }: {
   relationships: CharacterRelationship[];
   words: RelationshipWords;
+  guards: PublicPlan['itemGuards'];
   isPreview: boolean;
 }) {
   const { t } = useAtlasTranslation();
@@ -59,6 +63,8 @@ function PublicRelationshipList({
             className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline py-2 last:border-b-0"
           >
             <span className="min-w-0 break-words text-ink">{words.sentence(relationship)}</span>
+            {/* The preview marks one that waits for a chapter (story 6.14). */}
+            <PlanGuardPill guard={guards[relationship.id]} />
             {!isPreview && (
               <ReportButton
                 itemType="atlas_item"
@@ -100,7 +106,12 @@ export function PublicConnections({ plan, kind, base, isPreview }: PublicConnect
         hiddenCategories={hiddenCategories}
         onHiddenChange={setHiddenCategories}
       />
-      <PublicRelationshipList relationships={shown} words={words} isPreview={isPreview} />
+      <PublicRelationshipList
+        relationships={shown}
+        words={words}
+        guards={plan.itemGuards}
+        isPreview={isPreview}
+      />
     </div>
   );
 }

@@ -9,7 +9,7 @@
  * the moment a place is picked, so there is no separate "Create" step, and nothing is stored or
  * counted (rule 7). The address comes from the brand settings, never a hard-coded domain.
  * Who uses it: MarketingPage. What it calls: lib/storyQr.ts, lib/downloadQr.ts, useMyNames (the
- * username), usePlanVisibility (whether the story's world is shared) and MarketingSection.
+ * username), usePlanVisibility (whether the story's world is shared) and AtlasSection.
  */
 import { useMemo, useState } from 'react';
 
@@ -33,7 +33,7 @@ import {
 } from '../lib/storyQr';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { MarketingSection } from './MarketingSection';
+import { AtlasSection } from './AtlasSection';
 
 /** The choices for this story and writer, read from what is already loaded. */
 function useQrChoices(slug: string): QrChoice[] {
@@ -122,7 +122,7 @@ export function StoryQrCard({ slug }: { slug: string }) {
   const address = `${brand.siteUrl}${choice.path}`;
 
   return (
-    <MarketingSection id="atlas-story-qr-heading" heading={t('marketing.qr.heading')}>
+    <AtlasSection id="atlas-story-qr-heading" heading={t('marketing.qr.heading')}>
       <p className="m-0 type-meta text-ink-muted">{t('marketing.qr.hint')}</p>
       <div className="flex flex-wrap items-start gap-6">
         <QrFigure address={address} path={choice.path} />
@@ -157,6 +157,6 @@ export function StoryQrCard({ slug }: { slug: string }) {
           />
         </div>
       </div>
-    </MarketingSection>
+    </AtlasSection>
   );
 }

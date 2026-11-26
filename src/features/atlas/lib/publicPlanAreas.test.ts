@@ -37,7 +37,7 @@ const plan: PublicPlan = {
     relationships: [],
     relationshipColours: {},
   },
-  characterGuards: {},
+  itemGuards: {},
   sections: [
     {
       id: 's1',

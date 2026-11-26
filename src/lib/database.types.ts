@@ -9559,6 +9559,7 @@ export type Database = {
           kind: string;
           note: string;
           reverse_label: string;
+          show_from_chapter_id: string | null;
           story_id: string;
           to_character_id: string;
           updated_at: string;
@@ -9576,6 +9577,7 @@ export type Database = {
           kind: string;
           note?: string;
           reverse_label?: string;
+          show_from_chapter_id?: string | null;
           story_id: string;
           to_character_id: string;
           updated_at?: string;
@@ -9592,6 +9594,7 @@ export type Database = {
           kind?: string;
           note?: string;
           reverse_label?: string;
+          show_from_chapter_id?: string | null;
           story_id?: string;
           to_character_id?: string;
           updated_at?: string;
@@ -9603,6 +9606,13 @@ export type Database = {
             columns: ['from_character_id'];
             isOneToOne: false;
             referencedRelation: 'story_characters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_character_relationships_show_from_chapter_id_fkey';
+            columns: ['show_from_chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
             referencedColumns: ['id'];
           },
           {

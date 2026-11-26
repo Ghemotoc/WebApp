@@ -11,7 +11,7 @@
  * with the product's name (GAPS-2b). All of it is real HTML text, never a picture, so it reads
  * aloud and zooms (Architecture 1.1 principle 8). Empty parts are left out, with a plain line
  * when there is nothing to show yet.
- * Who uses it: MarketingPage. What it calls: MarketingSection; the page passes the saved text.
+ * Who uses it: MarketingPage. What it calls: AtlasSection; the page passes the saved text.
  */
 import { useState } from 'react';
 
@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/Button';
 
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { MarketingSection } from './MarketingSection';
+import { AtlasSection } from './AtlasSection';
 
 /** The pieces the back cover shows. */
 export interface BackCoverText {
@@ -83,7 +83,7 @@ export function BackCoverPreview({ text }: { text: BackCoverText }) {
   const { t } = useAtlasTranslation();
   const [isOpen, setIsOpen] = useState(true);
   return (
-    <MarketingSection id="atlas-back-cover-heading" heading={t('marketing.backCover.heading')}>
+    <AtlasSection id="atlas-back-cover-heading" heading={t('marketing.backCover.heading')}>
       <p className="m-0 type-meta text-ink-muted">{t('marketing.backCover.hint')}</p>
       <Button
         variant="secondary"
@@ -97,6 +97,6 @@ export function BackCoverPreview({ text }: { text: BackCoverText }) {
       <div id="atlas-back-cover-panel" className="flex flex-col" hidden={!isOpen}>
         {isOpen && <BackCover text={text} />}
       </div>
-    </MarketingSection>
+    </AtlasSection>
   );
 }

@@ -897,21 +897,26 @@
   "readers": {
     "documentTitle": "What readers can see in {{title}}: Story Atlas",
     "heading": "What readers can see",
-    "intro": "Everything in your plan is private until you turn an area on. An area you turn on shows with your story once it’s published, for every reader the story’s rating allows.",
-    "introItems": "To hold one thing back, tick “Keep private” on its own page: a character, a relationship, a section or entry of the story world, or an event. A character, entry or event can also wait until a reader reaches a chapter, so sharing it doesn’t spoil the story.",
+    "intro": "Everything in your plan is private until you turn an area on. To hold one thing back, tick Keep private on its own page: a character, a relationship or an entry.",
     "notPublished": "Your story isn’t published yet, so readers can’t see any of this yet.",
     "previewLink": "Preview as a reader",
     "areas": {
       "legend": "Areas readers see",
+      "hint": "An area you turn on shows on the story page, under Shared by the writer.",
+      "names": {
+        "characters": "Characters",
+        "relationship_map": "Relationship map",
+        "family_tree": "Family tree",
+        "bible": "Story world",
+        "timeline": "Timeline"
+      },
       "hints": {
         "characters": "Each character’s page, with only the parts of the sheet you open.",
         "relationship_map": "The map of how your characters are connected, with its list.",
         "family_tree": "The family tree.",
-        "bible": "The story world, in reading mode.",
+        "bible": "Your story world, in reading mode.",
         "timeline": "The events on your timeline, in order."
-      },
-      "on": "On",
-      "off": "Off"
+      }
     },
     "item": {
       "heading": "What readers see",
@@ -942,18 +947,20 @@
     },
     "characters": {
       "heading": "Characters",
+      "hint": "Pick the chapter each one shows from, and the parts of the sheet. Readers who haven’t reached that chapter don’t see it.",
+      "listLabel": "What readers see of each character",
       "none": "No characters yet.",
       "keptPrivate": "Kept private",
-      "fromStart": "Readers see it from the start",
-      "fromChapter": "Readers see it from chapter {{number}}",
+      "fromStart": "From the start",
+      "fromChapter": "From chapter {{number}}",
       "noParts": "no part of the sheet",
       "change": "Change",
       "done": "Done",
-      "changeNamed": "Change what readers see of {{name}}"
-    },
-    "spoilers": {
-      "heading": "Spoilers stay safe",
-      "body": "Pick the chapter each thing shows from. Readers who haven’t reached it don’t see it."
+      "changeNamed": "Change what readers see of {{name}}",
+      "fromChapterTitled": "From chapter {{number}}: {{title}}",
+      "showMore_one": "Show {{count}} more",
+      "showMore_few": "Show {{count}} more",
+      "showMore_other": "Show {{count}} more"
     },
     "summary": {
       "private": "Kept private",

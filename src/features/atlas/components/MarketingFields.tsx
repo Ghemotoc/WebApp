@@ -11,13 +11,13 @@
  * the query pitch. "Getting it out": the launch notes, then the writer's own details and "Add
  * detail" (GAPS-2b; the board doesn't draw them, docs/board-fixes.md).
  * Who uses it: MarketingPage. What it calls: the saveNote prop (useStoryMarketing),
- * MarketingSection and MarketingDetails.
+ * AtlasSection and MarketingDetails.
  */
 import type { MarketingNotes } from '../api/marketing';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { MarketingDetails } from './MarketingDetails';
-import { MarketingSection } from './MarketingSection';
+import { AtlasSection } from './AtlasSection';
 import { PlanTextField } from './PlanTextField';
 
 /** What the fields need. */
@@ -72,17 +72,17 @@ export function MarketingFields({ slug, notes, saveNote }: MarketingFieldsProps)
   const { t } = useAtlasTranslation();
   return (
     <>
-      <MarketingSection id="atlas-marketing-pitch-heading" heading={t('marketing.pitchHeading')}>
+      <AtlasSection id="atlas-marketing-pitch-heading" heading={t('marketing.pitchHeading')}>
         <p className="m-0 type-meta text-ink-muted">{t('marketing.sharedHint')}</p>
         <NoteField field="back_cover_blurb" notes={notes} saveNote={saveNote} />
         <NoteField field="comparable_titles" notes={notes} saveNote={saveNote} />
         <NoteField field="hooks_keywords" notes={notes} saveNote={saveNote} />
         <NoteField field="query_pitch" notes={notes} saveNote={saveNote} />
-      </MarketingSection>
-      <MarketingSection id="atlas-marketing-launch-heading" heading={t('marketing.launchHeading')}>
+      </AtlasSection>
+      <AtlasSection id="atlas-marketing-launch-heading" heading={t('marketing.launchHeading')}>
         <NoteField field="launch_notes" notes={notes} saveNote={saveNote} />
         <MarketingDetails slug={slug} />
-      </MarketingSection>
+      </AtlasSection>
     </>
   );
 }

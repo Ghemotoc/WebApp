@@ -89,8 +89,8 @@ export interface PublicPlan {
   areas: PlanArea[];
   /** The characters in the same shape as the writer's cast, so the map and tree draw them. */
   cast: StoryCast;
-  /** The chapter each character waits for, by character ID (preview only). */
-  characterGuards: Record<string, PlanGuard | null>;
+  /** The chapter each character and relationship waits for, by its ID (preview only). */
+  itemGuards: Record<string, PlanGuard | null>;
   sections: PublicSection[];
   events: PublicEvent[];
   /** The readable chapters, for [[Name]] links to a chapter. */
@@ -150,6 +150,8 @@ export interface PublicPlanRow {
     reverse_label: string;
     cousin_degree: number | null;
     cousin_removed: number | null;
+    /** The chapter it waits for, in the writer's preview only (story 6.14). */
+    show_from: PlanGuard | null;
   }[];
   sections: {
     id: string;
@@ -181,7 +183,8 @@ async function castFrom(
   const pictureMap: Record<string, Json | null> = {};
   for (const character of row.characters) pictureMap[character.id] = character.picture;
   const pictures = await pictureViewsFromJson(client, pictureMap);
-  // Step 2: each character, and the guard it waits for (only the preview has one).
+  // Step 2: each character, and the guard it waits for (only the preview has one); the
+  // relationships below add theirs to the same map.
   const guards: Record<string, PlanGuard | null> = {};
   const characters = row.characters.map((character) => {
     guards[character.id] = character.show_from;
@@ -213,17 +216,21 @@ async function castFrom(
       ownGroup: null,
     })),
     chapters: [],
-    relationships: row.relationships.map((link) => ({
-      id: link.id,
-      fromId: link.from,
-      toId: link.to,
-      kind: link.kind,
-      customLabel: link.custom_label,
-      reverseLabel: link.reverse_label,
-      cousinDegree: link.cousin_degree,
-      cousinRemoved: link.cousin_removed,
-      note: '',
-    })),
+    relationships: row.relationships.map((link) => {
+      // A relationship can wait for a chapter too (story 6.14); its mark sits beside it.
+      guards[link.id] = link.show_from;
+      return {
+        id: link.id,
+        fromId: link.from,
+        toId: link.to,
+        kind: link.kind,
+        customLabel: link.custom_label,
+        reverseLabel: link.reverse_label,
+        cousinDegree: link.cousin_degree,
+        cousinRemoved: link.cousin_removed,
+        note: '',
+      };
+    }),
     // Readers' maps draw the categories' default colours; the writer's picks stay on their own
     // map (CALM-9, board E25 shows only the writer's map).
     relationshipColours: {},
@@ -270,7 +277,7 @@ export async function publicPlanFrom(
     writerName: row.story.writer_name,
     areas: row.areas,
     cast,
-    characterGuards: guards,
+    itemGuards: guards,
     sections: row.sections.map((section) => ({
       id: section.id,
       preset: section.preset,

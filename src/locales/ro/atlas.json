@@ -897,21 +897,26 @@
   "readers": {
     "documentTitle": "Ce văd cititorii în {{title}}: Story Atlas",
     "heading": "Ce văd cititorii",
-    "intro": "Tot ce e în planul tău rămâne privat până când pornești o zonă. O zonă pornită apare lângă poveste după ce o publici, pentru fiecare cititor căruia ratingul poveștii îi permite.",
-    "introItems": "Ca să păstrezi ceva doar pentru tine, bifează „Păstrează privat” pe pagina lui: un personaj, o relație, o secțiune sau o intrare din lumea poveștii ori un eveniment. Un personaj, o intrare sau un eveniment pot aștepta și până când cititorul ajunge la un anumit capitol, ca să nu dezvălui povestea.",
+    "intro": "Tot ce e în planul tău rămâne privat până când pornești o zonă. Ca să păstrezi ceva doar pentru tine, bifează Păstrează privat pe pagina lui: un personaj, o relație sau o intrare.",
     "notPublished": "Povestea ta nu e publicată încă, așa că cititorii nu văd nimic din toate acestea.",
     "previewLink": "Vezi ca un cititor",
     "areas": {
       "legend": "Zone pe care le văd cititorii",
+      "hint": "O zonă pornită apare pe pagina poveștii, la Împărtășite de autor.",
+      "names": {
+        "characters": "Personaje",
+        "relationship_map": "Harta relațiilor",
+        "family_tree": "Arbore genealogic",
+        "bible": "Lumea poveștii",
+        "timeline": "Cronologie"
+      },
       "hints": {
         "characters": "Pagina fiecărui personaj, doar cu părțile din fișă pe care le deschizi.",
         "relationship_map": "Harta legăturilor dintre personaje, cu lista ei.",
         "family_tree": "Arborele genealogic.",
-        "bible": "Lumea poveștii, în modul de citire.",
+        "bible": "Lumea poveștii tale, în modul de citire.",
         "timeline": "Evenimentele din cronologie, în ordine."
-      },
-      "on": "Pornit",
-      "off": "Oprit"
+      }
     },
     "item": {
       "heading": "Ce văd cititorii",
@@ -942,18 +947,20 @@
     },
     "characters": {
       "heading": "Personaje",
+      "hint": "Alege capitolul de la care apare fiecare și părțile din fișă. Cititorii care n-au ajuns la acel capitol nu îl văd.",
+      "listLabel": "Ce văd cititorii din fiecare personaj",
       "none": "Niciun personaj încă.",
       "keptPrivate": "Păstrat privat",
-      "fromStart": "Cititorii îl văd de la început",
-      "fromChapter": "Cititorii îl văd de la capitolul {{number}}",
+      "fromStart": "De la început",
+      "fromChapter": "De la capitolul {{number}}",
       "noParts": "nicio parte din fișă",
       "change": "Schimbă",
       "done": "Gata",
-      "changeNamed": "Schimbă ce văd cititorii din {{name}}"
-    },
-    "spoilers": {
-      "heading": "Fără dezvăluiri",
-      "body": "Alege capitolul de la care apare fiecare lucru. Cititorii care n-au ajuns acolo nu îl văd."
+      "changeNamed": "Schimbă ce văd cititorii din {{name}}",
+      "fromChapterTitled": "De la capitolul {{number}}: {{title}}",
+      "showMore_one": "Arată încă {{count}}",
+      "showMore_few": "Arată încă {{count}}",
+      "showMore_other": "Arată încă {{count}}"
     },
     "summary": {
       "private": "Păstrat privat",

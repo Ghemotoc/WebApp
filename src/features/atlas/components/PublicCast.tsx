@@ -54,7 +54,7 @@ export function PublicCast({ plan, base }: { plan: PublicPlan; base: string }) {
                 : t(`characters.role.${character.role}`)}
             </span>
           </Link>
-          <PlanGuardPill guard={plan.characterGuards[character.id]} />
+          <PlanGuardPill guard={plan.itemGuards[character.id]} />
         </li>
       ))}
     </ul>
