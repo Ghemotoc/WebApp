@@ -42,7 +42,7 @@ function asPersona(userId: string, statement: string) {
     ${statement}`);
 }
 
-/** The space, with teacher as a moderator. */
+/** The space, with teacher as a moderator (invited, then accepted). */
 function startSpace() {
   asPersona(
     ownerId,
@@ -50,6 +50,8 @@ function startSpace() {
   );
   asPersona(teacherId, `select public.join_space('${slug}');`);
   asPersona(ownerId, `select public.set_space_moderator('${slug}', 'teacher', '{posts}');`);
+  // Since BOOKS-7 the owner's choice is an invitation the member accepts.
+  asPersona(teacherId, `select public.answer_space_moderator_invite('${slug}', true);`);
 }
 
 /** Opens a page as a persona in English, with motion reduced. */
