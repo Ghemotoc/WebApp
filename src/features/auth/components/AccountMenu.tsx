@@ -94,11 +94,12 @@ function ProfileRow({
   return (
     <Link
       to={`/u/${encodeURIComponent(handle)}`}
-      // One name for the whole card, so a screen reader says where it goes and whose it is.
-      aria-label={t('nav.viewProfileOf', { name })}
       className="profile-card mb-2 flex items-center gap-3 rounded-field border p-3 text-left no-underline"
       onClick={onOpen}
     >
+      {/* The card's words are its accessible name ("Ana Writer @inkwolf View public profile"): an
+          aria-label that left out the name or the @username would break WCAG 2.5.3 (label in
+          name), which axe checks. */}
       {/* Step 1: the same avatar as everywhere else, 44 px. */}
       <PersonAvatar name={name} handle={handle} size="card" />
       {/* Step 2: the name, the username and the words that say what the card does. */}
