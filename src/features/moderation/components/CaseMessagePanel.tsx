@@ -16,12 +16,14 @@ import { Notice } from '@/components/ui/Notice';
 
 import type { CaseChatMessage } from '../api/caseMessage';
 import { useCaseMessage } from '../hooks/useCaseMessage';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The date and time a message was sent. */
 function sentAtText(iso: string, language: string): string {
-  return new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'short' }).format(
-    new Date(iso),
-  );
+  return new Intl.DateTimeFormat(dateLocaleFor(language), {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(iso));
 }
 
 /**

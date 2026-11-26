@@ -23,6 +23,7 @@ import type { ContestEntryOption } from '@/schemas/contests';
 import { useStoryContests } from '../hooks/useStoryContests';
 import { contestDayInWords, contestNameIn } from '../lib/contestWords';
 import { useContestTranslation } from '../registerContestTranslations';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The card's state from the hook. */
 type StoryContests = ReturnType<typeof useStoryContests>;
@@ -128,7 +129,7 @@ function ContestBlock({
         {t('card.closesOn', { date: contestDayInWords(option.closes_on, i18n.language) })}
         {option.word_limit === null
           ? ''
-          : ` ${t('card.wordLimit', { limit: option.word_limit.toLocaleString(i18n.language) })}`}
+          : ` ${t('card.wordLimit', { limit: option.word_limit.toLocaleString(dateLocaleFor(i18n.language)) })}`}
       </p>
       <Link
         to={`/c/${option.page_slug}`}

@@ -21,7 +21,7 @@ import { settingsGroupKeys, type SettingsGroupKey } from '../lib/settingsGroups'
 
 /** The look of the two links to pages outside Settings. */
 const pageLinkClassName =
-  'flex min-h-12 items-center rounded-card px-4 type-body font-normal text-ink-heading no-underline hover:bg-panel';
+  'flex min-h-12 items-center rounded-card px-4 type-body font-normal text-ink-muted no-underline hover:bg-panel';
 
 /** What the menu needs. */
 export interface SettingsNavProps {
@@ -31,8 +31,8 @@ export interface SettingsNavProps {
 }
 
 /**
- * One group's link: the open one has the board's tint and bold text; "Delete account" is in the
- * destructive red, as on the board.
+ * One group's link: semibold ink, and the open one has the board's tint (bundle 10, J01: the
+ * board draws "Delete account" in ink like the rest; the red stays on the button that deletes).
  *
  * @returns the link
  */
@@ -46,17 +46,14 @@ function SettingsNavItem({
   onPick: () => void;
 }) {
   const { t } = useTranslation('account');
-  // Step 1: the text colour: red for "Delete account", plum for the open group, ink otherwise.
-  let textColour = isOpen ? 'text-primary' : 'text-ink-heading';
-  if (groupKey === 'delete-account') textColour = 'text-destructive';
-  // Step 2: the open group also gets the tint and bold text.
-  const look = isOpen ? 'bg-tint font-semibold' : 'font-normal hover:bg-panel';
+  // The open group gets the tint; the others tint softly on hover.
+  const look = isOpen ? 'bg-tint' : 'hover:bg-panel';
   return (
     <Link
       to={{ hash: groupKey }}
       aria-current={isOpen ? 'true' : undefined}
       onClick={onPick}
-      className={`flex min-h-12 items-center rounded-card px-4 type-body no-underline ${look} ${textColour}`}
+      className={`flex min-h-12 items-center rounded-card px-4 type-body font-semibold text-ink-heading no-underline ${look}`}
     >
       {t(`settings.groups.${groupKey}`)}
     </Link>
@@ -77,12 +74,15 @@ export function SettingsNav({ open, onPick }: SettingsNavProps) {
       // window it scrolls inside its own box, so its last links are not stuck under the floating
       // tab bar (under 1024 px: 96 px kept free at the foot) or below the window's edge
       // (WCAG 2.2, 2.4.11; GLASS-4 follow-up, 12 Nov 2026).
-      className="flex min-w-0 flex-[1_1_220px] flex-col gap-1 self-start rounded-card border border-border bg-surface p-3 shadow-card md:sticky md:top-28 md:max-h-[calc(100dvh-7rem-96px)] md:max-w-[320px] md:overflow-y-auto lg:max-h-[calc(100dvh-8rem)]"
+      // Unboxed, as on the board (bundle 10, J01): the links sit straight on the page.
+      className="flex min-w-0 flex-[1_1_220px] flex-col gap-1 self-start md:sticky md:top-28 md:max-h-[calc(100dvh-7rem-96px)] md:max-w-[240px] md:overflow-y-auto lg:max-h-[calc(100dvh-8rem)]"
     >
       {settingsGroupKeys.map((key) => (
         <SettingsNavItem key={key} groupKey={key} isOpen={key === open} onPick={onPick} />
       ))}
-      {/* Reports, appeals and certificates live on pages of their own (the board's last two). */}
+      {/* Reports, appeals and certificates live on pages of their own (the board's last two),
+          under a fine line and in lighter text. */}
+      <hr className="my-3 border-0 border-t border-hairline" />
       <Link to="/my-reports" className={pageLinkClassName}>
         {t('settings.myReportsLink')}
       </Link>

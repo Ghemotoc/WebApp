@@ -11,6 +11,7 @@
  */
 import type { MailMessage } from '../api/moderatorMail';
 import { useMailTranslation } from '../registerMailTranslations';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Who wrote a message, as the reader is told.
@@ -48,7 +49,7 @@ function toneOf(message: MailMessage): string {
 function MemberMessageItem({ message }: { message: MailMessage }) {
   const { i18n } = useMailTranslation();
   const author = useAuthorLine(message, false);
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(message.at));
@@ -79,7 +80,7 @@ function MemberMessageItem({ message }: { message: MailMessage }) {
 function StaffMessageItem({ message }: { message: MailMessage }) {
   const { i18n } = useMailTranslation();
   const author = useAuthorLine(message, true);
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(message.at));

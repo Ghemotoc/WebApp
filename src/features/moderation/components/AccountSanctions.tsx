@@ -17,6 +17,7 @@ import type { AccountSanction } from '../api/sanctions';
 import type { useSanctions } from '../hooks/useSanctions';
 
 import { ReasonForm } from './ReasonForm';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** The part of useSanctions's result the panel uses; useAccountActions gives the same shape. */
 type Sanctions = Pick<
@@ -32,9 +33,10 @@ type Sanctions = Pick<
 function SanctionMeta({ sanction }: { sanction: AccountSanction }) {
   const { t, i18n } = useTranslation('moderation');
   const whenText = (isoTime: string) =>
-    new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(
-      new Date(isoTime),
-    );
+    new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(isoTime));
   const appliedBy = t('sanctions.appliedBy', {
     handle: sanction.appliedByHandle ?? t('case.noHandle'),
     when: whenText(sanction.startsAt),

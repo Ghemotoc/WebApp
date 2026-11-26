@@ -374,3 +374,6 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | A10-Landing, the hero box (user story 1.10) | One plain box | The plum theme is the plain box; the gold, sage and sky themes tint it, so the four themes of S1-E11-14 stay |
 | A10-Landing, the shelf (user story 1.10) | Cards with the title and pen name only | The cards are the shared story cards of Read (status, rank, chapters), as on every shelf |
 | A10-Landing, the questions (user story 1.10) | All open, a line between | Built as drawn: the questions on a landing page no longer open and close (G5b's disclosures stay on the website's Help) |
+| J06-SettingsLanguage (bundle 10) | Five interface languages, among them Svenska, Dansk and Norsk bokmål | Only the open interface languages show (English and Română today); a Nordic language joins the radios once staff open it (MARKETS-2a) |
+| J06-SettingsLanguage (bundle 10) | "Story languages", whose stories come first | Built as "Reading languages": the lists show only stories in the chosen languages (MARKETS-2c), so the heading and line keep saying so |
+| J07-SettingsAccount (bundle 10) | Ways to log in with Google, Apple, Microsoft and a passkey | The section shows once the `social_login` or `passkey_login` flag is on, or something is connected; both are off for the invited-adults trial |

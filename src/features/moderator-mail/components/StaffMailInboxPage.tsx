@@ -19,6 +19,7 @@ import type { MailThreadSummary } from '../api/moderatorMail';
 import type { InboxFilters } from '../api/staffModeratorMail';
 import { useStaffInbox } from '../hooks/useStaffMail';
 import { useMailTranslation } from '../registerMailTranslations';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * One thread in the inbox.
@@ -27,7 +28,7 @@ import { useMailTranslation } from '../registerMailTranslations';
  */
 function InboxRow({ thread }: { thread: MailThreadSummary }) {
   const { t, i18n } = useMailTranslation();
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(thread.lastMessageAt));

@@ -12,6 +12,7 @@
  * Who shows it: MySupportTicketPage and StaffSupportTicketPage.
  */
 import { useSupportTranslation } from '../registerSupportTranslations';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /** One message, ready to draw. */
 export interface TicketMessageItem {
@@ -38,7 +39,7 @@ const toneClasses: Record<TicketMessageItem['tone'], string> = {
  */
 function ChatBubbleItem({ message }: { message: TicketMessageItem }) {
   const { i18n } = useSupportTranslation();
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(message.at));
@@ -70,7 +71,7 @@ function ChatBubbleItem({ message }: { message: TicketMessageItem }) {
  */
 function MessageItem({ message }: { message: TicketMessageItem }) {
   const { i18n } = useSupportTranslation();
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(message.at));

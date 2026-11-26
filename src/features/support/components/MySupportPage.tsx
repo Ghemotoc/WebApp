@@ -25,6 +25,7 @@ import { useSupportTranslation } from '../registerSupportTranslations';
 import { ReportInsteadCard } from './ReportInsteadCard';
 import { SignedOutLine } from './SignedOutLine';
 import { SupportBackLink } from './SupportBackLink';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * One ticket in the table.
@@ -34,7 +35,7 @@ import { SupportBackLink } from './SupportBackLink';
 function TicketRow({ ticket }: { ticket: MyTicketSummary }) {
   const { t, i18n } = useSupportTranslation();
   // Step 1: the last update in the reader's language, day and time.
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(ticket.lastMessageAt));

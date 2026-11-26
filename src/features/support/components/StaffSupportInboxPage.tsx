@@ -24,6 +24,7 @@ import { useSupportTranslation } from '../registerSupportTranslations';
 
 import { FirstReplyPill } from './FirstReplyPill';
 import { SupportViewChips } from './SupportViewChips';
+import { dateLocaleFor } from '../../../lib/romania-time';
 
 /**
  * Who a ticket is assigned to, in words.
@@ -46,7 +47,7 @@ function useAssignedLine(ticket: StaffTicketSummary): string {
 function InboxRow({ ticket }: { ticket: StaffTicketSummary }) {
   const { t, i18n } = useSupportTranslation();
   const assigned = useAssignedLine(ticket);
-  const when = new Intl.DateTimeFormat(i18n.language, {
+  const when = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(ticket.lastMessageAt));
