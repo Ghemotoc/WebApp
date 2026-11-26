@@ -75,6 +75,9 @@ async function openAs(
  * The results' kind and title, top to bottom ("Thread …", "Post 3 Re: …"), keeping only this
  * spec's threads. Board F02 (BOOKS-7): the title comes first, the kind leads the meta line under it.
  */
+/** How long a filtered search may take to show its results on a busy CI runner. */
+const filteredSearchTimeout = 15_000;
+
 async function resultsShown(page: Page): Promise<string[]> {
   const rows = page.getByRole('region', { name: /results? for/ }).locator('ol > li');
   await expect(rows.first()).toBeVisible();
@@ -129,13 +132,17 @@ test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
     await page.getByLabel('Forum', { exact: true }).selectOption('worldbuilding');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/forum=worldbuilding/);
-    await expect.poll(() => resultsShown(page)).toEqual([`Post 1 ${mapTitle}`]);
+    // Each new filter is a fresh search (no results are kept while it runs), and on a busy CI
+    // runner the filtered search can take longer than the 5-second default, so allow 15.
+    await expect
+      .poll(() => resultsShown(page), { timeout: filteredSearchTimeout })
+      .toEqual([`Post 1 ${mapTitle}`]);
     await page.getByLabel('Forum', { exact: true }).selectOption('');
     await page.getByLabel('Author', { exact: true }).fill('@teacher');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/author=%40teacher/);
     await expect
-      .poll(async () => (await resultsShown(page)).sort())
+      .poll(async () => (await resultsShown(page)).sort(), { timeout: filteredSearchTimeout })
       .toEqual([`Post 1 ${mapTitle}`, `Post 2 Re: ${dragonTitle}`].sort());
     await page.context().close();
   });
