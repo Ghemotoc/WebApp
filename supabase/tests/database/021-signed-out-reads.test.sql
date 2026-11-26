@@ -59,8 +59,9 @@ select results_eq(
        ('ad_bookings', 0::bigint),
        -- The ad slot catalogue: which slots exist, no personal data (SPONSORS-a1, S1-E12-01).
        ('ad_blocked_categories', (select count(*) from public.ad_blocked_categories)),
-       -- 19: CALM-5 added the reader's side box (chapter_side), BOOKS-A01 the home and hub slots.
-       ('ad_slots', 19::bigint),
+       -- 21: CALM-5 added the reader's side box (chapter_side), BOOKS-A01 the home and hub slots,
+       -- board D01 the two Write slots (write_wide, write_lower).
+       ('ad_slots', 21::bigint),
        ('age_check_attempts', 0::bigint),
        ('age_check_sessions', 0::bigint),
        ('appeals', 0::bigint),
