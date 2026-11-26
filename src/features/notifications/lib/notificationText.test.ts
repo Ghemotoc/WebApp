@@ -302,6 +302,24 @@ describe('notificationText', () => {
     expect(text.href).toBe('/spaces/fantasy-writers-circle');
   });
 
+  it('an invitation to moderate names who asked and opens the space to answer (BOOKS-7)', () => {
+    const inviteRow: AppNotification = {
+      ...newChapter,
+      kind: 'space_moderator_invited',
+      category: 'follows',
+      actors: [{ handle: 'ana', displayName: 'Ana' }],
+      actorCount: 1,
+      story: null,
+      chapter: null,
+      space: { slug: 'fantasy-writers-circle', name: 'Fantasy writers’ circle' },
+    };
+    const text = notificationText(englishT(), inviteRow, null);
+    expect(`${text.who} ${text.what}`).toBe(
+      'Ana asked you to help moderate Fantasy writers’ circle. Open it to accept or decline.',
+    );
+    expect(text.href).toBe('/spaces/fantasy-writers-circle');
+  });
+
   it('a space the reader can no longer see leaves the row without a link', () => {
     const hiddenRow: AppNotification = {
       ...newChapter,

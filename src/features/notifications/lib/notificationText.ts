@@ -494,6 +494,27 @@ function spaceJoinApprovedText(t: TFunction, notification: AppNotification): Not
 }
 
 /**
+ * The owner of a space the reader belongs to asked them to help run it (BOOKS-7, user stories 7.7
+ * and 7.10): "ana asked you to moderate Fantasy writers' circle", with "Open the space", where the
+ * reader accepts or declines; the powers start only once they accept.
+ *
+ * @param t - the notifications translation function
+ * @param notification - a space_moderator_invited row
+ * @returns the row's words
+ */
+function spaceModeratorInvitedText(t: TFunction, notification: AppNotification): NotificationText {
+  const space = notification.space;
+  return {
+    who: whoDidIt(t, notification),
+    what: t('what.spaceModeratorInvited', { space: space?.name ?? '' }),
+    quote: null,
+    grouped: null,
+    actionLabel: space === null ? null : t('actions.openSpace'),
+    href: space === null ? null : `/spaces/${space.slug}`,
+  };
+}
+
+/**
  * The owner of a space the reader moderates offered them the space (IDEAS-3e; idea
  * IDEA-20261102-7): "ana offered you Fantasy writers' circle", with "Open the space", where the
  * reader accepts or declines.
@@ -693,6 +714,7 @@ const teamTextFor: Partial<
   assignment_due: assignmentDueText,
   rank_reached: rankReachedText,
   space_handover_offered: spaceHandoverOfferedText,
+  space_moderator_invited: spaceModeratorInvitedText,
   story_featured: storyFeaturedText,
   spotlight_consent_agreed: spotlightConsentText,
   spotlight_consent_withdrawn: spotlightConsentText,

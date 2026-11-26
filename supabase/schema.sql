@@ -772,7 +772,8 @@ CREATE TYPE "public"."notification_kind" AS ENUM (
     'class_competition_results',
     'class_readers_choice',
     'comments_resumed',
-    'story_completed'
+    'story_completed',
+    'space_moderator_invited'
 );
 
 
@@ -1543,6 +1544,7 @@ CREATE OR REPLACE FUNCTION "public"."account_deletion_rules"() RETURNS TABLE("ta
     ('reports', 'kept', 0, 'a moderation record, kept as long as its case (docs/retention.md, OPEN)'),
     ('space_join_notes', 'delete', 1, null),
     ('space_members', 'delete', 1, null),
+    ('space_blocks', 'kept', 0, 'keeps the space safe after the moderator who blocked leaves, shown as a deleted account; deleted with the space or with the blocked account'),
     ('space_moderation_log', 'kept', 0, 'a record of moderation in the space, kept while the space exists, the moderator shown as a deleted account'),
     ('spaces', 'kept', 0, 'the space stays for its members, its owner shown as a deleted account (a question for Robert, FORUMS-2a)'),
     ('statements_of_reasons', 'kept', 0, 'a moderation record, kept 6 months after the decision and as long as its case (DSA art. 17)'),
@@ -14831,6 +14833,52 @@ COMMENT ON FUNCTION "public"."answer_space_handover"("slug" "text", "accept" boo
 
 
 
+CREATE OR REPLACE FUNCTION "public"."answer_space_moderator_invite"("slug" "text", "accept" boolean) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  space public.spaces;
+  member public.space_members;
+begin
+  -- Step 1: the space and the caller's open invitation in it.
+  select * into space from public.spaces where spaces.slug = answer_space_moderator_invite.slug and spaces.deleted_at is null;
+  select * into member from public.space_members
+  where space_members.space_id = space.id and space_members.user_id = caller_id
+    and space_members.moderator_invite_powers is not null;
+  if caller_id is null or space.id is null or member.id is null then
+    raise exception 'There is no invitation to answer.' using errcode = 'no_data_found', hint = 'invite:missing';
+  end if;
+  -- Step 2: declining only clears it.
+  if not coalesce(accept, false) then
+    update public.space_members set moderator_invite_powers = null, moderator_invited_at = null
+    where space_members.id = member.id;
+    perform public.log_space_action(space, 'moderator_invite_declined', caller_id, null, null, '{}'::jsonb);
+    return jsonb_build_object('outcome', 'declined');
+  end if;
+  -- Step 3: accepting needs the age group still (S1-E8-06), then the powers start.
+  if public.space_age_group_of_person(caller_id) is distinct from space.age_group then
+    raise exception 'This person is in another age group.' using errcode = 'check_violation', hint = 'member:age';
+  end if;
+  update public.space_members
+  set role = 'moderator', powers = member.moderator_invite_powers,
+      moderator_invite_powers = null, moderator_invited_at = null
+  where space_members.id = member.id;
+  perform public.log_space_action(space, 'moderator_invite_accepted', caller_id, null, null,
+    jsonb_build_object('powers_after', to_jsonb(member.moderator_invite_powers)));
+  return jsonb_build_object('outcome', 'accepted');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."answer_space_moderator_invite"("slug" "text", "accept" boolean) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."answer_space_moderator_invite"("slug" "text", "accept" boolean) IS 'The invited member accepts or declines becoming a space moderator; logged (BOOKS-7).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -15950,6 +15998,50 @@ ALTER FUNCTION "public"."blank_old_scrambled_ips"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."blank_old_scrambled_ips"() IS 'Job: blanks scrambled IP addresses on pictures and deletes sign-up IPs after 30 days (Q48, ADMIN-2 parts e2b and f2).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."block_space_member"("slug" "text", "handle" "text", "reason" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  space public.spaces := public.space_for_power(block_space_member.slug, 'members');
+  member public.space_members := public.space_member_by_handle(space.id, block_space_member.handle);
+begin
+  -- Step 1: someone in the space or waiting to join it, who may be blocked by the caller.
+  if space.kind = 'class' then
+    raise exception 'A class space has no Block.' using errcode = 'insufficient_privilege', hint = 'space:class';
+  end if;
+  if member.id is null then
+    raise exception 'That person isn''t a member of this space.' using errcode = 'no_data_found', hint = 'member:missing';
+  end if;
+  if member.role = 'owner' then
+    raise exception 'The owner can''t be blocked.' using errcode = 'check_violation', hint = 'member:owner';
+  end if;
+  if member.role = 'moderator' and space.user_id is distinct from (select auth.uid())
+     and not public.staff_may('moderation', 'act') then
+    raise exception 'Only the owner can block a moderator.' using errcode = 'insufficient_privilege', hint = 'space:not_allowed';
+  end if;
+  if char_length(btrim(coalesce(reason, ''))) > 500 then
+    raise exception 'Keep the reason under 500 characters.' using errcode = 'check_violation', hint = 'reason:too_long';
+  end if;
+  -- Step 2: out of the space, and kept out.
+  delete from public.space_members where space_members.id = member.id;
+  insert into public.space_blocks (user_id, space_id, blocked_user_id)
+  values ((select auth.uid()), space.id, member.user_id)
+  on conflict (space_id, blocked_user_id) do nothing;
+  -- Step 3: the log.
+  perform public.log_space_action(space, 'member_blocked', member.user_id, null, nullif(btrim(coalesce(reason, '')), ''));
+  return jsonb_build_object('blocked', true);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."block_space_member"("slug" "text", "handle" "text", "reason" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."block_space_member"("slug" "text", "handle" "text", "reason" "text") IS 'Takes someone out of an open space and keeps them from asking again; logged (BOOKS-7).';
 
 
 
@@ -23430,6 +23522,7 @@ CREATE OR REPLACE FUNCTION "public"."data_export_tables"() RETURNS TABLE("table_
     ('space_join_notes', true, null),
     ('space_members', true, null),
     ('space_moderation_log', true, null),
+    ('space_blocks', true, null),
     ('spaces', true, null),
     ('statements_of_reasons', true, null),
     ('stories', true, null),
@@ -27733,16 +27826,19 @@ COMMENT ON FUNCTION "public"."forum_thread_is_shown"("target" "public"."forum_th
 
 
 
-CREATE OR REPLACE FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone DEFAULT NULL::timestamp with time zone) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone DEFAULT NULL::timestamp with time zone, "sort" "text" DEFAULT 'latest'::"text", "skip" integer DEFAULT 0) RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   forum public.forums;
   page_size integer := coalesce((public.setting_value('forum_threads_page_size'))::integer, 25);
+  wanted_sort text := case when sort in ('newest', 'replies') then sort else 'latest' end;
+  first_page boolean := older_than is null and coalesce(skip, 0) <= 0;
   pinned jsonb := '[]'::jsonb;
   page jsonb;
   page_count integer;
+  total integer;
 begin
   -- Step 1: the forum, if it is live.
   select * into forum from public.forums where forums.slug = forum_thread_list.forum_slug and forums.deleted_at is null;
@@ -27750,40 +27846,52 @@ begin
     return null;
   end if;
   -- Step 2: on the first page only, every sticky thread the caller may open, latest first.
-  if older_than is null then
+  if first_page then
     select coalesce(jsonb_agg(public.forum_thread_summary_json(forum_threads) order by forum_threads.bumped_at desc), '[]'::jsonb)
     into pinned
     from public.forum_threads
     where forum_threads.forum_id = forum.id and forum_threads.is_sticky
       and public.forum_thread_is_shown(forum_threads);
   end if;
-  -- Step 3: one page of the other threads (one extra, to know whether there is more).
-  with listed as (
-    select forum_threads.* from public.forum_threads
+  -- Step 3: one page of the other threads in the order picked (one extra, to know whether there
+  -- is more). Latest activity follows the bump time, so "Don't bump" keeps a thread in place.
+  select coalesce(jsonb_agg(public.forum_thread_summary_json(listed.row_data)
+                            order by listed.sort_key desc, listed.bumped_at desc, listed.thread_number desc), '[]'::jsonb),
+         count(*)::integer
+  into page, page_count
+  from (
+    select forum_threads as row_data,
+           forum_threads.bumped_at,
+           forum_threads.thread_number,
+           case wanted_sort when 'newest' then extract(epoch from forum_threads.created_at)
+                            when 'replies' then forum_threads.last_post_number::numeric
+                            else extract(epoch from forum_threads.bumped_at) end as sort_key
+    from public.forum_threads
     where forum_threads.forum_id = forum.id
       and not forum_threads.is_sticky
       and (older_than is null or forum_threads.bumped_at < older_than)
       and public.forum_thread_is_shown(forum_threads)
-    order by forum_threads.bumped_at desc
+    order by sort_key desc, forum_threads.bumped_at desc, forum_threads.thread_number desc
+    offset greatest(coalesce(skip, 0), 0)
     limit page_size + 1
-  )
-  select coalesce(jsonb_agg(public.forum_thread_summary_json(listed) order by listed.bumped_at desc), '[]'::jsonb),
-         count(*)::integer
-  into page, page_count
-  from listed;
-  -- Step 4: the answer; the extra thread only says there is more.
+  ) as listed;
+  -- Step 4: how many threads the caller may open here, sticky ones included (F03's "7 of 312").
+  select count(*)::integer into total
+  from public.forum_threads
+  where forum_threads.forum_id = forum.id and public.forum_thread_is_shown(forum_threads);
+  -- Step 5: the answer; the extra thread only says there is more.
   if page_count > page_size then
     page := page - page_size;
   end if;
-  return jsonb_build_object('threads', pinned || page, 'has_more', page_count > page_size);
+  return jsonb_build_object('threads', pinned || page, 'has_more', page_count > page_size, 'total', total);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone) OWNER TO "postgres";
+ALTER FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone, "sort" "text", "skip" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone) IS 'One page of a forum''s threads, sticky first, then latest activity; never a user ID (S1-E8-02, S1-E8-05).';
+COMMENT ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone, "sort" "text", "skip" integer) IS 'One page of a forum''s threads, sticky first, then by latest activity, newest or most replies, with the total; never a user ID (S1-E8-02, S1-E8-05, BOOKS-7).';
 
 
 
@@ -30101,18 +30209,22 @@ begin
   if space.kind = 'class' then
     raise exception 'Join a class with your teacher''s code.' using errcode = 'insufficient_privilege', hint = 'space:class';
   end if;
-  -- Step 4: only people in the space's age group join it.
+  -- Step 4 (BOOKS-7, user story 7.11): someone the space blocked can't ask again.
+  if public.space_blocks_caller(space.id) then
+    raise exception 'This space blocked your account.' using errcode = 'insufficient_privilege', hint = 'space:blocked';
+  end if;
+  -- Step 5: only people in the space's age group join it.
   if not public.space_may_join(space) then
     raise exception 'This space is for another age group.' using errcode = 'insufficient_privilege', hint = 'space:age';
   end if;
   perform public.take_rate_limit('space_join');
-  -- Step 5: in straight away, or waiting for the owner.
+  -- Step 6: in straight away, or waiting for the owner.
   insert into public.space_members (user_id, space_id, status, joined_at)
   values (caller_id, space.id,
           case when space.joining = 'open' then 'active'::public.space_member_status else 'pending' end,
           case when space.joining = 'open' then now() end)
   returning * into membership;
-  -- Step 6 (IDEAS-3d): the note goes with a request only.
+  -- Step 7 (IDEAS-3d): the note goes with a request only.
   if membership.status = 'pending' and clean_note is not null then
     insert into public.space_join_notes (user_id, space_id, note) values (caller_id, space.id, clean_note);
   end if;
@@ -35983,6 +36095,7 @@ CREATE OR REPLACE FUNCTION "public"."notification_category"("kind" "public"."not
     when 'live_session_soon' then 'stories'
     when 'rank_reached' then 'stories'
     when 'space_handover_offered' then 'follows'
+    when 'space_moderator_invited' then 'follows'
     when 'story_featured' then 'stories'
     when 'spotlight_consent_agreed' then 'staff'
     when 'spotlight_consent_withdrawn' then 'staff'
@@ -45828,7 +45941,7 @@ COMMENT ON FUNCTION "public"."search_fold"("raw_text" "text") IS 'Internal: text
 
 
 
-CREATE OR REPLACE FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text" DEFAULT NULL::"text", "author_handle" "text" DEFAULT NULL::"text", "skip" integer DEFAULT 0, "language_code" "text" DEFAULT 'ro'::"text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text" DEFAULT NULL::"text", "author_handle" "text" DEFAULT NULL::"text", "skip" integer DEFAULT 0, "language_code" "text" DEFAULT 'ro'::"text", "sort" "text" DEFAULT 'best'::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -45837,28 +45950,31 @@ declare
   query tsquery := public.search_query(term);
   pattern text := public.search_like_pattern(term);
   wanted_handle text := lower(ltrim(btrim(coalesce(author_handle, '')), '@'));
+  wanted_sort text := case when sort in ('newest', 'replies') then sort else 'best' end;
   scope_id uuid;
   found jsonb;
   found_count integer;
+  total integer;
 begin
   -- Step 1: a term of under 2 characters finds nothing (a single letter matches everything).
   if char_length(public.search_fold(coalesce(term, ''))) < 2 then
-    return jsonb_build_object('results', '[]'::jsonb, 'has_more', false);
+    return jsonb_build_object('results', '[]'::jsonb, 'has_more', false, 'total', 0);
   end if;
   -- Step 2: the forum to search in, if one was picked; an unknown one finds nothing.
   if forum_slug is not null then
     select forums.id into scope_id from public.forums
     where forums.slug = search_forum_posts.forum_slug and forums.deleted_at is null;
     if scope_id is null then
-      return jsonb_build_object('results', '[]'::jsonb, 'has_more', false);
+      return jsonb_build_object('results', '[]'::jsonb, 'has_more', false, 'total', 0);
     end if;
   end if;
-  -- Step 3: every live post the caller may read that matches, in its thread and forum, ranked
-  -- (one extra, to know whether there is more).
+  -- Step 3: every live post the caller may read that matches, in its thread and forum. Class
+  -- spaces and spaces the caller can't read fall out in forum_thread_is_shown(), and posts by
+  -- blocked members in forum_post_state_for_caller() (user story 7.2).
   with candidates as (
     select forum_posts.id as post_id, forum_posts.post_number, forum_posts.user_id, forum_posts.created_at,
-           forum_posts.body, forum_threads.thread_number, forum_threads.title, forums.id as forum_id,
-           forums.slug, public.forum_post_search_text(forum_posts, forum_threads.title) as text
+           forum_posts.body, forum_threads.id as thread_id, forum_threads.thread_number, forum_threads.title,
+           forums.id as forum_id, forums.slug, public.forum_post_search_text(forum_posts, forum_threads.title) as text
     from public.forum_posts
     join public.forum_threads on forum_threads.id = forum_posts.thread_id
     join public.forums on forums.id = forum_threads.forum_id and forums.deleted_at is null
@@ -45870,14 +45986,25 @@ begin
   ), matched as (
     select candidates.*,
            candidates.post_number = 1 and public.search_fold(candidates.title) like pattern as title_matches,
-           ts_rank(to_tsvector('pg_catalog.romanian', candidates.text) || to_tsvector('pg_catalog.english', candidates.text), query) as closeness
+           ts_rank(to_tsvector('pg_catalog.romanian', candidates.text) || to_tsvector('pg_catalog.english', candidates.text), query) as closeness,
+           greatest(public.forum_live_post_count(candidates.thread_id) - 1, 0) as reply_count
     from candidates
     where (to_tsvector('pg_catalog.romanian', candidates.text) || to_tsvector('pg_catalog.english', candidates.text)) @@ query
        or candidates.text like pattern
+  ), ordered as (
+    -- The picked order becomes one row number, so the page and the list below agree.
+    select matched.*,
+           row_number() over (order by
+             case when wanted_sort = 'best' then matched.title_matches end desc nulls last,
+             case when wanted_sort = 'best' then matched.closeness end desc nulls last,
+             case when wanted_sort = 'replies' then matched.reply_count end desc nulls last,
+             matched.created_at desc, matched.post_id) as place,
+           count(*) over () as matched_count
+    from matched
   ), page as (
-    select * from matched
-    order by matched.title_matches desc, matched.closeness desc, matched.created_at desc
-    offset greatest(coalesce(skip, 0), 0)
+    select * from ordered
+    where ordered.place > greatest(coalesce(skip, 0), 0)
+    order by ordered.place
     limit page_size + 1
   )
   select coalesce(jsonb_agg(jsonb_build_object(
@@ -45889,24 +46016,30 @@ begin
            'post_number', page.post_number,
            'author', public.forum_person_json(page.user_id),
            'created_at', page.created_at,
+           'reply_count', page.reply_count,
            'snippet', public.forum_search_snippet(page.body))
-         order by page.title_matches desc, page.closeness desc, page.created_at desc), '[]'::jsonb),
-         count(*)::integer
-  into found, found_count
+         order by page.place), '[]'::jsonb),
+         count(*)::integer,
+         coalesce(max(page.matched_count), 0)::integer
+  into found, found_count, total
   from page;
-  -- Step 4: the answer; the extra result only says there is more.
+  -- Step 4: past the last page there is no row to carry the total, so count again.
+  if found_count = 0 and coalesce(skip, 0) > 0 then
+    total := null;
+  end if;
+  -- Step 5: the answer; the extra result only says there is more.
   if found_count > page_size then
     found := found - page_size;
   end if;
-  return jsonb_build_object('results', found, 'has_more', found_count > page_size);
+  return jsonb_build_object('results', found, 'has_more', found_count > page_size, 'total', total);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text", "author_handle" "text", "skip" integer, "language_code" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text", "author_handle" "text", "skip" integer, "language_code" "text", "sort" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text", "author_handle" "text", "skip" integer, "language_code" "text") IS 'Threads and posts matching a search, by forum and author, without removed posts or blocked people; never a user ID (S1-E8-10).';
+COMMENT ON FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text", "author_handle" "text", "skip" integer, "language_code" "text", "sort" "text") IS 'Searches the threads and posts the caller may read, best match, newest or most replies first, with the total (S1-E8-10, BOOKS-7).';
 
 
 
@@ -48431,15 +48564,31 @@ begin
   if cardinality(chosen) > 0 and public.space_age_group_of_person(member.user_id) is distinct from space.age_group then
     raise exception 'This person is in another age group.' using errcode = 'check_violation', hint = 'member:age';
   end if;
-  -- Step 3: the change.
-  outcome := case when cardinality(chosen) = 0 then 'removed'
-                  when member.role = 'moderator' then 'changed' else 'appointed' end;
-  update public.space_members
-  set role = (case when cardinality(chosen) = 0 then 'member' else 'moderator' end)::public.space_member_role, powers = chosen
-  where space_members.id = member.id;
-  -- Step 4: the log (criterion 2).
+  -- Step 3: a member gets an invitation (or loses a waiting one); a moderator changes at once.
+  if member.role = 'member' then
+    outcome := case when cardinality(chosen) = 0 then 'invite_cancelled' else 'invited' end;
+    if outcome = 'invite_cancelled' and member.moderator_invite_powers is null then
+      return jsonb_build_object('outcome', outcome);
+    end if;
+    update public.space_members
+    set moderator_invite_powers = case when cardinality(chosen) = 0 then null else chosen end,
+        moderator_invited_at = case when cardinality(chosen) = 0 then null else now() end
+    where space_members.id = member.id;
+  else
+    outcome := case when cardinality(chosen) = 0 then 'removed' else 'changed' end;
+    update public.space_members
+    set role = (case when cardinality(chosen) = 0 then 'member' else 'moderator' end)::public.space_member_role,
+        powers = chosen
+    where space_members.id = member.id;
+  end if;
+  -- Step 4: the log (S1-E8-07 criterion 2) and, for an invitation, the member's notification.
   perform public.log_space_action(space, 'moderator_' || outcome, member.user_id, null, null,
-    jsonb_build_object('powers_before', to_jsonb(member.powers), 'powers_after', to_jsonb(chosen)));
+    jsonb_build_object('powers_before', to_jsonb(coalesce(member.moderator_invite_powers, member.powers)),
+                       'powers_after', to_jsonb(chosen)));
+  if outcome = 'invited' then
+    perform public.notify(member.user_id, 'space_moderator_invited', (select auth.uid()),
+      jsonb_build_object('space_id', space.id));
+  end if;
   return jsonb_build_object('outcome', outcome);
 end;
 $$;
@@ -48448,7 +48597,7 @@ $$;
 ALTER FUNCTION "public"."set_space_moderator"("slug" "text", "handle" "text", "powers" "public"."space_power"[]) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_space_moderator"("slug" "text", "handle" "text", "powers" "public"."space_power"[]) IS 'The owner appoints a space moderator, changes their powers or removes them; logged (S1-E8-07).';
+COMMENT ON FUNCTION "public"."set_space_moderator"("slug" "text", "handle" "text", "powers" "public"."space_power"[]) IS 'The owner invites a member to moderate (they accept first), changes a moderator''s powers or takes them away; logged (S1-E8-07, BOOKS-7).';
 
 
 
@@ -49635,6 +49784,64 @@ COMMENT ON FUNCTION "public"."space_banner_upload_allowed"("object_name" "text")
 
 
 
+CREATE OR REPLACE FUNCTION "public"."space_blocked_members"("slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  space public.spaces := public.space_for_power(space_blocked_members.slug, 'members');
+begin
+  return coalesce((
+    select jsonb_agg(jsonb_build_object('person', public.forum_person_json(space_blocks.blocked_user_id),
+                                        'blocked_at', space_blocks.created_at)
+                     order by space_blocks.created_at desc)
+    from public.space_blocks
+    where space_blocks.space_id = space.id
+      and public.forum_person_json(space_blocks.blocked_user_id) is not null), '[]'::jsonb);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."space_blocked_members"("slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_blocked_members"("slug" "text") IS 'The people a space blocked, for its owner and moderators with the members power (BOOKS-7).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."space_blocks_caller"("target_space_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (select 1 from public.space_blocks
+                 where space_blocks.space_id = target_space_id
+                   and space_blocks.blocked_user_id = (select auth.uid()));
+$$;
+
+
+ALTER FUNCTION "public"."space_blocks_caller"("target_space_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_blocks_caller"("target_space_id" "uuid") IS 'Internal: whether a space blocked the caller (BOOKS-7).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."space_blocks_readable"("target_space_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (select 1 from public.spaces
+                 where spaces.id = target_space_id and public.space_may_act(spaces, 'members'));
+$$;
+
+
+ALTER FUNCTION "public"."space_blocks_readable"("target_space_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_blocks_readable"("target_space_id" "uuid") IS 'Internal: whether the caller runs a space (or is our moderation team), for the space_blocks policy (BOOKS-7).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."space_card_visible"("target" "public"."spaces") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -49863,6 +50070,9 @@ CREATE TABLE IF NOT EXISTS "public"."space_members" (
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "powers" "public"."space_power"[] DEFAULT '{}'::"public"."space_power"[] NOT NULL,
     "welcome_seen_at" timestamp with time zone,
+    "moderator_invite_powers" "public"."space_power"[],
+    "moderator_invited_at" timestamp with time zone,
+    CONSTRAINT "space_members_invite_only_members" CHECK ((("moderator_invite_powers" IS NULL) OR (("role" = 'member'::"public"."space_member_role") AND ("status" = 'active'::"public"."space_member_status") AND ("cardinality"("moderator_invite_powers") > 0) AND ("moderator_invited_at" IS NOT NULL)))),
     CONSTRAINT "space_members_joined_when_active" CHECK ((("status" = 'active'::"public"."space_member_status") = ("joined_at" IS NOT NULL))),
     CONSTRAINT "space_members_moderator_is_active" CHECK ((("role" <> 'moderator'::"public"."space_member_role") OR ("status" = 'active'::"public"."space_member_status"))),
     CONSTRAINT "space_members_owner_is_active" CHECK ((("role" <> 'owner'::"public"."space_member_role") OR ("status" = 'active'::"public"."space_member_status"))),
@@ -49883,6 +50093,14 @@ COMMENT ON COLUMN "public"."space_members"."powers" IS 'A moderator''s powers, c
 
 
 COMMENT ON COLUMN "public"."space_members"."welcome_seen_at" IS 'When the member pressed "Got it" on the space''s welcome note; null while it still shows (IDEA-20261102-6).';
+
+
+
+COMMENT ON COLUMN "public"."space_members"."moderator_invite_powers" IS 'The powers the owner offered this member, waiting for the member to accept; null for none (BOOKS-7).';
+
+
+
+COMMENT ON COLUMN "public"."space_members"."moderator_invited_at" IS 'When the owner sent the open moderator invitation; null for none (BOOKS-7).';
 
 
 
@@ -49999,24 +50217,36 @@ COMMENT ON FUNCTION "public"."space_latest_activity"("target" "public"."spaces")
 
 
 
-CREATE OR REPLACE FUNCTION "public"."space_list"("skip" integer DEFAULT 0, "how_many" integer DEFAULT 20) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."space_list"("skip" integer DEFAULT 0, "how_many" integer DEFAULT 20, "sort" "text" DEFAULT 'latest'::"text", "joined" boolean DEFAULT NULL::boolean) RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   page_size integer := least(greatest(coalesce(how_many, 20), 1), 50);
+  wanted_sort text := case when sort in ('members', 'newest') then sort else 'latest' end;
   found jsonb;
   total integer;
 begin
-  -- Step 1: every live space whose card the caller may see, the busiest first; then one page.
+  -- Step 1: every live space whose card the caller may see, split by "joined" when asked. Class
+  -- spaces never show among the others (user story 7.6: only their pupils and teacher see them,
+  -- under Joined).
   with seen as (
-    select spaces as row_data, public.space_latest_activity(spaces) as activity from public.spaces
+    select spaces as row_data,
+           case wanted_sort
+             when 'members' then (select count(*) from public.space_members
+                                  where space_members.space_id = spaces.id and space_members.status = 'active')::numeric
+             when 'newest' then extract(epoch from spaces.created_at)
+             else extract(epoch from public.space_latest_activity(spaces)) end as sort_key
+    from public.spaces
     where spaces.deleted_at is null and public.space_card_visible(spaces)
+      and (joined is null
+           or (joined and public.space_is_member(spaces.id))
+           or (not joined and not public.space_is_member(spaces.id) and spaces.kind = 'open'))
   ), page as (
-    select seen.* from seen order by seen.activity desc, (seen.row_data).name
+    select seen.* from seen order by seen.sort_key desc nulls last, (seen.row_data).name
     offset greatest(coalesce(skip, 0), 0) limit page_size
   )
-  select coalesce((select jsonb_agg(public.space_json(page.row_data) order by page.activity desc, (page.row_data).name)
+  select coalesce((select jsonb_agg(public.space_json(page.row_data) order by page.sort_key desc nulls last, (page.row_data).name)
                    from page), '[]'::jsonb),
          (select count(*)::integer from seen)
   into found, total;
@@ -50027,20 +50257,22 @@ end;
 $$;
 
 
-ALTER FUNCTION "public"."space_list"("skip" integer, "how_many" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."space_list"("skip" integer, "how_many" integer, "sort" "text", "joined" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."space_list"("skip" integer, "how_many" integer) IS 'The spaces the caller may see, busiest first (S1-E8-06).';
+COMMENT ON FUNCTION "public"."space_list"("skip" integer, "how_many" integer, "sort" "text", "joined" boolean) IS 'The spaces the caller may see, by latest activity, members or newest, joined or not (S1-E8-06, BOOKS-7).';
 
 
 
-CREATE OR REPLACE FUNCTION "public"."space_log"("slug" "text", "skip" integer DEFAULT 0) RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."space_log"("slug" "text", "skip" integer DEFAULT 0, "who" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   space public.spaces;
   page_size constant integer := 50;
+  wanted text := nullif(lower(ltrim(btrim(coalesce(who, '')), '@')), '');
+  wanted_id uuid;
 begin
   -- Step 1: the space, for its owner or platform moderators only (the table's policy says the same).
   select * into space from public.spaces where spaces.slug = space_log.slug and spaces.deleted_at is null;
@@ -50050,12 +50282,21 @@ begin
   if space.user_id is distinct from (select auth.uid()) and not public.staff_may('moderation', 'view') then
     raise exception 'Only the space''s owner can read its log.' using errcode = 'insufficient_privilege', hint = 'space:not_owner';
   end if;
-  -- Step 2: one page, one row more to know whether there is another.
+  -- Step 2: the person picked in "Who", by handle.
+  if wanted is not null and wanted <> 'platform' then
+    select profiles.id into wanted_id from public.profiles where lower(profiles.handle) = wanted;
+  end if;
+  -- Step 3: one page, one row more to know whether there is another.
   return (
-    with page as (
+    with filtered as (
       select log.* from public.space_moderation_log as log
       where log.space_id = space.id
-      order by log.created_at desc, log.id
+        and (wanted is null
+             or (wanted = 'platform' and log.by_platform)
+             or (wanted <> 'platform' and not log.by_platform and log.user_id = wanted_id))
+    ), page as (
+      select filtered.* from filtered
+      order by filtered.created_at desc, filtered.id
       offset greatest(coalesce(skip, 0), 0) limit page_size + 1
     )
     select jsonb_build_object(
@@ -50070,15 +50311,23 @@ begin
                  'details', page.details,
                  'created_at', page.created_at) order by page.created_at desc, page.id)
         from (select * from page order by page.created_at desc, page.id limit page_size) as page), '[]'::jsonb),
-      'has_more', (select count(*) > page_size from page)));
+      'has_more', (select count(*) > page_size from page),
+      'people', coalesce((
+        select jsonb_agg(person order by person ->> 'handle')
+        from (select distinct public.forum_person_json(log.user_id) as person
+              from public.space_moderation_log as log
+              where log.space_id = space.id and not log.by_platform) as actors
+        where person is not null), '[]'::jsonb),
+      'platform_acted', exists (select 1 from public.space_moderation_log as log
+                                where log.space_id = space.id and log.by_platform)));
 end;
 $$;
 
 
-ALTER FUNCTION "public"."space_log"("slug" "text", "skip" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."space_log"("slug" "text", "skip" integer, "who" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."space_log"("slug" "text", "skip" integer) IS 'A space''s moderation log, for its owner and platform moderators (S1-E8-07 criterion 2).';
+COMMENT ON FUNCTION "public"."space_log"("slug" "text", "skip" integer, "who" "text") IS 'A space''s moderation log, for its owner and platform moderators, optionally by who acted (S1-E8-07, BOOKS-7).';
 
 
 
@@ -50112,7 +50361,8 @@ CREATE OR REPLACE FUNCTION "public"."space_may_join"("target" "public"."spaces")
     and public.space_card_visible(target)
     and public.is_active_member()
     and public.space_age_group_of_caller() = target.age_group
-    and (public.space_membership_of_caller(target.id)).id is null;
+    and (public.space_membership_of_caller(target.id)).id is null
+    and not public.space_blocks_caller(target.id);
 $$;
 
 
@@ -50198,6 +50448,7 @@ begin
   return coalesce((
     select jsonb_agg(jsonb_build_object('person', public.forum_person_json(space_members.user_id),
                        'role', space_members.role, 'powers', to_jsonb(space_members.powers),
+                       'invited_powers', to_jsonb(space_members.moderator_invite_powers),
                        'joined_at', space_members.joined_at)
                      order by case space_members.role when 'owner' then 0 when 'moderator' then 1 else 2 end,
                               space_members.joined_at)
@@ -50569,15 +50820,16 @@ CREATE OR REPLACE FUNCTION "public"."space_viewer_json"("target" "public"."space
     'can_invite', target.kind = 'class' and public.space_may_act(target, 'members'),
     'waits_for_account', public.space_is_in_class(target) and not public.space_may_read(target),
     'powers', to_jsonb(public.space_powers_of_caller(target)),
-    -- IDEAS-3d: the welcome note, for members and the people who run the space only.
     'welcome_note', case when membership.status = 'active' or public.space_may_act(target, 'settings')
                          then target.welcome_note end,
     'show_welcome', coalesce(target.welcome_note is not null and membership.status = 'active'
                              and membership.role <> 'owner' and membership.welcome_seen_at is null, false),
-    -- IDEAS-3e: the owner may offer the space to a moderator; an open offer is shown to the owner
-    -- and to the moderator it is for, never to anyone else.
     'can_hand_over', target.user_id = (select auth.uid()),
-    'handover', public.space_handover_json(target))
+    'handover', public.space_handover_json(target),
+    -- BOOKS-7: the owner's open invitation to moderate, shown only to the member it is for.
+    'moderator_invite', to_jsonb(membership.moderator_invite_powers),
+    -- BOOKS-7: whether the space blocked the caller, so the page says why there is no Join.
+    'is_blocked', public.space_blocks_caller(target.id))
   from (select (public.space_membership_of_caller(target.id)).*) as membership;
 $$;
 
@@ -55153,6 +55405,37 @@ ALTER FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "h
 
 
 COMMENT ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) IS 'A genre''s most used tags, or the tags related to a tag, over stories the reader may see (BOOKS-A06, BOOKS-A09).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  space public.spaces := public.space_for_power(unblock_space_member.slug, 'members');
+  person_id uuid;
+  removed integer;
+begin
+  -- Step 1: the person, by handle.
+  select profiles.id into person_id from public.profiles
+  where profiles.handle_skeleton = public.username_skeleton(btrim(unblock_space_member.handle, ' @'));
+  -- Step 2: the block goes, and the log says so.
+  delete from public.space_blocks
+  where space_blocks.space_id = space.id and space_blocks.blocked_user_id = person_id;
+  get diagnostics removed = row_count;
+  if removed > 0 then
+    perform public.log_space_action(space, 'member_unblocked', person_id, null, null);
+  end if;
+  return jsonb_build_object('unblocked', removed > 0);
+end;
+$$;
+
+
+ALTER FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") IS 'Lets someone a space blocked ask to join again; logged (BOOKS-7).';
 
 
 
@@ -60507,6 +60790,24 @@ The scrambled IP address of a sign-up, under this month''s and last month''s key
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."space_blocks" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "space_id" "uuid" NOT NULL,
+    "blocked_user_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."space_blocks" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."space_blocks" IS 'kind: user_action
+The people a space''s owner or moderators blocked: they can''t ask to join again or read members-only posts (BOOKS-7, user story 7.11).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."space_join_notes" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -62611,6 +62912,16 @@ ALTER TABLE ONLY "public"."sign_up_ips"
 
 
 
+ALTER TABLE ONLY "public"."space_blocks"
+    ADD CONSTRAINT "space_blocks_once" UNIQUE ("space_id", "blocked_user_id");
+
+
+
+ALTER TABLE ONLY "public"."space_blocks"
+    ADD CONSTRAINT "space_blocks_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."space_join_notes"
     ADD CONSTRAINT "space_join_notes_pkey" PRIMARY KEY ("id");
 
@@ -64021,6 +64332,14 @@ CREATE INDEX "sign_up_ips_by_value" ON "public"."sign_up_ips" USING "btree" ("ip
 
 
 
+CREATE INDEX "space_blocks_blocked_user_id" ON "public"."space_blocks" USING "btree" ("blocked_user_id");
+
+
+
+CREATE INDEX "space_blocks_user_id" ON "public"."space_blocks" USING "btree" ("user_id");
+
+
+
 CREATE INDEX "space_join_notes_person" ON "public"."space_join_notes" USING "btree" ("user_id");
 
 
@@ -65286,6 +65605,14 @@ CREATE OR REPLACE TRIGGER "sign_in_failures_set_updated_at" BEFORE UPDATE ON "pu
 
 
 CREATE OR REPLACE TRIGGER "sign_up_ips_refuse_user_id_change" BEFORE UPDATE ON "public"."sign_up_ips" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "space_blocks_keep_user_id" BEFORE UPDATE ON "public"."space_blocks" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"('user_id');
+
+
+
+CREATE OR REPLACE TRIGGER "space_blocks_set_updated_at" BEFORE UPDATE ON "public"."space_blocks" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
 
 
 
@@ -67235,6 +67562,21 @@ ALTER TABLE ONLY "public"."sanctions"
 
 ALTER TABLE ONLY "public"."sign_up_ips"
     ADD CONSTRAINT "sign_up_ips_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
+
+
+
+ALTER TABLE ONLY "public"."space_blocks"
+    ADD CONSTRAINT "space_blocks_blocked_user_id_fkey" FOREIGN KEY ("blocked_user_id") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."space_blocks"
+    ADD CONSTRAINT "space_blocks_space_id_fkey" FOREIGN KEY ("space_id") REFERENCES "public"."spaces"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."space_blocks"
+    ADD CONSTRAINT "space_blocks_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("id");
 
 
 
@@ -69430,6 +69772,17 @@ CREATE POLICY "sign_up_ips_select_moderation" ON "public"."sign_up_ips" FOR SELE
 
 
 COMMENT ON POLICY "sign_up_ips_select_moderation" ON "public"."sign_up_ips" IS 'Allows moderation staff to read the scrambled sign-up IPs; nobody else, the person included (part f2).';
+
+
+
+ALTER TABLE "public"."space_blocks" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "space_blocks_select_runners" ON "public"."space_blocks" FOR SELECT TO "authenticated" USING (( SELECT "public"."space_blocks_readable"("space_blocks"."space_id") AS "space_blocks_readable"));
+
+
+
+COMMENT ON POLICY "space_blocks_select_runners" ON "public"."space_blocks" IS 'Allows a space''s owner, its moderators with the members power and platform moderators to read who the space blocked (BOOKS-7).';
 
 
 
@@ -71782,6 +72135,11 @@ GRANT ALL ON FUNCTION "public"."answer_space_handover"("slug" "text", "accept" b
 
 
 
+REVOKE ALL ON FUNCTION "public"."answer_space_moderator_invite"("slug" "text", "accept" boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."answer_space_moderator_invite"("slug" "text", "accept" boolean) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."answer_spotlight_consent"("token" "text", "decision" "text", "signature" "text") TO "authenticated";
@@ -71923,6 +72281,11 @@ REVOKE ALL ON FUNCTION "public"."bio_for_caller"("person" "public"."profiles") F
 
 
 REVOKE ALL ON FUNCTION "public"."blank_old_scrambled_ips"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."block_space_member"("slug" "text", "handle" "text", "reason" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."block_space_member"("slug" "text", "handle" "text", "reason" "text") TO "authenticated";
 
 
 
@@ -73528,8 +73891,8 @@ REVOKE ALL ON FUNCTION "public"."forum_thread_is_shown"("target" "public"."forum
 
 
 
-GRANT ALL ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone) TO "anon";
-GRANT ALL ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone, "sort" "text", "skip" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."forum_thread_list"("forum_slug" "text", "older_than" timestamp with time zone, "sort" "text", "skip" integer) TO "authenticated";
 
 
 
@@ -76027,8 +76390,8 @@ REVOKE ALL ON FUNCTION "public"."search_fold"("raw_text" "text") FROM PUBLIC;
 
 
 
-GRANT ALL ON FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text", "author_handle" "text", "skip" integer, "language_code" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text", "author_handle" "text", "skip" integer, "language_code" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text", "author_handle" "text", "skip" integer, "language_code" "text", "sort" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."search_forum_posts"("term" "text", "forum_slug" "text", "author_handle" "text", "skip" integer, "language_code" "text", "sort" "text") TO "authenticated";
 
 
 
@@ -76534,6 +76897,20 @@ GRANT ALL ON FUNCTION "public"."space_banner_upload_allowed"("object_name" "text
 
 
 
+REVOKE ALL ON FUNCTION "public"."space_blocked_members"("slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."space_blocked_members"("slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."space_blocks_caller"("target_space_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."space_blocks_readable"("target_space_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."space_blocks_readable"("target_space_id" "uuid") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."space_card_visible"("target" "public"."spaces") FROM PUBLIC;
 
 
@@ -76597,13 +76974,13 @@ REVOKE ALL ON FUNCTION "public"."space_latest_activity"("target" "public"."space
 
 
 
-GRANT ALL ON FUNCTION "public"."space_list"("skip" integer, "how_many" integer) TO "anon";
-GRANT ALL ON FUNCTION "public"."space_list"("skip" integer, "how_many" integer) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."space_list"("skip" integer, "how_many" integer, "sort" "text", "joined" boolean) TO "anon";
+GRANT ALL ON FUNCTION "public"."space_list"("skip" integer, "how_many" integer, "sort" "text", "joined" boolean) TO "authenticated";
 
 
 
-REVOKE ALL ON FUNCTION "public"."space_log"("slug" "text", "skip" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."space_log"("slug" "text", "skip" integer) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."space_log"("slug" "text", "skip" integer, "who" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."space_log"("slug" "text", "skip" integer, "who" "text") TO "authenticated";
 
 
 
@@ -77307,6 +77684,11 @@ REVOKE ALL ON FUNCTION "public"."topic_ids_of"("topic_kind" "text", "topic_key" 
 REVOKE ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "anon";
 GRANT ALL ON FUNCTION "public"."topic_tags"("topic_kind" "text", "topic_key" "text", "how_many" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."unblock_space_member"("slug" "text", "handle" "text") TO "authenticated";
 
 
 
@@ -78259,6 +78641,11 @@ GRANT SELECT ON TABLE "public"."sign_in_failures" TO "authenticated";
 
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."sign_up_ips" TO "service_role";
 GRANT SELECT ON TABLE "public"."sign_up_ips" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."space_blocks" TO "service_role";
+GRANT SELECT ON TABLE "public"."space_blocks" TO "authenticated";
 
 
 

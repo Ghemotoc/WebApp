@@ -128,7 +128,10 @@ select is(pg_temp.hint_of($$select public.join_space('cercul-epic-opt')$$), 'spa
 
 select pg_temp.sign_in('01');
 select is(public.set_space_moderator('cercul-epic-opt', 'teen_17', array['posts']::public.space_power[]) ->> 'outcome',
-  'appointed', 'adult_writer makes teen_17 a moderator of the space (S1-E8-07)');
+  'invited', 'adult_writer invites teen_17 to moderate the space (S1-E8-07, BOOKS-7)');
+select pg_temp.sign_in('02');
+select public.answer_space_moderator_invite('cercul-epic-opt', true);
+select pg_temp.sign_in('01');
 insert into kept select 'space_thread', public.start_forum_thread('space-cercul-epic-opt', 'Bun venit epic',
   'Prezentați-vă.') ->> 'thread_number';
 select pg_temp.sign_in('02');

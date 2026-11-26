@@ -8175,6 +8175,56 @@ export type Database = {
           },
         ];
       };
+      space_blocks: {
+        Row: {
+          blocked_user_id: string;
+          created_at: string;
+          id: string;
+          space_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          blocked_user_id: string;
+          created_at?: string;
+          id?: string;
+          space_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          blocked_user_id?: string;
+          created_at?: string;
+          id?: string;
+          space_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'space_blocks_blocked_user_id_fkey';
+            columns: ['blocked_user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'space_blocks_space_id_fkey';
+            columns: ['space_id'];
+            isOneToOne: false;
+            referencedRelation: 'spaces';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'space_blocks_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       space_join_notes: {
         Row: {
           created_at: string;
@@ -8226,6 +8276,8 @@ export type Database = {
           created_at: string;
           id: string;
           joined_at: string | null;
+          moderator_invite_powers: Database['public']['Enums']['space_power'][] | null;
+          moderator_invited_at: string | null;
           powers: Database['public']['Enums']['space_power'][];
           requested_at: string;
           role: Database['public']['Enums']['space_member_role'];
@@ -8241,6 +8293,8 @@ export type Database = {
           created_at?: string;
           id?: string;
           joined_at?: string | null;
+          moderator_invite_powers?: Database['public']['Enums']['space_power'][] | null;
+          moderator_invited_at?: string | null;
           powers?: Database['public']['Enums']['space_power'][];
           requested_at?: string;
           role?: Database['public']['Enums']['space_member_role'];
@@ -8254,6 +8308,8 @@ export type Database = {
           created_at?: string;
           id?: string;
           joined_at?: string | null;
+          moderator_invite_powers?: Database['public']['Enums']['space_power'][] | null;
+          moderator_invited_at?: string | null;
           powers?: Database['public']['Enums']['space_power'][];
           requested_at?: string;
           role?: Database['public']['Enums']['space_member_role'];
@@ -13280,6 +13336,7 @@ export type Database = {
         Returns: undefined;
       };
       answer_space_handover: { Args: { accept: boolean; slug: string }; Returns: Json };
+      answer_space_moderator_invite: { Args: { accept: boolean; slug: string }; Returns: Json };
       answer_spotlight_consent: {
         Args: { decision: string; signature: string; token: string };
         Returns: Json;
@@ -13391,6 +13448,10 @@ export type Database = {
         Returns: boolean;
       };
       blank_old_scrambled_ips: { Args: Record<PropertyKey, never>; Returns: number };
+      block_space_member: {
+        Args: { handle: string; reason?: string; slug: string };
+        Returns: Json;
+      };
       booked_sponsor_ad_for_slot: {
         Args: { context: Json; used_keys: string[]; wanted_slot_key: string };
         Returns: Json;
@@ -15154,7 +15215,10 @@ export type Database = {
         };
         Returns: boolean;
       };
-      forum_thread_list: { Args: { forum_slug: string; older_than?: string }; Returns: Json };
+      forum_thread_list: {
+        Args: { forum_slug: string; older_than?: string; skip?: number; sort?: string };
+        Returns: Json;
+      };
       forum_thread_pointer_json: { Args: { pointed_thread_id: string }; Returns: Json };
       forum_thread_summary_json: {
         Args: {
@@ -17712,6 +17776,7 @@ export type Database = {
           forum_slug?: string;
           language_code?: string;
           skip?: number;
+          sort?: string;
           term: string;
         };
         Returns: Json;
@@ -17989,6 +18054,9 @@ export type Database = {
       space_banner_change_request: { Args: { slug: string }; Returns: Json };
       space_banner_file_may_go: { Args: { object_name: string }; Returns: boolean };
       space_banner_upload_allowed: { Args: { object_name: string }; Returns: boolean };
+      space_blocked_members: { Args: { slug: string }; Returns: Json };
+      space_blocks_caller: { Args: { target_space_id: string }; Returns: boolean };
+      space_blocks_readable: { Args: { target_space_id: string }; Returns: boolean };
       space_card_visible: {
         Args: {
           target: Omit<
@@ -18142,8 +18210,11 @@ export type Database = {
         };
         Returns: string;
       };
-      space_list: { Args: { how_many?: number; skip?: number }; Returns: Json };
-      space_log: { Args: { skip?: number; slug: string }; Returns: Json };
+      space_list: {
+        Args: { how_many?: number; joined?: boolean; skip?: number; sort?: string };
+        Returns: Json;
+      };
+      space_log: { Args: { skip?: number; slug: string; who?: string }; Returns: Json };
       space_may_act: {
         Args: {
           target: Omit<
@@ -18187,6 +18258,8 @@ export type Database = {
           created_at: string;
           id: string;
           joined_at: string | null;
+          moderator_invite_powers: Database['public']['Enums']['space_power'][] | null;
+          moderator_invited_at: string | null;
           powers: Database['public']['Enums']['space_power'][];
           requested_at: string;
           role: Database['public']['Enums']['space_member_role'];
@@ -18210,6 +18283,8 @@ export type Database = {
           created_at: string;
           id: string;
           joined_at: string | null;
+          moderator_invite_powers: Database['public']['Enums']['space_power'][] | null;
+          moderator_invited_at: string | null;
           powers: Database['public']['Enums']['space_power'][];
           requested_at: string;
           role: Database['public']['Enums']['space_member_role'];
@@ -18992,6 +19067,7 @@ export type Database = {
         Returns: Json;
       };
       trending_tags: { Args: { how_many?: number }; Returns: Json };
+      unblock_space_member: { Args: { handle: string; slug: string }; Returns: Json };
       undo_decision_for_appeal: {
         Args: {
           appeal_reference: string;
@@ -19394,7 +19470,8 @@ export type Database = {
         | 'class_competition_results'
         | 'class_readers_choice'
         | 'comments_resumed'
-        | 'story_completed';
+        | 'story_completed'
+        | 'space_moderator_invited';
       picture_kind:
         | 'cover'
         | 'avatar'
@@ -19806,6 +19883,7 @@ export const Constants = {
         'class_readers_choice',
         'comments_resumed',
         'story_completed',
+        'space_moderator_invited',
       ],
       picture_kind: [
         'cover',
