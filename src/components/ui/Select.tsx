@@ -5,7 +5,9 @@
  * The rule: only as wide as its longest option (never stretched), a 14 px chevron 14 px from the
  * right edge and vertically centred, 36 px right padding, a control-border edge (#725F88 by day since CALM-1b, 3:1), 44 px tall and
  * a visible focus ring. The boards also draw 40 and 48 px versions; the DoD's 44 px wins
- * (docs/board-fixes.md). It is a real <select>, so keyboards and screen readers work as usual.
+ * (docs/board-fixes.md). On member pages it is a rounded square with the 12 px field corner,
+ * like a text field, not a pill (Robert, Atlas look-check comment, 26 Nov 2026); staff pages
+ * keep the pill. It is a real <select>, so keyboards and screen readers work as usual.
  *
  * Who uses it: the theme drop-down in the footer (S1-E1-03), the language drop-downs (S1-E1-04)
  * and every form after that.
@@ -130,7 +132,7 @@ export function Select({
           aria-describedby={descriptionId}
           aria-invalid={isInvalid || undefined}
           onChange={handleChange}
-          className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
+          className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-field in-data-[area=staff]:rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
         >
           {groups === undefined ? (
             <SelectOptions options={options} />
