@@ -46218,6 +46218,7 @@ ALTER FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text
 COMMENT ON FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") IS 'Internal: a search result''s text without its own title when the match is also elsewhere (story 6.15).';
 
 
+
 CREATE OR REPLACE FUNCTION "public"."search_spaces"("term" "text", "skip" integer DEFAULT 0, "how_many" integer DEFAULT 20) RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -76463,6 +76464,7 @@ REVOKE ALL ON FUNCTION "public"."search_query"("term" "text") FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."search_snippet_source"("haystack" "text", "title" "text", "wanted" "text") FROM PUBLIC;
+
 
 
 REVOKE ALL ON FUNCTION "public"."search_spaces"("term" "text", "skip" integer, "how_many" integer) FROM PUBLIC;
