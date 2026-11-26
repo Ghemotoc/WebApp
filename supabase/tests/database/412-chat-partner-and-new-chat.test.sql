@@ -50,6 +50,11 @@ insert into public.follows_users (user_id, followed_user_id)
   select '00000000-0000-4000-8000-000000000001', followed.id
   from public.profiles as followed
   where followed.handle in ('teacher', 'teen_17', 'kid_14_waiting', 'blocker', 'support');
+-- teen_17 follows adult_writer in the seed; set here too, so the file never leans on what
+-- another test left behind (teen_17's "People you follow" setting needs it).
+insert into public.follows_users (user_id, followed_user_id)
+  values ('00000000-0000-4000-8000-000000000002', '00000000-0000-4000-8000-000000000001')
+  on conflict do nothing;
 
 /* ---------- 1. The writer line in the chat header ---------- */
 

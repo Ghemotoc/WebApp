@@ -10,7 +10,7 @@
  *     ghosts are decoration, hidden from screen readers.
  *   - The row never scrolls sideways: 5 places a line on phones and tablets, all 10 on one line
  *     from 1024 px.
- * Who uses it: ReadingListsCard (the Library). What it calls: DrawnCover through
+ * Who uses it: ReadingListsCard (the Library); BookshelfBooks reuses the ghost place. What it calls: DrawnCover through
  * designsForRow(), and StoryCoverArt for uploaded covers.
  */
 import { Link } from 'react-router';
@@ -27,16 +27,18 @@ import { useLibraryTranslation } from '../registerLibraryTranslations';
 const placesGrid =
   'm-0 grid list-none grid-cols-5 gap-4 p-0 min-[600px]:gap-6 min-[1024px]:grid-cols-10';
 
-/** A dashed ghost place, the size and shape of a cover. */
-const ghostClasses =
+/** A dashed ghost place, the size and shape of a cover (also used on a bookshelf's page). */
+export const ghostClasses =
   'flex aspect-[2/3] w-full items-center justify-center rounded-cover border border-dashed border-dashed-border';
 
 /**
- * The first ghost: a + that links to Read, so an empty place says how to fill it.
+ * The first ghost: a + that links to Read, so an empty place says how to fill it. The bookshelf's
+ * own page (BookshelfBooks) uses it too.
  *
+ * @param props.name - the bookshelf's name, for the link's name ("Find stories for …")
  * @returns the link
  */
-function FindStoriesPlace({ name }: { name: string }) {
+export function FindStoriesPlace({ name }: { name: string }) {
   const { t } = useLibraryTranslation();
   return (
     <Link

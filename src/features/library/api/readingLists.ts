@@ -126,6 +126,17 @@ function toReadingList(row: ReadingListRow): ReadingList {
   };
 }
 
+/**
+ * The app's shape of a JSON array of lists, as my_reading_lists() and profile_bookshelves()
+ * answer it (the profile's bookshelves page, board C06, reads the same shape).
+ *
+ * @param data - the function's answer
+ * @returns the lists
+ */
+export function readingListsFromJson(data: unknown): ReadingList[] {
+  return (data as ReadingListRow[]).map(toReadingList);
+}
+
 /** What Supabase answers for a function call. */
 interface RpcAnswer {
   data: unknown;
@@ -163,7 +174,7 @@ function checkedChange(answer: RpcAnswer, action: string): Record<string, unknow
 export async function fetchMyReadingLists(client: AppSupabaseClient): Promise<ReadingList[]> {
   const { data, error } = await client.rpc('my_reading_lists');
   if (error !== null) throw new Error(`Could not read your reading lists: ${error.message}`);
-  return (data as unknown as ReadingListRow[]).map(toReadingList);
+  return readingListsFromJson(data);
 }
 
 /**
