@@ -6,6 +6,11 @@
  * after the first 16, which stay as they were. The brand page's covers (Robert, 23 Nov 2026,
  * 20:26 UTC; design books covers part 2) add three more, Blush dots, Sky lines and Gold grid,
  * drawn in the writer's accent colour (Robert's decision card, 24 Nov 2026).
+ * Classic covers (Robert, 26 Nov 2026, 18:20 UTC: "the classics make them all simple colours,
+ * except for the raven, luceafărul and goblin market"; "Plain solid yes") add six more plain
+ * colours and three artwork backdrops. They are for the classics account only: the writer's
+ * picker and swatches never offer them (writerCoverDesigns, writerColourKeys) and the database
+ * refuses them on anyone else's story (migration …_classic_plain_covers.sql).
  *
  * Where the values come from: design/boards/NewStory.dc.html (4.2), its `designs`, `pal` and
  * `art` lists, copied, not guessed. The artwork is drawn on a 100 × 160 (5:8) canvas, sliced to the 2:3 cover (CALM-4), so tiles,
@@ -17,9 +22,16 @@
  * (supabase/migrations/…_s1_e3_01_stories.sql), which list the same keys.
  * What it calls: src/lib/contrast.ts to pick dark or light title text.
  */
+import goblinMarketBackdrop from '@/assets/classic-covers/goblin-market.svg';
+import luceafarulBackdrop from '@/assets/classic-covers/luceafarul.svg';
+import theRavenBackdrop from '@/assets/classic-covers/the-raven.svg';
 import { contrastRatio } from '@/lib/contrast';
 
-/** The 9 palette colours a drawn cover may use, by key. */
+/**
+ * The colours a drawn cover may use, by key: the writer's 9, then the 6 classic covers add
+ * (Robert's ten classic colours are plum, violet, ink and gold from the 9 plus these six; the
+ * values are the tokens' crimson, seaglass, peach, pistachio, candy and link blue).
+ */
 export const coverPalette = {
   plum: '#481C5F',
   ink: '#26142E',
@@ -30,15 +42,56 @@ export const coverPalette = {
   sky: '#D7E6F2',
   sage: '#C9D8BF',
   paper: '#FAF8F5',
+  crimson: '#9F1239',
+  seaglass: '#0F766E',
+  peach: '#C2412D',
+  pistachio: '#4D7C0F',
+  candy: '#C0266D',
+  linkblue: '#3D4290',
 } as const;
 
 /** One of the palette keys. */
 export type CoverColourKey = keyof typeof coverPalette;
 
-/** The palette keys in the order the swatches show them (the board's order). */
+/** Every palette key, the writer's 9 first; used to check a colour the database sends. */
 export const coverColourKeys = Object.keys(coverPalette) as CoverColourKey[];
 
-/** The 22 design keys: 9 plain, the 7 first patterns, the 3 added in G9c, then the brand page's 3. */
+/** The 6 colours only classic covers use (the classics account; Robert, 26 Nov 2026). */
+export const classicOnlyColourKeys: readonly CoverColourKey[] = [
+  'crimson',
+  'seaglass',
+  'peach',
+  'pistachio',
+  'candy',
+  'linkblue',
+];
+
+/** The 9 colours a writer can pick, in the order the swatches show them (the board's order). */
+export const writerColourKeys: CoverColourKey[] = coverColourKeys.filter(
+  (key) => !classicOnlyColourKeys.includes(key),
+);
+
+/**
+ * The ten solid colours a classic's cover takes, in the order the database picks from
+ * (classic_cover_colour() in the migration hashes the story's ID over this list).
+ */
+export const classicCoverColourKeys: readonly CoverColourKey[] = [
+  'plum',
+  'violet',
+  'ink',
+  'gold',
+  'crimson',
+  'seaglass',
+  'peach',
+  'pistachio',
+  'candy',
+  'linkblue',
+];
+
+/**
+ * The 31 design keys: 9 plain, the 7 first patterns, the 3 added in G9c, the brand page's 3,
+ * then the classic covers' 6 plain colours and 3 artwork backdrops.
+ */
 export const coverDesignKeys = [
   'plum',
   'ink',
@@ -62,6 +115,15 @@ export const coverDesignKeys = [
   'blushdots',
   'skylines',
   'goldgrid',
+  'crimson',
+  'seaglass',
+  'peach',
+  'pistachio',
+  'candy',
+  'linkblue',
+  'classic_luceafarul',
+  'classic_the_raven',
+  'classic_goblin_market',
 ] as const;
 
 /** One of the design keys. */
@@ -82,7 +144,8 @@ export type CoverDesignKind =
   | 'forestwaves'
   | 'blushdots'
   | 'skylines'
-  | 'goldgrid';
+  | 'goldgrid'
+  | 'artwork';
 
 /** What the app knows about one design. */
 export interface CoverDesign {
@@ -96,9 +159,13 @@ export interface CoverDesign {
    * picker can say so; automatic covers never pick them, so existing covers keep their look.
    */
   isNew?: boolean;
+  /** True for the classic covers' designs: never offered to writers, never picked automatically. */
+  classicOnly?: boolean;
+  /** For an artwork design, the backdrop picture drawn behind the label (a file in src/assets). */
+  artworkUrl?: string;
 }
 
-/** The 22 designs with their board defaults. */
+/** The 31 designs with their board defaults. */
 export const coverDesigns: readonly CoverDesign[] = [
   { key: 'plum', kind: 'plain', background: 'plum', accent: 'gold' },
   { key: 'ink', kind: 'plain', background: 'ink', accent: 'gold' },
@@ -130,6 +197,52 @@ export const coverDesigns: readonly CoverDesign[] = [
   { key: 'blushdots', kind: 'blushdots', background: 'blush', accent: 'plum', isNew: true },
   { key: 'skylines', kind: 'skylines', background: 'sky', accent: 'violet', isNew: true },
   { key: 'goldgrid', kind: 'goldgrid', background: 'gold', accent: 'paper', isNew: true },
+  // Classic covers (Robert, 26 Nov 2026): a paper label on one solid colour. The accent is never
+  // drawn on a label cover; paper is stored so every row still has one.
+  { key: 'crimson', kind: 'plain', background: 'crimson', accent: 'paper', classicOnly: true },
+  { key: 'seaglass', kind: 'plain', background: 'seaglass', accent: 'paper', classicOnly: true },
+  { key: 'peach', kind: 'plain', background: 'peach', accent: 'paper', classicOnly: true },
+  { key: 'pistachio', kind: 'plain', background: 'pistachio', accent: 'paper', classicOnly: true },
+  { key: 'candy', kind: 'plain', background: 'candy', accent: 'paper', classicOnly: true },
+  { key: 'linkblue', kind: 'plain', background: 'linkblue', accent: 'paper', classicOnly: true },
+  // The three classics Robert kept as artwork (DESIGN covers thread, approved backdrops of
+  // 26 Nov 2026). Each backdrop is plum underneath, so plum is the colour a place that can't
+  // draw the picture (a link preview, an e-book cover) falls back to.
+  {
+    key: 'classic_luceafarul',
+    kind: 'artwork',
+    background: 'plum',
+    accent: 'paper',
+    classicOnly: true,
+    artworkUrl: luceafarulBackdrop,
+  },
+  {
+    key: 'classic_the_raven',
+    kind: 'artwork',
+    background: 'plum',
+    accent: 'paper',
+    classicOnly: true,
+    artworkUrl: theRavenBackdrop,
+  },
+  {
+    key: 'classic_goblin_market',
+    kind: 'artwork',
+    background: 'plum',
+    accent: 'paper',
+    classicOnly: true,
+    artworkUrl: goblinMarketBackdrop,
+  },
+];
+
+/** The 22 designs a writer can pick: everything but the classic covers' own. */
+export const writerCoverDesigns: readonly CoverDesign[] = coverDesigns.filter(
+  (design) => design.classicOnly !== true,
+);
+
+/** The writer's 22 design keys, for the story form's schema. */
+export const writerCoverDesignKeys = writerCoverDesigns.map((design) => design.key) as [
+  CoverDesignKey,
+  ...CoverDesignKey[],
 ];
 
 /**
@@ -161,7 +274,7 @@ export interface DrawnCoverChoice {
 /**
  * Finds a design by key.
  *
- * @param key - one of the 22 keys
+ * @param key - one of the 31 keys
  * @returns the design
  * Errors: throws when the key is unknown, which only a bug can cause (the schema and the database
  *   both check the key).
@@ -423,6 +536,8 @@ const artworkByKind: Record<CoverDesignKind, CoverArtwork> = {
   blushdots: blushDotsArtwork(),
   skylines: skyLinesArtwork(),
   goldgrid: goldGridArtwork(),
+  // An artwork design draws its backdrop picture instead (DrawnCover's ArtworkBackdrop).
+  artwork: noArtwork,
 };
 
 /**

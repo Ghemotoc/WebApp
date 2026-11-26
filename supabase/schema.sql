@@ -3443,7 +3443,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     CONSTRAINT "stories_class_link_only_when_class_only" CHECK (("class_only" OR ("class_space_id" IS NULL))),
     CONSTRAINT "stories_comment_audience_known" CHECK (("comment_audience" = ANY (ARRAY['everyone'::"text", 'followers'::"text"]))),
     CONSTRAINT "stories_content_note_length" CHECK (("char_length"("content_note") <= 300)),
-    CONSTRAINT "stories_cover_colours_are_in_the_palette" CHECK (((("cover_background" IS NULL) OR ("cover_background" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"]))) AND (("cover_accent" IS NULL) OR ("cover_accent" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"]))))),
+    CONSTRAINT "stories_cover_colours_are_in_the_palette" CHECK (((("cover_background" IS NULL) OR ("cover_background" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'crimson'::"text", 'seaglass'::"text", 'peach'::"text", 'pistachio'::"text", 'candy'::"text", 'linkblue'::"text"]))) AND (("cover_accent" IS NULL) OR ("cover_accent" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'crimson'::"text", 'seaglass'::"text", 'peach'::"text", 'pistachio'::"text", 'candy'::"text", 'linkblue'::"text"]))))),
     CONSTRAINT "stories_cover_columns_match_kind" CHECK (
 CASE "cover_kind"
     WHEN 'automatic'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NULL) AND ("cover_square_path" IS NULL))
@@ -3451,7 +3451,7 @@ CASE "cover_kind"
     WHEN 'upload'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NOT NULL))
     ELSE NULL::boolean
 END),
-    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text", 'blushdots'::"text", 'skylines'::"text", 'goldgrid'::"text"])))),
+    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text", 'blushdots'::"text", 'skylines'::"text", 'goldgrid'::"text", 'crimson'::"text", 'seaglass'::"text", 'peach'::"text", 'pistachio'::"text", 'candy'::"text", 'linkblue'::"text", 'classic_luceafarul'::"text", 'classic_the_raven'::"text", 'classic_goblin_market'::"text"])))),
     CONSTRAINT "stories_cover_style_fits_kind" CHECK (
 CASE "cover_kind"
     WHEN 'automatic'::"public"."cover_kind" THEN ("cover_style" = 'label'::"public"."cover_style")
@@ -3594,7 +3594,11 @@ COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the st
 
 
 
-COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, G9c added arches, rings and forestwaves, and the design books added blushdots, skylines and goldgrid.';
+COMMENT ON CONSTRAINT "stories_cover_colours_are_in_the_palette" ON "public"."stories" IS 'A drawn cover uses the 9-colour palette (16 Oct 2026); the last six colours are for the classics account only (classic covers, 26 Nov 2026).';
+
+
+
+COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); the last nine (six plain colours and three artwork backdrops) are for the classics account only (classic covers, 26 Nov 2026).';
 
 
 
@@ -20304,6 +20308,42 @@ ALTER FUNCTION "public"."classic_authors_dying_in"("died" integer) OWNER TO "pos
 
 
 COMMENT ON FUNCTION "public"."classic_authors_dying_in"("died" integer) IS 'Internal: the listed authors who died in a year (S1-E11-16b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."classic_cover_colour"("story_id" "uuid") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select (array['plum', 'violet', 'ink', 'gold', 'crimson', 'seaglass', 'peach', 'pistachio',
+                'candy', 'linkblue'])[
+    1 + (('x' || lpad(substr(md5(story_id::text), 1, 8), 16, '0'))::bit(64)::bigint % 10)::int];
+$$;
+
+
+ALTER FUNCTION "public"."classic_cover_colour"("story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."classic_cover_colour"("story_id" "uuid") IS 'The solid colour a classic cover takes, picked from the story ID so it never changes (classic covers, 26 Nov 2026).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."classic_cover_design"("story_slug" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case story_slug
+    when 'luceafarul-classic' then 'classic_luceafarul'
+    when 'the-raven-classic' then 'classic_the_raven'
+    when 'goblin-market-classic' then 'classic_goblin_market'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."classic_cover_design"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."classic_cover_design"("story_slug" "text") IS 'The artwork backdrop for Luceafărul, The Raven and Goblin Market; null for other classics (classic covers, 26 Nov 2026).';
 
 
 
@@ -52156,6 +52196,48 @@ COMMENT ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) IS 'L
 
 
 
+CREATE OR REPLACE FUNCTION "public"."stories_classic_cover"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  classic_only_keys text[] := array['crimson', 'seaglass', 'peach', 'pistachio', 'candy',
+    'linkblue', 'classic_luceafarul', 'classic_the_raven', 'classic_goblin_market'];
+  is_classic boolean := public.is_classics_account(new.user_id);
+begin
+  -- Step 1: only the classics account may use the classic covers' designs and colours.
+  if not is_classic and (new.cover_design = any (classic_only_keys)
+      or new.cover_background = any (classic_only_keys)
+      or new.cover_accent = any (classic_only_keys)) then
+    raise exception 'This cover is only for classics.'
+      using errcode = 'check_violation', hint = 'classic_cover_only';
+  end if;
+
+  -- Step 2: a new classic (a first edition, not an uploaded picture) gets its classic cover.
+  if tg_op = 'INSERT' and is_classic and new.edition_of_story_id is null
+      and new.cover_kind in ('automatic', 'drawn') then
+    new.cover_kind := 'drawn';
+    new.cover_style := 'label';
+    new.cover_accent := 'paper';
+    new.cover_design := coalesce(public.classic_cover_design(new.slug),
+                                 public.classic_cover_colour(new.id));
+    -- An artwork backdrop is plum underneath, so plum is its fall-back colour.
+    new.cover_background := case
+      when public.classic_cover_design(new.slug) is not null then 'plum'
+      else public.classic_cover_colour(new.id) end;
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."stories_classic_cover"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_classic_cover"() IS 'Gives a new classic its solid colour or artwork Label cover, and keeps the classic-only covers off other accounts'' stories (classic covers, 26 Nov 2026).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."stories_clear_hidden_presentation"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     SET "search_path" TO ''
@@ -66043,6 +66125,14 @@ CREATE OR REPLACE TRIGGER "stories_a_edition_rules" BEFORE INSERT OR UPDATE ON "
 
 
 
+CREATE OR REPLACE TRIGGER "stories_b_classic_cover" BEFORE INSERT OR UPDATE OF "cover_design", "cover_background", "cover_accent" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_classic_cover"();
+
+
+
+COMMENT ON TRIGGER "stories_b_classic_cover" ON "public"."stories" IS 'Classic covers (26 Nov 2026): a new classic gets its Label cover; nobody else may use the classic-only designs and colours.';
+
+
+
 CREATE OR REPLACE TRIGGER "stories_clear_hidden_presentation" BEFORE UPDATE OF "title", "cover_kind", "cover_design", "cover_background", "cover_accent", "cover_tall_path" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_clear_hidden_presentation"();
 
 
@@ -73183,6 +73273,14 @@ REVOKE ALL ON FUNCTION "public"."classic_authors_dying_in"("died" integer) FROM 
 
 
 
+REVOKE ALL ON FUNCTION "public"."classic_cover_colour"("story_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."classic_cover_design"("story_slug" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."classic_edition_details"("first_edition_id" "uuid", "edition_id" "uuid", "details" "jsonb") FROM PUBLIC;
 
 
@@ -77537,6 +77635,10 @@ GRANT ALL ON FUNCTION "public"."stop_reading_habit"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) TO "service_role";
+
+
+
+REVOKE ALL ON FUNCTION "public"."stories_classic_cover"() FROM PUBLIC;
 
 
 

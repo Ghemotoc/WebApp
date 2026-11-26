@@ -136,7 +136,16 @@
       "forestwaves": "Valuri de pădure",
       "blushdots": "Buline roz",
       "skylines": "Linii de cer",
-      "goldgrid": "Grilă aurie"
+      "goldgrid": "Grilă aurie",
+      "crimson": "Carmin",
+      "seaglass": "Sticlă de mare",
+      "peach": "Piersică",
+      "pistachio": "Fistic",
+      "candy": "Bomboană",
+      "linkblue": "Indigo",
+      "classic_luceafarul": "Luceafăr",
+      "classic_the_raven": "Corb",
+      "classic_goblin_market": "Fructele spiridușilor"
     },
     "colourNames": {
       "plum": "Prună",
@@ -147,7 +156,13 @@
       "blush": "Roz pal",
       "sky": "Cer",
       "sage": "Salvie",
-      "paper": "Hârtie"
+      "paper": "Hârtie",
+      "crimson": "Carmin",
+      "seaglass": "Sticlă de mare",
+      "peach": "Piersică",
+      "pistachio": "Fistic",
+      "candy": "Bomboană",
+      "linkblue": "Indigo"
     },
     "uploadLater": "Vrei să folosești o imagine proprie? Salvează mai întâi povestea, apoi încarc-o din setările poveștii.",
     "uploadChosen": "Imaginea încărcată este coperta. Alege mai jos un model desenat dacă vrei să-l folosești pe acela.",
