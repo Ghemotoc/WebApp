@@ -4,12 +4,14 @@
  * Who uses it: BugReportTab, which loads this file only the first time someone presses the tab.
  * What it calls: Sheet (the glass panel: beside the page on computers, from the bottom on
  * phones), BugReportForm, and hooks/useBugReport.ts.
- * After sending, the panel says thank you, with Close (board J32). Closing a sent report clears
+ * After sending, the panel says thank you in a success box, with Close as its main button
+ * (board J32). Closing a sent report clears
  * the form for the next one; Cancel or Escape keeps what was written, in case it was a slip.
  */
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { Notice } from '@/components/ui/Notice';
 import { Sheet } from '@/components/ui/Sheet';
 
 import { useBugReport } from '../hooks/useBugReport';
@@ -45,13 +47,10 @@ export function BugReportPanel({ isOpen, onClose }: BugReportPanelProps) {
   return (
     <Sheet isOpen={isOpen} onClose={close} title={t('bugReport.title')}>
       {report.isSent ? (
+        // Board J32: the thank-you in a success box, then Close as the panel's one main button.
         <div className="flex flex-col items-start gap-4">
-          <p role="status" className="m-0 type-body text-ink-muted">
-            {t('bugReport.sentBody')}
-          </p>
-          <Button variant="secondary" onClick={close}>
-            {t('bugReport.close')}
-          </Button>
+          <Notice tone="success">{t('bugReport.sentBody')}</Notice>
+          <Button onClick={close}>{t('bugReport.close')}</Button>
         </div>
       ) : (
         <BugReportForm

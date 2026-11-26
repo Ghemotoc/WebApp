@@ -74,16 +74,22 @@ function openLegalCentre(path: string, language: 'ro' | 'en' = 'en') {
 describe('LegalCentrePage', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('shows the terms with their sections, the draft status and the version history', () => {
+  it('shows the terms with their sections, the draft status, the version history and the questions', () => {
     loadedVersions([version('en'), version('ro')]);
     openLegalCentre('/legal/terms');
     expect(screen.getByRole('heading', { level: 2, name: 'Terms of use' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 3, name: 'Who can join' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: '1. Who can join' })).toBeInTheDocument();
     expect(
       screen.getByText('Draft: a Romanian lawyer reviews this before launch'),
     ).toBeInTheDocument();
     expect(screen.getByText('In Romanian and English')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Version history' })).toBeInTheDocument();
+    // Bundle 10 (board J08): every document has the side column's ways to ask or report.
+    expect(screen.getByRole('link', { name: 'Write to us' })).toHaveAttribute('href', '/contact');
+    expect(screen.getByRole('link', { name: 'the report form' })).toHaveAttribute(
+      'href',
+      '/report',
+    );
   });
 
   it('marks a line that applies only after the invited test, and explains the label', () => {

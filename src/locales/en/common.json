@@ -142,7 +142,6 @@
     "documentTitle": "Page not found",
     "heading": "We can’t find that page",
     "body": "It may have moved, or the story was made private. Try searching, or go back to Read.",
-    "eyebrow": "Error 404",
     "search": "Search {{productName}}",
     "goDiscover": "Go to Read"
   },

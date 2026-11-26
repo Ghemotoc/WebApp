@@ -41,7 +41,7 @@ export interface NoticeFormProps {
 
 /** The fields in the order they appear, so focus goes to the first one with a problem. */
 const fieldOrder: [NoticeField, string][] = [
-  ['kind', 'notice-kind-error'],
+  ['kind', 'notice-kind'],
   ['authorityName', 'notice-authority'],
   ['contentUrl', 'notice-url'],
   ['explanation', 'notice-explanation'],
@@ -51,17 +51,13 @@ const fieldOrder: [NoticeField, string][] = [
 ];
 
 /**
- * Moves focus to the first field with a problem. For the kind, the chosen-chip group itself.
+ * Moves focus to the first field with a problem (the kind's drop-down is a field like the rest).
  *
  * @param problems - what is wrong
  */
 function focusFirstProblem(problems: NoticeProblems): void {
   const first = fieldOrder.find(([field]) => problems[field] !== undefined);
   if (first === undefined) return;
-  if (first[0] === 'kind') {
-    document.querySelector<HTMLElement>('#notice-form [role="radiogroup"] [tabindex="0"]')?.focus();
-    return;
-  }
   document.getElementById(first[1])?.focus();
 }
 
@@ -113,10 +109,9 @@ export function NoticeForm({ language, isSending, failure, onSend }: NoticeFormP
       aria-labelledby="notice-form-heading"
       className="relative flex flex-col gap-4 rounded-card border border-border bg-surface p-4 lg:p-8 shadow-card"
     >
-      <h2
-        id="notice-form-heading"
-        className="m-0 font-heading type-heading font-bold text-ink-heading"
-      >
+      {/* Board J11 draws no heading in the card; this one names the form for screen readers and
+          says when it has turned into a removal order. */}
+      <h2 id="notice-form-heading" className="sr-only">
         {t(isOrder ? 'order.heading' : 'form.heading')}
       </h2>
       <NoticeKindPicker
@@ -134,11 +129,12 @@ export function NoticeForm({ language, isSending, failure, onSend }: NoticeFormP
           {t(`failures.${failure}`, { supportEmail: brand.supportEmail })}
         </Notice>
       )}
-      <div className="flex flex-wrap items-center gap-4">
+      {/* Send, then the promise under it in the small meta size, as on the board. */}
+      <div className="flex flex-col items-start gap-3">
         <Button type="submit" size="lg" disabled={isSending}>
           {t(sendLabelKey(isSending, isOrder))}
         </Button>
-        <span className="type-body text-ink-muted">{t('form.aPersonReads')}</span>
+        <p className="m-0 type-meta text-ink-muted">{t('form.aPersonReads')}</p>
       </div>
     </form>
   );

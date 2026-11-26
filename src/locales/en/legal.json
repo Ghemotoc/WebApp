@@ -1,6 +1,5 @@
 {
   "documentTitle": "{{documentTitle}} · Legal centre · {{productName}}",
-  "eyebrow": "Legal centre",
   "heading": "The rules, in plain words",
   "lead": "Every page starts with a short version that anyone aged 13 and up can follow. The full legal text sits under each part. If the two ever seem to disagree, ask us.",
   "documentsNavLabel": "Legal documents",
@@ -45,7 +44,6 @@
   "shortVersion": "In short",
   "fullTextDraft": "Full text · draft for lawyer review",
   "fullText": "Full text",
-  "fullTextRegion": "Full text: {{title}}",
   "proposedSection": "Proposed section",
   "afterTheTest": {
     "label": "After the invited test",
@@ -84,8 +82,6 @@
     "link": "Write to us"
   },
   "reportForm": {
-    "text": "Want to report illegal content? Anyone can use the report form.",
-    "link": "Report illegal content",
     "orderLink": "Authorities: send a removal order"
   },
   "country": {
@@ -106,5 +102,11 @@
       "consent": "Parent agrees under",
       "blocked": "Blocked under"
     }
-  }
+  },
+  "questions": {
+    "heading": "Questions or a report?",
+    "report": "Want to report illegal content? Anyone can use <report>the report form</report>."
+  },
+  "centreName": "Legal centre",
+  "sideColumnLabel": "About this document"
 }

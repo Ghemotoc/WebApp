@@ -109,7 +109,8 @@ export function HelpPageView() {
   const { entries, isLoaded, readFailed } = useWebsiteContent('help_page', helpPageContentSchema);
   const page = entries.find((entry) => entry.entryKey === slug);
   return (
-    <PageContainer className="flex max-w-[960px] flex-col gap-4 pt-8 pb-16">
+    // Board J26: the breadcrumb and the article sit on the page's left edge, at most 960 px wide.
+    <PageContainer className="flex flex-col items-start gap-4 pt-8 pb-16 [&>*]:w-full [&>*]:max-w-[960px]">
       {page !== undefined && <HelpArticle page={page} />}
       {page === undefined && readFailed && <Notice tone="error">{t('website.readFailed')}</Notice>}
       {page === undefined && isLoaded && !readFailed && (
