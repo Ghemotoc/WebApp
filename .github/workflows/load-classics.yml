@@ -1,0 +1,92 @@
+# Load the bulk public-domain classics into a Supabase database, at the press of a button.
+#
+# What it is for: Robert asked on 26 Nov 2026 for every classic on the research list that is free in
+# all 11 launch markets to be added to the Classics shelf. The texts are in
+# content/classics/bulk-2026-11/ (about 270 works, 65 MB of SQL), far too much to paste into the
+# SQL Editor by hand, so this workflow runs the same SQL with psql.
+# Who starts it: a person, from Actions > "Load classics" > Run workflow (it never runs on its own).
+# What it needs: the secret CLASSICS_DATABASE_URL, the database's Session pooler connection string
+# (Supabase > Connect > Session pooler), added by Robert under Settings > Secrets and variables >
+# Actions. The password lives only in that secret; this file never prints it.
+# What it does: scripts/classics/build-load-sql.py writes the SQL parts, psql runs them in order,
+# each part in its own transaction, and stops at the first error. Running it twice is safe: a work
+# that is already there is found again and only missing chapters are added.
+# Rule: schema changes still go only through migrations (CLAUDE.md rule 3); this adds rows only,
+# through the same helpers the Staff › Classics screens use (S1-E11-16).
+name: Load classics
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type LOAD to add the classics to the database in the CLASSICS_DATABASE_URL secret'
+        required: true
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  load:
+    name: Load the classics
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    # One load at a time, so two presses never write the same works side by side.
+    concurrency:
+      group: load-classics
+      cancel-in-progress: false
+    steps:
+      # Refuse to run unless the person typed LOAD, so a stray click does nothing.
+      - name: Check the confirmation
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "LOAD" ]; then
+            echo "Type LOAD in the confirm box to run the load." >&2
+            exit 1
+          fi
+
+      # Stop early, with a plain message, when the secret is missing.
+      - name: Check the database secret
+        env:
+          DATABASE_URL: ${{ secrets.CLASSICS_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Add the CLASSICS_DATABASE_URL secret first (Settings > Secrets and variables > Actions)." >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v5
+
+      # psql is on GitHub's Ubuntu runners; install it only if an image ever drops it.
+      - name: Make sure psql is installed
+        run: command -v psql || (sudo apt-get update && sudo apt-get install -y postgresql-client)
+
+      - name: Write the SQL parts
+        run: python3 scripts/classics/build-load-sql.py "$RUNNER_TEMP/classics-sql"
+
+      # Each part is one transaction; ON_ERROR_STOP makes psql stop at the first error, and the
+      # loop stops too, so a failed part leaves the database as the parts before it left it.
+      - name: Run the SQL parts in order
+        env:
+          DATABASE_URL: ${{ secrets.CLASSICS_DATABASE_URL }}
+        run: |
+          count=$(ls "$RUNNER_TEMP"/classics-sql/part-*.sql | wc -l)
+          number=0
+          for part in "$RUNNER_TEMP"/classics-sql/part-*.sql; do
+            number=$((number + 1))
+            echo "Part $number of $count: $(basename "$part")"
+            psql "$DATABASE_URL" --quiet --no-psqlrc -v ON_ERROR_STOP=1 --file "$part" > /dev/null
+          done
+
+      # Print the totals so the run's log says what is now on the shelf.
+      - name: Show the classics now live
+        env:
+          DATABASE_URL: ${{ secrets.CLASSICS_DATABASE_URL }}
+        run: |
+          psql "$DATABASE_URL" --no-psqlrc -c "
+            select stories.language_code as language, count(*) as live_classics
+            from public.stories
+            join public.classic_works on classic_works.story_id = stories.id
+            where stories.first_published_at is not null and stories.deleted_at is null
+            group by stories.language_code order by stories.language_code;"

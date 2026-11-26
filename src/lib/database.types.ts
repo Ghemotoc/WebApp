@@ -16841,6 +16841,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      profile_is_searchable: { Args: { person_id: string }; Returns: boolean };
       profile_is_shown_to_caller: {
         Args: {
           writer: Omit<
@@ -16856,6 +16857,7 @@ export type Database = {
         Args: { how_many: number; wanted_language: string; writer_id: string };
         Returns: Json;
       };
+      profile_search_head: { Args: { wanted_handle: string }; Returns: Json };
       profile_signature: { Args: { wanted_handle: string }; Returns: Json };
       profile_story_cards: { Args: { is_owner: boolean; writer_id: string }; Returns: Json };
       public_character_json: {
@@ -17209,6 +17211,7 @@ export type Database = {
         };
       };
       reading_list: { Args: { list_id: string }; Returns: Json };
+      reading_list_is_searchable: { Args: { target_list_id: string }; Returns: boolean };
       reading_list_is_visible: {
         Args: {
           target: Omit<
@@ -18789,6 +18792,7 @@ export type Database = {
         Returns: boolean;
       };
       story_ideas: { Args: { story_slug: string }; Returns: Json };
+      story_is_searchable: { Args: { target_story_id: string }; Returns: boolean };
       story_language_choices: {
         Args: Record<PropertyKey, never>;
         Returns: {
