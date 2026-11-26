@@ -2041,6 +2041,12 @@ The owner and admins upload a logo and an emblem for the light and the night the
 - **Table:** `list_page_backgrounds` (one row per genre or tag and market; `user_id` is the admin who chose it, left out of Download my data with its reason). Only owner and admins read it; visitors get only the colour name.
 - **Tests:** `supabase/tests/database/290-brand-assets.test.sql`, `e2e/brand-assets.spec.ts`.
 
+**The line under a genre or tag title (BOOKS-A06, BOOKS-A09).** Under the backgrounds, the same tab has "Lines under the title" (`ListLinesSection` and `ListLineForm`): one short sentence per genre or tag and language, as boards A06 ("Maps, magic and long journeys.") and A09 draw it. Website text comes only from staff, never from the locale files (decided 17 Oct 2026, 19:14).
+- **How one click travels:** Save line → `useSaveListPageLine()` → `saveListPageLine()` (`api/staff/listPageLines.ts`) → `admin_set_list_page_line(kind, key, language, line)` (owner or admin; a real genre or approved tag through `list_page_target()`, a language from `languages`, at most 200 characters; an empty line takes it off; logs `website.list_line_set` only when the line changed). The card lists the saved lines through `admin_list_page_lines()`.
+- **What visitors read:** `StoryListHeader`'s `ListHeading` asks `useListPageLine()` → `fetchListPageLine()` (`src/features/discovery/api/listPageLine.ts`) → `list_page_line(kind, key, page_language)`: `{line, language}` in the page's language, else in English (LOCALISE-1), else null. The line leads the muted line under the title in place of the list's description, with `lang` set to the language it is written in.
+- **Table:** `list_page_lines` (one row per genre or tag and language; `user_id` is the admin who wrote it, left out of Download my data with its reason).
+- **Tests:** `supabase/tests/database/408-list-page-lines.test.sql`, `e2e/list-page-lines.spec.ts`.
+
 ## Landing pages (S1-E11-14; CONTESTS-13a1)
 
 A landing page is a page at its own address, `/c/<name>`, for a contest, a campaign or some information. Admins build it from fixed blocks (hero, text, key dates, who can enter, prize, how to enter, rules, questions and answers) in Romanian and English side by side; there is no free HTML and no colour of their own, only four brand themes.
