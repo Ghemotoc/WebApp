@@ -941,8 +941,8 @@
     },
     "preview": {
       "documentTitle": "{{title}} văzută ca un cititor: Story Atlas",
-      "note": "Vezi ca un cititor. Asta văd cititorii. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
-      "notPublished": "Vezi ca un cititor. Asta vor vedea cititorii după ce povestea e publicată. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
+      "note": "Asta văd cititorii. Ce are un capitol marcat apare doar după ce cititorul a ajuns la el.",
+      "notPublished": "Asta vor vedea cititorii după ce povestea e publicată. Ce are un capitol marcat apare doar după ce cititorul a ajuns la el.",
       "nothing": "Nimic nu e public încă."
     },
     "characters": {
@@ -975,7 +975,7 @@
     "documentTitle": "{{area}}: {{title}}",
     "eyebrow": "Lumea poveștii",
     "navLabel": "Părți din lumea poveștii",
-    "notFound": "Asta nu e disponibilă. Poate autorul n-o împărtășește sau povestea nu îți e disponibilă.",
+    "notFound": "Asta nu e disponibilă. Poate autorul n-o împărtășește sau povestea nu mai e disponibilă.",
     "loadFailed": "Nu s-a putut încărca. Verifică-ți conexiunea și încearcă din nou.",
     "guard": "Apare de la capitolul {{number}}: {{title}}",
     "areas": {
@@ -986,7 +986,8 @@
       "timeline": "Cronologie"
     },
     "cast": {
-      "none": "Niciun personaj de arătat încă."
+      "none": "Niciun personaj de arătat încă.",
+      "lead": "Doar ce împărtășește autorul și doar până la capitolul la care ai ajuns."
     },
     "character": {
       "back": "Personaje",
@@ -1002,7 +1003,8 @@
     "timeline": {
       "none": "Niciun eveniment de arătat încă."
     },
-    "byline": "de {{name}} · împărtășit de autor"
+    "byline": "de {{name}} · împărtășit de autor",
+    "bylineLinked": "de <writer>{{name}}</writer> · împărtășit de autor"
   },
   "breadcrumb": {
     "label": "Unde ești"

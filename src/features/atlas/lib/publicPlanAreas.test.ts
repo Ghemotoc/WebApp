@@ -15,6 +15,7 @@ const plan: PublicPlan = {
   coverKind: 'automatic',
   drawnCover: null,
   writerName: 'inkwolf',
+  writerHandle: 'inkwolf',
   areas: ['characters', 'bible'],
   cast: {
     storyId: '',

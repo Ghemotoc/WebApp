@@ -38702,7 +38702,10 @@ begin
         'style', shown.cover_style, 'title_font', shown.cover_title_font),
       -- The pen name, else the username; never the user ID (rule 15).
       'writer_name', (select public.story_writer_name(shown.id, profiles.handle, profiles.pen_name)
-                      from public.profiles where profiles.id = shown.user_id)),
+                      from public.profiles where profiles.id = shown.user_id),
+      -- Story 6.16: the byline links to the writer's profile; a classic's real author has none.
+      'writer_handle', (select profiles.handle from public.profiles
+                        where profiles.id = shown.user_id and shown.classic_author_id is null)),
     'areas', to_jsonb(areas),
     'characters', public.public_plan_characters(shown.id, areas, as_preview),
     'fields', public.public_plan_fields(shown.id, areas, as_preview),
@@ -38721,7 +38724,7 @@ $$;
 ALTER FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) IS 'Internal: what readers see of a story''s plan, with the story''s cover and writer''s name (S1-E17-33; GAPS-4).';
+COMMENT ON FUNCTION "public"."public_plan_json"("target_story_id" "uuid", "as_preview" boolean) IS 'Internal: what readers see of a story''s plan, with the story''s cover, writer''s name and username (S1-E17-33; GAPS-4; story 6.16).';
 
 
 

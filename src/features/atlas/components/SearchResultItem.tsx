@@ -64,11 +64,11 @@ export function SearchResultItem({
     >
       <Link
         to={itemAddress(slug, result)}
-        className="self-start type-label font-semibold break-words text-ink-heading no-underline hover:underline"
+        className="self-start type-label font-semibold wrap-anywhere text-ink-heading no-underline hover:underline"
       >
         {title}
       </Link>
-      <span className="type-body break-words text-ink-muted">
+      <span className="type-body wrap-anywhere text-ink-muted">
         <HighlightedSnippet snippet={result.snippet} query={query} />
       </span>
     </li>

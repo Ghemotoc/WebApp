@@ -941,8 +941,8 @@
     },
     "preview": {
       "documentTitle": "Preview of {{title}} as a reader: Story Atlas",
-      "note": "Preview as a reader. This is what readers see. Anything marked with a chapter shows only once a reader gets there.",
-      "notPublished": "Preview as a reader. This is what readers will see once the story is published. Anything marked with a chapter shows only once a reader gets there.",
+      "note": "This is what readers see. Anything marked with a chapter shows only once a reader has reached it.",
+      "notPublished": "This is what readers will see once the story is published. Anything marked with a chapter shows only once a reader has reached it.",
       "nothing": "Nothing is public yet."
     },
     "characters": {
@@ -975,7 +975,7 @@
     "documentTitle": "{{area}}: {{title}}",
     "eyebrow": "The story’s world",
     "navLabel": "Parts of the story’s world",
-    "notFound": "This isn’t available. The writer may not share it, or the story isn’t available to you.",
+    "notFound": "This isn’t available. The writer may not share it, or the story isn’t available any more.",
     "loadFailed": "This couldn’t load. Check your connection and try again.",
     "guard": "Shows from chapter {{number}}: {{title}}",
     "areas": {
@@ -986,7 +986,8 @@
       "timeline": "Timeline"
     },
     "cast": {
-      "none": "No characters to show yet."
+      "none": "No characters to show yet.",
+      "lead": "Only what the writer shares, and only up to the chapter you’ve reached."
     },
     "character": {
       "back": "Characters",
@@ -1002,7 +1003,8 @@
     "timeline": {
       "none": "No events to show yet."
     },
-    "byline": "by {{name}} · shared by the writer"
+    "byline": "by {{name}} · shared by the writer",
+    "bylineLinked": "by <writer>{{name}}</writer> · shared by the writer"
   },
   "breadcrumb": {
     "label": "Where you are"

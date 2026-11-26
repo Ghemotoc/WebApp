@@ -86,6 +86,8 @@ export interface PublicPlan {
   titleFont?: string | null;
   /** The writer's pen name, else the username; a classic's real author. */
   writerName: string;
+  /** The writer's username, for the byline's link to their profile; null for a classic. */
+  writerHandle: string | null;
   areas: PlanArea[];
   /** The characters in the same shape as the writer's cast, so the map and tree draw them. */
   cast: StoryCast;
@@ -137,6 +139,7 @@ export interface PublicPlanRow {
     title: string;
     cover: PublicCoverRow;
     writer_name: string;
+    writer_handle: string | null;
   };
   areas: PlanArea[];
   characters: PublicCharacterRow[];
@@ -275,6 +278,7 @@ export async function publicPlanFrom(
     coverStyle: row.story.cover.style ?? null,
     titleFont: row.story.cover.title_font ?? null,
     writerName: row.story.writer_name,
+    writerHandle: row.story.writer_handle ?? null,
     areas: row.areas,
     cast,
     itemGuards: guards,
