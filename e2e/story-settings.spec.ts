@@ -3,12 +3,13 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
- * - adult_writer marks a story Completed and sets "Who can comment" to Nobody in story settings; the card
- *   on Your writing shows "Completed" and the Ongoing / Completed filter works;
+ * - adult_writer marks a story Completed and sets "Who can comment" to Nobody in story settings;
+ *   the card on Writing shows "Completed" and the Ongoing / Completed filter works;
  * - the story page shows the status and the comments setting (to the owner, as a preview);
  *   teen_17 can't open adult_writer's unpublished story;
- * - deleting asks twice, hides the story at once (the page says it isn't available), lists it
- *   under "Recently deleted" and undoes it; the purge job removes it only after 30 days;
+ * - deleting asks for the title (board D12), hides the story at once (the page says it isn't
+ *   available), lists it under "Recently deleted" and undoes it; the purge job removes it only
+ *   after 30 days;
  * - the settings and story pages pass axe, don't scroll sideways and draw no doodle at
  *   390, 768 and 1440 px, in light and night mode, in Romanian and English.
  * Test data: the seed story "Stația meteo" (adult_writer); it is put back as the seed made it.
@@ -77,10 +78,11 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
     ).toBe('completed false');
 
     // A finished story shows no status pill (Robert, 6 Nov 2026: "Completed" is a filter, not
-    // a tag); the filter keeps or drops it.
+    // a tag): board D01 says it as a plain word first in the card's meta line, not in bold like
+    // "Ongoing" (user story 5.1); the filter keeps or drops it.
     await page.goto('/write');
     await expect(card).toBeVisible();
-    await expect(card.getByText('Completed')).toHaveCount(0);
+    await expect(card.getByRole('listitem').first()).toHaveText('Completed');
     // The filter is the glass switch (G9b): a press on a segment's words picks it.
     const filter = page.getByRole('group', { name: 'Show' });
     await filter.getByText('Ongoing', { exact: true }).click();
@@ -116,15 +118,19 @@ test.describe('story status, settings and deletion (S1-E3-05)', () => {
     ).toBeVisible();
   });
 
-  test('deleting asks twice, hides the story at once, and can be undone; the purge waits 30 days', async ({
+  test('deleting asks for the title, hides the story at once, and can be undone; the purge waits 30 days', async ({
     browser,
   }) => {
     const page = await openAsPersona(browser, 'adult_writer', `/write/s/${slug}/settings`);
     await page.getByRole('button', { name: 'Delete story' }).click();
-    await expect(page.getByText('Delete “Stația meteo” and its chapters?')).toBeVisible();
-    await page.getByRole('button', { name: 'Yes, delete story' }).click();
-    await expect(page.getByText('Last check.')).toBeVisible();
-    await page.getByRole('button', { name: 'Delete story', exact: true }).click();
+    // Board D12: the dialog says what goes and asks for the title before it deletes.
+    const dialog = page.getByRole('dialog', { name: 'Delete Stația meteo?' });
+    await expect(dialog.getByText(/For 30 days it waits in Recently deleted/)).toBeVisible();
+    await dialog.getByRole('button', { name: 'Delete the story' }).click();
+    await expect(dialog.getByText('The title doesn’t match yet.', { exact: false })).toBeVisible();
+    await expect(dialog.getByLabel('Type the title to delete it')).toBeFocused();
+    await dialog.getByLabel('Type the title to delete it').fill('Stația meteo');
+    await dialog.getByRole('button', { name: 'Delete the story' }).click();
     await expect(page.getByText('Story deleted.', { exact: false })).toBeVisible();
     expect(
       runSql(`select deleted_at is not null from public.stories where id = '${storyId}'`),

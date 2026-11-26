@@ -311,17 +311,21 @@
   },
   "deleteStory": {
     "heading": "Delete this story",
-    "intro": "We ask you twice. The story and all its chapters are hidden straight away and deleted for good after 30 days.",
+    "intro": "The story and its chapters are hidden straight away and deleted for good after 30 days.",
     "button": "Delete story",
-    "firstTitle": "Delete “{{title}}” and its chapters?",
-    "firstBody": "Readers lose access straight away.",
-    "keep": "Keep story",
-    "confirmFirst": "Yes, delete story",
-    "lastCheckTitle": "Last check.",
-    "lastCheckBody": "We hide the story now and delete it for good on {{date}}. You can undo until then.",
-    "confirmLast": "Delete story",
+    "keep": "Keep the story",
     "deleted": "Story deleted. It’s hidden from readers and will be gone for good on {{date}}.",
-    "undo": "Undo"
+    "undo": "Undo",
+    "dialogTitle": "Delete {{title}}?",
+    "dialogBody_one": "It disappears from {{productName}} straight away: {{count}} chapter, its comments and its place in readers’ bookshelves. For 30 days it waits in Recently deleted on Writing, where Undo brings everything back. After that it is gone for good.",
+    "dialogBody_few": "It disappears from {{productName}} straight away: {{count}} chapters, their comments and its place in readers’ bookshelves. For 30 days it waits in Recently deleted on Writing, where Undo brings everything back. After that it is gone for good.",
+    "dialogBody_other": "It disappears from {{productName}} straight away: {{count}} chapters, their comments and its place in readers’ bookshelves. For 30 days it waits in Recently deleted on Writing, where Undo brings everything back. After that it is gone for good.",
+    "typeTitle": "Type the title to delete it",
+    "typeTitleHint": "Type {{title}}",
+    "titleMismatch": "The title doesn’t match yet. Type it as it is in the line above.",
+    "confirm": "Delete the story",
+    "failed": "The story wasn’t deleted. Check the connection and try again.",
+    "undoFailed": "The story wasn’t brought back. Check the connection and try again."
   },
   "recentlyDeleted": {
     "heading": "Recently deleted",
@@ -659,15 +663,14 @@
   },
   "canva": {
     "documentTitle": "Design it in Canva · {{productName}}",
-    "heading": "Design it in Canva",
     "backToWriting": "Back to Writing",
-    "backToSettings": "Back to your story’s settings",
+    "backToSettings": "Back to story settings",
     "opening": "Opening Canva…",
-    "signedOut": "Log in first, then press “Design it in Canva” again in your story’s settings.",
-    "working": "One moment. We’re talking to Canva…",
-    "cancelled": "You didn’t connect Canva, so nothing was shared with Canva. You can try again any time from your story’s settings.",
-    "saved": "Canva cover saved.",
-    "savedChecking": "You can see it now. Readers see it once it has been checked. That takes a few minutes, or up to two days when a person on our moderation team looks at it. You can close this tab.",
+    "signedOut": "Log in first, then press “Design it in Canva” again in story settings.",
+    "working": "Talking to Canva…",
+    "cancelled": "The answer on Canva’s page was no, so nothing was shared with Canva and the cover hasn’t changed. Try again any time from story settings.",
+    "saved": "The cover is saved",
+    "savedChecking": "You can see it now. Readers see it once its picture check has passed: usually within a few minutes, or up to two days when a person on the moderation team looks at it. You can close this tab.",
     "savedVisible": "Readers can see it now. You can close this tab.",
     "design": "Design it in Canva",
     "newTab": "(opens a new tab)",
@@ -675,14 +678,14 @@
     "failed": {
       "switched_off": "Designing covers in Canva is switched off right now.",
       "account": "This account can’t change covers right now.",
-      "not_connected": "Canva isn’t connected any more. Press “Design it in Canva” again in your story’s settings to connect it.",
+      "not_connected": "Canva isn’t connected any more. Press “Design it in Canva” again in story settings to connect it.",
       "declined": "Canva didn’t accept the connection. Try again from the story’s settings.",
       "expired": "This link has expired or didn’t come from Canva. Start again from the story’s settings.",
       "export_failed": "Canva couldn’t export your design. Open it in Canva and press Return again.",
       "unavailable": "Canva isn’t set up yet. Try again later.",
       "unreachable": "We couldn’t reach Canva or our server. Check your connection and try again.",
       "signed_out": "Log in first, then try again.",
-      "invalid": "This page only works on the way to Canva and back. Start from your story’s settings.",
+      "invalid": "This page only works on the way to Canva and back. Start from story settings.",
       "storyNotFound": "We couldn’t find that story on this account."
     },
     "settings": {
@@ -693,7 +696,21 @@
       "disconnectFailed": "We couldn’t disconnect Canva. Try again.",
       "loadFailed": "We couldn’t check whether Canva is connected. Try again."
     },
-    "arrived": "Your new cover from Canva is here, and it’s already saved."
+    "arrived": "Your new cover from Canva is here, and it’s already saved.",
+    "openingLine": "A blank design at cover size (1600 × 2560) opens in Canva. The first time, Canva asks whether it may share the design with {{productName}}.",
+    "stoppedHeading": "Something went wrong",
+    "crumbCover": "Cover",
+    "workingLine": "This takes a few seconds. Keep this tab open.",
+    "cancelledHeading": "Nothing was shared",
+    "waitingCheck": "Waiting for a check",
+    "stops": {
+      "heading": "If something stops it",
+      "noAnswer": "Canva didn’t answer",
+      "noAnswerLine": "Try again in a minute. The story is safe.",
+      "tryAgain": "Try again",
+      "popUps": "Pop-ups are blocked",
+      "popUpsLine": "Allow pop-ups for {{site}}, then press “Design it in Canva” again."
+    }
   },
   "insights": {
     "heading": "Lines and stops",

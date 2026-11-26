@@ -311,17 +311,21 @@
   },
   "deleteStory": {
     "heading": "Șterge această poveste",
-    "intro": "Te întrebăm de două ori. Povestea și toate capitolele ei sunt ascunse imediat și șterse definitiv după 30 de zile.",
+    "intro": "Povestea și capitolele ei sunt ascunse imediat și șterse definitiv după 30 de zile.",
     "button": "Șterge povestea",
-    "firstTitle": "Ștergi „{{title}}” și capitolele ei?",
-    "firstBody": "Cititorii pierd accesul imediat.",
     "keep": "Păstrează povestea",
-    "confirmFirst": "Da, șterge povestea",
-    "lastCheckTitle": "Ultima verificare.",
-    "lastCheckBody": "Ascundem povestea acum și o ștergem definitiv pe {{date}}. Până atunci poți reveni.",
-    "confirmLast": "Șterge povestea",
     "deleted": "Povestea a fost ștearsă. E ascunsă de cititori și va dispărea definitiv pe {{date}}.",
-    "undo": "Anulează ștergerea"
+    "undo": "Anulează ștergerea",
+    "dialogTitle": "Ștergi {{title}}?",
+    "dialogBody_one": "Dispare imediat de pe {{productName}}: {{count}} capitol, comentariile lui și locul ei din rafturile cititorilor. Timp de 30 de zile așteaptă la Șterse recent, pe pagina Scrieri, unde „Anulează ștergerea” aduce totul înapoi. După aceea dispare definitiv.",
+    "dialogBody_few": "Dispare imediat de pe {{productName}}: {{count}} capitole, comentariile lor și locul ei din rafturile cititorilor. Timp de 30 de zile așteaptă la Șterse recent, pe pagina Scrieri, unde „Anulează ștergerea” aduce totul înapoi. După aceea dispare definitiv.",
+    "dialogBody_other": "Dispare imediat de pe {{productName}}: {{count}} de capitole, comentariile lor și locul ei din rafturile cititorilor. Timp de 30 de zile așteaptă la Șterse recent, pe pagina Scrieri, unde „Anulează ștergerea” aduce totul înapoi. După aceea dispare definitiv.",
+    "typeTitle": "Scrie titlul ca s-o ștergi",
+    "typeTitleHint": "Scrie {{title}}",
+    "titleMismatch": "Titlul nu se potrivește încă. Scrie-l exact ca în rândul de mai sus.",
+    "confirm": "Da, șterge povestea",
+    "failed": "Povestea nu a fost ștearsă. Verifică conexiunea și încearcă din nou.",
+    "undoFailed": "Povestea nu a fost adusă înapoi. Verifică conexiunea și încearcă din nou."
   },
   "recentlyDeleted": {
     "heading": "Șterse recent",
@@ -659,15 +663,14 @@
   },
   "canva": {
     "documentTitle": "Creează-o în Canva · {{productName}}",
-    "heading": "Creează-o în Canva",
     "backToWriting": "Înapoi la Scrieri",
     "backToSettings": "Înapoi la setările poveștii",
     "opening": "Se deschide Canva…",
     "signedOut": "Conectează-te mai întâi, apoi apasă din nou „Creează-o în Canva” în setările poveștii.",
-    "working": "O clipă. Vorbim cu Canva…",
-    "cancelled": "Nu ai conectat Canva, așa că nu s-a trimis nimic către Canva. Poți încerca oricând din setările poveștii.",
-    "saved": "Coperta din Canva e salvată.",
-    "savedChecking": "O vezi deja. Cititorii o văd după ce este verificată. Durează câteva minute sau până la două zile când o verifică o persoană din echipa de moderare. Poți închide fila.",
+    "working": "Vorbim cu Canva…",
+    "cancelled": "Pe pagina Canva răspunsul a fost nu, așa că nu s-a trimis nimic către Canva și coperta nu s-a schimbat. Poți încerca oricând din setările poveștii.",
+    "saved": "Coperta e salvată",
+    "savedChecking": "O vezi deja. Cititorii o văd după ce trece de verificarea imaginii: de obicei în câteva minute sau până la două zile când o verifică o persoană din echipa de moderare. Poți închide fila.",
     "savedVisible": "Cititorii o pot vedea acum. Poți închide fila.",
     "design": "Creează-o în Canva",
     "newTab": "(se deschide într-o filă nouă)",
@@ -693,7 +696,21 @@
       "disconnectFailed": "Nu am putut deconecta Canva. Încearcă din nou.",
       "loadFailed": "Nu am putut verifica dacă Canva e conectat. Încearcă din nou."
     },
-    "arrived": "Coperta nouă din Canva a ajuns aici și este deja salvată."
+    "arrived": "Coperta nouă din Canva a ajuns aici și este deja salvată.",
+    "openingLine": "În Canva se deschide un design gol, cât o copertă (1600 × 2560). Prima dată, Canva întreabă dacă poate trimite designul către {{productName}}.",
+    "stoppedHeading": "Ceva n-a mers",
+    "crumbCover": "Copertă",
+    "workingLine": "Durează câteva secunde. Lasă fila deschisă.",
+    "cancelledHeading": "Nu s-a trimis nimic",
+    "waitingCheck": "Așteaptă verificarea",
+    "stops": {
+      "heading": "Dacă ceva o oprește",
+      "noAnswer": "Canva n-a răspuns",
+      "noAnswerLine": "Încearcă din nou peste un minut. Povestea e în siguranță.",
+      "tryAgain": "Încearcă din nou",
+      "popUps": "Ferestrele pop-up sunt blocate",
+      "popUpsLine": "Permite ferestrele pop-up pentru {{site}}, apoi apasă din nou „Creează-o în Canva”."
+    }
   },
   "insights": {
     "heading": "Rânduri și opriri",

@@ -201,9 +201,10 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
       .click();
     const deleteSection = page.getByRole('region', { name: 'Delete this story' });
     await deleteSection.getByRole('button', { name: 'Delete story' }).click();
-    await deleteSection.getByRole('button', { name: 'Yes, delete story' }).click();
-    await expect(deleteSection.getByText('Last check.')).toBeVisible();
-    await deleteSection.getByRole('button', { name: 'Delete story' }).click();
+    // Board D12: the dialog asks for the title before it deletes.
+    const dialog = page.getByRole('dialog', { name: 'Delete Atlas test: harta nopții?' });
+    await dialog.getByLabel('Type the title to delete it').fill('Atlas test: harta nopții');
+    await dialog.getByRole('button', { name: 'Delete the story' }).click();
     await expect(deleteSection.getByRole('button', { name: 'Undo' })).toBeVisible();
     await page.context().close();
   });
