@@ -34394,6 +34394,8 @@ CREATE OR REPLACE FUNCTION "public"."my_onboarding"() RETURNS "jsonb"
       'is_due', public.onboarding_is_due(profiles.id),
       'has_handle', profiles.handle is not null,
       'age_band', public.age_band(),
+      -- COUNTRY-2: the profile's country, so only its counties are offered.
+      'country_code', profiles.country_code,
       'region_code', profiles.region_code,
       'adults_may_message', profiles.adults_may_message,
       'read_categories', coalesce((
@@ -34417,7 +34419,7 @@ $$;
 ALTER FUNCTION "public"."my_onboarding"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."my_onboarding"() IS 'The signed-in person''s onboarding: whether it is due, their county, likes and the adult messages switch (S1-E2-06).';
+COMMENT ON FUNCTION "public"."my_onboarding"() IS 'The signed-in person''s onboarding: whether it is due, their country and county, likes and the adult messages switch (S1-E2-06, COUNTRY-2).';
 
 
 
@@ -45729,9 +45731,14 @@ CREATE OR REPLACE FUNCTION "public"."save_my_region"("wanted_region" "text" DEFA
 declare
   caller uuid := public.require_live_profile();
 begin
-  if wanted_region is not null and not exists (select 1 from public.regions where code = wanted_region) then
+  -- Step 1: a county must be on the list and in the country on the caller's profile.
+  if wanted_region is not null and not exists (
+    select 1 from public.regions
+    join public.profiles on profiles.id = caller
+    where regions.code = wanted_region and regions.country_code = profiles.country_code) then
     raise exception 'Pick a county from the list.' using errcode = 'check_violation', hint = 'unknown_region';
   end if;
+  -- Step 2: store it, or clear it.
   update public.profiles set region_code = wanted_region where id = caller;
 end;
 $$;
@@ -45740,7 +45747,7 @@ $$;
 ALTER FUNCTION "public"."save_my_region"("wanted_region" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."save_my_region"("wanted_region" "text") IS 'Sets or clears the caller''s county (S1-E2-06).';
+COMMENT ON FUNCTION "public"."save_my_region"("wanted_region" "text") IS 'Sets or clears the caller''s county, which must be in their own country (S1-E2-06, COUNTRY-2).';
 
 
 

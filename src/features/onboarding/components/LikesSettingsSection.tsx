@@ -7,7 +7,8 @@
  * live here (criteria 2 and 3).
  * Who shows it: SettingsPage, once the person has a username. What it calls: useMyOnboarding
  * (my_onboarding() and the writes) and useOnboardingChoices (the counties).
- * "Save" stores the county and the likes together.
+ * "Save" stores the county and the likes together. The county lists only the counties of the
+ * country on the profile, and is hidden for a country with none (COUNTRY-2).
  */
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,12 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
-import type { MyOnboarding, Preferences } from '../api/onboarding';
+import {
+  regionsOfCountry,
+  shownRegionCode,
+  type MyOnboarding,
+  type Preferences,
+} from '../api/onboarding';
 import { useMyOnboarding } from '../hooks/useMyOnboarding';
 import { useOnboardingChoices } from '../hooks/useOnboardingChoices';
 
@@ -38,6 +44,9 @@ function LikesForm({ onboarding, state }: LikesFormProps) {
   const { t } = useTranslation('account');
   const { regions } = useOnboardingChoices();
   const [regionCode, setRegionCode] = useState(onboarding.regionCode ?? '');
+  // COUNTRY-2: only the counties of the country on the profile, and none for a country without.
+  const countryRegions = regionsOfCountry(regions, onboarding.countryCode);
+  const shownRegion = shownRegionCode(countryRegions, regionCode);
   const [preferences, setPreferences] = useState<Preferences>({
     readCategories: onboarding.readCategories,
     writeCategories: onboarding.writeCategories,
@@ -49,7 +58,7 @@ function LikesForm({ onboarding, state }: LikesFormProps) {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setIsSaved(false);
-    await state.save({ kind: 'region', regionCode: regionCode === '' ? null : regionCode });
+    await state.save({ kind: 'region', regionCode: shownRegion === '' ? null : shownRegion });
     await state.save({ kind: 'preferences', preferences });
     setIsSaved(true);
   }
@@ -60,12 +69,14 @@ function LikesForm({ onboarding, state }: LikesFormProps) {
       className="flex flex-col gap-4"
       onSubmit={(event) => void handleSubmit(event).catch(errorShownByHook)}
     >
-      <RegionSelect
-        id="settings-region"
-        regions={regions}
-        value={regionCode}
-        onChange={setRegionCode}
-      />
+      {countryRegions.length > 0 && (
+        <RegionSelect
+          id="settings-region"
+          regions={countryRegions}
+          value={shownRegion}
+          onChange={setRegionCode}
+        />
+      )}
       <LikesFields value={preferences} onChange={setPreferences} />
       {state.saveFailed && <Notice tone="error">{t('onboarding.saveFailed')}</Notice>}
       {isSaved && !state.saveFailed && (
