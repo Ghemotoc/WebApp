@@ -139,6 +139,9 @@ test('a person logs in, sees their devices and logs the others out', async ({ br
 test('a password reset by email logs other devices out and sends a "password changed" email', async ({
   browser,
 }) => {
+  // Three devices, two emails and three logins: on a busy CI runner this flow takes about 30
+  // seconds, the default limit, so it failed by timing alone (26 Nov 2026). Give it a minute.
+  test.setTimeout(60_000);
   const account = newAccount();
   const newPassword = 'second secret passphrase';
   createTestAccount(account.email, firstPassword, account.handle);
