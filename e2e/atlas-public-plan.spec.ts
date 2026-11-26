@@ -294,14 +294,16 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
     await expect(visitor.getByTestId('atlas-public-entry-row')).toHaveCount(3);
     await expect(visitor.getByText('Moara macină noaptea.', { exact: false })).toHaveCount(0);
 
-    // One entry's page: its section, its text with a link to a public character, and the rest
-    // of the world beside it, the same section's entry first.
+    // One entry's page (board E36): its section, its text with a link to a public character, and
+    // the rest of the world beside it, the same section's entry first.
     await visitor.getByRole('link', { name: 'Moara', exact: true }).click();
     await expect(visitor).toHaveURL(new RegExp(`/atlas/world/${millEntryId}$`));
     await expect(visitor).toHaveTitle(/^Moara: Moara de pe deal/);
     const entry = visitor.getByTestId('atlas-public-entry');
     await expect(entry.getByRole('heading', { level: 2, name: 'Moara' })).toBeVisible();
     await expect(entry.getByText('World and places')).toBeVisible();
+    // Story 6.17: the page reads like the story, so the writer's tags stay on the writer's side.
+    await expect(entry.getByText('deal', { exact: true })).toHaveCount(0);
     await expect(entry.getByRole('link', { name: 'Ana' })).toHaveAttribute(
       'href',
       `${readerBase}/characters/${anaId}`,
