@@ -1327,7 +1327,14 @@ The word lists start in `content/username-word-lists/` and reach the database th
 
 ```
 /write (YourWritingPage) → "New story"    → /write/new (NewStoryPage)      src/features/writing/
-/write → "More comments" → /write/comments (ChapterCommentsPage, GAPS-5)   useMyChapterComments → my_chapter_comments()
+/write → "View 72 comments" → /write/comments (ChapterCommentsPage, GAPS-5)   useMyChapterComments → my_chapter_comments()
+  │  board D01 (user story 5.1): "Story Atlas" (/plan) beside "New story"; the total beside
+  │     "Latest comments" and each story's "last updated" come from lib/dashboardChapters.ts;
+  │     two adverts, PageAdSlot pageKey="write" (slots write_wide and write_lower)
+  │  board D04 (user story 5.4): no live story → WriteEmptyState ("No stories yet" box with
+  │     New story, "Plan before you write" → /plan, FirstStoryGuides: CMS help pages whose
+  │     address starts with "first-story-", lib/firstStoryGuides.ts); figures only once a
+  │     chapter is out (WriterDashboardTop hasChapterOut)
   │  the simplified look (CALM-7c): the figures on one glass Hero, each story a hairline row
   │     with one meta line (lib/writerStoryFacts.ts), quiet buttons, "Continue draft" the main one
   │  the choices: useStoryFormOptions → api/stories.ts → open_story_languages(), categories
@@ -1361,7 +1368,7 @@ first_published_at and get_story_page() (S1-E3-05) serves the public page (ADR 0
   │  SaveBar (G9d): stays at the foot of the window, says "You have unsaved changes" while
   │  isDirty, and Cancel puts the last saved answers back (useStorySettingsForm.discard);
   │  StoryPreviewAside beside the form shows the card readers will see
-  │  DeleteStoryControl: asked twice → delete_my_story(slug); Undo → restore_my_story(slug)
+  │  DeleteStoryControl: Delete story → DeleteStoryDialog (type the title) → delete_my_story(slug); Undo → restore_my_story(slug)
   ▼
 update_my_story(): is_active_member(), my_live_story_id() (the caller's own live story),
   check_story_basics() (shared with create_story()), check_story_cover(), set_story_tags();
@@ -1426,11 +1433,18 @@ Tests: `supabase/tests/database/104-ratings-and-labels.test.sql`, `e2e/ratings.s
   │  useChapterDraft → the chapters table (chapters_select_own: the owner only)
   │  useChapterEditor → TipTap with chapterEditorExtensions (only the allowed formatting);
   │    the stored Markdown becomes a document (lib/chapterMarkdown.ts) and back on every save
-  │  EditorToolbar (role=toolbar, one tab stop, aria-keyshortcuts), LinkDialog (Ctrl+K)
-  │  useAutosave: every 10 s while there are changes, and on blur
+  │  EditorBar (board D05): Back to chapters, the story's title, "Chapter 16 · Saved · 240 words"
+  │    (SaveWord), Focus mode, Compare versions after a conflict, Preview and Publish (a Sheet)
+  │  EditorToolbar (role=toolbar, one tab stop, aria-keyshortcuts) in EditorToolbarDock (at the
+  │    bottom over the keyboard below 1024 px, useKeyboardInset): the "+" InsertMenu (picture,
+  │    video link, scene break, drawing, music), Undo, the Poem button; LinkDialog (Ctrl+K)
+  │  EditorPaper: "Chapter 16", the title, the text, the words and "Saved at 14:02" at its foot
+  │  useAutosave: half a second after typing stops, every 10 s while a save is owed, and on blur
   │    → chapterDraftSchema (src/schemas/chapter.ts: no HTML, safe links, ş/ţ corrected)
   │    → api/chapters.ts → save_chapter_draft(code, title, body, expected_version)
-  │  EditorAside: SaveStatus (role=status), Publish (S1-E3-03), Story details
+  │  SaveStatus (role=status, hidden unless the writer must act: conflict, refused save with
+  │    Retry, a rule broken, an account that can't save); WritingChapterList on the left and
+  │    ChapterPlanPanel with EditorStoryDetails on the right from 1024 px (the plan is a Sheet below)
   ▼
 save_chapter_draft(): is_active_member(), the caller's own live chapter (locked), a stale
   expected_version → {status: conflict} (S1-E3-02b shows it), check_chapter_text() (the same
@@ -1443,7 +1457,7 @@ Offline, paste and conflicts (S1-E3-02b):
 ```
 every edit → useDeviceKeep: half a second later the title and text go to IndexedDB
   (lib/draftStore.ts, key: the chapter code, with the version they are based on)
-offline (useOnlineStatus, S1-E1-05) → nothing is sent; the Saving box says the words are kept
+offline (useOnlineStatus, S1-E1-05) → nothing is sent; the save words say the words are kept
 back online, or the editor opens with a device copy → that copy is sent at once
 the server has the text → the device copy is forgotten
 a conflict → "Keep this version" (save over the server's version) or "Compare versions"
@@ -1455,7 +1469,8 @@ paste → TipTap's transformPastedHTML → lib/pasteCleaning.ts (Word lists, Doc
 Publishing (S1-E3-03):
 
 ```
-PublishPanel (in EditorAside) ← useChapterPublishing (keeps the status after each action)
+PublishPanel (in a Sheet from the editor's bar, board D05) ← useChapterPublishing (keeps the
+  status after each action and refreshes the chapter list)
   │  "Publish chapter" / "Schedule chapter" / "Update chapter": the autosave saves first
   │    (saveNow, isAllSaved) so what goes live is what is on screen (Q10)
   │  the date and time are on the writer's own clock → src/lib/local-time.ts → an instant (CALM-8b)
@@ -1498,11 +1513,17 @@ Tests: `supabase/tests/database/392-last-chapter.test.sql`, `src/features/writin
 Managing chapters (S1-E3-04), at `/write/s/<slug>/chapters` ("Manage chapters" on a story card, or the story in the editor's breadcrumb):
 
 ```
-ManageChaptersPage → ChapterStats ("This story in numbers": chapters, words, next scheduled)
-  │  → ChapterListCard → SortableChapterList (dnd-kit: mouse, touch, keyboard)
-  │                     → ManagedChapterRow ("Chapter 3: Title", pill, meta from lib/chapterListText.ts)
-  │                       → ChapterRowActions (arrows, Edit, Rename, Unpublish, Delete)
-  │  → RecentlyDeletedChapters (Undo), DeleteChapterDialog (asks first)
+ManageChaptersPage → ChapterStats (board D03: Chapters by state, Words out, Reads of all time,
+  │                    Status and the marked last chapter; lib/chapterStats.ts, reads from
+  │                    useWriterDashboard with "fewer than 5" counted as a "+" floor)
+  │  → ChapterList (more than 10 chapters: the newest 6, then "Show chapters 1 to N")
+  │    → SortableChapterList (dnd-kit: mouse and touch drag the whole row; the click a drop
+  │                           lands on the title is dropped, lib/blockClickAfterDrag.ts)
+  │      → ManagedChapterRow ("Chapter 3: Title" over a MetaLine from lib/chapterListText.ts)
+  │        → ChapterRowActions (Earlier, Later, Edit, then MoreMenu: Rename, Preview, Schedule,
+  │          Unpublish or Publish again, Copy link, Delete; Earlier and Later move into More
+  │          under 600 px)
+  │  → RecentlyDeletedChapters (Restore, days left), DeleteChapterDialog (asks first)
   │  → MoveChapterDialog: a move that gives a published chapter a new number asks first
   │    (lib/chapterMoves.ts decides; drafts and scheduled chapters move straight away; G9d)
   ▼
@@ -1712,6 +1733,10 @@ Reading applies the reader's rules again (`notification_is_shown()`): a chapter 
 Tests: `154-notifications.test.sql`, `lib/notificationText.test.ts`, `lib/dayGroups.test.ts`, `e2e/notifications.spec.ts`.
 
 **The end of a followed story (BOOKS B06, user story 2.6).** When the chapter a `chapter_published` job names is the writer's marked last chapter (`chapters.is_last`), `notify_chapter_published()` tells the story's and the writer's followers once with the kind `story_completed` instead of `new_chapter` ("Lia Scrie finished Stația meteo.", opening the story page). It sits under Stories, and its email follows the person's New chapters choice (`email_delivery_for()`, the `storyCompleted` line in `email.json`). Tests: `404-story-completed-notification.test.sql`, `e2e/last-chapter.spec.ts`.
+
+**Tell followers (BOOKS D06, user story 5.6).** The Publish dialog's "Tell followers" switch (`TellFollowersSwitch`, on by default) sits under "This is the last chapter", with "1,284 followers get a notification when it goes out." from `chapter_followers_to_tell()` (`api/followersToTell.ts`, writer only; another writer gets null). It counts `new_chapter_audience()`, the one list `notify_chapter_published()` also loops over, so the number and the bells always agree; nobody but the database calls that list. `publish_chapter()` and `schedule_chapter()` take `tell_followers` (default true), keep it in `chapters.tell_followers`, and `chapter_publish_now()` copies it into the job; a job with `tell_followers` false tells nobody. Migration `20270205100552_books_d06_tell_followers.sql`; tests `409-tell-followers.test.sql`, `PublishPanel.test.tsx`, `e2e/publish.spec.ts`.
+
+**Story settings and Languages, as boards D07 and D08 draw them (user stories 5.7 and 5.8).** `StorySettingsHeader` puts "Writing / <the story>" (`WritingBreadcrumb`) over the heading "Story settings", the story's title in the line under it, and Manage chapters, Languages and See story page below. `StorySettingsPage` wraps its sections in `FlatFormSections`, so every `FormSection` there draws as a flat group under a 1 px line (`flatGroupClassName`) instead of a card, beside the preview from 1024 px. The Languages screen (`StoryLanguagesPage`) is one column: the table of languages with no "Translated by" column, "Add a language" as a flat group, and the card "One story, many languages" last; `LanguagesBreadcrumb` draws through the same `WritingBreadcrumb`. Translating one chapter (board D09, user story 5.9): `TranslationEditorHeader` puts "Writing / <the language's title> / Chapter N" over the chapter's place as the heading, the words translated so far and Save draft and Publish; below it, `SideBySidePapers` draws each side under its own head (side, language, word count) with no card around the page. The two Canva pages (boards D10 and D11, user stories 5.10 and 5.11) share `CanvaTripPage`: "Story settings / Cover", a heading that says what is happening ("Opening Canva…", "The cover is saved"), the line under it and "Back to story settings"; the start page adds `CanvaStopRows` ("If something stops it"). Deleting a story (board D12, user story 5.12) opens `DeleteStoryDialog`, a centred `Sheet` (a bottom sheet on phones) that says what goes and for how long Undo can bring it back, and deletes only once the title is typed; a press before that says so beside the field (`useMissingField`).
 
 ## Notification emails (S1-E7-02)
 
@@ -2962,8 +2987,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 
 ### App only stories (GAPS-15)
 
-A writer picks "Where can people read this story?" in the story's settings
-(`src/features/writing/components/StoryReadOnSection.tsx`); `updateMyStory()` saves it last through
+A writer turns on "App only" under "Who can read this story?" in the story's settings
+(`src/features/writing/components/StoryWhoCanReadSection.tsx`, board D07); `updateMyStory()` saves
+it last through
 `set_my_story_app_only()` into `stories.is_app_only`. Nothing changes for readers until staff turn
 the `app_only_stories` flag on (it waits for the apps): `story_app_only_applies()` is the one place
 that checks both. Then `get_chapter()` sends no text to anyone but the writer and says `app_only`,
@@ -3112,6 +3138,7 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 ### New story wizard and "Set in" (CALM-9, board D02)
 
 - `/write/new` is five steps, one open at a time: `NewStoryPage` → `useNewStorySteps` (which section each step holds) → `StepWizard` (`src/components/ui/`, shared with later long forms such as the waitlist, H08). "Next" checks only the open step's answers (`checkFields()` in `useNewStoryForm`); Create checks them all and opens the first step with a mistake.
+- Since bundle 5 (story 5.2) every step is a box with Back beside Next (`goToPreviousStep` in `useStepWizard`), the page opens with `WritingBreadcrumb` (Writing / New story, shared with the other Write pages), and Create sits under the steps at every step (`NewStoryActionBar`): a press with steps unfinished names them ("Still to finish: …") and opens the first. The language is a `Select` (its closed languages are `isDisabled` options), and `StoryPreviewAside` is one sticky box with a small cover.
 - "Set in" (up to five countries) is its own column, `stories.set_in_countries`, saved by `set_my_story_set_in_countries()` after `create_story()` (`saveNewStoryExtras()`) and from story settings (`updateMyStory()`). The migration `…_calm9_d02_set_in_countries.sql` moved existing "set in <country>" tags into it.
 
 ## Coming back to the same place (design books item 17)
@@ -3125,7 +3152,7 @@ story_hidden_here()       stories.hidden_in_countries holds that country; never 
 ## Show what is inside (design books item 16)
 
 - **New chapter in the Library:** `my_library()` adds `has_new_chapter` to each shelf place (true when the story's `last_chapter_published_at` is after the place's `saved_at`; migration `20270205100433_books16_new_chapter_dot.sql`). `LibraryShelves` passes it to `StoryCard`, which draws a small dot on the cover, and adds "new chapter" to the meta line so the dot is never the only cue.
-- **Saved at a glance in the editor:** `SaveWord` (`src/features/writing/components/`) shows one word beside the chapter's name in the breadcrumb ("Saved", "Saving…", "Not saved"), read from the same `useAutosave` state as the Saving box. It is plain text; the Saving box stays the live region.
+- **Saved at a glance in the editor:** `SaveWord` (`src/features/writing/components/`) shows the save in the editor's bar ("Chapter 16 · Saved · 240 words") and at the foot of the paper ("Saved at 14:02"), read from the same `useAutosave` state as `SaveStatus` ("Saving…", "Not saved yet. Trying again" and "Not saved" in the danger colour; board D05, user story 5.5). It is plain text; `SaveStatus` stays the live region.
 
 ## Healthy habits under 18 (design books S5)
 

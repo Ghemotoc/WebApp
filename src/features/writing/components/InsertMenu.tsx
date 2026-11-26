@@ -1,11 +1,12 @@
 /**
- * InsertMenu: the editor's "Insert" button and its menu (story S1-E3-09; board 4.3, the Insert
- * menu: picture, drawing, music, video).
+ * InsertMenu: the editor's Insert button and its menu (story S1-E3-09; board D05, user story
+ * 5.5: "+ opens Insert (Picture, Video link, Scene break)").
  *
- * Board values: a 44 px pill button in plum text, filled plum while open; the menu is a white
- * card (24 px corners, a soft shadow) under it, at most 340 px wide and never wider than the
- * screen (it moves left when it would run past the right edge, useStayOnScreen), each item a
- * 56 px row with its line icon in a tinted tile, its name and a short note.
+ * Board values: a round 40 px "+" button named "Insert a picture, video link or scene break",
+ * tinted while open; the menu is the box surface (12 px corners, 8 px inside, a soft shadow) under
+ * it from 1024 px and above it below (the toolbar floats at the bottom there), at most 340 px
+ * wide and never wider than the screen (it moves left when it would run past the right edge,
+ * useStayOnScreen); each item is a 44 px row with its line icon, its name and a short note.
  * Keyboard (WAI-ARIA menu button): Enter, Space or the down arrow opens it on the first item; the
  * arrow keys, Home and End move; Escape closes it and puts focus back on the button; Tab or a
  * click outside closes it.
@@ -119,7 +120,7 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
     <div
       ref={panelRef}
       style={{ left: shift }}
-      className="absolute top-[54px] left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-card border border-border bg-surface p-2 shadow-popover"
+      className="box-surface absolute top-12 left-0 z-20 w-[min(340px,calc(100vw-32px))] rounded-field p-2 shadow-popover max-lg:top-auto max-lg:bottom-12"
     >
       <div
         ref={menuRef}
@@ -141,17 +142,12 @@ function InsertMenuPanel(props: InsertMenuPanelProps) {
               onPicked();
               item.onPick();
             }}
-            className="flex min-h-14 w-full items-start gap-3 rounded-card px-4 py-3 text-left hover:bg-tint focus-visible:bg-tint"
+            className="flex min-h-11 w-full items-center gap-3 rounded-field px-3 py-2 text-left hover:bg-tint focus-visible:bg-tint"
           >
-            <span
-              aria-hidden="true"
-              className="inline-flex size-9 shrink-0 items-center justify-center rounded-field bg-tint text-ink-heading"
-            >
-              <ActionIcon name={item.icon} size={20} />
-            </span>
-            <span className="flex flex-col gap-1">
-              <span className="type-body font-semibold text-ink">{item.label}</span>
-              <span className="type-meta leading-snug text-ink-muted">{item.note}</span>
+            <ActionIcon name={item.icon} size={20} className="shrink-0 text-ink-heading" />
+            <span className="flex flex-col">
+              <span className="type-label font-semibold text-ink">{item.label}</span>
+              <span className="type-meta text-ink-muted">{item.note}</span>
             </span>
           </button>
         ))}
@@ -209,11 +205,13 @@ export function InsertMenu({ items, footnote }: { items: InsertMenuItem[]; footn
             setOpen(true);
           }
         }}
-        className={`inline-flex h-11 items-center gap-2 rounded-full px-4 type-body font-semibold ${
-          isOpen ? 'bg-primary text-on-primary' : 'text-ink-heading hover:bg-tint'
+        aria-label={t('insert.button')}
+        title={t('insert.button')}
+        className={`inline-flex size-10 items-center justify-center rounded-full text-ink-heading ${
+          isOpen ? 'bg-tint' : 'hover:bg-tint'
         }`}
       >
-        {t('insert.button')}
+        <ActionIcon name="plus" size={20} />
       </button>
       {isOpen && (
         <InsertMenuPanel

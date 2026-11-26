@@ -8,7 +8,10 @@ straight back (story S1-E3-12; ADR 0009). Off until there is a Canva developer a
   settings' cover (CoverSection).
 - `components/CanvaStartPage.tsx` (`/canva/start?story=<id>`) and
   `components/CanvaReturnPage.tsx` (`/canva/return`): the two pages the new tab passes through,
-  framed by `CanvaTripPage.tsx`.
+  framed by `CanvaTripPage.tsx` as boards D10 and D11 draw them ("Story settings / Cover", a
+  heading that says what is happening, one line under it, "Back to story settings"). The start
+  page adds "If something stops it" (`CanvaStopRows.tsx`); the return page puts the cover's place
+  beside the heading once the cover is saved.
 - `components/CanvaSettingsSection.tsx`: "Canva" in Settings, with Disconnect.
 - `hooks/`: the pages' work (`useCanvaStart`, `useCanvaReturn`) and the connection
   (`useCanvaConnection`).

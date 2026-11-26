@@ -1,8 +1,9 @@
 /**
- * useAutosave: saves the chapter draft every 10 seconds while there are changes, and at once
- * when the editor loses focus (story S1-E3-02a; board 4.3: "We save every 10 seconds and when
- * you click away from the text"), keeps a copy on the device while anything is unsaved and
- * handles a version conflict (story S1-E3-02b).
+ * useAutosave: saves the chapter draft half a second after the writer stops typing (board D05,
+ * user story 5.5: "Saving (after half a second)"), at once when the editor loses focus, and
+ * tries again every 10 seconds while a save failed or is waiting (story S1-E3-02a; "Not saved
+ * yet. Trying again"). It keeps a copy on the device while anything is unsaved and handles a
+ * version conflict (story S1-E3-02b).
  *
  * Who calls it: ChapterEditorPage, which gives it a way to read the current title and body and
  * whether the browser is online (useOnlineStatus, S1-E1-05).
@@ -25,8 +26,11 @@ import { forgetDraftOnDevice } from '../lib/draftStore';
 
 import { useDeviceKeep } from './useDeviceKeep';
 
-/** How often changes are saved while the writer keeps typing (board 4.3). */
+/** How often a failed or waiting save is tried again (board D05: "retries every 10 seconds"). */
 export const AUTOSAVE_INTERVAL_MILLISECONDS = 10_000;
+
+/** The pause after the last keystroke before the draft saves (board D05, user story 5.5). */
+export const AUTOSAVE_PAUSE_MILLISECONDS = 500;
 
 /** What the save status can be. */
 export type SaveState =
@@ -213,7 +217,7 @@ function useConflictExits(context: AutosaveContext, save: () => Promise<void>) {
 /**
  * Runs the autosave.
  *
- * @returns state; markChanged (on every edit); saveNow (on blur); isAllSaved (asked before
+ * @returns state; markChanged (on every edit, saves after the pause); saveNow (on blur); isAllSaved (asked before
  *   publishing); keepMine and acceptOther (the two ways out of a conflict)
  */
 export function useAutosave(options: AutosaveOptions) {
@@ -227,18 +231,24 @@ export function useAutosave(options: AutosaveOptions) {
   const save = useSave(context);
   const exits = useConflictExits(context, save);
 
-  /** Every edit marks the draft as changed and keeps a copy on the device. */
+  // The half-second pause: every edit restarts it, so a save goes once the writer stops typing.
+  const pauseTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(pauseTimer.current), []);
+
+  /** Every edit marks the draft as changed, keeps a copy on the device and restarts the pause. */
   const markChanged = useCallback(() => {
     refs.hasChanges.current = true;
     device.keepSoon();
+    window.clearTimeout(pauseTimer.current);
+    pauseTimer.current = window.setTimeout(() => void save(), AUTOSAVE_PAUSE_MILLISECONDS);
     setState((current) => {
       if (current.kind === 'saving' || current.kind === 'conflict') return current;
       return refs.isOnline.current ? { kind: 'unsaved' } : { kind: 'offline' };
     });
     // The refs never change identity.
-  }, [device]);
+  }, [device, save]);
 
-  // The 10-second tick (board 4.3), and a save as soon as the connection comes back.
+  // The 10-second retry (board D05), and a save as soon as the connection comes back.
   useEffect(() => {
     const timer = window.setInterval(() => void save(), AUTOSAVE_INTERVAL_MILLISECONDS);
     return () => window.clearInterval(timer);

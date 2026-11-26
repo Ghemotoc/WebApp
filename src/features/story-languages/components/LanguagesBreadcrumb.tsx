@@ -1,11 +1,17 @@
 /**
- * LanguagesBreadcrumb: "Write / <story> / Languages" above the writer's Languages screens
- * (bundle TRANSLATE-1c; board TrSettings).
+ * LanguagesBreadcrumb: "Writing / <story> / Languages" above the writer's Languages screens
+ * (bundle TRANSLATE-1c), drawn as board D08's breadcrumb (CALM-9, user story 5.8).
  *
  * Who shows it: StoryLanguagesPage and TranslateChaptersPage (which adds the language as the
  * last step). The last step is the page itself, so it is text with aria-current, not a link.
+ * What it calls: the writing feature's WritingBreadcrumb, so every Write page has one look.
  */
-import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
+
+import {
+  WritingBreadcrumb,
+  type WritingCrumb,
+} from '@/features/writing/components/WritingBreadcrumb';
 
 import { useStoryLanguagesTranslation } from '../registerStoryLanguagesTranslations';
 
@@ -17,8 +23,6 @@ export interface LanguagesBreadcrumbProps {
   languageName?: string;
 }
 
-const linkClass = 'inline-flex min-h-11 items-center type-body font-semibold break-words';
-
 /**
  * Renders the breadcrumb.
  *
@@ -26,47 +30,17 @@ const linkClass = 'inline-flex min-h-11 items-center type-body font-semibold bre
  */
 export function LanguagesBreadcrumb({ story, languageName }: LanguagesBreadcrumbProps) {
   const { t } = useStoryLanguagesTranslation();
-  const languagesStep =
-    languageName === undefined ? (
-      <span aria-current="page" className="type-body text-ink-muted">
-        {t('breadcrumb.languages')}
-      </span>
-    ) : (
-      <Link to={`/write/s/${story.slug}/languages`} className={linkClass}>
-        {t('breadcrumb.languages')}
-      </Link>
-    );
-  return (
-    <nav aria-label={t('breadcrumb.label')}>
-      <ol className="m-0 flex list-none flex-wrap items-center gap-x-2 p-0 type-body text-ink-muted">
-        <li>
-          <Link to="/write" className={linkClass}>
-            {t('breadcrumb.write')}
-          </Link>
-        </li>
-        <li aria-hidden="true">/</li>
-        <li className="min-w-0">
-          <Link
-            to={`/write/s/${story.slug}/settings`}
-            lang={story.languageCode}
-            className={linkClass}
-          >
-            {story.title}
-          </Link>
-        </li>
-        <li aria-hidden="true">/</li>
-        <li>{languagesStep}</li>
-        {languageName !== undefined && (
-          <>
-            <li aria-hidden="true">/</li>
-            <li>
-              <span aria-current="page" className="type-body text-ink-muted">
-                {languageName}
-              </span>
-            </li>
-          </>
-        )}
-      </ol>
-    </nav>
-  );
+  const { t: writingT } = useTranslation('writing');
+  const languagesAddress = `/write/s/${story.slug}/languages`;
+  // Writing, then the story (to its settings), then Languages: a link only on a language's page.
+  const crumbs: WritingCrumb[] = [
+    { label: writingT('breadcrumb.writing'), to: '/write' },
+    { label: story.title, to: `/write/s/${story.slug}/settings`, lang: story.languageCode },
+    {
+      label: t('breadcrumb.languages'),
+      to: languageName === undefined ? undefined : languagesAddress,
+    },
+  ];
+  if (languageName !== undefined) crumbs.push({ label: languageName });
+  return <WritingBreadcrumb crumbs={crumbs} />;
 }

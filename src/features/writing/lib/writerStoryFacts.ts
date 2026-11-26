@@ -1,10 +1,13 @@
 /**
- * writerStoryFacts: the meta line under a story's title on Write (bundle CALM-7c; board
- * simplified/New-Write, "Story by story"): "Fiction · Ongoing · No AI · 6 chapters published".
+ * writerStoryFacts: the meta line under a story's title on Write (bundle CALM-7c; board D01, user
+ * story 5.1, "Story by story"): "Ongoing · Fiction · No AI · 6 chapters published · last updated
+ * 10 October 2026", or "Not published yet · Fiction · No AI · Only you" while nothing is published.
  *
  * It replaces the story card's pills (DoD pills: on the simplified pages information pills become
- * words in a meta line). The state comes first among the labels and in bold: "Not published yet"
- * until the first chapter is out, "Ongoing" while it is being written, plain "Completed" after.
+ * words in a meta line). The state comes first and in bold: "Not published yet" until the first
+ * chapter is out (then "Only you" ends the line, as board D01 draws it), "Ongoing" while it is being
+ * written, plain "Completed" once the writer marks it so (that wins even before a chapter is out,
+ * so the card agrees with the Show filter).
  * Staff's "AI-written, not disclosed" label wins over the writer's answer (Q24) and is bold too.
  * The story's language is left out, as on the board: a language name in another language needs its
  * own lang attribute, which a meta line can't give, and story settings show it.
@@ -17,18 +20,21 @@ import type { MetaFact } from '@/components/ui/MetaLine';
 import type { MyStory } from '../api/stories';
 
 /**
- * The story's state: not published yet, ongoing (bold) or completed.
+ * The story's state: completed, not published yet (bold) or ongoing (bold).
  *
  * @param story - the writer's story
  * @param t - the writing translations
  * @returns one fact
  */
 function stateFact(story: MyStory, t: TFunction<'writing'>): MetaFact {
+  // Step 1: the writer's own "Completed" wins, even before a chapter is out, so the card agrees
+  // with the Show filter, which sorts by that setting (S1-E3-05).
+  if (story.completionStatus === 'completed') return { text: t('status.completed') };
+  // Step 2: otherwise an unpublished story says so (board D01), and a published one is ongoing.
   if (story.firstPublishedAt === null) {
     return { text: t('storyCard.notPublishedYet'), kind: 'state' };
   }
-  if (story.completionStatus === 'ongoing') return { text: t('status.ongoing'), kind: 'state' };
-  return { text: t('status.completed') };
+  return { text: t('status.ongoing'), kind: 'state' };
 }
 
 /**
@@ -60,16 +66,27 @@ function labelFacts(story: MyStory, t: TFunction<'writing'>): MetaFact[] {
  *
  * @param story - the writer's story
  * @param t - the writing translations
- * @returns the facts in reading order: category, state, labels, chapters published
+ * @param lastUpdated - when the story last changed for readers, already written out as a date
+ *   ("10 October 2026"); null while nothing is published or the numbers are still loading
+ * @returns the facts in reading order: state, category, labels, chapters published, last updated
  */
-export function writerStoryFacts(story: MyStory, t: TFunction<'writing'>): MetaFact[] {
-  const published = story.chapters.filter((chapter) => chapter.status === 'published').length;
+export function writerStoryFacts(
+  story: MyStory,
+  t: TFunction<'writing'>,
+  lastUpdated: string | null = null,
+): MetaFact[] {
+  // Step 1: the state, the category and the labels, so a writer sees what they picked.
   const facts: MetaFact[] = [
-    { text: t(`categories.${story.categorySlug}`, { defaultValue: story.categorySlug }) },
     stateFact(story, t),
+    { text: t(`categories.${story.categorySlug}`, { defaultValue: story.categorySlug }) },
     ...labelFacts(story, t),
   ];
-  // Chapters published, once there is one.
+  // Step 2: nothing published yet: who can see it closes the line (board D01 draws only the
+  // state and "Only you"; the category and labels stay, docs/board-fixes.md).
+  if (story.firstPublishedAt === null) return [...facts, { text: t('preview.onlyYou') }];
+  // Step 3: chapters published and when it last changed, once there is one.
+  const published = story.chapters.filter((chapter) => chapter.status === 'published').length;
   if (published > 0) facts.push({ text: t('storyCard.chaptersPublished', { count: published }) });
+  if (lastUpdated !== null) facts.push({ text: t('storyCard.lastUpdated', { date: lastUpdated }) });
   return facts;
 }
