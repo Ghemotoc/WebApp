@@ -3,11 +3,13 @@
  * Messages 5.5).
  *
  * The visible word is short ("Change"), so the accessible name says what it changes; it starts
- * with the visible word (WCAG 2.5.3, label in name). The page header's "Message settings" is a
- * glass pill drawn by MessagesPage since bundle G8c.
- * Who shows it: MessagesRulesNotice and AboutChatPanel.
+ * with the visible word (WCAG 2.5.3, label in name). It is the boards' text button (ink, underlined,
+ * 44 px tall; board E12-Messages).
+ * Who shows it: MessagesRulesNotice and ChatPanel (the line that says why the box is gone).
  */
 import { Link } from 'react-router';
+
+import { buttonClassName } from '@/components/ui/buttonStyles';
 
 /** What the link needs. */
 export interface MessageSettingsLinkProps {
@@ -27,7 +29,7 @@ export function MessageSettingsLink({ text, label }: MessageSettingsLinkProps) {
     <Link
       to="/settings#messages"
       aria-label={label}
-      className="inline-flex min-h-6 w-fit items-center gap-2 font-semibold text-link underline"
+      className={buttonClassName({ variant: 'text' }, 'w-fit')}
     >
       {text}
     </Link>

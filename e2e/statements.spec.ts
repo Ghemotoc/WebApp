@@ -7,7 +7,7 @@
  *   statement exactly as sent (criterion 3);
  * - the person reads it on My reports and decisions: what we did, why (the moderator's words),
  *   the rule, that no automated tools decided, and until when they can challenge it, with a link
- *   to Contact us (criterion 1); their notification links there with "Read why";
+ *   to Contact us (criterion 1); their notification links there with "Read the reasons";
  * - the reporter sees "Decided: action taken" on the same page, never the warning (criterion 2);
  * - My reports and decisions passes axe at 390, 768 and 1440 px.
  * Test data: seed personas; the report, case and statement made here are removed afterwards.
@@ -82,7 +82,7 @@ test.describe('statements of reasons (S1-E10-04)', () => {
 
     // Step 3: the teacher reads it, with the rule, how it was found and the Appeal button.
     const teacherPage = await openAs(browser, 'teacher', '/notifications');
-    await teacherPage.getByRole('link', { name: 'Read why' }).first().click();
+    await teacherPage.getByRole('link', { name: 'Read the reasons' }).first().click();
     await expect(teacherPage).toHaveURL(/\/my-reports/);
     const decision = teacherPage.getByRole('article').filter({ hasText: 'Account warned' });
     await expect(decision).toContainText('Your bio advertises a paid service.');

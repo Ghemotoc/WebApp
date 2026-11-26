@@ -19,6 +19,7 @@ import {
   fetchConversation,
   fetchConversations,
   fetchMyMessageSettings,
+  fetchNewChatPeople,
   markRead,
   MessagesError,
   sendMessage,
@@ -39,6 +40,7 @@ export const messagesKeys = {
   chat: (handle: string) => ['messages', 'chat', handle.toLowerCase()] as const,
   unread: unreadMessagesKey,
   settings: ['messages', 'settings'] as const,
+  newChatPeople: ['messages', 'new-chat-people'] as const,
 };
 
 /**
@@ -83,6 +85,21 @@ export function useMyMessageSettings() {
     queryKey: messagesKeys.settings,
     retry: false,
     queryFn: async () => fetchMyMessageSettings(await requireClient()),
+  });
+}
+
+/**
+ * The people New chat offers (user story 4.2), read when the dialog opens.
+ *
+ * @param isOpen - true while the New chat dialog is open
+ * @returns the query
+ */
+export function useNewChatPeople(isOpen: boolean) {
+  return useQuery({
+    queryKey: messagesKeys.newChatPeople,
+    retry: false,
+    enabled: isOpen,
+    queryFn: async () => fetchNewChatPeople(await requireClient()),
   });
 }
 

@@ -3,12 +3,12 @@
 In-app notifications (S1-E7-01), built by READ-3: the bell in the top bar and the Notifications page at `/notifications` (board 6.2).
 
 - `components/NotificationBell.tsx`: the bell with the unread count, in the top bar while signed in (`src/app/shell/AppLayout.tsx`); its words are in `common.json` because it is on every page.
-- `components/NotificationsPage.tsx`: "What's new", the unread line, Settings and "Mark all as read", the filter chips with the "Unread only" switch, the list and "Show older", with the two side cards beside the list (G8d, liquid glass).
-- `components/NotificationFilters.tsx`: All, Replies, Follows, Stories and Staff, each with its count.
+- `components/NotificationsPage.tsx`: "Notifications" and the unread line, then the filters, the "Unread only" switch and "Mark as read", the list and "Show older", with the two side cards beside the list (board E11, BOOKS-4).
+- `components/NotificationFilters.tsx`: a `SegmentedControl` of Everything, Replies, Follows, Stories and "From <product name>", each with its count ("Replies · 3").
 - `components/NotificationList.tsx`, `NotificationRow.tsx`, `NotificationIcon.tsx`: the rows under Today, Yesterday, Earlier this week and Older; opening one marks it as read.
-- `components/NotificationsEmpty.tsx`: "You're all caught up".
-- `components/DecisionsCard.tsx`: "Decisions about your posts": they always arrive and can't be switched off.
-- `components/EmailChoicesCard.tsx`: "Email choices", how each kind arrives by email (from `useEmailSettings`), with a link to Settings (G8d).
+- `components/NotificationsEmpty.tsx`: the one line shown when nothing is there. `lib/emphasisedWords.ts`: which words of a row's sentence are bold (who, and the titles), BOOKS-4.
+- `components/DecisionsCard.tsx`: "Decisions about posts": they always arrive and can't be switched off; a link to Reports and decisions.
+- `components/EmailChoicesCard.tsx`: "How you’re told", label rows saying how each kind arrives (here and by email, here with a daily email, or here only, from `useEmailSettings`) and the message emails with their quiet hours (from `useMyMessageSettings`), with a link to Settings (board E11, BOOKS-4).
 - `lib/notificationText.ts`: what each kind says and where it leads (some kinds have a file of their own beside it, such as `lib/commentsResumedText.ts`, the quiet note when a pause of new comments ends, CALM-8); `lib/dayGroups.ts`: the day headings, in Romanian time.
 - `api/notifications.ts` and the hooks: `my_notifications()`, `my_unread_notification_count()`, `mark_notifications_read()`. The bell asks every minute and on focus (no Realtime yet).
 - `registerNotificationsTranslations.ts`: the `notifications` text namespace, added when the page first renders.

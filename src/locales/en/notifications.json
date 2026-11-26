@@ -1,30 +1,29 @@
 {
   "page": {
-    "eyebrow": "Notifications",
-    "title": "What’s new",
+    "title": "Notifications",
     "newSince_one": "{{count}} new since you last looked.",
     "newSince_other": "{{count}} new since you last looked.",
     "caughtUp": "You’re caught up.",
     "markAllRead": "Mark as read",
     "markFailed": "We couldn’t mark them as read. Check your connection and try again.",
     "loadFailed": "We couldn’t load your notifications. Check your connection and try again.",
-    "showOlder": "Show older notifications",
+    "showOlder": "Show older",
     "aboutLabel": "About notifications",
     "signedOut": "Log in to see notifications.",
     "logIn": "Get in",
     "newSince_few": "{{count}} new since you last looked.",
-    "settings": "Settings",
     "unreadOnly": "Unread only",
     "switchOn": "On",
     "switchOff": "Off"
   },
   "filters": {
     "label": "Show",
-    "all": "All",
+    "all": "Everything",
     "replies": "Replies",
     "follows": "Follows",
     "stories": "Stories",
-    "staff": "Staff"
+    "staff": "From {{productName}}",
+    "withCount": "{{name}} · {{count}}"
   },
   "days": {
     "today": "Today",
@@ -40,12 +39,12 @@
     "moderationTeam": "Moderation team:",
     "many_few": "{{first}}, {{second}} and {{count}} others",
     "parentOrGuardian": "Your parent or guardian",
-    "yourAccount": "Account:",
+    "yourAccount": "{{productName}}:",
     "yourLibrary": "Library:",
     "reminder": "Reminder:",
     "story": "Story:",
     "rank": "Rank:",
-    "ourTeam": "The team:"
+    "ourTeam": "{{productName}}:"
   },
   "chapterOfStory": "Chapter {{position}} of {{story}}",
   "what": {
@@ -153,7 +152,7 @@
     "seeWho": "See who",
     "seeProfile": "See profile",
     "seeIt": "See it",
-    "readWhy": "Read why",
+    "readWhy": "Read the reasons",
     "seeMyReports": "See reports",
     "readReply": "Read the reply",
     "editTags": "Edit the tags",
@@ -184,20 +183,33 @@
     "startExploring": "Start exploring",
     "openThread": "Open the thread"
   },
-  "alwaysOn": "Always on",
   "unread": "Unread",
   "empty": {
-    "title": "You’re caught up",
-    "body": "New chapters, replies and follows will show up here."
+    "body": "Nothing new. Notifications about stories, replies and follows show here."
   },
   "decisionsCard": {
     "heading": "Decisions about posts",
-    "body": "When a moderator makes a decision about something you posted, you always hear about it here, with the reasons and how to challenge it. You can’t switch these off.",
+    "body": "When a moderator decides about something you posted, you always hear about it here, with the reasons and how to appeal. These can’t be switched off.",
     "link": "Reports and decisions"
   },
   "choicesCard": {
-    "heading": "Email choices",
-    "link": "Change in Settings"
+    "heading": "How you’re told",
+    "link": "Change notification settings"
+  },
+  "howTold": {
+    "kinds": {
+      "comment_reply": "Replies",
+      "new_chapter": "New chapters",
+      "comment_on_chapter": "Comments on chapters",
+      "new_follower": "Follows"
+    },
+    "hereAndEmail": "Here and by email",
+    "hereDaily": "Here, daily email",
+    "hereOnly": "Here only",
+    "messages": "Message emails",
+    "off": "Off",
+    "on": "On",
+    "quiet": "Quiet {{from}} to {{until}}"
   },
   "statementDecisions": {
     "hide": "a moderator hid something you posted.",

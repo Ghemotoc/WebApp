@@ -108,7 +108,7 @@ test.describe('appeals and moderator mail (S1-E10-07, S1-E10-11)', () => {
     // Step 3: the teacher is notified and reads the outcome.
     await teacherPage.goto('/notifications');
     await expect(teacherPage.getByText(/changed the decision/).first()).toBeVisible();
-    await teacherPage.getByRole('link', { name: 'Read why' }).first().click();
+    await teacherPage.getByRole('link', { name: 'Read the reasons' }).first().click();
     await expect(teacherPage.getByText(/and changed the decision/).first()).toBeVisible();
   });
 

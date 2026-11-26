@@ -1,14 +1,13 @@
 /**
- * NotificationsPage: Notifications, screen 6.2 at /notifications (story S1-E7-01; board
- * Notifications in the liquid glass redesign, bundle G8d).
+ * NotificationsPage: Notifications at /notifications (story S1-E7-01; user story 4.1, board
+ * E11-Notifications of "Build: the full design as user stories").
  *
- * What it shows: the eyebrow, "What's new" and "3 new since you last looked" on the left, with
- * Settings (a grey glass pill) and "Mark all as read" (the main pill) on the right; the filter
- * chips with counts and the "Unread only" switch; the list under Today, Yesterday, Earlier this
- * week and Older as glass cards; "Show older" when there is more; and beside it the email
- * choices card and the "Decisions about your posts" card.
- * Left out until their stories (docs/board-fixes.md): browser alerts and quiet hours (S1-E7-03),
- * and the data download, certificate and mention rows.
+ * What it shows, as the board draws it: the title and "3 new since you last looked"; a row with
+ * the tabs (Everything first, each with its count), "Unread only" with its switch and "Mark all
+ * as read" (a quiet button); then the rows under Today, Yesterday, Earlier this week and Older,
+ * with "Show older" across the column when there is more; and beside them "How you’re told" and
+ * "Decisions about your posts". Columns of 1.7 : 1, 64 px apart, from 1024 px; one column below.
+ * Browser alerts wait for S1-E7-03 (docs/board-fixes.md).
  * Who shows it: the router, at /notifications; the bell in the top bar links here.
  * What it calls: hooks/useNotifications.ts, hooks/useMarkNotificationsRead.ts, EmailChoicesCard
  * and DecisionsCard.
@@ -16,16 +15,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 
-import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
-import { buttonClassName } from '@/components/ui/buttonStyles';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { useMyNames } from '@/features/account/hooks/useMyNames';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { SwitchButton } from '@/features/settings/components/SwitchButton';
 
+import type { NotificationsPage as NotificationsPageData } from '../api/notifications';
 import { useMarkNotificationsRead } from '../hooks/useMarkNotificationsRead';
 import { useNotifications } from '../hooks/useNotifications';
 import { useNotificationsTranslation } from '../registerNotificationsTranslations';
@@ -36,43 +33,18 @@ import { NotificationFilters, type NotificationFilter } from './NotificationFilt
 import { NotificationList } from './NotificationList';
 
 /**
- * The heading block: eyebrow, title, the unread line and "Mark all as read".
+ * The heading block: the title and the unread line (board E11).
  *
  * @returns the page header
  */
-function NotificationsHeader({
-  unread,
-  onMarkAll,
-  isSaving,
-}: {
-  unread: number;
-  onMarkAll: () => void;
-  isSaving: boolean;
-}) {
+function NotificationsHeader({ unread }: { unread: number }) {
   const { t } = useNotificationsTranslation();
   return (
-    <header className="flex flex-col gap-4 pt-12 pb-6 md:flex-row md:items-end md:justify-between">
-      <div className="flex max-w-[640px] flex-col gap-2">
-        <Eyebrow>{t('page.eyebrow')}</Eyebrow>
-        <h1 className="page-title">{t('page.title')}</h1>
-        <p role="status" className="m-0 type-long leading-relaxed text-ink-muted">
-          {unread > 0 ? t('page.newSince', { count: unread }) : t('page.caughtUp')}
-        </p>
-      </div>
-      <div className="flex flex-wrap items-center gap-3">
-        {/* The board's Settings pill, to Settings › Notifications (LOOK-5; glass since G8d). */}
-        <Link
-          to="/settings#notifications"
-          className={buttonClassName({ variant: 'secondary' }, 'shrink-0')}
-        >
-          <ActionIcon name="settings" />
-          {t('page.settings')}
-        </Link>
-        <Button onClick={onMarkAll} disabled={unread === 0 || isSaving}>
-          <ActionIcon name="check" />
-          {t('page.markAllRead')}
-        </Button>
-      </div>
+    <header className="flex flex-col gap-2 pt-12">
+      <h1 className="page-title">{t('page.title')}</h1>
+      <p role="status" className="m-0 max-w-[34em] type-body text-ink-muted">
+        {unread > 0 ? t('page.newSince', { count: unread }) : t('page.caughtUp')}
+      </p>
     </header>
   );
 }
@@ -103,9 +75,42 @@ function UnreadOnlySwitch({ isOn, onToggle }: { isOn: boolean; onToggle: () => v
 }
 
 /**
- * The list and the side cards, once the first page has arrived.
+ * The row of tools over the list: the tabs, "Unread only" and "Mark all as read" (board E11).
  *
- * @returns the filters, list and card
+ * @returns the toolbar
+ */
+function NotificationsToolbar(props: {
+  counts: NotificationsPageData['counts'];
+  chosen: NotificationFilter;
+  onChoose: (filter: NotificationFilter) => void;
+  isUnreadOnly: boolean;
+  onToggleUnread: () => void;
+  unread: number;
+  onMarkAll: () => void;
+  isSaving: boolean;
+}) {
+  const { t } = useNotificationsTranslation();
+  return (
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+      <NotificationFilters counts={props.counts} chosen={props.chosen} onChoose={props.onChoose} />
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <UnreadOnlySwitch isOn={props.isUnreadOnly} onToggle={props.onToggleUnread} />
+        <Button
+          variant="secondary"
+          onClick={props.onMarkAll}
+          disabled={props.unread === 0 || props.isSaving}
+        >
+          {t('page.markAllRead')}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The list and the side sections, once the first page has arrived.
+ *
+ * @returns the header, toolbar, list and sections
  */
 function NotificationsBody() {
   const { t } = useNotificationsTranslation();
@@ -117,24 +122,28 @@ function NotificationsBody() {
   // Step 1: a wait, or a plain message when the list can't be read.
   if (list.loadFailed) return <Notice tone="error">{t('page.loadFailed')}</Notice>;
   if (!list.isLoaded || list.counts === null) return null;
-  // Step 2: the chosen filter's rows, and only the unread ones when "Unread only" is on.
+  // Step 2: the chosen tab's rows, and only the unread ones when "Unread only" is on.
   const shown = list.notifications.filter(
     (item) => (chosen === 'all' || item.category === chosen) && (!isUnreadOnly || !item.isRead),
   );
   return (
-    <>
-      <NotificationsHeader
-        unread={list.unread}
-        onMarkAll={mark.markAllRead}
-        isSaving={mark.isSaving}
-      />
-      {mark.saveFailed && <Notice tone="error">{t('page.markFailed')}</Notice>}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-        <NotificationFilters counts={list.counts} chosen={chosen} onChoose={setChosen} />
-        <UnreadOnlySwitch isOn={isUnreadOnly} onToggle={() => setIsUnreadOnly(!isUnreadOnly)} />
+    <div className="flex flex-col gap-16 pb-16">
+      <NotificationsHeader unread={list.unread} />
+      <div className="flex flex-col gap-6">
+        <NotificationsToolbar
+          counts={list.counts}
+          chosen={chosen}
+          onChoose={setChosen}
+          isUnreadOnly={isUnreadOnly}
+          onToggleUnread={() => setIsUnreadOnly(!isUnreadOnly)}
+          unread={list.unread}
+          onMarkAll={mark.markAllRead}
+          isSaving={mark.isSaving}
+        />
+        {mark.saveFailed && <Notice tone="error">{t('page.markFailed')}</Notice>}
       </div>
-      <div className="flex flex-wrap items-start gap-6 pb-16">
-        <div className="flex min-w-0 flex-[999_1_600px] flex-col gap-6">
+      <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+        <div className="flex min-w-0 flex-col gap-3">
           <NotificationList
             notifications={shown}
             ownHandle={names?.handle ?? null}
@@ -143,7 +152,7 @@ function NotificationsBody() {
           {list.hasMore && (
             <Button
               variant="secondary"
-              className="self-start"
+              className="w-full"
               onClick={list.loadMore}
               disabled={list.isLoadingMore}
             >
@@ -151,15 +160,12 @@ function NotificationsBody() {
             </Button>
           )}
         </div>
-        <aside
-          aria-label={t('page.aboutLabel')}
-          className="flex min-w-0 flex-[1_1_300px] flex-col gap-4"
-        >
+        <aside aria-label={t('page.aboutLabel')} className="flex min-w-0 flex-col gap-12">
           <EmailChoicesCard />
           <DecisionsCard />
         </aside>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -175,7 +181,6 @@ export function NotificationsPage() {
     <PageContainer>
       {isKnown && userId === null && (
         <div className="flex flex-col gap-2 pt-12 pb-16">
-          <Eyebrow>{t('page.eyebrow')}</Eyebrow>
           <h1 className="page-title">{t('page.title')}</h1>
           <p className="m-0 text-ink-muted">
             {t('page.signedOut')}{' '}

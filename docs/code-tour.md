@@ -250,7 +250,7 @@ Things that need a secret or talk to another company (email, the picture check, 
 | `src/features/legal/` | The Legal centre (`/legal/:documentSlug`) and the "We've updated our Terms" notice; see its README | S1-E14-01 |
 | `src/features/auth/` | Who is signed in (`useSession`), sign-up (`/sign-up`, `/join/<code>`), email confirmation (`/auth/confirm`) and the top bar's "Join for free"; sign-in comes with S1-E2-05 | S1-E14-01, S1-E2-01 |
 | `src/features/flags/` | The public feature flags for screens that change with them (`useFeatureFlags`) | S1-E2-01 |
-| `src/features/errors/` | Our own error log's browser side: the global handlers, the router's error page ("Something went wrong on our side") and the scrubbing before anything is sent; see its README | S1-E1-05 |
+| `src/features/errors/` | Our own error log's browser side: the global handlers, the router's error page ("Something went wrong on our side"), the one quiet reload when a tab still runs an older release, and the scrubbing before anything is sent; see its README | S1-E1-05 |
 | `src/features/maintenance/` | The maintenance page and the gate in AppLayout that shows it while `maintenance_mode` is on (staff and the log-in pages excepted) | S1-E1-05 |
 | `src/features/offline/` | The "You're offline" / "You're back online" banner under the top bar | S1-E1-05 |
 | `src/config/appVersion.ts` | The build's version for error reports: the short commit on Cloudflare, `local` elsewhere (set in `vite.config.ts`) | S1-E1-05 |
@@ -528,7 +528,18 @@ the other person: MessagesHeaderLink (useUnreadMessageCount → unread_message_c
   → opening the chat → mark_conversation_read()
 ```
 
-The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`. Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+The open chat asks again every 5 seconds and the list every 15, instead of Realtime (the bell's choice, READ-3). Each message from the other person has `<ReportButton itemType="message">`, behind its "…" button (board E13). Tests: `206` in `supabase/tests/database/`, `e2e/messages.spec.ts`.
+
+Boards E12 and E13 (BOOKS-4) added three reads, all in `…_books_e12_e13_chat_partner_and_new_chat.sql` (tests `412`), none of them changing who may write to whom:
+
+```
+NewChatButton → useNewChatPeople → new_chat_people()
+  → the people the caller follows, live and not staff, kept only when conversation_can_send() says yes
+ChatHeader / ChatFocusBar → usePartnerLine(chat.latestStory)
+  → conversation_with().latest_story ← chat_partner_story(): their newest story the reader may open
+AboutChatPanel / ChatPanel → chat.adultsSwitchStops
+  → conversation_with().adults_switch_stops ← my_adults_switch_stops_chat(): a 16 or 17-year-old's own switch
+```
 
 ## Block and report inside messages (S1-E9-02)
 
@@ -1725,7 +1736,7 @@ post_comment() ────────┘ queues comment_posted            comm
                                              notifications (the person told reads only their own rows)
 NotificationsPage → hooks/useNotifications → api/notifications.ts → my_notifications()
 NotificationBell → hooks/useUnreadNotificationCount (every 60 s and on focus) → my_unread_notification_count()
-"Mark all as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
+"Mark as read" / opening a row → hooks/useMarkNotificationsRead → mark_notifications_read()
 ```
 
 Reading applies the reader's rules again (`notification_is_shown()`): a chapter they can no longer open (rating, block, moderation) or someone either side now blocks is left out, so the badge and the list always agree. A moderation decision is always shown and `is_required` (DSA art. 17). Answers carry usernames and display names, never a user ID. The words for each kind are picked in `lib/notificationText.ts`; the day headings in `lib/dayGroups.ts` (Romanian time).
@@ -2109,6 +2120,7 @@ A landing page is a page at its own address, `/c/<name>`, for a contest, a campa
 - **How one click travels:** Publish → `useLandingPageEditor().act({ kind: 'publish', draft })` → `admin_save_landing_page_draft()` then `admin_publish_landing_page()`, which asks `landing_page_problems()` for what is missing (a hero first, every required field in both languages, a contest's key dates and Rules link, dates in order) and refuses with the list as the hint, which `labelOfField()` turns into "Block 3: Rules, English: Link text". The limits live twice, in `src/schemas/landingPages.ts` (`landingFieldRules`) and `landing_block_field_rules()`, so the counters and the server agree. Each create, publish, restore and archive writes `landing_page.*` to `audit_log`.
 - **Tables:** `landing_pages` (address, type, archived) and `landing_page_versions` (one draft per page, published versions with "show from" and "take down on"). `c` is a reserved name, so no username can take the address.
 - **Tests:** `supabase/tests/database/261-landing-pages.test.sql`, `e2e/landing-pages.spec.ts`, `src/features/landing-pages/lib/blocks.test.ts`.
+- **The footer's pages:** "About the apps" (`/c/apps`) and "For partners" (`/c/partners`) in `footerColumns` (`src/app/navigation.ts`) are information landing pages seeded live by `supabase/migrations/20270205100553_books_footer_apps_partners_pages.sql`, which runs the same publish checks first; staff rewrite them like any other page. Tests: `412-footer-pages.test.sql`, `e2e/footer-pages.spec.ts`.
 
 ### Pictures and featured stories (CONTESTS-13a2a)
 

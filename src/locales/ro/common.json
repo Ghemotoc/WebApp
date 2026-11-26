@@ -22,7 +22,9 @@
       "newWriters": "Scriitori noi",
       "joinClass": "Intră într-o clasă",
       "legal": "Informații legale",
-      "reportWithoutAccount": "Raportează fără cont"
+      "reportWithoutAccount": "Raportează fără cont",
+      "aboutApps": "Despre aplicații",
+      "forPartners": "Pentru parteneri"
     },
     "search": "Caută",
     "searchLabel": "Caută povești, scriitori și în Împreună",
@@ -75,7 +77,9 @@
     "notificationsUnread_other": "Notificări, {{count}} de noi",
     "accessibility": "Accesibilitate",
     "help": "Ajutor",
-    "write": "Scrie"
+    "write": "Scrie",
+    "notificationsManyUnread": "Notificări, {{number}} noi",
+    "messagesManyUnread": "Mesaje, {{number}} conversații cu mesaje noi"
   },
   "theme": {
     "label": "Mod",

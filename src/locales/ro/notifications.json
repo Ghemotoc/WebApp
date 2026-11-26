@@ -1,7 +1,6 @@
 {
   "page": {
-    "eyebrow": "Notificări",
-    "title": "Ce e nou",
+    "title": "Notificări",
     "newSince_one": "{{count}} notificare nouă de când te-ai uitat ultima dată.",
     "newSince_few": "{{count}} notificări noi de când te-ai uitat ultima dată.",
     "newSince_other": "{{count}} de notificări noi de când te-ai uitat ultima dată.",
@@ -9,22 +8,22 @@
     "markAllRead": "Marchează ca citite",
     "markFailed": "Nu le-am putut marca drept citite. Verifică conexiunea și încearcă din nou.",
     "loadFailed": "Nu am putut încărca notificările. Verifică conexiunea și încearcă din nou.",
-    "showOlder": "Arată notificări mai vechi",
+    "showOlder": "Arată mai vechi",
     "aboutLabel": "Despre notificări",
     "signedOut": "Intră în cont ca să vezi notificările.",
     "logIn": "Intră",
-    "settings": "Setări",
     "unreadOnly": "Doar necitite",
     "switchOn": "Pornit",
     "switchOff": "Oprit"
   },
   "filters": {
     "label": "Arată",
-    "all": "Toate",
+    "all": "Totul",
     "replies": "Răspunsuri",
     "follows": "Urmăriri",
     "stories": "Povești",
-    "staff": "Echipa"
+    "staff": "De la {{productName}}",
+    "withCount": "{{name}} · {{count}}"
   },
   "days": {
     "today": "Azi",
@@ -40,12 +39,12 @@
     "many_other": "{{first}}, {{second}} și încă {{count}} de persoane",
     "moderationTeam": "Echipa de moderare:",
     "parentOrGuardian": "Părintele sau tutorele tău",
-    "yourAccount": "Cont:",
+    "yourAccount": "{{productName}}:",
     "yourLibrary": "Bibliotecă:",
     "reminder": "Memento:",
     "story": "Poveste:",
     "rank": "Rang:",
-    "ourTeam": "Echipa:"
+    "ourTeam": "{{productName}}:"
   },
   "chapterOfStory": "capitolul {{position}} din {{story}}",
   "what": {
@@ -153,7 +152,7 @@
     "seeWho": "Vezi cine",
     "seeProfile": "Vezi profilul",
     "seeIt": "Vezi",
-    "readWhy": "Vezi de ce",
+    "readWhy": "Citește motivele",
     "seeMyReports": "Vezi raportările",
     "readReply": "Citește răspunsul",
     "editTags": "Modifică etichetele",
@@ -184,20 +183,33 @@
     "startExploring": "Începe să explorezi",
     "openThread": "Deschide discuția"
   },
-  "alwaysOn": "Mereu pornite",
   "unread": "Necitită",
   "empty": {
-    "title": "Le-ai văzut pe toate",
-    "body": "Capitolele noi, răspunsurile și urmăririle vor apărea aici."
+    "body": "Nimic nou. Notificările despre povești, răspunsuri și urmăriri apar aici."
   },
   "decisionsCard": {
     "heading": "Decizii despre postări",
-    "body": "Când un moderator ia o decizie despre ceva ce ai postat, afli mereu aici, cu motivele și cum o poți contesta. Nu poți opri aceste notificări.",
+    "body": "Când un moderator ia o decizie despre ceva ce ai postat, afli mereu aici, cu motivele și cum o poți contesta. Acestea nu pot fi oprite.",
     "link": "Raportări și decizii"
   },
   "choicesCard": {
-    "heading": "Alegeri pentru email",
-    "link": "Schimbă în Setări"
+    "heading": "Cum afli",
+    "link": "Schimbă setările notificărilor"
+  },
+  "howTold": {
+    "kinds": {
+      "comment_reply": "Răspunsuri",
+      "new_chapter": "Capitole noi",
+      "comment_on_chapter": "Comentarii la capitole",
+      "new_follower": "Urmăriri"
+    },
+    "hereAndEmail": "Aici și pe email",
+    "hereDaily": "Aici, email zilnic",
+    "hereOnly": "Doar aici",
+    "messages": "Emailuri despre mesaje",
+    "off": "Oprite",
+    "on": "Pornite",
+    "quiet": "Liniște între {{from}} și {{until}}"
   },
   "statementDecisions": {
     "hide": "un moderator a ascuns ceva ce ai postat.",

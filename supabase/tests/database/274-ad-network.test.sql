@@ -5,14 +5,16 @@
 -- - once on, it fills only a wide banner, once per page, labelled "Ad", after a matching sponsor
 --   and our landing pages and before our other house ads (S1-E12-05's fill order);
 -- - it never fills a card, a side box or a portrait, nor anything in a class space (Q70);
--- - a visitor and a signed-in reader get the same answer: nothing about the reader is read.
+-- - a visitor and a signed-in reader get the same answer: nothing about the reader is read;
+-- - an information page (About the apps, For partners) never takes the network's place: only
+--   contest and campaign pages are ads of ours (BOOKS-FOOTER).
 -- Personas: teen_17 (…02).
 -- Test data: settings changed here; rolled back.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(9);
+select plan(10);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -73,9 +75,22 @@ select is(public.page_ads('search'), (select words from kept where label = 'visi
   'a signed-in teenager gets exactly what a visitor gets');
 reset role;
 
--- Step 4: our landing pages come before the network.
+-- Step 4: a live information page is a reference page, not an ad, so the network keeps its place.
 with page as (
-  insert into public.landing_pages (slug, page_type) values ('retea-test-274', 'information') returning id
+  insert into public.landing_pages (slug, page_type) values ('info-test-274', 'information') returning id
+)
+insert into public.landing_page_versions (page_id, status, content, show_from, published_at)
+select page.id, 'published', jsonb_build_object('theme', 'gold', 'blocks', jsonb_build_array(
+  '{"id": "h", "kind": "hero", "ro": {"title": "Aplicațiile", "intro": ""}, "en": {"title": "The apps", "intro": ""}}'::jsonb)),
+  public.romania_today(), now()
+from page;
+select pg_temp.as_visitor();
+select is(public.page_ads('story') #>> '{0,ad,kind}', 'network', 'a live information page never comes before the network');
+reset role;
+
+-- Step 5: our contest and campaign landing pages come before the network.
+with page as (
+  insert into public.landing_pages (slug, page_type) values ('retea-test-274', 'campaign') returning id
 )
 insert into public.landing_page_versions (page_id, status, content, show_from, published_at)
 select page.id, 'published', jsonb_build_object('theme', 'gold', 'blocks', jsonb_build_array(
