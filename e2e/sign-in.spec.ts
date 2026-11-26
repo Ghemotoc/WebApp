@@ -13,7 +13,7 @@
  * - the log-in and password screens pass axe and don't scroll sideways at 390, 768 and 1440 px.
  * Test data: throwaway @example.com accounts made and removed by e2e/support/testAccounts.ts.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { expect, test, type Browser, type BrowserContext, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -29,9 +29,23 @@ function newAccount() {
   return { email: `sign-in-${stamp}@example.com`, handle: `sign.in.${stamp}` };
 }
 
-/** Opens /sign-in in English in a fresh browser context (one "device"). */
+/**
+ * Every "device" a test opened. Each is closed after its test: a signed-in context left open keeps
+ * refreshing its session in the background, and a few of them slowed the tests after them until
+ * they ran out of time on CI (26 Nov 2026).
+ */
+const openDevices: BrowserContext[] = [];
+
+test.afterEach(async () => {
+  // Close every device this test opened, so the next test starts on a quiet browser.
+  const devices = openDevices.splice(0);
+  await Promise.all(devices.map((device) => device.close()));
+});
+
+/** Opens /sign-in in English in a fresh browser context (one "device"), closed after the test. */
 async function openSignIn(browser: Browser): Promise<Page> {
   const context = await browser.newContext();
+  openDevices.push(context);
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
   const page = await context.newPage();
   await page.goto('/sign-in');
@@ -139,8 +153,8 @@ test('a person logs in, sees their devices and logs the others out', async ({ br
 test('a password reset by email logs other devices out and sends a "password changed" email', async ({
   browser,
 }) => {
-  // Three devices, two emails and three logins: on a busy CI runner this flow takes about 30
-  // seconds, the default limit, so it failed by timing alone (26 Nov 2026). Give it a minute.
+  // Three devices, two emails and three logins: about 22 seconds on CI, close to the default 30,
+  // and it ran out of time on a busy runner (26 Nov 2026). Give it a minute.
   test.setTimeout(60_000);
   const account = newAccount();
   const newPassword = 'second secret passphrase';
