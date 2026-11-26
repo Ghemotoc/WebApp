@@ -474,9 +474,16 @@
     "eyebrow": "Clasa",
     "title": "Povești împărtășite cu clasa",
     "note": "Doar {{name}} le poate citi până când autorul le face publice. Un profesor nu poate face niciodată publică povestea unui elev.",
-    "empty": "Încă nu e nicio poveste împărtășită. Ca să împărtășești una, deschide Setările poveștii și alege clasa aceasta la „Împărtășește cu o clasă”.",
+    "empty": "Nicio poveste împărtășită încă. Împărtășește una sau așteaptă tema.",
     "loadFailed": "Nu am putut încărca poveștile clasei. Încearcă din nou peste puțin timp.",
-    "documentTitle": "Povești împărtășite cu {{name}}"
+    "documentTitle": "Povești împărtășite cu {{name}}",
+    "crumb": "Povești",
+    "count_one": "{{count}} poveste",
+    "count_few": "{{count}} povești",
+    "count_other": "{{count}} de povești",
+    "makePublic": "Fă-o publică",
+    "makePublicLabel": "Fă publică povestea {{title}}",
+    "noAds": "Spațiile de clasă nu arată niciodată publicitate: nicio reclamă, niciun conținut sponsorizat și nicio mențiune a sponsorilor."
   },
   "storyClass": {
     "legend": "Împărtășește cu o clasă",

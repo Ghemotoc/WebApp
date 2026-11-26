@@ -39,33 +39,43 @@
     "heading": "Class points",
     "inClass": "Shared with {{name}}",
     "give": {
-      "label": "Points for this chapter",
+      "label": "Points",
       "none": "None",
       "points_one": "{{count}} point",
       "points_few": "{{count}} points",
       "points_other": "{{count}} points",
-      "left_one": "{{left}} of {{count}} point left this week.",
-      "left_few": "{{left}} of {{count}} points left this week.",
-      "left_other": "{{left}} of {{count}} points left this week.",
-      "noteLabel": "A line for the writer (optional)",
-      "noteHint": "The writer reads it without a name beside it. At most {{max}} characters.",
-      "save": "Give points",
-      "change": "Save",
+      "noteLabel": "What worked (optional)",
+      "noteHint": "One line, up to {{max}} characters. The writer can report it, like a comment. {{used}} of {{max}} used.",
       "saved_one": "Saved. This chapter has {{count}} point from this account this week.",
       "saved_few": "Saved. This chapter has {{count}} points from this account this week.",
       "saved_other": "Saved. This chapter has {{count}} points from this account this week.",
       "takenBack": "Points taken back.",
-      "resets": "Points can move until {{date}}.",
       "notOffered": "Points can’t be given to this chapter now.",
-      "locked": "This class is locked, so points stay as they are."
+      "locked": "This class is locked, so points stay as they are.",
+      "title": "Give class points",
+      "intro": "The writer sees the points and the note, never who gave them. Classmates never see points on a chapter.",
+      "pickFirst": "Pick how many points to give.",
+      "left_one": "{{left}} of {{count}} left",
+      "left_few": "{{left}} of {{count}} left",
+      "left_other": "{{left}} of {{count}} left",
+      "until": "points can move until {{date}}",
+      "give_one": "Give {{count}} point",
+      "give_few": "Give {{count}} points",
+      "give_other": "Give {{count}} points",
+      "giveAny": "Give points",
+      "takeBack": "Take the points back"
     },
     "received": {
-      "total_one": "{{count}} point from classmates",
-      "total_few": "{{count}} points from classmates",
-      "total_other": "{{count}} points from classmates",
-      "none": "No points from classmates yet.",
-      "notesHeading": "Notes from classmates",
-      "reportNote": "a classmate’s note"
+      "notesHeading": "Notes from classmates ({{count}})",
+      "reportNote": "a classmate’s note",
+      "title": "Points this chapter received",
+      "onlyYou": "Only you see this box.",
+      "classPoints": "Class points",
+      "fromClassmates": "from classmates",
+      "teacherPoints": "Teacher points",
+      "outOf": "out of {{max}}",
+      "noneYet": "None yet",
+      "footnote": "Notes from classmates come without names. Classmates never see points or notes on chapters, and only the teacher sees totals."
     },
     "teacher": {
       "shown": "Teacher points: {{points}}",
@@ -81,7 +91,19 @@
       "removed": "Teacher points removed.",
       "classTotal_one": "{{count}} point from classmates so far",
       "classTotal_few": "{{count}} points from classmates so far",
-      "classTotal_other": "{{count}} points from classmates so far"
+      "classTotal_other": "{{count}} points from classmates so far",
+      "noteFrom": "Note from the teacher",
+      "noteAudienceShort": "Only you, the teacher and the moderation team"
+    },
+    "quoted": "“{{text}}”",
+    "how": {
+      "title": "How class points work",
+      "body": "Everyone in the class gets {{budget}} points a week and can give up to {{cap}} to one chapter. Points are a quiet thank you: there are no totals, no lists and no ranks for pupils."
+    },
+    "about": {
+      "title": "About these points",
+      "body": "Teacher points and the note from the teacher work like marks on a school submission: only you and the teacher see them, and the moderation team if one is reported. There is no reply box; ask questions in the class threads.",
+      "openThreads": "Open the threads"
     }
   },
   "failures": {

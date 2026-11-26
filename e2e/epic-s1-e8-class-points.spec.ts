@@ -5,7 +5,7 @@
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves, as four journeys in one class:
  * 1. Points: the teacher turns class points on; kid_14_ok gives teen_17's chapter 3 points with
- *    the keyboard alone and reads "7 of 10 points left"; a 4th point and points for their own
+ *    the keyboard alone and reads "7 of 10 left"; a 4th point and points for their own
  *    chapter are refused; when the week turns, the budget is whole again; teen_17 sees the
  *    points but never who gave them or the class's totals, in the screens and through the
  *    database with their own session (row-level security).
@@ -186,7 +186,10 @@ async function openAs(
 
 /** The class points section at the end of a chapter. */
 function pointsSection(page: Page) {
-  return page.getByRole('region', { name: 'Class points' });
+  // The box's heading says what the reader can do there (boards G05, G06 and the teacher's).
+  return page.getByRole('region', {
+    name: /^(Give class points|Points this chapter received|Class points)$/,
+  });
 }
 
 /**
@@ -233,28 +236,28 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
     // Step 2: the pupil opens the classmate's chapter and gives 3 points without a mouse.
     const kid = await openAs(browser, 'kid_14_ok', chapterOf(teenStory).address);
     const section = pointsSection(kid);
-    await section.getByRole('radio', { name: 'None' }).focus();
-    await kid.keyboard.press('ArrowRight');
+    // Nothing is picked at first (board G05): Tab lands on "1 point", arrows move the choice.
+    await section.getByRole('radio', { name: '1 point' }).focus();
     await kid.keyboard.press('ArrowRight');
     await kid.keyboard.press('ArrowRight');
     await expect(section.getByRole('radio', { name: '3 points' })).toBeChecked();
     // The cap for one chapter is 3 (decision 8): no larger choice is offered.
-    await expect(section.getByRole('radio')).toHaveCount(4);
+    await expect(section.getByRole('radio')).toHaveCount(3);
     await kid.keyboard.press('Tab');
-    await expect(section.getByLabel('A line for the writer (optional)')).toBeFocused();
+    await expect(section.getByLabel('What worked (optional)')).toBeFocused();
     await kid.keyboard.type('Frumos final.');
     await kid.keyboard.press('Enter');
     await expect(section.getByText('Saved. This chapter has 3 points')).toBeVisible();
 
     // Step 3: what is left is real text a screen reader reads, on the chapter and the class.
-    await expect(section.getByText('7 of 10 points left this week.')).toBeVisible();
+    await expect(section.getByText('7 of 10 left', { exact: true })).toBeVisible();
     await kid.goto(`/spaces/${classSlug}`);
-    await expect(kid.getByText('7 of 10 points left', { exact: true })).toBeVisible();
+    await expect(kid.getByText('7 of 10 left', { exact: true })).toBeVisible();
 
     // Step 4: their own chapter offers nothing to give.
     await kid.goto(chapterOf(kidStory).address);
     await expect(kid.getByRole('heading', { name: 'Scara' })).toBeVisible();
-    await expect(kid.getByRole('button', { name: 'Give points' })).toHaveCount(0);
+    await expect(kid.getByRole('button', { name: /^Give/ })).toHaveCount(0);
     await kid.context().close();
   });
 
@@ -287,7 +290,7 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
     // In the screens: the points and the line, no name, and no table.
     const teen = await openAs(browser, 'teen_17', chapterOf(teenStory).address);
     const section = pointsSection(teen);
-    await expect(section.getByText('6 points from classmates')).toBeVisible();
+    await expect(section.getByRole('group', { name: 'Class points' })).toContainText('6');
     await expect(section.getByText('Frumos final.')).toBeVisible();
     await expect(section.getByText(kidName)).toHaveCount(0);
     await teen.goto(`/spaces/${classSlug}/points`);

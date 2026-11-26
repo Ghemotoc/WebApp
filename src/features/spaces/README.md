@@ -59,7 +59,8 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   sharing a story only with a class (`story_class_share()`, `set_story_class()`) and the class's
   list (`class_space_stories()`); `StoryClassCard` in Story settings, `ClassSharedStories` (rows of
   `ClassStoryRow`) and `ShareClassStory` on the class page and `ClassStoriesPage` at
-  `/spaces/<slug>/stories`.
+  `/spaces/<slug>/stories` (BOOKS-8, board G04: the same rows, "Share a story", the tabs and
+  `ClassStoryMakePublic` on the writer's own story).
 - `ClassSpaceContent` (bundle BOOKS-8, board G03): a class space's own page, chosen by `SpacePage`
   for a class: `ClassSpaceHeader`, `ClassSectionTabs` ("Class · Stories 6"), the competition
   panel, the class points box, `ClassThreads` (with `ClassThreadRow`) and the Winner card.

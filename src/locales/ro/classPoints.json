@@ -39,33 +39,43 @@
     "heading": "Puncte în clasă",
     "inClass": "Împărtășit cu {{name}}",
     "give": {
-      "label": "Puncte pentru capitolul acesta",
+      "label": "Puncte",
       "none": "Niciunul",
       "points_one": "{{count}} punct",
       "points_few": "{{count}} puncte",
       "points_other": "{{count}} de puncte",
-      "left_one": "Mai e {{left}} din {{count}} punct săptămâna aceasta.",
-      "left_few": "Mai sunt {{left}} din {{count}} puncte săptămâna aceasta.",
-      "left_other": "Mai sunt {{left}} din {{count}} de puncte săptămâna aceasta.",
-      "noteLabel": "Un rând pentru autor (opțional)",
-      "noteHint": "Autorul îl citește fără un nume alături. Cel mult {{max}} de caractere.",
-      "save": "Dă puncte",
-      "change": "Salvează",
+      "noteLabel": "Ce ți-a plăcut (opțional)",
+      "noteHint": "Un rând, cel mult {{max}} de caractere. Autorul îl poate raporta, ca pe un comentariu. Ai folosit {{used}} din {{max}}.",
       "saved_one": "Salvat. Capitolul are {{count}} punct de la contul acesta săptămâna aceasta.",
       "saved_few": "Salvat. Capitolul are {{count}} puncte de la contul acesta săptămâna aceasta.",
       "saved_other": "Salvat. Capitolul are {{count}} de puncte de la contul acesta săptămâna aceasta.",
       "takenBack": "Puncte luate înapoi.",
-      "resets": "Punctele se pot muta până pe {{date}}.",
       "notOffered": "Capitolul acesta nu poate primi puncte acum.",
-      "locked": "Clasa este blocată, așa că punctele rămân cum sunt."
+      "locked": "Clasa este blocată, așa că punctele rămân cum sunt.",
+      "title": "Dă puncte de clasă",
+      "intro": "Autorul vede punctele și nota, dar niciodată cine le-a dat. Colegii nu văd niciodată punctele unui capitol.",
+      "pickFirst": "Alege câte puncte dai.",
+      "left_one": "Mai ai {{left}} din {{count}}",
+      "left_few": "Mai ai {{left}} din {{count}}",
+      "left_other": "Mai ai {{left}} din {{count}}",
+      "until": "punctele se pot muta până {{date}}",
+      "give_one": "Dă {{count}} punct",
+      "give_few": "Dă {{count}} puncte",
+      "give_other": "Dă {{count}} de puncte",
+      "giveAny": "Dă puncte",
+      "takeBack": "Retrage punctele"
     },
     "received": {
-      "total_one": "{{count}} punct de la colegi",
-      "total_few": "{{count}} puncte de la colegi",
-      "total_other": "{{count}} de puncte de la colegi",
-      "none": "Încă niciun punct de la colegi.",
-      "notesHeading": "Notițe de la colegi",
-      "reportNote": "notița unui coleg"
+      "notesHeading": "Note de la colegi ({{count}})",
+      "reportNote": "notița unui coleg",
+      "title": "Punctele primite de capitol",
+      "onlyYou": "Doar tu vezi caseta aceasta.",
+      "classPoints": "Puncte de clasă",
+      "fromClassmates": "de la colegi",
+      "teacherPoints": "Puncte de la profesor",
+      "outOf": "din {{max}}",
+      "noneYet": "Încă niciunul",
+      "footnote": "Notele de la colegi vin fără nume. Colegii nu văd niciodată punctele sau notele de pe capitole și doar profesorul vede totalurile."
     },
     "teacher": {
       "shown": "Puncte de la profesor: {{points}}",
@@ -81,7 +91,19 @@
       "removed": "Punctele profesorului au fost șterse.",
       "classTotal_one": "{{count}} punct de la colegi până acum",
       "classTotal_few": "{{count}} puncte de la colegi până acum",
-      "classTotal_other": "{{count}} de puncte de la colegi până acum"
+      "classTotal_other": "{{count}} de puncte de la colegi până acum",
+      "noteFrom": "Nota profesorului",
+      "noteAudienceShort": "Doar tu, profesorul și echipa de moderare"
+    },
+    "quoted": "„{{text}}”",
+    "how": {
+      "title": "Cum funcționează punctele de clasă",
+      "body": "Fiecare elev din clasă primește {{budget}} puncte pe săptămână și poate da cel mult {{cap}} unui capitol. Punctele sunt un mulțumesc discret: elevii nu văd totaluri, liste sau clasamente."
+    },
+    "about": {
+      "title": "Despre aceste puncte",
+      "body": "Punctele și nota profesorului sunt ca notele pe o lucrare la școală: doar tu și profesorul le vedeți, plus echipa de moderare dacă una e raportată. Nu poți răspunde aici; pune întrebări în discuțiile clasei.",
+      "openThreads": "Deschide discuțiile"
     }
   },
   "failures": {

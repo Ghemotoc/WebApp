@@ -19099,7 +19099,7 @@ begin
                     and not public.is_moderated_away('class_point_note', gifts.id)))
       when viewer_role = 'teacher' then jsonb_build_object('total', received_total) end,
     'teacher', case when viewer_role in ('writer', 'teacher') then public.class_teacher_points_json(teacher_row) end,
-    'teacher_max', case when viewer_role = 'teacher' then public.class_points_number('class_teacher_points_max', 10) end,
+    'teacher_max', case when viewer_role in ('writer', 'teacher') then public.class_points_number('class_teacher_points_max', 10) end,
     'notes_on', case when viewer_role = 'teacher' then public.is_feature_enabled('class_teacher_notes') end,
     'note_max', case when viewer_role = 'teacher' then public.class_points_number('class_teacher_note_max_characters', 1000) end,
     'is_locked', public.space_is_locked(space));

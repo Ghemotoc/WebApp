@@ -473,10 +473,17 @@
   "classStories": {
     "eyebrow": "Class",
     "title": "Stories shared with the class",
-    "note": "Only {{name}} can read these until the writer makes them public. A teacher can never make a student’s story public.",
-    "empty": "No stories shared yet. To share one, open its Story settings and pick this class under “Share with a class”.",
+    "note": "Only {{name}} can read these until the writer makes them public. A teacher can never make a story public for a pupil.",
+    "empty": "No stories shared yet. Share one, or wait for homework.",
     "loadFailed": "We couldn’t load the class’s stories. Try again in a moment.",
-    "documentTitle": "Stories shared with {{name}}"
+    "documentTitle": "Stories shared with {{name}}",
+    "crumb": "Stories",
+    "count_one": "{{count}} story",
+    "count_few": "{{count}} stories",
+    "count_other": "{{count}} stories",
+    "makePublic": "Make public",
+    "makePublicLabel": "Make {{title}} public",
+    "noAds": "Class spaces never show advertising of any kind: no ads, no sponsored items and no sponsor credits."
   },
   "storyClass": {
     "legend": "Share with a class",

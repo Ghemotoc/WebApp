@@ -176,7 +176,7 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     const student = await openAs(browser, 'pending_check', classAddress);
     await expect(student.getByText('This space is locked.', { exact: false })).toBeVisible();
     await expect(student.getByText('Locked', { exact: true })).toBeVisible();
-    await expect(student.getByRole('link', { name: 'Start a thread' })).toHaveCount(0);
+    await expect(student.getByRole('link', { name: 'New thread' })).toHaveCount(0);
     // The code stops working while the class is locked.
     await student.goto(`/class/${code}`);
     await expect(
@@ -188,7 +188,7 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     await student.goto(classAddress);
     await expect(student.getByRole('heading', { level: 1, name: className })).toBeVisible();
     await expect(student.getByText('This space is locked.', { exact: false })).toHaveCount(0);
-    await expect(student.getByRole('link', { name: 'Start a thread' })).toBeVisible();
+    await expect(student.getByRole('link', { name: 'New thread' })).toBeVisible();
     await student.context().close();
     await teacher.context().close();
   });

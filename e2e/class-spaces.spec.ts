@@ -118,7 +118,9 @@ test.describe('class spaces (CLASSES-a, S1-E8-11)', () => {
     await page.getByRole('button', { name: 'Join the class' }).click();
     await expect(page).toHaveURL(new RegExp(`${classAddress}$`));
     await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();
-    await expect(page.getByText('Class space', { exact: true })).toBeVisible();
+    await expect(
+      page.getByText('Only the class can see this space', { exact: true }),
+    ).toBeVisible();
     await expect(page.getByRole('link', { name: 'Tema de vineri' })).toBeVisible();
     await page.context().close();
   });
