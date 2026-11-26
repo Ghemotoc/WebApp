@@ -17,7 +17,7 @@
  */
 
 /** Where this tab remembers when it last reloaded for a stale release (this tab only). */
-export const staleBuildReloadKey = 'ghemotoc.staleBuildReloadAt';
+export const staleBuildReloadKey = 'staleBuildReloadAt';
 
 /**
  * How long after an automatic reload another one is refused. If the page fails again this soon,
