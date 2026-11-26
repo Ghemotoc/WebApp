@@ -94,6 +94,30 @@ describe('DrawnCover', () => {
     }
   });
 
+  it('draws a classic artwork backdrop behind the label, hidden from screen readers', () => {
+    // Robert, 26 Nov 2026: The Raven, Luceafărul and Goblin Market keep their artwork.
+    const { container } = render(
+      <DrawnCover
+        title="The Raven"
+        penName="Edgar Allan Poe"
+        choice={defaultChoiceFor('classic_the_raven')}
+        size="card"
+      />,
+    );
+    const backdrop = container.querySelector('img');
+    expect(backdrop).toHaveAttribute('alt', '');
+    expect(backdrop).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.cover-label')).toHaveTextContent('The Raven');
+  });
+
+  it('draws a solid classic colour as a plain label, with no picture', () => {
+    const { container } = render(
+      <DrawnCover title="Ion" choice={defaultChoiceFor('seaglass')} size="card" />,
+    );
+    expect(container.querySelector('img')).toBeNull();
+    expect(container.firstElementChild).toHaveStyle({ backgroundColor: '#0F766E' });
+  });
+
   it('can be hidden entirely when the title is repeated as text beside it', () => {
     const { container } = render(
       <DrawnCover title="Titlu" choice={defaultChoiceFor('sky')} size="shelf" isDecorative />,

@@ -12,7 +12,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(18);
+select plan(21);
 
 create function pg_temp.sign_in_as(user_id uuid) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -86,6 +86,33 @@ select is((select array_agg(column_name::text order by column_name::text) from i
 select pg_temp.sign_out();
 select is((select array_agg(card ->> 'slug') from jsonb_array_elements(public.more_by_writer('statia-meteo-seed01') -> 'stories') as card),
   array['the-girl-who-fixed-radios-seed02'], 'More by lists the writer''s other story, not this one');
+reset role;
+
+-- Classics share one publishing account, so "More by" follows the real author (BUGS, 26 Nov 2026).
+-- seed01 and seed02 (one account) become classics by two authors; seed03 (another account) by the first.
+insert into public.classic_authors (id, name, died_year) values
+  ('00000000-0000-4000-a362-000000000001', 'Test Author One', 1870),
+  ('00000000-0000-4000-a362-000000000002', 'Test Author Two', 1889);
+update public.stories set classic_author_id = '00000000-0000-4000-a362-000000000001'
+where id in ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-9000-000000000003');
+update public.stories set classic_author_id = '00000000-0000-4000-a362-000000000002'
+where id = '00000000-0000-4000-9000-000000000002';
+select pg_temp.sign_out();
+select is((select array_agg(card ->> 'slug') from jsonb_array_elements(public.more_by_writer('statia-meteo-seed01') -> 'stories') as card),
+  array['scrisori-din-cutia-postala-seed03'],
+  'beside a classic, More by lists the same real author''s works, not other authors'' on the same account');
+select is(jsonb_array_length(public.more_by_writer('the-girl-who-fixed-radios-seed02') -> 'stories'), 0,
+  'an author with no other works gets an empty row, which the page hides');
+reset role;
+-- A writer's own story never lists the account's classics.
+update public.stories set classic_author_id = null where id = '00000000-0000-4000-9000-000000000002';
+select pg_temp.sign_out();
+select is(jsonb_array_length(public.more_by_writer('the-girl-who-fixed-radios-seed02') -> 'stories'), 0,
+  'beside a writer''s own story, More by leaves out classics on the same account');
+reset role;
+update public.stories set classic_author_id = null
+where id in ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-9000-000000000003');
+select pg_temp.sign_out();
 select is((select array_agg(card ->> 'slug') from jsonb_array_elements(public.stories_like_this('statia-meteo-seed01') -> 'stories') as card),
   array['scrisori-din-cutia-postala-seed03'], 'Stories like this lists the story the same readers finished');
 reset role;

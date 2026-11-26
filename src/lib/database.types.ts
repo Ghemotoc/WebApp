@@ -12134,7 +12134,11 @@ export type Database = {
         Returns: string;
       };
       admin_list_accounts: {
-        Args: { page_number?: number; page_size?: number };
+        Args: {
+          page_number?: number;
+          page_size?: number;
+          status_filter?: Database['public']['Enums']['account_status'];
+        };
         Returns: {
           account_status: Database['public']['Enums']['account_status'];
           age_band: Database['public']['Enums']['age_band'];
@@ -14191,6 +14195,8 @@ export type Database = {
       class_waiting_members: { Args: { slug: string }; Returns: Json };
       class_winners_allowed: { Args: { grade: number }; Returns: boolean };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
+      classic_cover_colour: { Args: { story_id: string }; Returns: string };
+      classic_cover_design: { Args: { story_slug: string }; Returns: string };
       classic_edition_details: {
         Args: { details: Json; edition_id: string; first_edition_id: string };
         Returns: Json;
@@ -18206,6 +18212,7 @@ export type Database = {
         Returns: boolean;
       };
       space_is_member: { Args: { target_space_id: string }; Returns: boolean };
+      space_is_searchable: { Args: { target_space_id: string }; Returns: boolean };
       space_join_note_for: {
         Args: {
           request: Omit<
@@ -18438,6 +18445,7 @@ export type Database = {
         };
         Returns: Database['public']['Enums']['space_power'][];
       };
+      space_search_head: { Args: { wanted_slug: string }; Returns: Json };
       space_show_forum_post: { Args: { post_id: string; reason: string }; Returns: undefined };
       space_slug_for: { Args: { name: string }; Returns: string };
       space_viewer_json: {

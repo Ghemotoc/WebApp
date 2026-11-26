@@ -4,8 +4,9 @@
 -- - get_chapter() sends a public-domain classic's chapter whole, not the teaser, and asks no
 --   sign-in for it;
 -- - a writer's own chapter still sends only the teaser and asks to sign in;
--- - the sitemap lists the chapters of both (a classic whole, a writer's as its teaser), and
---   leaves out a 16+ story's chapter, from which visitors get no text.
+-- - the sitemap lists a classic's chapter and leaves out a writer's chapter (GROWTH-4; Robert,
+--   26 Nov 2026, 19:45 UTC: only the story's page) and a 16+ story's chapter, from which visitors
+--   get no text.
 begin;
 
 create extension if not exists pgtap with schema extensions;
@@ -61,13 +62,13 @@ select is(public.get_chapter('the-girl-who-fixed-radios-seed02', 'grow0002') ->>
 
 select ok(exists (select 1 from public.sitemap_entries() where path = '/s/statia-meteo-seed01/grow0001'),
   'the sitemap lists a classic''s chapter');
-select ok(exists (select 1 from public.sitemap_entries() where path = '/s/the-girl-who-fixed-radios-seed02/grow0002'),
-  'and a writer''s chapter, shown to visitors as its teaser');
-reset role;
-update public.stories set rating = '16_plus' where id = '00000000-0000-4000-9000-000000000002';
-select pg_temp.sign_out();
 select ok(not exists (select 1 from public.sitemap_entries() where path = '/s/the-girl-who-fixed-radios-seed02/grow0002'),
-  'but not a 16+ chapter, from which visitors get no text');
+  'but not a writer''s chapter: only the story''s page is listed (GROWTH-4)');
+reset role;
+update public.stories set rating = '16_plus' where id = '00000000-0000-4000-9000-000000000001';
+select pg_temp.sign_out();
+select ok(not exists (select 1 from public.sitemap_entries() where path = '/s/statia-meteo-seed01/grow0001'),
+  'nor a 16+ chapter, from which visitors get no text');
 
 select * from finish();
 rollback;

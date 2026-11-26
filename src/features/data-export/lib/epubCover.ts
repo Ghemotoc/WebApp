@@ -13,13 +13,13 @@
  * Who calls it: runEpub.ts. What it calls: the cover designs (src/components/covers).
  */
 import {
-  coverArtwork,
   coverDesignByKey,
   coverPalette,
   titleColourOn,
   titleSurfaceFor,
   type DrawnCoverChoice,
 } from '@/components/covers/coverDesigns';
+import { coverArtwork } from '@/components/covers/coverArtwork';
 import type { EpubImage } from '@/lib/epub/epubTypes';
 import { coverTitleSize } from '@/lib/cover-title';
 
