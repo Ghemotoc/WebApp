@@ -33331,17 +33331,33 @@ CREATE OR REPLACE FUNCTION "public"."more_by_writer"("story_slug" "text") RETURN
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+  -- Step 1: the story the row sits beside, only when the caller may see it, with its real author
+  -- (null for a writer's own story).
   with shown_beside as (
-    select * from public.visible_story_by_slug(story_slug)
+    select visible.story_id, visible.writer_id, stories.classic_author_id
+    from public.visible_story_by_slug(story_slug) as visible
+    join public.stories on stories.id = visible.story_id
   ),
+  -- Step 2: the other listed stories with the same byline, most popular first.
   others as (
     select listed.id, coalesce(scores.score, 0) as score, listed.first_published_at
     from public.listed_stories('popular', null, null, null, null) as listed
-    join shown_beside on shown_beside.writer_id = listed.user_id and listed.id <> shown_beside.story_id
+    join public.stories as other_story on other_story.id = listed.id
+    join shown_beside on listed.id <> shown_beside.story_id
+      and (
+        -- A classic: the same real author, whichever account published it.
+        (shown_beside.classic_author_id is not null
+          and other_story.classic_author_id = shown_beside.classic_author_id)
+        -- A writer's own story: the same writer's own stories, never a classic.
+        or (shown_beside.classic_author_id is null
+          and other_story.classic_author_id is null
+          and listed.user_id = shown_beside.writer_id)
+      )
     left join public.story_scores as scores on scores.story_id = listed.id
     order by score desc, listed.first_published_at desc nulls last
     limit public.suggestion_row_size()
   )
+  -- Step 3: the cards, in the same order.
   select jsonb_build_object('stories', coalesce(
     (select jsonb_agg(public.story_card_json(others.id) order by others.score desc,
                       others.first_published_at desc nulls last) from others), '[]'::jsonb));
@@ -33351,7 +33367,7 @@ $$;
 ALTER FUNCTION "public"."more_by_writer"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."more_by_writer"("story_slug" "text") IS 'More by this writer: the writer''s other stories the caller may see, most popular first (S1-E15-06).';
+COMMENT ON FUNCTION "public"."more_by_writer"("story_slug" "text") IS 'More by: the other stories with the same byline the caller may see (a classic''s real author, or the writer), most popular first (S1-E15-06; BUGS, 26 Nov 2026).';
 
 
 
