@@ -251,17 +251,16 @@
     }
   },
   "readOn": {
-    "heading": "Where people can read it",
-    "label": "Where can people read this story?",
-    "options": {
-      "web_and_app": "On the web and in the app",
-      "app_only": "In the app only"
-    },
     "hints": {
       "web_and_app": "Readers open the chapters on the web and in the app.",
       "app_only": "On the web readers see the cover, blurb and chapter list. The chapters open in the app, where they are harder to copy."
     },
     "notYet": "The {{productName}} apps aren’t out yet. Until they are, everyone who’s logged in reads every chapter on the web, and we’ll tell you before “In the app only” starts to apply."
+  },
+  "whoCanReadCard": {
+    "heading": "Who can read this story?",
+    "visibility": "Visibility",
+    "appOnly": "App only"
   },
   "comments": {
     "label": "Who can comment",

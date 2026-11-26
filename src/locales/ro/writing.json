@@ -251,17 +251,16 @@
     }
   },
   "readOn": {
-    "heading": "Unde se poate citi",
-    "label": "Unde pot citi oamenii această poveste?",
-    "options": {
-      "web_and_app": "Pe web și în aplicație",
-      "app_only": "Doar în aplicație"
-    },
     "hints": {
       "web_and_app": "Cititorii deschid capitolele pe web și în aplicație.",
       "app_only": "Pe web cititorii văd coperta, descrierea și lista capitolelor. Capitolele se deschid în aplicație, unde sunt mai greu de copiat."
     },
     "notYet": "Aplicațiile {{productName}} nu au apărut încă. Până atunci, oricine e conectat citește toate capitolele pe web, iar noi îți spunem înainte ca „Doar în aplicație” să se aplice."
+  },
+  "whoCanReadCard": {
+    "heading": "Cine poate citi povestea?",
+    "visibility": "Vizibilitate",
+    "appOnly": "Doar în aplicație"
   },
   "comments": {
     "label": "Cine poate comenta",

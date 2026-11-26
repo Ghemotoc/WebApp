@@ -16,6 +16,10 @@
  * heading, "Manage chapters" and "See story page" beside it, "How readers will see it" (the
  * new story form's live preview) beside the form on wide screens, and a save bar that says
  * "You have unsaved changes" with Cancel, which puts every answer back.
+ * Board D07 (BOOKS D07, user story 5.7) sets the order of the cards: the basics, category and
+ * tags, the cover, status and comments, "Who can read this story?" (Visibility and App only in
+ * one card, StoryWhoCanReadSection), where it shows, labels, the cover's badges, sharing with a
+ * class, a contest and deleting, with the save bar last.
  * What it calls: useMyStories (the story), useStorySettingsForm (answers, checks,
  * update_my_story()), DeleteStoryControl (delete_my_story(), restore_my_story()),
  * StoryPreviewAside (the preview).
@@ -50,9 +54,8 @@ import { StoryBasicsSection } from './StoryBasicsSection';
 import { StoryLabelsSection } from './StoryLabelsSection';
 import { StoryPreviewAside } from './StoryPreviewAside';
 import { StoryStatusSection } from './StoryStatusSection';
-import { StoryReadOnSection } from './StoryReadOnSection';
-import { StoryVisibilitySection } from './StoryVisibilitySection';
 import { StoryWhereItShowsSection } from './StoryWhereItShowsSection';
+import { StoryWhoCanReadSection } from './StoryWhoCanReadSection';
 
 /** The message under the save button for each outcome. */
 function SaveOutcome({ outcome }: { outcome: ReturnType<typeof useStorySettingsForm>['outcome'] }) {
@@ -193,21 +196,23 @@ function SettingsFields({
         categories={options.categories}
         set={form.set}
       />
-      <RankBadgePicker slug={story.slug} />
-      <StoryClassCard slug={story.slug} />
-      <StoryContestCard slug={story.slug} />
+      {/* The rest in board D07's order: the cover, then status and comments, who can read it,
+          where it shows, labels, the badges, a class, a contest and deleting; the save bar
+          comes last, so it stays in view the whole way down. */}
       <CoverFields story={story} penName={penName} form={form} />
-      <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
-      <StoryVisibilitySection answers={form.answers} set={form.set} />
-      <StoryReadOnSection answers={form.answers} set={form.set} />
-      <StoryWhereItShowsSection answers={form.answers} set={form.set} />
       <StoryStatusSection
         answers={form.answers}
         set={form.set}
         pausedUntil={story.commentsPausedUntil}
       />
-      <SaveBar form={form} />
+      <StoryWhoCanReadSection answers={form.answers} set={form.set} />
+      <StoryWhereItShowsSection answers={form.answers} set={form.set} />
+      <StoryLabelsSection answers={form.answers} errors={form.errors} set={form.set} />
+      <RankBadgePicker slug={story.slug} />
+      <StoryClassCard slug={story.slug} />
+      <StoryContestCard slug={story.slug} />
       <DeleteStoryCard story={story} />
+      <SaveBar form={form} />
     </form>
   );
 }

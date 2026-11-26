@@ -2949,8 +2949,9 @@ The account gate is the one place minors are held back: while `adults_only` is o
 
 ### App only stories (GAPS-15)
 
-A writer picks "Where can people read this story?" in the story's settings
-(`src/features/writing/components/StoryReadOnSection.tsx`); `updateMyStory()` saves it last through
+A writer turns on "App only" under "Who can read this story?" in the story's settings
+(`src/features/writing/components/StoryWhoCanReadSection.tsx`, board D07); `updateMyStory()` saves
+it last through
 `set_my_story_app_only()` into `stories.is_app_only`. Nothing changes for readers until staff turn
 the `app_only_stories` flag on (it waits for the apps): `story_app_only_applies()` is the one place
 that checks both. Then `get_chapter()` sends no text to anyone but the writer and says `app_only`,
