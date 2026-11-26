@@ -6,7 +6,7 @@
  * bookshops and stuff.").
  *
  * What it adds:
- * - genres: the fixed list of mainstream genres (about 160), drawn from the BISAC subject
+ * - genres: the fixed list of mainstream genres (170), drawn from the BISAC subject
  *   headings bookshops shelve by (FICTION, JUVENILE FICTION, YOUNG ADULT FICTION, POETRY, DRAMA
  *   and the nonfiction headings closest to essays and memoir), with an English and a Romanian
  *   name. The three categories (fiction, poetry, nonfiction essays; Q52) stay the broad choice;
