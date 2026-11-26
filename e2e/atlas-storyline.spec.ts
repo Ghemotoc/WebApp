@@ -5,7 +5,9 @@
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
  * - the board shows the chapters as cards in act columns with their label, title, point of view,
- *   status, "Published", words and in-world date, and a card opens the writing view (S1-E17-19);
+ *   status, words and "Published" or "Draft", and a card opens the writing view (S1-E17-19;
+ *   story 6.9); on a phone the columns stay side by side and the board scrolls sideways inside
+ *   its own box (story 6.9, board E28);
  * - a move shows on the board before it is saved and goes back, with a note, when the save fails
  *   (design books item 13);
  * - the move buttons move a card within and between acts, and a drag does the same; a move that
@@ -129,7 +131,7 @@ async function openAs(browser: Browser, persona: SignInPersonaName, path: string
 }
 
 /**
- * Picks Board, Timeline or POV lanes. The switch's radios are visually hidden, so the click goes
+ * Picks Board, Timeline or Point-of-view lanes. The switch's radios are visually hidden, so the click goes
  * to the segment's words, as a person's would.
  */
 async function showView(page: Page, name: string) {
@@ -230,15 +232,38 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(storm).toContainText('Published');
     await expect(storm).toContainText('POV: Ana');
     await expect(storm).toContainText('4 words');
-    await expect(storm).toContainText('In-world date: Spring 2055');
+    // Story 6.9: the in-world date shows on the Timeline, not on the card.
+    await expect(storm).not.toContainText('In-world date');
     const calm = page.getByTestId('atlas-board-card').filter({ hasText: 'Calmul' });
     await expect(calm).toContainText('Chapter 2');
     await expect(calm).not.toContainText('Published');
+    await expect(calm).toContainText('· Draft');
     await expect(page.getByTestId('atlas-board-card').filter({ hasText: 'Zorii' })).toContainText(
       'Epilogue',
     );
     await storm.getByRole('link', { name: 'Furtuna' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${slug}/c/e2estor1$`));
+    await page.context().close();
+  });
+
+  test('on a phone the board scrolls sideways inside its box, not the page', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', storylineAddress);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await showView(page, 'Board');
+    const board = page.getByRole('region', {
+      name: 'Chapter board; scrolls sideways on small screens',
+    });
+    await expect(board).toBeVisible();
+    // The four columns sit side by side, wider than the box, so the box scrolls.
+    const widths = await board.evaluate((node) => [node.scrollWidth, node.clientWidth]);
+    expect(widths[0]).toBeGreaterThan(widths[1] ?? 0);
+    const pageWidths = await page.evaluate(() => [
+      document.documentElement.scrollWidth,
+      document.documentElement.clientWidth,
+    ]);
+    expect(pageWidths[0]).toBeLessThanOrEqual(pageWidths[1] ?? 0);
     await page.context().close();
   });
 
@@ -373,7 +398,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
-    await showView(page, 'POV lanes');
+    await showView(page, 'Point-of-view lanes');
     const table = page.getByRole('table', { name: 'Chapters by point-of-view character' });
     await expect(table.getByRole('columnheader')).toHaveText(['Chapter', 'Ana', 'Bogdan']);
     const stormRow = table.getByRole('row', { name: /Furtuna/ });
@@ -407,7 +432,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
       'POV: Narrator',
     );
     // The lanes give the Narrator the last column and a tile of their own.
-    await showView(page, 'POV lanes');
+    await showView(page, 'Point-of-view lanes');
     const table = page.getByRole('table', { name: 'Chapters by point-of-view character' });
     await expect(table.getByRole('columnheader')).toHaveText([
       'Chapter',

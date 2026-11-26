@@ -2,9 +2,9 @@
  * StorylinePage: /plan/s/:storySlug/storyline, a story's structure in Story Atlas (stories
  * S1-E17-19 to S1-E17-22).
  *
- * The Story Atlas top bar, the heading, then the view switch (Board, Timeline or POV lanes, one
- * switch away, S1-E17-22) with the view's hint beside it, and the view chosen (bundle G10 ATLAS,
- * part c1; board AtlasStoryline). The choice is remembered on this device, so the
+ * The Story Atlas top bar, the heading, then the view switch (Board, Timeline or Point-of-view
+ * lanes, one switch away, S1-E17-22), the view's hint and action under it, and the view chosen
+ * (bundle G10 ATLAS, part c1; redrawn by user stories bundle 6, story 6.9, board E28). The choice is remembered on this device, so the
  * storyline opens on it next time. Only the writer sees any of it.
  * Who calls it: src/app/router.tsx (loaded only when a writer opens it). What it calls:
  * useStoryline → story_storyline() and the changers; AddActForm, ChapterBoard, TimelineView,
@@ -78,8 +78,8 @@ function StorylineBody({
 }
 
 /**
- * Board, Timeline or POV lanes (S1-E17-22), with the view's hint beside the switch and, after the
- * hint, the view's own action (the board's "Add act", GAPS-2a).
+ * Board, Timeline or Point-of-view lanes (S1-E17-22), then the view's hint as a meta line and,
+ * under it, the view's own action (the board's "Add act", GAPS-2a; board E28).
  */
 function ViewToggle({
   slug,
@@ -92,7 +92,7 @@ function ViewToggle({
 }) {
   const { t } = useAtlasTranslation();
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+    <div className="flex min-w-0 flex-col gap-3">
       <SegmentedControl
         legend={t('storyline.viewLabel')}
         isLegendVisible={false}
@@ -104,10 +104,8 @@ function ViewToggle({
         value={view}
         onChange={onChange}
       />
-      <div className="flex min-w-0 flex-wrap items-center gap-3">
-        <p className="m-0 max-w-[60ch] type-body text-ink-muted">{t(`storyline.${view}.hint`)}</p>
-        {view === 'board' && <AddActForm slug={slug} />}
-      </div>
+      <p className="m-0 mt-3 type-meta text-ink-muted">{t(`storyline.${view}.hint`)}</p>
+      {view === 'board' && <AddActForm slug={slug} />}
     </div>
   );
 }

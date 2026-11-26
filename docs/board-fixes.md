@@ -406,3 +406,7 @@ The app follows the decision or the DoD rule on the right; the boards still draw
 | E27-Atlas story world, a name not found yet (user story 6.8) | Not drawn | "Insula (not found yet)" in the Links line, as the story says, plain words with no link |
 | E27-Atlas story world, What readers see (user story 6.8) | "… shared, from chapter 4: Twelve degrees." in one sentence | "Readers see this entry while the story world is shared." then the chapter picker and Keep private, as on every other item (S1-E17-35) |
 | E27-Atlas story world, phones (user story 6.8) | The Sections back link on the phone frame only | Below 1024 px an open entry hides the list and shows Sections, so a tablet works the same as a phone |
+| E28-Atlas storyline board, the grip (user story 6.9) | No grip on a resting card | A six-dot grip in each card's left padding, because the story says a card moves "by dragging its grip"; it takes no width from the words |
+| E28-Atlas storyline board, renaming an act (user story 6.9) | Not drawn | A round pen button, "Edit act: Act 1", beside the act's count opens the name, Save, Cancel and Delete act (GAPS-2a), so acts can still be renamed and deleted |
+| E28-Atlas storyline board, a card's in-world date (user story 6.9) | Not drawn | Left off the card, as the story lists the card's facts; it shows on the Timeline |
+| E28-Atlas storyline board, an empty column (user story 6.9) | Every column holds cards | "No chapters here yet." in the tinted box, with Add chapter under it |

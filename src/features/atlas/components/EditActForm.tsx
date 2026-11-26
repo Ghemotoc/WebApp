@@ -1,5 +1,6 @@
 /**
- * EditActForm: "Edit act" under an act's name on the chapter board (bundle GAPS-2a).
+ * EditActForm: "Edit act" beside an act's name on the chapter board (bundle GAPS-2a; a round pen
+ * button since story 6.9, board E28, which draws the act's name and count alone).
  *
  * One button; pressed, it opens the act's name with "Save" and "Cancel", and "Delete act".
  * Deleting asks first, in place, and says how many chapters stay in the book under "No act": no
@@ -10,6 +11,7 @@
  */
 import { useEffect, useState } from 'react';
 
+import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { TextInput } from '@/components/ui/TextInput';
@@ -61,18 +63,20 @@ function DeleteAct({
   );
 }
 
-/** "Edit act", named after its act for a screen reader ("Edit act: Act I"). */
+/** "Edit act": a round pen button named after its act ("Edit act: Act I", WCAG 4.1.2). */
 function EditActButton({ name, onOpen }: { name: string; onOpen: () => void }) {
   const { t } = useAtlasTranslation();
+  const label = t('storyline.board.acts.editNamed', { name });
   return (
-    <Button
-      variant="secondary"
-      className="h-8 self-start px-3 type-meta"
-      aria-label={t('storyline.board.acts.editNamed', { name })}
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
       onClick={onOpen}
+      className="tmc-focus grid size-11 flex-none cursor-pointer place-items-center rounded-full border-0 bg-transparent text-ink-muted hover:bg-surface hover:text-ink-heading"
     >
-      {t('storyline.board.acts.edit')}
-    </Button>
+      <ActionIcon name="pen" size={16} />
+    </button>
   );
 }
 
@@ -118,7 +122,8 @@ export function EditActForm({ slug, act, chapterCount }: EditActFormProps) {
 
   if (!isOpen) return <EditActButton name={act.name} onOpen={open} />;
   return (
-    <div className="flex min-w-0 flex-col gap-3">
+    // The open form takes the whole row under the act's name.
+    <div className="flex min-w-0 basis-full flex-col gap-3">
       <form
         className="flex min-w-0 flex-col gap-2"
         onSubmit={(event) => {

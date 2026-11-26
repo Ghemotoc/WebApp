@@ -616,11 +616,12 @@
     "views": {
       "board": "Board",
       "timeline": "Timeline",
-      "lanes": "POV lanes"
+      "lanes": "Point-of-view lanes"
     },
     "board": {
       "heading": "Chapter board",
-      "hint": "Drag a card by its grip (on a phone or tablet, press and hold it), or use its menu: Earlier, Later, Previous act, Next act. Moving a chapter that’s already published asks first.",
+      "hint": "Drag a card, or use its menu (Earlier, Later, Previous act, Next act). Moving a chapter that’s already published asks first.",
+      "regionLabel": "Chapter board; scrolls sideways on small screens",
       "noAct": "No act",
       "empty": "No chapters here yet.",
       "chapterNumber": "Chapter {{number}}",
@@ -628,10 +629,10 @@
       "pov": "POV: {{name}}",
       "noPov": "No point of view yet",
       "published": "Published",
+      "draft": "Draft",
       "words_one": "{{words}} word",
       "words_few": "{{words}} words",
       "words_other": "{{words}} words",
-      "worldDate": "In-world date: {{date}}",
       "addChapter": "Add chapter",
       "addChapterIn": "Add chapter to {{name}}",
       "addFailed": "We couldn’t add the chapter. Try again in a moment.",
