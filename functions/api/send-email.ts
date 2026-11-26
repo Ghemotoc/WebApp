@@ -7,7 +7,7 @@
  * SEND_EMAIL_HOOK_SECRET (from Supabase › Authentication › Hooks), BREVO_API_KEY, and the public
  * VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY for the overrides read. Brand values come from the
  * same VITE_BRAND_* variables as the front end (names are settings, not code), and so does the
- * site the links open (VITE_BRAND_SITE_DOMAIN, today ghemotoc.tech), never Supabase's own address.
+ * site the links open (VITE_BRAND_SITE_DOMAIN, or the default in src/config/brand.ts), never Supabase's own address.
  */
 import { brandDefaults, readBrand } from '../../src/config/brand';
 import { sendWithBrevo } from '../../server/contact';

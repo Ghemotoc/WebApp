@@ -87,7 +87,7 @@ const authEmailKinds: Record<string, AuthEmailKind> = {
 export interface SendEmailHookOptions {
   /** "v1,whsec_<base64>", from the Supabase dashboard. */
   hookSecret: string;
-  /** Our own website ("https://ghemotoc.tech"), which every link in the email opens. */
+  /** Our own website (from VITE_BRAND_SITE_DOMAIN), which every link in the email opens. */
   siteUrl: string;
   sender: EmailSender;
   productName: string;
