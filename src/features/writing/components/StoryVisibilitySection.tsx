@@ -6,9 +6,10 @@
  * now. Unlisted works like an unlisted video: only people with the link read it, and it is in no
  * list. Private: only the writer. The database enforces it on every path
  * (story_visibility_allows(), story_listing_allows()); staff Restrict and Hide still win.
- * Class-only sharing stays on the class's own setting; "In the app only" is its own section
- * beside this one (StoryReadOnSection, GAPS-15).
- * Who uses it: StorySettingsPage (a new story starts public).
+ * Class-only sharing stays on the class's own setting.
+ * Who uses it: the New story wizard's "Who can read it" step (useNewStorySteps; a new story starts
+ * public). Story settings draws Visibility and App only together in StoryWhoCanReadSection
+ * (board D07).
  */
 import { useTranslation } from 'react-i18next';
 

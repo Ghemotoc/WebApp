@@ -468,12 +468,12 @@
     "eyebrow": "Clasa",
     "title": "Povești împărtășite cu clasa",
     "note": "Doar {{name}} le poate citi până când autorul le face publice. Un profesor nu poate face niciodată publică povestea unui elev.",
-    "empty": "Încă nu e nicio poveste împărtășită. Ca să împărtășești una, deschide Setările poveștii și alege clasa aceasta la „Cine o poate citi”.",
+    "empty": "Încă nu e nicio poveste împărtășită. Ca să împărtășești una, deschide Setările poveștii și alege clasa aceasta la „Împărtășește cu o clasă”.",
     "loadFailed": "Nu am putut încărca poveștile clasei. Încearcă din nou peste puțin timp.",
     "documentTitle": "Povești împărtășite cu {{name}}"
   },
   "storyClass": {
-    "legend": "Cine o poate citi",
+    "legend": "Împărtășește cu o clasă",
     "intro": "Poți împărtăși povestea aceasta doar cu una dintre clasele tale. Atunci doar tu, clasa și echipa noastră de moderare o pot citi: nu apare în nicio listă publică și nici pe profilul tău. Doar tu o poți face din nou publică.",
     "publicNow": "Acum o poate citi oricine, în limita clasificării ei.",
     "pick": "Clasa",

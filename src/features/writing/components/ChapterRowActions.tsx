@@ -1,24 +1,31 @@
 /**
- * ChapterRowActions: the buttons at the end of each row on Manage chapters (story S1-E3-04;
- * board 4.4): move up and down, Edit, Rename, Unpublish or Publish again, and Delete.
+ * ChapterRowActions: the buttons at the end of each row on a story's Chapters page (story
+ * S1-E3-04; board D03, user story 5.3): Earlier and Later, Edit, then "…" (More) with Rename,
+ * Preview, Schedule or Unpublish (or Publish again), Copy link and Delete.
  *
- * Board values: 44 px round arrow buttons (a #8E7B99 border when they work, pale at the ends),
- * a thin divider, then text buttons in the link colour and Delete in red.
- * The arrows at the ends use aria-disabled, not disabled, so a keyboard user who just moved a
- * chapter to the top keeps focus on the button instead of losing it to the page.
- * Who uses it: ManagedChapterRow. What it calls: nothing itself; the row passes the changes up
- * to useManageChapters.
+ * Board values: 44 px round icon buttons for the arrows and More, Edit as a quiet button. The
+ * arrows at the ends use aria-disabled, not disabled, so a keyboard user who just moved a chapter
+ * to the top keeps focus on the button instead of losing it to the page. On phones (under 600
+ * px) the arrows move into More, as the story asks. Delete is last, in the danger ink, with its
+ * word (MoreMenu), and asks once (DeleteChapterDialog, on the page).
+ * Preview and Schedule open the editor on that chapter with its preview, or its publish panel
+ * on Later (the editor reads `?preview` and `?publish=later`); a scheduled chapter's item says
+ * "Change the schedule". Copy link copies the chapter's public address (sharing/lib/shareLink).
+ * Who uses it: ManagedChapterRow. What it calls: MoreMenu; the row passes the changes up to
+ * useManageChapters.
  */
-import type { RefObject } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { buttonClassName } from '@/components/ui/buttonStyles';
+import { MoreMenu, type MoreMenuItem } from '@/components/ui/MoreMenu';
 import { cn } from '@/lib/utils';
 
 import type { ManagedChapter } from '../api/manageChapters';
 import type { ChapterChange } from '../hooks/useManageChapters';
 
-import { ChevronDownIcon, ChevronUpIcon } from './ManageChaptersIcons';
+import { ArrowEarlierIcon, ArrowLaterIcon } from './ManageChaptersIcons';
 
 /** What the actions need. */
 export interface ChapterRowActionsProps {
@@ -28,22 +35,20 @@ export interface ChapterRowActionsProps {
   number: number;
   isLast: boolean;
   isBusy: boolean;
-  renameButtonRef: RefObject<HTMLButtonElement | null>;
   onChange: (change: ChapterChange) => void;
   onStartRename: () => void;
   onAskDelete: () => void;
+  onCopyLink: () => void;
+  /** The "…" button, so focus can come back to it after Rename. */
+  moreButtonRef: RefObject<HTMLButtonElement | null>;
 }
 
-/** The classes shared by the text buttons. */
-const textButton =
-  'inline-flex h-11 items-center rounded-full px-3 type-body font-semibold text-link hover:underline';
-
-/** One round arrow button; pale and inactive at the end of the list. */
+/** One round arrow button; inactive at the end of the list. Hidden on phones (they use More). */
 function ArrowButton(props: {
   label: string;
   isOff: boolean;
   onMove: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <button
@@ -54,10 +59,8 @@ function ArrowButton(props: {
         if (!props.isOff) props.onMove();
       }}
       className={cn(
-        'inline-flex size-11 items-center justify-center rounded-full border',
-        props.isOff
-          ? 'cursor-not-allowed border-border bg-panel text-ink-muted opacity-60'
-          : 'border-control-border bg-surface text-ink-heading hover:bg-tint',
+        'grid size-11 place-items-center rounded-full text-ink-heading max-sm:hidden',
+        props.isOff ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-tint',
       )}
     >
       {props.children}
@@ -65,82 +68,131 @@ function ArrowButton(props: {
   );
 }
 
-/** Unpublish for a published chapter, Publish again for an unpublished one, else nothing. */
-function PublishToggle({
-  chapter,
-  isBusy,
-  onChange,
-}: Pick<ChapterRowActionsProps, 'chapter' | 'isBusy' | 'onChange'>) {
-  const { t } = useTranslation('writing');
+/**
+ * The item that changes who can read the chapter: Unpublish for a published one, Publish again
+ * for one taken back, and none for a draft or a scheduled one.
+ *
+ * @param props - the chapter, whether a change is running and the change callback
+ * @param t - the writing translations
+ * @returns the item, or null
+ */
+function publishItem(
+  props: ChapterRowActionsProps,
+  t: ReturnType<typeof useTranslation>['t'],
+): MoreMenuItem | null {
+  const { chapter } = props;
+  if (props.isBusy) return null;
   if (chapter.state === 'published') {
-    return (
-      <button
-        type="button"
-        className={textButton}
-        disabled={isBusy}
-        onClick={() => onChange({ kind: 'unpublish', code: chapter.code })}
-      >
-        {t('manageChapters.unpublish')}
-      </button>
-    );
+    return {
+      key: 'unpublish',
+      label: t('manageChapters.unpublish'),
+      onSelect: () => props.onChange({ kind: 'unpublish', code: chapter.code }),
+    };
   }
   if (chapter.state !== 'unpublished') return null;
-  return (
-    <button
-      type="button"
-      className={textButton}
-      disabled={isBusy}
-      onClick={() => onChange({ kind: 'publish', code: chapter.code })}
-    >
-      {t('manageChapters.publishAgain')}
-    </button>
-  );
+  return {
+    key: 'publish-again',
+    label: t('manageChapters.publishAgain'),
+    onSelect: () => props.onChange({ kind: 'publish', code: chapter.code }),
+  };
+}
+
+/**
+ * Builds the More menu's items for one chapter, in the board's order.
+ *
+ * @param props - the row's actions
+ * @param t - the writing translations
+ * @returns the items
+ */
+function moreItems(
+  props: ChapterRowActionsProps,
+  t: ReturnType<typeof useTranslation>['t'],
+): MoreMenuItem[] {
+  const { chapter, number } = props;
+  const editorAddress = `/write/s/${props.slug}/c/${chapter.code}`;
+  const items: MoreMenuItem[] = [];
+  // Step 1: on phones the arrows live here (story 5.3); they are hidden from 600 px.
+  if (number > 1 && !props.isBusy) {
+    items.push({
+      key: 'earlier',
+      label: t('manageChapters.earlier'),
+      onlyOnPhones: true,
+      onSelect: () => props.onChange({ kind: 'move', code: chapter.code, direction: -1 }),
+    });
+  }
+  if (!props.isLast && !props.isBusy) {
+    items.push({
+      key: 'later',
+      label: t('manageChapters.later'),
+      onlyOnPhones: true,
+      onSelect: () => props.onChange({ kind: 'move', code: chapter.code, direction: 1 }),
+    });
+  }
+  // Step 2: the chapter's own actions.
+  items.push({ key: 'rename', label: t('manageChapters.rename'), onSelect: props.onStartRename });
+  items.push({
+    key: 'preview',
+    label: t('manageChapters.preview'),
+    to: `${editorAddress}?preview`,
+  });
+  if (chapter.state !== 'published') {
+    const scheduleLabel =
+      chapter.state === 'scheduled'
+        ? t('manageChapters.changeSchedule')
+        : t('manageChapters.schedule');
+    items.push({ key: 'schedule', label: scheduleLabel, to: `${editorAddress}?publish=later` });
+  }
+  const publishToggle = publishItem(props, t);
+  if (publishToggle !== null) items.push(publishToggle);
+  if (chapter.state === 'published') {
+    items.push({ key: 'copy', label: t('manageChapters.copyLink'), onSelect: props.onCopyLink });
+  }
+  // Step 3: Delete is always last, in the danger ink.
+  items.push({
+    key: 'delete',
+    label: t('manageChapters.delete'),
+    isDanger: true,
+    onSelect: props.onAskDelete,
+  });
+  return items;
 }
 
 /**
  * Renders the actions.
  *
- * @returns the arrows, the divider and the text buttons
+ * @returns the arrows, Edit and More
  */
-export function ChapterRowActions({ renameButtonRef, ...props }: ChapterRowActionsProps) {
+export function ChapterRowActions(props: ChapterRowActionsProps) {
   const { t } = useTranslation('writing');
   const { chapter, number } = props;
   return (
-    <div className="flex flex-[0_1_auto] flex-wrap items-center gap-1">
+    <div className="flex flex-none items-center gap-1">
       <ArrowButton
         label={t('manageChapters.moveUp', { number })}
         isOff={number === 1 || props.isBusy}
         onMove={() => props.onChange({ kind: 'move', code: chapter.code, direction: -1 })}
       >
-        <ChevronUpIcon />
+        <ArrowEarlierIcon />
       </ArrowButton>
       <ArrowButton
         label={t('manageChapters.moveDown', { number })}
         isOff={props.isLast || props.isBusy}
         onMove={() => props.onChange({ kind: 'move', code: chapter.code, direction: 1 })}
       >
-        <ChevronDownIcon />
+        <ArrowLaterIcon />
       </ArrowButton>
-      <span aria-hidden="true" className="mx-1 h-6 w-px bg-border" />
-      <Link to={`/write/s/${props.slug}/c/${chapter.code}`} className={textButton}>
+      <Link
+        to={`/write/s/${props.slug}/c/${chapter.code}`}
+        draggable={false}
+        className={buttonClassName({ variant: 'secondary' })}
+      >
         {t('manageChapters.edit')}
       </Link>
-      <button
-        ref={renameButtonRef}
-        type="button"
-        className={textButton}
-        onClick={props.onStartRename}
-      >
-        {t('manageChapters.rename')}
-      </button>
-      <PublishToggle chapter={chapter} isBusy={props.isBusy} onChange={props.onChange} />
-      <button
-        type="button"
-        className={cn(textButton, 'text-destructive')}
-        onClick={props.onAskDelete}
-      >
-        {t('manageChapters.delete')}
-      </button>
+      <MoreMenu
+        label={t('manageChapters.more', { number })}
+        items={moreItems(props, t)}
+        triggerRef={props.moreButtonRef}
+      />
     </div>
   );
 }

@@ -3,9 +3,9 @@
  * WriterDashboard 4.1).
  *
  * Simplified look (bundle CALM-7c, board simplified/New-Write): a plain heading and one row per
- * waiting chapter split by the hairline: a meta line with the state first in bold ("Draft",
- * "Scheduled") and the story, "Chapter n: title" as a link, a meta line with the words and when it
- * was saved (or when it publishes, on the writer's own clock), and "Edit" or "Reschedule" as a
+ * waiting chapter split by the hairline: "Chapter n: title" as a link first (board D01, story 5.1),
+ * then one meta line with the state in bold ("Draft", "Scheduled"), the story, the words and when
+ * it was saved (or when it publishes, on the writer's own clock), and "Edit" or "Reschedule" as a
  * quiet button. Newest first, at most four. No card and no pills.
  * Who uses it: WriterDashboardTop. Its rows come from writer_dashboard() (the chapters list).
  */
@@ -42,7 +42,7 @@ function rowTitle(chapter: DashboardChapter, t: TFunction<'writing'>) {
 }
 
 /**
- * The row's second meta line: when it publishes, or how long it is and when it was saved.
+ * The meta line's last facts: when it publishes, or how long it is and when it was saved.
  *
  * @param chapter - the waiting chapter
  * @param isScheduled - whether it has a publishing time
@@ -68,9 +68,9 @@ function detailFacts(
 }
 
 /**
- * One waiting chapter: a meta line with the state first and the story, the chapter's title as a
- * link, a meta line with the words and when it was saved (or when it publishes), and Edit or
- * Reschedule as a quiet button (board simplified/New-Write).
+ * One waiting chapter: the chapter's title as a link, then one meta line with the state, the
+ * story, the words and when it was saved (or when it publishes), and Edit or Reschedule as a quiet
+ * button (board D01).
  *
  * @param props - the chapter and its story's title
  * @returns one list item
@@ -87,6 +87,12 @@ function WaitingRow({ chapter, storyTitle }: WaitingRowProps) {
   return (
     <li className="flex items-center gap-4 border-t border-hairline py-4 first:border-t-0">
       <span className="flex min-w-0 flex-1 flex-col gap-1">
+        <Link
+          to={editorAddress}
+          className="type-body leading-5 font-semibold break-words text-ink-heading no-underline hover:underline"
+        >
+          {title}
+        </Link>
         <MetaLine
           facts={[
             {
@@ -94,15 +100,9 @@ function WaitingRow({ chapter, storyTitle }: WaitingRowProps) {
               kind: 'state',
             },
             { text: storyTitle },
+            ...detail,
           ]}
         />
-        <Link
-          to={editorAddress}
-          className="type-body leading-5 font-semibold break-words text-ink-heading no-underline hover:underline"
-        >
-          {title}
-        </Link>
-        <MetaLine facts={detail} />
       </span>
       <Link
         to={editorAddress}

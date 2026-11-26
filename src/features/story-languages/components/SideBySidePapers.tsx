@@ -3,11 +3,12 @@
  * right, each as its own reading paper (CALM-9, board D09 "Translate a chapter"; replaces the
  * paragraph-by-paragraph boxes of TRANSLATE-1c).
  *
- * What it shows: a head on each paper ("Original English · 64 words", "Translation Română ·
- * 41 words"), the original's paragraphs, and on the right one borderless field per paragraph
- * (TranslationField). The translation's paper gets a 2 px main-colour ring while a field has
- * focus. Under the papers: the checkbox "Scroll both sides together" (on by default,
- * hooks/useScrollTogether.ts) and the progress line "41 of 64 words so far".
+ * What it shows: above each paper its name and language on the left and its words on the right
+ * ("Original English … 64 words"; board D09, user story 5.9), the original's paragraphs, and on
+ * the right one borderless field per paragraph (TranslationField). The translation's paper gets
+ * a 2 px main-colour ring while a field has focus. Under the papers: the checkbox "Scroll both
+ * sides together" (on by default, hooks/useScrollTogether.ts) and the board's line "Translate
+ * in your own words…". The progress, "41 of 64 words so far", sits in the page's header.
  * Who shows it: TranslationEditorPage, from tablet width up; phones get PhoneTranslateNotice.
  * It only draws; the page's hook keeps the words.
  */
@@ -30,8 +31,11 @@ export interface SideBySidePapersProps {
 
 /** What one paper needs. */
 interface PaperProps {
-  /** "Original English" or "Translation Română", already put together. */
+  /** "Original" or "Translation". */
   heading: string;
+  /** The side's language in its own name ("English", "Română"). */
+  languageName: string;
+  languageCode: string;
   wordCount: number;
   scrollBox: RefObject<HTMLDivElement | null>;
   /** True for the translation: the paper shows the focus ring. */
@@ -40,24 +44,32 @@ interface PaperProps {
 }
 
 /** One paper: its head, then its own scroll box. */
-function Paper({ heading, wordCount, scrollBox, isEditable, children }: PaperProps) {
+function Paper(props: PaperProps) {
+  const { heading, languageName, languageCode, wordCount, scrollBox, isEditable, children } = props;
   const { t } = useStoryLanguagesTranslation();
   return (
-    <section
-      aria-label={heading}
-      className={cn(
-        'flex min-w-0 flex-col rounded-card border border-border bg-story-paper',
-        // CALM-9, D09: "2 px main-colour ring when focused" on the editable side only.
-        isEditable && 'focus-within:ring-2 focus-within:ring-primary',
-      )}
-    >
-      <p className="m-0 border-b border-border px-6 py-3 type-meta text-ink-muted">
-        <span className="font-semibold text-ink-heading">{heading}</span>
-        {' · '}
-        {t('editor.wordCount', { count: wordCount })}
-      </p>
+    // Board D09: the side's name and language above its paper, its words on the right.
+    <section aria-label={`${heading} ${languageName}`} className="flex min-w-0 flex-col gap-2">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="m-0 type-label font-semibold text-ink-heading">
+          {heading}{' '}
+          <span lang={languageCode} className="type-meta font-normal text-ink-muted">
+            {languageName}
+          </span>
+        </h2>
+        <span className="type-meta text-ink-muted">
+          {t('editor.wordCount', { count: wordCount })}
+        </span>
+      </div>
       {/* relative: the paragraphs measure their offsetTop from this box (useScrollTogether). */}
-      <div ref={scrollBox} className="relative max-h-[70vh] overflow-y-auto px-6 pt-4 pb-1">
+      <div
+        ref={scrollBox}
+        className={cn(
+          'relative min-h-[32rem] max-h-[70vh] overflow-y-auto rounded-card border border-border bg-story-paper px-6 pt-4 pb-1',
+          // CALM-9, D09: "2 px main-colour ring when focused" on the editable side only.
+          isEditable && 'focus-within:ring-2 focus-within:ring-primary',
+        )}
+      >
         {children}
       </div>
     </section>
@@ -105,7 +117,9 @@ export function SideBySidePapers({ original, translation, onChange }: SideBySide
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-2 gap-4">
         <Paper
-          heading={t('editor.originalHead', { language: original.languageName })}
+          heading={t('editor.originalHead')}
+          languageName={original.languageName}
+          languageCode={original.languageCode}
           wordCount={originalWords}
           scrollBox={leftBox}
           isEditable={false}
@@ -113,7 +127,9 @@ export function SideBySidePapers({ original, translation, onChange }: SideBySide
           <OriginalText languageCode={original.languageCode} paragraphs={original.paragraphs} />
         </Paper>
         <Paper
-          heading={t('editor.translationHead', { language: translation.languageName })}
+          heading={t('editor.translationHead')}
+          languageName={translation.languageName}
+          languageCode={translation.languageCode}
           wordCount={translatedWords}
           scrollBox={rightBox}
           isEditable
@@ -140,9 +156,7 @@ export function SideBySidePapers({ original, translation, onChange }: SideBySide
           />
           {t('editor.scrollTogether')}
         </label>
-        <p role="status" className="m-0 font-semibold text-ink-muted">
-          {t('editor.progress', { count: translatedWords, total: originalWords })}
-        </p>
+        <p className="m-0 text-ink-muted">{t('editor.tip')}</p>
       </div>
     </div>
   );

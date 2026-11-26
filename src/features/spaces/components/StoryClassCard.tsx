@@ -1,7 +1,7 @@
 /**
- * StoryClassCard: "Who can read it" in Story settings, where a student shares a story only with
- * their class or makes it public again (bundle CLASSES, part c; story S1-E8-11: the writer, never
- * the teacher, decides when a class story becomes public).
+ * StoryClassCard: "Share with a class" in Story settings (its name on board D07), where a student
+ * shares a story only with their class or makes it public again (bundle CLASSES, part c; story
+ * S1-E8-11: the writer, never the teacher, decides when a class story becomes public).
  *
  * What it shows: nothing for a writer in no class whose story is public. Otherwise, while public,
  * a drop-down of their classes and "Share only with this class"; while shared, which class reads

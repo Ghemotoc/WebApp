@@ -1,6 +1,7 @@
 /**
- * Tests for SaveWord (design books item 16, "Show what is inside"): the one word beside the
- * chapter's name says whether the chapter is saved, and stays out of the way before any change.
+ * Tests for SaveWord (design books item 16, "Show what is inside"; board D05, user story 5.5): the
+ * few words in the editor's bar and at the foot of the paper say whether the chapter is saved, and
+ * stay out of the way before any change.
  */
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
@@ -11,8 +12,8 @@ import type { SaveState } from '../hooks/useAutosave';
 import { SaveWord } from './SaveWord';
 
 /** Draws the word for one save state, in English. */
-function renderWord(state: SaveState) {
-  return renderWithProviders(<SaveWord state={state} />, 'en');
+function renderWord(state: SaveState, withTime = false) {
+  return renderWithProviders(<SaveWord state={state} withTime={withTime} />, 'en');
 }
 
 describe('SaveWord', () => {
@@ -36,8 +37,18 @@ describe('SaveWord', () => {
     expect(screen.getByText('Saved on this device')).toBeInTheDocument();
   });
 
-  it('says "Not saved" in the warning colour when the save failed', () => {
+  it('says "Saved at 14:02" at the foot of the paper, in the 24-hour clock', () => {
+    renderWord({ kind: 'saved', at: new Date(2026, 10, 25, 14, 2), wordCount: 12 }, true);
+    expect(screen.getByText('Saved at 14:02')).toHaveClass('text-ink-muted');
+  });
+
+  it('says "Not saved yet. Trying again" in the danger colour when the save failed', () => {
     renderWord({ kind: 'failed' });
-    expect(screen.getByText('Not saved')).toHaveClass('text-(--warning-text)');
+    expect(screen.getByText('Not saved yet. Trying again')).toHaveClass('text-(--error-text)');
+  });
+
+  it('says "Not saved" in the danger colour after a conflict', () => {
+    renderWord({ kind: 'conflict', serverVersion: 4 });
+    expect(screen.getByText('Not saved')).toHaveClass('text-(--error-text)');
   });
 });

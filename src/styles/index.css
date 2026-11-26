@@ -747,6 +747,9 @@ dialog.bg-surface,
  * at rest, 10 px and 8 px once the page has scrolled 12 px, in 300 ms). At rest the pill is the
  * website's see-through .lg-light glass; scrolled, glass-float's near-solid glass takes over.
  * Reduce motion makes the change jump.
+ *
+ * The tight bar is 14 px shorter and in the page's flow, so usePageScrolled tightens it only past
+ * 26 px and relaxes it at 12 px: the 14 px the browser scrolls back never flip it again.
  */
 .top-bar {
   padding-top: 16px;
@@ -1578,6 +1581,35 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 }
 .tmc-chapter-text .ProseMirror p.is-empty::before {
   content: '';
+}
+
+/* The editor's paper (board D05, user story 5.5): the story's own type, Literata 20/34 (17/28 on
+   phones), 16 px between paragraphs, the title in Literata 700 32/38 (24/32 on phones) over a
+   1 px control line. The paper itself is the story paper, 48 px by 64 px inside from 1024 px,
+   48 by 32 on tablets and 32 by 16 on phones (EditorPaper). */
+.tmc-chapter-text.tmc-chapter-text--editor {
+  font-family: var(--font-story);
+  font-size: 20px;
+  line-height: 34px;
+}
+.tmc-chapter-text--editor .ProseMirror > * + * {
+  margin-top: 16px;
+}
+.tmc-editor-title {
+  font-family: var(--font-story);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 38px;
+}
+@media (max-width: 599px) {
+  .tmc-chapter-text.tmc-chapter-text--editor {
+    font-size: 17px;
+    line-height: 28px;
+  }
+  .tmc-editor-title {
+    font-size: 24px;
+    line-height: 32px;
+  }
 }
 
 /* The chapter reader's text (story S1-E4-01a; board 3.5): Inter 19 px with 1.7 line height and

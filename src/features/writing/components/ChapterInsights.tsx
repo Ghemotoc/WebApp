@@ -5,10 +5,11 @@
  * The writer picks a chapter from a drop-down (the first published one is chosen at the start).
  * Everything here is a total: no reader is ever named, and small numbers show as "fewer than 5"
  * (S1-E3-07's rule), so a writer can't work out who stopped where.
- * Simplified look (bundle CALM-7c, board simplified/New-Write): "Only you see this" as a meta
- * line over the plain heading, no eyebrow; the two panels stack, because the section shares its row
- * with the latest comments from 1024 px.
- * Who shows it: YourWritingPage, after "Story by story", beside "Latest on your chapters".
+ * Simplified look (bundle CALM-7c; board D01, user story 5.1): the plain heading with nothing over
+ * or under it, then the chapter drop-down (the board names one chapter in a meta line instead; the
+ * drop-down stays so a writer can look at any chapter, docs/board-fixes.md); the two panels stack,
+ * because the section shares its row with the latest comments from 1024 px.
+ * Who shows it: YourWritingPage, after "Story by story", beside "Latest comments".
  * What it calls: useChapterInsights, then LovedLines and ReaderStopsBar.
  */
 import { useState } from 'react';
@@ -85,14 +86,9 @@ export function ChapterInsights({ chapters, storyTitles }: ChapterInsightsProps)
   }));
   return (
     <section aria-labelledby="chapter-insights-heading" className="flex min-w-0 flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        {/* What used to be the eyebrow, "Only you see this", as the meta line over the heading. */}
-        <p className="m-0 type-meta">{t('insights.eyebrow')}</p>
-        <h2 id="chapter-insights-heading" className="m-0 type-heading text-ink-heading">
-          {t('insights.heading')}
-        </h2>
-        <p className="m-0 type-body text-ink-muted">{t('insights.intro')}</p>
-      </div>
+      <h2 id="chapter-insights-heading" className="m-0 type-heading text-ink-heading">
+        {t('insights.heading')}
+      </h2>
       <Select
         id="chapter-insights-chapter"
         label={t('insights.chapterLabel')}

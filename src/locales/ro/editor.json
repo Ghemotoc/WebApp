@@ -18,7 +18,6 @@
     "quote": "Citat",
     "list": "Listă",
     "link": "Link",
-    "sceneBreak": "Pauză de scenă",
     "withShortcut": "{{name}} ({{keys}})",
     "keys": {
       "bold": "Ctrl+B",
@@ -26,9 +25,10 @@
       "heading": "Ctrl+Alt+2",
       "quote": "Ctrl+Shift+9",
       "list": "Ctrl+Shift+8",
-      "link": "Ctrl+K",
-      "sceneBreak": "Ctrl+Enter"
-    }
+      "link": "Ctrl+K"
+    },
+    "undo": "Anulează",
+    "plan": "Planul capitolului"
   },
   "wordCount_one": "{{count}} cuvânt",
   "wordCount_few": "{{count}} cuvinte",
@@ -37,15 +37,13 @@
   "rights": "Ce scrii rămâne al tău. Poți publica oriunde, oricând.",
   "rightsLink": "Cum funcționează drepturile aici",
   "saving": {
-    "heading": "Salvare",
-    "explain": "Salvăm la fiecare 10 secunde și când dai clic în afara textului.",
     "idle": "Nimic de salvat încă.",
     "unsaved": "Modificări nesalvate.",
     "saving": "Se salvează…",
     "savedJustNow": "Salvat acum.",
     "savedAt": "Salvat la {{time}}.",
     "conflict": "Acest capitol a fost modificat pe alt dispozitiv. Salvarea s-a oprit ca să nu se suprascrie nimic. Alege ce versiune păstrezi.",
-    "failed": "Nu s-a putut salva. Încercăm din nou în 10 secunde.",
+    "failed": "Nesalvat încă. Încercăm din nou peste 10 secunde; textul rămâne pe acest dispozitiv.",
     "notActive": "Contul nu poate salva capitole încă.",
     "offline": "Salvat pe acest dispozitiv. Se salvează online când revine conexiunea.",
     "retry": "Reîncearcă"
@@ -60,20 +58,19 @@
     "cancel": "Renunță"
   },
   "publish": {
-    "heading": "Publicare",
+    "heading": "Publică capitolul",
     "whenLabel": "Când publici",
-    "now": "Publică acum",
-    "later": "Programează pentru mai târziu",
-    "date": "Data",
-    "time": "Ora",
-    "zoneNote": "Ora locală a acestui dispozitiv. Apare în cel mult 5 minute după această oră.",
+    "now": "Acum",
+    "later": "Mai târziu",
+    "date": "Ziua",
+    "time": "Ora, după ceasul tău",
+    "zoneNote": "Apare în cel mult 5 minute după această oră.",
     "skippedHourNote": "Ora aceasta nu există în ziua respectivă, pentru că ceasurile se dau înainte. Se publică la {{time}}.",
     "preview": "Previzualizare",
     "publishButton": "Publică capitolul",
     "scheduleButton": "Programează capitolul",
     "publishNumbered": "Publică capitolul {{number}}",
     "scheduleNumbered": "Programează capitolul {{number}}",
-    "goLiveNote": "Când capitolul apare, povestea ta devine publică și urmăritorii tăi primesc o notificare.",
     "scheduledFor": "Programat pentru {{when}}, ora locală.",
     "cancelSchedule": "Anulează programarea",
     "published": "Publicat {{when}}.",
@@ -96,17 +93,25 @@
     "lastSwitch": "Acesta e ultimul capitol",
     "lastHint": "Cititorii văd „din {{number}}”, iar povestea devine Terminată când apare acest capitol.",
     "lastMarked": "Acesta e ultimul capitol.",
-    "markedBefore": "Capitolul {{number}} e marcat ca ultimul. Dacă îl publici pe acesta, marcajul se scoate."
+    "markedBefore": "Capitolul {{number}} e marcat ca ultimul. Dacă îl publici pe acesta, marcajul se scoate.",
+    "chapterLine": "Capitolul {{number}} · {{title}}",
+    "chapterLineUntitled": "Capitolul {{number}}",
+    "tellSwitch": "Anunță urmăritorii",
+    "tellHint_one": "{{formatted}} urmăritor primește o notificare când apare.",
+    "tellHint_few": "{{formatted}} urmăritori primesc o notificare când apare.",
+    "tellHint_other": "{{formatted}} de urmăritori primesc o notificare când apare.",
+    "tellHintNone": "Încă nu ai urmăritori, deci nu primește nimeni o notificare.",
+    "staysCompleted": "Cititorii văd „Capitolul {{number}} din {{number}}”, iar povestea rămâne Încheiată.",
+    "backToOngoing": "Povestea redevine În curs, iar cititorii văd „Capitolul {{number}}”.",
+    "saveDraft": "Salvează ciorna"
   },
   "details": {
     "heading": "Detaliile poveștii",
-    "intro": "Se aplică fiecărui capitol.",
-    "category": "Categorie",
-    "rating": "Clasificare",
-    "tags": "Etichete",
-    "noTags": "Niciuna încă",
-    "change": "Schimbă din setările poveștii",
-    "plan": "Plănuiește povestea"
+    "settings": "Setările poveștii",
+    "completion": {
+      "ongoing": "În curs",
+      "completed": "Încheiată"
+    }
   },
   "notFound": "Nu găsim acest capitol în cont.",
   "signedOut": "Intră în cont ca să scrii.",
@@ -145,19 +150,19 @@
     "close": "Închide"
   },
   "insert": {
-    "button": "Inserează",
+    "button": "Inserează o imagine, un link video sau o pauză de scenă",
     "menuLabel": "Inserează",
-    "pictureButton": "Inserează o imagine",
-    "videoButton": "Inserează un link video (YouTube, Vimeo sau Loom)",
     "picture": "Imagine",
-    "pictureNote": "Încarcă o imagine. Textul alternativ e obligatoriu.",
+    "pictureNote": "Un desen, verificat înainte să-l vadă cititorii",
     "drawing": "Desen",
     "drawingNote": "Desenează o schiță. Se salvează ca imagine.",
     "music": "Muzică",
     "musicNote": "Un link de pe Spotify sau Apple Music.",
-    "video": "Video",
-    "videoNote": "Un link de pe YouTube, Vimeo sau Loom.",
-    "embedFootnote": "Doar linkuri de la servicii aprobate. Nu se încarcă nimic de la ele până când cititorul apasă play."
+    "video": "Link video",
+    "videoNote": "YouTube, Vimeo sau Loom",
+    "embedFootnote": "Doar linkuri de la servicii aprobate. Nu se încarcă nimic de la ele până când cititorul apasă play.",
+    "sceneBreak": "Pauză de scenă",
+    "sceneBreakNote": "Un mic romb între scene"
   },
   "pictureDialog": {
     "heading": "Adaugă o imagine",
@@ -281,15 +286,29 @@
     "cancel": "Renunță"
   },
   "poemMode": {
-    "label": "Mod poezie",
     "hint": "Enter începe un vers nou, iar un al doilea Enter o strofă nouă. Spațiile de la începutul unui vers rămân, iar cititorii văd fiecare vers așa cum l-ai scris.",
-    "failed": "Nu am putut schimba modul poezie. Încearcă din nou."
+    "failed": "Nu am putut schimba modul poezie. Încearcă din nou.",
+    "button": "Poezie"
   },
   "saveWord": {
     "saved": "Salvat",
     "saving": "Se salvează…",
     "unsaved": "Nesalvat încă",
     "onDevice": "Salvat pe acest dispozitiv",
-    "notSaved": "Nesalvat"
+    "notSaved": "Nesalvat",
+    "savedAt": "Salvat la {{time}}",
+    "retrying": "Nesalvat încă. Încercăm din nou"
+  },
+  "pageHeading": "Editorul capitolului",
+  "manageChapters": "Gestionează capitolele",
+  "bar": {
+    "label": "Editorul capitolului",
+    "back": "Înapoi la capitole",
+    "focusMode": "Mod concentrare",
+    "preview": "Previzualizare",
+    "publish": "Publică"
+  },
+  "plan": {
+    "open": "Planul capitolului"
   }
 }
