@@ -1,18 +1,22 @@
 /**
- * EditorToolbar: the formatting buttons above the chapter text (story S1-E3-02a; board 4.3).
+ * EditorToolbar: the formatting bar above the chapter's paper (story S1-E3-02a; board D05, user
+ * story 5.5).
  *
- * Board values: a white pill-shaped bar, 44 px round buttons, the pressed one tinted plum, a
- * thin divider, the word count at the far right. In board order: Bold, Italic, Heading, Quote,
- * List, Link, Scene break. Every button has an accessible name, a title with its shortcut,
- * aria-keyshortcuts, aria-pressed (for the toggles) and a focus ring; the bar is a
- * role="toolbar" with one tab stop and the arrow keys moving between buttons (WCAG 2.1.1).
- * After a thin divider come the insert controls (ChapterInsertControls, S1-E3-09 to 11; G9e):
- * the Picture and Video link buttons and the Insert menu, each with its own tab stop, then the
- * word count. Scene break draws the four-diamond mark the text shows (EditorToolbarIcons).
- * Who uses it: ChapterEditorPage.
+ * In board order: Bold, Italic, Heading, Quote, List and Link, a thin divider, then Insert (a
+ * round "+" that opens Picture, Video link and Scene break, ChapterInsertControls), Undo and the
+ * "Poem" text button (PoemModeSwitch). Below 1024 px a last button opens the chapter's plan as a
+ * sheet, and the bar floats just above the on-screen keyboard (EditorToolbarDock). The word count
+ * moved to the editor's bar and the foot of the paper.
+ * Every formatting button has an accessible name, a title with its shortcut, aria-keyshortcuts,
+ * aria-pressed (for the toggles) and a focus ring; the formatting buttons are one tab stop with
+ * the arrow keys moving between them (WCAG 2.1.1), and the controls after the divider each have
+ * their own tab stop. Scene break keeps its shortcut (Ctrl+Enter) in the text.
+ * Who uses it: EditorToolbarDock. What it calls: ChapterInsertControls and PoemModeSwitch.
  */
 import type { Editor } from '@tiptap/react';
 import { useState, type KeyboardEvent, type ReactNode } from 'react';
+
+import { ActionIcon } from '@/components/icons/ActionIcon';
 
 import { ChapterInsertControls } from './ChapterInsertControls';
 import {
@@ -22,13 +26,13 @@ import {
   LinkIcon,
   ListIcon,
   QuoteIcon,
-  SceneBreakIcon,
 } from './EditorToolbarIcons';
+import { PoemModeSwitch, type PoemModeSwitchProps } from './PoemModeSwitch';
 import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** One button: its key in the locale file, its icon, what it does and whether it is "on". */
 interface ToolbarAction {
-  key: 'bold' | 'italic' | 'heading' | 'quote' | 'list' | 'link' | 'sceneBreak';
+  key: 'bold' | 'italic' | 'heading' | 'quote' | 'list' | 'link';
   /** The machine-readable shortcut (aria-keyshortcuts); the title shows the locale's text. */
   keyshortcuts: string;
   icon: ReactNode;
@@ -39,10 +43,13 @@ interface ToolbarAction {
 /** What the toolbar needs. */
 export interface EditorToolbarProps {
   editor: Editor;
-  wordCount: number;
   onLink: () => void;
   /** The chapter's row ID, for the Insert menu's pictures (S1-E3-09). */
   chapterId: string;
+  /** Poem mode's state and change (usePoemMode). */
+  poem: PoemModeSwitchProps;
+  /** Opens the chapter's plan as a sheet; the button shows below 1024 px only. */
+  onOpenPlan: () => void;
 }
 
 /**
@@ -95,21 +102,35 @@ function toolbarActions(onLink: () => void): ToolbarAction[] {
       run: () => onLink(),
       isOn: (editor) => editor.isActive('link'),
     },
-    {
-      key: 'sceneBreak',
-      keyshortcuts: 'Control+Enter',
-      icon: <SceneBreakIcon />,
-      run: (editor) => editor.chain().focus().setHorizontalRule().run(),
-    },
   ];
+}
+
+/** One round 40 px icon button after the divider (Undo, the plan), named by its label. */
+function ToolButton(props: {
+  label: string;
+  onClick: () => void;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={props.label}
+      title={props.label}
+      onClick={props.onClick}
+      className={`inline-flex size-10 items-center justify-center rounded-full text-ink-heading hover:bg-tint ${props.className ?? ''}`}
+    >
+      {props.children}
+    </button>
+  );
 }
 
 /**
  * Renders the toolbar.
  *
- * @returns the bar with its buttons and the word count
+ * @returns the bar with its buttons
  */
-export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorToolbarProps) {
+export function EditorToolbar({ editor, onLink, chapterId, poem, onOpenPlan }: EditorToolbarProps) {
   const { t } = useEditorTranslation();
   const actions = toolbarActions(onLink);
   // One tab stop: Tab lands on the remembered button, the arrow keys move along the bar.
@@ -132,7 +153,7 @@ export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorTo
     <div
       role="toolbar"
       aria-label={t('toolbar.label')}
-      className="flex flex-wrap items-center gap-1 rounded-full border border-border bg-surface p-1"
+      className="box-surface flex flex-wrap items-center gap-1 rounded-full p-1"
     >
       {actions.map((action, index) => {
         const name = t(`toolbar.${action.key}`);
@@ -150,7 +171,7 @@ export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorTo
             onClick={() => action.run(editor)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             onFocus={() => setFocusedIndex(index)}
-            className={`inline-flex size-11 items-center justify-center rounded-full ${
+            className={`inline-flex size-10 items-center justify-center rounded-full ${
               isOn === true ? 'bg-tint text-link' : 'text-ink-heading hover:bg-tint'
             }`}
           >
@@ -158,10 +179,16 @@ export function EditorToolbar({ editor, wordCount, onLink, chapterId }: EditorTo
           </button>
         );
       })}
+      <span aria-hidden="true" className="mx-2 h-6 w-px bg-border" />
       <ChapterInsertControls editor={editor} chapterId={chapterId} />
-      <span className="ml-auto px-4 type-body text-ink-muted">
-        {t('wordCount', { count: wordCount })}
-      </span>
+      <ToolButton label={t('toolbar.undo')} onClick={() => editor.chain().focus().undo().run()}>
+        <ActionIcon name="undo" size={20} />
+      </ToolButton>
+      <PoemModeSwitch {...poem} />
+      {/* The plan: beside the paper from 1024 px, a sheet below (board D05, tablets and phones). */}
+      <ToolButton label={t('toolbar.plan')} onClick={onOpenPlan} className="lg:hidden">
+        <ActionIcon name="list" size={20} />
+      </ToolButton>
     </div>
   );
 }

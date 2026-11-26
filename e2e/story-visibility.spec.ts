@@ -63,7 +63,8 @@ async function chooseWhoCanRead(browser: Browser, choice: 'Unlisted' | 'Private'
     .getByRole('article', { name: 'Stația meteo' })
     .getByRole('link', { name: 'Story settings' })
     .click();
-  const group = page.getByRole('radiogroup', { name: 'Who can read it' });
+  // Board D07: "Who can read this story?" holds Visibility as three radio rows.
+  const group = page.getByRole('group', { name: 'Visibility' });
   await group.getByRole('radio', { name: choice, exact: true }).click();
   await page.getByRole('button', { name: 'Save changes' }).click();
   await expect(page.getByText('Saved.')).toBeVisible();

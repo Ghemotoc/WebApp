@@ -289,6 +289,7 @@
     "hint": "Cititorii din aceste țări nu pot găsi sau deschide povestea și nu li se spune de ce. Selectează din nou o țară ca povestea să apară acolo."
   },
   "wizard": {
+    "back": "Înapoi",
     "next": "Mai departe: {{step}}",
     "skip": "Sari peste pasul ăsta",
     "change": "Schimbă",

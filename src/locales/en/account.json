@@ -277,6 +277,7 @@
       "languageHint": "The language of menus and buttons. {{productName}} opens in Romanian for everyone. If you’d rather use English, pick it here or from the language menu. It applies on every device you use.",
       "countryHeading": "Country",
       "countryBody": "We work out your country from your connection, so we don’t ask. You can see it in Settings.",
+      "countryDetected": "We work out your country from your connection: {{country}}. You can change it in Settings.",
       "regionLabel": "County (optional)",
       "regionNone": "I’d rather not say",
       "regionHint": "Only if you choose it. We use it only for the “Popular in your area” shelf. We never track where you are."

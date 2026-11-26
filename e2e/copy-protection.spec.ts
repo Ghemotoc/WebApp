@@ -20,6 +20,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
+import { openPublishSheet } from './support/chapterEditor';
 
 const storyId = '00000000-0000-4000-9000-000000000001';
 const chapterAddress = '/s/statia-meteo-seed01/copyoff1';
@@ -146,12 +147,12 @@ test.describe('copy protection on the web (S1-E4-06a)', () => {
       'adult_writer',
       '/write/s/statia-meteo-seed01/c/copyoff2',
     );
+    // The Publish panel opens in a sheet from the editor's bar (board D05).
+    const publishSheet = await openPublishSheet(page);
     await expect(
-      page
-        .getByRole('region', { name: 'Publish' })
-        .getByText(
-          'Signed-in readers can read this chapter in the browser until the apps exist. Copying is made harder; screenshots still work on the web.',
-        ),
+      publishSheet.getByText(
+        'Signed-in readers can read this chapter in the browser until the apps exist. Copying is made harder; screenshots still work on the web.',
+      ),
     ).toBeVisible();
   });
 });

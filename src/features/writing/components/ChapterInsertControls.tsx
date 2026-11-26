@@ -1,25 +1,21 @@
 /**
- * ChapterInsertControls: the editor's insert buttons, the Insert menu and the dialogs they open
- * (stories S1-E3-09, S1-E3-10 and S1-E3-11; board 4.3; liquid glass ChapterEditor board, bundle
- * G9 WRITING, part e).
+ * ChapterInsertControls: the editor's Insert menu and the dialogs it opens (stories S1-E3-09,
+ * S1-E3-10 and S1-E3-11; board D05, user story 5.5).
  *
- * What it holds today, after a thin divider in the toolbar:
- * - the Picture button (S1-E3-09) and the Insert menu's Drawing (S1-E3-11; a drawing is saved as
- *   a picture), shown only while the picture_uploads flag is on;
- * - the Video link button (YouTube, Vimeo or Loom, checked against the allow-list by the oembed
- *   function) and the Insert menu's Music (S1-E3-10), shown only while media_embeds is on.
- * These are the same switches the database checks (both stay off until their GO-LIVE steps).
- * The board draws Picture and Video link as toolbar buttons, so they sit in the bar; Drawing and
- * Music stay in the Insert menu, which ends with the board's note that only approved services
- * are allowed and nothing loads until a reader presses play. With both switches off there is
- * nothing at all.
- * Who uses it: EditorToolbar. What it calls: useFeatureFlags, ActionIcon, InsertMenu,
- * PictureInsertDialog, DrawingInsertDialog and EmbedInsertDialog.
+ * The menu, in board order: Picture ("A drawing, checked before readers see it": the upload of
+ * S1-E3-09, any picture but a real person, checked before readers see it), Video link (YouTube,
+ * Vimeo or Loom, S1-E3-10) and Scene break (the small diamond between scenes, always there). Two
+ * items the board leaves out stay after them because their stories ask for them: Draw a sketch
+ * (S1-E3-11, saved as a picture) and Music (S1-E3-10); docs/board-fixes.md, D05.
+ * Picture and the sketch show only while the picture_uploads switch is on, Video link and Music
+ * only while media_embeds is on: the same switches the database checks (both stay off until
+ * their GO-LIVE steps). The menu ends with the line on approved services while either embed shows.
+ * Who uses it: EditorToolbar. What it calls: useFeatureFlags, InsertMenu, PictureInsertDialog,
+ * DrawingInsertDialog and EmbedInsertDialog.
  */
 import type { Editor } from '@tiptap/react';
 import { useState } from 'react';
 
-import { ActionIcon, type ActionIconName } from '@/components/icons/ActionIcon';
 import { useFeatureFlags } from '@/features/flags/hooks/useFeatureFlags';
 
 import { DrawingInsertDialog } from './DrawingInsertDialog';
@@ -44,60 +40,59 @@ export interface ChapterInsertControlsProps {
 
 /**
  * The Insert menu's items, each only while its switch is on (the March value is off: nothing
- * shows while the flags are loading or unreadable). Picture and Video link have their own
- * toolbar buttons (InsertButton), so the menu keeps Drawing and Music.
+ * shows while the flags are loading or unreadable); Scene break is always there.
  *
- * @returns the items, in the board's order, and the footnote under them
+ * @returns the items, in the board's order, and the line under them
  */
-function useInsertItems({ openDrawing, openEmbed }: Omit<InsertOpeners, 'openPicture'>) {
+function useInsertItems(editor: Editor, openers: InsertOpeners) {
   const { t } = useEditorTranslation();
   const { isOn } = useFeatureFlags();
-  const items: InsertMenuItem[] = [];
-  if (isOn('picture_uploads', false)) {
-    items.push({
-      key: 'drawing',
-      label: t('insert.drawing'),
-      note: t('insert.drawingNote'),
-      icon: 'pen',
-      onPick: openDrawing,
-    });
-  }
+  const hasPictures = isOn('picture_uploads', false);
   const hasEmbeds = isOn('media_embeds', false);
-  if (hasEmbeds) {
-    items.push({
-      key: 'music',
-      label: t('insert.music'),
-      note: t('insert.musicNote'),
-      icon: 'music',
-      onPick: () => openEmbed('music'),
-    });
-  }
-  return {
-    items,
-    footnote: hasEmbeds ? t('insert.embedFootnote') : undefined,
-    hasPictures: isOn('picture_uploads', false),
-    hasEmbeds,
+  const sceneBreak: InsertMenuItem = {
+    key: 'sceneBreak',
+    label: t('insert.sceneBreak'),
+    note: t('insert.sceneBreakNote'),
+    icon: 'spark',
+    onPick: () => editor.chain().focus().setHorizontalRule().run(),
   };
-}
-
-/**
- * One of the toolbar's own insert buttons (Picture, Video link): a 44 px round icon button with
- * its accessible name and the same name as its tooltip, like the formatting buttons.
- *
- * @returns the button
- */
-function InsertButton(props: { label: string; icon: ActionIconName; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      aria-label={props.label}
-      title={props.label}
-      onClick={props.onClick}
-      className="inline-flex size-11 items-center justify-center rounded-full text-ink-heading hover:bg-tint"
-    >
-      <ActionIcon name={props.icon} size={20} aria-hidden="true" />
-    </button>
-  );
+  const picture: InsertMenuItem = {
+    key: 'picture',
+    label: t('insert.picture'),
+    note: t('insert.pictureNote'),
+    icon: 'picture',
+    onPick: openers.openPicture,
+  };
+  const video: InsertMenuItem = {
+    key: 'video',
+    label: t('insert.video'),
+    note: t('insert.videoNote'),
+    icon: 'video',
+    onPick: () => openers.openEmbed('video'),
+  };
+  const drawing: InsertMenuItem = {
+    key: 'drawing',
+    label: t('insert.drawing'),
+    note: t('insert.drawingNote'),
+    icon: 'pen',
+    onPick: openers.openDrawing,
+  };
+  const music: InsertMenuItem = {
+    key: 'music',
+    label: t('insert.music'),
+    note: t('insert.musicNote'),
+    icon: 'music',
+    onPick: () => openers.openEmbed('music'),
+  };
+  // The board's three first, each kept only while its switch is on, then the two kept items.
+  const items = [
+    hasPictures ? picture : null,
+    hasEmbeds ? video : null,
+    sceneBreak,
+    hasPictures ? drawing : null,
+    hasEmbeds ? music : null,
+  ].filter((item): item is InsertMenuItem => item !== null);
+  return { items, footnote: hasEmbeds ? t('insert.embedFootnote') : undefined };
 }
 
 /** The three dialogs the buttons and the menu open. */
@@ -138,37 +133,20 @@ function InsertDialogs(props: {
 /**
  * Renders the menu and the dialogs.
  *
- * @returns the Insert button with its menu, or nothing while no item is available
+ * @returns the Insert button with its menu
  */
 export function ChapterInsertControls({ editor, chapterId }: ChapterInsertControlsProps) {
-  const { t } = useEditorTranslation();
   const [isPictureDialogOpen, setPictureDialogOpen] = useState(false);
   const [isDrawingDialogOpen, setDrawingDialogOpen] = useState(false);
   const [embedDialogKind, setEmbedDialogKind] = useState<EmbedDialogKind>(null);
-  const { items, footnote, hasPictures, hasEmbeds } = useInsertItems({
+  const { items, footnote } = useInsertItems(editor, {
+    openPicture: () => setPictureDialogOpen(true),
     openDrawing: () => setDrawingDialogOpen(true),
     openEmbed: setEmbedDialogKind,
   });
-  // Nothing to insert while both switches are off: no divider, no buttons, no menu.
-  if (!hasPictures && !hasEmbeds) return null;
   return (
     <>
-      <span aria-hidden="true" className="mx-2 h-6 w-px bg-border" />
-      {hasPictures && (
-        <InsertButton
-          label={t('insert.pictureButton')}
-          icon="picture"
-          onClick={() => setPictureDialogOpen(true)}
-        />
-      )}
-      {hasEmbeds && (
-        <InsertButton
-          label={t('insert.videoButton')}
-          icon="video"
-          onClick={() => setEmbedDialogKind('video')}
-        />
-      )}
-      {items.length > 0 && <InsertMenu items={items} footnote={footnote} />}
+      <InsertMenu items={items} footnote={footnote} />
       <InsertDialogs
         editor={editor}
         chapterId={chapterId}

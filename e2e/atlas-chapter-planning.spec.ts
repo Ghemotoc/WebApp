@@ -264,7 +264,14 @@ test.describe('Story Atlas chapter planning (S1-E17-23 to S1-E17-26)', () => {
       const page = await context.newPage();
       // The type folds under "More details" (CALM-9, D05): it is opened before axe runs, so axe
       // checks the folded fields too. The fold is found by what it holds, in either language.
+      // Under 1024 px the plan sits in a sheet the toolbar's "Chapter plan" button opens (D05).
       await checkScreen(page, view, async (screen) => {
+        if (view.width < 1024) {
+          await screen
+            .getByRole('button', { name: /^(Chapter plan|Planul capitolului)$/ })
+            .filter({ visible: true })
+            .click();
+        }
         await screen.locator('details:has(#atlas-chapter-kind) > summary').click();
       });
       await expect(page.locator('#atlas-chapter-kind')).toBeVisible();

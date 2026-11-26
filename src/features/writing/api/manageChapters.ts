@@ -42,6 +42,8 @@ export interface ManagedChapter {
   wasPosition: number | null;
   /** True when the writer moved this chapter; false when it only shifted to make room. */
   wasPicked: boolean;
+  /** True on the chapter the writer marked as the story's last one (CALM-6). */
+  isMarkedLast: boolean;
 }
 
 /** One chapter's move note as chapter_move_notes() answers it. */
@@ -98,7 +100,7 @@ export async function fetchStoryChapters(
   const { data, error } = await client
     .from('chapters')
     .select(
-      'code, position, draft_title, status, word_count, draft_saved_at, first_published_at, edited_at, scheduled_for, unpublished_at, deleted_at, stories!inner(slug)',
+      'code, position, draft_title, status, word_count, draft_saved_at, first_published_at, edited_at, scheduled_for, unpublished_at, deleted_at, is_last, stories!inner(slug)',
     )
     .eq('stories.slug', storySlug)
     .order('position');
@@ -119,6 +121,7 @@ export async function fetchStoryChapters(
     deletedAt: row.deleted_at,
     wasPosition: notes.get(row.code)?.wasPosition ?? null,
     wasPicked: notes.get(row.code)?.wasPicked ?? false,
+    isMarkedLast: row.is_last,
   }));
 }
 

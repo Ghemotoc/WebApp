@@ -1,12 +1,9 @@
 {
   "breadcrumb": {
-    "label": "Breadcrumb",
-    "write": "Write",
     "languages": "Languages"
   },
   "page": {
     "documentTitle": "Languages · {{story}}",
-    "eyebrow": "Story settings",
     "heading": "Languages",
     "intro": "The original and every translation of this story.",
     "signedOut": "Log in to manage the languages of a story.",
@@ -17,13 +14,10 @@
     "caption": "Languages of this story",
     "language": "Language",
     "title": "Title",
-    "translatedBy": "Translated by",
     "chapters": "Chapters",
     "status": "Status",
     "actions": "Actions",
     "original": "Original",
-    "you": "You",
-    "nobody": "Not a translation",
     "chaptersOf": "{{count}} of {{total}}",
     "published": "Published",
     "draft": "Draft",
@@ -34,14 +28,12 @@
     "translateOnBiggerScreen": "Translate on a tablet or computer"
   },
   "add": {
-    "eyebrow": "Add a language",
-    "heading": "A new edition of this story",
+    "heading": "Add a language",
     "language": "Language",
     "chooseLanguage": "Choose a language",
     "title": "Title in that language",
-    "blurb": "Description in that language",
-    "translateYourself": "You translate it yourself, with the original beside you. Other members can’t translate your story.",
-    "chaptersAppear": "Chapters appear in this language as you publish them. Until then, readers get a link to the original.",
+    "blurb": "Blurb in that language",
+    "note": "You translate it yourself, with the original beside you; other members can’t translate the story. Chapters appear in this language as you publish them; until then readers get a link to the original.",
     "cancel": "Cancel",
     "submit": "Add the language",
     "adding": "Adding…",
@@ -57,7 +49,7 @@
   },
   "side": {
     "heading": "One story, many languages",
-    "body": "Every language is an edition of the same story: likes, saves and reads add up, and readers can switch at any chapter. Only you can translate your story."
+    "body": "Every language is an edition of the same story: likes and reads add up into one total, and readers can switch language at any chapter. The language switch shows only once a story has two languages."
   },
   "chapters": {
     "documentTitle": "Translate · {{story}}",
@@ -112,7 +104,7 @@
     "progress": "{{count}} of {{total}} words so far",
     "chapterTitle": "Chapter title in {{language}}",
     "translateParagraph": "Translate paragraph {{number}}",
-    "tip": "The original and the translation stay side by side. A paragraph you leave empty is shown to readers in the original until it’s translated.",
+    "tip": "Translate in your own words; it doesn’t have to match paragraph for paragraph. Readers keep seeing the original until you publish.",
     "fullEditor": "Open in the full editor",
     "fullEditorHint": "For headings, pictures and other formatting.",
     "noParagraphs": "The original chapter has no text yet.",
@@ -129,8 +121,8 @@
       "tooLong": "The text is too long to save.",
       "failed": "Not saved. Check the connection and try again."
     },
-    "originalHead": "Original {{language}}",
-    "translationHead": "Translation {{language}}",
+    "originalHead": "Original",
+    "translationHead": "Translation",
     "wordCount_one": "{{count}} word",
     "wordCount_few": "{{count}} words",
     "wordCount_other": "{{count}} words",

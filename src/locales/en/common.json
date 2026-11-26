@@ -289,6 +289,7 @@
     "hint": "Readers in these countries can’t find or open this story, and aren’t told why. Select a country again to show the story there."
   },
   "wizard": {
+    "back": "Back",
     "next": "Next: {{step}}",
     "skip": "Skip this step",
     "change": "Change",

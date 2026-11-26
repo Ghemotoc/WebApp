@@ -53,6 +53,23 @@ const drawings = {
       <path d="M5 12h14" />
     </>
   ),
+  // Bug: a beetle with feelers and legs, on the quiet "Report a bug" tab (TRIAL-FEEDBACK; Robert,
+  // 26 Nov 2026). Drawn after Lucide's "bug" (ISC licence).
+  bug: (
+    <>
+      <path d="m8 2 1.9 1.9" />
+      <path d="M14.1 3.9 16 2" />
+      <path d="M9 7.1V6a3 3 0 1 1 6 0v1.1" />
+      <path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6" />
+      <path d="M12 20v-9" />
+      <path d="M6.5 9C4.6 8.8 3 7.1 3 5" />
+      <path d="M6 13H2" />
+      <path d="M3 21c0-2.1 1.7-3.9 3.8-4" />
+      <path d="M20.97 5c0 2.1-1.6 3.8-3.5 4" />
+      <path d="M22 13h-4" />
+      <path d="M17.2 17c2.1.1 3.8 1.9 3.8 4" />
+    </>
+  ),
   // Grip: six dots in two columns, the handle a card is dragged by (CALM-9, board E28).
   grip: (
     <g fill="currentColor" stroke="none">
@@ -275,6 +292,13 @@ const drawings = {
       <circle cx="12" cy="12" r="9" />
       <circle cx="12" cy="12" r="5" />
       <circle cx="12" cy="12" r="1" />
+    </>
+  ),
+  // Undo: an arrow curling back to the left (the chapter editor's toolbar, board D05).
+  undo: (
+    <>
+      <path d="M9 14 4 9l5-5" />
+      <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
     </>
   ),
   // List: three dots, each with a line (GAPS-16b).

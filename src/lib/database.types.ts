@@ -1857,6 +1857,7 @@ export type Database = {
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          tell_followers: boolean;
           translation_of_chapter_id: string | null;
           unpublished_at: string | null;
           updated_at: string;
@@ -1888,6 +1889,7 @@ export type Database = {
           scheduled_for?: string | null;
           status?: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          tell_followers?: boolean;
           translation_of_chapter_id?: string | null;
           unpublished_at?: string | null;
           updated_at?: string;
@@ -1915,6 +1917,7 @@ export type Database = {
           scheduled_for?: string | null;
           status?: Database['public']['Enums']['chapter_status'];
           story_id?: string;
+          tell_followers?: boolean;
           translation_of_chapter_id?: string | null;
           unpublished_at?: string | null;
           updated_at?: string;
@@ -13688,6 +13691,7 @@ export type Database = {
         }[];
       };
       chapter_embed_states: { Args: { body: string; owner_id: string }; Returns: Json };
+      chapter_followers_to_tell: { Args: { chapter_code: string }; Returns: number };
       chapter_gate_outcome: {
         Args: {
           chapter: Omit<
@@ -16138,6 +16142,7 @@ export type Database = {
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          tell_followers: boolean;
           translation_of_chapter_id: string | null;
           unpublished_at: string | null;
           updated_at: string;
@@ -16343,6 +16348,7 @@ export type Database = {
       };
       network_ads_barred: { Args: { context: Json }; Returns: boolean };
       new_certificate_code: { Args: Record<PropertyKey, never>; Returns: string };
+      new_chapter_audience: { Args: { target_story_id: string }; Returns: string[] };
       new_chat_people: { Args: Record<PropertyKey, never>; Returns: Json };
       next_chapter_json: { Args: { target_story_id: string }; Returns: Json };
       next_class_lock_at: { Args: Record<PropertyKey, never>; Returns: string };
@@ -16858,7 +16864,10 @@ export type Database = {
         Args: { areas: string[]; as_preview: boolean; target_story_id: string };
         Returns: Json;
       };
-      publish_chapter: { Args: { as_last?: boolean; chapter_code: string }; Returns: Json };
+      publish_chapter: {
+        Args: { as_last?: boolean; chapter_code: string; tell_followers?: boolean };
+        Returns: Json;
+      };
       publish_class_competition: {
         Args: { results: Json; target_competition_id: string };
         Returns: Json;
@@ -16978,6 +16987,7 @@ export type Database = {
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          tell_followers: boolean;
           translation_of_chapter_id: string | null;
           unpublished_at: string | null;
           updated_at: string;
@@ -17014,6 +17024,7 @@ export type Database = {
           scheduled_for: string | null;
           status: Database['public']['Enums']['chapter_status'];
           story_id: string;
+          tell_followers: boolean;
           translation_of_chapter_id: string | null;
           unpublished_at: string | null;
           updated_at: string;
@@ -17735,7 +17746,12 @@ export type Database = {
       };
       say_no_thanks_to_request: { Args: { sender_handle: string }; Returns: Json };
       schedule_chapter: {
-        Args: { as_last?: boolean; chapter_code: string; publish_at: string };
+        Args: {
+          as_last?: boolean;
+          chapter_code: string;
+          publish_at: string;
+          tell_followers?: boolean;
+        };
         Returns: Json;
       };
       scrub_error_text: { Args: { max_length: number; raw_text: string }; Returns: string };
