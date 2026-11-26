@@ -173,6 +173,10 @@ select results_eq(
        ('forum_thread_views', 0::bigint),
        ('forum_threads', 0::bigint),
        ('forums', (select count(*) from public.forums where deleted_at is null and space_id is null)),
+       -- Bookshop genres with their names, for the genre picker and the filters (S1-E3-01); the 18+
+       -- genres stay hidden from a visitor, as from anyone too young for 18+ (rule 18).
+       ('genres', (select count(*) from public.genres
+                   where minimum_rating = 'all_ages' or public.rating_allows(minimum_rating))),
        -- Home page comment picks: the reader's own and featured staff's; visitors get the card through a function (GAPS-13).
        ('home_comment_picks', 0::bigint),
        -- Our own house ads: owner and admin only (SPONSORS-e1).
@@ -323,7 +327,7 @@ select results_eq(
        ('writing_days', 0::bigint),
        ('writing_prompts', 0::bigint)
      ) as expected (table_name, visible_rows) order by 1 $$,
-  'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories, tags, counties and age rules by country, nothing else'
+  'a signed-out visitor sees only public flags, settings, markets, published legal documents, languages, categories, genres, tags, counties and age rules by country, nothing else'
 );
 
 select * from finish();
