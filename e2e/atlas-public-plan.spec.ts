@@ -168,6 +168,12 @@ test.describe('Story Atlas for readers (S1-E17-32 to S1-E17-35)', () => {
     const visitor = await openAs(browser, null, `${readerBase}/characters/${anaId}`);
     await expect(visitor.getByText('Morăriță')).toBeVisible();
     await expect(visitor.getByText('Știe de foc')).toHaveCount(0);
+    // Board E37 (story 6.18): the facts sit under a "Basics" heading, with a way back to the cast.
+    await expect(visitor.getByRole('heading', { name: 'Basics' })).toBeVisible();
+    await expect(
+      visitor.getByRole('article').getByRole('link', { name: 'Characters' }),
+    ).toBeVisible();
+    await expect(visitor.getByRole('heading', { name: 'Inside' })).toHaveCount(0);
     // A private character's own address shows nothing of them.
     await visitor.goto(`${readerBase}/characters/${cezarId}`);
     await expect(visitor.getByRole('heading', { name: 'Cezar' })).toHaveCount(0);

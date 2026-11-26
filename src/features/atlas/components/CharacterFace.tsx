@@ -7,7 +7,8 @@
  * The circle's colour comes from the character's ID, so it stays the same everywhere. The name is
  * always written beside it, so the face is hidden from screen readers.
  * The large size (64 px) heads a character's sheet (story 6.4, board E23).
- * Who uses it: CastAtAGlance, CastList and CharacterSheetHeader. What it calls: initialsOf, beadStyleFor and lib/characterPicture.ts.
+ * Who uses it: CastAtAGlance, CastList, CharacterSheetHeader, PublicCast and
+ * PublicCharacter. What it calls: initialsOf, beadStyleFor and lib/characterPicture.ts.
  */
 import { beadStyleFor } from '@/features/avatars/lib/beadColours';
 import { initialsOf } from '@/features/people/lib/formatting';

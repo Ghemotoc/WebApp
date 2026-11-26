@@ -991,7 +991,7 @@
     },
     "character": {
       "back": "Characters",
-      "connections": "Relationships",
+      "connections": "Connections",
       "notShown": "This character isn’t shown here."
     },
     "world": {

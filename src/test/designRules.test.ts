@@ -115,7 +115,6 @@ const infoPillUsers = new Set([
   '/src/app/shell/StaffBar.tsx',
   '/src/features/atlas/components/CrossLinkChips.tsx',
   '/src/features/atlas/components/PlanGuardPill.tsx',
-  '/src/features/atlas/components/PublicCharacter.tsx',
   '/src/features/atlas/components/PublicWorld.tsx',
   '/src/features/atlas/components/WritingStatusPill.tsx',
   '/src/features/class-points/components/staff/StaffFlagCard.tsx',
