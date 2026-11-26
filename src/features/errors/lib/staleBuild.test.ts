@@ -51,6 +51,13 @@ describe('isStaleBuildError', () => {
 });
 
 describe('reloadOnceForNewRelease', () => {
+  it('never reloads while the browser is offline, so the offline banner stays', () => {
+    const reloadPage = vi.fn();
+    const storage = memoryStorage();
+    expect(reloadOnceForNewRelease(reloadPage, storage, 1_000_000, false)).toBe(false);
+    expect(reloadPage).not.toHaveBeenCalled();
+  });
+
   it('reloads the page the first time', () => {
     const reloadPage = vi.fn();
     const storage = memoryStorage();
