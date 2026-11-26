@@ -72,8 +72,8 @@ export function sortChoicesFor(kind: ListKind): readonly SortOrder[] {
 }
 
 /**
- * Writes the Rating and Length filters into a list's query string, when set (user story 1.8,
- * board A08).
+ * Writes the Rating, Length and Genre filters into a list's query string, when set (user story
+ * 1.8, board A08; the genre from S1-E3-01).
  *
  * @param query - the query string being built; changed in place
  * @param request - the list
@@ -81,6 +81,8 @@ export function sortChoicesFor(kind: ListKind): readonly SortOrder[] {
 function setRangeFilters(query: URLSearchParams, request: ListRequest): void {
   if (request.storyRating != null) query.set('rating', request.storyRating);
   if (request.storyLength != null) query.set('length', request.storyLength);
+  // S1-E3-01: the Genre filter.
+  if (request.genreSlug != null) query.set('genre', request.genreSlug);
 }
 
 /**
@@ -198,6 +200,18 @@ function lengthFrom(value: string | null): StoryLength | null {
 }
 
 /**
+ * The Genre filter from the address (S1-E3-01): a genre key; anything else counts as no filter.
+ * A key that names no genre simply finds no story.
+ *
+ * @param value - ?genre=
+ * @returns the genre slug or null
+ */
+function genreFrom(value: string | null): string | null {
+  if (value !== null && /^[a-z_]{2,40}$/.test(value)) return value;
+  return null;
+}
+
+/**
  * The sort from the address; anything else counts as the list's own order.
  *
  * @param value - ?sort=
@@ -260,26 +274,29 @@ export function requestFromAddress(
     sortOrder: sortOrder === 'relevance' && kind !== 'search' ? null : sortOrder,
     // MARKETS-2d: only the popular list carries "Popular in".
     ...(kind === 'popular' ? { popularIn: popularInFrom(kind, search.get('country')) } : {}),
-    // User story 1.8: the search's Rating and Length filters, only when the address has them.
+    // User story 1.8: the search's Rating and Length filters, and the Genre filter (S1-E3-01),
+    // only when the address has them.
     ...rangeFiltersFrom(search),
   };
 }
 
 /**
- * The Rating and Length filters from the address, left out entirely when neither is set, so a
- * list without them keeps the same request (and the same cached page) as before.
+ * The Rating, Length and Genre filters from the address, left out entirely when none is set, so
+ * a list without them keeps the same request (and the same cached page) as before.
  *
  * @param search - the query string
  * @returns the filters that are set
  */
 function rangeFiltersFrom(
   search: URLSearchParams,
-): Pick<ListRequest, 'storyRating' | 'storyLength'> {
+): Pick<ListRequest, 'storyRating' | 'storyLength' | 'genreSlug'> {
   const storyRating = ratingFrom(search.get('rating'));
   const storyLength = lengthFrom(search.get('length'));
+  const genreSlug = genreFrom(search.get('genre'));
   return {
     ...(storyRating === null ? {} : { storyRating }),
     ...(storyLength === null ? {} : { storyLength }),
+    ...(genreSlug === null ? {} : { genreSlug }),
   };
 }
 

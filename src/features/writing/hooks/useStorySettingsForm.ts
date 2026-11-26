@@ -63,6 +63,7 @@ function answersFrom(story: MyStory): StoryAnswers {
     isAppOnly: story.isAppOnly,
     hiddenInCountries: story.hiddenInCountries,
     setInCountries: story.setInCountries,
+    genreSlugs: story.genreSlugs,
     commentsEnabled: story.commentsEnabled,
     commentAudience: story.commentAudience,
     // CALM-8: nothing asked yet; the pause that runs is read from the story.

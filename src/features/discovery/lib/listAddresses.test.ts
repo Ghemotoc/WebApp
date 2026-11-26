@@ -76,6 +76,19 @@ describe('requestFromAddress', () => {
     expect(requestFromAddress('search', 'sare', search)).toEqual(request);
   });
 
+  it('reads back the Genre filter of a list (S1-E3-01)', () => {
+    const request = { ...plainList('updated'), genreSlug: 'cosy_mystery' };
+    const address = listAddress(request);
+    expect(address).toContain('genre=cosy_mystery');
+    const search = new URL(address, 'https://example.test').searchParams;
+    expect(requestFromAddress('updated', null, search)).toEqual(request);
+  });
+
+  it('ignores a genre that isn’t a genre key', () => {
+    const search = new URLSearchParams('genre=<b>Fantasy</b>');
+    expect(requestFromAddress('updated', null, search)).toEqual(plainList('updated'));
+  });
+
   it('ignores a rating or length it does not know', () => {
     const search = new URLSearchParams('rating=21_plus&length=medium');
     expect(requestFromAddress('updated', null, search)).toEqual(plainList('updated'));

@@ -6,16 +6,20 @@
  * Who uses it: NewStoryPage, which hands the steps to StepWizard. Each step wraps the same form
  * section story settings uses, drawn without its own card (InWizardFormSections), and says in one
  * line what a done step holds ("The Weather Station · English").
- * What it calls: the five form sections and lib/setInCountries.ts for the "Set in" summary.
+ * What it calls: the five form sections, lib/setInCountries.ts for the "Set in" summary and
+ * useGenres with lib/genreChoices.ts for the genres in it (S1-E3-01).
  */
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import type { WizardStep } from '@/components/ui/StepWizard';
 
+import type { Genre } from '../api/genres';
 import type { StoryCategory, StoryLanguageChoice } from '../api/stories';
 import type { SetStoryAnswer, StoryAnswers, StoryFieldErrors } from './storyAnswers';
+import { chosenGenreNames } from '../lib/genreChoices';
 import { setInPhrase } from '../lib/setInCountries';
+import { useGenres } from './useGenres';
 
 import { CategoryTagsSection } from '../components/CategoryTagsSection';
 import { CoverSection } from '../components/CoverSection';
@@ -27,7 +31,7 @@ import { StoryVisibilitySection } from '../components/StoryVisibilitySection';
 /** Which answers each step asks for, in step order; every other answer belongs to the last step. */
 export const newStoryStepFields: readonly (readonly (keyof StoryAnswers)[])[] = [
   ['storyId', 'title', 'blurb', 'languageCode'],
-  ['categorySlug', 'tags', 'setInCountries'],
+  ['categorySlug', 'genreSlugs', 'tags', 'setInCountries'],
   ['cover'],
   ['visibility'],
 ];
@@ -53,11 +57,21 @@ export interface NewStoryStepsInput {
   penName: string;
 }
 
+/** What the summaries are written from. */
+interface SummaryInput {
+  answers: StoryAnswers;
+  genres: readonly Genre[];
+  t: TFunction<'writing'>;
+  language: string;
+}
+
 /** The done summaries, one line per step. */
-function stepSummaries(answers: StoryAnswers, t: TFunction<'writing'>, language: string): string[] {
+function stepSummaries({ answers, genres, t, language }: SummaryInput): string[] {
   const title = answers.title.trim() === '' ? t('newStory.summary.noTitle') : answers.title.trim();
   const categoryTags = [
     t(`categories.${answers.categorySlug}`, { defaultValue: answers.categorySlug }),
+    // S1-E3-01: the genres' names, as picked ("Cosy mystery, Family saga").
+    chosenGenreNames(answers.genreSlugs, genres, language).join(', '),
     answers.tags.length > 0 ? t('newStory.summary.tags', { count: answers.tags.length }) : '',
     answers.setInCountries.length > 0
       ? t('newStory.summary.setIn', { countries: setInPhrase(answers.setInCountries, language) })
@@ -86,7 +100,8 @@ function stepSummaries(answers: StoryAnswers, t: TFunction<'writing'>, language:
 export function useNewStorySteps(input: NewStoryStepsInput): WizardStep[] {
   const { t, i18n } = useTranslation('writing');
   const { answers, errors, set } = input;
-  const summaries = stepSummaries(answers, t, i18n.language);
+  const { genres } = useGenres();
+  const summaries = stepSummaries({ answers, genres, t, language: i18n.language });
   const contents = [
     <StoryBasicsSection
       key="basics"

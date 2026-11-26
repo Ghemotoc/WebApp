@@ -21,6 +21,7 @@ const good = {
   contentNote: '',
   aiDisclosure: 'no_ai',
   setInCountries: ['RO'],
+  genreSlugs: ['cosy_mystery'],
   visibility: 'public',
 } as const;
 
@@ -167,6 +168,22 @@ describe('newStorySchema: where the story is set (CALM-9, board D02)', () => {
     ]);
     expect(issuesOf({ ...good, setInCountries: ['Romania'] })).toEqual([
       ['setInCountries.0', 'errors.setInInvalid'],
+    ]);
+  });
+});
+
+describe('newStorySchema: genres (S1-E3-01)', () => {
+  it('takes up to three genre keys', () => {
+    expect(issuesOf({ ...good, genreSlugs: ['fantasy', 'romance', 'satire'] })).toEqual([]);
+    expect(issuesOf({ ...good, genreSlugs: [] })).toEqual([]);
+  });
+
+  it('refuses a fourth genre and anything that isn’t a genre key', () => {
+    expect(issuesOf({ ...good, genreSlugs: ['fantasy', 'romance', 'satire', 'horror'] })).toEqual([
+      ['genreSlugs', 'errors.genresTooMany'],
+    ]);
+    expect(issuesOf({ ...good, genreSlugs: ['Epic fantasy'] })).toEqual([
+      ['genreSlugs.0', 'errors.genreInvalid'],
     ]);
   });
 });

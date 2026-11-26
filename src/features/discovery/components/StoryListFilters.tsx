@@ -5,8 +5,8 @@
  * On the page there is one quiet "Filter and sort" button and a short line saying what is in use
  * ("Ongoing and completed · Sorted by: Popular"). The button opens one panel, as on a shop (user
  * story 1.5, which replaces the G7c choice of keeping the filters on the page): the sort first,
- * then Ongoing, Completed or Both, the language, "Popular in" on the Popular list, and the
- * category chips. A filter the page already is (the category on a category page, the status on
+ * then Ongoing, Completed or Both, the language, "Popular in" on the Popular list, the genre
+ * (S1-E3-01: only genres in use, GenreFilterSelect) and the category chips. A filter the page already is (the category on a category page, the status on
  * Completed) isn't offered. Every change applies at once and goes into the address, so the
  * filtered list can be shared (S1-E5-09, fourth criterion); Done closes the panel.
  * Not yet in the panel: rating up to the reader's age, length and content labels to leave out,
@@ -35,6 +35,7 @@ import { categoryAccent } from '../lib/categoryAccents';
 import { sortChoicesFor } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
 
+import { GenreFilterSelect } from './GenreFilterSelect';
 import { PopularInSelect } from './PopularInSelect';
 
 /** What the filters need. */
@@ -159,11 +160,17 @@ function SortSelect({ request, sortOrder, onChange }: StoryListFiltersProps) {
 }
 
 /**
- * The fields inside the panel, top to bottom: sort, status, language, "Popular in", category.
+ * The fields inside the panel, top to bottom: sort, status, language, "Popular in", genre,
+ * category.
  *
  * @returns the group of filters
  */
-function FilterFields({ request, sortOrder, onChange }: StoryListFiltersProps) {
+function FilterFields({
+  request,
+  sortOrder,
+  onChange,
+  isPanelOpen,
+}: StoryListFiltersProps & { isPanelOpen: boolean }) {
   const { t } = useDiscoveryTranslation();
   const categoryOptions = useCategoryOptions();
   return (
@@ -179,6 +186,7 @@ function FilterFields({ request, sortOrder, onChange }: StoryListFiltersProps) {
           onChange={(value) => onChange({ ...request, popularIn: value })}
         />
       )}
+      <GenreFilterSelect request={request} onChange={onChange} isPanelOpen={isPanelOpen} />
       {request.kind !== 'category' && categoryOptions.length > 1 && (
         <ChoiceChips
           label={t('seeAll.category')}
@@ -230,7 +238,12 @@ export function StoryListFilters({ request, sortOrder, onChange }: StoryListFilt
       </Button>
       <p className="m-0 type-meta text-ink-muted">{summary}</p>
       <Sheet isOpen={isOpen} onClose={() => setIsOpen(false)} title={t('seeAll.filterAndSort')}>
-        <FilterFields request={request} sortOrder={sortOrder} onChange={onChange} />
+        <FilterFields
+          request={request}
+          sortOrder={sortOrder}
+          onChange={onChange}
+          isPanelOpen={isOpen}
+        />
         <ButtonRow>
           <Button onClick={() => setIsOpen(false)}>{t('seeAll.done')}</Button>
         </ButtonRow>

@@ -51,6 +51,7 @@ function emptyAnswers(): StoryAnswers {
     hiddenInCountries: [],
     // CALM-9 (board D02): "Set in" starts empty; the writer adds countries in step 2.
     setInCountries: [],
+    genreSlugs: [],
     commentsEnabled: true,
     // MUST-1a: the database starts a writer under 18 at Followers only; the new story form
     // doesn't show the setting (docs/board-fixes.md), so this is only the form's own default.

@@ -26,6 +26,7 @@ const answersWithComments: StoryAnswers = {
   isAppOnly: false,
   hiddenInCountries: [],
   setInCountries: [],
+  genreSlugs: [],
   commentsEnabled: true,
   commentAudience: 'everyone',
   commentPause: null,

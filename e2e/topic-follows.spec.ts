@@ -11,8 +11,8 @@
  * - Library's "What you follow" lists the genre and the tag, and unfollowing there takes them
  *   away (user story 1.6: "Library's What you follow lists them");
  * - a visitor is offered the log-in link instead of the button.
- * Test data: one published chapter on the seed story Stația meteo (fiction, tagged Grandparents,
- * Family and Set in Romania), so the genre and tag pages have a story to count tags over without
+ * Test data: one published chapter on the seed story Stația meteo (fiction, tagged Grandparents
+ * and Family), so the genre and tag pages have a story to count tags over without
  * leaning on what an earlier spec in the same shard published; and teacher's genre and tag
  * follows. Both are removed after.
  */

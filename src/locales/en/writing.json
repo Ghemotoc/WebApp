@@ -201,7 +201,9 @@
     "chapterCreateFailed": "The story was saved, but we couldn’t open chapter one. Open it from Writing.",
     "ratingReasonsMissing": "Tick at least one reason why it is 16+ or 18+.",
     "setInInvalid": "Choose a country from the list.",
-    "setInTooMany": "A story can be set in at most 5 countries."
+    "setInTooMany": "A story can be set in at most 5 countries.",
+    "genreInvalid": "Choose a genre from the list.",
+    "genresTooMany": "A story can have at most 3 genres."
   },
   "storyCard": {
     "settings": "Story settings",
@@ -752,6 +754,15 @@
     "remove": "Remove {{country}}",
     "groupLabel": "Countries the story is set in",
     "preview": "Set in {{countries}}"
+  },
+  "genres": {
+    "label": "Genres",
+    "search": "Search for a genre",
+    "hint": "Type a few letters and pick from the list. {{count}} of {{max}} genres.",
+    "full": "{{max}} of {{max}} genres. Remove one to add another.",
+    "remove": "Remove {{genre}}",
+    "groupLabel": "Genres of the story",
+    "needsAdultRating": "This genre needs the 18+ rating. Choose 18+ under Labels, rating and AI."
   },
   "writeEmpty": {
     "title": "No stories yet",
