@@ -417,6 +417,45 @@
   }
 }
 
+/*
+ * bug-tab: the quiet "Report a bug" tab on the window's right edge (TRIAL-FEEDBACK; Robert, DESIGN
+ * thread, 26 Nov 2026, 10:53 to 10:54 UTC: "slightly smaller ... thinner in the background colour.
+ * The outline is the purple, the writing inside is purple, and it has the bug icon"; "And use
+ * Inter for the font"). The page colour inside, a 1 px edge and text in the theme's main colour,
+ * no edge on the window side, 8 px outer corners. About 20 px drawn, with an invisible strip that
+ * keeps the press area 24 px wide (WCAG 2.2, 2.5.8). Hover and focus take the soft buttons' fill
+ * (--tint, the fill behind "Start a new story"; Robert, 10:54:53 UTC). At night the edge stays the
+ * main colour (Valentino) and the words take the light accent, which reads on the dark page.
+ */
+@utility bug-tab {
+  position: fixed;
+  background-color: var(--paper);
+  color: var(--plum-to);
+  border: 1px solid var(--plum-to);
+  /* The tab is turned half a circle (BugReportTab), so its left side ends up on the window's
+     edge: no edge there, and the rounded corners on its right end up facing the page. */
+  border-left-width: 0;
+  border-radius: 0 8px 8px 0;
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 500;
+  transition: background-color 120ms ease-out;
+  &::before {
+    content: '';
+    position: absolute;
+    /* Turned with the tab, so the strip widens it towards the page (left side after turning). */
+    inset: 0 -4px 0 0;
+  }
+  &:hover,
+  &:focus-visible {
+    background-color: var(--tint);
+  }
+  [data-theme='night'] & {
+    color: var(--accent);
+  }
+}
+
 @utility button-glass {
   background-color: var(--tint);
   background-image: none;
