@@ -1,49 +1,58 @@
 /**
- * IdeaItem: one question, idea, to-do or decision on the Ideas page (story S1-E17-28: "it has a
- * done tick-box, editable text and an 'Action or outcome' field"; "when I tick it, then the date
- * it was done is recorded").
+ * IdeaItem: one question, idea, to-do or decision on the Ideas page (story S1-E17-28; redrawn by
+ * user stories bundle 6, story 6.12, board E31: "Tick a note to mark it done; it shows “Done on 2
+ * Nov” and the outcome the writer added (Action or outcome) … Delete (the bin) takes the note away
+ * with “Removed. Undo” for 8 seconds. The type is a word in bold, never colour alone").
  *
- * A row in the glass list (board AtlasIdeas, bundle G10c3): the Done tick-box, the type as a pill
- * (words, not colour alone), the day it was done, the note (struck through once done) and its
- * outcome, with the [[Name]] links in them as chips (S1-E17-28, S1-E17-31). "Edit" opens the
- * note's text, "Action or outcome" and type, each saving by itself; Delete asks twice.
- * Who uses it: IdeasPage. What it calls: the save and remove props (useStoryIdeas) and
- * CrossLinkChips.
+ * A plain row between hairlines: the Done tick-box, then the type as a bold word, the note (in the
+ * muted colour once done) with its [[Name]] links as links (S1-E17-31), and once done "Done on 2
+ * Nov." with the outcome. At the end a pen opens the note's text, "Action or outcome" and type in
+ * place, each saving by itself, with Done to close them (the board draws no way to write the
+ * outcome, which the story asks for; docs/board-fixes.md), and the bin deletes it at once and
+ * offers Undo in the shared note (design books item 14).
+ * Who uses it: IdeasPage. What it calls: the save, remove, putBack and onRemoved props
+ * (useStoryIdeas), useUndo, CrossLinkText and CrossLinkChips.
  */
 import { useState } from 'react';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { Button } from '@/components/ui/Button';
-import { InfoPill, type PillTone } from '@/components/ui/InfoPill';
 import { Notice } from '@/components/ui/Notice';
+import { dateLocaleFor, withShortSeptember } from '@/lib/romania-time';
+import { useUndo } from '@/lib/undo/useUndo';
 import { cn } from '@/lib/utils';
 
-import { ideaKinds, type IdeaKind, type StoryIdea, type StoryIdeaChange } from '../api/ideas';
+import {
+  ideaKinds,
+  type RemovedStoryIdea,
+  type StoryIdea,
+  type StoryIdeaChange,
+} from '../api/ideas';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { CrossLinkChips } from './CrossLinkChips';
+import { CrossLinkText } from './CrossLinkText';
 import { PlanSelectField } from './PlanSelectField';
 import { PlanTextField } from './PlanTextField';
-import { TwoStepDelete } from './TwoStepDelete';
-import { dateLocaleFor } from '../../../lib/romania-time';
-
-/** Each type's pill colour (the pill system's tints; the pill's words carry the meaning). */
-const kindTones: Record<IdeaKind, PillTone> = {
-  question: 'sky',
-  idea: 'gold',
-  todo: 'sage',
-  decision: 'plum',
-};
 
 /** What the item needs. */
 export interface IdeaItemProps {
   idea: StoryIdea;
   save: (change: StoryIdeaChange) => Promise<void>;
-  remove: () => Promise<void>;
+  /** Deletes the note and hands back the removed row; throws when it can't. */
+  remove: () => Promise<RemovedStoryIdea>;
+  /** Puts the removed row back (Undo); throws when it can't. */
+  putBack: (removed: RemovedStoryIdea) => Promise<void>;
+  /** Called once the note is deleted, so the focus has somewhere to go. */
+  onRemoved: () => void;
 }
 
-/** The Done tick-box and, once ticked, the date it was done. */
-function DoneTick({ idea, save }: Omit<IdeaItemProps, 'remove'>) {
+/** The round 44 px quiet icon button at the end of a row (board E31's gh-iconbtn). */
+const iconButtonClass =
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink-heading hover:bg-tint aria-pressed:bg-tint';
+
+/** The Done tick-box: 20 px as board E31 draws it, inside a 24 px target (rule 9). */
+function DoneTick({ idea, save }: Pick<IdeaItemProps, 'idea' | 'save'>) {
   const { t } = useAtlasTranslation();
   // While a tick saves, the box shows the writer's choice instead of the last saved state.
   const [pendingDone, setPendingDone] = useState<boolean | null>(null);
@@ -59,66 +68,72 @@ function DoneTick({ idea, save }: Omit<IdeaItemProps, 'remove'>) {
   }
 
   return (
-    <>
-      <label className="inline-flex h-11 w-11 shrink-0 items-center justify-center">
+    <div className="flex flex-none flex-col">
+      <label className="inline-flex size-6 items-center justify-center">
         <input
           type="checkbox"
-          className="h-6 w-6"
+          className="size-5 accent-primary"
           checked={isDone}
+          aria-label={t('ideas.doneNamed', { body: idea.body })}
           onChange={(changed) => void tick(changed.target.checked)}
         />
-        {/* Heard as "Done: <the note>", so each box says which note it ticks. */}
-        <span className="sr-only">{t('ideas.doneNamed', { body: idea.body })}</span>
       </label>
       {hasFailed && <Notice tone="error">{t('ideas.tickFailed')}</Notice>}
-    </>
-  );
-}
-
-/** The note as it reads: its type, the day it was done, the words and the outcome. */
-function IdeaReading({ idea }: { idea: StoryIdea }) {
-  const { t, i18n } = useAtlasTranslation();
-  const doneDate =
-    idea.doneAt === null
-      ? null
-      : new Intl.DateTimeFormat(dateLocaleFor(i18n.language), { dateStyle: 'medium' }).format(
-          new Date(idea.doneAt),
-        );
-  return (
-    <div className="flex min-w-0 flex-1 flex-col gap-2 pt-3">
-      <p className="m-0 flex flex-wrap items-center gap-2">
-        <InfoPill tone={kindTones[idea.kind]}>{t(`ideas.kinds.${idea.kind}`)}</InfoPill>
-        {doneDate !== null && (
-          <span className="type-meta text-ink-muted">{t('ideas.doneOn', { date: doneDate })}</span>
-        )}
-      </p>
-      {/* A done note is struck through and also says "Done on …", so it isn't shown by the line
-          alone (WCAG 1.4.1). */}
-      <p
-        data-testid="atlas-idea-body"
-        className={cn(
-          'm-0 type-body font-semibold break-words text-ink-heading',
-          idea.doneAt !== null && 'line-through opacity-70',
-        )}
-      >
-        {idea.body}
-      </p>
-      {idea.outcome !== '' && (
-        <p className="m-0 type-body break-words whitespace-pre-line text-ink-muted">
-          {idea.outcome}
-        </p>
-      )}
-      <CrossLinkChips texts={[idea.body, idea.outcome]} />
     </div>
   );
 }
 
+/** The note as it reads: the type in bold, the words, and "Done on 2 Nov." with the outcome. */
+function IdeaReading({ idea }: { idea: StoryIdea }) {
+  const { t, i18n } = useAtlasTranslation();
+  const isDone = idea.doneAt !== null;
+  // Board E31: "Done on 2 Nov." (the day and the short month, British order in English), then
+  // the outcome.
+  const doneDate = isDone
+    ? withShortSeptember(
+        new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+          day: 'numeric',
+          month: 'short',
+        }).format(new Date(idea.doneAt ?? '')),
+      )
+    : null;
+  return (
+    <>
+      <p className="m-0 type-meta font-semibold text-ink">{t(`ideas.kinds.${idea.kind}`)}</p>
+      {/* A done note is muted and also says "Done on …", so it isn't shown by colour alone
+          (WCAG 1.4.1). */}
+      <p
+        data-testid="atlas-idea-body"
+        className={cn('m-0 type-body break-words', isDone ? 'text-ink-muted' : 'text-ink')}
+      >
+        <CrossLinkText text={idea.body} />
+      </p>
+      {doneDate !== null && (
+        <p className="m-0 type-meta break-words whitespace-pre-line text-ink-muted">
+          {t('ideas.doneOn', { date: doneDate })}
+          {idea.outcome !== '' && ' '}
+          {idea.outcome !== '' && <CrossLinkText text={idea.outcome} />}
+        </p>
+      )}
+      {!isDone && idea.outcome !== '' && (
+        <p className="m-0 type-meta break-words whitespace-pre-line text-ink-muted">
+          <CrossLinkText text={idea.outcome} />
+        </p>
+      )}
+    </>
+  );
+}
+
 /** The note's fields, each saving by itself: its words, "Action or outcome" and its type. */
-function IdeaEditor({ idea, save }: Omit<IdeaItemProps, 'remove'>) {
+function IdeaEditor({
+  idea,
+  save,
+  onDone,
+}: Pick<IdeaItemProps, 'idea' | 'save'> & { onDone: () => void }) {
   const { t } = useAtlasTranslation();
   const idBase = `atlas-idea-${idea.id}`;
   return (
-    <div className="flex min-w-0 flex-col gap-3 border-t border-hairline pt-3">
+    <div className="mt-2 flex min-w-0 flex-col gap-3">
       <PlanTextField
         id={`${idBase}-body`}
         label={t('ideas.body')}
@@ -147,74 +162,83 @@ function IdeaEditor({ idea, save }: Omit<IdeaItemProps, 'remove'>) {
           if (kind !== undefined) await save({ kind });
         }}
       />
-    </div>
-  );
-}
-
-/** Edit (opens the fields) and Delete (asked twice), each named with the note for screen readers. */
-function IdeaActions({
-  idea,
-  remove,
-  isEditing,
-  onToggle,
-}: Pick<IdeaItemProps, 'idea' | 'remove'> & { isEditing: boolean; onToggle: () => void }) {
-  const { t } = useAtlasTranslation();
-  return (
-    <div className="flex flex-wrap items-start gap-2">
-      <Button
-        variant="secondary"
-        aria-pressed={isEditing}
-        aria-label={t('ideas.editNamed', { body: idea.body })}
-        onClick={onToggle}
-      >
-        <ActionIcon name="pen" size={16} />
-        {t('ideas.edit')}
+      <CrossLinkChips texts={[idea.body, idea.outcome]} />
+      <Button variant="secondary" className="self-start" onClick={onDone}>
+        {t('ideas.closeEditor')}
       </Button>
-      <TwoStepDelete
-        buttonLabel={t('ideas.delete')}
-        buttonAccessibleName={t('ideas.deleteNamed', { body: idea.body })}
-        question={t('ideas.confirmDelete', { body: idea.body })}
-        yesLabel={t('ideas.yes')}
-        keepLabel={t('ideas.keep')}
-        failedMessage={t('ideas.deleteFailed')}
-        onDelete={async () => {
-          await remove();
-          return null;
-        }}
-      />
     </div>
   );
 }
 
 /**
- * Renders one note as a row of the glass list.
+ * Deletes the note at once and offers Undo in the shared note, or says plainly that it couldn't.
  *
- * @param props.idea - the note
- * @param props.save - saves a change to it; throws when it can't
- * @param props.remove - deletes it; throws when it can't
- * @returns the list item
+ * @returns whether the last delete failed, and the delete itself
  */
-export function IdeaItem({ idea, save, remove }: IdeaItemProps) {
+function useDeleteWithUndo({ remove, putBack, onRemoved }: IdeaItemProps) {
+  const { t } = useAtlasTranslation();
+  const { offerUndo } = useUndo();
+  const [hasFailed, setHasFailed] = useState(false);
+  async function deleteNow() {
+    setHasFailed(false);
+    // Step 1: delete; on a failure the row stays and says so.
+    let removed: RemovedStoryIdea;
+    try {
+      removed = await remove();
+    } catch {
+      setHasFailed(true);
+      return;
+    }
+    // Step 2: the row is gone, so the focus moves on, and the note offers Undo for 8 seconds.
+    onRemoved();
+    offerUndo({ message: t('ideas.removed'), undo: async () => putBack(removed) });
+  }
+  return { hasFailed, deleteNow };
+}
+
+/**
+ * Renders one note as a row of the list.
+ *
+ * @returns the list item, with its fields while it is being edited
+ */
+export function IdeaItem(props: IdeaItemProps) {
+  const { t } = useAtlasTranslation();
+  const { idea, save } = props;
   const [isEditing, setIsEditing] = useState(false);
+  const { hasFailed, deleteNow } = useDeleteWithUndo(props);
   return (
     <li
       id={`atlas-idea-${idea.id}`}
       data-testid="atlas-idea-item"
-      className="flex min-w-0 flex-col gap-3 border-b border-border px-3 py-3 last:border-b-0 sm:px-4"
+      className="flex items-start gap-3 border-t border-hairline py-3"
     >
-      <div className="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2">
-        <div className="flex min-w-0 flex-1 basis-64 items-start gap-2">
-          <DoneTick idea={idea} save={save} />
-          <IdeaReading idea={idea} />
+      <DoneTick idea={idea} save={save} />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <IdeaReading idea={idea} />
+        {isEditing && <IdeaEditor idea={idea} save={save} onDone={() => setIsEditing(false)} />}
+        <div aria-live="polite">
+          {hasFailed && <Notice tone="error">{t('ideas.deleteFailed')}</Notice>}
         </div>
-        <IdeaActions
-          idea={idea}
-          remove={remove}
-          isEditing={isEditing}
-          onToggle={() => setIsEditing(!isEditing)}
-        />
       </div>
-      {isEditing && <IdeaEditor idea={idea} save={save} />}
+      <div className="-mt-2 flex flex-none">
+        <button
+          type="button"
+          className={iconButtonClass}
+          aria-pressed={isEditing}
+          aria-label={t('ideas.editNamed', { body: idea.body })}
+          onClick={() => setIsEditing(!isEditing)}
+        >
+          <ActionIcon name="pen" size={22} />
+        </button>
+        <button
+          type="button"
+          className={iconButtonClass}
+          aria-label={t('ideas.deleteNamed', { body: idea.body })}
+          onClick={() => void deleteNow()}
+        >
+          <ActionIcon name="bin" size={22} />
+        </button>
+      </div>
     </li>
   );
 }

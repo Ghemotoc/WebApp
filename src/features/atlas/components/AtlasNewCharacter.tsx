@@ -17,9 +17,19 @@ import { NewCharacterButton } from './NewCharacterButton';
  * Renders the button for one story.
  *
  * @param props.slug - the story open now
+ * @param props.isMain - true where it is the page's main action (At a glance, board E21)
+ * @param props.isCompact - true to show the icon alone (after the first visits, story 6.2)
  * @returns NewCharacterButton wired to this story
  */
-export function AtlasNewCharacter({ slug }: { slug: string }) {
+export function AtlasNewCharacter({
+  slug,
+  isMain = false,
+  isCompact = false,
+}: {
+  slug: string;
+  isMain?: boolean;
+  isCompact?: boolean;
+}) {
   const { t } = useAtlasTranslation();
   const navigate = useNavigate();
   const { create } = useStoryCast(slug);
@@ -30,5 +40,5 @@ export function AtlasNewCharacter({ slug }: { slug: string }) {
     await navigate(`/plan/s/${slug}/characters/${characterId}`);
   }
 
-  return <NewCharacterButton onCreate={createAndOpen} />;
+  return <NewCharacterButton onCreate={createAndOpen} isMain={isMain} isCompact={isCompact} />;
 }

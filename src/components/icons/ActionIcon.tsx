@@ -17,7 +17,9 @@
  * dashboard, the chapter editor's insert buttons, forum locks, export status and the profile's
  * safety card); and the forum
  * reply's formatting toolbar (GAPS-16b: link, quote, list); Story Atlas's "Category colours"
- * (palette, CALM-9, board E25); and a landing page's steps (target, pen, book; CALM-9, board A10).
+ * (palette, CALM-9, board E25); and a landing page's steps (target, pen, book; CALM-9, board A10);
+ * and Story Atlas's Delete on a note (bin, user stories bundle 6, board E31); and the Marketing
+ * page's Download PNG and Download SVG (download, board E32).
  */
 import type { SVGProps } from 'react';
 
@@ -174,6 +176,22 @@ const drawings = {
     <>
       <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z" />
       <path d="m14.5 5.5 3 3" />
+    </>
+  ),
+  // Delete: a bin (board E31's Delete on a note).
+  bin: (
+    <>
+      <path d="M4 7h16" />
+      <path d="M9 7V4h6v3" />
+      <path d="m6 7 1 13h10l1-13" />
+    </>
+  ),
+  // Download: an arrow down onto a line (board E32).
+  download: (
+    <>
+      <path d="M12 4v11" />
+      <path d="m7 10 5 5 5-5" />
+      <path d="M5 20h14" />
     </>
   ),
   // Music: a note.

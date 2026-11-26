@@ -14,6 +14,8 @@ import { checkedAnswer } from './checkedAnswer';
 /** One match: what it is, its title and a snippet around the match. */
 export interface SearchResult extends AtlasItemReference {
   title: string;
+  /** A chapter's place in the story, for "Chapter 14: The register" (null for other kinds). */
+  number?: number | null;
   snippet: string;
 }
 

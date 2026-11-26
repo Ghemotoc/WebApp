@@ -2,8 +2,8 @@
  * storylineView: which storyline view the writer looked at last on this device (story
  * S1-E17-22: "when the storyline opens, then it shows my last choice").
  *
- * Kept in the browser's storage, a per-device convenience like the last planned story
- * (lastPlannedStory.ts). Storage can be off or full: then the board opens, and nothing breaks.
+ * Kept in the browser's storage, a per-device convenience. Storage can be off or full: then the
+ * board opens, and nothing breaks.
  * Who calls it: components/StorylinePage.tsx. What it calls: localStorage.
  */
 

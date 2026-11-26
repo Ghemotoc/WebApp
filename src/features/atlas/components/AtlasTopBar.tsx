@@ -1,25 +1,31 @@
 /**
- * AtlasTopBar: the card at the top of every Story Atlas page (stories S1-E17-01, S1-E17-02 and
- * S1-E17-30; redrawn in bundle CALM-9a, boards D01 and E20 to E34, approved by Robert on 22 Nov
- * 2026 after "it's harder to find the relationship page, and add characters, find the story").
+ * AtlasTopBar: the two lines at the top of every Story Atlas page (stories S1-E17-01, S1-E17-02
+ * and S1-E17-30; bundle CALM-9a; redrawn as board E21 in user stories bundle 6).
  *
- * Left: where the writer is, as a breadcrumb ("Story Atlas / <story picker>"), then the text links
- * "Story page" (the reader's page of this story), "Write" (the same story's chapters, so "Story
- * Atlas" and "Write" sit side by side, S1-E17 notes) and "New story" (the usual New story form,
- * which comes back to the new story's plan, S1-E17-01).
- * Right: the search box and the two adds writers look for most, "New character" and "Add a
- * relationship". A page whose own main button already does one of them leaves it out here, so
- * the same button never shows twice (Characters drops New character, Relationships drops Add a
- * relationship).
+ * First line: the breadcrumb, "Story Atlas / <the story's title>". Second line: "Story" with the
+ * story picker, the text links "Story page" (the reader's page of this story) and "Write" (the
+ * same story's chapters, so "Story Atlas" and "Write" sit side by side, S1-E17 notes), then at the
+ * right "New character", "Add a relationship" and the search box with its Search button.
+ * New character is the main button on At a glance, which has no main action of its own, and the
+ * quiet one everywhere else (boards E21 to E34). Characters leaves New character out here, since
+ * its own main button does it (board E22); Relationships keeps Add a relationship, which takes
+ * the writer to the form at the foot of that page (board E25). The two adds show their words for the first
+ * three visits on this device, then fold to their icons (story 6.2; lib/addHintVisits.ts). New
+ * story lives on /plan (board E20).
  * The sections menu is not part of the bar: AtlasFrame puts it at the side on a desktop and under
  * the bar on tablets and phones.
- * Who uses it: AtlasFrame. What it calls: StorySwitcher, AtlasSearchBox and AtlasNewCharacter.
+ * Who uses it: AtlasFrame. What it calls: useMyStories (the title in the breadcrumb),
+ * StorySwitcher, AtlasSearchBox, AtlasNewCharacter and lib/addHintVisits.ts.
  */
-import { Link } from 'react-router';
+import { useState } from 'react';
+import { Link, useParams } from 'react-router';
 
 import { ActionIcon } from '@/components/icons/ActionIcon';
 import { buttonClassName } from '@/components/ui/buttonStyles';
+import { useMyStories } from '@/features/writing/hooks/useMyStories';
+import { cn } from '@/lib/utils';
 
+import { countAtlasVisit, showsAddHints } from '../lib/addHintVisits';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
 import { AtlasNewCharacter } from './AtlasNewCharacter';
@@ -36,7 +42,7 @@ const textLink = buttonClassName({ variant: 'text' });
  * @param props.slug - the story open now
  * @param props.writeAddress - where "Write" goes: the latest chapter, or the chapter list
  * @param props.section - the Story Atlas section open now, or null on the search page
- * @returns the card with the breadcrumb, the links and the adds
+ * @returns the breadcrumb, then the picker, the links, the adds and the search
  */
 export function AtlasTopBar({
   slug,
@@ -47,65 +53,88 @@ export function AtlasTopBar({
   writeAddress: string;
   section: AtlasSection | null;
 }) {
-  return (
-    <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-card border border-border bg-surface px-4 py-3 shadow-card">
-      <AtlasWhereYouAre slug={slug} writeAddress={writeAddress} />
-      <AtlasTopActions slug={slug} section={section} />
-    </div>
-  );
-}
-
-/** The breadcrumb with the story picker, then Story page, Write and New story. */
-function AtlasWhereYouAre({ slug, writeAddress }: { slug: string; writeAddress: string }) {
   const { t } = useAtlasTranslation();
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
-      <nav aria-label={t('breadcrumb.label')} className="flex min-w-0 items-center gap-2">
-        <Link
-          to="/plan"
-          className="type-body font-semibold whitespace-nowrap text-ink no-underline"
-        >
-          {t('eyebrow')}
-        </Link>
-        {/* The slash is a separator only, so screen readers skip it. */}
-        <span aria-hidden="true" className="text-ink-muted">
-          /
-        </span>
+    <div className="flex min-w-0 flex-col gap-3">
+      <AtlasBreadcrumb slug={slug} />
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <StorySwitcher currentSlug={slug} />
-      </nav>
-      <div className="flex flex-wrap items-center gap-x-4">
         <Link to={`/s/${slug}`} className={textLink}>
           {t('switcher.storyPage')}
         </Link>
         <Link to={writeAddress} className={textLink}>
           {t('switcher.write')}
         </Link>
-        <Link to="/write/new?from=plan" className={textLink}>
-          {t('switcher.newStory')}
-        </Link>
+        <AtlasTopActions slug={slug} section={section} />
       </div>
     </div>
   );
 }
 
-/** Search, then New character and Add a relationship unless the page already has that button. */
+/** "Story Atlas / <title>": where the writer is (board E21). */
+function AtlasBreadcrumb({ slug }: { slug: string }) {
+  const { t } = useAtlasTranslation();
+  const { stories } = useMyStories();
+  const title = stories.find((story) => story.slug === slug)?.title;
+  return (
+    <nav aria-label={t('breadcrumb.label')} className="min-w-0">
+      <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0 type-meta">
+        <li>
+          <Link to="/plan" className="text-ink-muted underline underline-offset-[3px]">
+            {t('eyebrow')}
+          </Link>
+        </li>
+        {title !== undefined && (
+          <li className="flex min-w-0 items-center gap-2">
+            {/* The slash is a separator only, so screen readers skip it. */}
+            <span aria-hidden="true">/</span>
+            <span aria-current="page" className="min-w-0 wrap-anywhere text-ink-muted">
+              {title}
+            </span>
+          </li>
+        )}
+      </ol>
+    </nav>
+  );
+}
+
+/**
+ * Where the bar's Add a relationship goes: over an open character's sheet it opens the dialog
+ * there (?add=relationship, user stories bundle 6, story 6.5, board E24); elsewhere, the
+ * Relationships page included, it goes to that page's add form (?add=1, story 6.6, board E25).
+ */
+function useAddRelationshipAddress(slug: string, section: AtlasSection | null): string {
+  const { characterId } = useParams();
+  if (section === 'characters' && characterId !== undefined) {
+    return `/plan/s/${slug}/characters/${characterId}?add=relationship`;
+  }
+  return `/plan/s/${slug}/connections?add=1`;
+}
+
+/** New character (unless the page has its own), Add a relationship, then search. */
 function AtlasTopActions({ slug, section }: { slug: string; section: AtlasSection | null }) {
   const { t } = useAtlasTranslation();
+  // The two adds show their words for the first three visits on this device, then fold to their
+  // icons (story 6.2). Counted once per page load; later pages of the session don't count.
+  const [visits] = useState(countAtlasVisit);
+  const isCompact = !showsAddHints(visits);
+  const addRelationshipAddress = useAddRelationshipAddress(slug, section);
   return (
-    <div className="flex min-w-0 flex-wrap items-start gap-2">
-      {/* The search page has its own wide bar, so the small box stays out there. */}
-      {section !== null && <AtlasSearchBox slug={slug} />}
-      {section !== 'characters' && <AtlasNewCharacter slug={slug} />}
-      {section !== 'connections' && (
-        // ?add=1 opens the Relationships page with its add form already open.
+    <div className="flex min-w-0 flex-auto flex-wrap items-start justify-end gap-3">
+      <div className="flex flex-wrap items-start gap-2">
+        {section !== 'characters' && (
+          <AtlasNewCharacter slug={slug} isMain={section === 'glance'} isCompact={isCompact} />
+        )}
         <Link
-          to={`/plan/s/${slug}/connections?add=1`}
-          className={buttonClassName({ variant: 'secondary' })}
+          to={addRelationshipAddress}
+          className={cn(buttonClassName({ variant: 'secondary' }), isCompact && 'w-11 px-0')}
         >
           <ActionIcon name="link" />
-          {t('connections.add.open')}
+          <span className={isCompact ? 'sr-only' : undefined}>{t('connections.add.open')}</span>
         </Link>
-      )}
+      </div>
+      {/* The search page has its own wide bar, so the bar's box stays out there. */}
+      {section !== null && <AtlasSearchBox slug={slug} />}
     </div>
   );
 }

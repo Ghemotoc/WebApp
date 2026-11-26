@@ -11,6 +11,7 @@
 import { useEffect, useRef } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Notice } from '@/components/ui/Notice';
 import { Textarea } from '@/components/ui/Textarea';
 
@@ -68,14 +69,15 @@ export function RelationshipClashPanel({
         value={note}
         onChange={(event) => onNote(event.target.value)}
       />
-      <div className="flex flex-wrap gap-3">
-        <Button type="button" variant="secondary" onClick={onBack}>
-          {t('connections.clash.back')}
-        </Button>
+      {/* Save anyway first, then Go back (ButtonRow; design books item 8). */}
+      <ButtonRow>
         <Button type="button" variant="primary" onClick={onSave}>
           {t('connections.clash.save')}
         </Button>
-      </div>
+        <Button type="button" variant="secondary" onClick={onBack}>
+          {t('connections.clash.back')}
+        </Button>
+      </ButtonRow>
     </div>
   );
 }

@@ -36,52 +36,54 @@ export function CharacterIdentityFields({
 }) {
   const { t } = useAtlasTranslation();
   return (
-    <>
-      <div className="flex flex-wrap items-start gap-x-8 gap-y-2">
-        <div className="min-w-0 flex-1 basis-60">
-          <PlanTextField
-            id="atlas-character-name"
-            label={t('characters.name')}
-            maxLength={120}
-            isValid={(name) => name.trim() !== ''}
-            invalidMessage={t('characters.nameRequired')}
-            savedValue={character.name}
-            save={async (name) => saveChange({ name })}
-          />
-        </div>
-        <PlanSelectField
-          id="atlas-character-role"
-          label={t('characters.roleLabel')}
-          options={characterRoles.map((role) => ({
-            value: role,
-            label: t(`characters.role.${role}`),
-          }))}
-          savedValue={character.role}
-          save={async (role) => saveChange({ role: role as StoryCharacter['role'] })}
-        />
-        <PlanSelectField
-          id="atlas-character-gender"
-          label={t('characters.genderLabel')}
-          hint={t('characters.genderHint')}
-          options={[
-            { value: '', label: t('characters.gender.none') },
-            ...characterGenders.map((gender) => ({
-              value: gender,
-              label: t(`characters.gender.${gender}`),
-            })),
-          ]}
-          savedValue={character.gender ?? ''}
-          save={async (gender) => saveChange({ gender: gender as CharacterGender | '' })}
+    // Two columns from 768 px, like the group's own fields under it (board E23): the name and the
+    // role, then the gender, then "In a line" across both.
+    <div className="grid gap-x-6 gap-y-4 md:grid-cols-2">
+      <div className="min-w-0">
+        <PlanTextField
+          id="atlas-character-name"
+          label={t('characters.name')}
+          maxLength={120}
+          isValid={(name) => name.trim() !== ''}
+          invalidMessage={t('characters.nameRequired')}
+          savedValue={character.name}
+          save={async (name) => saveChange({ name })}
         />
       </div>
-      <PlanTextField
-        id="atlas-character-summary"
-        label={t('characters.fields.summary')}
-        hint={t('characters.hints.summary')}
-        maxLength={200}
-        savedValue={character.sheet.summary ?? ''}
-        save={async (summary) => saveChange({ sheet: { summary } })}
+      <PlanSelectField
+        id="atlas-character-role"
+        label={t('characters.roleLabel')}
+        options={characterRoles.map((role) => ({
+          value: role,
+          label: t(`characters.role.${role}`),
+        }))}
+        savedValue={character.role}
+        save={async (role) => saveChange({ role: role as StoryCharacter['role'] })}
       />
-    </>
+      <PlanSelectField
+        id="atlas-character-gender"
+        label={t('characters.genderLabel')}
+        hint={t('characters.genderHint')}
+        options={[
+          { value: '', label: t('characters.gender.none') },
+          ...characterGenders.map((gender) => ({
+            value: gender,
+            label: t(`characters.gender.${gender}`),
+          })),
+        ]}
+        savedValue={character.gender ?? ''}
+        save={async (gender) => saveChange({ gender: gender as CharacterGender | '' })}
+      />
+      <div className="min-w-0 md:col-span-2">
+        <PlanTextField
+          id="atlas-character-summary"
+          label={t('characters.fields.summary')}
+          hint={t('characters.hints.summary')}
+          maxLength={200}
+          savedValue={character.sheet.summary ?? ''}
+          save={async (summary) => saveChange({ sheet: { summary } })}
+        />
+      </div>
+    </div>
   );
 }
