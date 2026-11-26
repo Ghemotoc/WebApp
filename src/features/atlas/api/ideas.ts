@@ -4,9 +4,11 @@
  *
  * Who calls it: hooks/useStoryIdeas.ts.
  * What it calls next: Supabase (supabase/migrations/…_s1_e17_27_ideas_and_marketing.sql):
- * story_ideas() to read them, add_story_idea() for the quick-add box, update_story_idea() and
- * delete_story_idea(). Only the writer reads them (story_ideas_select_own).
+ * story_ideas() to read them, add_story_idea() for the quick-add box, update_story_idea(),
+ * delete_story_idea() and restore_story_idea() for Undo (…_books6_restore_idea_event.sql, user
+ * stories bundle 6, story 6.12). Only the writer reads them (story_ideas_select_own).
  */
+import type { Json } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import { checkedAnswer } from './checkedAnswer';
@@ -125,11 +127,40 @@ export async function saveStoryIdeaChange(
 }
 
 /**
- * Deletes a note (the screen asks twice first).
+ * The row delete_story_idea() hands back, kept only to give it to restoreStoryIdea() for Undo
+ * (design books item 14). The screen never reads inside it.
+ */
+export type RemovedStoryIdea = Json;
+
+/**
+ * Deletes a note at once (story 6.12, board E31: "Delete (the bin) takes the note away with
+ * “Removed. Undo” for 8 seconds").
  *
+ * @returns the removed row, for Undo
  * Errors: throws when the database can't be reached or the note isn't the writer's.
  */
-export async function deleteStoryIdea(client: AppSupabaseClient, ideaId: string) {
+export async function deleteStoryIdea(
+  client: AppSupabaseClient,
+  ideaId: string,
+): Promise<RemovedStoryIdea> {
   const answer = await client.rpc('delete_story_idea', { idea_id: ideaId });
-  checkedAnswer(answer, 'delete the note');
+  const data = checkedAnswer(answer, 'delete the note');
+  return (data.idea ?? null) as RemovedStoryIdea;
+}
+
+/**
+ * Puts back a note the writer just deleted, with the same id, outcome and "Done on" date
+ * (design books item 14). Called by the Undo note.
+ *
+ * @param removed - what deleteStoryIdea() returned
+ * Errors: throws when the story holds 1,000 notes again (hint 'too_many_ideas') or the database
+ *   can't be reached.
+ */
+export async function restoreStoryIdea(
+  client: AppSupabaseClient,
+  slug: string,
+  removed: RemovedStoryIdea,
+) {
+  const answer = await client.rpc('restore_story_idea', { story_slug: slug, removed });
+  checkedAnswer(answer, 'put the note back');
 }

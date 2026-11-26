@@ -1,5 +1,5 @@
 /**
- * AddActForm: "Add act" beside the chapter board's hint (bundle GAPS-2a; board AtlasStoryline).
+ * AddActForm: "Add act" under the chapter board's hint (bundle GAPS-2a; story 6.9, board E28).
  *
  * One button; pressed, it opens a small form with the act's name, "Add" and "Cancel". The new act
  * comes after the story's other acts, as a column before "No act". A story holds at most 12 acts
@@ -59,15 +59,16 @@ export function AddActForm({ slug }: { slug: string }) {
 
   if (!isOpen) {
     return (
-      <Button variant="secondary" className="h-9 px-4 type-meta" onClick={() => setIsOpen(true)}>
-        <ActionIcon name="plus" size={14} />
+      // Board E28: a quiet button of its own size, on its own line under the hint.
+      <Button variant="secondary" className="self-start" onClick={() => setIsOpen(true)}>
+        <ActionIcon name="plus" size={16} />
         {t('storyline.board.acts.add')}
       </Button>
     );
   }
   return (
     <form
-      className="flex min-w-0 flex-col gap-3"
+      className="flex max-w-xl min-w-0 flex-col gap-3"
       onSubmit={(event) => {
         event.preventDefault();
         void add();

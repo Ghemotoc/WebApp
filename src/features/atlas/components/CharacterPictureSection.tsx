@@ -1,11 +1,12 @@
 /**
- * CharacterPictureSection: a character's portrait or mood picture (story S1-E17-11), on the right
- * of the sheet's header card (bundle G10a, board AtlasCharacterSheet: a 4:5 portrait with the
- * upload under it and a short caption).
+ * CharacterPictureSection: the controls for a character's picture (story S1-E17-11), beside the
+ * face at the top of the sheet (user stories bundle 6, story 6.4, board E23: the face, then
+ * "Choose a picture" with a short line under it).
  *
- * - No picture: nothing shows but a short note; there is no initials circle (G10a).
- * - Choose a picture: it is prepared (location data out), uploaded, checked (CLAUDE.md rule 19)
- *   and shown once it passed; until then the section says it is being checked.
+ * - The face itself is CharacterFace in the header: initials until a drawn picture passes.
+ * - Choose a picture: a drawing, never a photo of a real person (story 6.4). It is prepared
+ *   (location data out), uploaded, checked (CLAUDE.md rule 19) and shown once it passed; until
+ *   then the section says "Your picture is being checked. It shows here once it passes."
  * - The alt text saves by itself; Remove picture takes it off and deletes the file.
  * Uploads follow the picture check's switch (picture_uploads): while it is off, the upload field
  * isn't offered. Who uses it: CharacterSheet. What it calls: useStoryCast's uploadPicture and
@@ -24,7 +25,6 @@ import type { UploadOutcome } from '@/features/pictures/hooks/usePictureUpload';
 import type { StoryCharacter } from '../api/characters';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
-import { CharacterAvatar } from './CharacterAvatar';
 import { PlanTextField } from './PlanTextField';
 
 /** What the section needs. */
@@ -50,16 +50,15 @@ function outcomeOf(status: string | undefined, error: Error | null): UploadOutco
 function PictureStateNote({ character }: { character: StoryCharacter }) {
   const { t } = useAtlasTranslation();
   const state = character.picture?.state;
-  if (state === undefined)
-    return <p className="m-0 type-body text-ink-muted">{t('characters.picture.none')}</p>;
-  if (state === 'visible') return null;
+  // No picture yet, or one that passed: the face says it all, so there is nothing to add.
+  if (state === undefined || state === 'visible') return null;
   return <Notice tone="info">{t(`characters.picture.${state}`)}</Notice>;
 }
 
 /**
  * Renders the section.
  *
- * @returns the group with the picture, the upload field, the alt text and Remove
+ * @returns the group with the check note, the upload field, the alt text and Remove
  */
 export function CharacterPictureSection({
   character,
@@ -73,9 +72,8 @@ export function CharacterPictureSection({
   const uploading = useMutation({ mutationFn: upload });
   const hasPicture = character.picture !== null;
   return (
-    <fieldset className="m-0 flex w-full min-w-0 flex-col gap-3 border-0 p-0 md:w-[220px] md:shrink-0">
+    <fieldset className="m-0 flex min-w-0 flex-1 flex-col gap-3 border-0 p-0">
       <legend className="sr-only">{t('characters.picture.heading')}</legend>
-      <CharacterAvatar character={character} size="large" />
       <PictureStateNote character={character} />
       {isOn('picture_uploads', false) && (
         <PictureUploadField

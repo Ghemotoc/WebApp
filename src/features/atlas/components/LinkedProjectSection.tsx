@@ -5,14 +5,14 @@
  * with a plain message and is never sent (the database refuses it too). Once both are saved,
  * "Open <name>" opens it in a new tab with rel="noopener" (and "noreferrer", so the other site
  * isn't told where the writer came from), and says that it opens a new tab.
- * Who uses it: StoryAtlasPage. What it calls: useStoryPlan's savePlan, lib/linkedProject.ts.
+ * Flat under a fine line, as board E21 draws it (user stories bundle 6).
+ * Who uses it: AtAGlance. What it calls: useStoryPlan's savePlan, lib/linkedProject.ts.
  */
-import { FormSection } from '@/features/writing/components/FormSection';
-
 import type { PlanFields, StoryPlanPage } from '../api/storyPlans';
 import { isLinkableAddress } from '../lib/linkedProject';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasFlatSection } from './AtlasFlatSection';
 import { PlanTextField } from './PlanTextField';
 
 /** What the section needs. */
@@ -33,7 +33,7 @@ function OpenLinkedProject({ label, address }: { label: string; address: string 
       href={address}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex min-h-11 items-center self-start type-body font-semibold break-words"
+      className="inline-flex min-h-11 items-center self-start type-body font-semibold break-words text-link underline"
     >
       {t('linked.open', { label })} <span className="sr-only">{t('linked.newTab')}</span>
     </a>
@@ -48,30 +48,32 @@ function OpenLinkedProject({ label, address }: { label: string; address: string 
 export function LinkedProjectSection({ page, savePlan }: LinkedProjectSectionProps) {
   const { t } = useAtlasTranslation();
   return (
-    <FormSection legend={t('linked.heading')}>
-      <p className="m-0 type-body text-ink-muted">{t('linked.hint')}</p>
-      <PlanTextField
-        id="atlas-linked-label"
-        label={t('linked.label')}
-        maxLength={60}
-        savedValue={page.plan.linkedProjectLabel}
-        save={async (label) => savePlan('linkedProjectLabel', label.trim())}
-      />
-      <PlanTextField
-        id="atlas-linked-address"
-        label={t('linked.address')}
-        hint={t('linked.addressHint')}
-        type="url"
-        maxLength={2000}
-        isValid={(address) => isLinkableAddress(address.trim())}
-        invalidMessage={t('linked.invalid')}
-        savedValue={page.plan.linkedProjectUrl}
-        save={async (address) => savePlan('linkedProjectUrl', address.trim())}
-      />
+    <AtlasFlatSection headingId="atlas-linked-heading" heading={t('linked.heading')}>
+      <p className="m-0 type-meta">{t('linked.hint')}</p>
+      <div className="flex max-w-[480px] flex-col gap-4">
+        <PlanTextField
+          id="atlas-linked-label"
+          label={t('linked.label')}
+          maxLength={60}
+          savedValue={page.plan.linkedProjectLabel}
+          save={async (label) => savePlan('linkedProjectLabel', label.trim())}
+        />
+        <PlanTextField
+          id="atlas-linked-address"
+          label={t('linked.address')}
+          hint={t('linked.addressHint')}
+          type="url"
+          maxLength={2000}
+          isValid={(address) => isLinkableAddress(address.trim())}
+          invalidMessage={t('linked.invalid')}
+          savedValue={page.plan.linkedProjectUrl}
+          save={async (address) => savePlan('linkedProjectUrl', address.trim())}
+        />
+      </div>
       <OpenLinkedProject
         label={page.plan.linkedProjectLabel}
         address={page.plan.linkedProjectUrl}
       />
-    </FormSection>
+    </AtlasFlatSection>
   );
 }

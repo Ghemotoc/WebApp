@@ -13,14 +13,14 @@
 --   else;
 -- - the reporting contract finds a public item and refuses a private one; a public character's
 --   picture is readable once its check passed (atlas_images_select_public, allowed and denied);
--- - no answer carries a user ID (rule 15).
+-- - no answer carries a user ID (rule 15); the byline gets the writer's username (story 6.16).
 -- Personas: adult_writer (…01) writes "Stația meteo"; teacher (…07) reads; kid_14_ok (…03) is
 -- under 16. Rolled back at the end.
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(40);
+select plan(41);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -151,10 +151,14 @@ select ok(public.get_public_story_plan('statia-meteo-seed01')::text !~ 'Notă pr
   'the writer''s note on a relationship stays private');
 select ok(public.get_public_story_plan('statia-meteo-seed01')::text !~ '00000000-0000-4000-8000-00000000000',
   'no public answer carries a user ID (rule 15)');
+select is(public.get_public_story_plan('statia-meteo-seed01') #>> '{story,writer_handle}', 'adult_writer',
+  'the plan names the writer''s username for the byline''s link, never the user ID (story 6.16)');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
-select is(pg_temp.refusal($$ select public.set_plan_item_show_from('19800000-0000-4000-8000-0000000000d2', 'c198aaaa') $$),
-  '23514:no_guard', 'a relationship takes no chapter: it follows its characters');
+select is(pg_temp.refusal($$ select public.set_plan_item_show_from(
+    (select id from public.story_bible_sections
+     where story_id = '00000000-0000-4000-9000-000000000001' and position = 1), 'c198aaaa') $$),
+  '23514:no_guard', 'a story world section takes no chapter: its entries do (a relationship can, story 6.14)');
 select is(pg_temp.refusal($$ select public.set_plan_item_show_from('19800000-0000-4000-8000-000000000ee1', 'zzzzzzzz') $$),
   '23514:unknown_chapter', 'a chapter of another story is refused');
 

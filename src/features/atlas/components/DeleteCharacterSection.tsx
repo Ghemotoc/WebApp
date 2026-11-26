@@ -5,7 +5,9 @@
  *
  * The first click asks "Delete Ana?" with Yes and Keep; the focus moves to the question so a
  * screen reader hears it. Yes deletes the character and its picture, then the caller closes the
- * sheet. Who uses it: CharacterSheet.
+ * sheet. At the sheet's foot the button stands alone, red on the quiet fill, with no heading or
+ * card (user stories bundle 6, story 6.4, board E23); the section keeps its name for screen
+ * readers. Who uses it: CharacterSheet.
  */
 import { useEffect, useRef, useState } from 'react';
 
@@ -24,7 +26,7 @@ export interface DeleteCharacterSectionProps {
 /**
  * Renders the section.
  *
- * @returns the card with Delete, or the question with Yes and Keep
+ * @returns Delete, or the question with Yes and Keep
  */
 export function DeleteCharacterSection({ name, onDelete }: DeleteCharacterSectionProps) {
   const { t } = useAtlasTranslation();
@@ -45,15 +47,9 @@ export function DeleteCharacterSection({ name, onDelete }: DeleteCharacterSectio
 
   return (
     <section
-      aria-labelledby="atlas-delete-character-heading"
-      className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-surface px-6 py-6 shadow-card"
+      aria-label={t('characters.delete.heading')}
+      className="flex min-w-0 flex-col gap-3 border-t border-hairline pt-6"
     >
-      <h2
-        id="atlas-delete-character-heading"
-        className="m-0 font-heading type-heading font-bold text-ink-heading"
-      >
-        {t('characters.delete.heading')}
-      </h2>
       {!isAsking && (
         <Button variant="destructive" className="self-start" onClick={() => setIsAsking(true)}>
           {t('characters.delete.button')}

@@ -103,7 +103,7 @@ export function PublicPlanPage() {
         })
       : t('publicPlan.notFound');
   return (
-    <PageContainer className="tmc-rise flex flex-col gap-8 pt-8 pb-12">
+    <PageContainer className="tmc-rise flex flex-col gap-4 pt-6 pb-12">
       <title>{title}</title>
       {loadFailed && <Notice tone="error">{t('publicPlan.loadFailed')}</Notice>}
       {isNothingToShow(plan, area) && <Notice tone="error">{t('publicPlan.notFound')}</Notice>}

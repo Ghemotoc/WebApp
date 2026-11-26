@@ -2,8 +2,10 @@
  * PublicPlanNav: the row of a story's public areas on the readers' pages (story S1-E17-33:
  * "tabs or links for those areas show … and none for areas that are off").
  *
- * Real links inside one glass track (boards AtlasPreview*, G10c4), with aria-current on the open
- * one, filled so it isn't told by colour alone; the track wraps on a phone. Who uses it: PublicPlanView. What it calls: lib/publicPlanAreas.ts.
+ * Real links inside one tinted track (board E35, user stories bundle 6, story 6.16), with
+ * aria-current on the open one, raised on the box surface so it isn't told by colour alone; on a
+ * narrow screen the track scrolls sideways rather than wrapping. Who uses it: PublicPlanView.
+ * What it calls: lib/publicPlanAreas.ts.
  */
 import { Link } from 'react-router';
 
@@ -32,16 +34,18 @@ export function PublicPlanNav({
 }) {
   const { t } = useAtlasTranslation();
   return (
-    <nav aria-label={t('publicPlan.navLabel')}>
-      <ul className="m-0 inline-flex max-w-full list-none flex-wrap gap-1 rounded-card border border-border bg-surface p-2 shadow-card">
+    <nav aria-label={t('publicPlan.navLabel')} className="max-w-full overflow-x-auto">
+      <ul className="m-0 inline-flex list-none gap-1 rounded-full bg-tint p-1">
         {areas.map((area) => (
           <li key={area}>
             <Link
               to={`${base}/${areaPaths[area]}`}
               aria-current={area === current ? 'page' : undefined}
               className={cn(
-                'inline-flex h-11 items-center rounded-full px-4 type-body font-semibold no-underline',
-                area === current ? 'bg-primary text-on-primary' : 'text-ink-heading hover:bg-tint',
+                'inline-flex min-h-10 items-center rounded-full px-4 type-body font-semibold whitespace-nowrap no-underline',
+                area === current
+                  ? 'bg-surface text-ink-heading shadow-card'
+                  : 'text-ink hover:text-ink-heading',
               )}
             >
               {t(`publicPlan.areas.${area}`)}

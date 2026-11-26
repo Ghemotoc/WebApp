@@ -12,7 +12,7 @@
  *   is the older one, as in "Ana is the first cousin once removed of Vali").
  * - "Whose tree" keeps only the chosen character's family: everyone joined to them by family
  *   links, however distant.
- * - Characters with no family link are left off, and the count says how many.
+ * - Characters with no family link are left off, and the tree names them (story 6.7, board E26).
  * Who calls it: FamilyTreeView. What it calls: nothing.
  */
 import type { CharacterRelationship } from '../api/characters';
@@ -39,7 +39,8 @@ export interface FamilyTree {
   partnerLinks: [string, string][];
   siblingLinks: [string, string][];
   cousinLinks: CousinLink[];
-  leftOffCount: number;
+  /** The characters with no family link at all, in the cast's order, named under the tree. */
+  leftOff: string[];
 }
 
 /** Every family line, ready to be laid out. */
@@ -212,13 +213,28 @@ function linksAmong(links: FamilyLinks, members: Set<string>): FamilyLinks {
 }
 
 /**
+ * The characters in the tree: everyone with a family link, or the chosen character's family.
+ *
+ * @returns the set of characters to draw, empty when the chosen character has no family link
+ */
+function familyToDraw(
+  rootId: string | null,
+  linked: Set<string>,
+  pairs: [string, string][],
+): Set<string> {
+  if (rootId === null) return linked;
+  if (!linked.has(rootId)) return new Set();
+  return familyOf(rootId, pairs);
+}
+
+/**
  * Builds the tree.
  *
  * @param characterIds - every character, in the cast's name order
  * @param relationships - every relationship in the story
  * @param includeMade - the "Include turned or made" switch
  * @param rootId - "Whose tree": a character, or null for every family in the story
- * @returns the generations, the lines and how many characters are left off
+ * @returns the generations, the lines and the characters left off
  */
 export function buildFamilyTree(
   characterIds: string[],
@@ -230,8 +246,9 @@ export function buildFamilyTree(
   const allLinks = familyLinksFrom(new Set(characterIds), relationships, includeMade);
   const pairs = allPairs(allLinks);
   const linked = new Set(pairs.flat());
-  // Step 2: the members: every linked character, or only the chosen character's family.
-  const family = rootId !== null && linked.has(rootId) ? familyOf(rootId, pairs) : linked;
+  // Step 2: the members: every linked character, or only the chosen character's family (none
+  // when the chosen character has no family link; the page says so, story 6.7).
+  const family = familyToDraw(rootId, linked, pairs);
   const members = characterIds.filter((id) => family.has(id));
   const links = linksAmong(allLinks, family);
   // Step 3: the rows, top to bottom, partners and siblings side by side.
@@ -250,6 +267,6 @@ export function buildFamilyTree(
     partnerLinks: links.partners,
     siblingLinks: links.siblings,
     cousinLinks: links.cousins,
-    leftOffCount: characterIds.length - linked.size,
+    leftOff: characterIds.filter((id) => !linked.has(id)),
   };
 }

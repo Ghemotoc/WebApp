@@ -5,7 +5,9 @@
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves:
  * - the board shows the chapters as cards in act columns with their label, title, point of view,
- *   status, "Published", words and in-world date, and a card opens the writing view (S1-E17-19);
+ *   status, words and "Published" or "Draft", and a card opens the writing view (S1-E17-19;
+ *   story 6.9); on a phone the columns stay side by side and the board scrolls sideways inside
+ *   its own box (story 6.9, board E28);
  * - a move shows on the board before it is saved and goes back, with a note, when the save fails
  *   (design books item 13);
  * - the move buttons move a card within and between acts, and a drag does the same; a move that
@@ -15,9 +17,11 @@
  *   chapters to "No act" without deleting any (GAPS-2a); a double click adds one act and another
  *   act's name is refused in plain words;
  * - a chapter told by the Narrator says so on the board and has its own lane (G10c2);
- * - the timeline adds, sorts, changes and deletes events beside dated chapters, and lists the
- *   undated chapters apart (S1-E17-20);
- * - the lanes show each chapter in its teller's column with its status in words (S1-E17-21);
+ * - the timeline adds, sorts, changes and deletes events beside dated chapters, says beside a
+ *   field what is missing, deletes with Undo and counts the undated chapters apart, with Show
+ *   them (S1-E17-20; story 6.10, board E29);
+ * - the lanes mark each chapter with "tells it" in its teller's column, count the tellers above
+ *   and scroll sideways inside their box on a phone (S1-E17-21; story 6.11, board E30);
  * - the view toggle remembers the last choice (S1-E17-22);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English, each view at every width.
@@ -129,7 +133,7 @@ async function openAs(browser: Browser, persona: SignInPersonaName, path: string
 }
 
 /**
- * Picks Board, Timeline or POV lanes. The switch's radios are visually hidden, so the click goes
+ * Picks Board, Timeline or Point-of-view lanes. The switch's radios are visually hidden, so the click goes
  * to the segment's words, as a person's would.
  */
 async function showView(page: Page, name: string) {
@@ -230,15 +234,38 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(storm).toContainText('Published');
     await expect(storm).toContainText('POV: Ana');
     await expect(storm).toContainText('4 words');
-    await expect(storm).toContainText('In-world date: Spring 2055');
+    // Story 6.9: the in-world date shows on the Timeline, not on the card.
+    await expect(storm).not.toContainText('In-world date');
     const calm = page.getByTestId('atlas-board-card').filter({ hasText: 'Calmul' });
     await expect(calm).toContainText('Chapter 2');
     await expect(calm).not.toContainText('Published');
+    await expect(calm).toContainText('· Draft');
     await expect(page.getByTestId('atlas-board-card').filter({ hasText: 'Zorii' })).toContainText(
       'Epilogue',
     );
     await storm.getByRole('link', { name: 'Furtuna' }).click();
     await expect(page).toHaveURL(new RegExp(`/write/s/${slug}/c/e2estor1$`));
+    await page.context().close();
+  });
+
+  test('on a phone the board scrolls sideways inside its box, not the page', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', storylineAddress);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await showView(page, 'Board');
+    const board = page.getByRole('region', {
+      name: 'Chapter board; scrolls sideways on small screens',
+    });
+    await expect(board).toBeVisible();
+    // The four columns sit side by side, wider than the box, so the box scrolls.
+    const widths = await board.evaluate((node) => [node.scrollWidth, node.clientWidth]);
+    expect(widths[0]).toBeGreaterThan(widths[1] ?? 0);
+    const pageWidths = await page.evaluate(() => [
+      document.documentElement.scrollWidth,
+      document.documentElement.clientWidth,
+    ]);
+    expect(pageWidths[0]).toBeLessThanOrEqual(pageWidths[1] ?? 0);
     await page.context().close();
   });
 
@@ -325,67 +352,122 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await page.context().close();
   });
 
-  test('the timeline sorts events with dated chapters, changes and deletes them, and remembers the view', async ({
+  test('the timeline sorts events with dated chapters, changes them in place, deletes with Undo, and remembers the view', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
     await showView(page, 'Timeline');
-    await page.getByRole('textbox', { name: 'Title' }).fill('The war');
+    // Add event stays pressable and says what is missing beside each field (story 6.10).
     await page.getByRole('button', { name: 'Add event' }).click();
-    await expect(
-      page.getByText('Give the event a number to sort by, such as 2055.3.'),
-    ).toBeVisible();
-    await page.getByRole('textbox', { name: 'Sort value' }).fill('2054');
+    const titleBox = page.getByRole('textbox', { name: 'Title' });
+    await expect(titleBox).toBeFocused();
+    await expect(titleBox).toHaveAccessibleDescription(/Give the event a title\./);
+    await titleBox.fill('The war');
+    await page.getByRole('button', { name: 'Add event' }).click();
+    const sortBox = page.getByRole('textbox', { name: 'Sort value' });
+    await expect(sortBox).toBeFocused();
+    await expect(sortBox).toHaveAccessibleDescription(
+      /Give the event a number to sort by, such as 2055\.3\./,
+    );
+    await sortBox.fill('2054');
     await page.getByRole('textbox', { name: 'Date as it shows' }).fill('2054');
     await page.getByRole('button', { name: 'Add event' }).click();
-    await expect(page.getByRole('textbox', { name: 'Title' })).toHaveValue('');
-    await page.getByRole('textbox', { name: 'Title' }).fill('Peace');
-    await page.getByRole('textbox', { name: 'Sort value' }).fill('2056,5');
+    await expect(titleBox).toHaveValue('');
+    await titleBox.fill('Peace');
+    await sortBox.fill('2056,5');
     await page.getByRole('button', { name: 'Add event' }).click();
+    // One list, earliest first; the kind is a word on each row.
     const timeline = page.getByRole('list', { name: 'Events and chapters in story order' });
-    await expect(timeline.getByTestId('atlas-timeline-item')).toHaveCount(3);
     const lines = timeline.getByTestId('atlas-timeline-item');
+    await expect(lines).toHaveCount(3);
     await expect(lines.nth(0)).toContainText('Event');
     await expect(lines.nth(0)).toContainText('The war');
+    await expect(lines.nth(0)).toContainText('sort 2054');
     await expect(lines.nth(1)).toContainText('Chapter');
+    await expect(lines.nth(1)).toContainText('Spring 2055');
     await expect(lines.nth(1)).toContainText('Furtuna');
+    await expect(lines.nth(1)).toContainText('POV: Ana');
     await expect(lines.nth(2)).toContainText('Peace');
-    // The undated chapters are listed apart.
-    const undated = page.getByRole('list', { name: 'Chapters without a date' });
-    await expect(undated.getByRole('link', { name: /Calmul/ })).toBeVisible();
-    // Change an event's sort value: it takes its new place.
-    await page.getByRole('button', { name: 'Edit Peace' }).click();
-    const sortBox = timeline.getByRole('textbox', { name: 'Sort value' });
-    await sortBox.fill('2050');
-    await sortBox.blur();
+    // The undated chapters are counted under the list, and Show them lists them.
+    const undated = page.getByRole('region', { name: 'Chapters without a date' });
+    await expect(undated).toContainText(/Chapters \d+ and \d+/);
+    await undated.getByRole('button', { name: 'Show them' }).click();
+    await expect(
+      undated.getByRole('list', { name: 'Chapters without a date' }).getByRole('link', {
+        name: /Calmul/,
+      }),
+    ).toBeVisible();
+    // More, then Edit, opens the fields in place; a new sort value moves the event.
+    await page.getByRole('button', { name: 'More for Peace' }).click();
+    await page.getByRole('menuitem', { name: 'Edit' }).click();
+    const editSort = timeline.getByRole('textbox', { name: 'Sort value' });
+    await editSort.fill('2050');
+    await editSort.blur();
     await expect(lines.nth(0)).toContainText('Peace');
-    // Delete asks twice.
-    await timeline.getByRole('button', { name: 'Delete Peace' }).click();
-    await timeline.getByRole('button', { name: 'Yes, delete it' }).click();
+    await timeline.getByRole('button', { name: 'Done' }).click();
+    await expect(timeline.getByRole('textbox')).toHaveCount(0);
+    // Delete deletes at once and offers Undo, which puts the event back.
+    await page.getByRole('button', { name: 'More for Peace' }).click();
+    await page.getByRole('menuitem', { name: 'Delete' }).click();
+    await expect(lines).toHaveCount(2);
+    await expect(page.getByText('Removed.')).toBeVisible();
+    await page.getByRole('button', { name: 'Undo' }).click();
+    await expect(lines).toHaveCount(3);
+    await expect(lines.nth(0)).toContainText('Peace');
+    // Deleted again, it stays gone.
+    await page.getByRole('button', { name: 'More for Peace' }).click();
+    await page.getByRole('menuitem', { name: 'Delete' }).click();
     await expect(lines).toHaveCount(2);
     // The view is remembered.
     await page.reload();
     await expect(page.getByRole('radio', { name: 'Timeline' })).toBeChecked();
+    await expect(lines).toHaveCount(2);
     await page.context().close();
   });
 
-  test('the lanes show each chapter in its teller’s column, with its status in words', async ({
+  test('the lanes mark each chapter’s teller with “tells it”, with the counts above', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
-    await showView(page, 'POV lanes');
+    await showView(page, 'Point-of-view lanes');
+    // Story 6.11: the counts say how the telling is shared, the word "chapters" said once.
+    await expect(
+      page.getByRole('list', { name: 'Chapters by teller' }).getByRole('listitem'),
+    ).toHaveText([/^Ana: \d+ chapters?$/, /^Bogdan: \d+$/]);
     const table = page.getByRole('table', { name: 'Chapters by point-of-view character' });
     await expect(table.getByRole('columnheader')).toHaveText(['Chapter', 'Ana', 'Bogdan']);
+    // The mark is the words "tells it", never a colour alone.
     const stormRow = table.getByRole('row', { name: /Furtuna/ });
-    await expect(stormRow.getByRole('cell').nth(0)).toHaveText('Drafting');
+    await expect(stormRow.getByRole('cell').nth(0)).toHaveText('tells it');
     await expect(stormRow.getByRole('cell').nth(1)).toHaveText('');
     await expect(
       table
         .getByRole('row', { name: /Calmul/ })
         .getByRole('cell')
         .nth(1),
-    ).toHaveText('Idea');
+    ).toHaveText('tells it');
     await expect(table.getByTestId('atlas-lane-row')).toHaveCount(4);
+    // Rows go by number and title ("1. Furtuna"), in book order.
+    await expect(table.getByRole('rowheader').first()).toHaveText(/^\d+\. /);
+    await page.context().close();
+  });
+
+  test('on a phone the lanes table scrolls sideways inside its box, not the page', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', storylineAddress);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await showView(page, 'Point-of-view lanes');
+    const box = page.getByRole('region', { name: 'Chapters by point-of-view character' });
+    await expect(box).toBeVisible();
+    const widths = await box.evaluate((element) => ({
+      scroll: element.scrollWidth,
+      client: element.clientWidth,
+      page: document.documentElement.scrollWidth,
+      view: window.innerWidth,
+    }));
+    expect(widths.scroll).toBeGreaterThan(widths.client);
+    expect(widths.page).toBeLessThanOrEqual(widths.view);
     await page.context().close();
   });
 
@@ -406,8 +488,8 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(page.getByTestId('atlas-board-card').filter({ hasText: 'Zorii' })).toContainText(
       'POV: Narrator',
     );
-    // The lanes give the Narrator the last column and a tile of their own.
-    await showView(page, 'POV lanes');
+    // The lanes give the Narrator the last column and a count of their own.
+    await showView(page, 'Point-of-view lanes');
     const table = page.getByRole('table', { name: 'Chapters by point-of-view character' });
     await expect(table.getByRole('columnheader')).toHaveText([
       'Chapter',
@@ -416,11 +498,11 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
       'Narratoroutside the story',
     ]);
     await expect(table.getByRole('row', { name: /Zorii/ }).getByRole('cell').nth(2)).toHaveText(
-      'Idea',
+      'tells it',
     );
     await expect(
       page.getByRole('list', { name: 'Chapters by teller' }).getByRole('listitem'),
-    ).toHaveText(['Told by Ana1', 'Told by Bogdan1', 'Told by the Narrator1']);
+    ).toHaveText(['Ana: 1 chapter', 'Bogdan: 1', 'Narrator: 1']);
     // A character takes the Narrator off again (one teller at a time).
     await page.goto(`/write/s/${slug}/c/e2estor3`);
     await openMoreDetails(page);

@@ -44,6 +44,13 @@
     "codeLabel": "Code for this address:",
     "linkNote": "The code works once and expires after an hour."
   },
+  "reauthentication": {
+    "subject": "Code to confirm it’s you",
+    "heading": "Code to confirm it’s you",
+    "body": "Someone asked to make a change to a {{productName}} account that needs this code first. Type it where you were asked for it.",
+    "codeLabel": "Code:",
+    "linkNote": "The code works once and expires after an hour."
+  },
   "notificationEmails": {
     "subjectDigest": "Daily round-up from {{productName}}",
     "subjectDecision": "A moderation decision about something you posted",

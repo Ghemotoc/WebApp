@@ -11,12 +11,13 @@
  * - a linked project refuses an address that isn't http or https, and "Open <name>" opens a new
  *   tab with rel="noopener" (S1-E17-04);
  * - Delete asks twice (S1-E17-05);
- * - the switcher moves between stories and /plan lists the plans, the story open last first
- *   (S1-E17-02, G10a);
+ * - the switcher moves between stories, and /plan lists every story's plan, the newest edit
+ *   first, with its writing status, genre, words and last edit in one line (S1-E17-02; board E20,
+ *   user stories bundle 6, story 6.1);
  * - "Story Atlas" sits beside "Continue chapter n" on Writing, with the line "In the Atlas:
  *   Characters · Relationships · Story world · Storyline" under it (CALM-9a); another writer can't
  *   open someone else's plan;
- * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
+ * - at a glance and /plan pass axe, don't scroll sideways and draw no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English.
  * Test data: adult_writer makes "Atlas test" stories (deleted at the end); suspended_user (whose
  * language no other spec changes) gets one seeded story for the accessibility checks.
@@ -66,9 +67,14 @@ function storyTitle(page: Page) {
   return page.locator('#atlas-summary-title');
 }
 
-/** The first plan card's link on /plan (the card's title, stretched over the card). */
+/** The first row on /plan (board E20's list of stories). */
+function firstPlanRow(page: Page) {
+  return page.getByRole('list', { name: 'Stories with a plan' }).getByRole('listitem').first();
+}
+
+/** The first row's title link, which opens that story's plan. */
 function firstPlanLink(page: Page) {
-  return page.getByRole('article').first().getByRole('link').first();
+  return firstPlanRow(page).getByRole('link');
 }
 
 /** Fills New story's required answers and creates the story. */
@@ -98,7 +104,7 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     await expect(page).toHaveURL(/\/plan\/s\/[a-z0-9-]+$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('At a glance');
     await expect(storyTitle(page)).toHaveText('Atlas test: harta');
-    await expect(page.getByText('0 of 90,000 words')).toBeVisible();
+    await expect(page.getByText('0 of 90,000', { exact: true })).toBeVisible();
     await expect(page.getByText('No chapters yet.')).toBeVisible();
 
     // The plan's own fields save by themselves (S1-E17-03).
@@ -126,16 +132,17 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     const summary = page.getByRole('region', { name: 'The story' });
     await expect(summary).toContainText('A map that changes at night.');
     await expect(summary).toContainText('Drafting');
-    await expect(page.getByText('0 of 60,000 words')).toBeVisible();
+    await expect(page.getByText('0 of 60,000', { exact: true })).toBeVisible();
     await expect(storyTitle(page)).toHaveText('Atlas test: harta nopții');
     await page.context().close();
   });
 
   test('a linked project takes only web addresses and opens in a new tab', async ({ browser }) => {
     const page = await openAs(browser, 'adult_writer', '/plan');
-    // /plan lists the plans, the one planned last first: here the new one (S1-E17-02 and G10a,
-    // a fresh device: the newest). Its card opens the plan.
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Story plans');
+    // /plan lists the plans, the newest edit first: here the one just edited (story 6.1). Its
+    // title opens the plan.
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Story Atlas');
+    await expect(page.getByText('Most recently edited first.')).toBeVisible();
     await expect(firstPlanLink(page)).toHaveText('Atlas test: harta nopții');
     await firstPlanLink(page).click();
     await expect(storyTitle(page)).toHaveText('Atlas test: harta nopții');
@@ -153,7 +160,7 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     await page.context().close();
   });
 
-  test('the switcher moves between stories, and /plan opens the one open last', async ({
+  test('the switcher moves between stories, and /plan puts the newest edit first', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', '/write');
@@ -175,9 +182,16 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     await page.getByLabel('Story', { exact: true }).selectOption('statia-meteo-seed01');
     await expect(page).toHaveURL(/\/plan\/s\/statia-meteo-seed01$/);
     await expect(storyTitle(page)).not.toHaveText(/Atlas test/);
-    // Back on the list, the story open last comes first.
+    // Back on the list, opening a story changes nothing: the newest edit still comes first, and
+    // its line says where it stands (board E20).
     await page.goto('/plan');
-    await expect(firstPlanLink(page)).toHaveAttribute('href', '/plan/s/statia-meteo-seed01?resume');
+    await expect(firstPlanLink(page)).toHaveText('Atlas test: harta nopții');
+    await expect(firstPlanRow(page).getByRole('listitem')).toHaveText([
+      'Drafting',
+      'Fiction',
+      '0 of 60,000 words',
+      /^edited /,
+    ]);
     await page.context().close();
   });
 
@@ -204,8 +218,9 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
     await page.context().close();
   });
 
-  for (const view of everyView([axeAddress])) {
-    test(`at a glance passes axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({
+  // At a glance and /plan (board E20), each at every width, by day and at night, in both languages.
+  for (const view of everyView([axeAddress, '/plan'])) {
+    test(`${view.address} passes axe at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       browser,
     }) => {
       runSql(
@@ -215,7 +230,12 @@ test.describe('Story Atlas at a glance (S1-E17-01 to S1-E17-06)', () => {
       await useSessionInBrowser(context, (await signInPersona('suspended_user')).session);
       const page = await context.newPage();
       await checkScreen(page, view);
-      await expect(storyTitle(page)).toHaveText('Harta din podul bunicii');
+      // Step: the page drew its story, on at a glance as the title and on /plan as a row's link.
+      if (view.address === axeAddress) {
+        await expect(storyTitle(page)).toHaveText('Harta din podul bunicii');
+      } else {
+        await expect(page.getByRole('link', { name: 'Harta din podul bunicii' })).toBeVisible();
+      }
       await expectNoDoodles(page);
       await context.close();
     });

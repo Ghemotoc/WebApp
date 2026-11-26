@@ -18,6 +18,8 @@ export interface MyOnboarding {
   isDue: boolean;
   hasHandle: boolean;
   ageBand: Enums<'age_band'>;
+  /** The country on the profile (two letters), or null when none is known (COUNTRY-2). */
+  countryCode: string | null;
   regionCode: string | null;
   adultsMayMessage: boolean;
   readCategories: string[];
@@ -31,6 +33,7 @@ interface MyOnboardingRow {
   is_due: boolean;
   has_handle: boolean;
   age_band: Enums<'age_band'>;
+  country_code: string | null;
   region_code: string | null;
   adults_may_message: boolean;
   read_categories: string[];
@@ -41,6 +44,8 @@ interface MyOnboardingRow {
 /** One county in the drop-down. */
 export interface Region {
   code: string;
+  /** The country the county belongs to (two letters), so the list can follow the person's. */
+  countryCode: string;
   nameRo: string;
   nameEn: string;
 }
@@ -77,6 +82,7 @@ export async function fetchMyOnboarding(client: AppSupabaseClient): Promise<MyOn
     isDue: row.is_due,
     hasHandle: row.has_handle,
     ageBand: row.age_band,
+    countryCode: row.country_code,
     regionCode: row.region_code,
     adultsMayMessage: row.adults_may_message,
     readCategories: row.read_categories,
@@ -94,10 +100,39 @@ export async function fetchMyOnboarding(client: AppSupabaseClient): Promise<MyOn
 export async function fetchRegions(client: AppSupabaseClient): Promise<Region[]> {
   const { data, error } = await client
     .from('regions')
-    .select('code, name_ro, name_en')
+    .select('code, country_code, name_ro, name_en')
     .order('name_ro');
   if (error !== null) throw new Error(`Could not read the counties: ${error.message}`);
-  return data.map((row) => ({ code: row.code, nameRo: row.name_ro, nameEn: row.name_en }));
+  return data.map((row) => ({
+    code: row.code,
+    countryCode: row.country_code,
+    nameRo: row.name_ro,
+    nameEn: row.name_en,
+  }));
+}
+
+/**
+ * Picks the counties of one country (COUNTRY-2: a person in Sweden never sees Romania's).
+ *
+ * @param regions - every county fetchRegions() read
+ * @param countryCode - the country on the person's profile, or null when none is known
+ * @returns that country's counties; none when the country is unknown or has no counties listed
+ */
+export function regionsOfCountry(regions: Region[], countryCode: string | null): Region[] {
+  if (countryCode === null) return [];
+  return regions.filter((region) => region.countryCode === countryCode);
+}
+
+/**
+ * The county to show as chosen: the saved one only when it is in the list offered.
+ *
+ * @param offered - the counties the drop-down lists (regionsOfCountry())
+ * @param regionCode - the chosen or saved county, or ''
+ * @returns regionCode when it is offered, else '' ("I'd rather not say")
+ */
+export function shownRegionCode(offered: Region[], regionCode: string): string {
+  const isOffered = offered.some((region) => region.code === regionCode);
+  return isOffered ? regionCode : '';
 }
 
 /**
