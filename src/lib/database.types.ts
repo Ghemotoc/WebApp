@@ -12134,7 +12134,11 @@ export type Database = {
         Returns: string;
       };
       admin_list_accounts: {
-        Args: { page_number?: number; page_size?: number };
+        Args: {
+          page_number?: number;
+          page_size?: number;
+          status_filter?: Database['public']['Enums']['account_status'];
+        };
         Returns: {
           account_status: Database['public']['Enums']['account_status'];
           age_band: Database['public']['Enums']['age_band'];

@@ -7080,14 +7080,13 @@ COMMENT ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid"
 
 
 
-CREATE OR REPLACE FUNCTION "public"."admin_list_accounts"("page_number" integer DEFAULT 1, "page_size" integer DEFAULT 50) RETURNS TABLE("user_id" "uuid", "handle" "text", "pen_name" "text", "email_masked" "text", "country_code" "text", "age_band" "public"."age_band", "joined_at" timestamp with time zone, "last_used_on" "date", "account_status" "public"."account_status", "sanction_kinds" "public"."sanction_kind"[], "open_case_count" integer, "total_count" bigint)
+CREATE OR REPLACE FUNCTION "public"."admin_list_accounts"("page_number" integer DEFAULT 1, "page_size" integer DEFAULT 5, "status_filter" "public"."account_status" DEFAULT NULL::"public"."account_status") RETURNS TABLE("user_id" "uuid", "handle" "text", "pen_name" "text", "email_masked" "text", "country_code" "text", "age_band" "public"."age_band", "joined_at" timestamp with time zone, "last_used_on" "date", "account_status" "public"."account_status", "sanction_kinds" "public"."sanction_kind"[], "open_case_count" integer, "total_count" bigint)
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   -- Today in Romania, so the age group matches what age_band() says elsewhere.
   today date := (now() at time zone 'Europe/Bucharest')::date;
-  every_account bigint;
 begin
   -- Step 1: the owner and admins only, in a staff session (staff_may checks the session).
   if not (public.staff_may('users', 'view')
@@ -7101,42 +7100,54 @@ begin
       using errcode = 'invalid_parameter_value', hint = 'refused';
   end if;
 
-  -- Step 3: the list itself is a sensitive read: who looked, which page (architecture 1.8.3).
+  -- Step 3: the list itself is a sensitive read: who looked, which page and which filter
+  -- (architecture 1.8.3).
   perform public.log_staff_action('sensitive_read.account_list', 'profiles',
-    'page ' || page_number::text);
+    'page ' || page_number::text || ', ' || page_size::text || ' a page'
+      || coalesce(', status ' || status_filter::text, ''));
 
-  -- Step 4: one page, newest first; deleted accounts too, so staff can still find them.
-  select count(*) into every_account from public.profiles;
+  -- Step 4: work out each account's status once, keep the ones the filter asks for (no filter:
+  -- everything but deleted), count them for the pager, and return one page, newest first.
   return query
-    select profiles.id,
-           profiles.handle,
-           profiles.pen_name,
+    with stated as (
+      select profiles.*, public.account_state(profiles.id) as state
+      from public.profiles
+    ),
+    matching as (
+      select stated.*, count(*) over () as matching_count
+      from stated
+      where (status_filter is null and stated.state <> 'deleted')
+         or stated.state = status_filter
+    )
+    select matching.id,
+           matching.handle,
+           matching.pen_name,
            public.mask_email(users.email),
-           profiles.country_code,
-           coalesce(public.age_band_from_birth(profiles.birth_year, profiles.birth_month,
-             profiles.age_check_result, today), 'unknown'::public.age_band),
-           profiles.created_at,
-           public.account_last_used_on(profiles.id),
-           public.account_state(profiles.id),
+           matching.country_code,
+           coalesce(public.age_band_from_birth(matching.birth_year, matching.birth_month,
+             matching.age_check_result, today), 'unknown'::public.age_band),
+           matching.created_at,
+           public.account_last_used_on(matching.id),
+           matching.state,
            coalesce((select array_agg(distinct sanctions.kind) from public.sanctions
-                     where sanctions.user_id = profiles.id), '{}'),
+                     where sanctions.user_id = matching.id), '{}'),
            (select count(*)::integer from public.cases
-            where cases.user_id = profiles.id and cases.status = 'open'
+            where cases.user_id = matching.id and cases.status = 'open'
               and public.may_see_case(cases.is_safeguarding)),
-           every_account
-    from public.profiles
-    left join auth.users on users.id = profiles.id
-    order by profiles.created_at desc, profiles.id
+           matching.matching_count
+    from matching
+    left join auth.users on users.id = matching.id
+    order by matching.created_at desc, matching.id
     limit page_size
     offset (page_number - 1) * page_size;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer, "status_filter" "public"."account_status") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) IS 'Every account, a page at a time, newest first, for the owner and admins; each page read logged (Staff › Users full list, 26 Nov 2026).';
+COMMENT ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer, "status_filter" "public"."account_status") IS 'Accounts a page at a time, newest first, by status (deleted left out unless asked for), for the owner and admins; each page read logged (Staff › Users, 26 Nov 2026).';
 
 
 
@@ -71694,8 +71705,8 @@ GRANT ALL ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uui
 
 
 
-REVOKE ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer, "status_filter" "public"."account_status") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer, "status_filter" "public"."account_status") TO "authenticated";
 
 
 

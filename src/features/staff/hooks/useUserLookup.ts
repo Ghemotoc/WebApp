@@ -31,6 +31,20 @@ export function userFailureOf(error: unknown): UserManagementFailure | null {
 }
 
 /**
+ * The page address with a new search text, everything else kept.
+ *
+ * @param current - the search params now
+ * @param text - the trimmed search text; empty removes it
+ * @returns new search params
+ */
+function searchParamsWith(current: URLSearchParams, text: string): URLSearchParams {
+  const next = new URLSearchParams(current);
+  if (text === '') next.delete('q');
+  else next.set('q', text);
+  return next;
+}
+
+/**
  * Follows one search.
  *
  * @returns the searched text, search(text), the results, whether it is searching, why it failed
@@ -49,7 +63,9 @@ export function useUserLookup() {
 
   return {
     searchedText,
-    search: (text: string) => setSearchParams(text.trim() === '' ? {} : { q: text.trim() }),
+    // Only "q" changes: the Members list below keeps its status and page size in the same
+    // address (S1-E11-02 follow-up, 26 Nov 2026).
+    search: (text: string) => setSearchParams((current) => searchParamsWith(current, text.trim())),
     hasSearched: searchedText !== '',
     isTooShort: searchedText !== '' && !isLongEnough,
     results: results.data ?? [],
