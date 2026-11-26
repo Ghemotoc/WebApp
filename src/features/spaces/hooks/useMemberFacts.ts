@@ -6,6 +6,7 @@
  * Who calls it: SpaceMemberRow. What it calls: nothing; it only picks words.
  */
 import type { MetaFact } from '@/components/ui/MetaLine';
+import { dateLocaleFor } from '@/lib/romania-time';
 
 import type { SpaceMember } from '../api/spaceModeration';
 import { powerKeys } from '../lib/spacePowers';
@@ -19,8 +20,11 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
  */
 export function useMemberFacts(member: SpaceMember): MetaFact[] {
   const { t, i18n } = useSpacesTranslation();
-  const listFormat = new Intl.ListFormat(i18n.language, { type: 'conjunction' });
-  const monthFormat = new Intl.DateTimeFormat(i18n.language, { month: 'long', year: 'numeric' });
+  const listFormat = new Intl.ListFormat(dateLocaleFor(i18n.language), { type: 'conjunction' });
+  const monthFormat = new Intl.DateTimeFormat(dateLocaleFor(i18n.language), {
+    month: 'long',
+    year: 'numeric',
+  });
   const month = member.joinedAt === '' ? '' : monthFormat.format(new Date(member.joinedAt));
   const powersIn = (powers: SpaceMember['powers']) =>
     listFormat.format(powerKeys(powers).map((key) => t(key)));
