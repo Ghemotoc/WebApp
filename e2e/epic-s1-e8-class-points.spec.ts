@@ -390,7 +390,9 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
     const teenCard = teen.getByRole('region', { name: competitionName });
     // The Winner card says "by" and the pen name (board G03).
     await expect(teenCard.getByText(`by ${kidName}`, { exact: true })).toBeVisible();
-    await expect(teenCard.getByRole('link', { name: 'Scara, in Casa din copac' })).toBeVisible();
+    // The story's title links to the winning chapter, and so does "Read the chapter" (G03).
+    await expect(teenCard.getByRole('link', { name: 'Casa din copac', exact: true })).toBeVisible();
+    await expect(teenCard.getByRole('link', { name: 'Read the chapter' })).toBeVisible();
     await expect(teenCard.getByText('Result: Finalist')).toBeVisible();
     await expect(teenCard.getByText('Also Readers’ choice')).toBeVisible();
     await expect(teenCard.getByText(adultName)).toHaveCount(0);
