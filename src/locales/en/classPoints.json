@@ -36,8 +36,6 @@
     "archived": "This class is archived, so class points stay as they are."
   },
   "chapter": {
-    "heading": "Class points",
-    "inClass": "Shared with {{name}}",
     "give": {
       "label": "Points",
       "none": "None",
@@ -84,16 +82,27 @@
       "reportNote": "the teacher’s note",
       "pointsLabel": "Teacher points (0 to {{max}})",
       "noteLabel": "Private note (optional)",
-      "noteHint": "Only this pupil, the teacher and the moderation team read it. It has no reply box.",
+      "noteHint": "Only the writer, you and the moderation team read it, like feedback on a school submission. No replies. Classmates never see it.",
       "save": "Save teacher points",
       "remove": "Remove teacher points",
       "saved": "Teacher points saved.",
       "removed": "Teacher points removed.",
-      "classTotal_one": "{{count}} point from classmates so far",
-      "classTotal_few": "{{count}} points from classmates so far",
-      "classTotal_other": "{{count}} points from classmates so far",
       "noteFrom": "Note from the teacher",
-      "noteAudienceShort": "Only you, the teacher and the moderation team"
+      "noteAudienceShort": "Only you, the teacher and the moderation team",
+      "title": "Teacher points",
+      "less": "One point less",
+      "more": "One point more",
+      "outOf": "out of {{max}}",
+      "writerSees": "The writer sees Teacher points: {{points}} and the note. You can change both until the competition this chapter is entered in is published.",
+      "saveBoth": "Save points and note",
+      "lockedLine": "These teacher points are locked: a competition the writer entered is published, so everyone stays judged the same way.",
+      "onChapterTitle": "Class points on this chapter",
+      "onChapterPoints_one": "{{count}} class point from classmates and",
+      "onChapterPoints_few": "{{count}} class points from classmates and",
+      "onChapterPoints_other": "{{count}} class points from classmates and",
+      "onChapterNotes_one": "{{count}} note. Who gave them stays private; only the moderation team can check that.",
+      "onChapterNotes_few": "{{count}} notes. Who gave them stays private; only the moderation team can check that.",
+      "onChapterNotes_other": "{{count}} notes. Who gave them stays private; only the moderation team can check that."
     },
     "quoted": "“{{text}}”",
     "how": {

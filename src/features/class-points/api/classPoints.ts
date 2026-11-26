@@ -272,8 +272,16 @@ export interface ChapterClassPoints {
   isLocked: boolean;
   /** For a classmate only. */
   giving: ChapterGiving | null;
-  /** The total for the writer and the teacher; the notes for the writer only. */
-  received: { total: number; notes: ReceivedNote[] } | null;
+  /**
+   * The total for the writer and the teacher; the notes' words for the writer only, and how many
+   * notes for both (the teacher never reads the words, BOOKS-8b, user story 8.10).
+   */
+  received: { total: number; notes: ReceivedNote[]; noteCount: number } | null;
+  /**
+   * For the teacher: true once a competition the writer entered is published, so teacher points
+   * can't change (BOOKS-8b). Always false for anyone else.
+   */
+  isTeacherLocked: boolean;
   /** The teacher's points, for the writer and the teacher. */
   teacher: TeacherPoints | null;
   /** For the teacher: the most points they may give, whether notes are on and the longest note. */
@@ -318,7 +326,9 @@ function receivedFrom(value: Json | undefined): ChapterClassPoints['received'] {
     const words = textFrom(note?.['note']);
     if (note !== null && words !== null) notes.push({ id: String(note['id']), note: words });
   }
-  return { total: numberFrom(row['total']), notes };
+  // The writer gets the notes themselves; the teacher gets only how many there are.
+  const noteCount = Array.isArray(row['notes']) ? notes.length : numberFrom(row['notes']);
+  return { total: numberFrom(row['total']), notes, noteCount };
 }
 
 /**
@@ -344,6 +354,7 @@ export function chapterClassPointsFrom(data: Json): ChapterClassPoints | null {
     teacherMax: numberFrom(row['teacher_max']),
     areNotesOn: row['notes_on'] === true,
     teacherNoteMax: numberFrom(row['note_max']),
+    isTeacherLocked: row['teacher_locked'] === true,
   };
 }
 

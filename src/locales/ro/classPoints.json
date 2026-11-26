@@ -36,8 +36,6 @@
     "archived": "Clasa este arhivată, așa că punctele rămân cum sunt."
   },
   "chapter": {
-    "heading": "Puncte în clasă",
-    "inClass": "Împărtășit cu {{name}}",
     "give": {
       "label": "Puncte",
       "none": "Niciunul",
@@ -84,16 +82,27 @@
       "reportNote": "notița profesorului",
       "pointsLabel": "Puncte de la profesor (0 până la {{max}})",
       "noteLabel": "Notiță privată (opțional)",
-      "noteHint": "Doar elevul acesta, profesorul și echipa de moderare o citesc. Nu are câmp de răspuns.",
+      "noteHint": "Doar autorul, tu și echipa de moderare o citiți, ca pe o observație la o lucrare de școală. Fără răspunsuri. Colegii nu o văd niciodată.",
       "save": "Salvează punctele profesorului",
       "remove": "Șterge punctele profesorului",
       "saved": "Punctele profesorului au fost salvate.",
       "removed": "Punctele profesorului au fost șterse.",
-      "classTotal_one": "{{count}} punct de la colegi până acum",
-      "classTotal_few": "{{count}} puncte de la colegi până acum",
-      "classTotal_other": "{{count}} de puncte de la colegi până acum",
       "noteFrom": "Nota profesorului",
-      "noteAudienceShort": "Doar tu, profesorul și echipa de moderare"
+      "noteAudienceShort": "Doar tu, profesorul și echipa de moderare",
+      "title": "Puncte de la profesor",
+      "less": "Un punct mai puțin",
+      "more": "Un punct mai mult",
+      "outOf": "din {{max}}",
+      "writerSees": "Autorul vede Puncte de la profesor: {{points}} și notița. Poți schimba amândouă până se publică concursul în care e înscris capitolul.",
+      "saveBoth": "Salvează punctele și notița",
+      "lockedLine": "Aceste puncte de la profesor sunt blocate: un concurs la care s-a înscris autorul a fost publicat, ca toți să fie judecați la fel.",
+      "onChapterTitle": "Puncte în clasă la acest capitol",
+      "onChapterPoints_one": "{{count}} punct de la colegi și",
+      "onChapterPoints_few": "{{count}} puncte de la colegi și",
+      "onChapterPoints_other": "{{count}} de puncte de la colegi și",
+      "onChapterNotes_one": "{{count}} notă. Cine le-a dat rămâne privat; doar echipa de moderare poate verifica.",
+      "onChapterNotes_few": "{{count}} note. Cine le-a dat rămâne privat; doar echipa de moderare poate verifica.",
+      "onChapterNotes_other": "{{count}} de note. Cine le-a dat rămâne privat; doar echipa de moderare poate verifica."
     },
     "quoted": "„{{text}}”",
     "how": {
