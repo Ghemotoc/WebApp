@@ -3,7 +3,7 @@
   "documentTitle": "{{title}}: Atlasul poveștii",
   "eyebrow": "Atlasul poveștii",
   "atAGlance": "Pe scurt",
-  "glanceAside": "Modificări recente și câmpuri proprii",
+  "glanceAside": "Modificate recent",
   "switcher": {
     "label": "Povestea",
     "newStory": "Poveste nouă",
@@ -16,11 +16,29 @@
     "action": "Poveste nouă"
   },
   "home": {
-    "heading": "Planurile poveștilor",
-    "lead": "Personaje, locuri, legături și ordinea lucrurilor, ținute lângă fiecare poveste pe care o scrii.",
+    "heading": "Atlasul poveștii",
+    "lead": "Personaje, locuri, legături și ordinea lucrurilor, ținute lângă fiecare poveste.",
     "privateNote": "Doar tu vezi un plan, dacă nu alegi ce văd cititorii.",
-    "newPlan": "Plănuiește o poveste nouă",
-    "loadFailed": "Planurile nu s-au încărcat. Verifică conexiunea și încearcă din nou."
+    "loadFailed": "Planurile nu s-au încărcat. Verifică conexiunea și încearcă din nou.",
+    "count_one": "{{count}} poveste",
+    "count_few": "{{count}} povești",
+    "count_other": "{{count}} de povești",
+    "order": "Cele modificate cel mai recent sunt primele.",
+    "listLabel": "Povești cu plan",
+    "wordsOnly_one": "{{formatted}} cuvânt",
+    "wordsOnly_few": "{{formatted}} cuvinte",
+    "wordsOnly_other": "{{formatted}} de cuvinte",
+    "edited": "modificată {{when}}",
+    "chaptersOut_one": "{{count}} capitol publicat",
+    "chaptersOut_few": "{{count}} capitole publicate",
+    "chaptersOut_other": "{{count}} de capitole publicate",
+    "poemsOut_one": "{{count}} poezie publicată",
+    "poemsOut_few": "{{count}} poezii publicate",
+    "poemsOut_other": "{{count}} de poezii publicate",
+    "essaysOut_one": "{{count}} eseu publicat",
+    "essaysOut_few": "{{count}} eseuri publicate",
+    "essaysOut_other": "{{count}} de eseuri publicate",
+    "notPublished": "nepublicată"
   },
   "signedOut": "Intră în cont ca să plănuiești povești.",
   "notFound": "Nu am găsit povestea în cont. Poate a fost ștearsă.",
@@ -67,7 +85,8 @@
   "words": {
     "heading": "Cuvinte",
     "count": "{{written}} din {{target}} de cuvinte",
-    "percent": "{{percent}}% din ținta de cuvinte"
+    "percent": "{{percent}}% din ținta de cuvinte",
+    "numbers": "{{written}} din {{target}}"
   },
   "chapters": {
     "heading": "Capitole",
@@ -83,8 +102,14 @@
     "line": {
       "published": "Publicat {{date}}",
       "scheduled": "Programat pentru {{date}}",
-      "draft": "Ciornă"
-    }
+      "draft": "Ciornă",
+      "publishedToday": "Publicat azi",
+      "publishedNoDate": "Publicat",
+      "saved": "salvat {{when}}"
+    },
+    "drafts_one": "{{count}} ciornă",
+    "drafts_few": "{{count}} ciorne",
+    "drafts_other": "{{count}} de ciorne"
   },
   "linked": {
     "heading": "Proiect legat",
@@ -123,7 +148,8 @@
     "filterHint": "După nume sau după cum mai sunt cunoscute.",
     "none": "Încă nu ai personaje. Adaugă-l pe primul cu Personaj nou.",
     "noMatch": "Niciun personaj nu se potrivește cu „{{filter}}”.",
-    "sideColumn": "Relații, capitole și cititori",
+    "choose": "Alege un personaj ca să-i deschizi fișa.",
+    "backToCast": "Personaje",
     "notFound": "Personajul acesta nu mai este în poveste.",
     "createFailed": "Personajul nu a fost adăugat. Verifică-ți conexiunea și încearcă din nou.",
     "name": "Nume",
@@ -182,14 +208,14 @@
     },
     "firstAppearance": "Prima apariție",
     "firstAppearanceNone": "Încă nealeasă",
-    "firstAppearancePill": "Apare prima dată: capitolul {{number}}",
-    "povPill_one": "Punct de vedere în {{count}} capitol",
-    "povPill_few": "Punct de vedere în {{count}} capitole",
-    "povPill_other": "Punct de vedere în {{count}} de capitole",
+    "povFact_one": "punct de vedere în {{count}} capitol",
+    "povFact_few": "punct de vedere în {{count}} capitole",
+    "povFact_other": "punct de vedere în {{count}} de capitole",
+    "firstAppearsFact": "apare prima dată în capitolul {{number}}",
     "custom": {
-      "heading": "Câmpuri proprii",
+      "heading": "Câmpuri pentru personaje",
       "none": "Încă nu ai câmpuri proprii.",
-      "manage": "Scoate sau adu înapoi câmpuri pe pagina Pe scurt"
+      "manage": "Adaugă sau scoate câmpuri pe pagina Pe scurt"
     },
     "details": {
       "add": "Adaugă un detaliu",
@@ -216,9 +242,8 @@
     },
     "picture": {
       "heading": "Imagine",
-      "none": "Încă nu are imagine.",
       "upload": "Alege o imagine",
-      "hint": "JPEG, PNG sau WebP, până la 5 MB. O verificăm înainte să apară și doar tu o vezi.",
+      "hint": "Un desen, niciodată fotografia unei persoane reale. JPEG, PNG sau WebP, până la 5 MB. O verificăm înainte să apară.",
       "alt": "Descrie imaginea",
       "altHint": "Pentru cine nu o poate vedea.",
       "remove": "Scoate imaginea",
@@ -329,21 +354,22 @@
     },
     "add": {
       "heading": "Adaugă o relație",
-      "hint": "Se citește de la primul personaj la al doilea: „Ana e părinte pentru Vali”.",
+      "hint": "Citește de la primul personaj la al doilea: „Ana e părinte pentru Vali”.",
       "from": "Personaj",
       "to": "Celălalt personaj",
       "pickCharacter": "Alege un personaj",
       "kind": "Legătura",
+      "customOption": "Personalizată (eticheta ta)",
       "customLabel": "Ce este {{from}} pentru {{to}}?",
       "customHint": "De exemplu „nașă pentru” sau „îi datorează lui”.",
       "note": "Notă (opțional)",
       "button": "Adaugă legătura",
+      "sheetNote": "Fiecare apare pe fișele ambelor personaje și completează harta și arborele genealogic.",
       "added": "Legătura a fost adăugată.",
       "alreadyThere": "Legătura aceasta există deja.",
       "pickBoth": "Alege ambele personaje.",
-      "labelRequired": "Scrie o etichetă pentru această legătură.",
+      "labelRequired": "Scrie eticheta ta pentru această legătură.",
       "failed": "Legătura nu a fost salvată. Verifică-ți conexiunea și încearcă din nou.",
-      "group": "Fel",
       "cousinDegree": "Ce fel de veri",
       "cousinDegree1": "Veri primari",
       "cousinDegree2": "Veri de-al doilea",
@@ -363,28 +389,21 @@
       "heading": "Relații",
       "sheetHeading": "Relații",
       "none": "Încă nu ai legături.",
+      "count_one": "{{count}} legătură",
+      "count_few": "{{count}} legături",
+      "count_other": "{{count}} de legături",
       "delete": "Șterge",
-      "deletedUndo": "Ai șters „{{sentence}}”.",
+      "deletedUndo": "Ștearsă.",
       "failed": "Legătura nu a fost ștearsă. Verifică-ți conexiunea și încearcă din nou."
     },
     "map": {
-      "heading": "Harta legăturilor",
-      "region": "Harta legăturilor; pe ecrane mici se derulează",
+      "region": "Harta legăturilor; pe ecrane mici se derulează în lateral",
       "categoriesLabel": "Arată categoriile",
       "none": "Încă nu sunt legături de desenat.",
-      "focusOn": "Evidențiază",
-      "everyone": "Toată lumea",
-      "arrange": "Aranjează automat",
-      "dragHint": "Trage un card ca să-l muți. Trage un card peste altul ca să le legi.",
-      "moveFailed": "Noul loc al cardului nu a fost salvat. Verifică conexiunea și încearcă din nou.",
-      "arrangeFailed": "Harta nu a fost rearanjată. Verifică conexiunea și încearcă din nou.",
-      "zoomLabel": "Mărire",
-      "zoomOut": "Micșorează",
-      "zoomIn": "Mărește",
-      "fit": "Potrivește",
-      "zoomNow": "{{percent}}%",
+      "born": "n. {{year}}",
       "offMap": "Încă nu sunt pe hartă: {{names}}",
-      "key": "Fiecare categorie are culoarea ei. Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență.",
+      "key": "Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență. Alege o persoană ca să-i deschizi fișa; aceleași legături sunt înșirate sub hartă.",
+      "readerKey": "Fiecare categorie are culoarea ei. Linii continue: familie și aliați. Punctate: dragoste și altele. Întrerupte: conflict. Puncte fine: descendență.",
       "coloursButton": "Culorile categoriilor",
       "coloursIntro": "Alege o culoare pentru fiecare categorie. Harta și lista o urmează.",
       "colourFor": "Culoarea pentru {{category}}",
@@ -402,39 +421,22 @@
     },
     "tree": {
       "heading": "Arborele familiei",
-      "hint": "Făcut din „Părinte pentru”, „Partener(ă) sau soț(ie) pentru” și „Frate sau soră cu”. Partenerii stau unul lângă altul, copiii atârnă de linia lor, iar frații și surorile au o acoladă comună.",
+      "hint": "Făcut din „Părinte pentru”, „Partener(ă) sau soț(ie) pentru” și „Frate sau soră cu”. Generațiile mai vechi sunt sus.",
       "includeMade": "Include și transformările sau creațiile",
       "region": "Arborele familiei; pe ecrane mici se derulează în lateral",
       "swipe": "Glisează în lateral ca să vezi tot arborele.",
-      "none": "Încă nu sunt legături de familie. Adaugă „Părinte pentru”, „Frate sau soră cu”, „Partener(ă) sau soț(ie) pentru” sau „Văr sau vară cu” ca să apară arborele.",
-      "leftOff_one": "{{count}} personaj fără legături de familie nu apare.",
-      "leftOff_few": "{{count}} personaje fără legături de familie nu apar.",
-      "leftOff_other": "{{count}} de personaje fără legături de familie nu apar.",
+      "none": "Încă nu sunt legături de familie. Adaugă „Părinte pentru” sau „Partener(ă) sau soț(ie) pentru” ca să apară arborele.",
+      "leftOff_one": "{{count}} personaj fără legături de familie nu apare: {{names}}.",
+      "leftOff_few": "{{count}} personaje fără legături de familie nu apar: {{names}}.",
+      "leftOff_other": "{{count}} de personaje fără legături de familie nu apar: {{names}}.",
       "generationsLabel": "Generații",
       "generation": "Generația {{number}}: {{names}}",
       "whose": "Al cui arbore",
-      "everyFamily": "Toate familiile",
-      "add": {
-        "open": "Adaugă în arbore",
-        "heading": "Adaugă în arbore: {{name}}",
-        "headingAny": "Adaugă în arbore",
-        "relatedTo": "Rudă cu",
-        "character": "Personaj",
-        "how": "Ce e pentru {{name}}",
-        "howAny": "Ce rudă e",
-        "relations": {
-          "parent": "Părinte",
-          "child": "Copil",
-          "sibling": "Frate sau soră",
-          "partner": "Partener(ă) sau soț(ie)",
-          "cousin": "Văr sau vară"
-        },
-        "cancel": "Renunță",
-        "button": "Adaugă"
-      }
+      "noneFor": "{{name}} nu are încă legături de familie.",
+      "generationsNote": "Același arbore, în cuvinte."
     },
     "clash": {
-      "title": "Se contrazice cu o legătură care există deja.",
+      "title": "Se contrazice cu o legătură care există deja",
       "explain": "Există deja: „{{existing}}”. Salvarea adaugă și „{{proposed}}”.",
       "bothTrue": "Pot fi adevărate amândouă într-o poveste. Dacă sunt, adaugă o notă ca să știi cum.",
       "note": "Cum sunt adevărate amândouă (opțional)",
@@ -447,8 +449,7 @@
     "views": {
       "legend": "Vizualizare",
       "map": "Hartă",
-      "tree": "Arborele familiei",
-      "list": "Listă"
+      "tree": "Arborele familiei"
     }
   },
   "bible": {
@@ -465,6 +466,7 @@
     },
     "contents": {
       "heading": "Secțiuni",
+      "navLabel": "Secțiunile lumii poveștii",
       "manage": "Organizează secțiunile",
       "newEntryIn": "Intrare nouă în {{section}}",
       "newEntryName": "Intrare nouă",
@@ -511,8 +513,8 @@
       "bodyHint": "Poți folosi **aldine**, *cursive*, liste, titluri și linkuri precum [o hartă](https://example.com).",
       "empty": "Încă nu ai text. Alege Editează ca să-l scrii.",
       "inSection": "În {{section}}",
+      "more": "Mai multe pentru {{title}}",
       "delete": {
-        "heading": "Șterge intrarea",
         "button": "Șterge intrarea",
         "confirm": "Ștergi „{{title}}”? Asta nu se poate anula.",
         "yes": "Da, șterge",
@@ -618,7 +620,8 @@
     },
     "board": {
       "heading": "Panoul capitolelor",
-      "hint": "Trage un card de mâner (pe telefon sau tabletă, ține-l apăsat) sau folosește meniul lui: Mai devreme, Mai târziu, Actul anterior, Actul următor. Mutarea unui capitol deja publicat întreabă întâi.",
+      "hint": "Trage un card sau folosește meniul lui (Mai devreme, Mai târziu, Actul anterior, Actul următor). Mutarea unui capitol deja publicat întreabă întâi.",
+      "regionLabel": "Panoul capitolelor; pe ecrane mici se derulează în lateral",
       "noAct": "Fără act",
       "empty": "Încă nu e niciun capitol aici.",
       "chapterNumber": "Capitolul {{number}}",
@@ -626,10 +629,10 @@
       "pov": "Perspectivă: {{name}}",
       "noPov": "Încă fără perspectivă",
       "published": "Publicat",
+      "draft": "Ciornă",
       "words_one": "{{words}} cuvânt",
       "words_few": "{{words}} cuvinte",
       "words_other": "{{words}} de cuvinte",
-      "worldDate": "Data în poveste: {{date}}",
       "addChapter": "Adaugă capitol",
       "addChapterIn": "Adaugă capitol în {{name}}",
       "addFailed": "Nu am putut adăuga capitolul. Încearcă din nou peste puțin timp.",
@@ -689,24 +692,29 @@
         "button": "Adaugă evenimentul",
         "titleRequired": "Dă-i evenimentului un titlu.",
         "sortRequired": "Dă-i evenimentului un număr după care să fie sortat, de exemplu 2055,3.",
-        "failed": "Nu am putut adăuga evenimentul. Încearcă din nou peste puțin timp."
+        "failed": "Nu am putut adăuga evenimentul. Încearcă din nou peste puțin timp.",
+        "titlePlaceholder": "Liftul se strică",
+        "displayDatePlaceholder": "Primăvara lui 2027",
+        "sortValuePlaceholder": "2027,3"
       },
       "edit": "Modifică",
-      "editNamed": "Modifică {{title}}",
       "done": "Gata",
       "sortValueInvalid": "Folosește un număr, de exemplu 2055,3.",
       "delete": "Șterge",
-      "deleteNamed": "Șterge {{title}}",
-      "confirmDelete": "Ștergi definitiv „{{title}}”?",
-      "yes": "Da, șterge-l",
-      "keep": "Păstrează-l",
       "deleteFailed": "Nu am putut șterge evenimentul. Încearcă din nou peste puțin timp.",
       "undatedHeading": "Capitole fără dată",
       "undatedHint": "Deschide un capitol și completează-i data în poveste și valoarea de sortare ca să-l așezi în cronologie.",
       "undatedNone": "Fiecare capitol are un loc în cronologie.",
       "sortLine": "sortare {{value}}",
-      "noDateYet": "Încă fără dată în poveste",
-      "sideLabel": "Adaugă un eveniment și capitole fără dată"
+      "sideLabel": "Adaugă un eveniment și capitole fără dată",
+      "more": "Mai multe pentru {{title}}",
+      "removed": "Șters.",
+      "draft": "ciornă",
+      "undatedNumbers_one": "Capitolul {{list}}",
+      "undatedNumbers_few": "Capitolele {{list}}",
+      "undatedNumbers_other": "Capitolele {{list}}",
+      "showUndated": "Arată-le",
+      "hideUndated": "Ascunde-le"
     },
     "lanes": {
       "heading": "Culoarele perspectivelor",
@@ -716,8 +724,12 @@
       "none": "Niciun capitol nu are încă o perspectivă. Alege una în planul fiecărui capitol.",
       "noChapters": "Povestea nu are încă niciun capitol.",
       "countsLabel": "Capitole după narator",
-      "chaptersBy": "Spuse de {{name}}",
-      "toldByNarrator": "Spuse de narator"
+      "countFirst_one": "{{name}}: {{count}} capitol",
+      "countFirst_few": "{{name}}: {{count}} capitole",
+      "countFirst_other": "{{name}}: {{count}} de capitole",
+      "count": "{{name}}: {{count}}",
+      "rowName": "{{number}}. {{title}}",
+      "tellsIt": "povestește"
     }
   },
   "ideas": {
@@ -743,7 +755,7 @@
     "filters": {
       "open": "Deschise ({{count}})",
       "done": "Rezolvate ({{count}})",
-      "all": "Toate ({{count}})"
+      "all": "Ambele ({{count}})"
     },
     "empty": {
       "open": "Nimic deschis. Totul e bifat sau încă nu e nimic.",
@@ -751,18 +763,15 @@
       "all": "Încă nu ai notițe. Adaug-o pe prima mai sus."
     },
     "doneNamed": "Rezolvat: {{body}}",
-    "doneOn": "Rezolvat pe {{date}}",
+    "doneOn": "Rezolvat pe {{date}}.",
     "tickFailed": "N-am putut salva bifa. Încearcă din nou.",
     "body": "Notiță",
     "outcome": "Acțiune sau rezultat",
     "outcomeHint": "Ce ai hotărât sau ce ai făcut.",
-    "edit": "Editează",
     "editNamed": "Editează „{{body}}”",
-    "delete": "Șterge",
+    "closeEditor": "Gata",
     "deleteNamed": "Șterge „{{body}}”",
-    "confirmDelete": "Ștergi „{{body}}”? Nu se mai poate anula.",
-    "yes": "Da, șterge",
-    "keep": "Păstreaz-o",
+    "removed": "Ștearsă.",
     "deleteFailed": "N-am putut s-o ștergem. Încearcă din nou."
   },
   "marketing": {
@@ -770,7 +779,7 @@
     "heading": "Marketing",
     "pitchHeading": "Prezentarea",
     "launchHeading": "Lansarea",
-    "sharedHint": "Rezumatul și felul în care publici sunt aceleași ca în Pe scurt; genul și publicul sunt aceleași ca în Setările poveștii.",
+    "sharedHint": "Rezumatul și felul în care publici sunt aceleași ca în Pe scurt; genul și publicul vin din poveste.",
     "fields": {
       "back_cover_blurb": "Textul de pe coperta a patra",
       "comparable_titles": "Titluri asemănătoare",
@@ -780,7 +789,7 @@
     },
     "hints": {
       "back_cover_blurb": "Ce ar citi cineva care întoarce cartea.",
-      "comparable_titles": "Cărți sau povești ca a ta, de exemplu „Umbra vântului întâlnește Stranger Things”.",
+      "comparable_titles": "Cărți sau povești ca a ta.",
       "hooks_keywords": "Ce o face să iasă în evidență și cuvintele pe care le-ar căuta un cititor.",
       "query_pitch": "Prezentarea pe care ai trimite-o unui agent sau unei edituri.",
       "launch_notes": "Date, locuri unde s-o împarți, cui să-i spui."
@@ -806,16 +815,15 @@
     },
     "backCover": {
       "heading": "Coperta a patra",
-      "show": "Arată coperta a patra",
-      "hide": "Ascunde coperta a patra",
+      "hint": "Titlul, rezumatul, textul de pe coperta a patra și titlurile asemănătoare, așezate ca pe spatele unei cărți.",
+      "toggle": "Coperta a patra",
       "forReadersOf": "Pentru cititorii cărților",
       "empty": "Scrie rezumatul, textul sau titlurile asemănătoare și vor apărea aici.",
       "byline": "{{name}} · {{productName}}"
     },
     "qr": {
       "heading": "Cod QR",
-      "use": "Pentru afișe, pliante și semne de carte",
-      "hint": "Oamenii îl scanează cu camera telefonului și ajung la poveste. Alege unde duce, apoi descarcă-l.",
+      "hint": "Pentru afișe, pliante și semne de carte. Oamenii îl scanează cu camera telefonului și ajung la poveste.",
       "destination": "Unde duce",
       "destinations": {
         "story": "Pagina poveștii",
@@ -871,6 +879,7 @@
     "notFound": "încă negăsit",
     "chipsLabel": "Legături:",
     "chipNotFound": "{{name}}: încă negăsit",
+    "lineNotFound": "{{name}} (încă negăsit)",
     "mentionedIn": {
       "heading": "Menționat în",
       "none": "Încă nicio [[legătură]] către acest personaj. Scrie [[numele lui]] într-o intrare, un capitol sau o notiță.",
@@ -888,26 +897,31 @@
   "readers": {
     "documentTitle": "Ce văd cititorii în {{title}}: Story Atlas",
     "heading": "Ce văd cititorii",
-    "intro": "Tot ce e în planul tău rămâne privat până când pornești o zonă. O zonă pornită apare lângă poveste după ce o publici, pentru fiecare cititor căruia ratingul poveștii îi permite.",
-    "introItems": "Ca să păstrezi ceva doar pentru tine, bifează „Păstrează privat” pe pagina lui: un personaj, o relație, o secțiune sau o intrare din lumea poveștii ori un eveniment. Un personaj, o intrare sau un eveniment pot aștepta și până când cititorul ajunge la un anumit capitol, ca să nu dezvălui povestea.",
+    "intro": "Tot ce e în planul tău rămâne privat până când pornești o zonă. Ca să păstrezi ceva doar pentru tine, bifează Păstrează privat pe pagina lui: un personaj, o relație sau o intrare.",
     "notPublished": "Povestea ta nu e publicată încă, așa că cititorii nu văd nimic din toate acestea.",
     "previewLink": "Vezi ca un cititor",
     "areas": {
       "legend": "Zone pe care le văd cititorii",
+      "hint": "O zonă pornită apare pe pagina poveștii, la Împărtășite de autor.",
+      "names": {
+        "characters": "Personaje",
+        "relationship_map": "Harta relațiilor",
+        "family_tree": "Arbore genealogic",
+        "bible": "Lumea poveștii",
+        "timeline": "Cronologie"
+      },
       "hints": {
         "characters": "Pagina fiecărui personaj, doar cu părțile din fișă pe care le deschizi.",
         "relationship_map": "Harta legăturilor dintre personaje, cu lista ei.",
         "family_tree": "Arborele genealogic.",
-        "bible": "Lumea poveștii, în modul de citire.",
+        "bible": "Lumea poveștii tale, în modul de citire.",
         "timeline": "Evenimentele din cronologie, în ordine."
-      },
-      "on": "Pornit",
-      "off": "Oprit"
+      }
     },
     "item": {
       "heading": "Ce văd cititorii",
       "characterHint": "Cititorii văd acest personaj cât timp Personajele, harta sau arborele genealogic sunt publice și doar părțile din fișă pe care le deschizi mai jos.",
-      "entryHint": "Cititorii văd această intrare cât timp lumea poveștii e publică.",
+      "entryHint": "Cititorii văd această intrare cât timp le arăți lumea poveștii.",
       "settingsLink": "Alege ce văd cititorii",
       "keepPrivate": "Păstrează privat",
       "keepPrivateNamed": "Păstrează privat: {{name}}",
@@ -927,24 +941,26 @@
     },
     "preview": {
       "documentTitle": "{{title}} văzută ca un cititor: Story Atlas",
-      "note": "Vezi ca un cititor. Asta văd cititorii. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
-      "notPublished": "Vezi ca un cititor. Asta vor vedea cititorii după ce povestea e publicată. Ce are un capitol marcat apare doar după ce cititorul ajunge acolo.",
+      "note": "Asta văd cititorii. Ce are un capitol marcat apare doar după ce cititorul a ajuns la el.",
+      "notPublished": "Asta vor vedea cititorii după ce povestea e publicată. Ce are un capitol marcat apare doar după ce cititorul a ajuns la el.",
       "nothing": "Nimic nu e public încă."
     },
     "characters": {
       "heading": "Personaje",
+      "hint": "Alege capitolul de la care apare fiecare și părțile din fișă. Cititorii care n-au ajuns la acel capitol nu îl văd.",
+      "listLabel": "Ce văd cititorii din fiecare personaj",
       "none": "Niciun personaj încă.",
       "keptPrivate": "Păstrat privat",
-      "fromStart": "Cititorii îl văd de la început",
-      "fromChapter": "Cititorii îl văd de la capitolul {{number}}",
+      "fromStart": "De la început",
+      "fromChapter": "De la capitolul {{number}}",
       "noParts": "nicio parte din fișă",
       "change": "Schimbă",
       "done": "Gata",
-      "changeNamed": "Schimbă ce văd cititorii din {{name}}"
-    },
-    "spoilers": {
-      "heading": "Fără dezvăluiri",
-      "body": "Alege capitolul de la care apare fiecare lucru. Cititorii care n-au ajuns acolo nu îl văd."
+      "changeNamed": "Schimbă ce văd cititorii din {{name}}",
+      "fromChapterTitled": "De la capitolul {{number}}: {{title}}",
+      "showMore_one": "Arată încă {{count}}",
+      "showMore_few": "Arată încă {{count}}",
+      "showMore_other": "Arată încă {{count}}"
     },
     "summary": {
       "private": "Păstrat privat",
@@ -959,7 +975,7 @@
     "documentTitle": "{{area}}: {{title}}",
     "eyebrow": "Lumea poveștii",
     "navLabel": "Părți din lumea poveștii",
-    "notFound": "Asta nu e disponibilă. Poate autorul n-o împărtășește sau povestea nu îți e disponibilă.",
+    "notFound": "Asta nu e disponibilă. Poate autorul n-o împărtășește sau povestea nu mai e disponibilă.",
     "loadFailed": "Nu s-a putut încărca. Verifică-ți conexiunea și încearcă din nou.",
     "guard": "Apare de la capitolul {{number}}: {{title}}",
     "areas": {
@@ -970,25 +986,29 @@
       "timeline": "Cronologie"
     },
     "cast": {
-      "none": "Niciun personaj de arătat încă."
+      "none": "Niciun personaj de arătat încă.",
+      "lead": "Doar ce împărtășește autorul și doar până la capitolul la care ai ajuns."
     },
     "character": {
       "back": "Personaje",
-      "connections": "Relații",
+      "connections": "Legături",
       "notShown": "Acest personaj nu apare aici."
     },
     "world": {
       "none": "Nimic din lumea poveștii de arătat încă.",
-      "back": "Lume",
       "more": "Mai multe din lume",
       "notShown": "Această intrare nu apare aici."
     },
     "timeline": {
       "none": "Niciun eveniment de arătat încă."
     },
-    "byline": "de {{name}} · împărtășit de autor"
+    "byline": "de {{name}} · împărtășit de autor",
+    "bylineLinked": "de <writer>{{name}}</writer> · împărtășit de autor"
   },
   "breadcrumb": {
     "label": "Unde ești"
+  },
+  "glance": {
+    "editedRecently": "Modificate recent"
   }
 }

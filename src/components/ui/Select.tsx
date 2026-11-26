@@ -53,6 +53,11 @@ export interface SelectProps {
    * isLabelVisible says. Left out, the label sits beside it, small, as in a filter bar.
    */
   isLabelAbove?: boolean;
+  /**
+   * A visible label beside the drop-down in the label style (15 px, semibold, the heading colour)
+   * instead of the small meta style, as board E26 draws "Whose tree".
+   */
+  isLabelStrong?: boolean;
   /** True while the choice is missing or wrong after a send, so screen readers say so. */
   isInvalid?: boolean;
 }
@@ -61,9 +66,12 @@ export interface SelectProps {
  * The classes of the wrapper and the label: side by side and small, or stacked like a text
  * field's label.
  *
+ * @param isLabelVisible - whether the label shows on screen
+ * @param isLabelAbove - whether it sits above the drop-down
+ * @param isLabelStrong - whether a label beside it takes the label style
  * @returns the two class strings
  */
-function labelLayout(isLabelVisible: boolean, isLabelAbove: boolean) {
+function labelLayout(isLabelVisible: boolean, isLabelAbove: boolean, isLabelStrong: boolean) {
   // A label above the drop-down is always shown: a form field's label is never hidden
   // (WCAG 3.3.2; bundle 10, boards J11 and J20), so isLabelAbove alone is enough.
   if (isLabelAbove) {
@@ -74,6 +82,13 @@ function labelLayout(isLabelVisible: boolean, isLabelAbove: boolean) {
   }
   if (!isLabelVisible) {
     return { wrapper: 'inline-flex flex-wrap items-center gap-2', label: 'sr-only' };
+  }
+  // Board E26: a strong label beside the drop-down, in the label style.
+  if (isLabelStrong) {
+    return {
+      wrapper: 'inline-flex flex-wrap items-center gap-2',
+      label: 'type-label font-semibold text-ink-heading',
+    };
   }
   return {
     wrapper: 'inline-flex flex-wrap items-center gap-2',
@@ -110,9 +125,10 @@ export function Select({
   placement = 'form',
   descriptionId,
   isLabelAbove = false,
+  isLabelStrong = false,
   isInvalid = false,
 }: SelectProps) {
-  const layout = labelLayout(isLabelVisible, isLabelAbove);
+  const layout = labelLayout(isLabelVisible, isLabelAbove, isLabelStrong);
   /** Passes the chosen value up; the parent keeps the state. */
   function handleChange(event: ChangeEvent<HTMLSelectElement>) {
     onChange(event.target.value);

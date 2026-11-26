@@ -12,7 +12,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(31);
+select plan(34);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -62,6 +62,17 @@ select is(public.my_onboarding() ->> 'region_code', 'RO-CJ', 'the county is kept
 select throws_ok($$ select public.save_my_region('RO-XX') $$, '23514', null, 'a county not on the list is refused');
 select lives_ok($$ select public.save_my_region(null) $$, 'the county can be cleared');
 select is(public.my_onboarding() ->> 'region_code', null, 'and is gone');
+-- COUNTRY-2: the counties follow the country on the profile (trial bug, 26 Nov 2026).
+select is(public.my_onboarding() ->> 'country_code', 'RO', 'the steps know the country on the profile');
+select pg_temp.as_owner();
+update public.profiles set country_code = 'SE' where id = '00000000-0000-4000-8000-000000000001';
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select throws_ok($$ select public.save_my_region('RO-CJ') $$, '23514', null,
+  'a person in Sweden can''t pick a Romanian county');
+select is(public.my_onboarding() ->> 'country_code', 'SE', 'and the steps say Sweden');
+select pg_temp.as_owner();
+update public.profiles set country_code = 'RO' where id = '00000000-0000-4000-8000-000000000001';
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is((select count(*)::integer from public.regions where country_code = 'RO'), 42,
   'Romania''s 41 counties and Bucharest are listed');
 select pg_temp.sign_out();

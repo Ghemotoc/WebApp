@@ -4,12 +4,12 @@
  * The title, genre and audience are the story's own (its title, category and rating from New
  * story and Story settings, S1-E3-01 and S1-E3-06), so a change here is the same change there
  * (one place for both sides). The logline, series name, word target, writing status and
- * publishing route are the plan's own and private. Every field saves by itself.
- * Who uses it: StoryAtlasPage. What it calls: useStoryPlan's saveStory and savePlan, and
+ * publishing route are the plan's own and private. Every field saves by itself. Laid out as board
+ * E21 draws it (user stories bundle 6): flat under a fine line, the four short fields in two
+ * columns, every field at most 480 px wide.
+ * Who uses it: AtAGlance. What it calls: useStoryPlan's saveStory and savePlan, and
  * useStoryChoiceOptions for the genres and audiences.
  */
-import { FormSection } from '@/features/writing/components/FormSection';
-
 import {
   publishingRoutes,
   writingStatuses,
@@ -20,6 +20,7 @@ import {
 import { useStoryChoiceOptions } from '../hooks/useStoryChoiceOptions';
 import { useAtlasTranslation } from '../registerAtlasTranslations';
 
+import { AtlasFlatSection } from './AtlasFlatSection';
 import { PlanSelectField } from './PlanSelectField';
 import { PlanTextField } from './PlanTextField';
 import { WordTargetField } from './WordTargetField';
@@ -37,49 +38,30 @@ export interface StoryDetailsSectionProps {
   savePlan: SavePlan;
 }
 
-/** The title, genre and audience: the story's own fields, shared with Story settings. */
-function StoryOwnFields({ page, saveStory }: Omit<StoryDetailsSectionProps, 'savePlan'>) {
+/** The four short fields in two columns: genre, audience, writing status and word target. */
+function ShortFields({ page, saveStory, savePlan }: StoryDetailsSectionProps) {
   const { t } = useAtlasTranslation();
   const { genreOptions, audienceOptions } = useStoryChoiceOptions();
   return (
-    <>
-      <p className="m-0 type-body text-ink-muted">{t('details.sharedHint')}</p>
-      <PlanTextField
-        id="atlas-title"
-        label={t('details.title')}
-        maxLength={120}
-        isValid={(title) => title.trim() !== ''}
-        invalidMessage={t('details.titleRequired')}
-        savedValue={page.story.title}
-        save={async (title) => saveStory('title', title)}
-      />
-      <div className="flex flex-wrap gap-x-8 gap-y-2">
-        {genreOptions.length > 0 && (
-          <PlanSelectField
-            id="atlas-genre"
-            label={t('details.genre')}
-            options={genreOptions}
-            savedValue={page.story.categorySlug}
-            save={async (slug) => saveStory('categorySlug', slug)}
-          />
-        )}
+    <div className="grid max-w-[480px] grid-cols-1 gap-4 sm:grid-cols-2">
+      {genreOptions.length > 0 && (
         <PlanSelectField
-          id="atlas-audience"
-          label={t('details.audience')}
-          options={audienceOptions}
-          savedValue={page.story.rating}
-          save={async (rating) => saveStory('rating', rating)}
+          id="atlas-genre"
+          label={t('details.genre')}
+          options={genreOptions}
+          savedValue={page.story.categorySlug}
+          save={async (slug) => saveStory('categorySlug', slug)}
+          isLabelAbove
         />
-      </div>
-    </>
-  );
-}
-
-/** The writing status and publishing route drop-downs: the plan's own. */
-function PlanChoiceFields({ page, savePlan }: Omit<StoryDetailsSectionProps, 'saveStory'>) {
-  const { t } = useAtlasTranslation();
-  return (
-    <div className="flex flex-wrap gap-x-8 gap-y-2">
+      )}
+      <PlanSelectField
+        id="atlas-audience"
+        label={t('details.audience')}
+        options={audienceOptions}
+        savedValue={page.story.rating}
+        save={async (rating) => saveStory('rating', rating)}
+        isLabelAbove
+      />
       <PlanSelectField
         id="atlas-writing-status"
         label={t('details.writingStatus')}
@@ -89,7 +71,39 @@ function PlanChoiceFields({ page, savePlan }: Omit<StoryDetailsSectionProps, 'sa
         }))}
         savedValue={page.plan.writingStatus}
         save={async (status) => savePlan('writingStatus', status as PlanFields['writingStatus'])}
+        isLabelAbove
       />
+      <WordTargetField
+        savedTarget={page.plan.wordTarget}
+        save={async (target) => savePlan('wordTarget', target)}
+      />
+    </div>
+  );
+}
+
+/**
+ * Renders the section.
+ *
+ * @returns "Story details" under a fine line: the shared hint, the title, the four short fields,
+ *   the publishing route, the logline and the series name (board E21)
+ */
+export function StoryDetailsSection({ page, saveStory, savePlan }: StoryDetailsSectionProps) {
+  const { t } = useAtlasTranslation();
+  return (
+    <AtlasFlatSection headingId="atlas-details-heading" heading={t('details.heading')}>
+      <p className="m-0 type-meta">{t('details.sharedHint')}</p>
+      <div className="max-w-[480px]">
+        <PlanTextField
+          id="atlas-title"
+          label={t('details.title')}
+          maxLength={120}
+          isValid={(title) => title.trim() !== ''}
+          invalidMessage={t('details.titleRequired')}
+          savedValue={page.story.title}
+          save={async (title) => saveStory('title', title)}
+        />
+      </div>
+      <ShortFields page={page} saveStory={saveStory} savePlan={savePlan} />
       <PlanSelectField
         id="atlas-publishing-route"
         label={t('details.publishingRoute')}
@@ -99,42 +113,26 @@ function PlanChoiceFields({ page, savePlan }: Omit<StoryDetailsSectionProps, 'sa
         }))}
         savedValue={page.plan.publishingRoute}
         save={async (route) => savePlan('publishingRoute', route as PlanFields['publishingRoute'])}
+        isLabelAbove
       />
-    </div>
-  );
-}
-
-/**
- * Renders the section.
- *
- * @returns the "Story details" card
- */
-export function StoryDetailsSection({ page, saveStory, savePlan }: StoryDetailsSectionProps) {
-  const { t } = useAtlasTranslation();
-  return (
-    <FormSection legend={t('details.heading')}>
-      <StoryOwnFields page={page} saveStory={saveStory} />
-      <PlanTextField
-        id="atlas-logline"
-        label={t('details.logline')}
-        hint={t('details.loglineHint')}
-        isMultiline
-        maxLength={400}
-        savedValue={page.plan.logline}
-        save={async (logline) => savePlan('logline', logline)}
-      />
-      <PlanTextField
-        id="atlas-series-name"
-        label={t('details.seriesName')}
-        maxLength={120}
-        savedValue={page.plan.seriesName}
-        save={async (name) => savePlan('seriesName', name)}
-      />
-      <WordTargetField
-        savedTarget={page.plan.wordTarget}
-        save={async (target) => savePlan('wordTarget', target)}
-      />
-      <PlanChoiceFields page={page} savePlan={savePlan} />
-    </FormSection>
+      <div className="flex max-w-[480px] flex-col gap-4">
+        <PlanTextField
+          id="atlas-logline"
+          label={t('details.logline')}
+          hint={t('details.loglineHint')}
+          isMultiline
+          maxLength={400}
+          savedValue={page.plan.logline}
+          save={async (logline) => savePlan('logline', logline)}
+        />
+        <PlanTextField
+          id="atlas-series-name"
+          label={t('details.seriesName')}
+          maxLength={120}
+          savedValue={page.plan.seriesName}
+          save={async (name) => savePlan('seriesName', name)}
+        />
+      </div>
+    </AtlasFlatSection>
   );
 }

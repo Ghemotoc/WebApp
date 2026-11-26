@@ -22,6 +22,8 @@ export interface PlanSelectFieldProps {
   savedValue: string;
   /** Saves the picked value; throws when it can't. */
   save: (value: string) => Promise<void>;
+  /** The label above the drop-down, as a form draws it (board E21); beside it when left out. */
+  isLabelAbove?: boolean;
 }
 
 /**
@@ -36,6 +38,7 @@ export function PlanSelectField({
   options,
   savedValue,
   save,
+  isLabelAbove = false,
 }: PlanSelectFieldProps) {
   const field = useAutosaveField({ savedValue, save });
 
@@ -51,6 +54,7 @@ export function PlanSelectField({
         id={id}
         label={label}
         isLabelVisible
+        isLabelAbove={isLabelAbove}
         options={options}
         value={field.value}
         onChange={pick}

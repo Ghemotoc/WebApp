@@ -966,7 +966,7 @@ const writeRoutes: RouteObject[] = [
     },
   },
   // Discover (S1-E5-01) and every list's See all page (S1-E5-09): the Discover shelves, a
-  // category, a tag and a writer's stories share one page; the address decides the list.
+  // category, a tag, someone's library and a search share one page; the address decides the list.
   {
     path: '/discover',
     HydrateFallback: () => null,
@@ -979,7 +979,6 @@ const writeRoutes: RouteObject[] = [
     '/discover/all/:listKind',
     '/discover/c/:categorySlug',
     '/discover/t/:tag',
-    '/u/:handle/stories',
     // Someone's library, from their profile, when they let the reader see it (S1-E13-01).
     '/u/:readerHandle/library',
     // Every story a search finds (S1-E5-04): the term is in ?q=.
@@ -1227,6 +1226,17 @@ const writeRoutes: RouteObject[] = [
       return { Component: () => <SearchGroupPage group={group} /> };
     },
   })),
+  // Every story a writer published, from "See every story" on their profile and "More by" at the
+  // end of a story (board C05, bundle 3 of the user stories): Ongoing, Completed and Both.
+  {
+    path: '/u/:handle/stories',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { ProfileStoriesPage } =
+        await import('@/features/people/components/ProfileStoriesPage');
+      return { Component: ProfileStoriesPage };
+    },
+  },
   // A person's public bookshelves, from "Also on" on their profile (board C06, bundle 3 of the
   // user stories): only public bookshelves, through profile_bookshelves().
   {

@@ -5,9 +5,10 @@
  *
  * Delete deletes at once and the shared undo note offers "Undo" for 8 seconds, which puts the
  * relationship back exactly as it was (design books item 14: Undo instead of asking; it replaces
- * the Story Atlas principle of a second, confirming click). The list's rows have a fine line between them (DoD: label
- * rows). On the Connections page each sentence starts with its category's colour dot (CALM-9,
- * board E25: the colour shows "on the list labels").
+ * the Story Atlas principle of a second, confirming click; story 6.6: "Removed. Undo"). The
+ * list's rows have a fine line between them (DoD: label rows), and Delete is a text button (board
+ * E25). On the Connections page each sentence has its category under it, in bold after its colour
+ * dot (board E25's meta line; CALM-9: the colour shows "on the list labels").
  * Who uses it: CharacterRelationshipsSection and ConnectionsPage. What it calls: onDelete (from
  * useRelationshipChangers) and useUndo.
  */
@@ -43,7 +44,7 @@ interface RelationshipRowProps extends Omit<RelationshipListProps, 'relationship
   relationship: CharacterRelationship;
 }
 
-/** The sentence, after its category's colour dot when the colours are given. */
+/** The sentence and, when the colours are given, its category under it with the colour dot. */
 function RowSentence({
   relationship,
   sentence,
@@ -53,12 +54,17 @@ function RowSentence({
   sentence: string;
   colours: RelationshipColours | undefined;
 }) {
+  const { t } = useAtlasTranslation();
+  const category = categoryOf(relationship.kind);
   return (
-    <span className="flex min-w-0 items-center gap-2 break-words text-ink">
+    <span className="flex min-w-0 flex-col gap-1">
+      <span className="type-body break-words text-ink">{sentence}</span>
       {colours !== undefined && (
-        <CategoryDot category={categoryOf(relationship.kind)} colours={colours} />
+        <span className="flex items-center gap-2 type-meta font-semibold text-ink">
+          <CategoryDot category={category} colours={colours} />
+          {t(`connections.categories.${category}`)}
+        </span>
       )}
-      {sentence}
     </span>
   );
 }
@@ -94,7 +100,7 @@ function RelationshipRow({
     <li className="flex flex-col gap-2 border-b border-hairline py-3 last:border-b-0">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <RowSentence relationship={relationship} sentence={sentence} colours={colours} />
-        <Button variant="secondary" onClick={() => void remove()}>
+        <Button variant="text" onClick={() => void remove()}>
           {t('connections.list.delete')}
           <span className="sr-only"> {sentence}</span>
         </Button>

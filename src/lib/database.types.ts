@@ -9680,6 +9680,7 @@ export type Database = {
           kind: string;
           note: string;
           reverse_label: string;
+          show_from_chapter_id: string | null;
           story_id: string;
           to_character_id: string;
           updated_at: string;
@@ -9697,6 +9698,7 @@ export type Database = {
           kind: string;
           note?: string;
           reverse_label?: string;
+          show_from_chapter_id?: string | null;
           story_id: string;
           to_character_id: string;
           updated_at?: string;
@@ -9713,6 +9715,7 @@ export type Database = {
           kind?: string;
           note?: string;
           reverse_label?: string;
+          show_from_chapter_id?: string | null;
           story_id?: string;
           to_character_id?: string;
           updated_at?: string;
@@ -9724,6 +9727,13 @@ export type Database = {
             columns: ['from_character_id'];
             isOneToOne: false;
             referencedRelation: 'story_characters';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'story_character_relationships_show_from_chapter_id_fkey';
+            columns: ['show_from_chapter_id'];
+            isOneToOne: false;
+            referencedRelation: 'chapters';
             referencedColumns: ['id'];
           },
           {
@@ -17611,6 +17621,8 @@ export type Database = {
         Args: { archive_email_hash: string; closed_user_id: string; new_user_id: string };
         Returns: Json;
       };
+      restore_story_event: { Args: { removed: Json; story_slug: string }; Returns: Json };
+      restore_story_idea: { Args: { removed: Json; story_slug: string }; Returns: Json };
       retention_periods: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -17800,6 +17812,10 @@ export type Database = {
       };
       search_like_pattern: { Args: { term: string }; Returns: string };
       search_query: { Args: { term: string }; Returns: unknown };
+      search_snippet_source: {
+        Args: { haystack: string; title: string; wanted: string };
+        Returns: string;
+      };
       search_story: { Args: { query: string; story_slug: string }; Returns: Json };
       search_tags: {
         Args: { page_offset?: number; page_size?: number; term: string };

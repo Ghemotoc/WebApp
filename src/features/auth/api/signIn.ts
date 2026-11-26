@@ -12,6 +12,7 @@
 import type { AppSupabaseClient } from '@/lib/supabase';
 
 import { hashEmail } from '../lib/emailHash';
+import { resetPasswordAddress } from '../lib/passwordRecovery';
 
 /** What a log-in try answered. */
 export type SignInResult =
@@ -130,7 +131,8 @@ export async function sendLogInLink(
 }
 
 /**
- * Emails a link to choose a new password ("Send reset link").
+ * Emails a link to choose a new password ("Send reset link"). The link comes back to
+ * /reset-password on this site (redirectTo, allowed in Supabase's Redirect URLs).
  *
  * @param client - the shared Supabase client
  * @param email - as typed
@@ -141,7 +143,11 @@ export async function sendResetLink(
   client: AppSupabaseClient,
   email: string,
 ): Promise<'sent' | 'too_many_attempts'> {
-  const { error } = await client.auth.resetPasswordForEmail(email.trim());
+  // The link in the email comes back to this site's reset page, which asks for the new password;
+  // without it Auth sent people to the home page, logged in but never asked (26 Nov 2026).
+  const { error } = await client.auth.resetPasswordForEmail(email.trim(), {
+    redirectTo: resetPasswordAddress(window.location.origin),
+  });
   if (error !== null && rateLimitCodes.has(error.code ?? '')) return 'too_many_attempts';
   if (error !== null && isUnreachable(error)) throw new Error('Could not reach Supabase.');
   return 'sent';
@@ -161,6 +167,19 @@ export async function openResetLink(
 ): Promise<boolean> {
   const { error } = await client.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' });
   return error === null;
+}
+
+/**
+ * Whether this device is already signed in from a reset link. Supabase's own reset email opens
+ * Auth's verify address, which signs the person in and comes back to /reset-password with the
+ * session in the address; the client reads it while it starts, so getSession() has it.
+ *
+ * @param client - the shared Supabase client
+ * @returns true when there is a session to choose a new password with
+ */
+export async function hasResetSession(client: AppSupabaseClient): Promise<boolean> {
+  const { data, error } = await client.auth.getSession();
+  return error === null && data.session !== null;
 }
 
 /**
