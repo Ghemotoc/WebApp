@@ -13,6 +13,8 @@
  *   (board A08; CLAUDE.md rule 18);
  * - the Spaces tab finds a seeded 16+ space by a word of its description, and never the seeded
  *   under-16 space for a visitor (board A08);
+ * - before a search, the Spaces chip under the field makes the search open on the Spaces tab
+ *   (board A07);
  * - the Writers tab finds a writer by username and opens their profile;
  * - on a phone "Filter and sort" opens a sheet and counts the filters on, and writer rows have
  *   Follow (board A08);
@@ -174,6 +176,32 @@ test.describe('search (S1-E5-04)', () => {
     await expect(page.getByText('No spaces match “young poets”.')).toBeVisible();
   });
 
+  test('before a search, the Spaces chip makes the search open on the Spaces tab', async ({
+    page,
+  }) => {
+    // Board A07: the four chips sit under the field, Stories chosen first.
+    await page.goto('/search');
+    const scope = page.getByRole('radiogroup', { name: 'Search in' });
+    await expect(scope.getByRole('radio', { name: 'Stories' })).toBeChecked();
+    await scope.getByRole('radio', { name: 'Spaces' }).click();
+    await expect(page).toHaveURL(/\/search\?in=spaces$/);
+    // The search then opens on the Spaces tab, and the chips give way to the results tabs.
+    await page
+      .getByRole('searchbox', { name: 'Search stories, writers and Together' })
+      .fill('folklore');
+    await page
+      .getByRole('searchbox', { name: 'Search stories, writers and Together' })
+      .press('Enter');
+    await expect(page).toHaveURL(/q=folklore&in=spaces/);
+    await expect(page.getByRole('radio', { name: /^Spaces 1$/ })).toBeChecked();
+    await expect(
+      page
+        .getByRole('list', { name: 'Spaces' })
+        .getByRole('link', { name: 'Fantasy writers’ circle' }),
+    ).toBeVisible();
+    await expect(page.getByRole('radiogroup', { name: 'Search in' })).toHaveCount(0);
+  });
+
   test('the Writers tab finds a writer by username and opens their profile', async ({ page }) => {
     await page.goto('/search?q=teacher');
     await page
@@ -236,7 +264,11 @@ test.describe('search (S1-E5-04)', () => {
     await expect(page.getByText('Check the spelling.')).toBeVisible();
   });
 
-  for (const view of everyView([`/search?q=${foldedWord}`, '/search/writers?q=teacher'])) {
+  for (const view of everyView([
+    '/search',
+    `/search?q=${foldedWord}`,
+    '/search/writers?q=teacher',
+  ])) {
     test(`axe: ${view.address} at ${view.width} px, ${view.theme}, ${view.language}`, async ({
       page,
     }) => {
