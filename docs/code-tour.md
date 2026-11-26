@@ -868,6 +868,8 @@ readers: get_story_page() → story_classic_author() → "Text from: <source edi
 
 Tests: `supabase/tests/database/160-classic-works.test.sql`, `src/features/staff/lib/splitClassicText.test.ts`, `src/features/staff/lib/publicDomain.test.ts`, `e2e/classics.spec.ts`.
 
+Many classics at once (Robert, 26 Nov 2026): the texts sit in `content/classics/bulk-2026-11/` as compressed JSON lines. Actions › "Load classics" (`.github/workflows/load-classics.yml`) runs `scripts/classics/build-load-sql.py`, which writes SQL parts that each define `pg_temp.load_classic` (`scripts/classics/load-classic.sql`) and run it once per work: the same steps as the three `admin_*` functions above, as the database owner, with the owner account in the audit log. The test is in `scripts/repository-setup.test.ts`.
+
 ### The classics shelf, research lists, 1 January and typo fixes (S1-E5-06, S1-E11-16 part 16b)
 
 - **Readers:** Discover's "Public-domain classics" shelf is the story list kind `classics` (`list_holds_story()`: stories with a `classic_author_id`). It goes through `listed_stories()` like every list, so ratings, blocks and moderation apply, and "View more" opens `/discover/all/classics`. The shelf is the word `classics` in the `discover_shelves` setting (Staff › Settings › Discover mix); `is_story_list_kind()` is the one list of kinds `browse_stories()` accepts.
