@@ -16,6 +16,9 @@
  * - the class then sees the Winner card with the Winner's pen name and chapter and the Readers'
  *   choice pen name, each entrant reads only their own result, and each is told in
  *   Notifications;
+ * - the Winner gets "You're the winner" the first time they open the class after the results
+ *   came out (it keeps to the look rules by day and at night); Done closes it and it never comes
+ *   back (board G13, user story 8.13; BOOKS-8, part 8c);
  * - the Winner card's "Issue certificates" opens the certificates with the confirmed results
  *   filled in and locked; approving signs one per entrant and a second one for Readers' choice,
  *   and a certificate typed by hand under the competition's name can't say anything else
@@ -488,10 +491,27 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     await expect(writer.getByText('Readers’ choice.')).toBeVisible();
     await writer.context().close();
 
+    // G13: the Winner's "You're the winner" notice keeps to the look rules, by day and at night.
+    await expectLookRulesByDayAndNight(browser, 'adult_writer', `/spaces/${classSlug}`, (page) =>
+      expect(page.getByRole('dialog', { name: 'You’re the winner' })).toBeVisible(),
+    );
     const winner = await openAs(browser, 'adult_writer', `/spaces/${classSlug}`);
+    const notice = winner.getByRole('dialog', { name: 'You’re the winner' });
     await expect(
-      winner.getByRole('region', { name: competitionName }).getByText('Result: Winner'),
+      notice.getByText(`picked “Lacul din nord” as the winner of ${competitionName}.`),
     ).toBeVisible();
+    await expect(notice.getByRole('link', { name: 'Read the chapter again' })).toBeVisible();
+    await expect(notice.getByText(/\d+ of \d+|\d+ points?/)).toHaveCount(0);
+    // Done closes it for good: it never comes back, even after a reload.
+    await notice.getByRole('button', { name: 'Done' }).click();
+    await expect(notice).toHaveCount(0);
+    await winner.reload();
+    await expect(
+      winner
+        .getByRole('region', { name: `Winner: ${competitionName}` })
+        .getByText('Result: Winner'),
+    ).toBeVisible();
+    await expect(winner.getByRole('dialog', { name: 'You’re the winner' })).toHaveCount(0);
     await winner.goto('/notifications');
     await expect(winner.getByText('you are the Winner of the class competition')).toBeVisible();
     await winner.context().close();
@@ -504,22 +524,23 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     await teacher.getByRole('link', { name: 'Issue certificates' }).click();
     await expect(teacher).toHaveURL(/\/certificates\?competition=/);
     // The competition's name is the programme and the results are the confirmed ones, locked.
-    await expect(
-      teacher.getByText(`Results of the competition “${competitionName}”.`, { exact: false }),
-    ).toBeVisible();
-    const results = teacher.getByRole('region', { name: 'Confirmed results' });
+    await expect(teacher.getByRole('heading', { name: `From ${competitionName}` })).toBeVisible();
+    const results = teacher.getByRole('list', { name: 'Certificates to sign' });
     const winnerRow = results.getByRole('listitem').filter({ hasText: classmateName });
     await expect(winnerRow.getByText('Winner', { exact: true })).toBeVisible();
-    const finalistRow = results.getByRole('listitem').filter({ hasText: writerName });
-    await expect(finalistRow.getByText('Finalist', { exact: true })).toBeVisible();
-    await expect(finalistRow.getByText('Readers’ choice', { exact: true })).toBeVisible();
+    // Readers' choice is a second certificate, so it has a row of its own (board G14).
+    const finalistRows = results.getByRole('listitem').filter({ hasText: writerName });
+    await expect(finalistRows).toHaveCount(2);
+    await expect(finalistRows.nth(0).getByText('Finalist', { exact: true })).toBeVisible();
+    await expect(finalistRows.nth(1).getByText('Readers’ choice', { exact: true })).toBeVisible();
     await expect(teacher.getByLabel(/^Result for /)).toHaveCount(0);
-    await expect(teacher.getByLabel('Programme')).toHaveCount(0);
+    await expect(teacher.getByLabel('Programme')).toHaveValue(competitionName);
+    await expect(teacher.getByLabel('Programme')).not.toBeEditable();
     // One certificate per entrant, and a second one for Readers' choice.
     await teacher.getByRole('button', { name: 'Approve and sign' }).click();
     await expect(teacher.getByText('Signed: 3 certificates made or changed.')).toBeVisible();
-    const signed = teacher.getByRole('region', { name: 'Signed certificates' });
-    await expect(signed.getByRole('listitem')).toHaveCount(3);
+    const signed = teacher.getByRole('region', { name: 'Signed in this class' });
+    await expect(signed.locator(':scope > ul > li')).toHaveCount(3);
     await expect(signed.getByText('Readers’ choice', { exact: true })).toBeVisible();
 
     // By hand, a certificate named after the competition can't say anything else.
@@ -530,7 +551,7 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     await expect(
       teacher.getByText('This programme is a confirmed competition', { exact: false }),
     ).toBeVisible();
-    await expect(signed.getByRole('listitem')).toHaveCount(3);
+    await expect(signed.locator(':scope > ul > li')).toHaveCount(3);
     await teacher.context().close();
   });
 
@@ -538,7 +559,7 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
     browser,
   }) => {
     const writer = await openAs(browser, 'pending_check', '/certificates');
-    const links = writer.getByRole('link', { name: `Open “${competitionName}”` });
+    const links = writer.getByRole('link', { name: new RegExp(`^${competitionName}`) });
     await expect(links).toHaveCount(2);
     // The link's name ends with the result, so the two can be told apart without sight.
     await links.filter({ hasText: 'Readers’ choice' }).click();
@@ -550,7 +571,9 @@ test.describe('class competitions (CLASS-POINTS, S1-E8-15, 17 and 19)', () => {
 
     // The Winner has one certificate; nobody has "Took part" any more.
     const winner = await openAs(browser, 'adult_writer', '/certificates');
-    await expect(winner.getByRole('link', { name: `Open “${competitionName}”` })).toHaveCount(1);
+    await expect(winner.getByRole('link', { name: new RegExp(`^${competitionName}`) })).toHaveCount(
+      1,
+    );
     await expect(winner.getByText('Winner', { exact: true })).toBeVisible();
     await expect(winner.getByText('Took part')).toHaveCount(0);
     await winner.context().close();

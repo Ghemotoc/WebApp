@@ -69,13 +69,22 @@ export interface MyCertificate {
   crest: StoredPicture | null;
 }
 
-/** What anyone sees when they check a code. Never a name. */
+/**
+ * What anyone sees when they check a code: what it says, the class, the school and who signed it
+ * (BOOKS-8c, user story 8.17). Never the pupil's name, real or pen (S1-E8-12 criterion 6).
+ */
 export interface CertificateCheck {
   status: 'valid' | 'revoked' | 'retired' | 'unknown';
   programmeName: string | null;
   result: CertificateResult | null;
   schoolName: string | null;
   signedAt: string | null;
+  className: string | null;
+  teacherName: string | null;
+  /** True for a writing contest's certificate: no class and no teacher. */
+  isContest: boolean;
+  /** When it was withdrawn, for a revoked certificate; null otherwise. */
+  revokedAt: string | null;
 }
 
 /** Why the database refused a call. */
@@ -285,6 +294,10 @@ export function certificateCheckFrom(value: Json): CertificateCheck {
     result: resultOrNull(row['result']),
     schoolName: textOrNull(row['school_name']),
     signedAt: textOrNull(row['signed_at']),
+    className: textOrNull(row['class_name']),
+    teacherName: textOrNull(row['teacher_name']),
+    isContest: row['is_contest'] === true,
+    revokedAt: textOrNull(row['revoked_at']),
   };
 }
 

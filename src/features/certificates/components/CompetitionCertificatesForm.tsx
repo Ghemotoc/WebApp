@@ -1,13 +1,14 @@
 /**
  * CompetitionCertificatesForm: the certificates of a class competition, filled in from its
- * confirmed results (bundle CLASS-POINTS, part 3; story S1-E8-17).
+ * published results (bundle CLASS-POINTS, part 3; story S1-E8-17; board G14, bundle BOOKS-8, part
+ * 8c).
  *
- * What it shows: the competition's name as the programme, every entrant with the result the
- * teacher confirmed (Winner, Finalist or Contestant, and Readers' choice beside it), the look
- * picker and "Approve and sign". Nothing in the list can change here: the results are locked
- * once confirmed (Robert, 13 Nov 2026, decision 11), and the database refuses a certificate that
- * says anything else (check_class_certificate_result()). Only pupils who entered are listed
- * (decision 17).
+ * What it shows, left: "From <competition>" with when the results were published, the programme
+ * (the competition's name, read-only), every certificate to sign (CertificateEntryRows), the
+ * "Look" section and "Approve and sign"; right: the Preview. Nothing in the list can change here:
+ * the results are locked once confirmed (Robert, 13 Nov 2026, decision 11), and the database
+ * refuses a certificate that says anything else (check_class_certificate_result()). Only pupils
+ * who entered are listed (decision 17).
  * Who shows it: ClassCertificatesPage, when the Winner card's "Issue certificates" opened it.
  * What it calls: useIssueClassCertificates() → issue_class_certificates().
  */
@@ -16,32 +17,26 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { MetaLine } from '@/components/ui/MetaLine';
+import { buttonClassName } from '@/components/ui/buttonStyles';
+import { TextInput } from '@/components/ui/TextInput';
 
 import { useIssueClassCertificates } from '../hooks/useClassCertificates';
+import { certificateDate, certificateLanguageOf } from '../lib/certificateDate';
 import type { CertificateLook } from '../lib/certificateLook';
-import {
-  competitionCertificateEntries,
-  type ConfirmedEntrant,
-} from '../lib/competitionCertificates';
+import { competitionCertificateEntries } from '../lib/competitionCertificates';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
+import { CertificateEntryRows, type CompetitionCertificateEntrant } from './CertificateEntryRows';
+import { CertificateFormColumns } from './CertificateFormColumns';
 import { CertificateLookPicker } from './CertificateLookPicker';
 import { IssueAnswer } from './IssueAnswer';
 
-/** One entrant as the list shows them. */
-export interface CompetitionCertificateEntrant extends ConfirmedEntrant {
-  displayName: string;
-}
-
 /** What the form needs. */
 export interface CompetitionCertificatesFormProps {
-  /** The class's address. */
-  slug: string;
-  /** The class's ID, the folder its crest is uploaded to (G13b). */
-  spaceId: string;
-  /** The competition's name: the programme the certificates print. */
-  competitionName: string;
+  /** The class: its address, its ID (the folder its crest is uploaded to, G13b) and its name. */
+  space: { slug: string; spaceId: string; name: string };
+  /** The competition's name (the programme the certificates print) and when its results came out. */
+  competition: { name: string; publishedOn: string };
   /** The pupils who entered, with their confirmed results. */
   entrants: CompetitionCertificateEntrant[];
   /** The look to start from: the one last used in the class, or the default. */
@@ -49,35 +44,46 @@ export interface CompetitionCertificatesFormProps {
 }
 
 /**
- * The entrants and what each certificate will say. Read-only.
+ * "From <competition>", when its results came out, the programme and the rows.
  *
+ * @param props.competition - the competition's name and publishing date
  * @param props.entrants - the pupils who entered
- * @returns the list
+ * @returns the section
  */
-function ConfirmedResultsList({ entrants }: { entrants: CompetitionCertificateEntrant[] }) {
-  const { t } = useCertificatesTranslation();
+function ResultsSection({
+  competition,
+  entrants,
+}: Pick<CompetitionCertificatesFormProps, 'competition' | 'entrants'>) {
+  const { t, i18n } = useCertificatesTranslation();
+  const language = certificateLanguageOf(i18n.language);
   return (
-    <section aria-labelledby="competition-certificates-heading" className="flex flex-col gap-2">
-      <h3 id="competition-certificates-heading" className="m-0 type-body font-bold text-ink">
-        {t('class.competitionResultsTitle')}
-      </h3>
-      <ul className="m-0 flex list-none flex-col p-0">
-        {entrants.map((entrant) => (
-          <li
-            key={entrant.handle}
-            className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-2"
-          >
-            <span className="text-ink">{entrant.displayName}</span>
-            {/* The result in bold, then Readers' choice, as words (CALM-9f; was two pills). */}
-            <MetaLine
-              facts={[
-                { text: t(`results.${entrant.result ?? 'participant'}`), kind: 'state' },
-                { text: entrant.isReadersChoice ? t('results.readers_choice') : '' },
-              ]}
-            />
-          </li>
-        ))}
-      </ul>
+    <section
+      aria-labelledby="competition-certificates-heading"
+      className="flex flex-col gap-4 border-t border-hairline pt-6"
+    >
+      <div className="flex flex-col gap-2">
+        <h2
+          id="competition-certificates-heading"
+          className="m-0 type-heading break-words text-ink-heading"
+        >
+          {t('class.fromCompetitionTitle', { name: competition.name })}
+        </h2>
+        {competition.publishedOn !== '' && (
+          <p className="m-0 type-meta text-ink-muted">
+            {t('class.filledInOn', { date: certificateDate(competition.publishedOn, language) })}
+          </p>
+        )}
+      </div>
+      <TextInput
+        id="certificate-programme"
+        label={t('class.programmeLabel')}
+        hint={t('class.programmeFromCompetition')}
+        value={competition.name}
+        readOnly
+        className="w-full max-w-[480px]"
+      />
+      <CertificateEntryRows entrants={entrants} />
+      <p className="m-0 max-w-none type-meta text-ink-muted">{t('class.competitionNote')}</p>
     </section>
   );
 }
@@ -88,19 +94,18 @@ function ConfirmedResultsList({ entrants }: { entrants: CompetitionCertificateEn
  * @returns the form, or a note when nobody entered
  */
 export function CompetitionCertificatesForm({
-  slug,
-  spaceId,
-  competitionName,
+  space,
+  competition,
   entrants,
   startLook,
 }: CompetitionCertificatesFormProps) {
   const { t } = useCertificatesTranslation();
-  const issuing = useIssueClassCertificates(slug);
+  const issuing = useIssueClassCertificates(space.slug);
   const [look, setLook] = useState<CertificateLook>(startLook);
   const otherProgramme = (
     <Link
-      to={`/spaces/${slug}/certificates`}
-      className="self-start font-semibold text-link underline"
+      to={`/spaces/${space.slug}/certificates`}
+      className={buttonClassName({ variant: 'text' })}
     >
       {t('class.otherProgramme')}
     </Link>
@@ -110,35 +115,44 @@ export function CompetitionCertificatesForm({
   async function approve(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const results = competitionCertificateEntries(entrants);
-    await issuing.issue({ programmeName: competitionName, results, look }).catch(() => null);
+    await issuing.issue({ programmeName: competition.name, results, look }).catch(() => null);
   }
 
   if (entrants.length === 0) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="m-0 text-ink-muted">{t('class.noEntrants')}</p>
+        <p className="m-0 type-body text-ink-muted">{t('class.noEntrants')}</p>
         {otherProgramme}
       </div>
     );
   }
+  const first = entrants[0];
   return (
-    <form className="flex flex-col gap-4" onSubmit={approve}>
-      <p className="m-0 text-ink-muted">{t('class.fromCompetition', { name: competitionName })}</p>
-      <ConfirmedResultsList entrants={entrants} />
-      <CertificateLookPicker
-        look={look}
-        onChange={setLook}
-        programmeName={competitionName}
-        space={{ slug, spaceId }}
-      />
-      <p className="m-0 type-body text-ink-muted">{t('class.competitionIntro')}</p>
-      <Button type="submit" className="self-start" disabled={issuing.isRunning}>
-        {t('class.approve')}
-      </Button>
-      <div aria-live="polite">
-        <IssueAnswer issuing={issuing} />
-      </div>
-      {otherProgramme}
+    <form onSubmit={approve}>
+      <CertificateFormColumns
+        preview={{
+          look,
+          programmeName: competition.name,
+          className: space.name,
+          slug: space.slug,
+          entry: { name: first?.displayName ?? null, result: first?.result ?? 'participant' },
+        }}
+      >
+        <ResultsSection competition={competition} entrants={entrants} />
+        <CertificateLookPicker look={look} onChange={setLook} space={space} />
+        <div className="flex flex-col gap-3">
+          <p className="m-0 type-meta text-ink-muted">{t('class.competitionIntro')}</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="submit" size="lg" disabled={issuing.isRunning}>
+              {t('class.approve')}
+            </Button>
+            {otherProgramme}
+          </div>
+          <div aria-live="polite">
+            <IssueAnswer issuing={issuing} />
+          </div>
+        </div>
+      </CertificateFormColumns>
     </form>
   );
 }

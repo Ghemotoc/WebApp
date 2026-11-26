@@ -12,8 +12,8 @@ Certificate-Participation and Certificate-Winner). Contests (S1-E12-02) will iss
 - `hooks/useCertificates.ts` and `hooks/useClassCertificates.ts`: the reads and changes.
 - `lib/certificateLook.ts` (G13a): the eight colours and the patterns a certificate can be drawn in,
   saved on each certificate at signing; `components/CertificateFrame.tsx` draws the frame, the
-  faint pattern and the seal, and `CertificateLookPicker.tsx` is the teacher's choice with a
-  preview. Since G13b the seal shows the cat or the school's crest (`CertificateSeal.tsx`,
+  faint pattern and the seal, and `CertificateLookPicker.tsx` is the teacher's choice (its
+  preview is `CertificateLookPreview.tsx`, since BOOKS-8c). Since G13b the seal shows the cat or the school's crest (`CertificateSeal.tsx`,
   `CertificateSealChoices.tsx`, `CertificateCrestField.tsx`; `api/certificateCrest.ts` and
   `hooks/useCertificateCrest.ts` upload, choose and read it).
 - `lib/certificateDate.ts`: dates in the certificate's language; `lib/pickedResults.ts`: the
@@ -37,3 +37,10 @@ Certificate-Participation and Certificate-Winner). Contests (S1-E12-02) will iss
   certificate). `lib/competitionCertificates.ts` turns them into the list the database takes;
   `IssueAnswer.tsx` is the answer under "Approve and sign", shared with `ClassResultsForm`. The
   database checks every line against the competition's results.
+- The pages as boards G14 to G17 draw them (BOOKS-8, part 8c): `MyCertificatesPage` lists rows
+  (a dot in the certificate's colour, the programme, one meta line); `CertificatePage` puts the
+  sheet beside `PrintedNameForm` ("Name and language"); `VerifyCertificatePage` shows
+  `CertificateCheckAnswer` (the class, school and teacher from `verify_certificate()`, never a
+  pupil's name); `ClassCertificatesPage` shows the class's section tabs and
+  `CertificateFormColumns`: the form (`CertificateEntryRows` for a competition's results, or
+  `ClassResultsForm`'s list, then `CertificateLookPicker`) beside `CertificateLookPreview`.

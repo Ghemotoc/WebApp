@@ -7,10 +7,13 @@
  *   approves the list, which signs it (criteria 1 and 5);
  * - the student finds it under My certificates, types the real name it prints, and sees the
  *   certificate in English and in Romanian, ready to print (criteria 2 and 4);
- * - a visitor checks the code and sees "valid" without the student's name (criterion 6);
+ * - a visitor checks the code and sees "Real certificate" with the class, the school and the
+ *   teacher, never the pupil's name (criterion 6; board G17, user story 8.17);
  * - staff with Schools access find the code and revoke it; the check page then says "revoked"
  *   (criterion 7);
  * - archiving the class tells the teacher in the app and queues an email (criterion 3);
+ * - the teacher's, the student's and the public certificate pages keep to the look rules by day
+ *   and at night (boards G14 to G17, bundle BOOKS-8, part 8c);
  * - every certificate screen passes axe at 390, 768 and 1440 px, light and night, ro and en, and
  *   no doodle is drawn.
  * Test data: the teacher persona starts the class with SQL; pending_check joins with its code;
@@ -21,6 +24,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
+import { expectLookRulesByDayAndNight } from './support/lookCheck';
 import { expectNoDoodles } from './support/noDoodles';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
@@ -152,11 +156,13 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
     await page.getByLabel(`Result for ${studentName()}`).selectOption('winner');
     // G13a: the teacher picks the look; it is saved on the certificate at signing.
     await page.getByRole('radio', { name: 'Sea glass', exact: true }).check({ force: true });
-    await page.getByRole('radio', { name: 'Waves', exact: true }).check({ force: true });
+    await page.getByLabel('Pattern behind the text').selectOption('waves');
     await expect(page.locator('[data-certificate-colour="sea_glass"]')).toBeVisible();
     // G13b: the school's crest in the seal, uploaded as an SVG and stored only as pixels (WebP or PNG).
-    await page.getByRole('radio', { name: 'School crest' }).click();
-    await page.getByRole('radio', { name: 'White on the certificate colour' }).click();
+    await page.getByRole('radio', { name: 'School crest' }).check({ force: true });
+    await page
+      .getByRole('radio', { name: 'White on the certificate colour' })
+      .check({ force: true });
     await page
       .getByLabel('Upload a crest or logo')
       .setInputFiles({ name: 'crest.svg', mimeType: 'image/svg+xml', buffer: crestSvg });
@@ -176,9 +182,9 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
 
   test('the student prints it with their real name', async ({ browser }) => {
     const page = await openAs(browser, 'pending_check', '/certificates');
-    await page.getByRole('link', { name: `Open “${programme}”` }).click();
-    await page.getByLabel('Name to print').fill('Ana Popescu');
-    await page.getByRole('button', { name: 'Save the name' }).click();
+    await page.getByRole('link', { name: new RegExp(`^${programme}.*Winner$`) }).click();
+    await page.getByLabel('Printed name').fill('Ana Popescu');
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByText('Saved.')).toBeVisible();
     const sheet = page.getByRole('article', { name: 'Certificate' });
     await expect(sheet.getByText('Ana Popescu')).toBeVisible();
@@ -193,7 +199,7 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
       'href',
       new RegExp(`/verify\\?code=${certificate().code}$`),
     );
-    await page.getByLabel('Language of the certificate').selectOption('ro');
+    await page.getByRole('radio', { name: 'Română' }).check({ force: true });
     await expect(
       page
         .getByRole('article', { name: 'Diplomă' })
@@ -203,12 +209,38 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
     await page.context().close();
   });
 
-  test('a visitor checks the code and never sees the name', async ({ browser }) => {
+  test('a visitor checks the code and never sees the pupil’s name', async ({ browser }) => {
     const page = await openAs(browser, null, `/verify?code=${certificate().code}`);
-    await expect(page.getByText('This certificate is valid.')).toBeVisible();
-    await expect(page.getByText(programme)).toBeVisible();
-    await expect(page.getByText('Ana Popescu')).toHaveCount(0);
+    const answer = page.getByRole('region', { name: 'This certificate is real.' });
+    await expect(answer.getByText('Real certificate')).toBeVisible();
+    await expect(answer.getByRole('heading', { name: `Winner · ${programme}` })).toBeVisible();
+    await expect(answer.getByText(/^Given in Clasa a VIII-a diplome/)).toBeVisible();
+    // Story S1-E8-12 criterion 6: never the pupil's name, not even in part (board G17 asks for
+    // "Ana P."; the story wins until Robert decides).
+    await expect(page.getByText(/Ana P|Popescu/)).toHaveCount(0);
     await page.context().close();
+  });
+
+  test('the certificate pages keep to the look rules by day and at night (boards G14 to G17)', async ({
+    browser,
+  }) => {
+    test.setTimeout(240_000);
+    const { id, code } = certificate();
+    await expectLookRulesByDayAndNight(
+      browser,
+      'teacher',
+      `/spaces/${classSlug}/certificates`,
+      (page) => expect(page.getByRole('region', { name: 'Preview' })).toBeVisible(),
+    );
+    await expectLookRulesByDayAndNight(browser, 'pending_check', '/certificates', (page) =>
+      expect(page.getByRole('list', { name: 'Certificates' })).toBeVisible(),
+    );
+    await expectLookRulesByDayAndNight(browser, 'pending_check', `/certificates/${id}`, (page) =>
+      expect(page.getByRole('article', { name: 'Certificate' })).toBeVisible(),
+    );
+    await expectLookRulesByDayAndNight(browser, 'teacher', `/verify?code=${code}`, (page) =>
+      expect(page.getByText('Real certificate')).toBeVisible(),
+    );
   });
 
   test('staff revoke it and the check page says so', async ({ browser }) => {
@@ -222,7 +254,7 @@ test.describe('writing certificates (CLASSES-e, S1-E8-12)', () => {
     await page.context().close();
 
     const visitor = await openAs(browser, null, `/verify?code=${certificate().code}`);
-    await expect(visitor.getByText('This certificate was revoked.')).toBeVisible();
+    await expect(visitor.getByText(/^This certificate was withdrawn on /)).toBeVisible();
     await visitor.context().close();
   });
 

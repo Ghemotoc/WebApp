@@ -8,35 +8,36 @@
   "my": {
     "documentTitle": "Certificates",
     "title": "Certificates",
-    "intro": "Certificates from your class programmes. Open one to print it or save it as a PDF for your school portfolio.",
-    "empty": "You have no certificates yet. When your teacher approves a class programme’s results, yours appears here.",
+    "intro": "Every certificate given to you, the newest first. Anyone can check a certificate with its code.",
+    "empty": "No certificates yet. Teachers and {{productName}} contests give them for programmes and contests you take part in.",
     "loadFailed": "We couldn’t load your certificates. Try again in a moment.",
-    "open": "Open “{{programme}}”",
-    "signed": "Signed {{date}}",
     "revoked": "Revoked",
-    "checkLink": "Check a certificate’s code",
+    "checkLink": "Check a code",
     "signedOut": "Log in to see certificates.",
-    "logIn": "Get in"
+    "logIn": "Get in",
+    "listLabel": "Certificates",
+    "contestPlace": "{{productName}} contest",
+    "code": "code {{code}}"
   },
   "page": {
     "documentTitle": "Certificate: {{programme}}",
     "back": "Certificates",
     "notFound": "We couldn’t find this certificate.",
     "revokedNote": "This certificate was revoked, so it can’t be printed. If you think this is a mistake, write to us from Contact us.",
-    "languageLabel": "Language of the certificate",
+    "languageLabel": "Language",
     "print": "Print or save as PDF",
-    "printHint": "In the print window, choose “Save as PDF” to keep a copy for your portfolio."
+    "breadcrumb": "Where you are",
+    "signedBy": "signed by {{name}}",
+    "checkAt": "Anyone can check it at {{domain}}/verify with the code {{code}}."
   },
   "name": {
-    "title": "Name on the certificate",
-    "intro": "A class certificate may print your real name with the school’s name. It is stored only with this certificate, never on your profile, and it is deleted 30 days after the class is archived. Leave it empty to print your pen name.",
-    "label": "Name to print",
-    "hint": "Up to 80 characters.",
-    "save": "Save the name",
-    "clear": "Use the pen name",
+    "title": "Name and language",
+    "label": "Printed name",
+    "hint": "The pen name prints unless you add a real name. The real name is kept only with this class certificate, never on your profile.",
+    "save": "Save",
     "saved": "Saved.",
     "deletesOn": "The name is deleted on {{date}}. Save a copy before then.",
-    "deleted": "The class was archived more than 30 days ago, so the printed name was deleted. The certificate prints your pen name.",
+    "deleted": "The class was archived more than 30 days ago, so the printed name was deleted. The certificate prints the pen name.",
     "failures": {
       "name_length": "Write the name in 80 characters or fewer.",
       "name_deleted": "Printed names are deleted 30 days after the class is archived.",
@@ -85,20 +86,26 @@
   },
   "verify": {
     "documentTitle": "Check a certificate",
-    "title": "Check a certificate",
-    "intro": "Type the code printed on a certificate. We show whether it is valid, the programme, the result and the date, never the student’s name.",
+    "title": "Is this certificate real?",
+    "intro": "Type the code printed at the foot of the certificate.",
     "codeLabel": "Certificate code",
-    "codeHint": "For example CL27-7K4M-Q9.",
     "check": "Check",
-    "valid": "This certificate is valid.",
-    "revoked": "This certificate was revoked.",
+    "valid": "This certificate is real.",
+    "revoked": "This certificate was withdrawn.",
     "retired": "This certificate is no longer available.",
-    "unknown": "We found no certificate with this code. Check it and try again.",
-    "programme": "Programme",
-    "result": "Result",
-    "school": "School",
-    "date": "Signed",
-    "loadFailed": "We couldn’t check the code. Try again in a moment."
+    "unknown": "No certificate has this code. Check the letters and numbers, or ask the person who gave it.",
+    "loadFailed": "We couldn’t check the code. Try again in a moment.",
+    "codeMissing": "Type the code printed on the certificate.",
+    "realState": "Real certificate",
+    "revokedState": "Withdrawn",
+    "checkedNow": "checked just now",
+    "givenInSchool": "Given in {{className}}, {{school}}.",
+    "givenInClass": "Given in {{className}}.",
+    "givenInContest": "Given in a {{productName}} writing contest.",
+    "signedByTeacher": "Signed by the teacher {{teacher}} on {{date}}.",
+    "signedByProduct": "Signed by {{productName}} on {{date}}.",
+    "nameNote": "The pupil’s name doesn’t show here, to protect pupils.",
+    "revokedOn": "This certificate was withdrawn on {{date}}, so it is no longer valid."
   },
   "class": {
     "documentTitle": "Certificates: {{name}}",
@@ -115,7 +122,7 @@
     "approved_other": "Signed: {{count}} certificates made or changed.",
     "nothingChanged": "Nothing changed: every result was already signed.",
     "noStudents": "No students have joined yet.",
-    "issuedTitle": "Signed certificates",
+    "issuedTitle": "Signed in this class",
     "issuedEmpty": "None yet.",
     "revoked": "Revoked",
     "archived": "This class is archived, so it issues no more certificates.",
@@ -140,11 +147,17 @@
       "readers_choice": "Readers’ choice comes only from the confirmed results of a competition.",
       "competition_result": "This programme is a confirmed competition, so each certificate says what was confirmed there. Open it from the Winner card."
     },
-    "fromCompetition": "Results of the competition “{{name}}”. They are confirmed and locked, so they can’t change here.",
     "competitionIntro": "Approving signs one certificate per entrant, and a second one for Readers’ choice. The approval is an electronic signature: the teacher’s name prints as the second signatory, with “signed electronically” and the date.",
-    "competitionResultsTitle": "Confirmed results",
     "noEntrants": "Nobody joined this competition, so there is nothing to sign.",
-    "otherProgramme": "Sign another programme"
+    "otherProgramme": "Sign another programme",
+    "pageIntro": "Certificates come from a competition’s results. You sign them with your name and the school’s.",
+    "fromCompetitionTitle": "From {{name}}",
+    "filledInOn": "Filled in from the results published on {{date}}",
+    "programmeFromCompetition": "Prints on every certificate. Taken from the competition name.",
+    "competitionNote": "Only pupils who entered are listed, with the published results; they can’t be changed here. Check the list, then sign.",
+    "toSignLabel": "Certificates to sign",
+    "secondCertificate": "a second certificate",
+    "code": "code {{code}}"
   },
   "settingsCard": {
     "title": "Certificates",
@@ -152,8 +165,7 @@
     "link": "Open certificates"
   },
   "look": {
-    "title": "Colour and pattern",
-    "intro": "Pick how this programme’s certificates look. Students see it on their certificate and in the PDF.",
+    "title": "Look",
     "colour": "Colour",
     "colours": {
       "plum": "Plum",
@@ -177,7 +189,6 @@
       "rings": "Rings",
       "forestwaves": "Forest waves"
     },
-    "noneShort": "None",
     "patternHint": "The same patterns as the covers, in the certificate colour and kept very faint so the text stays easy to read.",
     "previewName": "Student’s name",
     "previewProgramme": "Programme name",
@@ -203,6 +214,9 @@
       "waiting_for_person": "A moderator looks at it first. Until then, the cat shows.",
       "visible": "Checked. It shows in the seal.",
       "removed": "This crest was taken down. Upload another, or choose the cat."
-    }
+    },
+    "sealHint": "A crest is a PNG, SVG, JPEG or WebP up to 2 MB, checked before it shows; until then the cat shows. No photos of people.",
+    "previewTitle": "Preview",
+    "previewLabel": "Certificate for {{name}}"
   }
 }

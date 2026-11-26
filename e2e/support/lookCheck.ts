@@ -120,6 +120,19 @@ export async function findLookIssues(page: Page): Promise<LookIssue[]> {
       });
     }
 
+    /**
+     * The two spacings the rules allow on purpose: the DoD's 36 px on the right of a select, so
+     * the chevron sits after the text, and a modal dialog's margins, which the browser sets to
+     * auto to centre it and which read back as the space left around it (the centred Sheet,
+     * board G13), not as a gap anyone chose.
+     */
+    function isKnownException(element: Element, property: string, pixels: number): boolean {
+      if (element.tagName === 'DIALOG' && property.startsWith('margin')) return true;
+      return (
+        element.tagName === 'SELECT' && property === 'paddingRight' && Math.abs(pixels - 36) < 0.5
+      );
+    }
+
     /** Checks gaps, padding and margins against the spacing steps. */
     function checkSpacing(element: Element, style: CSSStyleDeclaration) {
       const properties = [
@@ -137,13 +150,7 @@ export async function findLookIssues(page: Page): Promise<LookIssue[]> {
         if (raw === 'normal' || raw === 'auto' || raw === '') continue;
         const pixels = Math.abs(parseFloat(raw));
         if (Number.isNaN(pixels) || isAllowed(pixels, rules.spacing)) continue;
-        // The DoD's drop-down rule: 36 px on the right of a select, so the chevron sits after the text.
-        if (
-          element.tagName === 'SELECT' &&
-          property === 'paddingRight' &&
-          Math.abs(pixels - 36) < 0.5
-        )
-          continue;
+        if (isKnownException(element, property, pixels)) continue;
         issues.push({ element: describe(element), property, value: raw });
       }
     }

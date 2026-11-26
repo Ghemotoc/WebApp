@@ -2,25 +2,29 @@
  * ClassCertificatesPage: /spaces/:spaceSlug/certificates, a class's certificates for its teacher
  * (bundle CLASSES, part e; story S1-E8-12 criteria 1 and 5).
  *
- * What it shows: the results form for a new programme (only while the class isn't archived),
- * filled in from a class competition's confirmed results when the Winner card opened the page
- * (CLASS-POINTS part 3; story S1-E8-17), and every certificate signed in the class, with each student's name, the programme, the result and
- * the code. Never a student's printed real name.
+ * What it shows: the class's section tabs, the results form for a new programme beside its
+ * Preview (only while the class isn't archived), filled in from a class competition's confirmed
+ * results when the Winner card opened the page (CLASS-POINTS part 3; story S1-E8-17), and every
+ * certificate signed in the class, with each pupil's name, the programme, the result and the
+ * code. Never a pupil's printed real name. Board G14 (bundle BOOKS-8, part 8c) sets the layout.
  * Who shows it: the router; the class's settings link here (ClassCertificatesCard). The database
  * lets in only whoever holds the class's settings power, and only the teacher signs.
  * What it calls: useSpace() and useSpaceMembers() from spaces, useClassCertificates() and
- * useCompetitionScoring() from class-competitions.
+ * useCompetitionScoring() and useClassCompetitions() from class-competitions, ClassSectionTabs.
  */
 import { useParams, useSearchParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import type { Space } from '@/features/spaces/api/spaces';
+import { ClassSectionTabs } from '@/features/spaces/components/ClassSectionTabs';
 import { SpaceBreadcrumb } from '@/features/spaces/components/SpaceBreadcrumb';
 import { useSpaceMembers } from '@/features/spaces/hooks/useSpaceModeration';
 import { useSpace } from '@/features/spaces/hooks/useSpaces';
 import type { CompetitionScoring } from '@/features/class-competitions/api/competitionScoring';
+import { useClassCompetitions } from '@/features/class-competitions/hooks/useClassCompetitions';
 import { useCompetitionScoring } from '@/features/class-competitions/hooks/useCompetitionScoring';
+import { MetaLine } from '@/components/ui/MetaLine';
 
 import { useClassCertificates } from '../hooks/useClassCertificates';
 import { defaultCertificateLook, type CertificateLook } from '../lib/certificateLook';
@@ -39,31 +43,29 @@ function SignedCertificates({ slug }: { slug: string }) {
   const { t } = useCertificatesTranslation();
   const read = useClassCertificates(slug);
   return (
-    <section aria-labelledby="signed-certificates-heading" className="flex flex-col gap-3">
-      <h2
-        id="signed-certificates-heading"
-        className="m-0 font-heading type-heading font-bold text-ink-heading"
-      >
+    <section aria-labelledby="signed-certificates-heading" className="flex flex-col gap-4">
+      <h2 id="signed-certificates-heading" className="m-0 type-heading text-ink-heading">
         {t('class.issuedTitle')}
       </h2>
       {read.isError && <Notice tone="error">{t('class.loadFailed')}</Notice>}
-      {read.data?.length === 0 && <p className="m-0 text-ink-muted">{t('class.issuedEmpty')}</p>}
+      {read.data?.length === 0 && (
+        <p className="m-0 type-body text-ink-muted">{t('class.issuedEmpty')}</p>
+      )}
       <ul className="m-0 flex list-none flex-col p-0">
         {(read.data ?? []).map((certificate) => (
-          <li
-            key={certificate.code}
-            className="flex flex-wrap items-center gap-3 border-b border-border py-2"
-          >
-            <span className="font-semibold text-ink">{certificate.studentName}</span>
-            <span className="text-ink-muted">{certificate.programmeName}</span>
-            {/* The result in bold and "Revoked" in red, as words (CALM-9f; was two pills).
-                Plain spans rather than MetaLine, so each row stays one list item without a
-                list inside it. */}
-            <span className="font-semibold text-ink">{t(`results.${certificate.result}`)}</span>
-            {certificate.isRevoked && (
-              <span className="font-semibold text-destructive">{t('class.revoked')}</span>
-            )}
-            <span className="type-body text-ink-muted">{certificate.code}</span>
+          <li key={certificate.code} className="flex flex-col border-t border-hairline py-3">
+            <span className="type-label break-words text-ink-heading">
+              {certificate.studentName}
+            </span>
+            {/* "Revoked" first in red, then the result in bold, as words (CALM-9f). */}
+            <MetaLine
+              facts={[
+                { text: certificate.isRevoked ? t('class.revoked') : '', kind: 'urgent' },
+                { text: t(`results.${certificate.result}`), kind: 'state' },
+                { text: certificate.programmeName },
+                { text: t('class.code', { code: certificate.code }) },
+              ]}
+            />
           </li>
         ))}
       </ul>
@@ -101,13 +103,12 @@ function ManualResults({ space, startLook }: { space: Space; startLook: Certific
   const members = useSpaceMembers(space.slug, true);
   const students = studentsOf(members.data ?? []);
   if (members.isSuccess && students.length === 0) {
-    return <p className="m-0 text-ink-muted">{t('class.noStudents')}</p>;
+    return <p className="m-0 type-body text-ink-muted">{t('class.noStudents')}</p>;
   }
   if (students.length === 0) return null;
   return (
     <ClassResultsForm
-      slug={space.slug}
-      spaceId={space.id}
+      space={{ slug: space.slug, spaceId: space.id, name: space.name }}
       students={students}
       startLook={startLook}
     />
@@ -133,6 +134,20 @@ function confirmedCompetitionOf(
 }
 
 /**
+ * When a competition's results came out, from the class's Winner cards (already read by the class
+ * page, so usually no second call).
+ *
+ * @param slug - the class's address
+ * @param competitionId - the competition, or null
+ * @returns the date (ISO), or an empty text when unknown
+ */
+function usePublishedOn(slug: string, competitionId: string | null): string {
+  const published = useClassCompetitions(slug).data?.published ?? [];
+  const card = published.find((candidate) => candidate.id === competitionId);
+  return card?.publishedOn ?? '';
+}
+
+/**
  * The form for new certificates in a class that isn't archived: filled in from a competition's
  * confirmed results when the Winner card opened the page (?competition=<id>; S1-E8-17),
  * otherwise the list the teacher fills in by hand.
@@ -146,6 +161,8 @@ function OpenClassResults({ space }: { space: Space }) {
   // The competition the Winner card named, if any.
   const competitionId = searchParams.get('competition');
   const scoring = useCompetitionScoring(competitionId);
+  // When its results came out, for "Filled in from the results published on …" (G14).
+  const publishedOn = usePublishedOn(slug, competitionId);
   // G13a: the form starts from the look of the newest certificate signed in the class.
   const signed = useClassCertificates(slug);
   // Wait for the last look and, when a competition was named, for its results.
@@ -156,9 +173,11 @@ function OpenClassResults({ space }: { space: Space }) {
   if (competition === null) return <ManualResults space={space} startLook={startLook} />;
   return (
     <CompetitionCertificatesForm
-      slug={slug}
-      spaceId={space.id}
-      competitionName={competition.name}
+      space={{ slug, spaceId: space.id, name: space.name }}
+      competition={{
+        name: competition.name,
+        publishedOn,
+      }}
       entrants={competition.entrants}
       startLook={startLook}
     />
@@ -193,6 +212,7 @@ function ClassCertificatesBody({ slug, space }: { slug: string; space: Space | n
   }
   return (
     <>
+      <ClassSectionTabs slug={slug} isTeacher />
       <NewResults space={space} />
       <SignedCertificates slug={slug} />
     </>
@@ -210,11 +230,12 @@ export function ClassCertificatesPage() {
   const space = useSpace(spaceSlug);
   const name = space.data?.name ?? '';
   return (
-    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-8">
+    <PageContainer className="flex max-w-[1280px] flex-col gap-8 pt-6 pb-12 md:gap-12 lg:gap-16 lg:pt-12 lg:pb-20">
       <title>{t('class.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={t('class.title')} />
       <header className="flex flex-col gap-2">
-        <h1 className="m-0 type-title break-words lg:type-display">{t('class.title')}</h1>
+        <h1 className="m-0 page-title break-words">{t('class.title')}</h1>
+        <p className="m-0 max-w-[34em] type-body text-ink-muted">{t('class.pageIntro')}</p>
       </header>
       <ClassCertificatesBody slug={spaceSlug} space={space.data} />
     </PageContainer>
