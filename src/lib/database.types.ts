@@ -12133,6 +12133,23 @@ export type Database = {
         Args: { other_handle: string; reason_given: string; target_case_id: string };
         Returns: string;
       };
+      admin_list_accounts: {
+        Args: { page_number?: number; page_size?: number };
+        Returns: {
+          account_status: Database['public']['Enums']['account_status'];
+          age_band: Database['public']['Enums']['age_band'];
+          country_code: string;
+          email_masked: string;
+          handle: string;
+          joined_at: string;
+          last_used_on: string;
+          open_case_count: number;
+          pen_name: string;
+          sanction_kinds: Database['public']['Enums']['sanction_kind'][];
+          total_count: number;
+          user_id: string;
+        }[];
+      };
       admin_list_calls: {
         Args: {
           before?: string;

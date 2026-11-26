@@ -7,7 +7,8 @@
  * components, no doodles (DoD: staff screens).
  * Who shows it: the router, inside StaffLayout. The database refuses anyone but owner, admin,
  * moderator and support (admin_user_lookup()), and the page says so.
- * What it calls: useUserLookup → api/userManagement.ts.
+ * What it calls: useUserLookup → api/userManagement.ts. Under the search, AccountList shows every
+ * account, a page at a time, to the owner and admins only (Robert, 26 Nov 2026).
  */
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,7 @@ import { registerModerationTranslations } from '@/features/moderation/registerMo
 
 import { useUserLookup } from '../../hooks/useUserLookup';
 
+import { AccountList } from './AccountList';
 import { UserResults } from './UserResults';
 import { UsersTabs } from './UsersTabs';
 
@@ -121,6 +123,7 @@ export function UsersPage() {
       <div className="flex max-w-[1100px] flex-col gap-6">
         <UserSearchForm lookup={lookup} />
         <UserSearchResults lookup={lookup} />
+        <AccountList />
       </div>
     </PageContainer>
   );
