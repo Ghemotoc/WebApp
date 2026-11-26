@@ -94,7 +94,7 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
   test('a new thread is new in the list, on the index and in New for you', async ({ browser }) => {
     const writer = await openAs(browser, 'adult_writer', '/forums/first-chapters/new');
     await writer.getByLabel('Title').fill(threadTitle);
-    await writer.getByLabel('Post').fill('Does this look new to you?');
+    await writer.getByRole('textbox', { name: 'First post' }).fill('Does this look new to you?');
     await writer.getByRole('button', { name: 'Post the thread' }).click();
     await expect(writer.getByRole('heading', { level: 1, name: threadTitle })).toBeVisible();
     // One's own thread is never new to oneself.

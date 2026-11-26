@@ -9,7 +9,7 @@
  * - F04, New thread at /forums/new: "Post the thread" stays pressable and says what is missing
  *   beside the field, the forum first, then the title (design books item 9; user story 7.4).
  * The space's moderators, blocks and log are in space-moderators.spec.ts.
- * Test data: the seeded 16+ space "fantasy-writers-circle"; teen_17's request is taken out before
+ * Test data: the seeded 16+ space "fantasy-writers-circle"; pending_check's request is taken out before
  * and after.
  */
 import { expect, test, type Browser, type Page } from '@playwright/test';
@@ -18,12 +18,12 @@ import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
 
-/** Takes teen_17's request to join the seeded space out, as the seed left it. */
+/** Takes pending_check's request to join the seeded space out, as the seed left it. */
 function cleanUp() {
   runSql(`delete from public.space_members
-      where user_id = (select id from public.profiles where handle = 'teen_17')
+      where user_id = (select id from public.profiles where handle = 'pending_check')
         and space_id = (select id from public.spaces where slug = 'fantasy-writers-circle');
-    update public.profiles set locale = 'ro' where handle in ('teen_17', 'adult_writer');`);
+    update public.profiles set locale = 'ro' where handle in ('pending_check', 'adult_writer');`);
 }
 
 /** Opens a page as a persona in English. */
@@ -50,7 +50,7 @@ test.describe('Together and spaces (BOOKS-7)', () => {
   test('a reader asks to join from More spaces, takes it back, and sorts the list', async ({
     browser,
   }) => {
-    const page = await openAs(browser, 'teen_17', '/spaces');
+    const page = await openAs(browser, 'pending_check', '/spaces');
     const more = page.getByRole('region', { name: 'More spaces' });
     await more.getByRole('button', { name: 'Ask to join Fantasy writers’ circle' }).click();
     const asked = more.getByRole('button', {

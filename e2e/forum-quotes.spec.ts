@@ -70,7 +70,9 @@ function replyBox(page: Page) {
 async function startThread(browser: Browser) {
   const writer = await openAs(browser, 'adult_writer', '/forums/first-chapters/new');
   await writer.getByLabel('Title').fill(threadTitle);
-  await writer.getByLabel('Post').fill('Open on the **choir** counting heads.');
+  await writer
+    .getByRole('textbox', { name: 'First post' })
+    .fill('Open on the **choir** counting heads.');
   await writer.getByRole('button', { name: 'Post the thread' }).click();
   await expect(writer.getByRole('heading', { level: 1, name: threadTitle })).toBeVisible();
   await writer.context().close();

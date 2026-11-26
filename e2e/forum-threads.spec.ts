@@ -76,7 +76,7 @@ test.describe('forum threads and posts (FORUMS-1b, S1-E8-02)', () => {
     await expect(page).toHaveURL(/\/forums\/first-chapters\/new$/);
     await page.getByLabel('Title').fill(threadTitle);
     await page
-      .getByLabel('Post')
+      .getByRole('textbox', { name: 'First post' })
       .fill('Every version of my chapter one starts with **two pages** of history.');
     await page.getByRole('button', { name: 'Post the thread' }).click();
     await expect(page.getByRole('heading', { level: 1, name: threadTitle })).toBeVisible();
