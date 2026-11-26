@@ -10,9 +10,9 @@
  *   date it was done ("Done on 2 Nov."); Open, Done and Both filter the list, Both first; its
  *   type changes; the bin deletes it at once and Undo puts it back as it was (S1-E17-28; story
  *   6.12, board E31);
- * - every marketing field saves by itself, the logline and genre being the same fields as At a
- *   glance and Story settings; "Back cover" shows a preview of the title, logline, blurb and
- *   comparable titles as real text (S1-E17-29);
+ * - every marketing note saves by itself, and the logline written on At a glance shows on the
+ *   back cover, which the page doesn't ask for again; "Back cover" shows and hides a preview of
+ *   the title, logline, blurb and comparable titles as real text (S1-E17-29; story 6.13, E32);
  * - "Add detail" adds a detail of the writer's own that saves by itself, renames, is found by
  *   search and deletes after a question; the back cover is signed with the pen name (GAPS-2b);
  * - a note reads as a row and the pen opens its fields; the QR code points at the story page,
@@ -208,13 +208,22 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     await page.context().close();
   });
 
-  test('every marketing field saves by itself, sharing the logline and genre with the story', async ({
+  test('every marketing note saves by itself, and the logline comes from At a glance', async ({
     browser,
   }) => {
-    const page = await openAs(browser, 'adult_writer', marketingAddress);
-    await expect(page.getByRole('heading', { level: 1, name: 'Marketing' })).toBeVisible();
+    // The logline is written once, on At a glance.
+    const page = await openAs(browser, 'adult_writer', `/plan/s/${slug}`);
     await page.getByRole('textbox', { name: 'Logline' }).fill('A keeper hunts the light.');
-    await expect(page.locator('#atlas-marketing-logline-save')).toHaveText('Saved');
+    await expect(page.locator('#atlas-logline-save')).toHaveText('Saved');
+    await page.goto(marketingAddress);
+    await expect(page.getByRole('heading', { level: 1, name: 'Marketing' })).toBeVisible();
+    // Board E32: the page doesn't repeat the logline, genre, audience or route; it says where
+    // they are written.
+    await expect(page.getByRole('textbox', { name: 'Logline' })).toHaveCount(0);
+    await expect(page.getByLabel('Genre')).toHaveCount(0);
+    await expect(
+      page.getByText('The logline and publishing route are the same as on At a glance'),
+    ).toBeVisible();
     const notes = [
       ['back_cover_blurb', 'Back-cover blurb', 'A dark lighthouse and a quiet island.'],
       ['comparable_titles', 'Comparable titles', 'The Shadow of the Wind'],
@@ -226,21 +235,13 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
       await page.getByRole('textbox', { name: label }).fill(value);
       await expect(page.locator(`#atlas-marketing-${column}-save`)).toHaveText('Saved');
     }
-    await page.getByLabel('Genre').selectOption('poetry');
-    await expect(page.locator('#atlas-marketing-genre-save')).toHaveText('Saved');
-    await page.getByLabel('Publishing route').selectOption('complete_here');
-    await expect(page.locator('#atlas-marketing-route-save')).toHaveText('Saved');
     for (const [column, , value] of notes) expect(savedMarketing(column)).toBe(value);
-    expect(
-      runSql(`select stories.title || '|' || categories.slug || '|' || story_plans.logline || '|' || story_plans.publishing_route
-        from public.stories join public.categories on categories.id = stories.category_id
-        join public.story_plans on story_plans.story_id = stories.id where stories.slug = '${slug}'`),
-    ).toBe('Farul de pe stâncă|poetry|A keeper hunts the light.|complete_here');
-    // The same logline shows on At a glance: one place for both.
-    await page.goto(`/plan/s/${slug}`);
-    await expect(page.getByRole('textbox', { name: 'Logline' })).toHaveValue(
-      'A keeper hunts the light.',
+    // Comparable titles and hooks are one-line boxes, as the board draws them.
+    await expect(page.locator('#atlas-marketing-comparable_titles')).toHaveJSProperty(
+      'tagName',
+      'INPUT',
     );
+    await expect(page.getByTestId('atlas-back-cover')).toContainText('A keeper hunts the light.');
     await page.context().close();
   });
 
@@ -260,13 +261,13 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
       `select coalesce(pen_name, handle) from public.profiles where id = '${writerId}'`,
     );
     await expect(page.getByTestId('atlas-back-cover-byline')).toContainText(`${writerName} · `);
-    const hide = page.getByRole('button', { name: 'Hide the back cover' });
-    await expect(hide).toHaveAttribute('aria-expanded', 'true');
-    await hide.click();
+    // One quiet "Back cover" button shows and hides it, saying which through aria-expanded.
+    const toggle = page.getByRole('button', { name: 'Back cover', exact: true });
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await toggle.click();
     await expect(page.getByTestId('atlas-back-cover')).toHaveCount(0);
-    const show = page.getByRole('button', { name: 'Show the back cover' });
-    await expect(show).toHaveAttribute('aria-expanded', 'false');
-    await show.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await toggle.click();
     await expect(page.getByTestId('atlas-back-cover')).toBeVisible();
     await page.context().close();
   });
@@ -329,14 +330,15 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
   }) => {
     const page = await openAs(browser, 'adult_writer', marketingAddress);
     const card = page.getByRole('region', { name: 'QR code' });
-    // It starts on the story page, with the address written under the code.
+    // It starts on the story page, with the address written beside the code.
+    const address = card.getByTestId('atlas-story-qr-address');
     await expect(card.getByRole('img', { name: `QR code for /s/${slug}` })).toBeVisible();
-    await expect(card.locator('figcaption')).toHaveText(`/s/${slug}`);
+    await expect(address).toHaveText(new RegExp(`^[^/]+/s/${slug}$`));
     // The story's world is offered only while it is shared; the profile always is.
     const where = card.getByLabel('Where it takes people');
     await expect(where.locator('option')).toHaveText(['The story page', 'The writer’s profile']);
     await where.selectOption({ label: 'The writer’s profile' });
-    await expect(card.locator('figcaption')).toHaveText('/u/adult_writer');
+    await expect(address).toHaveText(/^[^/]+\/u\/adult_writer$/);
     // Both files are made in the browser and named after the story and the place.
     const svg = page.waitForEvent('download');
     await card.getByRole('button', { name: 'Download SVG' }).click();
@@ -352,9 +354,9 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
       .getByRole('region', { name: 'QR code' })
       .getByLabel('Where it takes people')
       .selectOption({ label: 'The story’s world' });
-    await expect(page.getByRole('region', { name: 'QR code' }).locator('figcaption')).toHaveText(
-      `/s/${slug}/atlas/world`,
-    );
+    await expect(
+      page.getByRole('region', { name: 'QR code' }).getByTestId('atlas-story-qr-address'),
+    ).toHaveText(new RegExp(`^[^/]+/s/${slug}/atlas/world$`));
     await page.context().close();
   });
 

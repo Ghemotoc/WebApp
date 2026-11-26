@@ -779,7 +779,7 @@
     "heading": "Marketing",
     "pitchHeading": "The pitch",
     "launchHeading": "Getting it out",
-    "sharedHint": "The logline and publishing route are the same as on At a glance; the genre and audience are the same as in Story settings.",
+    "sharedHint": "The logline and publishing route are the same as on At a glance; the genre and audience come from the story.",
     "fields": {
       "back_cover_blurb": "Back-cover blurb",
       "comparable_titles": "Comparable titles",
@@ -789,7 +789,7 @@
     },
     "hints": {
       "back_cover_blurb": "What a reader turning the book over would read.",
-      "comparable_titles": "Books or stories like yours, for example “The Shadow of the Wind meets Stranger Things”.",
+      "comparable_titles": "Books or stories like yours.",
       "hooks_keywords": "What makes it stand out, and the words a reader might search for.",
       "query_pitch": "The pitch you’d send to an agent or a publisher.",
       "launch_notes": "Dates, places to share it, who to tell."
@@ -815,16 +815,15 @@
     },
     "backCover": {
       "heading": "Back cover",
-      "show": "Show the back cover",
-      "hide": "Hide the back cover",
+      "hint": "The title, logline, blurb and comparable titles laid out like the back of a book.",
+      "toggle": "Back cover",
       "forReadersOf": "For readers of",
       "empty": "Write a logline, a blurb or comparable titles and they’ll show here.",
       "byline": "{{name}} · {{productName}}"
     },
     "qr": {
       "heading": "QR code",
-      "use": "For posters, flyers and bookmarks",
-      "hint": "People scan it with a phone camera and land on the story. Pick where it goes, then download it.",
+      "hint": "For posters, flyers and bookmarks. People scan it with a phone camera and land on the story.",
       "destination": "Where it takes people",
       "destinations": {
         "story": "The story page",

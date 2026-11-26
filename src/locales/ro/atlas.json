@@ -779,7 +779,7 @@
     "heading": "Marketing",
     "pitchHeading": "Prezentarea",
     "launchHeading": "Lansarea",
-    "sharedHint": "Rezumatul și felul în care publici sunt aceleași ca în Pe scurt; genul și publicul sunt aceleași ca în Setările poveștii.",
+    "sharedHint": "Rezumatul și felul în care publici sunt aceleași ca în Pe scurt; genul și publicul vin din poveste.",
     "fields": {
       "back_cover_blurb": "Textul de pe coperta a patra",
       "comparable_titles": "Titluri asemănătoare",
@@ -789,7 +789,7 @@
     },
     "hints": {
       "back_cover_blurb": "Ce ar citi cineva care întoarce cartea.",
-      "comparable_titles": "Cărți sau povești ca a ta, de exemplu „Umbra vântului întâlnește Stranger Things”.",
+      "comparable_titles": "Cărți sau povești ca a ta.",
       "hooks_keywords": "Ce o face să iasă în evidență și cuvintele pe care le-ar căuta un cititor.",
       "query_pitch": "Prezentarea pe care ai trimite-o unui agent sau unei edituri.",
       "launch_notes": "Date, locuri unde s-o împarți, cui să-i spui."
@@ -815,16 +815,15 @@
     },
     "backCover": {
       "heading": "Coperta a patra",
-      "show": "Arată coperta a patra",
-      "hide": "Ascunde coperta a patra",
+      "hint": "Titlul, rezumatul, textul de pe coperta a patra și titlurile asemănătoare, așezate ca pe spatele unei cărți.",
+      "toggle": "Coperta a patra",
       "forReadersOf": "Pentru cititorii cărților",
       "empty": "Scrie rezumatul, textul sau titlurile asemănătoare și vor apărea aici.",
       "byline": "{{name}} · {{productName}}"
     },
     "qr": {
       "heading": "Cod QR",
-      "use": "Pentru afișe, pliante și semne de carte",
-      "hint": "Oamenii îl scanează cu camera telefonului și ajung la poveste. Alege unde duce, apoi descarcă-l.",
+      "hint": "Pentru afișe, pliante și semne de carte. Oamenii îl scanează cu camera telefonului și ajung la poveste.",
       "destination": "Unde duce",
       "destinations": {
         "story": "Pagina poveștii",
