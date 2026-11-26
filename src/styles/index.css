@@ -748,25 +748,16 @@ dialog.bg-surface,
  * website's see-through .lg-light glass; scrolled, glass-float's near-solid glass takes over.
  * Reduce motion makes the change jump.
  *
- * The tight bar is 14 px shorter (6 px above the pill, 8 px inside it), and the header is in the
- * page's flow, so the same 14 px go below it as margin: the header's place in the page never
- * changes size. Without that, the page below moved up 14 px when the bar tightened; the browser
- * kept the text in view by scrolling back 14 px (scroll anchoring), which took the page above
- * 12 px again, so the bar grew, the page scrolled forward, and so on every frame. A page resting
- * near 12 px shook without end, and a test could not click a button there because it never held
- * still (CI, PR #652: "element is not stable" on the Story Atlas Delete button).
+ * The tight bar is 14 px shorter and in the page's flow, so usePageScrolled tightens it only past
+ * 26 px and relaxes it at 12 px: the 14 px the browser scrolls back never flip it again.
  */
 .top-bar {
   padding-top: 16px;
-  margin-bottom: 0;
-  transition:
-    padding-top 300ms ease,
-    margin-bottom 300ms ease;
+  transition: padding-top 300ms ease;
 }
 
 .top-bar[data-scrolled='true'] {
   padding-top: 10px;
-  margin-bottom: 14px;
 }
 
 .top-bar-pill {
