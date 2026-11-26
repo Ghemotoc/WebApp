@@ -9,10 +9,11 @@
  * useLibraryTranslation().
  */
 import { createNamespaceTranslations } from '@/lib/namespace-translations';
-import englishLibrary from '@/locales/en/library.json';
 import romanianLibrary from '@/locales/ro/library.json';
 
-const libraryTranslations = createNamespaceTranslations('library', romanianLibrary, englishLibrary);
+// The English text is left out here: the chapter reader shows this namespace, so its English
+// loads with the rest of the English text (readerFeatureNamespaces in src/lib/i18n-loading.ts).
+const libraryTranslations = createNamespaceTranslations('library', romanianLibrary);
 
 /**
  * Registers the library texts once; calling it again does nothing.

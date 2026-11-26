@@ -50,9 +50,17 @@ beforeEach(() => {
 });
 
 describe('SignedOutGate', () => {
-  it('sends a signed-out visitor from Library, Together and search to the home page while the flag is on', async () => {
+  it("sends a signed-out visitor from Library, search, writing and a space's tools to the home page while the flag is on", async () => {
     setUp('signed out', 'on');
-    for (const path of ['/library', '/forums', '/search?q=vreme', '/library/want', '/write']) {
+    const closedPaths = [
+      '/library',
+      '/search?q=vreme',
+      '/library/want',
+      '/write',
+      '/spaces/new',
+      '/spaces/cercul/settings',
+    ];
+    for (const path of closedPaths) {
       const { unmount } = openPage(path);
       expect(await screen.findByText('The home page')).toBeTruthy();
       expect(screen.queryByText('The page itself')).toBeNull();
@@ -60,7 +68,7 @@ describe('SignedOutGate', () => {
     }
   });
 
-  it('keeps Read, profiles, reading lists, signing in and the legal pages open to a signed-out visitor', () => {
+  it('keeps Read, profiles, reading lists, Together, signing in and the legal pages open to a signed-out visitor', () => {
     setUp('signed out', 'on');
     const openPaths = [
       '/discover',
@@ -71,6 +79,11 @@ describe('SignedOutGate', () => {
       '/u/inkwolf',
       '/u/inkwolf/stories',
       '/library/lists/7a1c2f3e-0000-4000-8000-000000000001',
+      // GROWTH-4: the forums, a thread and a space's page (the database decides what they show).
+      '/forums',
+      '/forums/first-chapters/12',
+      '/spaces',
+      '/spaces/cercul',
       '/sign-in',
       '/join/abc',
       '/legal/terms',
