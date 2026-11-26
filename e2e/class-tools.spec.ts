@@ -130,7 +130,11 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
 
   test('a teacher on Join a class is led to a new class space', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', '/class');
-    await page.getByRole('link', { name: 'Create a class space' }).click();
+    const createLink = page.getByRole('link', { name: 'Create a class space' });
+    // Wait for the badge check: until it answers, the same words link to the Teacher badge in
+    // Settings (ClassJoinTeacherLine), so a click before then goes there instead.
+    await expect(createLink).toHaveAttribute('href', '/spaces/new?kind=class');
+    await createLink.click();
     await expect(page).toHaveURL(/\/spaces\/new\?kind=class$/);
     await expect(page.getByRole('radio', { name: 'Class space' })).toBeChecked();
     await page.context().close();
