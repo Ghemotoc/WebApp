@@ -28166,6 +28166,7 @@ declare
   text_to_send text;
   teaser_words integer;
   app_only boolean;
+  open_to_visitors boolean;
   awaits_adult_answer boolean;
 begin
   -- Step 1: the story, if this caller may read it (age, blocks, deleted, moderated).
@@ -28267,9 +28268,12 @@ begin
   -- only once they have said in this browser that they are 18 or over.
   awaits_adult_answer := caller_id is null and story.rating = '18_plus'
     and not public.visitor_said_adult();
+  -- GROWTH-2 (Robert, 26 Nov 2026, 15:11 UTC): a public-domain classic is read whole by
+  -- visitors too, so search engines can list its chapters; a writer's own story keeps the teaser.
+  open_to_visitors := story.classic_author_id is not null;
   if app_only or awaits_adult_answer then
     text_to_send := '';
-  elsif caller_id is not null then
+  elsif caller_id is not null or open_to_visitors then
     text_to_send := chapter.published_body;
   else
     select coalesce((settings.value #>> '{}')::integer, 600) into teaser_words
@@ -28297,8 +28301,9 @@ begin
     'edited_at', chapter.edited_at,
     'minutes_to_read', greatest(1, ceil(coalesce(chapter.published_word_count, 0) / 200.0))::integer,
     'is_owner', story.user_id = caller_id,
-    'needs_sign_in', caller_id is null and not app_only,
-    'is_teaser', caller_id is null and not app_only and not awaits_adult_answer,
+    'needs_sign_in', caller_id is null and not app_only and not open_to_visitors,
+    'is_teaser', caller_id is null and not app_only and not awaits_adult_answer
+      and not open_to_visitors,
     'app_only', app_only,
     -- CALM-9m: true while a visitor hasn't yet said they are 18 or over (no text is sent).
     'needs_adult_answer', awaits_adult_answer,
@@ -38790,6 +38795,28 @@ COMMENT ON FUNCTION "public"."profile_is_open_to"("owner" "public"."profiles", "
 
 
 
+CREATE OR REPLACE FUNCTION "public"."profile_is_searchable"("person_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((
+    select profiles.handle is not null and profiles.deleted_at is null
+      -- Adults only: the age group worked out the same way age_band() does.
+      and public.age_band_of(profiles.id) = '18_plus'
+      -- Their own choice (S1-E13-01): only a profile open to everyone, signed out included.
+      and public.profile_audience_of(profiles) = 'everyone'
+      and not public.is_moderated_away('profile', profiles.id)
+    from public.profiles where profiles.id = person_id), false);
+$$;
+
+
+ALTER FUNCTION "public"."profile_is_searchable"("person_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_is_searchable"("person_id" "uuid") IS 'Internal: an adult profile open to everyone and not moderated away, which search engines may list (GROWTH-3).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -38890,6 +38917,37 @@ ALTER FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_
 
 
 COMMENT ON FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) IS 'Internal: a person''s latest forum posts that the caller may read (board C04, Recent posts in Together).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."profile_search_head"("wanted_handle" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  person public.profiles;
+  is_open boolean;
+begin
+  -- Step 1: the live profile behind the username; none, or one a moderator hid, has no head.
+  select * into person from public.profile_for_handle(wanted_handle);
+  if not found or public.is_moderated_away('profile', person.id) then
+    return null;
+  end if;
+  -- Step 2: the bio only when its owner shows the whole profile to everyone (S1-E13-01).
+  is_open := public.profile_audience_of(person) = 'everyone';
+  -- Step 3: the answer; indexable only for an adult (profile_is_searchable()).
+  return jsonb_build_object(
+    'display_name', public.display_name(person.handle, person.pen_name),
+    'bio', case when is_open then coalesce(person.bio, '') else '' end,
+    'indexable', public.profile_is_searchable(person.id));
+end;
+$$;
+
+
+ALTER FUNCTION "public"."profile_search_head"("wanted_handle" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."profile_search_head"("wanted_handle" "text") IS 'A profile''s name, open bio and whether search engines may index it, for the page head (GROWTH-3).';
 
 
 
@@ -40890,6 +40948,28 @@ ALTER FUNCTION "public"."reading_list"("list_id" "uuid") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."reading_list"("list_id" "uuid") IS 'One reading list the caller may see (their own, or a public one), for its page; null otherwise (GAPS-6).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."reading_list_is_searchable"("target_list_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((
+    select reading_lists.is_public and reading_lists.deleted_at is null
+      and not public.is_moderated_away('reading_list', reading_lists.id)
+      and public.profile_is_searchable(reading_lists.user_id)
+      and exists (select 1 from public.reading_list_stories
+                  where reading_list_stories.list_id = reading_lists.id
+                    and public.story_is_searchable(reading_list_stories.story_id))
+    from public.reading_lists where reading_lists.id = target_list_id), false);
+$$;
+
+
+ALTER FUNCTION "public"."reading_list_is_searchable"("target_list_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."reading_list_is_searchable"("target_list_id" "uuid") IS 'Internal: a public reading list of an adult with a listed story, which search engines may list (GROWTH-3).';
 
 
 
@@ -50063,6 +50143,44 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       and not public.is_moderated_away('story', stories.id)
       -- CALM-9s: a story hidden in any country stays out, as search engines list worldwide.
       and cardinality(stories.hidden_in_countries) = 0
+    union all
+    -- Step 5 (GROWTH-2): each readable chapter of a story listed in step 4 that visitors get
+    -- text from: the whole chapter for a classic, the teaser for a writer's story. 16+ and 18+
+    -- chapters show visitors no text, so they stay out.
+    select '/s/' || stories.slug || '/' || chapters.code,
+      coalesce(chapters.edited_at, chapters.first_published_at)::date
+    from public.stories
+    join public.chapters on chapters.story_id = stories.id
+    where stories.first_published_at is not null and stories.deleted_at is null
+      and stories.visibility = 'public' and not stories.class_only
+      and stories.rating not in ('16_plus', '18_plus')
+      and not public.story_app_only_applies(stories.is_app_only)
+      and not public.is_moderated_away('story', stories.id)
+      and cardinality(stories.hidden_in_countries) = 0
+      and public.chapter_is_readable(chapters.id)
+    union all
+    -- Step 6 (GROWTH-3): the profile of each adult who shows it to everyone and has a story in
+    -- step 4 or a public reading list in step 7. Under-18s never appear here (Robert, 26 Nov
+    -- 2026, 15:13 UTC: "Profile for adults").
+    select '/u/' || profiles.handle, profiles.updated_at::date
+    from public.profiles
+    where public.profile_is_searchable(profiles.id)
+      and (exists (select 1 from public.stories
+                   where stories.user_id = profiles.id and public.story_is_searchable(stories.id))
+           or exists (select 1 from public.reading_lists
+                      where reading_lists.user_id = profiles.id
+                        and public.reading_list_is_searchable(reading_lists.id)))
+    union all
+    -- Step 7 (GROWTH-3): each public reading list of such an adult with a listed story in it.
+    select '/library/lists/' || reading_lists.id, reading_lists.updated_at::date
+    from public.reading_lists
+    where public.reading_list_is_searchable(reading_lists.id)
+    union all
+    -- Step 8 (GROWTH-3): each category's See all page, once a listed story is in it.
+    select '/discover/c/' || categories.slug, public.romania_today()
+    from public.categories
+    where exists (select 1 from public.stories
+                  where stories.category_id = categories.id and public.story_is_searchable(stories.id))
   )
   limit 50000;
 $$;
@@ -53271,6 +53389,27 @@ ALTER FUNCTION "public"."story_ideas"("story_slug" "text") OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."story_ideas"("story_slug" "text") IS 'The caller''s questions, ideas, to-dos and decisions on one story, newest first (S1-E17-27).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_is_searchable"("target_story_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select coalesce((
+    select stories.first_published_at is not null and stories.deleted_at is null
+      and stories.visibility = 'public' and not stories.class_only
+      and not public.story_app_only_applies(stories.is_app_only)
+      and not public.is_moderated_away('story', stories.id)
+      and cardinality(stories.hidden_in_countries) = 0
+    from public.stories where stories.id = target_story_id), false);
+$$;
+
+
+ALTER FUNCTION "public"."story_is_searchable"("target_story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_is_searchable"("target_story_id" "uuid") IS 'Internal: a story search engines may list: published, public, web, not moderated or hidden (GROWTH-3).';
 
 
 
@@ -75771,6 +75910,10 @@ REVOKE ALL ON FUNCTION "public"."profile_is_open_to"("owner" "public"."profiles"
 
 
 
+REVOKE ALL ON FUNCTION "public"."profile_is_searchable"("person_id" "uuid") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."profile_is_shown_to_caller"("writer" "public"."profiles") FROM PUBLIC;
 
 
@@ -75787,6 +75930,12 @@ GRANT ALL ON FUNCTION "public"."profile_reader_level"("wanted_handle" "text") TO
 
 
 REVOKE ALL ON FUNCTION "public"."profile_recent_posts_json"("writer_id" "uuid", "wanted_language" "text", "how_many" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."profile_search_head"("wanted_handle" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."profile_search_head"("wanted_handle" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."profile_search_head"("wanted_handle" "text") TO "authenticated";
 
 
 
@@ -76074,6 +76223,10 @@ REVOKE ALL ON FUNCTION "public"."reader_visible_story_anywhere"("story_slug" "te
 REVOKE ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."reading_list"("list_id" "uuid") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."reading_list_is_searchable"("target_list_id" "uuid") FROM PUBLIC;
 
 
 
@@ -77685,6 +77838,10 @@ REVOKE ALL ON FUNCTION "public"."story_hidden_here"("hidden_in_countries" "text"
 
 REVOKE ALL ON FUNCTION "public"."story_ideas"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_ideas"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_is_searchable"("target_story_id" "uuid") FROM PUBLIC;
 
 
 

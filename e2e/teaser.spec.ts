@@ -15,7 +15,7 @@
  *   and a chapter asks "I'm 18 or over" first: no text before the answer, the teaser after it,
  *   and the answer stays in the browser for the next chapter;
  * - the HTML a link preview reads carries the Open Graph tags (title, pen name, blurb, the cover's
- *   colour), chapter pages carry noindex in the page and the header, story pages carry JSON-LD
+ *   colour), chapter pages are indexable (GROWTH-2) with the teaser only, story pages carry JSON-LD
  *   without chapter text, and a 16+ story's tags hold its title only;
  * - axe finds nothing serious in all 12 views of the teaser and the notice, nothing scrolls
  *   sideways, and the teaser draws no doodle at 390, 768 and 1440 px.
@@ -167,10 +167,11 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await expect(page.getByRole('heading', { name: 'For mature readers' })).toHaveCount(0);
   });
 
-  test('a shared link’s HTML carries the preview, and only story pages are indexable', async ({
+  test('a shared link’s HTML carries the preview, and story and chapter pages are indexable', async ({
     request,
   }) => {
-    // A chapter: Open Graph tags, noindex in the page and in the header, no structured data.
+    // A chapter: Open Graph tags, indexable (GROWTH-2; Robert, 26 Nov 2026, 15:13 UTC), no
+    // structured data, and only the teaser's words.
     const chapter = await request.get(chapterAddress);
     const chapterHtml = await chapter.text();
     expect(chapterHtml).toContain(
@@ -182,8 +183,8 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     expect(chapterHtml).toMatch(
       /<meta property="og:image" content="http[^"]+\/link-previews\/sky\.png">/,
     );
-    expect(chapterHtml).toContain('<meta name="robots" content="noindex">');
-    expect(chapter.headers()['x-robots-tag']).toBe('noindex');
+    expect(chapterHtml).not.toContain('<meta name="robots" content="noindex">');
+    expect(chapter.headers()['x-robots-tag']).toBeUndefined();
     expect(chapterHtml).not.toContain('application/ld+json');
     expect(chapterHtml).not.toContain('Vântul bate');
     // The picture it names is served.

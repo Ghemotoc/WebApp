@@ -13,8 +13,12 @@
  * Read stays open as a shop window (Robert, 23 Nov 2026, 10:50 UTC: "we can have read ... similar
  * to how Facebook or Reddit have it. You can see a preview, but then you have to sign in or sign
  * up"): Discover and its lists, a story's page and a chapter, where get_chapter() sends a
- * signed-out visitor only the short preview and the sign-in prompt. Library, Together, search,
- * profiles and the rest stay closed.
+ * signed-out visitor only the short preview and the sign-in prompt. Profiles and public reading
+ * lists open too (GROWTH-3; Robert, 26 Nov 2026, 15:13 UTC: "Profile for adults, read lists,
+ * categories, writers, chapters. Yes."), so search engines can reach them: each still shows only
+ * what its owner lets everyone see (profile_is_open_to(), reading_list_is_visible()), and an
+ * under-18's profile tells search engines not to list it (server/profile-head.ts). The rest of the
+ * Library, Together, search and the rest stay closed.
  */
 import { pathWithoutPlace } from '@/lib/websitePlace';
 
@@ -39,6 +43,10 @@ const openPathPrefixes = [
   // Read: Discover, its See all lists, and a story's page and chapters (the preview only).
   '/discover',
   '/s/',
+  // GROWTH-3: profiles (with their stories, bookshelves and library when shared) and one public
+  // reading list.
+  '/u/',
+  '/library/lists/',
 ];
 
 /**

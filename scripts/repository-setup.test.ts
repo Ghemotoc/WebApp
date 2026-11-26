@@ -39,6 +39,17 @@ describe('repository setup', () => {
     }
   });
 
+  it('loads the bulk classics only when a person presses Run and types LOAD (Robert, 26 Nov 2026)', () => {
+    // The load writes to a real database, so it must never start on a push or a pull request.
+    const workflow = readRepositoryFile('.github/workflows/load-classics.yml');
+    const triggers = workflow.slice(workflow.indexOf('\non:'), workflow.indexOf('\npermissions:'));
+
+    expect(triggers).toContain('workflow_dispatch:');
+    expect(triggers).not.toMatch(/\b(push|pull_request|schedule):/);
+    expect(workflow).toContain('if [ "$CONFIRM" != "LOAD" ]; then');
+    expect(workflow).toContain('ON_ERROR_STOP=1');
+  });
+
   it('sends every address to index.html on Cloudflare Pages, so reloading any page works', () => {
     expect(readRepositoryFile('public/_redirects').trim()).toBe('/* /index.html 200');
   });
