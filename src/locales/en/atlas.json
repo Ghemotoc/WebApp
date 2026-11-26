@@ -724,8 +724,12 @@
       "none": "No chapter has a point of view yet. Pick one in each chapter’s plan.",
       "noChapters": "This story has no chapters yet.",
       "countsLabel": "Chapters by teller",
-      "chaptersBy": "Told by {{name}}",
-      "toldByNarrator": "Told by the Narrator"
+      "countFirst_one": "{{name}}: {{count}} chapter",
+      "countFirst_few": "{{name}}: {{count}} chapters",
+      "countFirst_other": "{{name}}: {{count}} chapters",
+      "count": "{{name}}: {{count}}",
+      "rowName": "{{number}}. {{title}}",
+      "tellsIt": "tells it"
     }
   },
   "ideas": {

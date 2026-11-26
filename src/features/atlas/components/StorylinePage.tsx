@@ -79,7 +79,7 @@ function StorylineBody({
 
 /**
  * Board, Timeline or Point-of-view lanes (S1-E17-22), then the view's hint as a meta line (the
- * timeline draws its own, over its list, board E29) and, under it, the view's own action (the
+ * timeline and the lanes draw their own, boards E29 and E30) and, under it, the view's own action (the
  * board's "Add act", GAPS-2a; board E28).
  */
 function ViewToggle({
@@ -105,8 +105,8 @@ function ViewToggle({
         value={view}
         onChange={onChange}
       />
-      {/* Board E29 puts the timeline's hint over its list, so TimelineView draws that one. */}
-      {view !== 'timeline' && (
+      {/* Boards E29 and E30 put the hint 12 px over the view, so those views draw their own. */}
+      {view === 'board' && (
         <p className="m-0 mt-3 type-meta text-ink-muted">{t(`storyline.${view}.hint`)}</p>
       )}
       {view === 'board' && <AddActForm slug={slug} />}

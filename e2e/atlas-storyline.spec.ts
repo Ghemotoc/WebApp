@@ -20,7 +20,8 @@
  * - the timeline adds, sorts, changes and deletes events beside dated chapters, says beside a
  *   field what is missing, deletes with Undo and counts the undated chapters apart, with Show
  *   them (S1-E17-20; story 6.10, board E29);
- * - the lanes show each chapter in its teller's column with its status in words (S1-E17-21);
+ * - the lanes mark each chapter with "tells it" in its teller's column, count the tellers above
+ *   and scroll sideways inside their box on a phone (S1-E17-21; story 6.11, board E30);
  * - the view toggle remembers the last choice (S1-E17-22);
  * - the page passes axe, doesn't scroll sideways and draws no doodle at 390, 768 and
  *   1440 px, light and night, Romanian and English, each view at every width.
@@ -424,23 +425,49 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await page.context().close();
   });
 
-  test('the lanes show each chapter in its teller’s column, with its status in words', async ({
+  test('the lanes mark each chapter’s teller with “tells it”, with the counts above', async ({
     browser,
   }) => {
     const page = await openAs(browser, 'adult_writer', storylineAddress);
     await showView(page, 'Point-of-view lanes');
+    // Story 6.11: the counts say how the telling is shared, the word "chapters" said once.
+    await expect(
+      page.getByRole('list', { name: 'Chapters by teller' }).getByRole('listitem'),
+    ).toHaveText([/^Ana: \d+ chapters?$/, /^Bogdan: \d+$/]);
     const table = page.getByRole('table', { name: 'Chapters by point-of-view character' });
     await expect(table.getByRole('columnheader')).toHaveText(['Chapter', 'Ana', 'Bogdan']);
+    // The mark is the words "tells it", never a colour alone.
     const stormRow = table.getByRole('row', { name: /Furtuna/ });
-    await expect(stormRow.getByRole('cell').nth(0)).toHaveText('Drafting');
+    await expect(stormRow.getByRole('cell').nth(0)).toHaveText('tells it');
     await expect(stormRow.getByRole('cell').nth(1)).toHaveText('');
     await expect(
       table
         .getByRole('row', { name: /Calmul/ })
         .getByRole('cell')
         .nth(1),
-    ).toHaveText('Idea');
+    ).toHaveText('tells it');
     await expect(table.getByTestId('atlas-lane-row')).toHaveCount(4);
+    // Rows go by number and title ("1. Furtuna"), in book order.
+    await expect(table.getByRole('rowheader').first()).toHaveText(/^\d+\. /);
+    await page.context().close();
+  });
+
+  test('on a phone the lanes table scrolls sideways inside its box, not the page', async ({
+    browser,
+  }) => {
+    const page = await openAs(browser, 'adult_writer', storylineAddress);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await showView(page, 'Point-of-view lanes');
+    const box = page.getByRole('region', { name: 'Chapters by point-of-view character' });
+    await expect(box).toBeVisible();
+    const widths = await box.evaluate((element) => ({
+      scroll: element.scrollWidth,
+      client: element.clientWidth,
+      page: document.documentElement.scrollWidth,
+      view: window.innerWidth,
+    }));
+    expect(widths.scroll).toBeGreaterThan(widths.client);
+    expect(widths.page).toBeLessThanOrEqual(widths.view);
     await page.context().close();
   });
 
@@ -461,7 +488,7 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
     await expect(page.getByTestId('atlas-board-card').filter({ hasText: 'Zorii' })).toContainText(
       'POV: Narrator',
     );
-    // The lanes give the Narrator the last column and a tile of their own.
+    // The lanes give the Narrator the last column and a count of their own.
     await showView(page, 'Point-of-view lanes');
     const table = page.getByRole('table', { name: 'Chapters by point-of-view character' });
     await expect(table.getByRole('columnheader')).toHaveText([
@@ -471,11 +498,11 @@ test.describe('Story Atlas storyline (S1-E17-19 to S1-E17-22)', () => {
       'Narratoroutside the story',
     ]);
     await expect(table.getByRole('row', { name: /Zorii/ }).getByRole('cell').nth(2)).toHaveText(
-      'Idea',
+      'tells it',
     );
     await expect(
       page.getByRole('list', { name: 'Chapters by teller' }).getByRole('listitem'),
-    ).toHaveText(['Told by Ana1', 'Told by Bogdan1', 'Told by the Narrator1']);
+    ).toHaveText(['Ana: 1 chapter', 'Bogdan: 1', 'Narrator: 1']);
     // A character takes the Narrator off again (one teller at a time).
     await page.goto(`/write/s/${slug}/c/e2estor3`);
     await openMoreDetails(page);

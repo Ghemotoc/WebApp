@@ -116,7 +116,6 @@ const infoPillUsers = new Set([
   '/src/features/atlas/components/CrossLinkChips.tsx',
   '/src/features/atlas/components/IdeaItem.tsx',
   '/src/features/atlas/components/PlanGuardPill.tsx',
-  '/src/features/atlas/components/PlanningStatusPill.tsx',
   '/src/features/atlas/components/PublicCharacter.tsx',
   '/src/features/atlas/components/PublicWorld.tsx',
   '/src/features/atlas/components/PublicWorldEntry.tsx',

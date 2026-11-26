@@ -724,8 +724,12 @@
       "none": "Niciun capitol nu are încă o perspectivă. Alege una în planul fiecărui capitol.",
       "noChapters": "Povestea nu are încă niciun capitol.",
       "countsLabel": "Capitole după narator",
-      "chaptersBy": "Spuse de {{name}}",
-      "toldByNarrator": "Spuse de narator"
+      "countFirst_one": "{{name}}: {{count}} capitol",
+      "countFirst_few": "{{name}}: {{count}} capitole",
+      "countFirst_other": "{{name}}: {{count}} de capitole",
+      "count": "{{name}}: {{count}}",
+      "rowName": "{{number}}. {{title}}",
+      "tellsIt": "povestește"
     }
   },
   "ideas": {
