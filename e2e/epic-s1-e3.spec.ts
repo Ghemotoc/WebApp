@@ -172,7 +172,7 @@ test.describe('epic S1-E3 journeys', () => {
 
     // The breadcrumb's story link opens Manage chapters; add chapter two and schedule it.
     await page.getByRole('navigation').getByRole('link', { name: storyTitle }).click();
-    await expect(page.getByRole('heading', { name: 'Manage chapters', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Chapters', level: 1 })).toBeVisible();
     await page.getByRole('button', { name: 'New chapter' }).click();
     await writeChapter(page, 'Seara', 'Vântul se întoarce spre seară.');
     await publishPanel.getByRole('radio', { name: 'Schedule for later' }).check();
@@ -184,9 +184,9 @@ test.describe('epic S1-E3 journeys', () => {
 
     // Move chapter two up on Manage chapters (S1-E3-04).
     await page.goto(`/write/s/${slug}/chapters`);
-    await page.getByRole('button', { name: 'Move chapter 2 up' }).click();
+    await page.getByRole('button', { name: 'Move chapter 2 earlier' }).click();
     await expect(
-      page.getByRole('list', { name: 'Chapters in reading order' }).getByRole('listitem').first(),
+      page.getByRole('list', { name: 'Chapters in reading order' }).locator(':scope > li').first(),
     ).toContainText('Seara');
 
     // Mark the story Completed in its settings (S1-E3-05).

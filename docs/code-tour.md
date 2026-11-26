@@ -1493,11 +1493,17 @@ Tests: `supabase/tests/database/392-last-chapter.test.sql`, `src/features/writin
 Managing chapters (S1-E3-04), at `/write/s/<slug>/chapters` ("Manage chapters" on a story card, or the story in the editor's breadcrumb):
 
 ```
-ManageChaptersPage → ChapterStats ("This story in numbers": chapters, words, next scheduled)
-  │  → ChapterListCard → SortableChapterList (dnd-kit: mouse, touch, keyboard)
-  │                     → ManagedChapterRow ("Chapter 3: Title", pill, meta from lib/chapterListText.ts)
-  │                       → ChapterRowActions (arrows, Edit, Rename, Unpublish, Delete)
-  │  → RecentlyDeletedChapters (Undo), DeleteChapterDialog (asks first)
+ManageChaptersPage → ChapterStats (board D03: Chapters by state, Words out, Reads of all time,
+  │                    Status and the marked last chapter; lib/chapterStats.ts, reads from
+  │                    useWriterDashboard with "fewer than 5" counted as a "+" floor)
+  │  → ChapterList (more than 10 chapters: the newest 6, then "Show chapters 1 to N")
+  │    → SortableChapterList (dnd-kit: mouse and touch drag the whole row; the click a drop
+  │                           lands on the title is dropped, lib/blockClickAfterDrag.ts)
+  │      → ManagedChapterRow ("Chapter 3: Title" over a MetaLine from lib/chapterListText.ts)
+  │        → ChapterRowActions (Earlier, Later, Edit, then MoreMenu: Rename, Preview, Schedule,
+  │          Unpublish or Publish again, Copy link, Delete; Earlier and Later move into More
+  │          under 600 px)
+  │  → RecentlyDeletedChapters (Restore, days left), DeleteChapterDialog (asks first)
   │  → MoveChapterDialog: a move that gives a published chapter a new number asks first
   │    (lib/chapterMoves.ts decides; drafts and scheduled chapters move straight away; G9d)
   ▼

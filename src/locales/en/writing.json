@@ -402,17 +402,14 @@
     "parody": "Parody"
   },
   "manageChapters": {
-    "documentTitle": "Manage chapters",
-    "heading": "Manage chapters",
-    "intro": "Change the order, rename, unpublish or delete chapters. Readers see changes straight away.",
+    "documentTitle": "Chapters",
+    "heading": "Chapters",
     "newChapter": "New chapter",
-    "listEyebrow": "Chapters",
     "noChapters": "No chapters yet",
-    "note": "Drag a chapter, or use the arrows. Moving a published chapter asks first.",
+    "note": "Drag a chapter, or use Earlier and Later. Moving a published chapter asks first, because it changes the order for everyone reading.",
     "listLabel": "Chapters in reading order",
-    "dragLabel": "Drag chapter {{number}} to reorder. You can also use the arrows.",
-    "moveUp": "Move chapter {{number}} up",
-    "moveDown": "Move chapter {{number}} down",
+    "moveUp": "Move chapter {{number}} earlier",
+    "moveDown": "Move chapter {{number}} later",
     "edit": "Edit",
     "rename": "Rename",
     "renameLabel": "New title for chapter {{number}}",
@@ -443,16 +440,11 @@
       "unpublished": "Unpublished"
     },
     "meta": {
-      "published": "Published {{date}}",
       "edited": "readers see “Edited on {{date}}”",
-      "draft": "Draft",
       "words_one": "{{count}} word",
       "words_few": "{{count}} words",
       "words_other": "{{count}} words",
-      "saved": "saved {{date}}",
-      "scheduled": "Goes live {{when}}, local time",
-      "unpublished": "Unpublished {{date}}",
-      "unpublishedNote": "readers can’t open it · comments hidden but kept"
+      "saved": "saved {{date}}"
     },
     "deleteDialog": {
       "title": "Delete “{{title}}”?",
@@ -462,10 +454,14 @@
     },
     "deleted": {
       "heading": "Recently deleted",
-      "intro": "Deleted chapters are hidden straight away and deleted for good after 30 days. Until then you can undo.",
-      "meta": "Deleted {{date}} · gone for good on {{purgeDate}}",
-      "undo": "Undo",
-      "empty": "Nothing deleted in the last 30 days."
+      "intro": "Deleted chapters stay here for 30 days, then they are gone for good.",
+      "undo": "Restore",
+      "empty": "Nothing deleted in the last 30 days.",
+      "restoreLabel": "Restore “{{title}}”",
+      "deletedOn": "Deleted {{date}}",
+      "daysLeft_one": "{{count}} day left",
+      "daysLeft_few": "{{count}} days left",
+      "daysLeft_other": "{{count}} days left"
     },
     "problems": {
       "notActive": "Your account can’t change chapters yet. Confirm your email and choose a username first.",
@@ -474,28 +470,61 @@
       "failed": "That didn’t work. Check your connection and try again."
     },
     "drag": {
-      "instructions": "To move a chapter, focus its handle and press Space. Use the up and down arrow keys to move it, Space again to drop it, or Escape to cancel.",
       "pickedUp": "Picked up chapter {{position}}, {{title}}.",
       "over": "{{title}} is now at position {{position}} of {{total}}.",
       "dropped": "Dropped {{title}} at position {{position}} of {{total}}.",
       "cancelled": "Move cancelled. {{title}} stays where it was."
     },
     "rowTitle": "Chapter {{number}}: {{title}}",
-    "movedFrom": "Moved here from chapter {{number}}",
-    "wasChapter": "Was chapter {{number}}",
     "chapterBoard": "Open the chapter board",
     "stats": {
       "label": "This story in numbers",
-      "chapters": "chapters",
-      "words": "words",
-      "nextChapter": "next chapter",
-      "noneScheduled": "none scheduled"
+      "chapters": "Chapters",
+      "out": "{{count}} out",
+      "drafts_one": "{{count}} draft",
+      "drafts_few": "{{count}} drafts",
+      "drafts_other": "{{count}} drafts",
+      "scheduled": "{{count}} scheduled",
+      "unpublished": "{{count}} unpublished",
+      "noChapters": "No chapters yet",
+      "words": "Words",
+      "chaptersOut_one": "{{count}} chapter out",
+      "chaptersOut_few": "{{count}} chapters out",
+      "chaptersOut_other": "{{count}} chapters out",
+      "noneOut": "Nothing out yet",
+      "reads": "Reads",
+      "allTime": "All time",
+      "status": "Status",
+      "lastIs": "Chapter {{number}} is the last",
+      "noLast": "No last chapter yet"
     },
     "moveDialog": {
-      "title": "Move a published chapter?",
+      "title": "Change the order readers see?",
       "body": "“{{title}}” becomes chapter {{number}}. Readers see the new numbers at once, and their saved places stay with the chapters.",
       "keep": "Keep the order",
-      "confirm": "Move chapter"
+      "confirm": "Move it"
+    },
+    "earlier": "Earlier",
+    "later": "Later",
+    "more": "More for chapter {{number}}",
+    "preview": "Preview",
+    "schedule": "Schedule",
+    "changeSchedule": "Change the schedule",
+    "copyLink": "Copy link",
+    "linkCopied": "Link to chapter {{number}} copied.",
+    "copyFailed": "The link couldn’t be copied. Open the chapter as a reader and copy it from the address bar.",
+    "showEarlier": "Show chapters 1 to {{last}}",
+    "row": {
+      "today": "today",
+      "goesLive": "goes live {{when}}, local time",
+      "notOpen": "readers can’t open it",
+      "commentsKept": "comments hidden but kept",
+      "likes_one": "{{count}} like",
+      "likes_few": "{{count}} likes",
+      "likes_other": "{{count}} likes",
+      "movedFrom": "moved here from chapter {{number}}",
+      "wasChapter": "was chapter {{number}}",
+      "lastChapter": "the last chapter"
     }
   },
   "rankBadges": {

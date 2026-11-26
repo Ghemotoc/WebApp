@@ -63,30 +63,3 @@ export function chapterMoveOf(
 export function needsMoveQuestion(move: ChapterMove | null): move is ChapterMove {
   return move !== null && move.chapter.state === 'published';
 }
-
-/** The numbers in the "This story in numbers" row. */
-export interface StoryNumbers {
-  chapterCount: number;
-  wordCount: number;
-  /** When the next scheduled chapter goes live, or null when none is scheduled. */
-  nextScheduledFor: string | null;
-}
-
-/**
- * Adds up the numbers for the row above the list.
- *
- * @param chapters - the live chapters
- * @returns the chapter count, the words in every chapter and the next scheduled time
- */
-export function storyNumbers(chapters: ManagedChapter[]): StoryNumbers {
-  // The earliest time among scheduled chapters; ISO timestamps in UTC sort as text.
-  const scheduledTimes = chapters
-    .filter((chapter) => chapter.state === 'scheduled' && chapter.scheduledFor !== null)
-    .map((chapter) => new Date(chapter.scheduledFor ?? '').toISOString())
-    .sort();
-  return {
-    chapterCount: chapters.length,
-    wordCount: chapters.reduce((total, chapter) => total + chapter.wordCount, 0),
-    nextScheduledFor: scheduledTimes[0] ?? null,
-  };
-}

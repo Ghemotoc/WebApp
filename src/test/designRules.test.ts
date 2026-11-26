@@ -189,7 +189,6 @@ const infoPillUsers = new Set([
   '/src/features/writing/components/ChapterEmbedNodeView.tsx',
   '/src/features/writing/components/ChapterPictureNodeView.tsx',
   '/src/features/writing/components/DrawnCoverPicker.tsx',
-  '/src/features/writing/components/ManagedChapterRow.tsx',
 ]);
 
 /**

@@ -402,17 +402,14 @@
     "parody": "Parodie"
   },
   "manageChapters": {
-    "documentTitle": "Gestionează capitolele",
-    "heading": "Gestionează capitolele",
-    "intro": "Schimbă ordinea, redenumește, retrage sau șterge capitole. Cititorii văd schimbările imediat.",
+    "documentTitle": "Capitole",
+    "heading": "Capitole",
     "newChapter": "Capitol nou",
-    "listEyebrow": "Capitole",
     "noChapters": "Niciun capitol încă",
-    "note": "Trage un capitol sau folosește săgețile. Când muți un capitol publicat, te întrebăm înainte.",
+    "note": "Trage un capitol sau folosește Mai devreme și Mai târziu. Când muți un capitol publicat, te întrebăm înainte, pentru că se schimbă ordinea pentru toți cititorii.",
     "listLabel": "Capitolele în ordinea lecturii",
-    "dragLabel": "Trage capitolul {{number}} ca să-i schimbi locul. Poți folosi și săgețile.",
-    "moveUp": "Mută capitolul {{number}} mai sus",
-    "moveDown": "Mută capitolul {{number}} mai jos",
+    "moveUp": "Mută capitolul {{number}} mai devreme",
+    "moveDown": "Mută capitolul {{number}} mai târziu",
     "edit": "Editează",
     "rename": "Redenumește",
     "renameLabel": "Titlul nou al capitolului {{number}}",
@@ -443,16 +440,11 @@
       "unpublished": "Retras"
     },
     "meta": {
-      "published": "Publicat pe {{date}}",
       "edited": "cititorii văd „Modificat pe {{date}}”",
-      "draft": "Ciornă",
       "words_one": "{{count}} cuvânt",
       "words_few": "{{count}} cuvinte",
       "words_other": "{{count}} de cuvinte",
-      "saved": "salvat pe {{date}}",
-      "scheduled": "Apare {{when}}, ora locală",
-      "unpublished": "Retras pe {{date}}",
-      "unpublishedNote": "cititorii nu-l pot deschide · comentariile sunt ascunse, dar păstrate"
+      "saved": "salvat pe {{date}}"
     },
     "deleteDialog": {
       "title": "Ștergi „{{title}}”?",
@@ -462,10 +454,14 @@
     },
     "deleted": {
       "heading": "Șterse recent",
-      "intro": "Capitolele șterse sunt ascunse imediat și șterse definitiv după 30 de zile. Până atunci poți anula.",
-      "meta": "Șters pe {{date}} · dispare definitiv pe {{purgeDate}}",
-      "undo": "Anulează",
-      "empty": "Nimic șters în ultimele 30 de zile."
+      "intro": "Capitolele șterse rămân aici 30 de zile, apoi dispar definitiv.",
+      "undo": "Restaurează",
+      "empty": "Nimic șters în ultimele 30 de zile.",
+      "restoreLabel": "Restaurează „{{title}}”",
+      "deletedOn": "Șters pe {{date}}",
+      "daysLeft_one": "{{count}} zi rămasă",
+      "daysLeft_few": "{{count}} zile rămase",
+      "daysLeft_other": "{{count}} de zile rămase"
     },
     "problems": {
       "notActive": "Contul tău nu poate schimba capitole încă. Confirmă-ți adresa de e-mail și alege mai întâi un nume de utilizator.",
@@ -474,28 +470,61 @@
       "failed": "Nu a mers. Verifică-ți conexiunea și încearcă din nou."
     },
     "drag": {
-      "instructions": "Ca să muți un capitol, du-te pe mânerul lui și apasă Spațiu. Mută-l cu săgețile sus și jos, apasă din nou Spațiu ca să-l lași sau Escape ca să renunți.",
       "pickedUp": "Ai ridicat capitolul {{position}}, {{title}}.",
       "over": "{{title}} este acum pe locul {{position}} din {{total}}.",
       "dropped": "Ai lăsat {{title}} pe locul {{position}} din {{total}}.",
       "cancelled": "Mutare anulată. {{title}} rămâne unde era."
     },
     "rowTitle": "Capitolul {{number}}: {{title}}",
-    "movedFrom": "Mutat aici de la capitolul {{number}}",
-    "wasChapter": "A fost capitolul {{number}}",
     "chapterBoard": "Deschide tabla capitolelor",
     "stats": {
       "label": "Povestea în cifre",
-      "chapters": "capitole",
-      "words": "cuvinte",
-      "nextChapter": "capitolul următor",
-      "noneScheduled": "nimic programat"
+      "chapters": "Capitole",
+      "out": "{{count}} publicate",
+      "drafts_one": "{{count}} ciornă",
+      "drafts_few": "{{count}} ciorne",
+      "drafts_other": "{{count}} de ciorne",
+      "scheduled": "{{count}} programate",
+      "unpublished": "{{count}} retrase",
+      "noChapters": "Niciun capitol încă",
+      "words": "Cuvinte",
+      "chaptersOut_one": "{{count}} capitol publicat",
+      "chaptersOut_few": "{{count}} capitole publicate",
+      "chaptersOut_other": "{{count}} de capitole publicate",
+      "noneOut": "Nimic publicat încă",
+      "reads": "Citiri",
+      "allTime": "De la început",
+      "status": "Stare",
+      "lastIs": "Capitolul {{number}} e ultimul",
+      "noLast": "Niciun capitol final încă"
     },
     "moveDialog": {
-      "title": "Muți un capitol publicat?",
+      "title": "Schimbi ordinea pe care o văd cititorii?",
       "body": "„{{title}}” devine capitolul {{number}}. Cititorii văd imediat numerele noi, iar locurile salvate rămân la capitolele lor.",
       "keep": "Păstrează ordinea",
-      "confirm": "Mută capitolul"
+      "confirm": "Mută-l"
+    },
+    "earlier": "Mai devreme",
+    "later": "Mai târziu",
+    "more": "Mai multe pentru capitolul {{number}}",
+    "preview": "Previzualizează",
+    "schedule": "Programează",
+    "changeSchedule": "Schimbă programarea",
+    "copyLink": "Copiază linkul",
+    "linkCopied": "Linkul către capitolul {{number}} a fost copiat.",
+    "copyFailed": "Linkul nu a putut fi copiat. Deschide capitolul ca cititor și copiază-l din bara de adrese.",
+    "showEarlier": "Arată capitolele de la 1 la {{last}}",
+    "row": {
+      "today": "azi",
+      "goesLive": "apare {{when}}, ora locală",
+      "notOpen": "cititorii nu-l pot deschide",
+      "commentsKept": "comentariile sunt ascunse, dar păstrate",
+      "likes_one": "{{count}} apreciere",
+      "likes_few": "{{count}} aprecieri",
+      "likes_other": "{{count}} de aprecieri",
+      "movedFrom": "mutat aici de la capitolul {{number}}",
+      "wasChapter": "a fost capitolul {{number}}",
+      "lastChapter": "ultimul capitol"
     }
   },
   "rankBadges": {
