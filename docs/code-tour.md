@@ -937,6 +937,7 @@ The error page shows the first six characters of the stored row's ID as the code
   │                      area, grouped as the side menu is
   ├─ /staff/roles      StaffRolesPage (S1-E2-07a, below)
   ├─ /staff/users      UsersPage (S1-E11-02): search → useUserLookup → admin_user_lookup()
+  │                      and, for owners and admins, AccountList → useAccountList → admin_list_accounts() (every account, paged, each page logged)
   ├─ /staff/users/:id  AccountPage: useAccount → admin_user_account(), admin_account_open_cases(),
   │                      admin_account_sanctions(), admin_reveal_email();
   │                      AccountActions → useAccountActions → admin_apply_sanction(),

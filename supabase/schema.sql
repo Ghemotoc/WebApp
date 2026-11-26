@@ -7080,6 +7080,66 @@ COMMENT ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."admin_list_accounts"("page_number" integer DEFAULT 1, "page_size" integer DEFAULT 50) RETURNS TABLE("user_id" "uuid", "handle" "text", "pen_name" "text", "email_masked" "text", "country_code" "text", "age_band" "public"."age_band", "joined_at" timestamp with time zone, "last_used_on" "date", "account_status" "public"."account_status", "sanction_kinds" "public"."sanction_kind"[], "open_case_count" integer, "total_count" bigint)
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  -- Today in Romania, so the age group matches what age_band() says elsewhere.
+  today date := (now() at time zone 'Europe/Bucharest')::date;
+  every_account bigint;
+begin
+  -- Step 1: the owner and admins only, in a staff session (staff_may checks the session).
+  if not (public.staff_may('users', 'view')
+          and (public.is_staff('owner') or public.is_staff('admin'))) then
+    raise exception 'Only the owner and admins can list every account.'
+      using errcode = 'insufficient_privilege', hint = 'not_allowed';
+  end if;
+  -- Step 2: a page that makes sense; a huge page would be an export by another name.
+  if page_number is null or page_number < 1 or page_size is null or page_size not between 1 and 100 then
+    raise exception 'Ask for page 1 or later, with 1 to 100 accounts a page.'
+      using errcode = 'invalid_parameter_value', hint = 'refused';
+  end if;
+
+  -- Step 3: the list itself is a sensitive read: who looked, which page (architecture 1.8.3).
+  perform public.log_staff_action('sensitive_read.account_list', 'profiles',
+    'page ' || page_number::text);
+
+  -- Step 4: one page, newest first; deleted accounts too, so staff can still find them.
+  select count(*) into every_account from public.profiles;
+  return query
+    select profiles.id,
+           profiles.handle,
+           profiles.pen_name,
+           public.mask_email(users.email),
+           profiles.country_code,
+           coalesce(public.age_band_from_birth(profiles.birth_year, profiles.birth_month,
+             profiles.age_check_result, today), 'unknown'::public.age_band),
+           profiles.created_at,
+           public.account_last_used_on(profiles.id),
+           public.account_state(profiles.id),
+           coalesce((select array_agg(distinct sanctions.kind) from public.sanctions
+                     where sanctions.user_id = profiles.id), '{}'),
+           (select count(*)::integer from public.cases
+            where cases.user_id = profiles.id and cases.status = 'open'
+              and public.may_see_case(cases.is_safeguarding)),
+           every_account
+    from public.profiles
+    left join auth.users on users.id = profiles.id
+    order by profiles.created_at desc, profiles.id
+    limit page_size
+    offset (page_number - 1) * page_size;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) IS 'Every account, a page at a time, newest first, for the owner and admins; each page read logged (Staff › Users full list, 26 Nov 2026).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."admin_list_calls"("since" timestamp with time zone DEFAULT ("now"() - '24:00:00'::interval), "only_failures" boolean DEFAULT false, "kind" "text" DEFAULT NULL::"text", "name_contains" "text" DEFAULT NULL::"text", "person_handle" "text" DEFAULT NULL::"text", "before" timestamp with time zone DEFAULT NULL::timestamp with time zone, "max_rows" integer DEFAULT 100) RETURNS TABLE("id" "uuid", "called_at" timestamp with time zone, "user_id" "uuid", "handle" "text", "call_kind" "text", "call_name" "text", "http_method" "text", "outcome" "text", "status_code" integer, "error_code" "text", "duration_ms" integer, "route_path" "text", "app_version" "text")
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -71368,6 +71428,11 @@ GRANT ALL ON FUNCTION "public"."admin_lift_sanction"("target_sanction_id" "uuid"
 
 REVOKE ALL ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid", "other_handle" "text", "reason_given" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid", "other_handle" "text", "reason_given" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) TO "authenticated";
 
 
 
