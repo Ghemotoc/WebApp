@@ -1,12 +1,16 @@
 /**
- * The autosave: every 10 seconds while there are changes, at once on demand, stopping on a
- * conflict (story S1-E3-02a); the device copy, offline and the two ways out of a conflict
- * (story S1-E3-02b).
+ * The autosave: half a second after typing stops (user story 5.5), every 10 seconds while there
+ * are changes, at once on demand, stopping on a conflict (story S1-E3-02a); the device copy,
+ * offline and the two ways out of a conflict (story S1-E3-02b).
  */
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { AUTOSAVE_INTERVAL_MILLISECONDS, useAutosave } from './useAutosave';
+import {
+  AUTOSAVE_INTERVAL_MILLISECONDS,
+  AUTOSAVE_PAUSE_MILLISECONDS,
+  useAutosave,
+} from './useAutosave';
 import { DEVICE_KEEP_DELAY_MILLISECONDS } from './useDeviceKeep';
 
 const saveChapterDraft = vi.fn();
@@ -64,6 +68,18 @@ describe('useAutosave', () => {
       expectedVersion: 1,
     });
     expect(hook.result.current.state).toMatchObject({ kind: 'saved', wordCount: 1 });
+  });
+
+  it('saves half a second after the writer stops typing, not while they type', async () => {
+    const { hook } = renderAutosave();
+    // Two changes 300 ms apart: the pause starts again at the second one.
+    act(() => hook.result.current.markChanged());
+    await act(() => vi.advanceTimersByTimeAsync(300));
+    act(() => hook.result.current.markChanged());
+    await act(() => vi.advanceTimersByTimeAsync(AUTOSAVE_PAUSE_MILLISECONDS - 100));
+    expect(saveChapterDraft).not.toHaveBeenCalled();
+    await act(() => vi.advanceTimersByTimeAsync(100));
+    expect(saveChapterDraft).toHaveBeenCalledTimes(1);
   });
 
   it('saves at once on saveNow (the blur) and then sends the new version', async () => {

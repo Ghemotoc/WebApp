@@ -607,7 +607,13 @@
     "moreDetails": "More details",
     "moreDetailsLine": "Point of view, date, act, place and scenes.",
     "addChip": "+ Add",
-    "addCharacter": "Add a character"
+    "addCharacter": "Add a character",
+    "close": "Close the plan",
+    "chapterStates": {
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "published": "Published"
+    }
   },
   "storyline": {
     "documentTitle": "Storyline of {{title}}: Story Atlas",

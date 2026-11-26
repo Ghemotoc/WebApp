@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { ManagedChapter, ManagedChapterState } from '../api/manageChapters';
 
-import { chapterMoveOf, needsMoveQuestion, storyNumbers } from './chapterMoves';
+import { chapterMoveOf, needsMoveQuestion } from './chapterMoves';
 
 /** A live chapter with only the fields these rules read set on purpose. */
 function chapter(
@@ -28,6 +28,7 @@ function chapter(
     deletedAt: null,
     wasPosition: null,
     wasPicked: false,
+    isMarkedLast: false,
     ...extra,
   };
 }
@@ -70,19 +71,5 @@ describe('chapterMoveOf and needsMoveQuestion', () => {
   it('a rename, or an order without the dragged chapter, is not a move', () => {
     expect(chapterMoveOf({ kind: 'rename', code: 'one', title: 'New' }, chapters)).toBeNull();
     expect(chapterMoveOf({ kind: 'order', codes: ['two', 'one'] }, chapters)).toBeNull();
-  });
-});
-
-describe('storyNumbers', () => {
-  it('counts the chapters, adds up the words and finds the earliest scheduled chapter', () => {
-    expect(storyNumbers(chapters)).toEqual({
-      chapterCount: 5,
-      wordCount: 2228,
-      nextScheduledFor: '2027-03-01T16:00:00.000Z',
-    });
-  });
-
-  it('says nothing is scheduled when no chapter is', () => {
-    expect(storyNumbers(chapters.slice(0, 3)).nextScheduledFor).toBeNull();
   });
 });

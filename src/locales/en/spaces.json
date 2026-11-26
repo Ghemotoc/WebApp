@@ -468,12 +468,12 @@
     "eyebrow": "Class",
     "title": "Stories shared with the class",
     "note": "Only {{name}} can read these until the writer makes them public. A teacher can never make a student’s story public.",
-    "empty": "No stories shared yet. To share one, open its Story settings and pick this class under “Who can read it”.",
+    "empty": "No stories shared yet. To share one, open its Story settings and pick this class under “Share with a class”.",
     "loadFailed": "We couldn’t load the class’s stories. Try again in a moment.",
     "documentTitle": "Stories shared with {{name}}"
   },
   "storyClass": {
-    "legend": "Who can read it",
+    "legend": "Share with a class",
     "intro": "You can share this story only with one of your classes. Then only you, the class and our moderation team can read it: it isn’t in any public list or on your profile. Only you can make it public again.",
     "publicNow": "Right now everyone may read it, within its rating.",
     "pick": "Class",

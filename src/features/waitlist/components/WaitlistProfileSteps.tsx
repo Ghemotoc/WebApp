@@ -111,6 +111,7 @@ export function WaitlistProfileSteps(props: WaitlistProfileStepsProps) {
         onOpenStep={wizard.openStep}
         onNext={wizard.goToNextStep}
         onSkip={wizard.goToNextStep}
+        onBack={wizard.goToPreviousStep}
         lastStepActions={doneButton}
       />
       {/* A polite live region, so a screen reader hears that the steps are finished. */}

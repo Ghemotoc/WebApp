@@ -54,8 +54,9 @@ describe('LanguagesTable', () => {
     expect(
       within(original).getByRole('link', { name: 'Open the chapters of Stația meteo' }),
     ).toHaveAttribute('href', '/write/s/statia-meteo/chapters');
-    // Only the writer translates their story (Robert, 16 Nov 2026, 12:20 UTC).
-    expect(within(english).getByText('You')).toBeInTheDocument();
+    // Board D08: no "Translated by" column; only the writer translates their own story, and
+    // that credit shows on classics only (Robert, 16 Nov 2026).
+    expect(screen.queryByRole('columnheader', { name: 'Translated by' })).toBeNull();
     expect(within(english).getByText('Draft')).toBeInTheDocument();
     expect(within(english).getByRole('link', { name: 'Translate into English' })).toHaveAttribute(
       'href',
@@ -67,7 +68,7 @@ describe('LanguagesTable', () => {
 });
 
 describe('SideBySidePapers', () => {
-  it('puts the translation beside the original, counts words and scrolls together by default', () => {
+  it('puts the translation beside the original, counts each side’s words and scrolls together by default', () => {
     const onChange = vi.fn();
     renderWithProviders(
       <SideBySidePapers
@@ -86,7 +87,9 @@ describe('SideBySidePapers', () => {
       'en',
     );
     // "Bunica notează vremea." + "Azi a nins." is 6 words; the one translated paragraph has 4.
-    expect(screen.getByText('4 of 6 words so far')).toBeInTheDocument();
+    // Board D09: each paper's head names its side and language and counts its words; the
+    // "4 of 6 words so far" line moved to the page header (TranslationEditorHeader).
+    expect(screen.getByRole('heading', { level: 2, name: 'Original Română' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Original Română' })).toHaveTextContent('6 words');
     expect(screen.getByRole('region', { name: 'Translation English' })).toHaveTextContent(
       '4 words',

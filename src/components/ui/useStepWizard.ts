@@ -18,6 +18,8 @@ export interface StepWizardState {
   openStep: (index: number) => void;
   /** Opens the step after the open one ("Next" and "Skip this step"). */
   goToNextStep: () => void;
+  /** Opens the step before the open one ("Back"), without checking anything. */
+  goToPreviousStep: () => void;
   /** Folds every step as done, with none open (the last step's "Done" on a wizard that has no
    * page button of its own, H08). Change still opens any step again. */
   finish: () => void;
@@ -49,6 +51,11 @@ export function useStepWizard(stepCount: number): StepWizardState {
     setFurthestIndex((current) => Math.max(current, nextIndex));
   }
 
+  function goToPreviousStep() {
+    // Never before the first step; the furthest step stays where it was.
+    setOpenIndex((current) => Math.max(current - 1, 0));
+  }
+
   function finish() {
     // An open index past the last step leaves every step folded; all of them count as reached.
     setOpenIndex(stepCount);
@@ -60,6 +67,7 @@ export function useStepWizard(stepCount: number): StepWizardState {
     furthestIndex,
     openStep,
     goToNextStep,
+    goToPreviousStep,
     finish,
     isFinished: openIndex >= stepCount,
   };

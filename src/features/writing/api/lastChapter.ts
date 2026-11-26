@@ -4,12 +4,13 @@
  *
  * Who calls it: useChapterPublishing (the Publish panel).
  * What it calls next: Supabase.
- * - publish_chapter(chapter_code, as_last): puts the chapter out now, as the last when as_last;
- *   the story turns Completed.
+ * - publish_chapter(chapter_code, as_last, tell_followers): puts the chapter out now, as the last
+ *   when as_last (the story turns Completed), telling followers unless tell_followers is false
+ *   (board D06).
  * - set_chapter_last(chapter_code, is_last): the switch on a scheduled chapter (on or off) or on
  *   the latest published one (on only).
  * - my_chapter_last_state(chapter_code): what the panel shows about the mark.
- * Scheduling with the mark is scheduleChapter(…, asLast) in chapters.ts.
+ * Scheduling with the mark is scheduleChapter(…, { asLast }) in chapters.ts.
  */
 import type { AppSupabaseClient } from '@/lib/supabase';
 
@@ -69,6 +70,7 @@ export async function fetchChapterLastState(
  * @param client - the shared Supabase client
  * @param code - the chapter's code
  * @param asLast - true when "This is the last chapter" is on
+ * @param tellFollowers - true when "Tell followers" is on (board D06)
  * @returns the outcome; 'not_last' when a later chapter is already out or scheduled
  * Errors: throws when the database can't be reached.
  */
@@ -76,10 +78,13 @@ export async function publishChapter(
   client: AppSupabaseClient,
   code: string,
   asLast: boolean,
+  tellFollowers = true,
 ): Promise<ChapterActionOutcome> {
   const { data, error } = await client.rpc('publish_chapter', {
     chapter_code: code,
     as_last: asLast,
+    // Board D06: "Tell followers"; off sends no notification for this chapter.
+    tell_followers: tellFollowers,
   });
   if (error !== null) throw new Error(`Could not publish the chapter: ${error.message}`);
   return toActionOutcome(data);

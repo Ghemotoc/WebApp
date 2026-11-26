@@ -1,18 +1,17 @@
 /**
- * AddLanguageForm: "Add a language · A new edition of this story" (bundle TRANSLATE-1c; board
- * TrSettings; Robert, 16 Nov 2026).
+ * AddLanguageForm: "Add a language" under the table of languages (bundle TRANSLATE-1c; Robert,
+ * 16 Nov 2026), as board D08 draws it (CALM-9, user story 5.8).
  *
- * What it shows: the language (the ones open for writing that this story doesn't have yet, each
- * in its own name), the title and the description in that language, the two notes from the
- * handoff ("You translate it yourself…", "Chapters appear in this language as you publish
- * them…"), Cancel and "Add the language". A story at its limit, or already in every open
- * language, gets one line saying so instead of the form.
+ * What it shows: a group under a fine line, not a card: the heading, then the language (the
+ * ones open for writing that this story doesn't have yet, each in its own name), the title and
+ * the blurb in that language, one stacked column of fields at most 480 px wide, the line "You
+ * translate it yourself…", and "Add the language" with Cancel beside it. A story at its limit,
+ * or already in every open language, gets one line saying so instead of the form.
  * Who shows it: StoryLanguagesPage. What it calls: hooks/useAddLanguage.ts, and the writing
  * feature's useStoryFormOptions for the open languages (story_language_choices()).
  */
 import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
 import { Notice } from '@/components/ui/Notice';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
@@ -44,18 +43,19 @@ function useLanguagesLeft(languages: StoryLanguages): string[] {
     .map((choice) => choice.code);
 }
 
-/** The three fields. */
+/** The three fields, one under another, as wide as the board's (480 px). */
 function AddLanguageFields(props: { form: ReturnType<typeof useAddLanguage>; left: string[] }) {
   const { form, left } = props;
   const { t } = useStoryLanguagesTranslation();
   const chosen = form.answers.languageCode === '' ? undefined : form.answers.languageCode;
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="flex max-w-[480px] flex-col gap-4">
         <Select
           id="add-language-code"
           label={t('add.language')}
           isLabelVisible
+          isLabelAbove
           placement="form"
           options={[
             { value: '', label: t('add.chooseLanguage') },
@@ -73,21 +73,21 @@ function AddLanguageFields(props: { form: ReturnType<typeof useAddLanguage>; lef
           autoComplete="off"
           onChange={(event) => form.set('title', event.target.value)}
         />
+        <Textarea
+          id="add-language-blurb"
+          label={t('add.blurb')}
+          lang={chosen}
+          value={form.answers.blurb}
+          maxLength={MAXIMUM_BLURB_LENGTH}
+          onChange={(event) => form.set('blurb', event.target.value)}
+        />
       </div>
-      <Textarea
-        id="add-language-blurb"
-        label={t('add.blurb')}
-        lang={chosen}
-        value={form.answers.blurb}
-        maxLength={MAXIMUM_BLURB_LENGTH}
-        onChange={(event) => form.set('blurb', event.target.value)}
-      />
     </>
   );
 }
 
 /**
- * Renders the card.
+ * Renders the group.
  *
  * @returns the form, or the line saying no language can be added
  */
@@ -99,17 +99,14 @@ export function AddLanguageForm({ storySlug, languages }: AddLanguageFormProps) 
   return (
     <section
       aria-labelledby="add-language-heading"
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-card md:p-6"
+      className="flex flex-col gap-4 border-t border-border pt-6"
     >
-      <div className="flex flex-col gap-2">
-        <Eyebrow>{t('add.eyebrow')}</Eyebrow>
-        <h2
-          id="add-language-heading"
-          className="m-0 font-heading type-heading font-bold text-ink-heading"
-        >
-          {t('add.heading')}
-        </h2>
-      </div>
+      <h2
+        id="add-language-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
+        {t('add.heading')}
+      </h2>
       {isAtLimit && (
         <p className="m-0 text-ink-muted">
           {t('add.problems.tooMany', { max: languages.languagesMax })}
@@ -126,8 +123,7 @@ export function AddLanguageForm({ storySlug, languages }: AddLanguageFormProps) 
           }}
         >
           <AddLanguageFields form={form} left={left} />
-          <p className="m-0 type-meta text-ink-muted">{t('add.translateYourself')}</p>
-          <p className="m-0 type-meta text-ink-muted">{t('add.chaptersAppear')}</p>
+          <p className="m-0 type-meta text-ink-muted">{t('add.note')}</p>
           {form.problem !== null && (
             <Notice tone="error">
               {t(`add.problems.${form.problem}`, { max: languages.languagesMax })}
@@ -137,7 +133,7 @@ export function AddLanguageForm({ storySlug, languages }: AddLanguageFormProps) 
             <Button type="submit" size="lg" disabled={form.isSending}>
               {form.isSending ? t('add.adding') : t('add.submit')}
             </Button>
-            <Button type="button" size="lg" variant="secondary" onClick={form.reset}>
+            <Button type="button" size="lg" variant="text" onClick={form.reset}>
               {t('add.cancel')}
             </Button>
           </ButtonRow>

@@ -52,7 +52,8 @@ function payloadFor(action: string, locale?: string): SendEmailHookPayload {
       token_hash: 'hash',
       token_new: '654321',
       email_action_type: action,
-      site_url: 'https://example.test',
+      // What Supabase really sends here: its own Auth address, which links must never use.
+      site_url: 'https://project.supabase.test/auth/v1',
     },
   };
 }
@@ -73,6 +74,7 @@ async function run(
     }),
     {
       hookSecret: secret,
+      siteUrl: 'https://example.test/',
       sender: { name: 'Product', email: 'hello@example.test' },
       productName: 'Product',
       companyName: 'Company',
@@ -132,14 +134,45 @@ describe('the Send Email hook', () => {
   });
 
   it('a change of email sends each address its own code', async () => {
+    // Supabase's names are reversed: token is the current address's code, token_new the new one's.
     const { sent } = await run(payloadFor('email_change', 'en'));
     expect(sent.map((email) => email.to)).toEqual(['reader@example.com', 'new@example.com']);
     expect(sent[0]?.text).toContain('123456');
     expect(sent[1]?.text).toContain('654321');
   });
 
+  it('a change of email with one code sends it to the new address only', async () => {
+    const payload = payloadFor('email_change', 'en');
+    payload.email_data.token_new = '';
+    const { sent } = await run(payload);
+    expect(sent.map((email) => email.to)).toEqual(['new@example.com']);
+    expect(sent[0]?.text).toContain('123456');
+  });
+
+  it('every link opens our own site, never the Auth address Supabase sends as site_url', async () => {
+    const recovery = await run(payloadFor('recovery', 'en'));
+    expect(recovery.sent[0]?.text).toContain(
+      'https://example.test/reset-password?token_hash=hash&type=recovery',
+    );
+    const magicLink = await run(payloadFor('magiclink', 'en'));
+    expect(magicLink.sent[0]?.text).toContain(
+      'https://example.test/auth/confirm?token_hash=hash&type=email',
+    );
+    for (const email of [...recovery.sent, ...magicLink.sent]) {
+      expect(email.text).not.toContain('supabase.test');
+    }
+  });
+
+  it('a reauthentication email carries the code Supabase made', async () => {
+    const { response, sent } = await run(payloadFor('reauthentication', 'en'));
+    expect(response.status).toBe(200);
+    expect(sent[0]?.to).toBe('reader@example.com');
+    expect(sent[0]?.subject).toBe('Code to confirm it’s you');
+    expect(sent[0]?.text).toContain('Code: 123456');
+  });
+
   it('an unknown kind of email is refused and a failed send is a plain 500', async () => {
-    expect((await run(payloadFor('reauthentication'))).response.status).toBe(400);
+    expect((await run(payloadFor('invite'))).response.status).toBe(400);
     const failed = await run(payloadFor('recovery'), new Map(), true);
     expect(failed.response.status).toBe(500);
     expect(JSON.stringify(await failed.response.json())).not.toContain('reader@example.com');
