@@ -16,7 +16,8 @@
  * country of the connection with its market (useSignUpMarket, S1-E2-10), which starts the
  * country picker, and the age rules by country (useAgeRules, MARKETS-1). Once sign-up is public,
  * a closed or unknown country joins the waiting list with its country while the list is on
- * (MARKETS-2b, S1-E11-32), and goes to /not-open only while the list is off.
+ * (MARKETS-2b, S1-E11-32), and goes to /not-open only while the list is off. A working invite
+ * link lets the person in from a closed country either way (INVITE-MARKET, useInviteAndMarket).
  */
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
@@ -29,9 +30,10 @@ import { chooseLegalVersion } from '@/features/legal/lib/chooseLegalVersion';
 
 import type { SignUpContext } from '../api/signUp';
 import { useAgeRules } from '../hooks/useAgeRules';
-import { useInviteCheck } from '../hooks/useInviteCheck';
+import { useInviteAndMarket } from '../hooks/useInviteAndMarket';
+import type { useInviteCheck } from '../hooks/useInviteCheck';
 import { useSignUpForm } from '../hooks/useSignUpForm';
-import { useSignUpMarket, type SignUpMarket } from '../hooks/useSignUpMarket';
+import type { SignUpMarket } from '../hooks/useSignUpMarket';
 import { rememberPathAfterSignUp } from '../lib/pathAfterSignUp';
 
 import type { InviteGateReason } from './InviteGate';
@@ -178,21 +180,22 @@ export function SignUpPage() {
   const isInviteOnly = flags.isOn('invite_only', true);
   // The waiting list (WAITLIST-1): while on, a code skips the queue and nobody needs one.
   const isWaitlistOn = flags.isOn('waitlist', false);
-  const inviteCode = isInviteOnly || isWaitlistOn ? (code ?? null) : null;
-  const invite = useInviteCheck(inviteCode);
   const isAdultsOnly = flags.isOn('adults_only', true);
-  // The country of the connection (S1-E2-10): any country may join the invited test (Q6).
-  const market = useSignUpMarket(isInviteOnly && isAdultsOnly);
+  // The country of the connection (S1-E2-10) and the invite; a working invite opens a country
+  // that isn't open yet (INVITE-MARKET).
+  const place = useInviteAndMarket(code, { isInviteOnly, isWaitlistOn, isAdultsOnly });
+  const { market, invite, inviteCode } = place;
+  const isClosedNow = place.isClosedHere && !place.isCheckingInvite;
   const { waitsForMarket, codeUsed, joinsWaitlist } = waitlistChoice(
     isWaitlistOn,
-    market.isClosed,
+    isClosedNow,
     inviteCode,
   );
   const { context, legalFailed } = useSignUpContext(codeUsed, market, isWaitlistOn);
   const form = useSignUpForm(context, isAdultsOnly);
   const gateReason = inviteGateReason(isInviteOnly && !isWaitlistOn, codeUsed, invite);
   // With the waiting list off, a closed or unknown country sees the "not open yet" page instead.
-  if (market.isClosed && !isWaitlistOn) return <Navigate to="/not-open" replace />;
+  if (isClosedNow && !isWaitlistOn) return <Navigate to="/not-open" replace />;
 
   return (
     <PageContainer className="tmc-rise flex flex-col pt-12 pb-6">
