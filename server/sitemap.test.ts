@@ -43,8 +43,38 @@ describe('robotsTxt', () => {
     expect(text).toContain('Disallow: /staff');
     expect(text).toContain('Disallow: /write');
     expect(text).toContain('Disallow: /settings');
-    expect(text).not.toContain('Disallow: /s/');
     expect(text).toContain('Sitemap: https://example.test/sitemap.xml');
+  });
+
+  /** The lines of one group: from the line naming the crawler to the next blank line. */
+  function groupFor(text: string, crawler: string): string[] {
+    const groups = text.split('\n\n').map((group) => group.split('\n'));
+    return groups.find((lines) => lines.includes(`User-agent: ${crawler}`)) ?? [];
+  }
+
+  it('lets search engines read stories, chapters and a public reading list (GROWTH-3 and 4)', () => {
+    const general = groupFor(robotsTxt('https://example.test', 'example.test'), '*');
+    expect(general).not.toContain('Disallow: /s/');
+    expect(general).not.toContain('Disallow: /s/*/');
+    expect(general).toContain('Allow: /library/lists/');
+    expect(general).toContain('Disallow: /library');
+    expect(general).toContain('Disallow: /spaces/*/settings');
+    expect(general).not.toContain('Disallow: /forums');
+  });
+
+  it('lets AI crawlers read story pages, Discover and the forums, and nothing else (GROWTH-4)', () => {
+    const text = robotsTxt('https://example.test', 'example.test');
+    for (const crawler of ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended', 'CCBot']) {
+      const group = groupFor(text, crawler);
+      expect(group).toContain('Allow: /s/');
+      expect(group).toContain('Disallow: /s/*/');
+      expect(group).toContain('Allow: /discover');
+      expect(group).toContain('Allow: /forums');
+      expect(group).toContain('Allow: /spaces/');
+      expect(group).toContain('Disallow: /staff');
+      expect(group).toContain('Disallow: /spaces/new');
+      expect(group.at(-1)).toBe('Disallow: /');
+    }
   });
 
   it('keeps every crawler out of a pull request’s preview copy', () => {

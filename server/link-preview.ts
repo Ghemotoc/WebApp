@@ -14,8 +14,9 @@
  *   (`genre`) and tags (`keywords`), and a keywords meta tag with the category and tags;
  * - for unknown addresses, shared passages and chapters visitors get no text from (16+ and 18+),
  *   <meta name="robots" content="noindex"> and the same rule in an X-Robots-Tag header. Story pages
- *   and their other chapters are indexable (Q36; GROWTH-2, Robert, 26 Nov 2026: a classic's
- *   chapter is read whole, a writer's chapter shows visitors the teaser).
+ *   are indexable (Q36), and so are a classic's chapters, read whole; a writer's chapters are not
+ *   (GROWTH-4, Robert, 26 Nov 2026, 19:45 UTC: "the chapters of user generated content should not
+ *   be crawlable, just the book page ... Only the classics all chapters can be indexable").
  * Every story gets the same details whatever its rating, and the rating itself is never shown
  * (Robert, 11 Nov 2026; S1-E11-36, replacing Q6's "title and rating only"). An 18+ story adds a
  * plain "For mature readers" note (16+ adds nothing). A 16+ or 18+ story still never shares a
@@ -594,17 +595,23 @@ function keywordTagsFor(preview: LinkPreview): string[] {
 
 /**
  * Whether search engines may list the page: a public story's own page (Q36; S1-E11-36), read on
- * the web and shown in every country (CALM-9s), and its chapters when visitors get text from them
- * (GROWTH-2, Robert, 26 Nov 2026, 15:13 UTC: a classic's whole chapter, a writer's teaser).
+ * the web and shown in every country (CALM-9s), and a classic's chapters (GROWTH-2). A writer's
+ * chapters stay out (GROWTH-4, Robert, 26 Nov 2026, 19:45 UTC): only the story's page, with its
+ * details, is listed for them.
  *
  * @param preview - the story's preview
- * @returns true for such a story's page or chapter; false for a shared passage, a 16+ or 18+
- *   chapter (visitors get no text), or an unlisted, app-only or country-hidden story
+ * @returns true for such a story's page or a classic's chapter; false for a writer's chapter, a
+ *   shared passage, a 16+ or 18+ chapter (visitors get no text), or an unlisted, app-only or
+ *   country-hidden story
  */
 export function isIndexable(preview: LinkPreview): boolean {
   // CALM-9s: an app-only or country-hidden story stays out too.
   if (!carriesStatement(preview)) return false;
   if (!preview.isChapter) return true;
+  // GROWTH-4: only a classic's chapters are listed. get_link_preview() gives a classic no
+  // writer's username (its author has no profile), so a missing username marks a classic; when
+  // in doubt the chapter stays out.
+  if (preview.writerHandle !== null) return false;
   // GROWTH-2: a chapter is listed only on its own address (a shared passage repeats it) and only
   // when visitors get its text; sitemap_entries() lists the same chapters.
   return preview.passage === null && !preview.hidesText;
@@ -638,7 +645,7 @@ export function headTagsFor(
   ];
   // An unlisted story is shared by its link only, so it is noindex (S1-E11-36).
   // CALM-9s: an app-only or country-hidden story is noindex as well, with no structured data.
-  // GROWTH-2: a chapter visitors get text from is indexable, but the language links and the
+  // GROWTH-2: a classic's chapter is indexable (GROWTH-4: a writer's is not), but the language links and the
   // structured data describe the story, so only the story's own page carries them.
   if (!isIndexable(preview)) tags.push('<meta name="robots" content="noindex">');
   else if (!preview.isChapter) {

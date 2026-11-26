@@ -75,7 +75,8 @@ export function threadQueryKey(threadNumber: number, upToPost: number | null) {
  * @param threadNumber - the number in the address
  * @param upToPost - the permalink's post number, or null
  * @returns the thread (undefined while loading, null when it can't be opened), the posts so far,
- *   hasMore, showMore(), isLoadingMore and loadFailed
+ *   hasMore, moreForMembers (a visitor has read all they may, GROWTH-4), showMore(), isLoadingMore
+ *   and loadFailed
  */
 export function useForumThread(threadNumber: number, upToPost: number | null) {
   const read = useInfiniteQuery({
@@ -97,6 +98,8 @@ export function useForumThread(threadNumber: number, upToPost: number | null) {
     thread: latestHeader(pages, read.data === undefined),
     posts: pages.flatMap((page) => page?.posts ?? []),
     hasMore: read.hasNextPage,
+    // GROWTH-4: the last page read says whether a visitor is asked to get in for the rest.
+    moreForMembers: pages.at(-1)?.moreForMembers === true,
     showMore: () => void read.fetchNextPage(),
     isLoadingMore: read.isFetchingNextPage,
     loadFailed: read.isError,

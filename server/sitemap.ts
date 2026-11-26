@@ -9,7 +9,9 @@
  *   its live help pages, live landing pages and public stories, never anything private, unlisted,
  *   class-only, app-only, hidden by a moderator or hidden from search engines by staff.
  * - /robots.txt points to the sitemap and keeps crawlers out of the staff site, the writing
- *   screens and every member's own screens. A Cloudflare preview copy of the site
+ *   screens and every member's own screens. AI crawlers get a shorter list (GROWTH-4, Robert,
+ *   26 Nov 2026, 19:45 to 19:48 UTC): story pages without their chapters, Discover and its lists,
+ *   and the open forums, threads and public spaces, nothing else. A Cloudflare preview copy of the site
  *   (<preview>.<project>.pages.dev) tells every crawler to stay out, so a pull request's preview is
  *   never listed next to the real site.
  * Who calls it: functions/sitemap.xml.ts and functions/robots.txt.ts on Cloudflare Pages, and
@@ -55,6 +57,71 @@ export const privatePathPrefixes = [
   '/data-request',
   '/teacher-check',
   '/unsubscribe',
+] as const;
+
+/**
+ * Addresses inside a private prefix that are still open to search engines: one public reading
+ * list (GROWTH-3), which sits under /library like the member's own Library.
+ */
+export const publicPathsInsidePrivate = ['/library/lists/'] as const;
+
+/**
+ * Addresses under an open prefix that only a member can use: starting a space, and a space's
+ * tools. A space's own page and its threads stay open; each one tells search engines whether it
+ * may be listed (server/space-head.ts).
+ */
+export const memberOnlySpacePaths = [
+  '/spaces/new',
+  '/spaces/*/new',
+  '/spaces/*/settings',
+  '/spaces/*/stories',
+  '/spaces/*/points',
+  '/spaces/*/competition',
+  '/spaces/*/certificates',
+  '/spaces/*/members',
+  '/spaces/*/log',
+  '/forums/*/new',
+  '/forums/search',
+] as const;
+
+/**
+ * The crawlers that gather text for AI tools, by the name each one gives in robots.txt. They may
+ * read only the pages in aiCrawlerOpenPaths (GROWTH-4; Robert, 26 Nov 2026, 19:45 to 19:48 UTC).
+ * A crawler obeys the most specific group that names it, so their group repeats the private list.
+ */
+export const aiCrawlerNames = [
+  'GPTBot',
+  'ChatGPT-User',
+  'OAI-SearchBot',
+  'ClaudeBot',
+  'Claude-User',
+  'Claude-SearchBot',
+  'anthropic-ai',
+  'PerplexityBot',
+  'Perplexity-User',
+  'Google-Extended',
+  'Applebot-Extended',
+  'CCBot',
+  'Bytespider',
+  'Amazonbot',
+  'meta-externalagent',
+  'cohere-ai',
+  'Diffbot',
+  'DuckAssistBot',
+  'MistralAI-User',
+] as const;
+
+/**
+ * What AI crawlers may read: a story's own page but none of its chapters ("/s/<story>/" and
+ * anything after it), Discover and its lists, and the forums, threads and spaces. Each forum
+ * thread or space page still says noindex when it is not fully public (server/space-head.ts).
+ */
+export const aiCrawlerRules = [
+  'Allow: /s/',
+  'Disallow: /s/*/',
+  'Allow: /discover',
+  'Allow: /forums',
+  'Allow: /spaces/',
 ] as const;
 
 /**
@@ -124,9 +191,31 @@ export function isPreviewHost(hostname: string): boolean {
 export function robotsTxt(origin: string, hostname: string): string {
   // Step 1: a preview copy keeps every crawler out, and points nowhere.
   if (isPreviewHost(hostname)) return 'User-agent: *\nDisallow: /\n';
-  // Step 2: the real site: everything but the private screens, and where the sitemap is.
-  const disallowed = privatePathPrefixes.map((prefix) => `Disallow: ${prefix}`);
-  return ['User-agent: *', ...disallowed, '', `Sitemap: ${origin}/sitemap.xml`, ''].join('\n');
+  // Step 2: the rules every crawler shares: the open exceptions first (the longest rule wins, so
+  // their order is for the reader), then the private screens and a space's member-only tools.
+  const allowed = publicPathsInsidePrivate.map((path) => `Allow: ${path}`);
+  const disallowed = [...privatePathPrefixes, ...memberOnlySpacePaths].map(
+    (prefix) => `Disallow: ${prefix}`,
+  );
+  // Step 3: AI crawlers: the same private rules, the few pages they may read, and nothing else.
+  const aiGroup = [
+    ...aiCrawlerNames.map((name) => `User-agent: ${name}`),
+    ...aiCrawlerRules,
+    ...disallowed,
+    'Disallow: /',
+  ];
+  // Step 4: every other crawler (Google, Bing and the rest): everything but the private screens,
+  // and where the sitemap is.
+  return [
+    ...aiGroup,
+    '',
+    'User-agent: *',
+    ...allowed,
+    ...disallowed,
+    '',
+    `Sitemap: ${origin}/sitemap.xml`,
+    '',
+  ].join('\n');
 }
 
 /** What the handler needs from its host (Cloudflare or the local plugin). */
