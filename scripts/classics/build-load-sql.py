@@ -101,7 +101,10 @@ def part_text(number, total, part, loader):
     head = (
         f"-- Classics bulk load: part {number} of {total} ({len(titles)} works).\n"
         "-- Run the parts in order. Each part is safe to run twice.\n"
-        f"-- Works: {'; '.join(titles)[:900]}\n\nbegin;\n\n"
+        f"-- Works: {'; '.join(titles)[:900]}\n\nbegin;\n"
+        # Supabase stops a statement after 2 minutes; a long novel's chapters can take longer to
+        # check and publish (part 298 of the 27 Nov load). This lifts it for this transaction only.
+        "set local statement_timeout = 0;\n\n"
     )
     body = "".join(call for _, call in part)
     tail = (

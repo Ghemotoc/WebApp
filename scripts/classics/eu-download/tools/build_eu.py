@@ -35,7 +35,8 @@ SOURCE_LINE = re.compile(r"^\**\s*(Источник( текста)?\s*:|Ориг
                          r"(М|Л|СПб|Мн|М\., Л)\.,?:? .{0,60}\d{4}[;.)]?\s*(\(.*\))?$)|"
                          r"Собрание сочинений в \d|Избранные произведения в \d|Полное собрание сочинений в \d|"
                          r"Эл\. версия|Корректура .{0,40}выполнена|печатается по тексту|опубликован впервые|впервые опубликован|"
-                         r"/ Сост\.|послесл\.|\d+ с\.,? ил\.|— \d+ с\. —", re.I)
+                         r"/ Сост\.|послесл\.|\d+ с\.,? ил\.|— \d+ с\. —|"
+                         r"[^\n]{0,80}\bХуд\. [А-ЯЁ]", re.I)  # last: a picture's caption ("Пир. Худ. В. Васнецов")
 # A heading that opens an editor's notes or commentary: everything from it to the chapter's end goes.
 NOTES_HEADING = re.compile(r"^#+\s*\**\s*(Примечани|Комментари|Варианты|Przypis|Objaśnieni|Notes?\b|Anmerkung|Erläuterung|"
                            r"Note\b|Notas?\b|Aantekening|Toelichting)", re.I)
@@ -173,20 +174,45 @@ HELD_BACK = {
 # word, contents, imprint), and where it ends, when a modern note follows it.
 START_AT = {
     "ru-notes-of-a-schoolgirl": "Моим дорогим подругам",
-    "ru-years-of-childhood": "Внучке моей Ольге",
+    "ru-years-of-childhood": "*Внучке моей Ольге",
+    "ru-scarlet-sails": "НИНЕ НИКОЛАЕВНЕ ГРИН",  # after the 1923 title page
+}
+# Chapters that are only a printed edition's title page and contents (the magazine and the 1928 book).
+DROP_CHAPTERS = {
+    "ru-the-twelve-chairs": {"30 дней", "ЗиФ 1928"},
+}
+# A modern edition's contents list inside chapter 1: removed from the first text up to the second.
+DROP_BETWEEN = {
+    "ru-years-of-childhood": ("**Содержание**", "**К ЧИТАТЕЛЯМ**"),
+}
+# An editor's footnote mark left in the text ("\[1\]"); the notes themselves are already gone.
+FOOTNOTE_MARK = re.compile(r" ?\\\[\d{1,3}\\\]")
+# Small fixes of how a page was typeset, (wrong, right) per work: words run together at a line break.
+RETYPESET = {
+    "ru-scarlet-sails": [("1922 г.АВТОР.", "1922 г.  \nАВТОР.")],
 }
 CUT_FROM = {
     "ru-the-tale-of-the-dead-princess-and-the-seven-knight": "«Сказка о мертвой царевне и семи богатырях» — одна",
 }
 
 def trim_ends(work_id, chapters):
-    """Apply START_AT and CUT_FROM for one work; checked by hand in the CONTENT thread."""
-    chapters = list(chapters)
+    """Apply DROP_CHAPTERS, DROP_BETWEEN, START_AT, RETYPESET and CUT_FROM for one work, and drop
+    footnote marks; each entry was checked by hand in the CONTENT thread."""
+    chapters = [(title, FOOTNOTE_MARK.sub("", body)) for title, body in chapters
+                if title not in DROP_CHAPTERS.get(work_id, set())]
+    if work_id in DROP_BETWEEN:
+        first, last = DROP_BETWEEN[work_id]
+        title, body = chapters[0]
+        start, end = body.find(first), body.find(last)
+        if start < 0 or end < start: raise SystemExit(f"{work_id}: DROP_BETWEEN text not found")
+        chapters[0] = (title, body[:start] + body[end:])
     if work_id in START_AT:
         title, body = chapters[0]
         at = body.find(START_AT[work_id])
         if at < 0: raise SystemExit(f"{work_id}: START_AT text not found")
         chapters[0] = (title, body[at:])
+    for wrong, right in RETYPESET.get(work_id, []):
+        chapters = [(title, body.replace(wrong, right)) for title, body in chapters]
     if work_id in CUT_FROM:
         title, body = chapters[-1]
         at = body.find(CUT_FROM[work_id])

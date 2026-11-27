@@ -93,13 +93,40 @@ def heading_text(node):
     text = " ".join(node.get_text(" ").split())
     return re.sub(r"(?<=[^\W\d_])\d{1,2}$", "", text)
 
+# Tags that start a new paragraph. Anything else (a styled name, italics, a link) is part of the
+# sentence around it, so a run of them with the plain text beside them stays one paragraph. Without
+# this, a stage direction such as "Входят <span>Варя</span> и <span>Яша</span>." fell apart into
+# five paragraphs (book-by-book check, 27 Nov 2026).
+BLOCK_TAGS = set(HEADINGS) | {"p", "div", "section", "center", "blockquote", "ul", "ol", "dl", "hr", "table",
+    "main", "article", "body", "html", "pre", "figure"}
+
+# A row of links to a work's parts ("I • II • III • Примечания"): Wikisource navigation.
+NAVIGATION_LINE = re.compile(r"^[^•|\n]{1,30}(\s*[•|·]\s*[^•|\n]{1,30}){2,}$")
+
+def is_inline(child):
+    """True for text and for an inline tag that holds no paragraph of its own."""
+    if isinstance(child, NavigableString):
+        return child.__class__.__name__ not in ("Comment", "Doctype")
+    if not isinstance(child, Tag) or child.name in BLOCK_TAGS: return False
+    if "poem" in child.get("class", []): return False
+    return not child.find(list(BLOCK_TAGS))
+
+def flush_run(run, items):
+    """Turn a run of inline siblings into paragraphs; two line breaks in a row end a paragraph."""
+    holder = BeautifulSoup("<div></div>", "lxml").div
+    for node in run: holder.append(node.__copy__() if isinstance(node, Tag) else NavigableString(str(node)))
+    for piece in re.split(r"(?:  \n\s*){2,}", inline(holder)):
+        text = tidy_paragraph(piece)
+        if text and not NAVIGATION_LINE.match(text): items.append(("block", text))
+    run.clear()
+
 def walk(node, items):
     """Flatten the content into ('heading', level, text) and ('block', markdown) items in order."""
-    for child in node.children:
-        if isinstance(child, NavigableString):
-            text = str(child).strip()
-            if text and child.__class__.__name__ not in ("Comment",): items.append(("block", tidy_paragraph(inline_text(text))))
-            continue
+    run = []
+    for child in list(node.children):
+        if is_inline(child):
+            run.append(child); continue
+        if run: flush_run(run, items)
         if not isinstance(child, Tag): continue
         name, classes = child.name, child.get("class", [])
         if name in HEADINGS:
@@ -124,17 +151,10 @@ def walk(node, items):
                 if part.find(["dl", "p", "div"]): continue
                 text = tidy_paragraph(inline(part))
                 if text: items.append(("block", f"**{text}**" if part.name == "dt" else text))
-        elif name in ("div", "section", "center", "blockquote", "span", "main", "article", "body", "html", "font", "big", "small"):
-            if name == "span" and not child.find(["p", "div", "br"]):
-                text = tidy_paragraph(inline(child))
-                if text: items.append(("block", text))
-                continue
+        else:
+            # A container (div, center, blockquote, or an inline tag holding paragraphs): look inside.
             walk(child, items)
-        elif name in ("i", "b", "em", "strong", "a", "u", "s"):
-            text = tidy_paragraph(inline(child))
-            if text: items.append(("block", text))
-        elif name == "br":
-            continue
+    if run: flush_run(run, items)
     return items
 
 def inline_text(text):
