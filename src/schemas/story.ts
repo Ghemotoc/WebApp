@@ -160,6 +160,9 @@ export type StoryVisibility = (typeof storyVisibilities)[number];
 /** At most this many countries in "Set in" (CALM-9, board D02; stories_set_in_countries_are_codes). */
 export const MAXIMUM_SET_IN_COUNTRIES = 5;
 
+/** At most this many genres per story (S1-E3-01; stories_genre_slugs_are_keys). */
+export const MAXIMUM_GENRES = 3;
+
 /** The answers on the new story form, before the rules that span fields. */
 const newStoryShape = z.object({
   // The form makes the story's ID (crypto.randomUUID()) so the automatic cover is known before
@@ -186,6 +189,14 @@ const newStoryShape = z.object({
   setInCountries: z
     .array(z.string().regex(/^[A-Z]{2}$/, 'errors.setInInvalid'))
     .max(MAXIMUM_SET_IN_COUNTRIES, 'errors.setInTooMany'),
+  /**
+   * The story's bookshop genres (S1-E3-01; Robert, 26 Nov 2026): genres.slug keys, at most
+   * three; saved through set_my_story_genres(), which checks each against the genre list and the
+   * story's rating again (an 18+ genre needs an 18+ story).
+   */
+  genreSlugs: z
+    .array(z.string().regex(/^[a-z_]{2,40}$/, 'errors.genreInvalid'))
+    .max(MAXIMUM_GENRES, 'errors.genresTooMany'),
   /** Who can read it (NEW-1); the wizard's step 4, saved through its own function. */
   visibility: z.enum(storyVisibilities),
   ...storyLabelsShape,

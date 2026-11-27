@@ -75,7 +75,7 @@ end $$;
 
 select is(
   (select string_agg(name, ' ' order by name) from findings where kind = 'visitor_reads'),
-  'ad_blocked_categories ad_slots categories country_age_rules feature_flags forum_names forums languages legal_document_versions legal_documents markets regions safety_contacts settings tag_names tags',
+  'ad_blocked_categories ad_slots categories country_age_rules feature_flags forum_names forums genres languages legal_document_versions legal_documents markets regions safety_contacts settings tag_names tags',
   'a visitor reads rows only from the tables that are public by design');
 select is((select string_agg(name, ' ' order by name) from findings where kind = 'member_deletes'), null,
   'denied: a member can''t delete a row that isn''t theirs, in any table');

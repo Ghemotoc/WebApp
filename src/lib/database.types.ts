@@ -4764,6 +4764,43 @@ export type Database = {
           },
         ];
       };
+      genres: {
+        Row: {
+          created_at: string;
+          group_key: string;
+          id: string;
+          minimum_rating: Database['public']['Enums']['story_rating'];
+          name_en: string;
+          name_ro: string;
+          position: number;
+          slug: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          group_key: string;
+          id?: string;
+          minimum_rating?: Database['public']['Enums']['story_rating'];
+          name_en: string;
+          name_ro: string;
+          position: number;
+          slug: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          group_key?: string;
+          id?: string;
+          minimum_rating?: Database['public']['Enums']['story_rating'];
+          name_en?: string;
+          name_ro?: string;
+          position?: number;
+          slug?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       home_comment_picks: {
         Row: {
           agreed_at: string | null;
@@ -9203,6 +9240,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          genre_slugs: string[];
           hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
@@ -9260,6 +9298,7 @@ export type Database = {
             edition_of_story_id: string | null;
             first_published_at: string | null;
             first_published_year: number | null;
+            genre_slugs: string[];
             hidden_in_countries: string[];
             id: string;
             is_app_only: boolean;
@@ -9325,6 +9364,7 @@ export type Database = {
           edition_of_story_id?: string | null;
           first_published_at?: string | null;
           first_published_year?: number | null;
+          genre_slugs?: string[];
           hidden_in_countries?: string[];
           id?: string;
           is_app_only?: boolean;
@@ -9375,6 +9415,7 @@ export type Database = {
           edition_of_story_id?: string | null;
           first_published_at?: string | null;
           first_published_year?: number | null;
+          genre_slugs?: string[];
           hidden_in_countries?: string[];
           id?: string;
           is_app_only?: boolean;
@@ -12984,6 +13025,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          genre_slugs: string[];
           hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
@@ -13527,6 +13569,7 @@ export type Database = {
         Args: {
           category_slug?: string;
           completion?: Database['public']['Enums']['completion_status'];
+          genre_slug?: string;
           language?: string;
           list_key?: string;
           list_kind: string;
@@ -14300,6 +14343,7 @@ export type Database = {
       clean_bible_tags: { Args: { raw_tags: Json }; Returns: string[] };
       clean_certificate_code: { Args: { typed: string }; Returns: string };
       clean_country_codes: { Args: { codes: string[] }; Returns: string[] };
+      clean_genre_slugs: { Args: { wanted: string[] }; Returns: string[] };
       clean_mail_text: { Args: { longest: number; raw_text: string }; Returns: string };
       clean_reading_list_name: { Args: { typed_name: string }; Returns: string };
       clear_map_positions: { Args: { story_slug: string }; Returns: Json };
@@ -15733,6 +15777,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          genre_slugs: string[];
           hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
@@ -17208,6 +17253,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          genre_slugs: string[];
           hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
@@ -17267,6 +17313,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          genre_slugs: string[];
           hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
@@ -18014,6 +18061,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      set_my_story_genres: { Args: { story_slug: string; wanted_genres: string[] }; Returns: Json };
       set_my_story_hidden_countries: {
         Args: { countries: string[]; story_slug: string };
         Returns: Json;
@@ -18800,6 +18848,7 @@ export type Database = {
           edition_of_story_id: string | null;
           first_published_at: string | null;
           first_published_year: number | null;
+          genre_slugs: string[];
           hidden_in_countries: string[];
           id: string;
           is_app_only: boolean;
@@ -18911,6 +18960,16 @@ export type Database = {
       story_like_state_of: { Args: { target_story_id: string }; Returns: Json };
       story_like_total: { Args: { target_story_id: string }; Returns: number };
       story_link_targets: { Args: { story_slug: string }; Returns: Json };
+      story_list_genres: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          group_key: string;
+          name_en: string;
+          name_ro: string;
+          slug: string;
+          story_count: number;
+        }[];
+      };
       story_list_row_extras: {
         Args: { list_kind: string; target_story_id: string };
         Returns: Json;

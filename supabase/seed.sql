@@ -169,11 +169,15 @@ values
    'ro', (select id from public.categories where slug = 'poetry'),
    'drawn', 'dots', 'lilac', 'violet', '13_plus', 'no_ai');
 
--- Their tags, through the same function the app uses, so look-alikes merge the same way.
+-- Their tags, through the same function the app uses, so look-alikes merge the same way. Only
+-- neutral tags: where a story takes place is its "Set in" countries (CALM-9; S1-E3-01, Robert,
+-- 26 Nov 2026: "from tags, remove setting Romania").
 select public.set_story_tags('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-8000-000000000001',
-  array['bunici', 'familie', 'set in Romania']);
+  array['bunici', 'familie']);
 select public.set_story_tags('00000000-0000-4000-9000-000000000002', '00000000-0000-4000-8000-000000000001',
-  array['mystery', 'set in Romania', 'family']);
+  array['mystery', 'family']);
+update public.stories set set_in_countries = '{RO}'
+where id in ('00000000-0000-4000-9000-000000000001', '00000000-0000-4000-9000-000000000002');
 select public.set_story_tags('00000000-0000-4000-9000-000000000003', '00000000-0000-4000-8000-000000000002',
   array['oraș', 'vecini']);
 

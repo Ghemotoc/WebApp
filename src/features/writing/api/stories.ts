@@ -14,6 +14,8 @@
  *   (supabase/migrations/…_s1_e3_05_story_settings.sql), which answer with an outcome.
  * - The labels (S1-E3-06): create_story() and update_my_story() take a `labels` object
  *   (…_s1_e3_06_ratings_and_labels.sql, check_story_labels()).
+ * - The genres (S1-E3-01, 26 Nov 2026): set_my_story_genres() (…_s1_e3_01_genres.sql), after
+ *   the rating is saved; the list itself is read by api/genres.ts.
  * Readers never read these tables: they go through get_story_page() and get_chapter()
  * (ADR 0004, S1-E3-05 and S1-E4-01a).
  */
@@ -75,6 +77,8 @@ export interface MyStory {
   hiddenInCountries: string[];
   /** The countries the story takes place in (CALM-9, board D02); empty when not said. */
   setInCountries: string[];
+  /** The story's genres as genre slugs, at most three (S1-E3-01); empty when none is picked. */
+  genreSlugs: string[];
   commentsEnabled: boolean;
   /** Who may comment while comments are on (MUST-1a). */
   commentAudience: CommentAudience;
@@ -225,7 +229,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
   const { data, error } = await client
     .from('stories')
     .select(
-      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_style, cover_title_font, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, hidden_in_countries, set_in_countries, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
+      'id, slug, title, blurb, language_code, cover_kind, cover_design, cover_background, cover_accent, cover_style, cover_title_font, cover_tall_path, first_published_at, created_at, completion_status, visibility, is_app_only, hidden_in_countries, set_in_countries, genre_slugs, comments_enabled, comment_audience, comments_paused_until, quote_cards_enabled, picture_sharing_enabled, card_colour, deleted_at, rating, is_fan_fiction, is_parody, deals_with_abuse_or_coercion, content_note, ai_disclosure, rating_reasons, ai_undisclosed_labelled_at, categories(slug), story_tags(tags(name)), chapters(code, position, status)',
     )
     // A story in several languages shows once, as its original; its other languages are on its
     // Languages page (TRANSLATE-1c). A removed language still comes back, so "Recently deleted"
@@ -256,6 +260,7 @@ export async function fetchMyStories(client: AppSupabaseClient): Promise<MyStory
     isAppOnly: row.is_app_only,
     hiddenInCountries: row.hidden_in_countries,
     setInCountries: row.set_in_countries,
+    genreSlugs: row.genre_slugs,
     commentsEnabled: row.comments_enabled,
     commentAudience: row.comment_audience === 'followers' ? 'followers' : 'everyone',
     commentsPausedUntil: row.comments_paused_until,
@@ -339,7 +344,10 @@ export async function updateMyStory(
   const hiddenOutcome = await setMyStoryHiddenCountries(client, slug, settings.hiddenInCountries);
   // CALM-9 (board D02): then the countries it is set in.
   if (hiddenOutcome !== 'ok') return hiddenOutcome;
-  return setMyStorySetInCountries(client, slug, settings.setInCountries);
+  const setInOutcome = await setMyStorySetInCountries(client, slug, settings.setInCountries);
+  // S1-E3-01: then the genres, after the rating, because an 18+ genre needs an 18+ story.
+  if (setInOutcome !== 'ok') return setInOutcome;
+  return setMyStoryGenres(client, slug, settings.genreSlugs);
 }
 
 /**
@@ -367,9 +375,34 @@ export async function setMyStorySetInCountries(
 }
 
 /**
- * Saves the two new story answers create_story() doesn't take: who can read it (step 4 of the
- * wizard, NEW-1) and "Set in" (step 2, CALM-9), each only when the writer changed it from the
- * start (public, no countries), so a plain story makes no extra calls.
+ * Saves the writer's own story's genres (S1-E3-01). The database writes them to every edition
+ * of the story and checks each against the genre list the writer may read.
+ *
+ * @param client - the shared Supabase client
+ * @param slug - the story's public address
+ * @param genreSlugs - genre slugs, at most three; an empty list clears them
+ * @returns the outcome
+ * Errors: throws when the database refuses a genre (an unknown one, a fourth, or an 18+ genre on
+ *   a story that isn't rated 18+) or can't be reached.
+ */
+export async function setMyStoryGenres(
+  client: AppSupabaseClient,
+  slug: string,
+  genreSlugs: string[],
+): Promise<SettingsOutcome> {
+  const { data, error } = await client.rpc('set_my_story_genres', {
+    story_slug: slug,
+    wanted_genres: genreSlugs,
+  });
+  if (error !== null) throw new Error(`Could not save the story's genres: ${error.message}`);
+  return toSettingsOutcome(data);
+}
+
+/**
+ * Saves the new story answers create_story() doesn't take: who can read it (step 4 of the
+ * wizard, NEW-1), "Set in" (step 2, CALM-9) and the genres (step 2, S1-E3-01), each only when
+ * the writer changed it from the start (public, no countries, no genres), so a plain story makes
+ * no extra calls. The genres go last: create_story() has saved the rating by then.
  *
  * @param client - the shared Supabase client
  * @param slug - the new story's address, from createStory()
@@ -380,14 +413,18 @@ export async function setMyStorySetInCountries(
 export async function saveNewStoryExtras(
   client: AppSupabaseClient,
   slug: string,
-  input: Pick<NewStoryInput, 'visibility' | 'setInCountries'>,
+  input: Pick<NewStoryInput, 'visibility' | 'setInCountries' | 'genreSlugs'>,
 ): Promise<SettingsOutcome> {
   if (input.visibility !== 'public') {
     const visibilityOutcome = await setMyStoryVisibility(client, slug, input.visibility);
     if (visibilityOutcome !== 'ok') return visibilityOutcome;
   }
-  if (input.setInCountries.length === 0) return 'ok';
-  return setMyStorySetInCountries(client, slug, input.setInCountries);
+  if (input.setInCountries.length > 0) {
+    const setInOutcome = await setMyStorySetInCountries(client, slug, input.setInCountries);
+    if (setInOutcome !== 'ok') return setInOutcome;
+  }
+  if (input.genreSlugs.length === 0) return 'ok';
+  return setMyStoryGenres(client, slug, input.genreSlugs);
 }
 
 /**

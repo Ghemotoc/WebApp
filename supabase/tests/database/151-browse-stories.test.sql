@@ -31,8 +31,8 @@ $$;
 grant execute on all functions in schema pg_temp to anon, authenticated;
 
 -- The three seed stories get a published chapter each, an hour apart (seed03 newest):
--- seed01 "Stația meteo" (adult_writer, fiction, ro, All ages, tags bunici, familie, set in Romania),
--- seed02 (adult_writer, fiction, en, made 16+ and completed, tags mystery, set in Romania, family),
+-- seed01 "Stația meteo" (adult_writer, fiction, ro, All ages, tags bunici, familie; set in Romania),
+-- seed02 (adult_writer, fiction, en, made 16+ and completed, tags mystery, family; set in Romania),
 -- seed03 (teen_17, poetry, ro, 13+).
 insert into public.chapters (story_id, user_id, code, position, draft_title, draft_body, word_count,
   status, published_title, published_body, published_word_count, first_published_at)
@@ -99,7 +99,7 @@ select lives_ok($$ select public.set_block('adult_writer', false) $$, 'and unblo
 
 select is(pg_temp.slugs(public.browse_stories('category', 'poetry')), 'scrisori-din-cutia-postala-seed03',
   'a category lists its stories');
-select is(pg_temp.slugs(public.browse_stories('tag', 'Set in Romania')),
+select is(pg_temp.slugs(public.browse_stories('tag', 'FAMILY')),
   'statia-meteo-seed01,the-girl-who-fixed-radios-seed02',
   'a tag lists every visible story with it, whatever its case (popular order: no scores yet, so the newer first)');
 select is(pg_temp.slugs(public.browse_stories('completed')), 'the-girl-who-fixed-radios-seed02',

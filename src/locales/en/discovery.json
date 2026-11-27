@@ -66,6 +66,8 @@
     "filtersLabel": "Filters",
     "category": "Category",
     "anyCategory": "Any category",
+    "genre": "Genre",
+    "anyGenre": "Any genre",
     "status": "Status",
     "anyStatus": "Both",
     "ongoing": "Ongoing",

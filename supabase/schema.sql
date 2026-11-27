@@ -3439,6 +3439,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "cover_title_font" "public"."cover_title_font" DEFAULT 'reading'::"public"."cover_title_font" NOT NULL,
     "hidden_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
     "set_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
+    "genre_slugs" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3463,6 +3464,7 @@ CASE "cover_kind"
 END),
     CONSTRAINT "stories_edition_not_of_itself" CHECK ((("edition_of_story_id" IS NULL) OR ("edition_of_story_id" <> "id"))),
     CONSTRAINT "stories_first_published_year_range" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
+    CONSTRAINT "stories_genre_slugs_are_keys" CHECK ((("cardinality"("genre_slugs") <= 3) AND ("array_to_string"("genre_slugs", ','::"text") ~ '^([a-z_]{2,40}(,[a-z_]{2,40})*)?$'::"text"))),
     CONSTRAINT "stories_hidden_in_countries_are_codes" CHECK ((("cardinality"("hidden_in_countries") <= 60) AND ("array_to_string"("hidden_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
@@ -3593,6 +3595,10 @@ COMMENT ON COLUMN "public"."stories"."hidden_in_countries" IS 'The countries whe
 
 
 COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the story takes place in, at most five, shown as "Set in" (CALM-9, board D02).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."genre_slugs" IS 'The story''s genres (genres.slug), at most three; an 18+ genre only on an 18+ story (S1-E3-01, Robert 26 Nov 2026).';
 
 
 
@@ -16279,7 +16285,7 @@ COMMENT ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_asset
 
 
 
-CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text", "story_rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "story_length" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text", "story_rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "story_length" "text" DEFAULT NULL::"text", "genre_slug" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
@@ -16333,6 +16339,8 @@ begin
   with listed as (
     select listed_rows.* from public.listed_stories(list_kind, list_key, category_slug, completion, language) as listed_rows
     where public.story_matches_list_filters(listed_rows.id, listed_rows.rating, story_rating, story_length)
+      -- S1-E3-01 (Robert, 26 Nov 2026): one genre, through the GIN index on genre_slugs.
+      and (genre_slug is null or listed_rows.genre_slugs @> array[genre_slug])
   ),
   numbered as (
     select listed.id, count(*) over () as list_total, row_number() over (order by
@@ -16385,17 +16393,18 @@ begin
   if total is null then
     select count(*) into total
     from public.listed_stories(list_kind, list_key, category_slug, completion, language) as listed_rows
-    where public.story_matches_list_filters(listed_rows.id, listed_rows.rating, story_rating, story_length);
+    where public.story_matches_list_filters(listed_rows.id, listed_rows.rating, story_rating, story_length)
+      and (genre_slug is null or listed_rows.genre_slugs @> array[genre_slug]);
   end if;
   return jsonb_build_object('total', total, 'stories', page, 'popular_in', ranked_country);
 end;
 $$;
 
 
-ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages, search) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking, one rating and one length (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d, user story 1.8).';
+COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages, search) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking, one rating, one length and one genre (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d, user story 1.8, S1-E3-01).';
 
 
 
@@ -21004,6 +21013,46 @@ ALTER FUNCTION "public"."clean_country_codes"("codes" "text"[]) OWNER TO "postgr
 
 
 COMMENT ON FUNCTION "public"."clean_country_codes"("codes" "text"[]) IS 'Internal: country codes in capitals, each once, sorted; refuses anything else (COUNTRY-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."clean_genre_slugs"("wanted" "text"[]) RETURNS "text"[]
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  cleaned text[];
+begin
+  -- Step 1: tidy the list, keeping the writer's order.
+  cleaned := array(
+    select picked.slug from (
+      select lower(btrim(entry)) as slug, min(place) as first_place
+      from unnest(coalesce(wanted, '{}')) with ordinality as entries (entry, place)
+      where btrim(coalesce(entry, '')) <> ''
+      group by lower(btrim(entry))) as picked
+    order by picked.first_place);
+  -- Step 2: at most three (the form's limit too).
+  if cardinality(cleaned) > 3 then
+    raise exception 'Choose at most 3 genres.' using errcode = 'check_violation', hint = 'too_many_genres';
+  end if;
+  -- Step 3: each one a genre this person may read; an under-18 can't name an 18+ genre.
+  if exists (
+    select 1 from unnest(cleaned) as picked (slug)
+    where not exists (
+      select 1 from public.genres
+      where genres.slug = picked.slug
+        and (genres.minimum_rating = 'all_ages' or public.rating_allows(genres.minimum_rating)))) then
+    raise exception 'That genre isn''t on the list.' using errcode = 'check_violation', hint = 'unknown_genre';
+  end if;
+  return cleaned;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."clean_genre_slugs"("wanted" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."clean_genre_slugs"("wanted" "text"[]) IS 'Internal: a story''s genre list tidied and checked against the genres the caller may read (S1-E3-01).';
 
 
 
@@ -30881,6 +30930,36 @@ ALTER FUNCTION "public"."keep_setting"("setting_key" "text", "default_value" int
 
 
 COMMENT ON FUNCTION "public"."keep_setting"("setting_key" "text", "default_value" integer) IS 'Internal: a keep time from the settings, or its default (S1-E13-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."keep_story_genres_within_rating"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+begin
+  -- Step 1: nothing to check for a story with no genres (the common case).
+  if cardinality(new.genre_slugs) = 0 then
+    return new;
+  end if;
+  -- Step 2: keep each genre whose youngest rating the story's rating reaches, in the same order.
+  -- story_rating is ordered all_ages < 13_plus < 16_plus < 18_plus.
+  new.genre_slugs := array(
+    select chosen.slug
+    from unnest(new.genre_slugs) with ordinality as chosen (slug, place)
+    where not exists (
+      select 1 from public.genres
+      where genres.slug = chosen.slug and genres.minimum_rating > new.rating)
+    order by chosen.place);
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."keep_story_genres_within_rating"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."keep_story_genres_within_rating"() IS 'Trigger: an 18+ genre comes off a story that isn''t rated 18+ (S1-E3-01, rule 18).';
 
 
 
@@ -49187,6 +49266,54 @@ COMMENT ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "sty
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_my_story_genres"("story_slug" "text", "wanted_genres" "text"[]) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  target_story_id uuid;
+  family_story_id uuid;
+  story_rating public.story_rating;
+  cleaned text[];
+begin
+  -- Step 1: a signed-in writer who may write.
+  if (select auth.uid()) is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  cleaned := public.clean_genre_slugs(wanted_genres);
+  if not public.is_active_member() then
+    return jsonb_build_object('outcome', 'not_active');
+  end if;
+  -- Step 2: their own live story.
+  target_story_id := public.my_live_story_id(story_slug);
+  if target_story_id is null then
+    return jsonb_build_object('outcome', 'not_found');
+  end if;
+  select coalesce(stories.edition_of_story_id, stories.id), stories.rating
+    into family_story_id, story_rating
+  from public.stories where stories.id = target_story_id;
+  -- Step 3: an 18+ genre needs an 18+ story (rule 18), said out loud instead of dropped.
+  if exists (
+    select 1 from public.genres
+    where genres.slug = any (cleaned) and genres.minimum_rating > story_rating) then
+    raise exception 'This genre needs the 18+ rating.'
+      using errcode = 'check_violation', hint = 'genre_needs_adult_rating';
+  end if;
+  -- Step 4: save it on the original and every edition, so each language says the same.
+  update public.stories set genre_slugs = cleaned
+  where stories.id = family_story_id or stories.edition_of_story_id = family_story_id;
+  return jsonb_build_object('outcome', 'ok');
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_my_story_genres"("story_slug" "text", "wanted_genres" "text"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_my_story_genres"("story_slug" "text", "wanted_genres" "text"[]) IS 'The writer sets their story''s genres, at most three; 18+ genres only on 18+ stories (S1-E3-01).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -54447,6 +54574,35 @@ ALTER FUNCTION "public"."story_link_targets"("story_slug" "text") OWNER TO "post
 
 
 COMMENT ON FUNCTION "public"."story_link_targets"("story_slug" "text") IS 'What a [[Name]] in the caller''s story can point to: characters, bible entries, chapters (S1-E17-31).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."story_list_genres"() RETURNS TABLE("slug" "text", "name_en" "text", "name_ro" "text", "group_key" "text", "story_count" bigint)
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  with visible as (
+    select listed.genre_slugs
+    from public.listed_stories('updated', null, null, null, null) as listed
+    where cardinality(listed.genre_slugs) > 0
+  ),
+  used as (
+    select used_slug, count(*) as story_count
+    from visible cross join unnest(visible.genre_slugs) as used_slug
+    group by used_slug
+  )
+  select genres.slug, genres.name_en, genres.name_ro, genres.group_key, used.story_count
+  from used
+  join public.genres on genres.slug = used.used_slug
+  where genres.minimum_rating = 'all_ages' or public.rating_allows(genres.minimum_rating)
+  order by genres.position;
+$$;
+
+
+ALTER FUNCTION "public"."story_list_genres"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_list_genres"() IS 'The genres used by stories this reader may see, for Discover''s genre filter (S1-E3-01).';
 
 
 
@@ -61081,6 +61237,30 @@ COMMENT ON COLUMN "public"."forums"."rules_thread_id" IS 'The thread that holds 
 
 
 
+CREATE TABLE IF NOT EXISTS "public"."genres" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "slug" "text" NOT NULL,
+    "group_key" "text" NOT NULL,
+    "name_en" "text" NOT NULL,
+    "name_ro" "text" NOT NULL,
+    "minimum_rating" "public"."story_rating" DEFAULT 'all_ages'::"public"."story_rating" NOT NULL,
+    "position" smallint NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "genres_group_is_known" CHECK (("group_key" = ANY (ARRAY['fiction'::"text", 'young_adult'::"text", 'children'::"text", 'poetry'::"text", 'drama'::"text", 'nonfiction'::"text"]))),
+    CONSTRAINT "genres_names_length" CHECK (((("char_length"("name_en") >= 2) AND ("char_length"("name_en") <= 60)) AND (("char_length"("name_ro") >= 2) AND ("char_length"("name_ro") <= 60)))),
+    CONSTRAINT "genres_slug_is_a_key" CHECK (("slug" ~ '^[a-z_]{2,40}$'::"text"))
+);
+
+
+ALTER TABLE "public"."genres" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."genres" IS 'kind: platform
+The bookshop genres a writer picks for a story, with English and Romanian names; 18+ genres only for 18+ stories (S1-E3-01, Robert 26 Nov 2026).';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."home_comment_picks" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -63839,6 +64019,16 @@ ALTER TABLE ONLY "public"."forums"
 
 
 
+ALTER TABLE ONLY "public"."genres"
+    ADD CONSTRAINT "genres_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."genres"
+    ADD CONSTRAINT "genres_slug_key" UNIQUE ("slug");
+
+
+
 ALTER TABLE ONLY "public"."home_comment_picks"
     ADD CONSTRAINT "home_comment_picks_pkey" PRIMARY KEY ("id");
 
@@ -65886,6 +66076,10 @@ CREATE INDEX "stories_edition_of_story_id_idx" ON "public"."stories" USING "btre
 
 
 
+CREATE INDEX "stories_genre_slugs" ON "public"."stories" USING "gin" ("genre_slugs");
+
+
+
 CREATE INDEX "stories_hidden_cover_paths" ON "public"."stories" USING "btree" ("cover_tall_path", "cover_square_path") WHERE ("cover_hidden_at" IS NOT NULL);
 
 
@@ -66706,6 +66900,10 @@ CREATE OR REPLACE TRIGGER "forums_set_updated_at" BEFORE UPDATE ON "public"."for
 
 
 
+CREATE OR REPLACE TRIGGER "genres_set_updated_at" BEFORE UPDATE ON "public"."genres" FOR EACH ROW EXECUTE FUNCTION "public"."set_updated_at"();
+
+
+
 CREATE OR REPLACE TRIGGER "home_comment_picks_refuse_user_id_change" BEFORE UPDATE ON "public"."home_comment_picks" FOR EACH ROW EXECUTE FUNCTION "public"."refuse_user_id_change"();
 
 
@@ -67171,6 +67369,10 @@ CREATE OR REPLACE TRIGGER "stories_editions_follow_cover_look" AFTER UPDATE OF "
 
 
 CREATE OR REPLACE TRIGGER "stories_editions_follow_first" AFTER UPDATE ON "public"."stories" FOR EACH ROW WHEN (("new"."edition_of_story_id" IS NULL)) EXECUTE FUNCTION "public"."stories_editions_follow_first"();
+
+
+
+CREATE OR REPLACE TRIGGER "stories_keep_genres_within_rating" BEFORE INSERT OR UPDATE OF "genre_slugs", "rating" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."keep_story_genres_within_rating"();
 
 
 
@@ -70550,6 +70752,17 @@ COMMENT ON POLICY "forums_select_public" ON "public"."forums" IS 'Allows anyone 
 
 
 
+ALTER TABLE "public"."genres" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "genres_select_public" ON "public"."genres" FOR SELECT TO "authenticated", "anon" USING ((("minimum_rating" = 'all_ages'::"public"."story_rating") OR "public"."rating_allows"("minimum_rating")));
+
+
+
+COMMENT ON POLICY "genres_select_public" ON "public"."genres" IS 'Allows anyone to read the genres; an 18+ genre only for someone old enough to read 18+ stories (rule 18, age_band()).';
+
+
+
 ALTER TABLE "public"."home_comment_picks" ENABLE ROW LEVEL SECURITY;
 
 
@@ -73769,9 +73982,9 @@ REVOKE ALL ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_as
 
 
 
-REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") TO "authenticated";
 
 
 
@@ -74408,6 +74621,10 @@ REVOKE ALL ON FUNCTION "public"."clean_certificate_code"("typed" "text") FROM PU
 
 
 REVOKE ALL ON FUNCTION "public"."clean_country_codes"("codes" "text"[]) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."clean_genre_slugs"("wanted" "text"[]) FROM PUBLIC;
 
 
 
@@ -75706,6 +75923,10 @@ REVOKE ALL ON FUNCTION "public"."keep_furthest_reading_place"() FROM PUBLIC;
 
 
 REVOKE ALL ON FUNCTION "public"."keep_setting"("setting_key" "text", "default_value" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."keep_story_genres_within_rating"() FROM PUBLIC;
 
 
 
@@ -78225,6 +78446,11 @@ GRANT ALL ON FUNCTION "public"."set_my_story_cover_look"("story_slug" "text", "s
 
 
 
+REVOKE ALL ON FUNCTION "public"."set_my_story_genres"("story_slug" "text", "wanted_genres" "text"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_my_story_genres"("story_slug" "text", "wanted_genres" "text"[]) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_my_story_hidden_countries"("story_slug" "text", "countries" "text"[]) TO "authenticated";
 
@@ -78971,6 +79197,12 @@ REVOKE ALL ON FUNCTION "public"."story_like_total"("target_story_id" "uuid") FRO
 
 REVOKE ALL ON FUNCTION "public"."story_link_targets"("story_slug" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."story_link_targets"("story_slug" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."story_list_genres"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_list_genres"() TO "anon";
+GRANT ALL ON FUNCTION "public"."story_list_genres"() TO "authenticated";
 
 
 
@@ -79999,6 +80231,12 @@ GRANT UPDATE ON SEQUENCE "public"."forum_threads_thread_number_seq" TO "service_
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."forums" TO "service_role";
 GRANT SELECT ON TABLE "public"."forums" TO "anon";
 GRANT SELECT ON TABLE "public"."forums" TO "authenticated";
+
+
+
+GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."genres" TO "service_role";
+GRANT SELECT ON TABLE "public"."genres" TO "anon";
+GRANT SELECT ON TABLE "public"."genres" TO "authenticated";
 
 
 

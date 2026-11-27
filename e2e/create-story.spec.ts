@@ -5,12 +5,13 @@
  * What it proves:
  * - adult_writer goes through the five-step wizard (CALM-9, board D02) and creates a story with
  *   tags "Fantezie" and "fantezie": one tag, shown as "Fantasy" in the English interface (CMS-1e),
- *   set in Romania (its own field, not a tag), a drawn cover
+ *   set in Romania (its own field, not a tag), the genre Cosy mystery picked by typing (S1-E3-01;
+ *   the 18+ genres are offered to adults only), a drawn cover
  *   with a long title at phone width, recoloured within the palette, and sees it on Your writing;
  * - Next refuses to leave the basics without a title;
  * - the upload tab is not offered while picture_uploads is off (no uploads in the demo);
- * - teen_17 (read-only while the test is adults only) can't create a story and never sees
- *   adult_writer's new story;
+ * - teen_17 (read-only while the test is adults only) can't create a story, never sees
+ *   adult_writer's new story and is never offered an 18+ genre (rule 18);
  * - the Write button leads to /write, and a signed-out visitor is asked to log in;
  * - /write and /write/new pass axe, don't scroll sideways and draw no doodle at 390,
  *   768 and 1440 px, in light and night mode, in Romanian and English.
@@ -94,6 +95,15 @@ test.describe('create a story (S1-E3-01)', () => {
     await expect(page.getByRole('button', { name: 'Remove Romania' })).toBeVisible();
     await expect(page.getByRole('complementary').getByText('Set in Romania')).toBeVisible();
 
+    // Genres (S1-E3-01): typing a few letters pops up the matching genres; picking one adds it
+    // as a chip. An adult is offered the 18+ genres too.
+    const genreField = page.getByRole('combobox', { name: 'Genres' });
+    await expect(page.locator('datalist option[value="Cosy mystery"]')).toHaveCount(1);
+    await expect(page.locator('datalist option[value="Erotica"]')).toHaveCount(1);
+    await genreField.fill('Cosy mystery');
+    await expect(page.getByRole('button', { name: 'Remove Cosy mystery' })).toBeVisible();
+    await expect(page.getByText('1 of 3 genres.', { exact: false })).toBeVisible();
+
     // Tags: Fantezie and fantezie are one tag, the recommended Fantasy, named in the interface
     // language (CMS-1e); the counter says so.
     const tagField = page.getByPlaceholder('Add a tag');
@@ -172,6 +182,11 @@ test.describe('create a story (S1-E3-01)', () => {
         `select array_to_string(set_in_countries, ',') from public.stories where title = '${longTitle}'`,
       ),
     ).toBe('RO');
+    expect(
+      runSql(
+        `select array_to_string(genre_slugs, ',') from public.stories where title = '${longTitle}'`,
+      ),
+    ).toBe('cosy_mystery');
   });
 
   test('teen_17 cannot create a story and does not see adult_writer’s new story', async ({
@@ -184,6 +199,10 @@ test.describe('create a story (S1-E3-01)', () => {
 
     await page.goto('/write/new');
     await page.getByRole('textbox', { name: 'Title' }).fill('Fata care repara radiouri (teen)');
+    // The genre list has loaded, and holds no 18+ genre for a 17-year-old (genres_select_public).
+    await goToNewStoryStep(page, 'Category, tags and setting');
+    await expect(page.locator('datalist option[value="Cosy mystery"]')).toHaveCount(1);
+    await expect(page.locator('datalist option[value="Erotica"]')).toHaveCount(0);
     await goToLastNewStoryStep(page);
     // Every story needs a rating and an AI answer before it saves (S1-E3-06).
     await page.getByRole('radio', { name: 'All ages', exact: true }).click();

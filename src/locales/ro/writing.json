@@ -220,7 +220,9 @@
     "chapterCreateFailed": "Povestea a fost salvată, dar nu am putut deschide capitolul unu. Deschide-l din Scrieri.",
     "ratingReasonsMissing": "Bifează cel puțin un motiv pentru care e 16+ sau 18+.",
     "setInInvalid": "Alege o țară din listă.",
-    "setInTooMany": "O poveste poate avea loc în cel mult 5 țări."
+    "setInTooMany": "O poveste poate avea loc în cel mult 5 țări.",
+    "genreInvalid": "Alege un gen din listă.",
+    "genresTooMany": "O poveste poate avea cel mult 3 genuri."
   },
   "storyCard": {
     "settings": "Setările poveștii",
@@ -771,6 +773,15 @@
     "remove": "Scoate {{country}}",
     "groupLabel": "Țările în care are loc povestea",
     "preview": "Are loc în {{countries}}"
+  },
+  "genres": {
+    "label": "Genuri",
+    "search": "Caută un gen",
+    "hint": "Scrie câteva litere și alege din listă. {{count}} din {{max}} genuri.",
+    "full": "{{max}} din {{max}} genuri. Scoate unul ca să adaugi altul.",
+    "remove": "Scoate {{genre}}",
+    "groupLabel": "Genurile poveștii",
+    "needsAdultRating": "Acest gen cere clasificarea 18+. Alege 18+ la Etichete, clasificare și AI."
   },
   "writeEmpty": {
     "title": "Nicio poveste încă",

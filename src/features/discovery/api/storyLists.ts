@@ -96,6 +96,8 @@ export interface ListRequest {
   storyRating?: StoryRating | null;
   /** The Length filter (user story 1.8): short, long, or null/absent for any. */
   storyLength?: StoryLength | null;
+  /** The Genre filter (S1-E3-01): one genre slug, or null/absent for any. */
+  genreSlug?: string | null;
 }
 
 /** "Popular in › Everywhere": the overall ranking (MARKETS-2d). */
@@ -302,20 +304,25 @@ export function toListedStory(row: ListedStoryRow): ListedStory {
   };
 }
 
-/**
- * The Rating and Length filters as the database's inputs, only those that are set (user story
- * 1.8, board A08).
- *
- * @param request - the list and its filters
- * @returns story_rating and story_length when set, else nothing
- */
-function rangeFilterArguments(request: ListRequest): {
+/** The optional filters browse_stories() takes by name. */
+interface OptionalFilterArguments {
   story_rating?: StoryRating;
   story_length?: StoryLength;
-} {
-  const inputs: { story_rating?: StoryRating; story_length?: StoryLength } = {};
+  genre_slug?: string;
+}
+
+/**
+ * The Rating, Length and Genre filters as the database's inputs, only those that are set (user
+ * story 1.8, board A08; the genre from S1-E3-01).
+ *
+ * @param request - the list and its filters
+ * @returns story_rating, story_length and genre_slug when set, else nothing
+ */
+function rangeFilterArguments(request: ListRequest): OptionalFilterArguments {
+  const inputs: OptionalFilterArguments = {};
   if (request.storyRating != null) inputs.story_rating = request.storyRating;
   if (request.storyLength != null) inputs.story_length = request.storyLength;
+  if (request.genreSlug != null) inputs.genre_slug = request.genreSlug;
   return inputs;
 }
 

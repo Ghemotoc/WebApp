@@ -25,8 +25,8 @@ grant execute on all functions in schema pg_temp to authenticated, anon;
 
 /* ---------- 1. The default and who may set it ---------- */
 
-select is((select set_in_countries from public.stories where id = '00000000-0000-4000-9000-000000000001'),
-  '{}'::text[], 'a story is set in no country by default');
+select is((select set_in_countries from public.stories where id = '00000000-0000-4000-9000-000000000003'),
+  '{}'::text[], 'a story is set in no country by default (seed03; the seed sets seed01 in Romania)');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(public.set_my_story_set_in_countries('statia-meteo-seed01', array['RO']) ->> 'outcome',
   'not_found', 'another member can''t say where someone else''s story is set');
