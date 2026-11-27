@@ -20403,6 +20403,63 @@ COMMENT ON FUNCTION "public"."class_week_totals"("class_id" "uuid", "week" "date
 
 
 
+CREATE OR REPLACE FUNCTION "public"."class_winner_notice"("slug" "text") RETURNS "jsonb"
+    LANGUAGE "plpgsql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  space public.spaces;
+  notice jsonb;
+begin
+  -- Step 1: only a signed-in, active member of a live class.
+  if caller_id is null then
+    return null;
+  end if;
+  select * into space from public.spaces
+  where spaces.slug = class_winner_notice.slug and spaces.kind = 'class' and spaces.deleted_at is null;
+  if space.id is null or not exists (
+      select 1 from public.space_members as members
+      where members.space_id = space.id and members.user_id = caller_id and members.status = 'active') then
+    return null;
+  end if;
+  -- Step 2: the newest published competition the caller won whose notice is still open, with the
+  -- teacher's name, the caller's own pen name ("by …") and the winning chapter's address (no score
+  -- or point, user story 8.13).
+  select jsonb_build_object(
+           'competition_id', competitions.id,
+           'name', competitions.name,
+           'teacher_name', public.display_name(teacher.handle, teacher.pen_name),
+           'winner_name', public.display_name(winner.handle, winner.pen_name),
+           'story_title', stories.title,
+           'story_slug', stories.slug,
+           'chapter_code', chapters.code)
+  into notice
+  from public.class_competition_results as results
+  join public.class_competitions as competitions on competitions.id = results.competition_id
+  join public.profiles as teacher on teacher.id = space.user_id
+  join public.profiles as winner on winner.id = results.pupil_user_id
+  left join public.chapters on chapters.id = results.winning_chapter_id and chapters.deleted_at is null
+  left join public.stories on stories.id = chapters.story_id and stories.deleted_at is null
+  where competitions.space_id = space.id
+    and competitions.published_at is not null
+    and results.pupil_user_id = caller_id
+    and results.result = 'winner'
+    and results.winner_notice_seen_at is null
+  order by competitions.published_at desc
+  limit 1;
+  return notice;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."class_winner_notice"("slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."class_winner_notice"("slug" "text") IS 'The "You''re the winner" notice the caller still has to see in a class, or null (BOOKS-8c, user story 8.13).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."class_winners_allowed"("grade" smallint) RETURNS boolean
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -25058,6 +25115,33 @@ ALTER FUNCTION "public"."disconnect_canva"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."disconnect_canva"() IS 'Removes the caller''s Canva connection, from Settings (S1-E3-12).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."dismiss_class_winner_notice"("target_competition_id" "uuid") RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  closed_count integer;
+begin
+  -- Only the caller's own Winner row, and only once.
+  update public.class_competition_results set winner_notice_seen_at = now()
+  where class_competition_results.competition_id = target_competition_id
+    and class_competition_results.pupil_user_id = caller_id
+    and class_competition_results.result = 'winner'
+    and class_competition_results.winner_notice_seen_at is null;
+  get diagnostics closed_count = row_count;
+  return closed_count > 0;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."dismiss_class_winner_notice"("target_competition_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."dismiss_class_winner_notice"("target_competition_id" "uuid") IS 'The Winner closes the "You''re the winner" notice, once (BOOKS-8c, user story 8.13).';
 
 
 
@@ -57695,12 +57779,16 @@ declare
   clean_code text := public.clean_certificate_code(code);
   target public.certificates;
 begin
+  -- Step 1: a certificate with this code: what it says and who signed it, never the pupil's name.
   select * into target from public.certificates where certificates.code = clean_code;
   if target.id is not null then
     return jsonb_build_object('status', public.certificate_status(target),
       'programme_name', target.programme_name, 'result', target.result,
-      'school_name', target.school_name, 'signed_at', target.signed_at);
+      'school_name', target.school_name, 'class_name', target.class_name,
+      'teacher_name', target.teacher_name, 'is_contest', target.contest_id is not null,
+      'signed_at', target.signed_at, 'revoked_at', target.revoked_at);
   end if;
+  -- Step 2: a deleted certificate's code, kept so it never says "unknown" by mistake.
   if exists (select 1 from public.retired_certificate_codes where retired_certificate_codes.code = clean_code) then
     return jsonb_build_object('status', 'retired');
   end if;
@@ -57712,7 +57800,7 @@ $$;
 ALTER FUNCTION "public"."verify_certificate"("code" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."verify_certificate"("code" "text") IS 'Public: whether a certificate code is valid, revoked or no longer available, never the name (S1-E8-12).';
+COMMENT ON FUNCTION "public"."verify_certificate"("code" "text") IS 'Public: whether a certificate code is valid, revoked or no longer available, with the programme, result, class, school, teacher and dates; never the pupil''s name (S1-E8-12; BOOKS-8c, user story 8.17).';
 
 
 
@@ -59930,6 +60018,7 @@ CREATE TABLE IF NOT EXISTS "public"."class_competition_results" (
     "readers_choice" boolean DEFAULT false NOT NULL,
     "winning_chapter_id" "uuid",
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "winner_notice_seen_at" timestamp with time zone,
     CONSTRAINT "class_competition_results_chapter_only_winner" CHECK ((("winning_chapter_id" IS NULL) OR ("result" = 'winner'::"public"."certificate_result"))),
     CONSTRAINT "class_competition_results_not_own" CHECK (("user_id" <> "pupil_user_id")),
     CONSTRAINT "class_competition_results_result_is_placing" CHECK (("result" = ANY (ARRAY['winner'::"public"."certificate_result", 'finalist'::"public"."certificate_result", 'participant'::"public"."certificate_result"])))
@@ -59941,6 +60030,10 @@ ALTER TABLE "public"."class_competition_results" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."class_competition_results" IS 'kind: user_action
 The result the teacher confirmed for one entrant of a class competition: Winner, Finalist or Contestant, and whether they are the Readers'' choice (S1-E8-15). The class sees only the Winner card through class_competitions(); an entrant reads their own result there.';
+
+
+
+COMMENT ON COLUMN "public"."class_competition_results"."winner_notice_seen_at" IS 'When the Winner closed the "You''re the winner" notice; null until then (BOOKS-8c, user story 8.13).';
 
 
 
@@ -73882,6 +73975,11 @@ REVOKE ALL ON FUNCTION "public"."class_week_totals"("class_id" "uuid", "week" "d
 
 
 
+REVOKE ALL ON FUNCTION "public"."class_winner_notice"("slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."class_winner_notice"("slug" "text") TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."class_winners_allowed"("grade" smallint) FROM PUBLIC;
 
 
@@ -74501,6 +74599,11 @@ REVOKE ALL ON FUNCTION "public"."derive_handle_forms"() FROM PUBLIC;
 
 REVOKE ALL ON FUNCTION "public"."disconnect_canva"() FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."disconnect_canva"() TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."dismiss_class_winner_notice"("target_competition_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dismiss_class_winner_notice"("target_competition_id" "uuid") TO "authenticated";
 
 
 

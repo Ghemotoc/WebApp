@@ -25,6 +25,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { type Browser, type Page } from '@playwright/test';
 import { expect, test } from './support/test';
 
+import { brandDefaults } from '../src/config/brand';
+
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';
@@ -309,16 +311,16 @@ test.describe('Contests (S1-E11-15)', () => {
     await expect(admin.getByText('1 certificate issued or updated.')).toBeVisible();
     await admin.context().close();
 
-    // Step 2: the winner finds it under My certificates, marked as a writing contest.
+    // Step 2: the winner finds it under My certificates, marked as a contest of the product.
     const writer = await openAs(browser, 'adult_writer', '/certificates');
-    await expect(writer.getByText('Writing contest')).toBeVisible();
-    await writer.getByRole('link', { name: 'Open “The trial contest”' }).click();
+    await expect(writer.getByText(`${brandDefaults.productName} contest`)).toBeVisible();
+    await writer.getByRole('link', { name: /^The trial contest ?, Winner$/ }).click();
 
     // Step 3: no real-name form (CLAUDE.md rule 5), one signature and the contest's sentence.
     await expect(
       writer.getByRole('heading', { level: 1, name: 'The trial contest' }),
     ).toBeVisible();
-    await expect(writer.getByLabel('Name to print')).toHaveCount(0);
+    await expect(writer.getByLabel('Printed name')).toHaveCount(0);
     await expect(
       writer.getByText('for winning the writing contest “The trial contest”.'),
     ).toBeVisible();

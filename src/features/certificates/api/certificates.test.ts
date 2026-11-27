@@ -121,13 +121,35 @@ describe('the student’s certificates', () => {
 });
 
 describe('the public check', () => {
-  it('a valid code shows the programme and the result, never a name', async () => {
+  it('a valid code shows the programme, the result, the class and the teacher, never a pupil', async () => {
     const { client } = fakeClient({
-      data: { status: 'valid', programme_name: 'Cercul', result: 'finalist', school_name: null },
+      data: {
+        status: 'valid',
+        programme_name: 'Cercul',
+        result: 'finalist',
+        school_name: null,
+        class_name: 'Clasa 9B',
+        teacher_name: 'teacher',
+      },
     });
     const check = await verifyCertificate(client, 'cl27 7k4m q9');
-    expect(check).toMatchObject({ status: 'valid', programmeName: 'Cercul', result: 'finalist' });
-    expect(JSON.stringify(check)).not.toContain('name"');
+    expect(check).toMatchObject({
+      status: 'valid',
+      programmeName: 'Cercul',
+      result: 'finalist',
+      className: 'Clasa 9B',
+      teacherName: 'teacher',
+      isContest: false,
+    });
+    expect(Object.keys(check)).not.toContain('givenTo');
+  });
+
+  it('a revoked code says when it was revoked', () => {
+    const check = certificateCheckFrom({ status: 'revoked', revoked_at: '2026-11-20T10:00:00Z' });
+    expect(check).toMatchObject({
+      status: 'revoked',
+      revokedAt: '2026-11-20T10:00:00Z',
+    });
   });
 
   it('a certificate deleted with its account reads as no longer available', () => {

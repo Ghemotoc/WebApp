@@ -22,7 +22,7 @@
  * readers (no doodles; the boards' QR code is left out).
  */
 import type { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { brand } from '@/config/brand';
 
@@ -175,6 +175,46 @@ function CertificateFooter({
 }
 
 /**
+ * The sheet's header: the product, the maker's line and the school the programme ran with.
+ *
+ * @param props.school - the school's name, or null
+ * @param props.language - the language the sheet prints in
+ * @returns the header
+ */
+function SheetHeader({
+  school,
+  language,
+}: {
+  school: string | null;
+  language: CertificateLanguage;
+}) {
+  const { i18n } = useTranslation();
+  const t = i18n.getFixedT(language, 'certificates');
+  return (
+    <header className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-col">
+        <p className={`m-0 font-heading type-heading font-bold ${ink.heading}`}>
+          {brand.productName}
+        </p>
+        <p className={`m-0 type-body ${ink.muted}`}>
+          {/* The maker's line has a <company> tag around the name; Trans fills it, so the sheet
+              never prints the tag itself (bundle BOOKS-8, part 8c). */}
+          <Trans
+            t={i18n.getFixedT(language, 'common')}
+            i18nKey="shell.madeBy"
+            values={{ companyName: brand.companyName }}
+            components={{ company: <span /> }}
+          />
+        </p>
+      </div>
+      {school !== null && (
+        <p className={`m-0 type-body ${ink.muted}`}>{t('sheet.partnership', { school })}</p>
+      )}
+    </header>
+  );
+}
+
+/**
  * Renders the certificate.
  *
  * @param props.certificate - the certificate
@@ -206,21 +246,12 @@ export function CertificateSheet({
       <article
         lang={language}
         aria-label={t('sheet.label')}
+        // The printed sheet scales its title and name with the paper (clamp), like the words drawn
+        // on a cover, so the page's type steps don't apply to it (e2e/support/lookCheck.ts).
+        data-look-exempt=""
         className={`flex flex-col gap-8 p-6 sm:p-12 ${ink.text}`}
       >
-        <header className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex flex-col">
-            <p className={`m-0 font-heading type-heading font-bold ${ink.heading}`}>
-              {brand.productName}
-            </p>
-            <p className={`m-0 type-body ${ink.muted}`}>
-              {t('common:shell.madeBy', { lng: language })}
-            </p>
-          </div>
-          {school !== null && (
-            <p className={`m-0 type-body ${ink.muted}`}>{t('sheet.partnership', { school })}</p>
-          )}
-        </header>
+        <SheetHeader school={school} language={language} />
         <div className="flex flex-col items-center gap-3 text-center">
           <CertificateSeal look={certificate.look} size="large" crestUrl={crestUrl} />
           <h2

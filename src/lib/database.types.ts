@@ -2103,6 +2103,7 @@ export type Database = {
           readers_choice: boolean;
           result: Database['public']['Enums']['certificate_result'];
           user_id: string;
+          winner_notice_seen_at: string | null;
           winning_chapter_id: string | null;
         };
         ComputedFields: never;
@@ -2114,6 +2115,7 @@ export type Database = {
           readers_choice?: boolean;
           result: Database['public']['Enums']['certificate_result'];
           user_id: string;
+          winner_notice_seen_at?: string | null;
           winning_chapter_id?: string | null;
         };
         Update: {
@@ -2124,6 +2126,7 @@ export type Database = {
           readers_choice?: boolean;
           result?: Database['public']['Enums']['certificate_result'];
           user_id?: string;
+          winner_notice_seen_at?: string | null;
           winning_chapter_id?: string | null;
         };
         Relationships: [
@@ -14198,6 +14201,7 @@ export type Database = {
       class_today: { Args: Record<PropertyKey, never>; Returns: string };
       class_waiting_members: { Args: { slug: string }; Returns: Json };
       class_week_totals: { Args: { class_id: string; week: string }; Returns: Json };
+      class_winner_notice: { Args: { slug: string }; Returns: Json };
       class_winners_allowed: { Args: { grade: number }; Returns: boolean };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
       classic_cover_colour: { Args: { story_id: string }; Returns: string };
@@ -14854,6 +14858,7 @@ export type Database = {
       delete_story_event: { Args: { event_id: string }; Returns: Json };
       delete_story_idea: { Args: { idea_id: string }; Returns: Json };
       disconnect_canva: { Args: Record<PropertyKey, never>; Returns: boolean };
+      dismiss_class_winner_notice: { Args: { target_competition_id: string }; Returns: boolean };
       dismiss_space_welcome: { Args: { slug: string }; Returns: undefined };
       display_name: { Args: { handle: string; pen_name: string }; Returns: string };
       downvote_comment: {

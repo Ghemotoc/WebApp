@@ -177,7 +177,9 @@ test.describe('epic check: forums and spaces (S1-E8-QA)', () => {
     );
     await student.goto('/notifications');
     await student.getByRole('link', { name: 'Open certificates' }).first().click();
-    await expect(student.getByRole('link', { name: `Open “${programme}”` })).toBeVisible();
+    await expect(
+      student.getByRole('link', { name: new RegExp(`^${programme} ?, Contestant$`) }),
+    ).toBeVisible();
     await student.context().close();
   });
 });

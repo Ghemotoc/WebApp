@@ -33,6 +33,9 @@ the Readers' choice pen names and the pupil's own result, nothing else.
   `CriteriaList` and "What each criterion needs", the pupil's `PupilControls` or the teacher's
   `TeacherControls`) and, under the threads, `ClassLatestWinner`: the latest `WinnerCard` with a
   Winner for a pupil, every confirmed competition's card for the teacher. In the class's settings: `ClassGradeCard` (the school year).
+- The Winner's notice (board G13, BOOKS-8c): `api/winnerNotice.ts` (`class_winner_notice()`,
+  `dismiss_class_winner_notice()`), `hooks/useWinnerNotice.ts`, and `components/WinnerNotice.tsx`,
+  which `ClassLatestWinner` loads lazily only when the Winner still has to see it.
 - `/spaces/<slug>/competition` (board G11, BOOKS-8b): `CompetitionFormPage` → `CompetitionForm`
   with `CompetitionDetailsFields` (name, Starts, Ends), `CriteriaEditor` (one criterion open at a
   time, the others as rows with Edit), `CriteriaTemplateTools` ("Use template", "Save as

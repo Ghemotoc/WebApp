@@ -1,45 +1,40 @@
 /**
- * CertificateLookPicker: the teacher's choice of how a programme's certificates look, its colour
- * and the faint pattern behind the text, with a small preview (bundle G13a; the canvas's
- * SpaceCertificates board, "Certificate look: colour and pattern").
+ * CertificateLookPicker: the "Look" section of the teacher's certificates form: the colour, the
+ * faint pattern behind the text and what the seal shows (bundle G13a and G13b; board G14, bundle
+ * BOOKS-8, part 8c).
  *
- * Each choice is a group of real radio buttons, so arrow keys move between them and a screen
- * reader names each one ("Sea glass", "Waves"); the swatch and the tile only show it. The selected
- * one carries a check mark as well as a ring, so the choice never rests on colour alone (DoD pill
- * system). The preview is the same frame and seal as the student's certificate, with the class's
- * name and the programme, so the teacher sees what they sign.
- * Since G13b the seal can show the school's crest (CertificateSealChoices); the preview draws it
- * once its check passed, as the students will see it.
- * Who shows it: ClassResultsForm. What it calls: CertificateFrame, CertificateSeal,
- * CertificateSealChoices, useClassCertificateCrest and the look helpers in lib/certificateLook.ts.
+ * The colours are a group of real radio buttons drawn as swatches, so arrow keys move between them
+ * and a screen reader names each one ("Sea glass"); the chosen one carries a check mark as well as
+ * its ring, so the choice never rests on colour alone (DoD pill system). The pattern is a
+ * drop-down, as G14 draws it, with the same names as the covers. The seal choice is
+ * CertificateSealChoices. The preview of what the teacher signs is CertificateLookPreview, beside
+ * the form.
+ * Who shows it: ClassResultsForm and CompetitionCertificatesForm.
+ * What it calls: CertificateSealChoices and the look helpers in lib/certificateLook.ts.
  */
 import { CheckIcon } from '@/components/icons/CheckIcon';
-import { coverArtwork } from '@/components/covers/coverArtwork';
+import { Select } from '@/components/ui/Select';
 
 import {
-  certificateColourHex,
   certificateColours,
   certificateFrameBackground,
+  certificatePatternOf,
   certificatePatterns,
   type CertificateLook,
-  type CertificatePattern,
 } from '../lib/certificateLook';
-import { useClassCertificateCrest } from '../hooks/useCertificateCrest';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
-import { CertificateFrame } from './CertificateFrame';
-import { CertificateSeal } from './CertificateSeal';
 import { CertificateSealChoices } from './CertificateSealChoices';
 
-/** The styles every choice shares: a visible focus ring on the hidden input's label. */
-const choiceClasses =
-  'relative flex cursor-pointer items-center justify-center has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus-ring) has-[:focus-visible]:outline-solid';
+/** A colour swatch: a 44 px circle with a visible focus ring on the hidden radio's label. */
+const swatchClasses =
+  'relative flex size-11 cursor-pointer items-center justify-center rounded-full has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus-ring) has-[:focus-visible]:outline-solid';
 
-/** A colour swatch: a 44 px circle (the board's 40 px, raised to the 44 px touch target). */
-const swatchClasses = `${choiceClasses} h-11 w-11 rounded-full`;
-
-/** A pattern tile: the board's 56 px square with 14 px corners. */
-const tileClasses = `${choiceClasses} h-14 w-14 rounded-field`;
+/** What the picker needs. */
+interface CertificateLookPickerProps {
+  look: CertificateLook;
+  onChange: (look: CertificateLook) => void;
+}
 
 /**
  * The colour swatches.
@@ -50,8 +45,8 @@ function ColourChoices({ look, onChange }: CertificateLookPickerProps) {
   const { t } = useCertificatesTranslation();
   return (
     <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-      <legend className="mb-2 type-body font-semibold text-ink">{t('look.colour')}</legend>
-      <div className="flex flex-wrap gap-3">
+      <legend className="mb-2 type-label text-ink">{t('look.colour')}</legend>
+      <div className="flex flex-wrap gap-2">
         {certificateColours.map((colour) => (
           <label
             key={colour}
@@ -76,133 +71,60 @@ function ColourChoices({ look, onChange }: CertificateLookPickerProps) {
 }
 
 /**
- * A small tile showing one pattern in the chosen colour.
+ * The pattern drop-down with its hint.
  *
- * @returns the tile's drawing, hidden from screen readers
+ * @returns the field
  */
-function PatternTile({ pattern, look }: { pattern: CertificatePattern; look: CertificateLook }) {
-  if (pattern === 'none') return null;
-  const artwork = coverArtwork(pattern);
-  return (
-    <svg
-      viewBox="0 0 100 160"
-      preserveAspectRatio="xMidYMid slice"
-      aria-hidden="true"
-      focusable="false"
-      className="absolute inset-0 h-full w-full opacity-40"
-      style={{ color: certificateColourHex[look.colour].light }}
-    >
-      {artwork.fillPath !== '' && <path d={artwork.fillPath} fill="currentColor" />}
-      {artwork.strokePath !== '' && (
-        <path
-          d={artwork.strokePath}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={artwork.strokeWidth}
-        />
-      )}
-    </svg>
-  );
-}
-
-/**
- * The pattern tiles.
- *
- * @returns the radio group
- */
-function PatternChoices({ look, onChange }: CertificateLookPickerProps) {
+function PatternChoice({ look, onChange }: CertificateLookPickerProps) {
   const { t } = useCertificatesTranslation();
+  const options = certificatePatterns.map((pattern) => ({
+    value: pattern,
+    label: t(`look.patterns.${pattern}`),
+  }));
   return (
-    <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-      <legend className="mb-2 type-body font-semibold text-ink">{t('look.pattern')}</legend>
-      <div className="flex flex-wrap gap-3">
-        {certificatePatterns.map((pattern) => (
-          <label
-            key={pattern}
-            className={`${tileClasses} overflow-hidden border border-control bg-white`}
-          >
-            <input
-              type="radio"
-              name="certificate-pattern"
-              value={pattern}
-              checked={look.pattern === pattern}
-              onChange={() => onChange({ ...look, pattern })}
-              className="sr-only"
-            />
-            <PatternTile pattern={pattern} look={look} />
-            <span className="sr-only">{t(`look.patterns.${pattern}`)}</span>
-            {pattern === 'none' && look.pattern !== 'none' && (
-              <span aria-hidden="true" className="type-meta text-ink-muted">
-                {t('look.noneShort')}
-              </span>
-            )}
-            {look.pattern === pattern && <CheckIcon size={16} className="relative text-ink" />}
-          </label>
-        ))}
-      </div>
-      <p className="m-0 type-body text-ink-muted">{t('look.patternHint')}</p>
-    </fieldset>
+    <div className="flex flex-col gap-2">
+      <Select
+        id="certificate-pattern"
+        label={t('look.pattern')}
+        isLabelAbove
+        placement="form"
+        options={options}
+        value={look.pattern}
+        descriptionId="certificate-pattern-hint"
+        onChange={(value) => onChange({ ...look, pattern: certificatePatternOf(value) })}
+      />
+      <p id="certificate-pattern-hint" className="m-0 max-w-[480px] type-meta text-ink-muted">
+        {t('look.patternHint')}
+      </p>
+    </div>
   );
 }
 
-/** What the picker needs. */
-interface CertificateLookPickerProps {
-  look: CertificateLook;
-  onChange: (look: CertificateLook) => void;
-}
-
 /**
- * Renders the picker beside its preview.
+ * Renders the section.
  *
  * @param props.look - the look chosen so far
  * @param props.onChange - called with the new look
- * @param props.programmeName - the programme, for the preview
  * @param props.space - the class's address and ID, for its crest
  * @returns the section
  */
 export function CertificateLookPicker({
   look,
   onChange,
-  programmeName,
   space,
-}: CertificateLookPickerProps & {
-  programmeName: string;
-  space: { slug: string; spaceId: string };
-}) {
+}: CertificateLookPickerProps & { space: { slug: string; spaceId: string } }) {
   const { t } = useCertificatesTranslation();
-  // G13b: the preview draws the crest only once it passed its check, as students will see it.
-  const crest = useClassCertificateCrest(space.slug).data ?? null;
-  const crestUrl = crest?.state === 'visible' ? crest.url : null;
   return (
-    <section aria-labelledby="certificate-look-heading" className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <h3
-          id="certificate-look-heading"
-          className="m-0 font-heading type-subheading font-bold text-ink-heading"
-        >
-          {t('look.title')}
-        </h3>
-        <p className="m-0 type-body text-ink-muted">{t('look.intro')}</p>
-      </div>
-      <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,280px)]">
-        <div className="flex flex-col gap-4">
-          <ColourChoices look={look} onChange={onChange} />
-          <PatternChoices look={look} onChange={onChange} />
-          <CertificateSealChoices look={look} onChange={onChange} space={space} />
-        </div>
-        <CertificateFrame look={look} patternId="certificate-look-preview" isCompact>
-          <div
-            aria-hidden="true"
-            className="flex flex-col items-center gap-2 px-4 py-6 text-center"
-          >
-            <CertificateSeal look={look} size="small" crestUrl={crestUrl} />
-            <p className="m-0 font-heading type-long font-bold">{t('look.previewName')}</p>
-            <p className="m-0 type-body break-words">
-              {programmeName.trim() || t('look.previewProgramme')}
-            </p>
-          </div>
-        </CertificateFrame>
-      </div>
+    <section
+      aria-labelledby="certificate-look-heading"
+      className="flex flex-col gap-4 border-t border-hairline pt-6"
+    >
+      <h2 id="certificate-look-heading" className="m-0 type-heading text-ink-heading">
+        {t('look.title')}
+      </h2>
+      <ColourChoices look={look} onChange={onChange} />
+      <PatternChoice look={look} onChange={onChange} />
+      <CertificateSealChoices look={look} onChange={onChange} space={space} />
     </section>
   );
 }

@@ -116,9 +116,15 @@ test.describe('read and unread in the forums (FORUMS-1d, S1-E8-04)', () => {
 
   test('the list opens a thread at its first new post, then it is read', async ({ browser }) => {
     const page = await openAs(browser, 'teacher', '/forums/first-chapters');
+    // Opening the thread saves the read mark in the background; leaving before that answer
+    // arrives would cancel it, so the step waits for it (it failed this way in CI, 27 Nov 2026).
+    const markSaved = page.waitForResponse((response) =>
+      response.url().includes('/rpc/mark_forum_thread_read'),
+    );
     await threadRow(page).getByRole('link', { name: threadTitle }).click();
     await expect(page).toHaveURL(/\?post=1$/);
     await expect(page.locator('#post-1')).toBeFocused();
+    await markSaved;
     await page.goto('/forums/first-chapters');
     await expect(threadRow(page).getByText('No new posts')).toBeAttached();
     // Two replies later, the list opens it at #2, the first of them.
