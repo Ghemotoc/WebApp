@@ -250,7 +250,7 @@ describe('the page a shared link serves', () => {
       rating: '18_plus',
     });
     expect(poem.html).toContain(
-      '<meta name="description" content="Read for free Stația meteo, an essay by Lia Scrie, on Brand. For mature readers. Bunica notează vremea.">',
+      '<meta name="description" content="Read for free Stația meteo, a non-fiction book by Lia Scrie, on Brand. For mature readers. Bunica notează vremea.">',
     );
     expect(poem.html).not.toContain('18');
     const json =

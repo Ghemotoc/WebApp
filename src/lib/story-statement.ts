@@ -12,7 +12,8 @@
  * The same words fill the footer of the story page and the reader, the page's <title>, its
  * description, its Open Graph description and its JSON-LD, so every reader of the page, human or
  * machine, gets one consistent statement. The type comes from the category (Fiction is a story,
- * Poetry a poem, Non-fiction an essay, Plays a play; FORMS-1, 27 Nov 2026); the genre is the story's first recommended tag, when it has one.
+ * Poetry a poem, Non-fiction a non-fiction book (the "essay" keys; Robert, 27 Nov 2026), Plays a play;
+ * FORMS-1, 27 Nov 2026); the genre is the story's first recommended tag, when it has one.
  * The words live in the reading namespace's `storyFooter` keys of the locale files (CLAUDE.md
  * rule 4); the callers pass them in, in the story's own language.
  * Never a real name, an age, the rating (18+ adds only "For mature readers") or chapter text.

@@ -57,7 +57,7 @@ describe('the story statement', () => {
 
   it('uses "an" before a vowel', () => {
     expect(sentenceOf(factsWith({ categorySlug: 'nonfiction_essays' }))).toBe(
-      'Read for free The Weather Station, an essay by Lia Writes, on Brand.',
+      'Read for free The Weather Station, a non-fiction book by Lia Writes, on Brand.',
     );
     expect(sentenceOf(factsWith({ genre: 'Adventure' }))).toBe(
       'Read for free The Weather Station, an adventure story by Lia Writes, on Brand.',
