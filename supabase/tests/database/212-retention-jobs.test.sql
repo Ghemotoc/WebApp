@@ -1,7 +1,7 @@
 -- Database tests for the retention schedule's clean-up jobs (story S1-E13-04; GDPR art. 5(1)(e)).
 -- What it proves:
--- - criterion 2: an account whose email isn't confirmed 7 days after sign-up is deleted, a newer
---   one is kept; expired exports and exports left half-made for a day go, a ready one stays; a
+-- - criterion 2: an account whose email isn't confirmed 30 days after sign-up is deleted, a newer
+--   one (8 days, past its reminder) is kept (CONFIRM-1; Robert, 27 Nov 2026, 19:11 UTC); expired exports and exports left half-made for a day go, a ready one stays; a
 --   picture removed 30 days ago goes, a newer one stays; an account erased for a missing age
 --   check loses its other rows too;
 -- - criterion 4: daily read and share totals older than 3 years fold into one row per chapter,
@@ -55,14 +55,14 @@ grant execute on all functions in schema pg_temp to anon, authenticated;
 /* ---------- Accounts (criterion 2) ---------- */
 
 create temp table people as
-select pg_temp.sign_up('unconfirmed.old@example.com', 8) as old_id,
-       pg_temp.sign_up('unconfirmed.new@example.com', 6) as new_id,
+select pg_temp.sign_up('unconfirmed.old@example.com', 31) as old_id,
+       pg_temp.sign_up('unconfirmed.new@example.com', 8) as new_id,
        pg_temp.sign_up('unchecked@example.com', 0) as unchecked_id;
 grant select on people to authenticated;
 insert into public.reading_settings (user_id) select unchecked_id from people;
 
 select is(public.purge_unconfirmed_accounts(), 1,
-  'an account whose email is still unconfirmed 7 days after sign-up is deleted, and only that one');
+  'an account whose email is still unconfirmed 30 days after sign-up is deleted, and only that one');
 select results_eq(
   $$ select profiles.deleted_at is not null, users.email like '%@deleted.invalid'
      from public.profiles join auth.users on users.id = profiles.id
@@ -70,7 +70,7 @@ select results_eq(
   $$ values (true, true) $$,
   'the unconfirmed account becomes an empty tombstone, its email gone');
 select is((select deleted_at from public.profiles where id = (select new_id from people)), null,
-  'an account signed up 6 days ago still has time to confirm its email');
+  'an account signed up 8 days ago, past its reminder, still has time to confirm its email');
 select is((select count(*)::integer from public.profiles
            where id in ('00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000005')
              and deleted_at is null), 2,

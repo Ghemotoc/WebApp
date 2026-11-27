@@ -10,6 +10,13 @@
     "button": "Confirm email",
     "linkNote": "The link works once and expires after an hour."
   },
+  "confirmationReminder": {
+    "subject": "Your account is waiting: confirm the email",
+    "heading": "Confirm the email address",
+    "body": "You signed up to {{productName}}, but the email address isn’t confirmed yet. Press the button to confirm it and keep the account. An account that isn’t confirmed closes 30 days after sign-up.",
+    "button": "Confirm email",
+    "linkNote": "The link works once and expires after an hour."
+  },
   "waitlistConfirmation": {
     "subject": "You’re on the list: confirm the email",
     "heading": "You’re on the waiting list",

@@ -203,6 +203,33 @@ describe('the Send Email hook', () => {
     expect(sent[0]?.html).toContain('>Yes, it’s me</a>');
   });
 
+  it('words a sign-up email to an account a week old as the reminder, in English by default (CONFIRM-1)', async () => {
+    const payload = payloadFor('signup');
+    payload.user.created_at = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+    payload.user.user_metadata = { locale: 'en', country: 'GB' };
+    const { sent } = await run(payload);
+    expect(sent[0]?.subject).toBe('Your account is waiting: confirm the email');
+    expect(sent[0]?.text).toContain('https://example.test/auth/confirm?token_hash=hash&type=email');
+  });
+
+  it('sends the reminder in Romanian to an account in Romania or Moldova, or set to Romanian', async () => {
+    const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+    for (const metadata of [{ country: 'RO' }, { country: 'md', locale: 'en' }, { locale: 'ro' }]) {
+      const payload = payloadFor('signup');
+      payload.user.created_at = weekAgo;
+      payload.user.user_metadata = metadata;
+      const { sent } = await run(payload);
+      expect(sent[0]?.subject).toBe('Contul te așteaptă: confirmă emailul');
+    }
+  });
+
+  it('keeps the first sign-up email for an account made less than a day ago', async () => {
+    const payload = payloadFor('signup', 'en');
+    payload.user.created_at = new Date(now - 60 * 1000).toISOString();
+    const { sent } = await run(payload);
+    expect(sent[0]?.subject).toBe('Confirm the email address');
+  });
+
   it('an unknown kind of email is refused and a failed send is a plain 500', async () => {
     expect((await run(payloadFor('invite'))).response.status).toBe(400);
     const failed = await run(payloadFor('recovery'), new Map(), true);
