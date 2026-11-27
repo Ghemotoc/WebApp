@@ -59,6 +59,7 @@ export function FindStoriesPlace({ name }: { name: string }) {
  * @returns the row
  */
 export function BookshelfPlaces({ list, places }: { list: ReadingList; places: number }) {
+  const { t } = useLibraryTranslation();
   // Step 1: the books, as many places as the bookshelf has; neighbours never share a design.
   const books = list.covers.slice(0, places);
   const covers = designsForRow(books);
@@ -79,7 +80,16 @@ export function BookshelfPlaces({ list, places }: { list: ReadingList; places: n
         );
         return (
           <li key={story.slug} className="min-w-0">
-            <Link to={`/s/${story.slug}`} aria-label={story.title} className="block">
+            {/* The link's name holds every word drawn on the cover, title and pen name, so a
+                voice user can say what they see (WCAG 2.5.3, Label in Name). */}
+            <Link
+              to={`/s/${story.slug}`}
+              aria-label={t('lists.coverLink', {
+                title: story.title,
+                penName: story.writer.displayName,
+              })}
+              className="block"
+            >
               <StoryCoverArt story={story} drawn={drawn} className="w-full" />
             </Link>
           </li>
