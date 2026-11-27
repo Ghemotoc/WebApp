@@ -4,15 +4,15 @@
  *
  * In board order: Bold, Italic, Heading, Quote, List, Link and Footnote ("fn", Ctrl+Alt+F, pressed
  * while a note is open; BOOKS-D05b, board D13), a thin divider, then Insert (a
- * round "+" that opens Picture, Video link and Scene break, ChapterInsertControls), Undo and the
- * "Poem" text button (PoemModeSwitch). Below 1024 px a last button opens the chapter's plan as a
+ * round "+" that opens Picture, Video link and Scene break, ChapterInsertControls) and Undo. The
+ * "Poem" button moved to the paper's Layout choice (LAYOUTS-1, LayoutChoice). Below 1024 px a last button opens the chapter's plan as a
  * sheet, and the bar floats just above the on-screen keyboard (EditorToolbarDock). The word count
  * moved to the editor's bar and the foot of the paper.
  * Every formatting button has an accessible name, a title with its shortcut, aria-keyshortcuts,
  * aria-pressed (for the toggles) and a focus ring; the formatting buttons are one tab stop with
  * the arrow keys moving between them (WCAG 2.1.1), and the controls after the divider each have
  * their own tab stop. Scene break keeps its shortcut (Ctrl+Enter) in the text.
- * Who uses it: EditorToolbarDock. What it calls: ChapterInsertControls and PoemModeSwitch.
+ * Who uses it: EditorToolbarDock. What it calls: ChapterInsertControls.
  */
 import type { Editor } from '@tiptap/react';
 import { useState, type KeyboardEvent, type ReactNode } from 'react';
@@ -28,7 +28,6 @@ import {
   ListIcon,
   QuoteIcon,
 } from './EditorToolbarIcons';
-import { PoemModeSwitch, type PoemModeSwitchProps } from './PoemModeSwitch';
 import { useEditorTranslation } from '../registerEditorTranslations';
 
 /** One button: its key in the locale file, its icon, what it does and whether it is "on". */
@@ -51,8 +50,6 @@ export interface EditorToolbarProps {
   isFootnoteOpen: boolean;
   /** The chapter's row ID, for the Insert menu's pictures (S1-E3-09). */
   chapterId: string;
-  /** Poem mode's state and change (usePoemMode). */
-  poem: PoemModeSwitchProps;
   /** Opens the chapter's plan as a sheet; the button shows below 1024 px only. */
   onOpenPlan: () => void;
 }
@@ -160,7 +157,7 @@ function ToolButton(props: {
  * @returns the bar with its buttons
  */
 export function EditorToolbar(props: EditorToolbarProps) {
-  const { editor, chapterId, poem, onOpenPlan } = props;
+  const { editor, chapterId, onOpenPlan } = props;
   const { t } = useEditorTranslation();
   const actions = toolbarActions(props);
   // One tab stop: Tab lands on the remembered button, the arrow keys move along the bar.
@@ -214,7 +211,6 @@ export function EditorToolbar(props: EditorToolbarProps) {
       <ToolButton label={t('toolbar.undo')} onClick={() => editor.chain().focus().undo().run()}>
         <ActionIcon name="undo" size={20} />
       </ToolButton>
-      <PoemModeSwitch {...poem} />
       {/* The plan: beside the paper from 1024 px, a sheet below (board D05, tablets and phones). */}
       <ToolButton label={t('toolbar.plan')} onClick={onOpenPlan} className="lg:hidden">
         <ActionIcon name="list" size={20} />
