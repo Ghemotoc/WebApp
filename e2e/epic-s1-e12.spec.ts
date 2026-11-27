@@ -7,10 +7,11 @@
  *   ad network on, the admin books an approved banner into Discover's wide slot; kid_14_ok then
  *   sees that sponsor there, labelled Sponsored, never the network; the view is counted and the
  *   admin finds it in the campaign's report.
- * - Journey 2, a writer's rating turns the network off (S1-E3-06 × S1-E12-04): teen_17 sees an
- *   "Ad" on the story's page; the writer rates the story 16+ for graphic violence; teen_17 then
- *   sees our own ad there and Google is never asked.
- * - Journey 3, the story page with our own ad passes axe at 390, 768 and 1440 px, at night, in
+ * - Journey 2, a writer's genre turns the network off (S1-E3-01 × S1-E12-04, AD-GATES): an adult
+ *   (teacher) sees an "Ad" on an 18+ story with sexual content ticked, as every mature story gets
+ *   the network now; the writer adds the Erotica genre; the adult then sees our own ad there and
+ *   Google is never asked (Robert, 27 Nov 2026, 17:40 UTC).
+ * - Journey 3, the story page with our own ad (the Erotica story, read by the adult) passes axe at 390, 768 and 1440 px, at night, in
  *   Romanian (each story's own spec covers its other screens and views).
  * The database half is supabase/tests/database/277-epic-s1-e12.test.sql.
  * Test data: the sponsor "E2E Epic" with one approved banner, one published chapter of the seed
@@ -37,10 +38,10 @@ const cleanUpSql = `
   delete from public.sponsor_campaigns where sponsor_id in (select id from public.sponsors where name = '${sponsorName}');
   delete from public.sponsors where name = '${sponsorName}';
   delete from public.chapters where code = 'epic12e1';
-  update public.stories set rating = 'all_ages', rating_reasons = '{}' where slug = '${storySlug}';
+  update public.stories set rating = 'all_ages', rating_reasons = '{}', genre_slugs = '{}' where slug = '${storySlug}';
   update public.feature_flags set is_enabled = false where key = 'ad_network';
   update public.settings set value = '""'::jsonb where key in ('ad_network_publisher_id', 'ad_network_slot_id');
-  update public.profiles set locale = 'ro' where handle in ('admin', 'adult_writer', 'teen_17', 'kid_14_ok');`;
+  update public.profiles set locale = 'ro' where handle in ('admin', 'adult_writer', 'teen_17', 'kid_14_ok', 'teacher');`;
 
 /** A published chapter, the sponsor and its approved Discover banner, and the network on. */
 const setUpSql = `
@@ -138,29 +139,32 @@ test.describe('epic check S1-E12 (S1-E12-QA)', () => {
     await report.context().close();
   });
 
-  test('journey 2: the writer rates the story 16+ for graphic violence and the network goes', async ({
+  test('journey 2: the writer labels the 18+ story Erotica and the network goes', async ({
     browser,
   }) => {
-    // Step 1: on an All ages story, teen_17 is shown a network ad.
-    const before = await openAs(browser, 'teen_17', `/s/${storySlug}`);
+    // Step 1: the story is 18+ with sexual content ticked; an adult is still shown a network ad,
+    // as the rating reasons no longer switch it off (AD-GATES; replaces the 2 Nov 2026 rule).
+    runSql(`update public.stories set rating = '18_plus', rating_reasons = '{sexual_content}'
+      where slug = '${storySlug}';`);
+    const before = await openAs(browser, 'teacher', `/s/${storySlug}`);
     const slot = before.page.locator('[data-ad="wide"]').first();
     await expect(slot.getByText('Ad', { exact: true })).toBeAttached();
     await before.page.context().close();
 
-    // Step 2: the writer rates it 16+ and says why (S1-E3-06, SPONSORS-f).
+    // Step 2: the writer adds the Erotica genre in Story settings (S1-E3-01).
     const { page: writer } = await openAs(browser, 'adult_writer', '/write');
     await writer
       .getByRole('article', { name: 'Stația meteo' })
       .getByRole('link', { name: 'Story settings' })
       .click();
-    await writer.getByRole('radio', { name: '16+', exact: true }).click();
-    await writer.getByRole('checkbox', { name: 'Graphic violence or gore' }).check();
+    await writer.getByRole('combobox', { name: 'Genres' }).fill('Erotica');
+    await expect(writer.getByRole('button', { name: 'Remove Erotica' })).toBeVisible();
     await writer.getByRole('button', { name: 'Save changes' }).click();
     await expect(writer.getByText('Saved.')).toBeVisible();
     await writer.context().close();
 
-    // Step 3: teen_17 now sees our own ad there, and Google is never asked.
-    const after = await openAs(browser, 'teen_17', `/s/${storySlug}`);
+    // Step 3: the adult now sees our own ad there, and Google is never asked.
+    const after = await openAs(browser, 'teacher', `/s/${storySlug}`);
     const ownSlot = after.page.locator('[data-ad="wide"]').first();
     await ownSlot.scrollIntoViewIfNeeded();
     await expect(ownSlot.getByText('From us', { exact: true })).toBeVisible();
@@ -172,8 +176,8 @@ test.describe('epic check S1-E12 (S1-E12-QA)', () => {
     test(`journey 3: the story page with our own ad passes axe at ${width} px, night, Romanian`, async ({
       page,
     }) => {
-      runSql(`update public.profiles set locale = 'ro' where handle = 'teen_17';`);
-      await useSessionInBrowser(page.context(), (await signInPersona('teen_17')).session);
+      runSql(`update public.profiles set locale = 'ro' where handle = 'teacher';`);
+      await useSessionInBrowser(page.context(), (await signInPersona('teacher')).session);
       await checkScreen(page, {
         address: `/s/${storySlug}`,
         width,
