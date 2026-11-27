@@ -4,7 +4,7 @@
  * shows in the chapter list; board D05, user story 5.5).
  *
  * As board D05 draws it: "Chapters" in the label type, then one row a chapter, "16. Epilogue:
- * Spring" over its state ("Draft", "Published"), the open one tinted and marked aria-current,
+ * Spring" over its layout and state ("Play · Draft", "Prose · Published"; LAYOUTS-1, board D14), the open one tinted and marked aria-current,
  * each row a link to its editor. A chapter with a target adds its words against it to the state
  * line ("Draft · 240 of 1,500 words", S1-E17-26). The caller adds the way out underneath
  * ("Manage chapters"). No card around it: the list sits on the page. Hidden in focus mode and
@@ -45,15 +45,17 @@ function ChapterLine({
   const { t, i18n } = useAtlasTranslation();
   const numbers = new Intl.NumberFormat(i18n.language);
   const name = chapter.title === '' ? t('chapterPlan.untitled') : chapter.title;
-  // The state line: the chapter's state, then its words against its target when it has one.
-  const state = t(`chapterPlan.chapterStates.${chapter.status}`, { defaultValue: chapter.status });
-  const stateLine =
+  // The state line: the chapter's layout and state, then its words against its target. Each
+  // part is its own span, so the state reads on its own ("Published") as it did before LAYOUTS-1.
+  const layoutWord = t(`chapterPlan.layouts.${chapter.layout}`, { defaultValue: chapter.layout });
+  const status = t(`chapterPlan.chapterStates.${chapter.status}`, { defaultValue: chapter.status });
+  const wordsLine =
     chapter.wordTarget === null
-      ? state
-      : `${state} · ${t('chapterPlan.wordsOfTarget', {
+      ? null
+      : t('chapterPlan.wordsOfTarget', {
           words: numbers.format(chapter.wordCount),
           target: numbers.format(chapter.wordTarget),
-        })}`;
+        });
   return (
     <li>
       <Link
@@ -68,7 +70,10 @@ function ChapterLine({
           {t(`chapterPlan.listKinds.${chapter.kind}`, { number: number ?? chapter.position })}{' '}
           {name}
         </span>
-        <span className="type-meta font-normal text-ink-muted">{stateLine}</span>
+        <span className="type-meta font-normal text-ink-muted">
+          <span>{layoutWord}</span> · <span>{status}</span>
+          {wordsLine !== null && <> · {wordsLine}</>}
+        </span>
       </Link>
     </li>
   );

@@ -68,6 +68,8 @@ export interface ChapterProgress {
   title: string;
   status: string;
   kind: ChapterKind;
+  /** How it is written: prose, play or poem (LAYOUTS-1; "Play · Draft" in the list). */
+  layout: string;
   wordCount: number;
   wordTarget: number | null;
 }
@@ -204,6 +206,7 @@ export async function fetchChapterProgress(
     title: string;
     status: string;
     kind: ChapterKind;
+    layout: string | null;
     word_count: number;
     word_target: number | null;
   }[];
@@ -213,6 +216,8 @@ export async function fetchChapterProgress(
     title: row.title,
     status: row.status,
     kind: row.kind,
+    // An older answer without it reads as prose, the column's default.
+    layout: row.layout ?? 'prose',
     wordCount: row.word_count,
     wordTarget: row.word_target,
   }));

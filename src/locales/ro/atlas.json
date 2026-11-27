@@ -613,6 +613,11 @@
       "draft": "Ciornă",
       "scheduled": "Programat",
       "published": "Publicat"
+    },
+    "layouts": {
+      "prose": "Proză",
+      "play": "Teatru",
+      "poem": "Poezie"
     }
   },
   "storyline": {
