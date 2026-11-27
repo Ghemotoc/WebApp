@@ -14,7 +14,8 @@
  *   390, 768 and 1440 px, in light and night mode, in Romanian and English.
  * Test data: the seed story "Stația meteo" (adult_writer); it is put back as the seed made it.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

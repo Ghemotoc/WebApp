@@ -140,7 +140,16 @@
       "forestwaves": "Forest waves",
       "blushdots": "Blush dots",
       "skylines": "Sky lines",
-      "goldgrid": "Gold grid"
+      "goldgrid": "Gold grid",
+      "crimson": "Crimson",
+      "seaglass": "Sea glass",
+      "peach": "Peach",
+      "pistachio": "Pistachio",
+      "candy": "Candy",
+      "linkblue": "Indigo",
+      "classic_luceafarul": "Evening star",
+      "classic_the_raven": "Raven",
+      "classic_goblin_market": "Goblin fruit"
     },
     "colourNames": {
       "plum": "Plum",
@@ -151,7 +160,13 @@
       "blush": "Blush",
       "sky": "Sky",
       "sage": "Sage",
-      "paper": "Paper"
+      "paper": "Paper",
+      "crimson": "Crimson",
+      "seaglass": "Sea glass",
+      "peach": "Peach",
+      "pistachio": "Pistachio",
+      "candy": "Candy",
+      "linkblue": "Indigo"
     },
     "uploadLater": "Want to use your own picture? Save the story first, then upload it in the story’s settings.",
     "uploadChosen": "Your uploaded picture is the cover. Pick a drawn design below to use that instead.",

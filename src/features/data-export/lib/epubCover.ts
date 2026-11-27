@@ -13,13 +13,13 @@
  * Who calls it: runEpub.ts. What it calls: the cover designs (src/components/covers).
  */
 import {
-  coverArtwork,
   coverDesignByKey,
   coverPalette,
   titleColourOn,
   titleSurfaceFor,
   type DrawnCoverChoice,
 } from '@/components/covers/coverDesigns';
+import { coverArtwork } from '@/components/covers/coverArtwork';
 import type { EpubImage } from '@/lib/epub/epubTypes';
 import { coverTitleSize } from '@/lib/cover-title';
 
@@ -113,8 +113,14 @@ function drawArtwork(context: CanvasRenderingContext2D, choice: DrawnCoverChoice
 
 /** The lines of the words block and how tall it is, measured before drawing. */
 function measureWords(context: CanvasRenderingContext2D, words: DrawnCoverWords) {
-  const titleSize = coverTitleSize(words.title, titleBaseSize);
   const innerWidth = coverWidth - padding * 3;
+  // The title keeps its one size and shrinks only when its lines would rise past 12% from the
+  // cover's top (Robert, DESIGN card, 26 Nov 2026, 21:07 UTC: no size steps by length).
+  const titleRoom = coverHeight * 0.76 - padding * 2 - lineGap - nameSize - accentBar.height;
+  const titleSize = coverTitleSize(titleBaseSize, (size) => {
+    context.font = titleFont(size);
+    return wrapText(context, words.title, innerWidth).length * size * 1.05 <= titleRoom;
+  });
   context.font = titleFont(titleSize);
   const titleLines = wrapText(context, words.title, innerWidth);
   const titleWidth = Math.max(...titleLines.map((line) => context.measureText(line).width));

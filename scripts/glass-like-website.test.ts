@@ -80,7 +80,9 @@ describe('the main website glass on this app (GLASS-2)', () => {
 
   it('draws the floating bars as the website navbar island: blurred near-solid glass', () => {
     const floatingBar = blockAfter(indexCss, '@utility glass-float');
-    expect(floatingBar).toContain('background-image: var(--lg-float-bg);');
+    // Lilac mist by day paints its Isabelline bar through --nav-bar-bg (CALM-1c, Robert, 26 Nov
+    // 2026); every other look keeps the near-white glass of --lg-float-bg.
+    expect(floatingBar).toContain('background-image: var(--nav-bar-bg, var(--lg-float-bg));');
     expect(floatingBar).toContain('backdrop-filter: var(--nav-blur);');
   });
 

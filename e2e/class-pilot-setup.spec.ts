@@ -15,7 +15,8 @@
  * Test data: the moderator and teacher personas. The class is removed before and after; its name
  * never ends in "e2e", so spaces.spec leaves it alone.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -100,7 +101,7 @@ test.describe('class pilot set-up (CLASSES-d, S1-E8-11)', () => {
 
     await page.goto(`/spaces/${classSlug}`);
     await expect(page.getByText('This class is archived.')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Start a thread' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'New thread' })).toHaveCount(0);
     await page.context().close();
   });
 

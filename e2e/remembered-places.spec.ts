@@ -14,7 +14,8 @@
  * Test data: adult_writer's story "Locul păstrat" in Romanian and English, with one chapter each;
  * teen_17 reads it. Removed afterwards, with both personas' remembered places.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

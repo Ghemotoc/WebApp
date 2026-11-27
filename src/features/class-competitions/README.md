@@ -27,9 +27,10 @@ the Readers' choice pen names and the pupil's own result, nothing else.
   `lib/typedScores.ts`: reading the score fields; `lib/competitionDates.ts`: the form's starting
   moments (open from now, closing at 23:59 two weeks later) and how its date and time fields
   become moments (CALM-7d, part 3).
-- On a class page: `ClassCompetitionCard` (the running competition with `CriteriaList`, the
-  pupil's `PupilControls` or the teacher's `TeacherControls`, then one `WinnerCard` per confirmed
-  competition). In the class's settings: `ClassGradeCard` (the school year).
+- On a class page (board G03, BOOKS-8): `ClassCompetitionCard` (the running competition with
+  `CriteriaList` and "What each criterion needs", the pupil's `PupilControls` or the teacher's
+  `TeacherControls`) and, under the threads, `ClassLatestWinner`: the latest `WinnerCard` with a
+  Winner for a pupil, every confirmed competition's card for the teacher. In the class's settings: `ClassGradeCard` (the school year).
 - `/spaces/<slug>/competition`: `CompetitionFormPage` with `CriteriaEditor` and
   `CriteriaTemplateTools` ("Use template", "Save as template").
 - `/spaces/<slug>/competition/templates`: `CriteriaTemplatesPage`.

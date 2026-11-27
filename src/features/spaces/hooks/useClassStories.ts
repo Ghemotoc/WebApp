@@ -1,8 +1,8 @@
 /**
  * Stories shared only with a class, as React hooks (bundle CLASSES, part c; story S1-E8-11).
  *
- * Who calls it: StoryClassCard (Story settings, "Who can read it") and ClassStoriesCard (the
- * class's page). What it calls: api/classStories.ts. After a change every story list refreshes,
+ * Who calls it: StoryClassCard (Story settings, "Who can read it"), and on the class's pages
+ * ClassSharedStories, ClassSectionTabs, ShareClassStory and ClassStoriesPage. What it calls: api/classStories.ts. After a change every story list refreshes,
  * so the story leaves or rejoins public lists at once.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -78,4 +78,26 @@ export function useClassSpaceStories(slug: string) {
     queryKey: [...classStoriesKey, 'list', slug],
     queryFn: async () => fetchClassSpaceStories(await requireClient(), slug),
   });
+}
+
+/**
+ * Shares one of the writer's stories with this class, from the class page's "Share a story"
+ * (bundle BOOKS-8; boards G03 and G04, user stories 8.3 and 8.4).
+ *
+ * @param classSlug - the class's address
+ * @returns share(storySlug), the failure and isRunning
+ */
+export function useShareStoryWithClass(classSlug: string) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async (storySlug: string) =>
+      setStoryClass(await requireClient(), { storySlug, classSlug }),
+    // The story leaves public lists and joins the class's, so everything cached is read again.
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+  return {
+    share: mutation.mutateAsync,
+    failure: classStoryFailureOf(mutation.error),
+    isRunning: mutation.isPending,
+  };
 }

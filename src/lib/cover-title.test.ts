@@ -1,56 +1,70 @@
 /**
- * Tests for the cover title size steps (story S1-E1-03; DoD design rules, covers).
+ * Tests for the cover title size (story S1-E1-03; DoD design rules, covers): a title keeps its
+ * look's one size whatever its length and shrinks only when it would run past its room (Robert,
+ * DESIGN card, 26 Nov 2026, 21:07 UTC).
  */
 import { describe, expect, it } from 'vitest';
 
 import { coverTitleFit, coverTitleSize } from './cover-title';
 
+/** The break-test titles: a short one, one long word, and the 120-character maximum. */
+const shortTitle = 'Ion';
+const longWord = 'Neîmblânzitele';
+const longestTitle =
+  'O poveste foarte lungă despre o vară petrecută la bunici, cu mulți veri, cu un câine, o bicicletă stricată și un pod';
+const fonts = ['reading', 'display', 'sans', 'hand'] as const;
+
 describe('coverTitleSize', () => {
-  it('keeps the base size for titles up to 18 characters', () => {
-    expect(coverTitleSize('Ghemul de ață', 21)).toBe(21);
-    expect(coverTitleSize('a'.repeat(18), 21)).toBe(21);
+  it('keeps the base size while the title fits its room', () => {
+    expect(coverTitleSize(140, () => true)).toBe(140);
   });
 
-  it('steps down to 85% from 19 to 28 characters', () => {
-    expect(coverTitleSize('a'.repeat(19), 20)).toBe(17);
-    expect(coverTitleSize('a'.repeat(28), 20)).toBe(17);
+  it('shrinks just enough to fit', () => {
+    expect(coverTitleSize(140, (size) => size <= 100)).toBe(100);
   });
 
-  it('steps down to 72% from 29 to 40 characters', () => {
-    expect(coverTitleSize('a'.repeat(29), 25)).toBe(18);
-  });
-
-  it('steps down to 62% for longer titles', () => {
-    expect(coverTitleSize('a'.repeat(41), 25)).toBe(15.5);
-  });
-
-  it('never goes below 11 px, even on a small thumbnail', () => {
-    expect(coverTitleSize('a'.repeat(80), 14)).toBe(11);
+  it('never goes below 11 px', () => {
+    expect(coverTitleSize(14, () => false)).toBe(11);
   });
 });
 
 describe('coverTitleFit', () => {
-  it('keeps the length step for a short title of short words', () => {
-    expect(coverTitleFit('Ghemul de ață', 'label', 'reading')).toBe(1);
+  it('the 120-character maximum is 120 characters or fewer', () => {
+    expect(longestTitle.length).toBeLessThanOrEqual(120);
   });
 
-  it('steps down until one long word fits the line of a Big title cover', () => {
-    const fit = coverTitleFit('Neîmblânzitele', 'big_title', 'reading');
+  it('a short title keeps the one size in every look and font', () => {
+    for (const font of fonts) {
+      expect(coverTitleFit(shortTitle, 'label', font)).toBe(1);
+      expect(coverTitleFit(shortTitle, 'big_title', font)).toBe(1);
+      expect(coverTitleFit(shortTitle, 'initial', font)).toBe(1);
+    }
+  });
+
+  it('a 30-character title of short words keeps the one size on a Label cover', () => {
+    // Before 26 Nov 2026 this title stepped down to 72% only for its length.
+    expect(coverTitleFit('Ghemul de ață și pisica bunicii', 'label', 'reading')).toBe(1);
+  });
+
+  it('one long word shrinks only until it fits the line of a Big title cover', () => {
+    const fit = coverTitleFit(longWord, 'big_title', 'reading');
     // 20 cqi at this step fits 79.2 cqi: 14 letters at about 0.6 em each.
     expect(fit).toBeLessThan(0.6);
     expect(fit).toBeGreaterThan(0.4);
   });
 
-  it('steps down further for the wider handwriting font', () => {
+  it('the wider handwriting font shrinks further than the reading font', () => {
     expect(coverTitleFit('Labirintul', 'big_title', 'hand')).toBeLessThan(
       coverTitleFit('Labirintul', 'big_title', 'reading'),
     );
   });
 
-  it('steps a long title below the length step so the pen name stays on a Big title cover', () => {
-    const longTitle =
-      'O poveste foarte lungă despre o vară petrecută la bunici, cu mulți veri, cu un câine și o bicicletă stricată';
-    expect(coverTitleFit(longTitle, 'big_title', 'sans')).toBeLessThan(0.62);
+  it('the longest title shrinks so the label ends above 12% from the bottom, in every font', () => {
+    for (const font of fonts) {
+      const fit = coverTitleFit(longestTitle, 'label', font);
+      expect(fit).toBeLessThan(1);
+      expect(fit).toBeGreaterThan(0.3);
+    }
   });
 
   it('never returns less than 0.3', () => {

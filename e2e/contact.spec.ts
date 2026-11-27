@@ -11,7 +11,7 @@
  * The axe runs for /legal/contact are in e2e/legal.spec.ts with the other legal pages.
  * Test data: the seed persona adult_writer, unchanged.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { brand } from '../src/config/brand';
 

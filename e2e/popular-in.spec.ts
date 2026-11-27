@@ -15,7 +15,8 @@
  * reads by country written straight into the totals, then both ranking jobs run. The "fewer than
  * 5 ranked stories" rule is lowered to 2 for the spec and put back afterwards.
  */
-import { expect, test, type Browser, type Locator, type Page } from '@playwright/test';
+import { type Browser, type Locator, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

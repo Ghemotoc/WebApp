@@ -12,6 +12,8 @@
  * Who calls it: components/ErrorPage.tsx (a page that failed to draw) and
  * lib/installGlobalErrorHandlers.ts (Vite's `vite:preloadError` event, when a file a page needs
  * fails to load).
+ * Offline it never reloads: the file failed for want of a connection, and a reload would only show
+ * the browser's own offline page.
  * What it calls next: window.location.reload(), at most once in a short window, so a page that
  * really is broken can never reload forever; then the error page shows as before.
  */
@@ -60,13 +62,19 @@ export function isStaleBuildError(thrown: unknown): boolean {
  * @param reloadPage - what reloads the page (tests pass their own)
  * @param storage - where the last reload time is kept (tests pass their own)
  * @param now - the current time in milliseconds (tests pass their own)
+ * @param isOnline - whether the browser has a connection (tests pass their own)
  * @returns true when a reload was started, false when it was refused (show the error instead)
  */
 export function reloadOnceForNewRelease(
   reloadPage: () => void = () => window.location.reload(),
   storage: Storage | null = readSessionStorage(),
   now: number = Date.now(),
+  isOnline: boolean = readOnlineState(),
 ): boolean {
+  // Step 0: offline, a file fails because there is no connection, not because the release is old.
+  // A reload then swaps the page, and its offline banner (S1-E1-05), for the browser's own
+  // "no internet" page, so leave the page as it is.
+  if (!isOnline) return false;
   // Step 1: without somewhere to remember the reload, a loop can't be ruled out, so don't reload.
   if (storage === null) return false;
   // Step 2: refuse if this tab reloaded for the same reason a moment ago.
@@ -80,6 +88,15 @@ export function reloadOnceForNewRelease(
   }
   reloadPage();
   return true;
+}
+
+/**
+ * Says whether the browser thinks it has a connection; true where the browser can't tell.
+ *
+ * @returns navigator.onLine, or true outside a browser
+ */
+function readOnlineState(): boolean {
+  return typeof navigator === 'undefined' ? true : navigator.onLine;
 }
 
 /**

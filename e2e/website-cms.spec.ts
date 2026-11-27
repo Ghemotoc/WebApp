@@ -16,7 +16,8 @@
  * Test data: the seeded version 1. Everything this spec publishes is deleted afterwards, so the
  * seeded copy is live again for the other specs.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

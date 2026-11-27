@@ -13,7 +13,8 @@
  * Test data: seed personas; the support persona's extra moderator role, intern marker, the waiting
  * picture, its case and the alerts are removed afterwards (audit log rows stay: it is append-only).
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

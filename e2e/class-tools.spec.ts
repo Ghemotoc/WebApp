@@ -17,7 +17,8 @@
  * kid_14_waiting is the one who waits. Codes come from make_class_invite() as the teacher. The
  * class is removed before and after; its name never ends in "e2e", so spaces.spec leaves it alone.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -112,6 +113,14 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     await expect(page).toHaveURL(/\/class$/);
     await page.getByRole('button', { name: 'Find the class' }).click();
     await expect(page.getByText('Type the code from the teacher.')).toBeVisible();
+    // A code no class has is said under the field, and the page stays put (user story 8.1).
+    await page.getByLabel('Class code').fill('ZZZZ-ZZZZ-ZZZZ');
+    await page.getByRole('button', { name: 'Find the class' }).click();
+    await expect(
+      page.getByText('No class has this code. Check it with the teacher.'),
+    ).toBeVisible();
+    await expect(page).toHaveURL(/\/class$/);
+    await expect(page.getByLabel('Class code')).toHaveValue('ZZZZ-ZZZZ-ZZZZ');
     await page.getByLabel('Class code').fill(` ${code.toLowerCase()} `);
     await page.getByRole('button', { name: 'Find the class' }).click();
     await expect(page.getByRole('heading', { level: 1, name: className })).toBeVisible();
@@ -120,10 +129,24 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     await page.context().close();
   });
 
+  test('a teacher on Join a class is led to a new class space', async ({ browser }) => {
+    const page = await openAs(browser, 'teacher', '/class');
+    const createLink = page.getByRole('link', { name: 'Create a class space' });
+    // Wait for the badge check: until it answers, the same words link to the Teacher badge in
+    // Settings (ClassJoinTeacherLine), so a click before then goes there instead.
+    await expect(createLink).toHaveAttribute('href', '/spaces/new?kind=class');
+    await createLink.click();
+    await expect(page).toHaveURL(/\/spaces\/new\?kind=class$/);
+    await expect(page.getByRole('radio', { name: 'Class space' })).toBeChecked();
+    await page.context().close();
+  });
+
   test('the teacher sees who is waiting and why', async ({ browser }) => {
     const student = await openAs(browser, 'kid_14_waiting', `/class/${code}`);
     await student.getByRole('button', { name: 'Join the class' }).click();
-    await expect(student.getByText(`You’re in ${className}.`, { exact: false })).toBeVisible();
+    await expect(
+      student.getByText('You’re in. You can read the class once a parent or guardian says yes.'),
+    ).toBeVisible();
     await student.context().close();
 
     const page = await openAs(browser, 'teacher', `${classAddress}/settings`);
@@ -158,7 +181,7 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     const student = await openAs(browser, 'pending_check', classAddress);
     await expect(student.getByText('This space is locked.', { exact: false })).toBeVisible();
     await expect(student.getByText('Locked', { exact: true })).toBeVisible();
-    await expect(student.getByRole('link', { name: 'Start a thread' })).toHaveCount(0);
+    await expect(student.getByRole('link', { name: 'New thread' })).toHaveCount(0);
     // The code stops working while the class is locked.
     await student.goto(`/class/${code}`);
     await expect(
@@ -170,7 +193,7 @@ test.describe('class tools (CLASSES-b, S1-E8-11)', () => {
     await student.goto(classAddress);
     await expect(student.getByRole('heading', { level: 1, name: className })).toBeVisible();
     await expect(student.getByText('This space is locked.', { exact: false })).toHaveCount(0);
-    await expect(student.getByRole('link', { name: 'Start a thread' })).toBeVisible();
+    await expect(student.getByRole('link', { name: 'New thread' })).toBeVisible();
     await student.context().close();
     await teacher.context().close();
   });

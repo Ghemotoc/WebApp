@@ -11,7 +11,8 @@
  * - a signed-in person's choice in Settings is saved to the account and opens on a second device;
  * - nothing scrolls sideways at 390, 768 and 1440 px (CLAUDE.md rule 21).
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { signInPersona, useSessionInBrowser } from './support/personas';
 

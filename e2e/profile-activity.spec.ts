@@ -18,7 +18,8 @@
  * Test data: a story of Lia's with one chapter, two bookshelves and a forum thread, made here and
  * removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

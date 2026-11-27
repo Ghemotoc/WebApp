@@ -13,7 +13,8 @@
  * - the axe checks at 390, 768 and 1440 px live in staff-roles.spec.ts, which opens the same page.
  * Test data: seed personas only; the role and the blocker persona's holding are removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

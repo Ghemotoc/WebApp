@@ -12,7 +12,8 @@
  * off for the test, so a 17-year-old can comment (the March test is invited adults only), and put
  * back after; the e2e run uses one worker, so no other spec sees the change.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import AxeBuilder from '@axe-core/playwright';
 

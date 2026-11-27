@@ -12,7 +12,8 @@
  * - the writer changes the rating in story settings and the story page follows.
  * Test data: a story made here and deleted after; the personas' language is put back.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { goToLastNewStoryStep } from './support/newStoryWizard';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';

@@ -15,7 +15,8 @@
  * Test data: the thread this spec starts, removed before and after. Replies by adult_writer are
  * added straight into the database, as if written later, so the post limit doesn't come into it.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

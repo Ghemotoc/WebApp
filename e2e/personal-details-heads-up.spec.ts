@@ -14,7 +14,8 @@
  * Test data: one published chapter on adult_writer's "Stația meteo"; teacher's setting and bio are
  * put back before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import AxeBuilder from '@axe-core/playwright';
 

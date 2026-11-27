@@ -16,7 +16,8 @@
  * Uses the seed persona adult_writer and puts their profile back afterwards.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -76,12 +77,12 @@ test.describe('Settings › Appearance: High contrast (CONTRAST-1)', () => {
   test('High contrast turns the page plain white at once and follows the member to another device', async ({
     browser,
   }) => {
-    // Step 1: the switch starts off and the page is the pastel glass.
+    // Step 1: the switch starts off and the page is the Lilac mist white page with its Isabelline boxes.
     const page = await openAsWriter(browser, '/settings#appearance');
     const highContrast = page.getByRole('switch', { name: 'High contrast' });
     await expect(highContrast).toHaveAttribute('aria-checked', 'false');
     await expect(page.locator('html')).not.toHaveAttribute('data-contrast');
-    expect(await rootToken(page, '--paper')).toBe('rgb(244, 240, 236)');
+    expect(await rootToken(page, '--paper')).toBe('rgb(255, 255, 255)');
 
     // Step 2: switched on, the page is white, the blobs are gone and the panel is plain.
     await highContrast.click();

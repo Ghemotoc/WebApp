@@ -22,7 +22,8 @@
  */
 import { readFile } from 'node:fs/promises';
 
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 import JSZip from 'jszip';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';

@@ -2,7 +2,8 @@
  * AccountMenu: the signed-in person's button in the top bar (story S1-E2-05;
  * design/boards/Main.dc.html shows a round avatar button there).
  *
- * The panel starts with the person's name and @username, a link to their own public profile, then
+ * The panel starts with a card holding the person's avatar, name and @username, one link to their
+ * own public profile (DESIGN, Robert, 26 Nov 2026), then
  * "Edit profile" (Settings › Profile), Settings, Resources (G9a) and Log out (bundle NAV-1; Robert, 6 Nov 2026,
  * 18:40 UTC: "when you press on the name, it should go to the public profile. But then, in the
  * dropdown, you also have the option to go to the settings profile"). Before a username is chosen
@@ -22,6 +23,7 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 
+import { ChevronRightIcon } from '@/components/icons/ChevronRightIcon';
 import { Notice } from '@/components/ui/Notice';
 import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { initialsOf } from '@/features/people/lib/formatting';
@@ -68,13 +70,16 @@ function useClosePanel(
 }
 
 /**
- * The panel's first row: the person's name and @username, linking to their public profile
- * (/u/<username>), the page other people see.
+ * The panel's first row: a card with the person's avatar, name, @username and "View public
+ * profile", the whole card one link to their public profile (/u/<username>), the page other people
+ * see. It sits on the box colour with the box edge, so it reads as a card on the white menu, and
+ * turns the soft-button lilac on hover (Robert, DESIGN card, 26 Nov 2026, 21:07 UTC: "Isabelline
+ * card, one big link"; the look lives in the profile-card class in index.css).
  *
  * @param props.name - the shown name (pen name, or the username when there is none)
  * @param props.handle - the username, without the @
  * @param props.onOpen - closes the panel once the link is followed
- * @returns the profile row
+ * @returns the profile card
  */
 function ProfileRow({
   name,
@@ -89,12 +94,22 @@ function ProfileRow({
   return (
     <Link
       to={`/u/${encodeURIComponent(handle)}`}
-      className="mb-1 flex min-h-11 flex-col justify-center rounded-field border-b border-border px-3 py-2 text-left no-underline hover:bg-tint"
+      className="profile-card mb-2 flex items-center gap-3 rounded-field border p-3 text-left no-underline"
       onClick={onOpen}
     >
-      <span className="truncate type-body font-semibold text-ink-heading">{name}</span>
-      <span className="truncate type-meta text-ink-muted">@{handle}</span>
-      <span className="type-meta font-semibold text-link underline">{t('nav.viewProfile')}</span>
+      {/* The card's words are its accessible name ("Ana Writer @inkwolf View public profile"): an
+          aria-label that left out the name or the @username would break WCAG 2.5.3 (label in
+          name), which axe checks. */}
+      {/* Step 1: the same avatar as everywhere else, 44 px. */}
+      <PersonAvatar name={name} handle={handle} size="card" />
+      {/* Step 2: the name, the username and the words that say what the card does. */}
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="truncate type-body font-semibold text-ink-heading">{name}</span>
+        <span className="truncate type-meta text-ink-muted">@{handle}</span>
+        <span className="type-meta font-semibold text-link underline">{t('nav.viewProfile')}</span>
+      </span>
+      {/* Step 3: the arrow says the card opens a page. */}
+      <ChevronRightIcon className="shrink-0 text-accent" />
     </Link>
   );
 }
@@ -172,7 +187,7 @@ export function AccountMenu({ initial, name, handle }: AccountMenuProps) {
       <div
         id="account-menu-panel"
         hidden={!isOpen}
-        className="absolute top-full right-0 z-20 mt-2 w-56 rounded-card border border-border bg-surface p-2 shadow-popover"
+        className="absolute top-full right-0 z-20 mt-2 w-64 rounded-card border border-border bg-surface p-2 shadow-popover"
       >
         {/* Step 1: the public profile, then where to edit it (NAV-1); drawn only while open, so
             a closed menu adds no second @username to a page such as Settings. */}
