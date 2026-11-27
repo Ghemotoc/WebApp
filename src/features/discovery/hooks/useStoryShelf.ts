@@ -12,7 +12,12 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { useReadingLanguageFilter } from '@/features/language/hooks/useReadingLanguages';
 import { getSupabaseClient } from '@/lib/supabase';
 
-import { fetchStoryList, type ListRequest, type StoryListPage } from '../api/storyLists';
+import {
+  fetchStoryList,
+  languagesFirstFor,
+  type ListRequest,
+  type StoryListPage,
+} from '../api/storyLists';
 
 /** The first part of every list's cache key, so a block or a follow can refresh them all. */
 export const storyListQueryKey = 'story-list';
@@ -35,7 +40,15 @@ export function useStoryShelf(request: ListRequest) {
     // What each person sees differs (ratings, blocks, follows), so the key names them.
     // TRANSLATE-1b: a story in several languages is listed in the page's language, so the
     // list is read again when the interface language changes.
-    queryKey: [storyListQueryKey, 'shelf', request, userId, reading.languages, i18n.language],
+    queryKey: [
+      storyListQueryKey,
+      'shelf',
+      request,
+      userId,
+      reading.languages,
+      reading.isDefault,
+      i18n.language,
+    ],
     // A shelf whose filter changes (the home page's genre chips, LOOK-3) keeps its stories until
     // the new ones arrive, so the row and its controls never vanish while it loads.
     placeholderData: keepPreviousData,
@@ -47,6 +60,12 @@ export function useStoryShelf(request: ListRequest) {
         pageSize: shelfRows,
         offset: 0,
         readingLanguages: reading.languages ?? [],
+        // CLASSICS-ORDER: on the classics list, the reader's languages come first.
+        languagesFirst: languagesFirstFor(request, {
+          languages: reading.languages ?? [],
+          isDefault: reading.isDefault,
+          interfaceLanguage: i18n.language,
+        }),
       });
     },
   });

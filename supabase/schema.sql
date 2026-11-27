@@ -14113,6 +14113,9 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "suggests_from_reading" boolean,
     "less_motion" boolean DEFAULT false NOT NULL,
     "high_contrast" boolean DEFAULT false NOT NULL,
+    "confirm_reminder_sent_at" timestamp with time zone,
+    "confirm_reminder_claimed_at" timestamp with time zone,
+    "confirm_reminder_attempts" integer DEFAULT 0 NOT NULL,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -14326,6 +14329,10 @@ COMMENT ON COLUMN "public"."profiles"."less_motion" IS 'Whether the member turne
 
 
 COMMENT ON COLUMN "public"."profiles"."high_contrast" IS 'Whether the member turned "High contrast" on in Settings › Appearance: plain white pages (black at night), darker text and edges, the theme kept in its deep accent (bundle CONTRAST-1). The device''s own contrast setting still counts by itself.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."confirm_reminder_sent_at" IS 'When the one "confirm your email" reminder left (CONFIRM-1).';
 
 
 
@@ -16291,10 +16298,10 @@ COMMENT ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_asset
 
 
 
-CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text", "story_rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "story_length" "text" DEFAULT NULL::"text", "genre_slug" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text", "story_rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "story_length" "text" DEFAULT NULL::"text", "genre_slug" "text" DEFAULT NULL::"text", "languages_first" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
-    AS $$
+    AS $_$
 declare
   wanted_rows integer := least(greatest(coalesce(page_size, 21), 1), 60);
   ordering text := coalesce(sort_order, public.list_default_sort(list_kind));
@@ -16305,6 +16312,9 @@ declare
   search_pattern text := case when list_kind = 'search' then public.search_like_pattern(list_key) end;
   -- MARKETS-2d: the country whose ranking orders a popular list, or null for the overall one.
   ranked_country text;
+  -- CLASSICS-ORDER: the languages whose stories come first, as a list (null: no such order).
+  first_languages text[] := case when coalesce(btrim(languages_first), '') <> ''
+    then string_to_array(replace(languages_first, ' ', ''), ',') end;
 begin
   -- Step 1: check what was asked for.
   if list_kind is null or not public.is_story_list_kind(list_kind) then
@@ -16324,6 +16334,11 @@ begin
   -- Step 1a (user story 1.8, board A08): the Length filter knows two answers.
   if story_length is not null and story_length not in ('short', 'long') then
     raise exception 'Unknown length.' using errcode = 'invalid_parameter_value';
+  end if;
+  -- Step 1a (CLASSICS-ORDER): every code first in the list must look like a language code.
+  if first_languages is not null and exists (
+      select 1 from unnest(first_languages) as code where code !~ '^[a-z]{2}(-[A-Z]{2})?$') then
+    raise exception 'Unknown language.' using errcode = 'invalid_parameter_value';
   end if;
   -- Step 1b (MARKETS-2d): "Popular in" a country. Only a country on the drop-down's list counts;
   -- one with too few ranked stories falls back to the overall ranking (popular_in is then null
@@ -16350,6 +16365,9 @@ begin
   ),
   numbered as (
     select listed.id, count(*) over () as list_total, row_number() over (order by
+        -- CLASSICS-ORDER (Robert, 27 Nov 2026, 20:33 UTC): stories in the reader's languages
+        -- first, then every other language, each part in the list's own order.
+        case when first_languages is not null then listed.language_code = any(first_languages) end desc,
         -- Relevance, as story_search_rank(): 2 for the term inside the title, plus the word rank,
         -- read from the kept search row instead of building it again for every story.
         case when ordering = 'relevance' then
@@ -16404,13 +16422,13 @@ begin
   end if;
   return jsonb_build_object('total', total, 'stories', page, 'popular_in', ranked_country);
 end;
-$$;
+$_$;
 
 
-ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages, search) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking, one rating, one length and one genre (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d, user story 1.8, S1-E3-01).';
+COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages, search) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking, one rating, one length and one genre, optionally with some languages first (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d, user story 1.8, S1-E3-01, CLASSICS-ORDER).';
 
 
 
@@ -22505,6 +22523,101 @@ ALTER FUNCTION "public"."confirm_opening_list"("token" "text") OWNER TO "postgre
 
 
 COMMENT ON FUNCTION "public"."confirm_opening_list"("token" "text") IS 'Confirms a "tell me when you open here" address from its emailed link (G5a; GDPR art. 7(1)).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer DEFAULT 20) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  claimed jsonb := '[]'::jsonb;
+  due record;
+begin
+  -- Step 1: only our worker may ask.
+  if not public.email_worker_key_matches(worker_key) then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the oldest due accounts nobody else is sending.
+  for due in
+    select profiles.id, users.email
+    from public.profiles
+    join auth.users on users.id = profiles.id
+    where public.confirm_reminder_is_due(profiles.id)
+      and (profiles.confirm_reminder_claimed_at is null
+           or profiles.confirm_reminder_claimed_at < now() - interval '15 minutes')
+    order by users.created_at
+    limit least(greatest(coalesce(batch_size, 20), 1), 50)
+    for update of profiles skip locked
+  loop
+    -- Step 3: claim it, so a second run doesn't send it too, and count the try.
+    update public.profiles
+    set confirm_reminder_claimed_at = now(),
+        confirm_reminder_attempts = profiles.confirm_reminder_attempts + 1
+    where profiles.id = due.id;
+    claimed := claimed || jsonb_build_array(jsonb_build_object('id', due.id, 'email', due.email));
+  end loop;
+  return claimed;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) IS 'The reminder worker claims the "confirm your email" reminders due now (CONFIRM-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."confirm_reminder_is_due"("profile_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1
+    from public.profiles
+    join auth.users on users.id = profiles.id
+    where profiles.id = profile_id
+      and profiles.deleted_at is null
+      and profiles.confirm_reminder_sent_at is null
+      and profiles.confirm_reminder_attempts < 3
+      and users.email_confirmed_at is null
+      and users.email is not null
+      and users.created_at <= now() - make_interval(days => public.keep_setting('confirm_reminder_days', 7))
+      and coalesce(users.raw_app_meta_data ->> 'seed_persona', 'false') <> 'true'
+  );
+$$;
+
+
+ALTER FUNCTION "public"."confirm_reminder_is_due"("profile_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."confirm_reminder_is_due"("profile_id" "uuid") IS 'Internal: whether an account''s "confirm your email" reminder is due now (CONFIRM-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  marked integer;
+begin
+  if not public.email_worker_key_matches(worker_key) then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.profiles set confirm_reminder_sent_at = now()
+  where profiles.id = any(profile_ids) and profiles.confirm_reminder_sent_at is null;
+  get diagnostics marked = row_count;
+  return marked;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) IS 'The reminder worker marks the "confirm your email" reminders that left (CONFIRM-1).';
 
 
 
@@ -45959,6 +46072,36 @@ ALTER FUNCTION "public"."romania_today"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."romania_today"() IS 'Today''s date in Romanian time (S1-E11-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."run_confirm_reminder_worker"() RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+declare
+  worker_url text;
+  worker_key text;
+begin
+  select decrypted_secret into worker_url from vault.decrypted_secrets where name = 'email_worker_url';
+  select decrypted_secret into worker_key from vault.decrypted_secrets where name = 'email_worker_key';
+  if coalesce(worker_url, '') = '' or coalesce(worker_key, '') = ''
+     or not exists (select 1 from public.profiles where public.confirm_reminder_is_due(profiles.id)) then
+    return false;
+  end if;
+  perform net.http_post(
+    url := regexp_replace(worker_url, '/api/[^/?]*$', '/api/confirm-reminders'),
+    headers := jsonb_build_object('Authorization', 'Bearer ' || worker_key, 'Content-Type', 'application/json'),
+    body := '{}'::jsonb);
+  return true;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."run_confirm_reminder_worker"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."run_confirm_reminder_worker"() IS 'Internal: calls the "confirm your email" reminder worker through pg_net when one is due (CONFIRM-1); pg_cron every hour.';
 
 
 
@@ -74060,9 +74203,9 @@ REVOKE ALL ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_as
 
 
 
-REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") TO "authenticated";
 
 
 
@@ -74878,6 +75021,22 @@ REVOKE ALL ON FUNCTION "public"."compute_story_scores"() FROM PUBLIC;
 REVOKE ALL ON FUNCTION "public"."confirm_opening_list"("token" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."confirm_opening_list"("token" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."confirm_opening_list"("token" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."confirm_reminder_is_due"("profile_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) TO "anon";
+GRANT ALL ON FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) TO "authenticated";
 
 
 
@@ -78120,6 +78279,10 @@ GRANT ALL ON FUNCTION "public"."rising_writers"("page_size" integer) TO "authent
 
 
 REVOKE ALL ON FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."run_confirm_reminder_worker"() FROM PUBLIC;
 
 
 

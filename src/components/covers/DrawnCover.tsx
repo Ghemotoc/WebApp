@@ -152,7 +152,14 @@ function LabelWords({ title, penName }: CoverWordsProps) {
   return (
     <span className="cover-label">
       <span className="cover-words-title">{title}</span>
-      {penName !== undefined && <span className="cover-words-by">{penName}</span>}
+      {/* The space keeps the title and pen name apart in the text a screen reader or a voice
+          user's link name reads ("Title Pen"), not "TitlePen" (WCAG 2.5.3). */}
+      {penName !== undefined && (
+        <>
+          {' '}
+          <span className="cover-words-by">{penName}</span>
+        </>
+      )}
     </span>
   );
 }
@@ -170,7 +177,14 @@ function BigTitleWords({ title, penName }: CoverWordsProps) {
         <span className="cover-words-title">{title}</span>
         <span className="cover-big-rule" aria-hidden="true" />
       </span>
-      {penName !== undefined && <span className="cover-words-by">{penName}</span>}
+      {/* The space keeps the title and pen name apart in the text a screen reader or a voice
+          user's link name reads ("Title Pen"), not "TitlePen" (WCAG 2.5.3). */}
+      {penName !== undefined && (
+        <>
+          {' '}
+          <span className="cover-words-by">{penName}</span>
+        </>
+      )}
     </span>
   );
 }
@@ -199,7 +213,14 @@ function InitialWords({ title, penName }: CoverWordsProps) {
       </svg>
       <span className="cover-inner cover-initial">
         <span className="cover-words-title">{title}</span>
-        {penName !== undefined && <span className="cover-words-by">{penName}</span>}
+        {/* The space keeps the title and pen name apart in the text a screen reader or a voice
+          user's link name reads ("Title Pen"), not "TitlePen" (WCAG 2.5.3). */}
+        {penName !== undefined && (
+          <>
+            {' '}
+            <span className="cover-words-by">{penName}</span>
+          </>
+        )}
       </span>
     </>
   );

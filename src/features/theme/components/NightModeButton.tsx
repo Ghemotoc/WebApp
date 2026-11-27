@@ -8,6 +8,8 @@
  * says on or off; WCAG 4.1.2). A member who leaves the mode on "Device" sees the mode the device
  * shows now; pressing the button then picks light or night for good. Device stays a choice in Settings › Appearance, where the full
  * Device / Light / Night choice lives, and the staff footer keeps its drop-down (ThemeSelect).
+ * It is the small size (32 px, 13 px type) so the footer's controls stay quiet at the right
+ * (Robert, 27 Nov 2026).
  * It changes the same mode as Settings and Reading settings (useNightMode), so they never disagree.
  * Who uses it: the member footer (src/app/shell/Footer.tsx).
  * What it calls: useNightMode.
@@ -29,7 +31,7 @@ export function NightModeButton() {
   // The button names the mode it goes to, the other one; a press picks it and saves it.
   const label = isNightOn ? t('theme.dayMode') : t('theme.nightMode');
   return (
-    <Button type="button" variant="secondary" onClick={toggle}>
+    <Button type="button" variant="secondary" size="sm" onClick={toggle}>
       {label}
     </Button>
   );

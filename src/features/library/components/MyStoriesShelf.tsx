@@ -25,6 +25,8 @@ import type { MetaFact } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { Shelf } from '@/components/ui/Shelf';
 import { StoryCard } from '@/components/ui/StoryCard';
+import { useMyNames } from '@/features/account/hooks/useMyNames';
+import { displayName } from '@/features/account/lib/nameRules';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import type { MyStory } from '@/features/writing/api/stories';
 import { useMyStories } from '@/features/writing/hooks/useMyStories';
@@ -54,9 +56,11 @@ function storyFacts(
 
 /**
  * One card in the row: the cover and title linking to the story's chapters in the writing
- * tools, then the meta line ("Draft · Private").
+ * tools, then the meta line ("Draft · Private"). The cover's label carries the writer's own pen
+ * name under the title (board C01; Robert, 27 Nov 2026, 19:02 UTC).
  */
-function MyStoryCard({ story, cover }: { story: MyStory; cover: DrawnCoverChoice }) {
+function MyStoryCard(props: { story: MyStory; cover: DrawnCoverChoice; penName?: string }) {
+  const { story, cover, penName } = props;
   const { t } = useLibraryTranslation();
   const { t: tWriting } = useTranslation('writing');
   const visibilityText = tWriting(`visibility.options.${story.visibility}`);
@@ -68,6 +72,7 @@ function MyStoryCard({ story, cover }: { story: MyStory; cover: DrawnCoverChoice
       title={story.title}
       metaLine={metaLine}
       cover={cover}
+      coverPenName={penName}
       href={`/write/s/${encodeURIComponent(story.slug)}/chapters`}
       wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
     />
@@ -119,6 +124,10 @@ function WrittenByYouWithoutRow({ children }: { children: ReactNode }) {
 export function MyStoriesShelf() {
   const { t } = useLibraryTranslation();
   const { stories, isKnown, loadFailed } = useMyStories();
+  // The writer's own name for the covers: the pen name, else the username (nameRules).
+  const { names } = useMyNames();
+  const penName =
+    names === null ? undefined : (displayName(names.handle, names.penName) ?? undefined);
   // Step 1: a failed read says so in plain words; nothing shows while it loads.
   if (loadFailed) {
     return (
@@ -154,7 +163,11 @@ export function MyStoriesShelf() {
         items={live.map((story, index) => ({
           key: story.slug,
           content: (
-            <MyStoryCard story={story} cover={covers[index] ?? automaticCoverFor(story.id)} />
+            <MyStoryCard
+              story={story}
+              cover={covers[index] ?? automaticCoverFor(story.id)}
+              penName={penName}
+            />
           ),
         }))}
       />

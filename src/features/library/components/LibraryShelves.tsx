@@ -81,6 +81,7 @@ function LibraryStoryCard(props: {
       title={story.title}
       metaLine={`${category} · ${progress}${newChapter}`}
       cover={cover}
+      coverPenName={story.writer.displayName}
       href={`/s/${story.slug}`}
       wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
       progressPercent={progressPercent}

@@ -328,7 +328,7 @@ While the `adults_only` flag is on (the March test), under-18s are `minor_not_ad
 ## Retention clean-ups (S1-E13-04)
 
 - **One nightly job:** `run-retention-jobs` runs `run_retention_jobs()`, which runs each clean-up and writes its count to `retention_runs` (kind platform; owner and admin read it, `retention_runs_select_admin`). The older purges keep their own jobs (`docs/runbooks/scheduled-jobs.md`).
-- **Accounts:** `purge_unconfirmed_accounts()` deletes an account whose email isn't confirmed 7 days after sign-up (`unconfirmed_account_days`), and `erase_unchecked_account()` now deletes everything like a deleted account (`delete_account_data()`); seed personas are never touched.
+- **Accounts:** `purge_unconfirmed_accounts()` deletes an account whose email isn't confirmed 30 days after sign-up (`unconfirmed_account_days`; 7 days until CONFIRM-1, which sends one reminder on day 7), and `erase_unchecked_account()` now deletes everything like a deleted account (`delete_account_data()`); seed personas are never touched.
 - **Rows:** `purge_expired_exports()`, `purge_deleted_pictures()` (30 days, `content_purge_days`, unless a case holds it) and `purge_old_staff_records()` (invites, on-call shifts, moderator mail, safety contact checks, done compliance entries; each keep time is a setting).
 - **The audit log:** `refuse_audit_log_change()` lets one delete through: a row older than `audit_log_keep_years` (3) while `purge_old_audit_log()` has set `audit_log.retention_purge` for its own transaction. Every other update, delete or truncate is refused, for every role.
 - **Daily totals:** `fold_old_daily_totals()` folds `chapter_reads` and `chapter_shares` rows older than `daily_totals_keep_years` (3) into one row per chapter, so all-time counts stay right.

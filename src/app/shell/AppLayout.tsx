@@ -207,7 +207,7 @@ export function AppLayout() {
           about={
             storyStatement === null ? undefined : <StoryFooterAbout statement={storyStatement} />
           }
-          endSlot={<LanguageSelect id="language-select-footer" />}
+          endSlot={<LanguageSelect id="language-select-footer" size="sm" />}
         />
         {/* The floating tab bar, on narrow browse pages only (handoff "App header and tab bar"). */}
         {hasTabBar && <TabBar />}

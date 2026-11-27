@@ -28,6 +28,8 @@
  * you open here", signed with NOTICE_SECRET; the emails go to Mailpit),
  * POST /api/waitlist-alerts (server/waitlist-alerts.ts, WAITLIST-2: one staff email for each new
  * person on the waiting list, with the notification worker's key; the emails go to Mailpit),
+ * POST /api/confirm-reminders (server/confirm-reminders.ts, CONFIRM-1: the one "confirm your
+ * email" reminder, with the same worker key; local Auth sends it to Mailpit),
  * GET /s/… (server/link-preview.ts, S1-E4-04: the shared link's Open Graph tags, read from the
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * GET /c/… (server/landing-preview.ts, S1-E11-14: a landing page's Open Graph tags, the same way).
@@ -79,6 +81,7 @@ import { handlePicturePreview } from './picture-preview.ts';
 import { handleNotice } from './notice.ts';
 import { handleOpeningEmails, handleOpeningList } from './opening-list.ts';
 import { handleWaitlistAlerts } from './waitlist-alerts.ts';
+import { handleConfirmReminders } from './confirm-reminders.ts';
 import {
   handleNotificationEmails,
   handleUnsubscribe,
@@ -374,6 +377,10 @@ function openingListHandlerFor(
   // The staff email for each new person on the waiting list (WAITLIST-2), with the same options.
   if (url === '/api/waitlist-alerts') {
     return (request) => handleWaitlistAlerts(request, notificationEmailOptions(environment));
+  }
+  // CONFIRM-1: the reminder worker uses the same database, key and address as the alerts.
+  if (url === '/api/confirm-reminders') {
+    return (request) => handleConfirmReminders(request, notificationEmailOptions(environment));
   }
   if (url !== '/api/opening-list') return null;
   return (request) =>
