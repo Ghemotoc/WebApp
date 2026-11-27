@@ -17,7 +17,8 @@
  */
 import { readFile } from 'node:fs/promises';
 
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 import JSZip from 'jszip';
 
 import englishDataExport from '../src/locales/en/dataExport.json' with { type: 'json' };

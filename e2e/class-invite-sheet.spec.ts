@@ -16,7 +16,8 @@
  * pending_check joins and replies, kid_14_waiting joins and doesn't. Removed before and after; the
  * name never ends in "e2e", so spaces.spec leaves it alone.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { qrModulesFor, qrPathFor } from '../src/features/spaces/lib/qrModules';
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';

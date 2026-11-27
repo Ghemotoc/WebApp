@@ -11,7 +11,8 @@
  * accessibility-statement). Test data: seed personas only; adult_writer's language is set to
  * English for the walk and put back afterwards.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

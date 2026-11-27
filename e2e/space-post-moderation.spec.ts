@@ -16,7 +16,8 @@
  *   pass axe at 390, 768 and 1440 px, light and night, ro and en, with no doodle drawn.
  * Test data: two threads this spec writes into the seeded space's forum, removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

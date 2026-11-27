@@ -11,7 +11,8 @@
  * - axe finds nothing serious at 390, 768 and 1440 px, light and night, Romanian and English.
  * Test data: list_page_backgrounds, emptied before and after (the audit log keeps its rows).
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

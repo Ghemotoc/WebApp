@@ -12,7 +12,8 @@
  * chapter-drawings.spec.ts.
  * Test data: none is saved; the personas' language is put back.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { goToLastNewStoryStep } from './support/newStoryWizard';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';

@@ -26,7 +26,8 @@
  * with it. The journeys with teen_17 and kid_14_ok are in the bundle's closing check
  * (S1-E8-QA2). Everything is removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

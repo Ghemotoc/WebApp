@@ -23,7 +23,8 @@
  * notices, copies and files; kid_14_ok's parental consent gets an address unique to this run (and
  * English) and is put back afterwards; the audit log keeps its rows, as nobody may change it.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

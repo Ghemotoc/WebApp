@@ -13,7 +13,8 @@
  * Test data: the seed's admin, adult_writer and teacher, who read in Romanian; the pick is
  * removed afterwards (the audit log keeps its rows: append-only).
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen } from './support/accessibility';
 import { runSql } from './support/database';

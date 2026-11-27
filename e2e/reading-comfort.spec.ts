@@ -19,13 +19,8 @@
  * Test data: adult_writer's story "Ceasul din turn" with two long chapters; the editor persona
  * reads it (no other reader spec reads as editor). Everything is removed at the start and the end.
  */
-import {
-  expect,
-  test,
-  type Browser,
-  type BrowserContextOptions,
-  type Page,
-} from '@playwright/test';
+import { type Browser, type BrowserContextOptions, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

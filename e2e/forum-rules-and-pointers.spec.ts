@@ -15,7 +15,8 @@
  *   ro and en, with no doodle drawn.
  * Test data: three threads this spec writes to the database, removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

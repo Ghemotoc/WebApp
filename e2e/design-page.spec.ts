@@ -11,7 +11,8 @@
  * quick presses of Next add up (CALM-4); drop-downs are only as wide as their longest option.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 /** The three widths every screen is checked at, with a typical height for each. */
 const screenSizes = [

@@ -9,7 +9,8 @@
  * Each bundle's own spec adds its pages through expectLookRules() as it is built.
  * Persona: teacher (an adult member with no staff role), in English for the run.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { THEME_STORAGE_KEY } from '../src/lib/theme';
 

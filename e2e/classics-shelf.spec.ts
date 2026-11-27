@@ -15,7 +15,8 @@
  * the classics account, with a made-up author), and the drafts the import makes under the house
  * classics account; all removed afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

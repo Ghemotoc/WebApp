@@ -21,7 +21,8 @@
  * the end); suspended_user (whose language no other spec changes) gets one seeded story with one
  * character for the accessibility checks.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

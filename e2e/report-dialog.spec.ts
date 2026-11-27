@@ -14,7 +14,8 @@
  * Test data: seed personas only; the reports made here are removed afterwards.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { everyView, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

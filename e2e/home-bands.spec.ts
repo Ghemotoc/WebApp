@@ -14,7 +14,8 @@
  * at every width, theme and language.
  * Test data: two threads of the spec's own in the platform's first forum, removed after.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -18,7 +18,8 @@
  * Test data: three characters on the seed story "Stația meteo"; the characters, pictures, cases
  * and statements made here are removed afterwards and the story's rating is put back.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

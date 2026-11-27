@@ -11,7 +11,8 @@
  * - those pages, signed out and signed in (Realtime included), load without one policy violation.
  * Test data: none; it reads the seed story "statia-meteo-seed01" and signs in as teacher.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { signInPersona, useSessionInBrowser } from './support/personas';
 
