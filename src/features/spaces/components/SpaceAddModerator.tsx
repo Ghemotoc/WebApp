@@ -1,7 +1,8 @@
 /**
- * SpaceAddModerator: "Add a moderator": a member's username, the powers to give them and "Make
- * moderator" (bundle FORUMS-2, part b; S1-E8-07 criterion 1: "the owner adds moderators by
- * username").
+ * SpaceAddModerator: "Add a moderator": a member's username, the powers to offer them and "Invite
+ * as moderator" (bundle FORUMS-2, part b; S1-E8-07 criterion 1: "the owner adds moderators by
+ * username"). Since bundle BOOKS-7 (user stories 7.7 and 7.10) this invites: the member's powers
+ * start once they accept on the space's page.
  *
  * Only a member of the space, in its age group, can be made a moderator; the database says why
  * not otherwise, and SpaceModeratorsCard shows its words. The form empties once it worked.

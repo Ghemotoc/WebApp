@@ -31,7 +31,27 @@ describe('searchForums', () => {
       author_handle: '@inkwolf',
       skip: 20,
       language_code: 'en',
+      sort: 'best',
     });
+  });
+
+  it('sends the order picked and reads the total and the replies (board F02)', async () => {
+    const { client, rpc } = clientAnswering({
+      results: [{ kind: 'thread', thread_number: 7, post_number: 1, reply_count: 23 }],
+      has_more: false,
+      total: 48,
+    });
+    const page = await searchForums(
+      client,
+      { term: 'prologue', forumSlug: null, authorHandle: null, sort: 'replies' },
+      { skip: 0, languageCode: 'en' },
+    );
+    expect(rpc).toHaveBeenCalledWith(
+      'search_forum_posts',
+      expect.objectContaining({ sort: 'replies' }),
+    );
+    expect(page.total).toBe(48);
+    expect(page.results[0]?.replyCount).toBe(23);
   });
 
   it('reads a thread result with its author and snippet', async () => {

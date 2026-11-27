@@ -23,8 +23,8 @@ const shortestTerm = 2;
  * Searches the forums.
  *
  * @param query - the term and filters, from the address
- * @returns results (null while loading or with no search yet), hasMore, showMore(),
- *   isLoadingMore, loadFailed and isSearching (a long enough term was given)
+ * @returns results (null while loading or with no search yet), total (how many in all), hasMore,
+ *   showMore(), isLoadingMore, loadFailed and isSearching (a long enough term was given)
  */
 export function useForumSearch(query: ForumSearchQuery) {
   const { userId } = useSession();
@@ -43,6 +43,8 @@ export function useForumSearch(query: ForumSearchQuery) {
   const pages = search.data?.pages ?? null;
   return {
     results: pages === null ? null : pages.flatMap((page) => page.results),
+    // The first page always carries the total; later pages past the end may not.
+    total: pages?.[0]?.total ?? null,
     hasMore: search.hasNextPage,
     showMore: () => void search.fetchNextPage(),
     isLoadingMore: search.isFetchingNextPage,

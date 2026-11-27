@@ -259,5 +259,14 @@
     "archived": "This class is archived.",
     "not_allowed": "Only the teacher of this class does this.",
     "unreachable": "We couldn’t save that. Check the connection and try again."
+  },
+  "notice": {
+    "title": "You’re the winner",
+    "pickedStory": "{{teacher}} picked “{{story}}” as the winner of {{competition}}.",
+    "pickedYou": "{{teacher}} picked you as the winner of {{competition}}.",
+    "afterClose": "When you close this, the class space shows one Winner card with the competition, your pen name and the chapter. No scores or points. The certificate comes from {{teacher}}.",
+    "boxLabel": "Winner of {{name}}",
+    "done": "Done",
+    "readAgain": "Read the chapter again"
   }
 }

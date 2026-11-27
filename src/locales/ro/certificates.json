@@ -8,35 +8,36 @@
   "my": {
     "documentTitle": "Diplome",
     "title": "Diplome",
-    "intro": "Diplome din programele clasei tale. Deschide una ca s-o tipărești sau s-o salvezi ca PDF pentru portofoliul școlar.",
-    "empty": "Încă nu ai diplome. Când cadrul didactic aprobă rezultatele unui program al clasei, diploma ta apare aici.",
+    "intro": "Fiecare diplomă primită, cele mai noi primele. Oricine poate verifica o diplomă după cod.",
+    "empty": "Nicio diplomă încă. Profesorii și concursurile {{productName}} le dau pentru programele și concursurile la care participi.",
     "loadFailed": "Nu ți-am putut încărca diplomele. Încearcă din nou peste puțin timp.",
-    "open": "Deschide „{{programme}}”",
-    "signed": "Semnată pe {{date}}",
     "revoked": "Retrasă",
-    "checkLink": "Verifică codul unei diplome",
+    "checkLink": "Verifică un cod",
     "signedOut": "Conectează-te ca să vezi diplomele.",
-    "logIn": "Intră"
+    "logIn": "Intră",
+    "listLabel": "Diplome",
+    "contestPlace": "concurs {{productName}}",
+    "code": "cod {{code}}"
   },
   "page": {
     "documentTitle": "Diplomă: {{programme}}",
     "back": "Diplome",
     "notFound": "Nu am găsit această diplomă.",
     "revokedNote": "Această diplomă a fost retrasă, așa că nu poate fi tipărită. Dacă e o greșeală, scrie-ne din Contact.",
-    "languageLabel": "Limba diplomei",
+    "languageLabel": "Limba",
     "print": "Tipărește sau salvează ca PDF",
-    "printHint": "În fereastra de tipărire, alege „Salvează ca PDF” ca să păstrezi o copie pentru portofoliu."
+    "breadcrumb": "Unde ești",
+    "signedBy": "semnată de {{name}}",
+    "checkAt": "Oricine o poate verifica la {{domain}}/verify cu codul {{code}}."
   },
   "name": {
-    "title": "Numele de pe diplomă",
-    "intro": "O diplomă de clasă poate avea numele tău real lângă numele școlii. Îl păstrăm doar cu această diplomă, niciodată în profil, și îl ștergem la 30 de zile după ce clasa e arhivată. Lasă câmpul gol ca să apară pseudonimul tău.",
-    "label": "Numele de pe diplomă",
-    "hint": "Cel mult 80 de caractere.",
-    "save": "Salvează numele",
-    "clear": "Folosește pseudonimul",
+    "title": "Nume și limbă",
+    "label": "Numele tipărit",
+    "hint": "Se tipărește pseudonimul, dacă nu adaugi un nume real. Numele real se păstrează doar cu această diplomă de clasă, niciodată pe profil.",
+    "save": "Salvează",
     "saved": "Salvat.",
     "deletesOn": "Numele se șterge pe {{date}}. Salvează o copie până atunci.",
-    "deleted": "Clasa a fost arhivată acum mai bine de 30 de zile, așa că numele a fost șters. Diploma are acum pseudonimul tău.",
+    "deleted": "Clasa a fost arhivată acum mai bine de 30 de zile, așa că numele a fost șters. Diploma are acum pseudonimul.",
     "failures": {
       "name_length": "Scrie numele în cel mult 80 de caractere.",
       "name_deleted": "Numele de pe diplome se șterg la 30 de zile după arhivarea clasei.",
@@ -85,20 +86,26 @@
   },
   "verify": {
     "documentTitle": "Verifică o diplomă",
-    "title": "Verifică o diplomă",
-    "intro": "Scrie codul tipărit pe diplomă. Îți arătăm dacă e valabilă, programul, rezultatul și data, niciodată numele elevului.",
+    "title": "Este reală diploma?",
+    "intro": "Scrie codul tipărit în josul diplomei.",
     "codeLabel": "Codul diplomei",
-    "codeHint": "De exemplu CL27-7K4M-Q9.",
     "check": "Verifică",
-    "valid": "Diploma este valabilă.",
+    "valid": "Diploma este reală.",
     "revoked": "Diploma a fost retrasă.",
     "retired": "Diploma nu mai este disponibilă.",
-    "unknown": "Nu am găsit nicio diplomă cu acest cod. Verifică-l și încearcă din nou.",
-    "programme": "Program",
-    "result": "Rezultat",
-    "school": "Școală",
-    "date": "Semnată",
-    "loadFailed": "Nu am putut verifica codul. Încearcă din nou peste puțin timp."
+    "unknown": "Nicio diplomă nu are acest cod. Verifică literele și cifrele sau întreabă persoana care ți-a dat-o.",
+    "loadFailed": "Nu am putut verifica codul. Încearcă din nou peste puțin timp.",
+    "codeMissing": "Scrie codul tipărit pe diplomă.",
+    "realState": "Diplomă reală",
+    "revokedState": "Retrasă",
+    "checkedNow": "verificată acum",
+    "givenInSchool": "Acordată în {{className}}, {{school}}.",
+    "givenInClass": "Acordată în {{className}}.",
+    "givenInContest": "Acordată într-un concurs de scris {{productName}}.",
+    "signedByTeacher": "Semnată de {{teacher}}, care conduce clasa, pe {{date}}.",
+    "signedByProduct": "Semnată de {{productName}} pe {{date}}.",
+    "nameNote": "Numele elevului nu apare aici, pentru a-i proteja pe elevi.",
+    "revokedOn": "Diploma a fost retrasă pe {{date}}, așa că nu mai este valabilă."
   },
   "class": {
     "documentTitle": "Diplome: {{name}}",
@@ -115,7 +122,7 @@
     "approved_other": "Semnat: {{count}} de diplome emise sau schimbate.",
     "nothingChanged": "Nimic nou: toate rezultatele erau deja semnate.",
     "noStudents": "Încă nu s-a alăturat niciun elev.",
-    "issuedTitle": "Diplome semnate",
+    "issuedTitle": "Semnate în această clasă",
     "issuedEmpty": "Niciuna deocamdată.",
     "revoked": "Retrasă",
     "archived": "Clasa este arhivată, așa că nu mai emite diplome.",
@@ -140,11 +147,17 @@
       "readers_choice": "Alegerea cititorilor vine doar din rezultatele confirmate ale unui concurs.",
       "competition_result": "Acest program este un concurs confirmat, așa că fiecare diplomă spune ce s-a confirmat acolo. Deschide-l din cardul Câștigător."
     },
-    "fromCompetition": "Rezultatele concursului „{{name}}”. Sunt confirmate și blocate, așa că nu se pot schimba aici.",
     "competitionIntro": "Aprobarea semnează câte o diplomă pentru fiecare elev înscris și încă una pentru Alegerea cititorilor. Aprobarea este o semnătură electronică: numele cadrului didactic apare ca al doilea semnatar, cu „semnat electronic” și data.",
-    "competitionResultsTitle": "Rezultate confirmate",
     "noEntrants": "Nimeni nu s-a înscris la acest concurs, așa că nu este nimic de semnat.",
-    "otherProgramme": "Semnează alt program"
+    "otherProgramme": "Semnează alt program",
+    "pageIntro": "Diplomele vin din rezultatele unui concurs. Le semnezi cu numele tău și al școlii.",
+    "fromCompetitionTitle": "Din {{name}}",
+    "filledInOn": "Completat din rezultatele publicate pe {{date}}",
+    "programmeFromCompetition": "Apare pe fiecare diplomă. Luat din numele concursului.",
+    "competitionNote": "Apar doar elevii care au participat, cu rezultatele publicate; aici nu se pot schimba. Verifică lista, apoi semnează.",
+    "toSignLabel": "Diplome de semnat",
+    "secondCertificate": "a doua diplomă",
+    "code": "cod {{code}}"
   },
   "settingsCard": {
     "title": "Diplome",
@@ -152,8 +165,7 @@
     "link": "Deschide diplomele"
   },
   "look": {
-    "title": "Culoare și model",
-    "intro": "Alege cum arată certificatele acestui program. Elevii le văd așa pe certificat și în PDF.",
+    "title": "Aspect",
     "colour": "Culoare",
     "colours": {
       "plum": "Prună",
@@ -177,7 +189,6 @@
       "rings": "Inele",
       "forestwaves": "Valuri de pădure"
     },
-    "noneShort": "Fără",
     "patternHint": "Aceleași modele ca la coperți, în culoarea certificatului și foarte estompate, ca textul să se citească ușor.",
     "previewName": "Numele elevului",
     "previewProgramme": "Numele programului",
@@ -203,6 +214,9 @@
       "waiting_for_person": "Un moderator se uită întâi la ea. Până atunci apare pisica.",
       "visible": "Verificată. Apare în sigiliu.",
       "removed": "Stema a fost scoasă. Încarcă alta sau alege pisica."
-    }
+    },
+    "sealHint": "O stemă este PNG, SVG, JPEG sau WebP de până la 2 MB, verificată înainte să apară; până atunci apare pisica. Fără fotografii cu oameni.",
+    "previewTitle": "Previzualizare",
+    "previewLabel": "Diploma pentru {{name}}"
   }
 }

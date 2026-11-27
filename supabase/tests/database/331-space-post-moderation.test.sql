@@ -96,6 +96,8 @@ select is((pg_temp.post('one', 'Pe lângă subiect.') ->> 'can_space_moderate'):
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select public.set_space_moderator('fantasy-writers-circle', '@teacher', array['members']::public.space_power[]);
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
+-- The invitation is accepted first (BOOKS-7).
+select public.answer_space_moderator_invite('fantasy-writers-circle', true);
 select is(pg_temp.hint_of(format($$ select public.space_hide_forum_post(%L, 'Nu e aici') $$, pg_temp.post_id('Pe lângă subiect.'))),
   '42501', 'a moderator without the posts power can''t hide a post');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');

@@ -49,7 +49,16 @@
     "categoryNote": "Discuțiile se poartă în forumurile din această categorie.",
     "pinned": "Fixată",
     "locked": "Închisă",
-    "answered": "Are răspuns"
+    "answered": "Are răspuns",
+    "sortLabel": "Ordinea firelor",
+    "sort": {
+      "latest": "Activitate recentă",
+      "newest": "Cele mai noi",
+      "replies": "Cele mai multe răspunsuri"
+    },
+    "shownOf_one": "{{shown, number}} din {{count, number}} fir",
+    "shownOf_few": "{{shown, number}} din {{count, number}} fire",
+    "shownOf_other": "{{shown, number}} din {{count, number}} de fire"
   },
   "person": {
     "deleted": "Cont șters",
@@ -166,7 +175,20 @@
     "heading": "Discuție nouă",
     "post": "Publică discuția",
     "cancel": "Renunță",
-    "logIn": "Intră ca să începi o discuție."
+    "logIn": "Intră ca să începi o discuție.",
+    "forum": "Forum",
+    "pickForum": "Alege un forum",
+    "missingForum": "Alege un forum.",
+    "titleHint": "Spune în câteva cuvinte despre ce e firul.",
+    "missingTitle": "Adaugă un titlu.",
+    "missingBody": "Scrie prima postare.",
+    "firstPost": "Prima postare",
+    "leave": {
+      "title": "Pleci fără să postezi?",
+      "body": "Titlul și postarea rămân pe acest dispozitiv până le postezi.",
+      "keep": "Scrie mai departe",
+      "leave": "Pleacă"
+    }
   },
   "failures": {
     "signed_out": "Intră mai întâi în cont.",
@@ -208,7 +230,7 @@
   "unread": {
     "new": "Postări noi de la ultima vizită",
     "none": "Nicio postare nouă",
-    "markAll": "Marchează ca citit",
+    "markAll": "Marchează tot ca citit",
     "mark": "Marchează ca citit",
     "markLabel": "Marchează ca citit: {{name}}",
     "markFailed": "Nu am putut marca drept citit. Încearcă din nou."
@@ -275,15 +297,28 @@
     "author": "Autor",
     "authorPlaceholder": "Nume de utilizator",
     "title": "Caută în forumuri",
-    "results": "Rezultate",
     "tooShort": "Scrie cel puțin 2 litere ca să cauți.",
     "none": "Nu am găsit nimic pentru „{{term}}”. Încearcă alt cuvânt sau caută în toate forumurile.",
     "loadFailed": "Nu am putut căuta în forumuri. Verifică-ți conexiunea și încearcă din nou.",
     "showMore": "Arată mai multe rezultate",
     "kindThread": "Discuție",
-    "kindPost": "Mesajul #{{number}}",
-    "where": "În {{forum}} · de {{name}} · {{date}}",
-    "spaceOption": "Spațiu: {{name}}"
+    "kindPost": "Mesajul {{number}}",
+    "spaceOption": "Spațiu: {{name}}",
+    "sortLabel": "Ordine",
+    "sort": {
+      "best": "Cele mai potrivite",
+      "newest": "Cele mai noi",
+      "replies": "Cele mai multe răspunsuri"
+    },
+    "resultsFor_one": "{{count, number}} rezultat pentru „{{term}}”",
+    "resultsFor_few": "{{count, number}} rezultate pentru „{{term}}”",
+    "resultsFor_other": "{{count, number}} de rezultate pentru „{{term}}”",
+    "orderNote": {
+      "best": "Întâi titlurile firelor, apoi postările",
+      "newest": "Cele mai noi întâi",
+      "replies": "Întâi firele cu cele mai multe răspunsuri"
+    },
+    "replyTitle": "Re: {{title}}"
   },
   "space": {
     "spaces": "Spații"
@@ -427,5 +462,9 @@
   "beforePost": {
     "title": "Înainte să postezi",
     "text": "Comentează textul, nu persoana care l-a scris. Păstrează pentru tine adresa, școala și numărul de telefon. Fiecare mesaj are un buton de raportare."
+  },
+  "header": {
+    "newThread": "Fir nou",
+    "getIn": "Intră ca să postezi"
   }
 }

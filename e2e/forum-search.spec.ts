@@ -72,14 +72,29 @@ async function openAs(
   return page;
 }
 
-/** The results' titles with their kind, top to bottom, keeping only this spec's threads. */
+/** How long a filtered search may take to show its results on a busy CI runner. */
+const filteredSearchTimeout = 15_000;
+
+/**
+ * The results' kind and title, top to bottom ("Thread …", "Post 3 Re: …"), keeping only this
+ * spec's threads. Board F02 (BOOKS-7): the title comes first, the kind leads the meta line under it.
+ */
+
 async function resultsShown(page: Page): Promise<string[]> {
-  const list = page.getByRole('region', { name: 'Results' }).getByRole('listitem');
-  await expect(list.first()).toBeVisible();
-  const rows = await list.allInnerTexts();
-  return rows
-    .filter((row) => row.includes('e2e search'))
-    .map((row) => row.split('\n').slice(0, 2).join(' '));
+  const rows = page.getByRole('region', { name: /results? for/ }).locator('ol > li');
+  await expect(rows.first()).toBeVisible();
+  // Read every row in one go inside the page. Reading them one by one raced a new search: when
+  // the list shrank from three rows to one between two reads, waiting on the third row's text
+  // hung until the poll gave up ("waiting on the predicate").
+  const rowTexts = await rows.evaluateAll((items) =>
+    items.map((item) => ({
+      title: item.querySelector<HTMLElement>('a[href]')?.innerText ?? '',
+      kind: item.querySelector<HTMLElement>('.meta-line li')?.innerText ?? '',
+    })),
+  );
+  return rowTexts
+    .filter((row) => row.title.includes('e2e search'))
+    .map((row) => `${row.kind} ${row.title}`);
 }
 
 test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
@@ -102,13 +117,13 @@ test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
     await expect(page).toHaveURL(/\/forums\/search\?q=dragoni$/);
     const shown = await resultsShown(page);
     expect(shown[0]).toBe(`Thread ${dragonTitle}`);
-    expect(shown).toContain(`Post #3 ${dragonTitle}`);
-    expect(shown).toContain(`Post #1 ${mapTitle}`);
+    expect(shown).toContain(`Post 3 Re: ${dragonTitle}`);
+    expect(shown).toContain(`Post 1 ${mapTitle}`);
     // A result opens the thread at its post.
     await page
-      .getByRole('listitem')
-      .filter({ hasText: 'Post #3' })
-      .getByRole('link', { name: dragonTitle })
+      .locator('ol > li')
+      .filter({ hasText: 'Post 3' })
+      .getByRole('link', { name: `Re: ${dragonTitle}` })
       .click();
     await expect(page.locator('#post-3')).toBeFocused();
     await page.context().close();
@@ -118,24 +133,31 @@ test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
     const page = await openAs(browser, 'adult_writer', '/forums/search?q=povesti');
     await expect.poll(() => resultsShown(page)).toEqual([`Thread ${dragonTitle}`]);
     await page.goto('/forums/search?q=dragoni');
+    // Wait for the results first: they load after the page has hydrated, and a pick made before
+    // that is reset to the empty forum when React takes over the server-drawn select.
+    await expect.poll(() => resultsShown(page)).toContain(`Thread ${dragonTitle}`);
     await page.getByLabel('Forum', { exact: true }).selectOption('worldbuilding');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/forum=worldbuilding/);
-    await expect.poll(() => resultsShown(page)).toEqual([`Post #1 ${mapTitle}`]);
+    // Each new filter is a fresh search (no results are kept while it runs), and on a busy CI
+    // runner the filtered search can take longer than the 5-second default, so allow 15.
+    await expect
+      .poll(() => resultsShown(page), { timeout: filteredSearchTimeout })
+      .toEqual([`Post 1 ${mapTitle}`]);
     await page.getByLabel('Forum', { exact: true }).selectOption('');
     await page.getByLabel('Author', { exact: true }).fill('@teacher');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page).toHaveURL(/author=%40teacher/);
     await expect
-      .poll(async () => (await resultsShown(page)).sort())
-      .toEqual([`Post #1 ${mapTitle}`, `Post #2 ${dragonTitle}`].sort());
+      .poll(async () => (await resultsShown(page)).sort(), { timeout: filteredSearchTimeout })
+      .toEqual([`Post 1 ${mapTitle}`, `Post 2 Re: ${dragonTitle}`].sort());
     await page.context().close();
   });
 
   test('a post by someone who blocks the reader is not found', async ({ browser }) => {
     const page = await openAs(browser, 'blocked', '/forums/search?q=h%C4%83r%C8%9Bi');
     const shown = await resultsShown(page);
-    expect(shown).not.toContain(`Post #3 ${dragonTitle}`);
+    expect(shown).not.toContain(`Post 3 Re: ${dragonTitle}`);
     // The other thread's title has the word, so it is found as a thread.
     expect(shown).toContain(`Thread ${mapTitle}`);
     await page.context().close();

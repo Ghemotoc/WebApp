@@ -4,11 +4,14 @@
  *
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
- * - the owner adds a member as a moderator by username with chosen powers, and "Who runs it" shows
- *   them with those powers (criterion 1);
- * - a moderator with the members power sees "Members", removes a member with a reason, is never
- *   offered to remove the owner, and can't open the log or change the settings;
- * - the owner reads the moderation log: who did what, and the reason (criterion 2);
+ * - the owner invites a member as a moderator by username with chosen powers; the member accepts on
+ *   the space's page, and "Who runs it" shows them with those powers (criterion 1; BOOKS-7, user
+ *   stories 7.7 and 7.10: "they accept first");
+ * - a moderator with the members power sees "Members", removes a member with a reason from the
+ *   row's ••• list, is never offered anything on the owner, and can't open the log or settings;
+ * - the owner blocks a member, finds them under "Blocked" and unblocks them (BOOKS-7, story 7.11);
+ * - the owner reads the moderation log as a table: who did what, and the reason (criterion 2),
+ *   and narrows it to one person with "Who" (BOOKS-7, board F12);
  * - the settings with the Moderators card, the members page and the log pass axe at 390, 768 and
  *   1440 px, light and night, ro and en, and no doodle is drawn.
  * Test data: the seeded 16+ space "fantasy-writers-circle" (adult_writer owns it, teacher is a
@@ -36,6 +39,8 @@ function cleanUp() {
     delete from public.space_members
       where user_id = (select id from public.profiles where handle = 'blocker')
         and space_id = (select id from public.spaces where slug = 'fantasy-writers-circle');
+    delete from public.space_blocks
+      where space_id = (select id from public.spaces where slug = 'fantasy-writers-circle');
     delete from public.space_moderation_log
       where space_id = (select id from public.spaces where slug = 'fantasy-writers-circle');
     update public.profiles set locale = 'ro' where handle in ('adult_writer', 'teacher');`);
@@ -75,18 +80,30 @@ test.describe('space moderators (FORUMS-2b, S1-E8-07)', () => {
   });
   test.afterAll(cleanUp);
 
-  test('the owner makes a member a moderator with two powers', async ({ browser }) => {
-    const page = await openAs(browser, 'adult_writer', `${fantasyAddress}/settings`);
-    await expect(page.getByRole('heading', { level: 2, name: 'Moderators' })).toBeVisible();
-    await page.getByLabel('Username').fill('@teacher');
-    const choices = page.getByRole('group', { name: 'What they can do' });
+  test('the owner invites a member to moderate with two powers, and they accept', async ({
+    browser,
+  }) => {
+    const owner = await openAs(browser, 'adult_writer', `${fantasyAddress}/settings`);
+    await expect(owner.getByRole('heading', { level: 2, name: 'Moderators' })).toBeVisible();
+    await owner.getByLabel('Username').fill('@teacher');
+    const choices = owner.getByRole('group', { name: 'What they can do' });
     await expect(choices.getByRole('checkbox', { name: 'Threads' })).toBeChecked();
     await choices.getByRole('checkbox', { name: 'Members' }).check();
-    await page.getByRole('button', { name: 'Make moderator' }).click();
-    await expect(page.getByText('@teacher is now a moderator.')).toBeVisible();
-    await expect(page.getByRole('group', { name: 'What teacher can do' })).toBeVisible();
+    await owner.getByRole('button', { name: 'Invite as moderator' }).click();
+    await expect(
+      owner.getByText('@teacher is invited. Their powers start when they accept.'),
+    ).toBeVisible();
+    await expect(
+      owner.getByText('Invited: threads and members. Waiting for them to accept.'),
+    ).toBeVisible();
+    await owner.context().close();
 
-    await page.goto(fantasyAddress);
+    const page = await openAs(browser, 'teacher', fantasyAddress);
+    const invite = page.getByRole('region', { name: /^Help run / });
+    await expect(invite.getByText(/threads and members/)).toBeVisible();
+    await invite.getByRole('button', { name: 'Accept' }).click();
+    await expect(page.getByText('You’re a moderator now.')).toBeVisible();
+    await expect(invite).toHaveCount(0);
     const runs = page.getByRole('region', { name: 'Who runs it' });
     await expect(runs.getByText('Moderator: threads and members')).toBeVisible();
     await page.context().close();
@@ -102,12 +119,13 @@ test.describe('space moderators (FORUMS-2b, S1-E8-07)', () => {
     await expect(page.getByRole('link', { name: 'Space settings' })).toHaveCount(0);
     await page.getByRole('link', { name: 'Members', exact: true }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'Members' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Remove Lia Scrie' })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Remove blocker' }).click();
+    await expect(page.getByRole('button', { name: 'More for Lia Scrie' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'More for blocker' }).click();
+    await page.getByRole('button', { name: 'Remove', exact: true }).click();
     await page.getByLabel('Why remove blocker? (optional)').fill(removalReason);
     await page.getByRole('button', { name: 'Yes, remove blocker' }).click();
     await expect(page.getByText('blocker is no longer in the space.')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Remove blocker' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'More for blocker' })).toHaveCount(0);
 
     await page.goto(`${fantasyAddress}/log`);
     await expect(
@@ -116,14 +134,36 @@ test.describe('space moderators (FORUMS-2b, S1-E8-07)', () => {
     await page.context().close();
   });
 
-  test('the owner reads who did what in the moderation log', async ({ browser }) => {
+  test('the owner blocks a member, then unblocks them', async ({ browser }) => {
+    addBlocker();
+    const page = await openAs(browser, 'adult_writer', `${fantasyAddress}/members`);
+    await page.getByRole('searchbox', { name: 'Find a member' }).fill('block');
+    await expect(page.getByRole('link', { name: 'Lia Scrie' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'More for blocker' }).click();
+    await page.getByRole('button', { name: 'Block', exact: true }).click();
+    await page.getByRole('button', { name: 'Yes, block blocker' }).click();
+    await expect(page.getByText('blocker is blocked from the space.')).toBeVisible();
+    const blocked = page.getByRole('region', { name: 'Blocked' });
+    await blocked.getByRole('button', { name: 'Unblock blocker' }).click();
+    await expect(page.getByText('Unblocked. They can ask to join again.')).toBeVisible();
+    await page.context().close();
+  });
+
+  test('the owner reads who did what in the moderation log, and narrows it to one person', async ({
+    browser,
+  }) => {
     const page = await openAs(browser, 'adult_writer', `${fantasyAddress}/log`);
     await expect(page.getByRole('heading', { level: 1, name: 'Moderation log' })).toBeVisible();
-    await expect(page.getByText('teacher removed blocker from the space.')).toBeVisible();
-    await expect(page.getByText(`Reason: “${removalReason}”`)).toBeVisible();
+    const log = page.getByRole('region', { name: 'Moderation log' }).getByRole('table');
+    await expect(log.getByText('teacher removed blocker from the space.')).toBeVisible();
+    await expect(log.getByText(`Reason: “${removalReason}”`)).toBeVisible();
     await expect(
-      page.getByText('Lia Scrie made teacher a moderator: threads and members.'),
+      log.getByText('Lia Scrie invited teacher to moderate: threads and members.'),
     ).toBeVisible();
+    await expect(log.getByText('Lia Scrie blocked blocker.')).toBeVisible();
+    await page.getByLabel('Who').selectOption({ label: 'teacher' });
+    await expect(log.getByText('Lia Scrie blocked blocker.')).toHaveCount(0);
+    await expect(log.getByText('teacher removed blocker from the space.')).toBeVisible();
     await page.context().close();
   });
 

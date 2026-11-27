@@ -49,6 +49,10 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000015');
 select public.join_space('cercul-predarii-zq');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select public.set_space_moderator('cercul-predarii-zq', 'teacher', '{posts}');
+-- The moderator accepts the invitation first (BOOKS-7).
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
+select public.answer_space_moderator_invite('cercul-predarii-zq', true);
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 
 /* ---------- 1. The offer ---------- */
 

@@ -98,6 +98,7 @@
     "certificateIssuedPlain": "you have a new certificate. It’s in Certificates.",
     "rankReached": "you’re now a {{rank}}. Well done.",
     "spaceHandoverOffered": "offered you {{space}}. Open it to accept or decline.",
+    "spaceModeratorInvited": "asked you to help moderate {{space}}. Open it to accept or decline.",
     "storyFeatured": "your story “{{story}}” is in Featured this week on Read.",
     "commentsResumed": "new comments are open again on “{{story}}”.",
     "spotlightAgreed": "your parent or guardian agreed that we may suggest you and your stories to other readers.",

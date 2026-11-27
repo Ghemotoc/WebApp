@@ -259,5 +259,14 @@
     "archived": "Clasa este arhivată.",
     "not_allowed": "Doar profesorul acestei clase face asta.",
     "unreachable": "Nu am putut salva. Verifică conexiunea și încearcă din nou."
+  },
+  "notice": {
+    "title": "Ai câștigat",
+    "pickedStory": "{{teacher}} a ales „{{story}}” drept câștigătoare la {{competition}}.",
+    "pickedYou": "Ai câștigat la {{competition}}: așa a hotărât {{teacher}}.",
+    "afterClose": "După ce închizi, spațiul clasei arată un singur card al câștigătorului, cu concursul, pseudonimul tău și capitolul. Fără scoruri sau puncte. Diploma vine de la {{teacher}}.",
+    "boxLabel": "Câștigător la {{name}}",
+    "done": "Gata",
+    "readAgain": "Citește din nou capitolul"
   }
 }

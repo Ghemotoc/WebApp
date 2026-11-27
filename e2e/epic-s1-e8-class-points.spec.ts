@@ -425,7 +425,7 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
   }) => {
     const teacher = await openAs(browser, 'teacher', `/spaces/${classSlug}`);
     await teacher.getByRole('link', { name: 'Issue certificates' }).click();
-    const results = teacher.getByRole('region', { name: 'Confirmed results' });
+    const results = teacher.getByRole('list', { name: 'Certificates to sign' });
     const rowOf = (name: string) => results.getByRole('listitem').filter({ hasText: name });
     await expect(rowOf(kidName).getByText('Winner', { exact: true })).toBeVisible();
     await expect(rowOf(teenName).getByText('Finalist', { exact: true })).toBeVisible();
@@ -438,7 +438,9 @@ test.describe('epic S1-E8 class points journeys (S1-E8-QA2)', () => {
     // The Contestant's certificate says "Contestant", and the competition is the programme.
     const adult = await openAs(browser, 'adult_writer', '/certificates');
     await expect(adult.getByText('Contestant', { exact: true })).toBeVisible();
-    await adult.getByRole('link', { name: `Open “${competitionName}”` }).click();
+    await adult
+      .getByRole('link', { name: new RegExp(`^${competitionName} ?, Contestant$`) })
+      .click();
     const sheet = adult.getByRole('article', { name: 'Certificate' });
     await expect(sheet.getByText(`“${competitionName}”`, { exact: false }).first()).toBeVisible();
     await expect(sheet.getByText(/Contestant · \d{4}/)).toBeVisible();

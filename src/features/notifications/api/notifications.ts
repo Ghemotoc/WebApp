@@ -55,6 +55,7 @@ export type NotificationKind =
   | 'assignment_due'
   | 'rank_reached'
   | 'space_handover_offered'
+  | 'space_moderator_invited'
   | 'story_featured'
   | 'spotlight_consent_agreed'
   | 'spotlight_consent_withdrawn'

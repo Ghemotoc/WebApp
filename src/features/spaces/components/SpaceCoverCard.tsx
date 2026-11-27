@@ -52,7 +52,8 @@ export function SpaceCoverCard({ space }: { space: Space }) {
         data-testid="space-cover-card"
         className="flex w-full flex-col overflow-hidden rounded-card border border-border bg-surface no-underline"
       >
-        <span className="relative flex min-h-28 flex-col justify-end px-4 py-3">
+        {/* The top padding keeps the name clear of the kind pill however it wraps. */}
+        <span className="relative flex min-h-32 flex-col justify-end px-4 pt-12 pb-3">
           <SpaceBannerBand banner={space.banner} pictureUrl={pictureUrl} />
           <span aria-hidden="true" className="absolute inset-0 space-cover-shade" />
           <span className="absolute top-3 left-3 rounded-full space-kind-pill px-3 type-kicker leading-5">

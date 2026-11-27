@@ -1,7 +1,7 @@
 {
   "eyebrow": "Conduse de membri",
   "title": "Spații",
-  "intro": "Membrii creează și conduc spațiile. Cine a creat spațiul decide cine poate posta.",
+  "intro": "Membrii creează și conduc spațiile. Cine a creat spațiul decide cine poate citi și cine poate posta.",
   "create": "Creează un spațiu",
   "seeAll_one": "Vezi {{count, number}} spațiu",
   "seeAll_few": "Vezi {{count, number}} spații",
@@ -87,12 +87,15 @@
     "ageChanged": "{{name}} nu mai este în grupa de vârstă a spațiului, așa că cererea a fost ștearsă.",
     "loadFailed": "Nu am putut încărca cererile.",
     "noteLabel": "Mesaj de la {{name}}",
-    "noteReportLabel": "mesajul de la {{name}}"
+    "noteReportLabel": "mesajul de la {{name}}",
+    "waitingTitle": "Așteaptă să intre",
+    "waitingIntro_one": "{{count}} cerere. Răspund proprietarul și moderatorii cu puterea de membri.",
+    "waitingIntro_few": "{{count}} cereri. Răspund proprietarul și moderatorii cu puterea de membri.",
+    "waitingIntro_other": "{{count}} de cereri. Răspund proprietarul și moderatorii cu puterea de membri."
   },
   "form": {
     "eyebrow": "Spațiu nou",
     "title": "Creează un spațiu",
-    "editEyebrow": "Setările spațiului",
     "intro16": "Oricine poate crea un spațiu și îl conduce. Pentru că ai cel puțin 16 ani, spațiul tău este pentru membri de la 16 ani, iar oricine, cu sau fără cont, îl poate citi. Poți schimba mai târziu tot ce este mai jos.",
     "introUnder16": "Oricine poate crea un spațiu și îl conduce. Pentru că ai sub 16 ani, spațiul tău este pentru membri sub 16 ani, iar tu alegi cine îl poate citi. Poți schimba mai târziu tot ce este mai jos.",
     "introUnknown": "Avem nevoie de grupa ta de vârstă înainte să poți crea un spațiu.",
@@ -153,7 +156,8 @@
     "bannerHint": "Una dintre culori sau o imagine a ta. Mărimea imaginii: 2800 × 400 px (7 la 1). Ține cuvintele și formele principale în caseta din mijloc: cardurile și telefoanele arată doar acea parte.",
     "bannerGuide": "Se vede pe orice ecran și pe carduri",
     "bannerChosen": "Ales: {{name}}",
-    "editIntro": "Doar proprietarul, un moderator cu dreptul de a schimba setările și echipa noastră de moderare le pot schimba."
+    "editIntro": "Doar proprietarul, un moderator cu dreptul de a schimba setările și echipa noastră de moderare le pot schimba.",
+    "aboutTitle": "Despre"
   },
   "newThread": {
     "eyebrow": "Discuție nouă",
@@ -211,7 +215,9 @@
     "handover_missing": "Oferta nu mai este valabilă.",
     "handover_not_moderator": "Doar unul dintre moderatorii spațiului îl poate prelua.",
     "handover_age": "Persoana este în altă grupă de vârstă, așa că nu poate conduce acest spațiu.",
-    "handover_not_teacher": "O clasă poate fi predată doar unui profesor cu insigna de Profesor."
+    "handover_not_teacher": "O clasă poate fi predată doar unui profesor cu insigna de Profesor.",
+    "blocked": "Acest spațiu ți-a blocat contul, deci nu poți cere să intri.",
+    "invite_missing": "Invitația a fost retrasă sau are deja un răspuns."
   },
   "moderators": {
     "eyebrow": "Setările spațiului",
@@ -219,7 +225,6 @@
     "intro": "Cei care moderează te ajută să conduci spațiul. Alege ce poate face fiecare. Doar tu poți adăuga sau scoate pe cineva din moderare, iar echipa noastră de moderare poate interveni în continuare în orice spațiu.",
     "none": "Nu moderează nimeni încă.",
     "loadFailed": "Nu am putut încărca lista celor care moderează.",
-    "appointed": "{{name}} moderează acum spațiul.",
     "changed": "Drepturile contului {{name}} sunt salvate.",
     "removed": "{{name}} nu mai moderează, dar rămâne în spațiu.",
     "powersOf": "Ce poate face {{name}}",
@@ -231,7 +236,7 @@
     "addTitle": "Adaugă pe cineva la moderare",
     "username": "Nume de utilizator",
     "usernameHint": "Trebuie să fie deja în acest spațiu.",
-    "add": "Dă drept de moderare",
+    "add": "Invită ca moderator",
     "powers": {
       "posts": "Discuții",
       "members": "Membri",
@@ -248,7 +253,10 @@
       "settings": "Schimbă numele, descrierea, regulile și cine poate posta sau intra."
     },
     "missingUsername": "Scrie mai întâi un nume de utilizator.",
-    "missingPowers": "Alege cel puțin un lucru pe care îl poate face."
+    "missingPowers": "Alege cel puțin un lucru pe care îl poate face.",
+    "invited": "{{name}} a primit invitația. Puterile încep când acceptă.",
+    "inviteCancelled": "Invitația pentru {{name}} a fost retrasă.",
+    "invitedNote": "Invitat: {{powers}}. Așteptăm să accepte."
   },
   "members": {
     "title": "Membri",
@@ -263,14 +271,45 @@
     "confirmLabel": "Da, scoate {{name}}",
     "removed": "{{name}} nu mai este în spațiu.",
     "loadFailed": "Nu am putut încărca lista membrilor.",
-    "notAllowed": "Nu poți gestiona membrii acestui spațiu."
+    "notAllowed": "Nu poți gestiona membrii acestui spațiu.",
+    "introCount_one": "{{count}} membru: întâi proprietarul, apoi moderatorii cu puterile lor, apoi membrii după data intrării.",
+    "introCount_few": "{{count}} membri: întâi proprietarul, apoi moderatorii cu puterile lor, apoi membrii după data intrării.",
+    "introCount_other": "{{count}} de membri: întâi proprietarul, apoi moderatorii cu puterile lor, apoi membrii după data intrării.",
+    "moderator": "Moderator",
+    "started": "a pornit spațiul, {{month}}",
+    "joinedMonth": "a intrat în {{month}}",
+    "invitedFact": "invitat ca moderator: {{powers}}",
+    "find": "Caută un membru",
+    "noMatch": "Nu e nimeni aici cu acest nume.",
+    "more": "Mai multe pentru {{name}}",
+    "choices": {
+      "remove": "Scoate",
+      "block": "Blochează",
+      "invite": "Fă-l moderator",
+      "cancelInvite": "Retrage invitația"
+    },
+    "blockReason": "De ce blochezi pe {{name}}? (opțional)",
+    "blockHint": "Apare în jurnalul moderării. Iese din spațiu și nu mai poate cere să intre până nu e deblocat.",
+    "blockConfirm": "Da, blochează",
+    "blockConfirmLabel": "Da, blochează pe {{name}}",
+    "blocked": "{{name}} e blocat în acest spațiu.",
+    "inviteLegend": "Ce poate face {{name}} după ce acceptă",
+    "inviteLabel": "Invită pe {{name}} ca moderator",
+    "showMore": "Arată încă 50",
+    "footnote": "Scoaterea cuiva apare în jurnal. Poate cere din nou să intre, dacă nu e blocat.",
+    "blockedTitle": "Blocați",
+    "blockedIntro": "Nu pot cere să intre până nu sunt deblocați.",
+    "blockedOn": "blocat pe {{date}}",
+    "unblock": "Deblochează",
+    "unblockLabel": "Deblochează pe {{name}}",
+    "unblocked": "Deblocat. Poate cere din nou să intre."
   },
   "log": {
     "title": "Jurnalul moderării",
     "intro": "Tot ce au făcut în acest spațiu cine l-a creat, cei care moderează și echipa noastră de moderare, de la cel mai nou. Doar cine a creat spațiul și echipa noastră de moderare îl pot citi.",
     "empty": "Nu s-a întâmplat nimic încă.",
     "loadFailed": "Nu am putut încărca jurnalul.",
-    "showMore": "Arată mai multe",
+    "showMore": "Arată 50 mai vechi",
     "notAllowed": "Doar cine a creat spațiul îi poate citi jurnalul moderării.",
     "team": "Echipa de moderare",
     "reason": "Motiv: „{{reason}}”",
@@ -323,8 +362,18 @@
       "post_hidden": "{{actor}} a ascuns un mesaj.",
       "post_shown": "{{actor}} a arătat din nou un mesaj ascuns.",
       "post_moved": "{{actor}} a mutat un mesaj în altă discuție.",
-      "certificate_crest_changed": "{{actor}} a schimbat stema de pe diplome."
-    }
+      "certificate_crest_changed": "{{actor}} a schimbat stema de pe diplome.",
+      "moderator_invited": "{{actor}} l-a invitat pe {{target}} să modereze: {{powers}}.",
+      "moderator_invite_cancelled": "{{actor}} a retras invitația pentru {{target}}.",
+      "moderator_invite_accepted": "{{actor}} a acceptat invitația de a modera: {{powers}}.",
+      "moderator_invite_declined": "{{actor}} a refuzat invitația de a modera.",
+      "member_blocked": "{{actor}} l-a blocat pe {{target}}.",
+      "member_unblocked": "{{actor}} l-a deblocat pe {{target}}."
+    },
+    "anyone": "Oricine",
+    "who": "Cine",
+    "when": "Când",
+    "what": "Ce s-a întâmplat"
   },
   "bannerPicture": {
     "title": "Imaginea de banner",
@@ -628,6 +677,60 @@
     "members_other": "{{count, number}} de membri",
     "private": "Privat",
     "classOnly": "îl văd doar membrii clasei"
+  },
+  "list": {
+    "joined": "Te-ai alăturat",
+    "joinedLabel": "Spații în care ești membru",
+    "more": "Alte spații",
+    "emptyMore": "Încă nu există alte spații. Creează unul.",
+    "line": {
+      "16_plus": {
+        "latest": "Spații pentru membrii de 16 ani și peste, întâi cele cu activitate recentă",
+        "members": "Spații pentru membrii de 16 ani și peste, întâi cele cu cei mai mulți membri",
+        "newest": "Spații pentru membrii de 16 ani și peste, întâi cele mai noi"
+      },
+      "under_16": {
+        "latest": "Spații pentru membrii sub 16 ani, întâi cele cu activitate recentă",
+        "members": "Spații pentru membrii sub 16 ani, întâi cele cu cei mai mulți membri",
+        "newest": "Spații pentru membrii sub 16 ani, întâi cele mai noi"
+      },
+      "anyone": {
+        "latest": "Întâi cele cu activitate recentă",
+        "members": "Întâi cele cu cei mai mulți membri",
+        "newest": "Întâi cele mai noi"
+      }
+    },
+    "sortLabel": "Ordonează spațiile",
+    "sort": {
+      "latest": "Activitate recentă",
+      "members": "Cei mai mulți membri",
+      "newest": "Cele mai noi"
+    },
+    "showMore": "Arată încă {{count, number}}",
+    "private": "Privat",
+    "classOnly": "îl văd doar membrii clasei",
+    "latestPost": "ultima postare {{when}}",
+    "join": "Intră",
+    "joinLabel": "Intră în {{name}}",
+    "ask": "Cere să intri",
+    "askLabel": "Cere să intri în {{name}}",
+    "asked": "Cerere trimisă",
+    "askedLabel": "Ai cerut să intri în {{name}}. Apasă ca să retragi cererea."
+  },
+  "invite": {
+    "title": "Ajuți la conducerea spațiului {{name}}?",
+    "body": "Cine a creat spațiul te-a rugat să ajuți: {{powers}}. Puterile încep când accepți, iar fiecare acțiune intră în jurnal.",
+    "accept": "Accept",
+    "decline": "Refuz",
+    "accepted": "Acum ești moderator.",
+    "declined": "Ai refuzat. Nu s-a schimbat nimic."
+  },
+  "sections": {
+    "label": "Paginile {{name}}",
+    "threads": "Fire",
+    "settings": "Setări",
+    "members": "Membri",
+    "log": "Jurnalul moderării"
   },
   "classPage": {
     "sections": "Secțiunile clasei",

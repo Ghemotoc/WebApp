@@ -1,71 +1,57 @@
 /**
- * SpacesPage: every space the reader may see, latest activity first, 20 at a time, at /spaces
- * (bundle FORUMS-2, part a, redrawn in G8b; S1-E8-06; board Spaces in the liquid glass redesign).
+ * SpacesPage: the spaces a member can see, at /spaces (bundle FORUMS-2, part a; S1-E8-06; redrawn
+ * as board F06 in bundle BOOKS-7, user story 7.6).
  *
- * As the board draws it: the breadcrumb back to the forums, the header ("Run by members", the
- * page title, the lead line, and "Create a space" on the right), then the spaces as glass cards,
- * three across on a wide screen, two on a tablet and one on a phone, and "Show 20 more". The board's
- * ad slot under the header isn't drawn: the ad catalogue has no slot for this page yet (noted in
- * the pull request's follow-ups). A student with a class code finds "Join a class" beside
- * "Create a space" (bundle CLASSES, part b).
- * Who shows it: the router; "See all spaces" and the breadcrumb on a space's page link here.
- * Anyone can read it; the database leaves out the spaces the reader may not see (an under-16
- * space whose readers are members only, for anyone outside its age group).
- * What it calls: useSpaceList → space_list(); SpaceCard for each space.
+ * As the board draws it: the breadcrumb "Together / Spaces", the title, the lead line and
+ * "Create a space" (the plum main button) under it; then "Joined", the spaces the member is in
+ * (class spaces included, only for their members), then "More spaces" with its order drop-down,
+ * Join or Ask to join on each row and "Show 20 more"; then one advert banner after the lists
+ * (slot spaces_wide; never on a class space, which this page isn't). A student with a class code
+ * finds "Join a class" beside "Create a space" (bundle CLASSES, part b).
+ * Who shows it: the router; "See all spaces" on Together and a space's breadcrumb link here.
+ * Anyone can read it; the database leaves out the spaces the reader may not see.
+ * What it calls: SpacesJoinedSection and SpacesMoreSection (space_list()), PageAdSlot.
  */
 import { Link } from 'react-router';
 
-import { Button } from '@/components/ui/Button';
-import { Eyebrow } from '@/components/ui/Eyebrow';
-import { Notice } from '@/components/ui/Notice';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageContainer } from '@/components/ui/PageContainer';
+import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 
-import { useSpaceList } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
-import { SpaceCard } from './SpaceCard';
-
-/** How many spaces each "Show more" adds. */
-const pageSize = 20;
+import { SpacesJoinedSection } from './SpacesJoinedSection';
+import { SpacesMoreSection } from './SpacesMoreSection';
 
 /**
- * The breadcrumb, the title and the two ways in.
+ * The breadcrumb, the title, the lead line and the two ways in.
  *
  * @returns the page's header
  */
 function SpacesHeader() {
   const { t } = useSpacesTranslation();
+  const steps = [{ label: t('space.forums'), to: '/forums' }, { label: t('title') }];
   return (
-    <header className="flex flex-col gap-4">
-      <nav aria-label={t('space.breadcrumb')}>
+    <header className="flex flex-col gap-6">
+      <Breadcrumb label={t('space.breadcrumb')} steps={steps} />
+      <div className="flex flex-col gap-2">
+        <h1 className="page-title m-0">{t('title')}</h1>
+        <p className="m-0 max-w-[34em] type-body text-ink-muted">{t('intro')}</p>
+      </div>
+      <div className="flex flex-wrap items-center gap-4">
         <Link
-          to="/forums"
-          className="inline-flex min-h-6 items-center type-body text-link underline"
+          to="/spaces/new"
+          className="inline-flex h-11 items-center rounded-full button-main px-6 type-label font-semibold no-underline"
         >
-          {t('space.forums')}
+          {t('create')}
         </Link>
-      </nav>
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="flex max-w-[760px] flex-col gap-2">
-          <Eyebrow>{t('eyebrow')}</Eyebrow>
-          <h1 className="page-title">{t('title')}</h1>
-          <p className="m-0 type-long leading-relaxed text-ink-muted">{t('intro')}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-4">
-          {/* A student with a class code types it on /class (bundle CLASSES, part b). */}
-          <Link
-            to="/class"
-            className="inline-flex min-h-6 items-center type-body font-semibold text-link underline"
-          >
-            {t('joinClassLink')}
-          </Link>
-          <Link
-            to="/spaces/new"
-            className="inline-flex h-12 items-center rounded-full button-main px-6 type-body font-semibold no-underline"
-          >
-            {t('create')}
-          </Link>
-        </div>
+        {/* A student with a class code types it on /class (bundle CLASSES, part b). */}
+        <Link
+          to="/class"
+          className="hit-target inline-flex min-h-6 items-center type-body text-link underline"
+        >
+          {t('joinClassLink')}
+        </Link>
       </div>
     </header>
   );
@@ -74,37 +60,16 @@ function SpacesHeader() {
 /**
  * Renders the page.
  *
- * @returns the header and the spaces, or why there are none
+ * @returns the header, the two lists and the advert
  */
 export function SpacesPage() {
-  const { t } = useSpacesTranslation();
-  const list = useSpaceList(pageSize);
   return (
-    <PageContainer className="flex flex-col gap-8 py-8">
+    <PageContainer className="flex flex-col gap-16 pt-12 pb-20">
       <SpacesHeader />
-      {list.loadFailed && <Notice tone="error">{t('loadFailed')}</Notice>}
-      {list.spaces !== null && list.spaces.length === 0 && (
-        <p className="m-0 type-body text-ink-muted">{t('empty')}</p>
-      )}
-      {list.spaces !== null && list.spaces.length > 0 && (
-        <section aria-label={t('title')} className="flex flex-col gap-6">
-          <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2 xl:grid-cols-3">
-            {list.spaces.map((space) => (
-              <SpaceCard key={space.id} space={space} />
-            ))}
-          </ul>
-          {list.hasMore && (
-            <Button
-              variant="secondary"
-              className="self-center"
-              onClick={list.showMore}
-              disabled={list.isLoadingMore}
-            >
-              {t('showMore')}
-            </Button>
-          )}
-        </section>
-      )}
+      <SpacesJoinedSection />
+      <SpacesMoreSection />
+      {/* One banner after the lists (user story 7.6), 728 × 90, centred as the board draws it. */}
+      <PageAdSlot pageKey="spaces" position={1} className="flex justify-center" />
     </PageContainer>
   );
 }

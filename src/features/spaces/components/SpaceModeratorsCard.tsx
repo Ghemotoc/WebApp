@@ -20,11 +20,13 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { SpaceAddModerator } from './SpaceAddModerator';
 import { SpaceFormCard } from './SpaceFormCard';
+import { SpaceInvitedModerators } from './SpaceInvitedModerators';
 import { SpaceModeratorRow } from './SpaceModeratorRow';
 
 /** The words for each outcome. */
 const outcomeKeys: Record<ModeratorOutcome, string> = {
-  appointed: 'moderators.appointed',
+  invited: 'moderators.invited',
+  invite_cancelled: 'moderators.inviteCancelled',
   changed: 'moderators.changed',
   removed: 'moderators.removed',
 };
@@ -83,6 +85,7 @@ export function SpaceModeratorsCard({ space }: { space: Space }) {
           ))}
         </ul>
       )}
+      <SpaceInvitedModerators space={space} onChange={change} isRunning={setting.isRunning} />
       <SpaceAddModerator onAdd={change} isRunning={setting.isRunning} />
     </SpaceFormCard>
   );

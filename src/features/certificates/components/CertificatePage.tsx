@@ -1,67 +1,87 @@
 /**
- * CertificatePage: /certificates/:certificateId, one of the student's certificates (bundle CLASSES,
- * part e; story S1-E8-12 criteria 2 and 4).
+ * CertificatePage: /certificates/:certificateId, one of the member's certificates (bundle CLASSES,
+ * part e; story S1-E8-12 criteria 2 and 4; board G16, bundle BOOKS-8, part 8c).
  *
- * What it shows: a link back to My certificates, the printed-name form, the language the
- * certificate prints in (Romanian or English), "Print or save as PDF" and the certificate itself.
- * A revoked certificate shows a note instead and can't be printed. A contest certificate has no
- * printed-name form: a real name is stored only with a class certificate (CLAUDE.md rule 5;
- * CONTESTS-13b2c), so it always prints the pen name.
- * Who shows it: the router; My certificates links here. Only the student reaches it: the list comes
+ * What it shows: a breadcrumb back to Certificates, the programme as the title with a meta line
+ * (result, class, who signed it, date), then the certificate beside a "Name and language" panel
+ * (the printed name, the language it prints in, Print or save as PDF, Save, and where anyone can
+ * check it). A revoked certificate shows a note instead and can't be printed. A contest
+ * certificate has no printed-name field: a real name is stored only with a class certificate
+ * (CLAUDE.md rule 5; CONTESTS-13b2c), so it always prints the pen name.
+ * Who shows it: the router; Certificates links here. Only the member reaches it: the list comes
  * from my_certificates(), which answers only their own.
- * What it calls: useMyCertificates(), PrintedNameForm, CertificateSheet and window.print().
+ * What it calls: useMyCertificates(), CertificateSheet and PrintedNameForm.
  */
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
-import { Button } from '@/components/ui/Button';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { Select } from '@/components/ui/Select';
 
 import type { MyCertificate } from '../api/certificates';
 import { useMyCertificates } from '../hooks/useCertificates';
-import { certificateLanguageOf, type CertificateLanguage } from '../lib/certificateDate';
+import {
+  certificateDate,
+  certificateLanguageOf,
+  type CertificateLanguage,
+} from '../lib/certificateDate';
 import { useCertificatesTranslation } from '../registerCertificatesTranslations';
 
 import { CertificateSheet } from './CertificateSheet';
 import { PrintedNameForm } from './PrintedNameForm';
 
-/** The two languages, each named in its own language (WCAG 3.1.2). */
-const languageOptions = [
-  { value: 'ro', label: 'Română', lang: 'ro' },
-  { value: 'en', label: 'English', lang: 'en' },
-];
-
 /**
- * The tools and the sheet for a certificate that can be printed.
+ * The facts under the title: result, class (or the product's contest), who signed it, the date.
  *
  * @param props.certificate - the certificate
- * @returns the form, the language choice, the print button and the sheet
+ * @returns the meta line
+ */
+function CertificateFacts({ certificate }: { certificate: MyCertificate }) {
+  const { t, i18n } = useCertificatesTranslation();
+  const language = certificateLanguageOf(i18n.language);
+  const place = certificate.isContest ? t('my.contestPlace') : certificate.className;
+  const signedBy = certificate.isContest
+    ? ''
+    : t('page.signedBy', { name: certificate.teacherName });
+  return (
+    <MetaLine
+      className="mt-1"
+      facts={[
+        { text: certificate.isRevoked ? t('my.revoked') : '', kind: 'urgent' },
+        { text: t(`results.${certificate.result}`), kind: 'state' },
+        { text: place },
+        { text: signedBy },
+        { text: certificateDate(certificate.signedAt, language) },
+      ]}
+    />
+  );
+}
+
+/**
+ * The sheet and the panel beside it, for a certificate that can be printed.
+ *
+ * @param props.certificate - the certificate
+ * @returns the two columns (one on phones and tablets, the sheet first)
  */
 function PrintableCertificate({ certificate }: { certificate: MyCertificate }) {
-  const { t, i18n } = useCertificatesTranslation();
+  const { i18n } = useCertificatesTranslation();
   // The certificate starts in the page's language; schools receive the Romanian version.
   const [language, setLanguage] = useState<CertificateLanguage>(
     certificateLanguageOf(i18n.language),
   );
   return (
-    <>
-      {!certificate.isContest && <PrintedNameForm certificate={certificate} />}
-      <div className="flex flex-wrap items-center gap-4">
-        <Select
-          id="certificate-language"
-          label={t('page.languageLabel')}
-          isLabelVisible
-          options={languageOptions}
-          value={language}
-          onChange={(value) => setLanguage(certificateLanguageOf(value))}
-        />
-        <Button onClick={() => window.print()}>{t('page.print')}</Button>
+    <div className="grid items-start gap-8 md:gap-12 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-16">
+      <div className="min-w-0">
+        <CertificateSheet certificate={certificate} language={language} />
       </div>
-      <p className="m-0 type-body text-ink-muted">{t('page.printHint')}</p>
-      <CertificateSheet certificate={certificate} language={language} />
-    </>
+      <PrintedNameForm
+        certificate={certificate}
+        language={language}
+        onLanguageChange={setLanguage}
+      />
+    </div>
   );
 }
 
@@ -100,14 +120,16 @@ export function CertificatePage() {
   const certificate = read.data?.find((candidate) => candidate.id === certificateId);
   const heading = certificate === undefined ? t('my.title') : certificate.programmeName;
   return (
-    <PageContainer className="flex max-w-[900px] flex-col gap-6 py-12">
+    <PageContainer className="flex max-w-[1280px] flex-col gap-8 pt-6 pb-12 md:gap-12 lg:gap-16 lg:pt-12 lg:pb-20">
       <title>{t('page.documentTitle', { programme: heading })}</title>
-      <nav aria-label={t('page.back')}>
-        <Link to="/certificates" className="text-link underline">
-          {t('page.back')}
-        </Link>
-      </nav>
-      <h1 className="m-0 type-title text-ink-heading">{heading}</h1>
+      <Breadcrumb
+        label={t('page.breadcrumb')}
+        steps={[{ label: t('page.back'), to: '/certificates' }, { label: heading }]}
+      />
+      <header className="flex flex-col gap-2">
+        <h1 className="m-0 page-title break-words">{heading}</h1>
+        {certificate !== undefined && <CertificateFacts certificate={certificate} />}
+      </header>
       <CertificateBody read={read} certificate={certificate} />
     </PageContainer>
   );
