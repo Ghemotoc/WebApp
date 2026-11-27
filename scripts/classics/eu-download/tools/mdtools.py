@@ -49,11 +49,35 @@ def tidy_paragraph(text):
     joined = re.sub(r"^(#+|\d+\.|[-+])(\s)", r"\\\1\2", joined, flags=re.M)
     return joined.strip()
 
+def split_block(block):
+    """Cut one block that is itself too long into blocks that fit.
+
+    A long verse passage has no blank lines, only hard line breaks ("  \\n"), and a badly
+    marked-up page can be one paragraph; either would otherwise make a chapter past the
+    database's 100,000-character limit (check_chapter_text, S1-E3-02a). Cut at a line break
+    first, at the end of a sentence otherwise. Returns a list of blocks.
+    """
+    if len(block) <= MAX_CHAPTER_CHARACTERS:
+        return [block]
+    separator = "  \n" if "  \n" in block else ". "
+    pieces, current = [], ""
+    for unit in block.split(separator):
+        candidate = unit if not current else current + separator + unit
+        if current and len(candidate) > MAX_CHAPTER_CHARACTERS:
+            pieces.append(current + (separator.strip() if separator == ". " else ""))
+            current = unit
+        else:
+            current = candidate
+    if current: pieces.append(current)
+    return pieces
+
 def split_long(title, body, part_word):
     """Split a chapter that is too long at paragraph breaks into numbered parts."""
     if len(body) <= MAX_CHAPTER_CHARACTERS:
         return [(title, body)]
-    blocks = body.split("\n\n")
+    blocks = []
+    for block in body.split("\n\n"):
+        blocks.extend(split_block(block))
     pieces, current = [], []
     for block in blocks:
         if current and len("\n\n".join(current + [block])) > MAX_CHAPTER_CHARACTERS:
