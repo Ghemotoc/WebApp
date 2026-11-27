@@ -6,12 +6,13 @@
  * What it shows: signed out, a link to log in; with no known age group, why a space can't be
  * started yet; otherwise the intro for the owner's age group and the form. The new space opens
  * once it is made. An adult with the Teacher badge is first asked "What kind of space?": an open
- * space or a class space (bundle CLASSES, part b; S1-E8-11 criterion 2). Everyone else never sees
- * the question, and every space they make is an open space.
+ * space or a class space (bundle CLASSES, part b; S1-E8-11 criterion 2). Choosing a class space
+ * (or arriving with ?kind=class from "Join a class") opens the class form instead, with its own
+ * title (NewClassSpaceForm; bundle BOOKS-8, part 8b, board G07). Everyone else never sees the
+ * question, and every space they make is an open space.
  * What it calls: useMyAgeGroup → my_space_age_group(); useCreateSpace → create_space();
- * useMyTeacherCheck → my_teacher_check(); useCreateClassSpace → create_class_space().
+ * useMyTeacherCheck → my_teacher_check(); NewClassSpaceForm.
  */
-import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 
 import { Notice } from '@/components/ui/Notice';
@@ -21,10 +22,10 @@ import { useSession } from '@/features/auth/hooks/useSession';
 import { useMyTeacherCheck } from '@/features/teacher-badge/hooks/useMyTeacherCheck';
 
 import type { SpaceAgeGroup, SpaceKind, SpaceSettings } from '../api/spaces';
-import { useCreateClassSpace } from '../hooks/useClassTools';
 import { useCreateSpace, useMyAgeGroup } from '../hooks/useSpaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { NewClassSpaceForm } from './NewClassSpaceForm';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
 import { SpaceForm } from './SpaceForm';
 import { SpaceFormCard } from './SpaceFormCard';
@@ -78,7 +79,7 @@ function SpaceKindChoice({
 }
 
 /**
- * The form, for a signed-in person whose age group is known.
+ * The open space's form, for a signed-in person whose age group is known.
  *
  * @param props.ageGroup - the owner's age group
  * @param props.isTeacher - whether they hold the Teacher badge (and so may start a class)
@@ -88,19 +89,17 @@ function NewSpaceForm({ ageGroup, isTeacher }: { ageGroup: SpaceAgeGroup; isTeac
   const { t } = useSpacesTranslation();
   const navigate = useNavigate();
   const creating = useCreateSpace();
-  const creatingClass = useCreateClassSpace();
-  // Step 1: "Join a class" links teachers here with ?kind=class (board G01), so the class is
-  // already chosen; anyone without the badge still gets an open space.
-  const [searchParams] = useSearchParams();
-  const askedForClass = isTeacher && searchParams.get('kind') === 'class';
-  const [kind, setKind] = useState<SpaceKind>(askedForClass ? 'class' : 'open');
-  const isClass = kind === 'class';
-  const running = isClass ? creatingClass : creating;
+  const [, setSearchParams] = useSearchParams();
 
-  /** Starts the space (or the class), then opens it. */
+  /** Starts the space, then opens it. */
   async function create(settings: SpaceSettings) {
-    const slug = await running.run(settings);
+    const slug = await creating.run(settings);
     void navigate(`/spaces/${slug}`);
+  }
+
+  /** "Class space" opens the class form (board G07) at its own address. */
+  function chooseKind(kind: SpaceKind) {
+    if (kind === 'class') setSearchParams({ kind: 'class' });
   }
 
   return (
@@ -109,20 +108,35 @@ function NewSpaceForm({ ageGroup, isTeacher }: { ageGroup: SpaceAgeGroup; isTeac
       title={t('form.title')}
       intro={ageGroup === 'under_16' ? t('form.introUnder16') : t('form.intro16')}
     >
-      {isTeacher && <SpaceKindChoice value={kind} onChange={setKind} />}
+      {isTeacher && <SpaceKindChoice value="open" onChange={chooseKind} />}
       <SpaceForm
         initial={newSpaceDefaults(ageGroup)}
         ageGroup={ageGroup}
         ownName={null}
-        isClass={isClass}
-        submitLabel={isClass ? t('form.createClass') : t('form.create')}
+        submitLabel={t('form.create')}
         onSubmit={create}
-        failure={running.failure}
-        isRunning={running.isRunning}
+        failure={creating.failure}
+        isRunning={creating.isRunning}
         cancelTo="/spaces"
       />
     </SpaceFormCard>
   );
+}
+
+/**
+ * Which form the page shows: a class form only for an adult teacher who asked for one. While the
+ * teacher check is still loading the answer is 'waiting', so the open form never flashes first.
+ *
+ * @param ageGroup - the person's age group, or null when unknown
+ * @returns 'class', 'open' or 'waiting'
+ */
+function useFormKind(ageGroup: SpaceAgeGroup | null | undefined): 'class' | 'open' | 'waiting' {
+  const [searchParams] = useSearchParams();
+  const { teacherCheck } = useMyTeacherCheck();
+  if (searchParams.get('kind') !== 'class') return 'open';
+  if (teacherCheck === undefined) return 'waiting';
+  // Only an adult teacher starts a class (S1-E2-11 gives the badge to adults only).
+  return teacherCheck?.isTeacher === true && ageGroup === '16_plus' ? 'class' : 'open';
 }
 
 /**
@@ -135,6 +149,7 @@ function NewSpaceBody() {
   const { userId, isKnown } = useSession();
   const ageGroup = useMyAgeGroup();
   const { teacherCheck } = useMyTeacherCheck();
+  const formKind = useFormKind(ageGroup.data);
   if (!isKnown) return null;
   if (userId === null)
     return (
@@ -152,6 +167,8 @@ function NewSpaceBody() {
         <Notice tone="info">{t('form.introUnknown')}</Notice>
       </SpaceFormCard>
     );
+  if (formKind === 'waiting') return null;
+  if (formKind === 'class') return <NewClassSpaceForm />;
   // Only an adult teacher starts a class (S1-E2-11 gives the badge to adults only).
   const isTeacher = teacherCheck?.isTeacher === true && ageGroup.data === '16_plus';
   return <NewSpaceForm ageGroup={ageGroup.data} isTeacher={isTeacher} />;
@@ -164,9 +181,11 @@ function NewSpaceBody() {
  */
 export function NewSpacePage() {
   const { t } = useSpacesTranslation();
+  const ageGroup = useMyAgeGroup();
+  const isClass = useFormKind(ageGroup.data) === 'class';
   return (
     <PageContainer className="flex flex-col gap-6 py-8">
-      <SpaceBreadcrumb current={t('form.title')} />
+      <SpaceBreadcrumb current={isClass ? t('classNew.crumb') : t('form.title')} />
       <NewSpaceBody />
     </PageContainer>
   );

@@ -201,8 +201,8 @@ select is((select count(*)::integer from public.class_chapter_opens), 0,
   'denied: class_chapter_opens_select_own: nobody reads another pupil''s opened chapters');
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
-select is(public.class_chapter_points(pg_temp.kept_id('kid_chapter_1')) -> 'received', '{"total": 2}'::jsonb,
-  'the teacher sees the chapter''s total and nothing else about its points');
+select is(public.class_chapter_points(pg_temp.kept_id('kid_chapter_1')) -> 'received', '{"total": 2, "notes": 1}'::jsonb,
+  'the teacher sees the chapter''s total and how many notes, never their words or who gave them (BOOKS-8b, user story 8.10)');
 select is((select count(*)::integer from public.class_point_gifts), 0,
   'denied: class_point_gifts_select_moderators: the teacher reads no gift, so never who gave points');
 select is(public.class_points_summary('clasa-a-ix-a') ->> 'given', null,

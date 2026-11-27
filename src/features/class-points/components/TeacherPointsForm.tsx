@@ -2,10 +2,12 @@
  * TeacherPointsForm: the teacher gives points and an optional private note to a pupil's chapter
  * or assignment reply (bundle CLASS-POINTS, part 1; story S1-E8-14).
  *
- * What it shows: a number from 0 to the most a teacher may give, the private note (only while the
- * staff switch class_teacher_notes is on; it has no reply box, and only that pupil, the teacher
- * and our moderators read it), "Save teacher points" and, once there are points, "Remove teacher
- * points".
+ * What it shows (board G10-TeacherPoints, BOOKS-8 part 8b): a number from 0 to the most a teacher
+ * may give with − and + (TeacherPointsStepper), the private note (only while the staff switch
+ * class_teacher_notes is on; it has no reply box, and only that pupil, the teacher and our
+ * moderators read it), on a chapter the line saying what the writer sees and until when it can
+ * change, "Save points and note" and, once there are points, "Remove teacher points" as a text
+ * button.
  * Who shows it: ChapterClassPoints (under a chapter) and ReplyTeacherPoints (under a reply), for
  * the class's teacher only. What it calls: useSetTeacherPoints → set_teacher_points(), which
  * checks the caller is that class's teacher and writes the class's log.
@@ -14,12 +16,14 @@ import { type FormEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
+import { FieldProblem } from '@/components/ui/FieldProblem';
 import { Textarea } from '@/components/ui/Textarea';
-import { TextInput } from '@/components/ui/TextInput';
 
 import type { ClassPointsFailure, TeacherPoints } from '../api/classPoints';
 import { useSetTeacherPoints } from '../hooks/useClassPoints';
 import { useClassPointsTranslation } from '../registerClassPointsTranslations';
+
+import { TeacherPointsStepper } from './TeacherPointsStepper';
 
 /** What the form needs. */
 export interface TeacherPointsFormProps {
@@ -83,19 +87,80 @@ function FormOutcome({
  * @param props.onRemove - takes the points away
  * @returns the buttons
  */
-function FormButtons(props: { canRemove: boolean; isRunning: boolean; onRemove: () => void }) {
+function FormButtons(props: {
+  canRemove: boolean;
+  isRunning: boolean;
+  onRemove: () => void;
+  withNote: boolean;
+}) {
   const { t } = useClassPointsTranslation();
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap items-center gap-6">
       <Button type="submit" disabled={props.isRunning}>
-        {t('chapter.teacher.save')}
+        {props.withNote ? t('chapter.teacher.saveBoth') : t('chapter.teacher.save')}
       </Button>
       {props.canRemove && (
-        <Button variant="secondary" disabled={props.isRunning} onClick={props.onRemove}>
+        <Button variant="text" disabled={props.isRunning} onClick={props.onRemove}>
           {t('chapter.teacher.remove')}
         </Button>
       )}
     </div>
+  );
+}
+
+/**
+ * The stepper and, after a save with a number out of range, what is wrong with it.
+ *
+ * @returns the stepper and its problem line
+ */
+function PointsField(props: {
+  id: string;
+  typed: string;
+  max: number;
+  onChange: (typed: string) => void;
+  isOutOfRange: boolean;
+}) {
+  const { t } = useClassPointsTranslation();
+  const problemId = `${props.id}-problem`;
+  return (
+    <>
+      <TeacherPointsStepper
+        id={props.id}
+        typed={props.typed}
+        max={props.max}
+        onChange={props.onChange}
+        problemId={props.isOutOfRange ? problemId : undefined}
+      />
+      <FieldProblem id={problemId} isShown={props.isOutOfRange}>
+        {t('failures.range')}
+      </FieldProblem>
+    </>
+  );
+}
+
+/**
+ * The private note: only that pupil, the teacher and the moderators read it, with no replies.
+ *
+ * @returns the text area with its hint
+ */
+function NoteField(props: {
+  id: string;
+  note: string;
+  noteMax: number;
+  onChange: (note: string) => void;
+}) {
+  const { t } = useClassPointsTranslation();
+  return (
+    <Textarea
+      id={props.id}
+      label={t('chapter.teacher.noteLabel')}
+      hint={t('chapter.teacher.noteHint')}
+      rows={3}
+      maxLength={props.noteMax}
+      value={props.note}
+      className="max-w-[480px]"
+      onChange={(event) => props.onChange(event.target.value)}
+    />
   );
 }
 
@@ -140,27 +205,27 @@ export function TeacherPointsForm(props: TeacherPointsFormProps) {
   const fieldId = `teacher-points-${targetId}`;
   return (
     <form className="flex flex-col gap-4" onSubmit={save}>
-      <TextInput
+      <PointsField
         id={fieldId}
-        label={t('chapter.teacher.pointsLabel', { max })}
-        inputMode="numeric"
-        value={typed}
-        onChange={(event) => setTyped(event.target.value)}
-        errorMessage={outcome === 'range' ? t('failures.range') : undefined}
-        className="w-28"
+        typed={typed}
+        max={max}
+        onChange={setTyped}
+        isOutOfRange={outcome === 'range'}
       />
       {areNotesOn && (
-        <Textarea
-          id={`${fieldId}-note`}
-          label={t('chapter.teacher.noteLabel')}
-          hint={t('chapter.teacher.noteHint')}
-          rows={3}
-          maxLength={noteMax}
-          value={note}
-          onChange={(event) => setNote(event.target.value)}
-        />
+        <NoteField id={`${fieldId}-note`} note={note} noteMax={noteMax} onChange={setNote} />
       )}
-      <FormButtons canRemove={current !== null} isRunning={saver.isRunning} onRemove={remove} />
+      {kind === 'chapter' && (
+        <p className="m-0 type-meta">
+          {t('chapter.teacher.writerSees', { points: pointsFrom(typed) ?? 0 })}
+        </p>
+      )}
+      <FormButtons
+        canRemove={current !== null}
+        isRunning={saver.isRunning}
+        onRemove={remove}
+        withNote={areNotesOn}
+      />
       <FormOutcome outcome={outcome} failure={saver.failure?.failure ?? null} />
     </form>
   );

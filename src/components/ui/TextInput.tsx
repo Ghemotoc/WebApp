@@ -20,6 +20,11 @@ export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   hint?: string;
   errorMessage?: string;
+  /**
+   * True when the row around the field already says what it is (a learning outcome's line on the
+   * competition form, BOOKS-8b): the label is kept for screen readers only.
+   */
+  isLabelHidden?: boolean;
 }
 
 /**
@@ -34,6 +39,7 @@ export function TextInput({
   errorMessage,
   className,
   onChange,
+  isLabelHidden = false,
   ...inputProps
 }: TextInputProps) {
   // Ids for the hint and error, so the field can point at whichever exist.
@@ -51,7 +57,10 @@ export function TextInput({
     <div className="flex flex-col gap-2">
       {/* wrap-anywhere: a label a member typed as one long word (a detail's name on a character
           sheet) breaks inside its column and never pushes the page sideways (rule 21). */}
-      <label htmlFor={id} className="type-body font-semibold wrap-anywhere text-ink">
+      <label
+        htmlFor={id}
+        className={cn('type-body font-semibold wrap-anywhere text-ink', isLabelHidden && 'sr-only')}
+      >
         {label}
       </label>
       <input

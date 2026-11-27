@@ -8,7 +8,9 @@
  *   no counter; under the box, "How class points work";
  * - the writer (board G06): "Points this chapter received", "Only you see this box.", the figures
  *   and notes (ReceivedPoints); under the box, "About these points" and "Open the threads";
- * - the teacher: the total from classmates as a guide and the teacher points form.
+ * - the teacher (board G10, BOOKS-8 part 8b, user story 8.10): "Teacher points" with the form, or
+ *   why they are locked once a competition the writer entered is published; under the box,
+ *   "Class points on this chapter": how many and how many notes, never who gave them.
  * Anyone else, and any chapter outside a class with points on, gets nothing at all. One tinted
  * box like the class page's points box (bg-surface-solid), no doodles.
  * The boards draw the classmate's box under the chapter and the writer's above it; it stays at the
@@ -20,6 +22,7 @@
  */
 import { Link } from 'react-router';
 
+import { buttonClassName } from '@/components/ui/buttonStyles';
 import { Notice } from '@/components/ui/Notice';
 
 import type { ChapterClassPoints as ChapterPoints } from '../api/classPoints';
@@ -45,17 +48,27 @@ function ClassmatePart({ chapterId, points }: { chapterId: string; points: Chapt
 }
 
 /**
- * The part for the teacher: the classmates' total as a guide, then the form.
+ * The part for the teacher (board G10, BOOKS-8b): the form, or why the points can't change (the
+ * class is locked, or a competition the writer entered is published).
  *
- * @returns the line and the form
+ * @returns the form or a line
  */
 function TeacherPart({ chapterId, points }: { chapterId: string; points: ChapterPoints }) {
   const { t } = useClassPointsTranslation();
+  if (points.isTeacherLocked) {
+    return (
+      <div className="flex flex-col gap-2">
+        {points.teacher !== null && (
+          <p className="m-0 type-label text-ink-heading">
+            {t('chapter.teacher.shown', { points: points.teacher.points })}
+          </p>
+        )}
+        <p className="m-0 type-body text-ink-muted">{t('chapter.teacher.lockedLine')}</p>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-4">
-      <p className="m-0 text-ink-muted">
-        {t('chapter.teacher.classTotal', { count: points.received?.total ?? 0 })}
-      </p>
       {points.isLocked ? (
         <p className="m-0 text-ink-muted">{t('chapter.give.locked')}</p>
       ) : (
@@ -76,12 +89,42 @@ function TeacherPart({ chapterId, points }: { chapterId: string; points: Chapter
 const headings = {
   classmate: { title: 'chapter.give.title', line: 'chapter.give.intro' },
   writer: { title: 'chapter.received.title', line: 'chapter.received.onlyYou' },
-  teacher: { title: 'chapter.heading', line: 'chapter.inClass' },
+  teacher: { title: 'chapter.teacher.title', line: null },
 } as const;
 
 /**
+ * Under the teacher's box (board G10): how many class points and notes the chapter got, never
+ * who gave them, and the way to the class points table.
+ *
+ * @param props.points - the chapter's class points
+ * @returns the section
+ */
+function TeacherUnderTheBox({ points }: { points: ChapterPoints }) {
+  const { t } = useClassPointsTranslation();
+  const total = points.received?.total ?? 0;
+  const notes = points.received?.noteCount ?? 0;
+  return (
+    <section aria-labelledby="class-points-on-chapter" className="flex flex-col gap-2">
+      <h3 id="class-points-on-chapter" className="m-0 type-subheading text-ink-heading">
+        {t('chapter.teacher.onChapterTitle')}
+      </h3>
+      <p className="m-0 max-w-[34em] type-body text-ink-muted">
+        {t('chapter.teacher.onChapterPoints', { count: total })}{' '}
+        {t('chapter.teacher.onChapterNotes', { count: notes })}
+      </p>
+      <Link
+        to={`/spaces/${points.classSlug}/points`}
+        className={buttonClassName({ variant: 'text' }, 'w-fit')}
+      >
+        {t('card.openTable')}
+      </Link>
+    </section>
+  );
+}
+
+/**
  * The few lines under the box: how points work for a classmate, what teacher points are for the
- * writer, nothing for the teacher.
+ * writer, and for the teacher the chapter's class points (TeacherUnderTheBox).
  *
  * @param props.points - the chapter's class points
  * @returns the section, or null
@@ -100,6 +143,7 @@ function UnderTheBox({ points }: { points: ChapterPoints }) {
       </section>
     );
   }
+  if (points.role === 'teacher') return <TeacherUnderTheBox points={points} />;
   if (points.role !== 'writer') return null;
   return (
     <section aria-labelledby="class-points-about" className="flex flex-col gap-2">
@@ -140,9 +184,11 @@ export function ChapterClassPoints({ chapterId }: { chapterId: string }) {
           <h2 id="chapter-class-points-heading" className="m-0 type-subheading text-ink-heading">
             {t(heading.title)}
           </h2>
-          <p className="m-0 type-body text-ink-muted">
-            {t(heading.line, { name: points.className })}
-          </p>
+          {heading.line !== null && (
+            <p className="m-0 type-body text-ink-muted">
+              {t(heading.line, { name: points.className })}
+            </p>
+          )}
         </header>
         {points.role === 'classmate' && <ClassmatePart chapterId={chapterId} points={points} />}
         {points.role === 'writer' && <ReceivedPoints points={points} />}

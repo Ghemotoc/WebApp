@@ -54,7 +54,12 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   a class space from the new space form (`create_class_space()`), its lock at the end of the
   school year (`set_class_lock()`) and the members still waiting to read
   (`class_waiting_members()`); `ClassLockCard` and `ClassWaitingCard` on the settings page,
-  `ClassAboutCard` beside a class's threads and `ClassCodeForm` on `/class`.
+  `ClassAboutCard` on the settings page (BOOKS-8b) and `ClassCodeForm` on `/class`.
+- Starting a class (BOOKS-8b, board G07): `NewSpacePage`'s class switch opens
+  `NewClassSpaceForm` (`ClassNewFields` for the name, grade and school, `ClassGradeGuide` for what
+  a grade turns on); `hooks/useStartClass.ts` creates it (`createClassSpace()`) and saves the
+  school (`set_class_school()`, `useClassSchool()`), and `ClassSchoolCard` changes the school in
+  the settings.
 - `api/classStories.ts` and `hooks/useClassStories.ts` (bundle CLASSES, part c; S1-E8-11):
   sharing a story only with a class (`story_class_share()`, `set_story_class()`) and the class's
   list (`class_space_stories()`); `StoryClassCard` in Story settings, `ClassSharedStories` (rows of
@@ -63,7 +68,9 @@ Each space owns one hidden forum, so its threads reuse the forums feature (`Thre
   `ClassStoryMakePublic` on the writer's own story).
 - `ClassSpaceContent` (bundle BOOKS-8, board G03): a class space's own page, chosen by `SpacePage`
   for a class: `ClassSpaceHeader`, `ClassSectionTabs` ("Class · Stories 6"), the competition
-  panel, the class points box, `ClassThreads` (with `ClassThreadRow`) and the Winner card.
+  panel, the class points box, `ClassThreads` (with `ClassThreadRow`) and the Winner card. The
+  teacher's page (BOOKS-8b, board G08) adds `ClassTeacherActions` (the class log, invite and
+  settings links) and the class points feature's `ClassWeekCard`.
 - `archiveClassSpace()` in `api/classTools.ts` and `useArchiveClass()` (bundle CLASSES, part d):
   archiving a class for good; `ClassArchiveCard` in the class's settings. Staff set up pilot
   classes from `src/features/staff/components/schools/ClassSpacesPage.tsx`.

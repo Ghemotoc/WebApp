@@ -24,24 +24,31 @@ the Readers' choice pen names and the pupil's own result, nothing else.
 - `hooks/`: the reads and changes. After a change every competition read is fetched again, so the
   class page, the form and the results agree.
 - `lib/criteriaDraft.ts`: pure helpers for editing a list of criteria and for totals;
-  `lib/typedScores.ts`: reading the score fields; `lib/competitionDates.ts`: the form's starting
+  `lib/typedScores.ts`: reading the score fields; `lib/resultsDraft.ts`: the results page's sums
+  (typed totals, "Same total", Readers' choice as the database works it out, one Winner, the
+  changed scores to save; BOOKS-8b); `lib/competitionDates.ts`: the form's starting
   moments (open from now, closing at 23:59 two weeks later) and how its date and time fields
   become moments (CALM-7d, part 3).
 - On a class page (board G03, BOOKS-8): `ClassCompetitionCard` (the running competition with
   `CriteriaList` and "What each criterion needs", the pupil's `PupilControls` or the teacher's
   `TeacherControls`) and, under the threads, `ClassLatestWinner`: the latest `WinnerCard` with a
   Winner for a pupil, every confirmed competition's card for the teacher. In the class's settings: `ClassGradeCard` (the school year).
-- `/spaces/<slug>/competition`: `CompetitionFormPage` with `CriteriaEditor` and
-  `CriteriaTemplateTools` ("Use template", "Save as template").
+- `/spaces/<slug>/competition` (board G11, BOOKS-8b): `CompetitionFormPage` → `CompetitionForm`
+  with `CompetitionDetailsFields` (name, Starts, Ends), `CriteriaEditor` (one criterion open at a
+  time, the others as rows with Edit), `CriteriaTemplateTools` ("Use template", "Save as
+  template"), "How the winner is picked", and `CompetitionPreview` ("What pupils see") beside it.
 - `/spaces/<slug>/competition/templates`: `CriteriaTemplatesPage`.
-- `/spaces/<slug>/competition/<id>/results`: `CompetitionResultsPage` with one
-  `EntrantScoreCard` per entrant (the outcomes as a checklist beside the score; ticks are never
-  saved) and `ResultsForm` (Winner, winning chapter, Finalists, then `ConfirmedButton`).
+- `/spaces/<slug>/competition/<id>/results` (board G12, BOOKS-8b): `CompetitionResultsPage`
+  ("Results: <name>", "Scoring · Ended … · N entries") → `ScoringWorkspace`, which holds every
+  typed score and chosen result: `EntrantScoreCard` (one entry at a time, the outcomes as ticks
+  that are never saved, Previous and Next entry), `EntriesTable` (every entry, its scores, "Same
+  total", the guides and Winner, Finalist or Contestant) and `PublishFooter` (Readers' choice, the
+  Winner's chapter, "Publish results" through `ConfirmedButton`, "Save as draft").
 - `competitionPages.ts`: the three pages behind one lazy import, to keep the first download small.
 - `registerClassCompetitionsTranslations.ts`: the texts (`classCompetitions.json`), loaded with the
   feature.
 
 Tests: `supabase/tests/database/379-class-competitions.test.sql`,
 `380-class-competition-results.test.sql`, `api/classCompetitions.test.ts`,
-`lib/criteriaDraft.test.ts`, `lib/typedScores.test.ts`, `lib/competitionDates.test.ts`,
+`lib/criteriaDraft.test.ts`, `lib/typedScores.test.ts`, `lib/resultsDraft.test.ts`, `lib/competitionDates.test.ts`,
 `e2e/class-competitions.spec.ts`.

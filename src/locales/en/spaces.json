@@ -307,6 +307,7 @@
       "class_points_reported": "{{actor}} reported the points on a chapter by {{target}} as suspicious.",
       "class_points_removed": "The moderation team removed class points from a chapter by {{target}}.",
       "class_grade_set": "{{actor}} set the school year.",
+      "class_school_set": "{{actor}} changed the school.",
       "competition_started": "{{actor}} started a class competition.",
       "competition_changed": "{{actor}} changed the class competition.",
       "competition_ended": "{{actor}} ended the class competition.",
@@ -439,7 +440,8 @@
       "missing": "This class isn’t here any more.",
       "lock_date": "Choose a day within the next two years.",
       "unreachable": "We couldn’t reach the server. Try again.",
-      "archived": "This class is archived, so it stays locked."
+      "archived": "This class is archived, so it stays locked.",
+      "school_length": "Give the school’s name, up to 120 characters."
     },
     "archivedNote": "The class is archived, so it stays locked for good."
   },
@@ -667,6 +669,48 @@
     "storiesCount_one": "{{count}} story. Only the class can read it.",
     "storiesCount_few": "{{count}} stories. Only the class can read them.",
     "storiesCount_other": "{{count}} stories. Only the class can read them.",
-    "openStories": "Open the stories"
+    "openStories": "Open the stories",
+    "pointsTab": "Class points",
+    "certificatesTab": "Certificates",
+    "membersTab": "Members",
+    "grade": "grade {{grade}}",
+    "invitePupils": "Invite pupils",
+    "classSettings": "Class settings",
+    "classLog": "Class log",
+    "newCodeTitle": "The class is ready. Share its code",
+    "newCodeIntro": "Pupils join with this code or link. You can make a new code any time in class settings; the old one then stops working."
+  },
+  "classNew": {
+    "crumb": "New class space",
+    "title": "Create a class space",
+    "intro": "Only you and the pupils you invite can see a class space, whatever their ages. You can make one because you have a Teacher badge.",
+    "name": "Class name",
+    "nameHint": "Pupils see this name. Use the name the school uses.",
+    "nameMissing": "Give the class a name.",
+    "grade": "Grade",
+    "gradeChoose": "Choose the grade",
+    "gradeOption": "Grade {{grade}}",
+    "gradeHint": "Needed for every class. Below grade 8, class competitions have no winner.",
+    "gradeMissing": "Choose the class’s grade.",
+    "school": "School",
+    "schoolHint": "Prints on certificates under your name.",
+    "schoolMissing": "Give the school’s name.",
+    "description": "Description",
+    "points": "Class points",
+    "pointsHint": "Pupils get 10 points a week to give, at most 3 to one chapter. Off until you turn it on, here or in class settings.",
+    "create": "Create the class",
+    "cancel": "Cancel",
+    "guideTitle": "What the grade changes",
+    "guideHigh": "Grade 8 and above",
+    "guideHighValue": "One Winner and any Finalists in a class competition",
+    "guideLow": "Below grade 8",
+    "guideLowValue": "Every entry is a Contestant: no Winner and no Winner card",
+    "guideAny": "Any grade",
+    "guideAnyValue": "Winners only in a competition the teacher runs"
+  },
+  "classSchool": {
+    "title": "School",
+    "save": "Save the school",
+    "saved": "Saved."
   }
 }

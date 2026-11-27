@@ -43,7 +43,9 @@ export function ClassThreads({ space }: { space: Space }) {
   const { t } = useSpacesTranslation();
   const list = useThreadList(space.forumSlug);
   const dueMoments = useDueMoments(space.slug);
-  const canStart = space.viewer.canPost && !space.isLocked;
+  // The teacher's New thread sits under the class's name instead (board G08, BOOKS-8b).
+  const isTeacher = space.viewer.membership === 'owner';
+  const canStart = space.viewer.canPost && !space.isLocked && !isTeacher;
   return (
     <section aria-labelledby="class-threads-heading" className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">

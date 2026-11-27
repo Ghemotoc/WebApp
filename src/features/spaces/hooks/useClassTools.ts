@@ -1,8 +1,8 @@
 /**
- * The teacher's class tools as React hooks: starting a class space, its lock and the members
+ * The teacher's class tools as React hooks: a class's lock and the members
  * still waiting to read (bundle CLASSES, part b; story S1-E8-11).
  *
- * Who calls it: NewSpacePage (the Class space choice), ClassLockCard, ClassArchiveCard and
+ * Who calls it: ClassLockCard, ClassArchiveCard and
  * ClassWaitingCard (space settings). What it calls: api/classTools.ts. After a change every forum and space read
  * refreshes, so the space page shows the lock at once.
  */
@@ -14,13 +14,11 @@ import { forumsQueryKey } from '@/features/forums/hooks/useForumIndex';
 import {
   archiveClassSpace,
   ClassToolError,
-  createClassSpace,
   fetchClassWaitingMembers,
   setClassLock,
 } from '../api/classTools';
-import type { SpaceSettings } from '../api/spaces';
 
-import { spaceFailureOf, spacesQueryKey } from './useSpaces';
+import { spacesQueryKey } from './useSpaces';
 
 /**
  * The failure a call ended with, as a ClassToolError.
@@ -31,25 +29,6 @@ import { spaceFailureOf, spacesQueryKey } from './useSpaces';
 export function classToolFailureOf(error: Error | null): ClassToolError | null {
   if (error === null) return null;
   return error instanceof ClassToolError ? error : new ClassToolError('unreachable');
-}
-
-/**
- * Starts a class space (a teacher with the badge).
- *
- * @returns run(settings) → the new address, the failure (as for any space) and isRunning
- */
-export function useCreateClassSpace() {
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: async (settings: SpaceSettings) =>
-      createClassSpace(await requireClient(), settings),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [forumsQueryKey] }),
-  });
-  return {
-    run: mutation.mutateAsync,
-    failure: spaceFailureOf(mutation.error),
-    isRunning: mutation.isPending,
-  };
 }
 
 /**

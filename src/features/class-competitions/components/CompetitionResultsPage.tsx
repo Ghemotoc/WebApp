@@ -1,22 +1,25 @@
 /**
- * CompetitionResultsPage: /spaces/<slug>/competition/<id>/results, where the teacher assesses
- * the entries and confirms the results, and later reads them back (bundle CLASS-POINTS, part 2;
- * story S1-E8-17).
+ * CompetitionResultsPage: /spaces/<slug>/competition/<id>/results, where the teacher scores the
+ * entries and publishes the results, and later reads them back (bundle CLASS-POINTS, part 2;
+ * story S1-E8-17; redrawn by BOOKS-8 part 8b, board G12-CompetitionResults, user story 8.12).
  *
- * What it shows: while the competition is being assessed, one EntrantScoreCard per entrant in
- * order of name (never sorted by points: nobody is ranked) and the ResultsForm; once
- * the results are confirmed, a read-only table of each entrant's result and criteria total.
- * Before the competition ends it says scores open later; anyone but the class's teacher is told
- * the page is the teacher's. Plain page, no doodles, no ads.
- * Who shows it: the router; the class page's competition card links here.
+ * What it shows: "Results: <name>", "Scoring · Ended 31 October · 5 entries", what to do and that
+ * the app never picks; then, while it is being scored, the ScoringWorkspace (one entry at a time,
+ * every entry in a table, entrants by name and never by points: nobody is ranked); once
+ * published, a read-only table of each entrant's result and criteria total. Before the
+ * competition ends it says scores open later; anyone but the class's teacher is told the page is
+ * the teacher's. No doodles, no ads.
+ * Who shows it: the router; the class page's competition card links here ("See entries").
  * What it calls: useCompetitionScoring → class_competition_scoring(), which answers only the
  * class's teacher.
  */
 import { useParams } from 'react-router';
 
+import { MetaLine, type MetaFact } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { SpaceBreadcrumb } from '@/features/spaces/components/SpaceBreadcrumb';
+import { formatLocalDate } from '@/lib/local-time';
 import { useSpace } from '@/features/spaces/hooks/useSpaces';
 
 import { competitionFailureOf } from '../api/competitionErrors';
@@ -25,8 +28,7 @@ import { useCompetitionScoring } from '../hooks/useCompetitionScoring';
 import { maxTotal, totalOf } from '../lib/criteriaDraft';
 import { useClassCompetitionsTranslation } from '../registerClassCompetitionsTranslations';
 
-import { EntrantScoreCard } from './EntrantScoreCard';
-import { ResultsForm } from './ResultsForm';
+import { ScoringWorkspace } from './ScoringWorkspace';
 
 /**
  * One entrant's result in words: "Winner", "Finalist" or "Contestant", plus "Readers' choice"
@@ -112,17 +114,48 @@ function ScoringBody({ scoring }: { scoring: CompetitionScoring }) {
     return <p className="m-0 text-ink-muted">{t('scoring.noEntrants')}</p>;
   }
   if (scoring.phase === 'published') return <PublishedResults scoring={scoring} />;
+  return <ScoringWorkspace scoring={scoring} />;
+}
+
+/**
+ * The facts under the title: "Scoring" or "Published", when it ended and how many entries.
+ *
+ * @param props.scoring - the competition
+ * @returns the meta line
+ */
+function ResultsFacts({ scoring }: { scoring: CompetitionScoring }) {
+  const { t, i18n } = useClassCompetitionsTranslation();
+  const isPublished = scoring.phase === 'published';
+  const facts: MetaFact[] = [
+    { text: t(isPublished ? 'scoring.statePublished' : 'scoring.stateJudging'), kind: 'state' },
+  ];
+  if (scoring.endsAt !== '') {
+    const date = formatLocalDate(new Date(scoring.endsAt), i18n.language);
+    facts.push({ text: t('scoring.ended', { date }), kind: 'fact' });
+  }
+  facts.push({
+    text: t('scoring.entries', { count: scoring.entrants.length }),
+    kind: 'fact',
+  });
+  return <MetaLine facts={facts} />;
+}
+
+/**
+ * What the teacher does here, and that the app never picks (board G12).
+ *
+ * @param props.scoring - the competition, while it is being scored
+ * @returns the intro and the tinted note
+ */
+function ScoringIntro({ scoring }: { scoring: CompetitionScoring }) {
+  const { t } = useClassCompetitionsTranslation();
   return (
     <>
-      {scoring.entrants.map((entrant) => (
-        <EntrantScoreCard
-          key={entrant.handle}
-          competitionId={scoring.id}
-          criteria={scoring.criteria}
-          entrant={entrant}
-        />
-      ))}
-      <ResultsForm scoring={scoring} />
+      <p className="m-0 max-w-[34em] type-body text-ink-muted">
+        {t(scoring.areWinnersAllowed ? 'scoring.intro' : 'scoring.introLow')}
+      </p>
+      <p className="m-0 max-w-none rounded-card bg-tint p-4 type-body text-ink">
+        {t('scoring.appNote')}
+      </p>
     </>
   );
 }
@@ -148,6 +181,29 @@ function ResultsBody({ competitionId }: { competitionId: string }) {
 }
 
 /**
+ * The title, the facts and, while it is being scored, what to do.
+ *
+ * @param props.scoring - the competition, or undefined while it loads
+ * @returns the header
+ */
+function ResultsHeader({ scoring }: { scoring: CompetitionScoring | undefined }) {
+  const { t } = useClassCompetitionsTranslation();
+  if (scoring === undefined) {
+    return <h1 className="m-0 page-title break-words">{t('scoring.titlePublished')}</h1>;
+  }
+  const isScoring = scoring.phase === 'judging' && scoring.entrants.length > 0;
+  return (
+    <header className="flex flex-col gap-3">
+      <h1 className="m-0 page-title break-words">
+        {t('scoring.titleResults', { name: scoring.name })}
+      </h1>
+      <ResultsFacts scoring={scoring} />
+      {isScoring && <ScoringIntro scoring={scoring} />}
+    </header>
+  );
+}
+
+/**
  * Renders the page.
  *
  * @returns the screen
@@ -157,18 +213,15 @@ export function CompetitionResultsPage() {
   const { spaceSlug = '', competitionId = '' } = useParams();
   const className = useSpace(spaceSlug).data?.name ?? '';
   const scoring = useCompetitionScoring(competitionId).data;
-  const isPublished = scoring?.phase === 'published';
-  const title = t(isPublished ? 'scoring.titlePublished' : 'scoring.title');
   // The competition's name once it has loaded; the class's name until then.
   const name = scoring?.name ?? className;
   return (
-    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-8">
+    <PageContainer className="flex flex-col gap-12 py-8">
       <title>{t('scoring.documentTitle', { name })}</title>
-      <SpaceBreadcrumb space={{ slug: spaceSlug, name: className }} current={title} />
-      <header className="flex flex-col gap-2">
-        <h1 className="m-0 type-title break-words lg:type-display">{title}</h1>
-        {!isPublished && <p className="m-0 max-w-[640px] text-ink-muted">{t('scoring.intro')}</p>}
-      </header>
+      <div className="flex flex-col gap-4">
+        <SpaceBreadcrumb space={{ slug: spaceSlug, name: className }} current={name} />
+        <ResultsHeader scoring={scoring} />
+      </div>
       <ResultsBody competitionId={competitionId} />
     </PageContainer>
   );

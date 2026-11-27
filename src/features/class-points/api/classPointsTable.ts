@@ -3,7 +3,8 @@
  * S1-E8-16).
  *
  * Who calls it: hooks/useClassPoints.ts. What it calls: the SQL functions class_points_table()
- * and report_class_points() in supabase/migrations/…_classpoints1_02_class_points.sql.
+ * (supabase/migrations/…_classpoints1_02_class_points.sql, with the notes count from
+ * …_books8b_class_teacher_pages.sql) and report_pupil_class_points() (BOOKS-8b, board G09).
  *
  * The table has each pupil's two numbers and their chapters. It has no rank and no giver
  * (Robert, 13 Nov 2026): the database sends neither, so no screen can show one.
@@ -33,8 +34,13 @@ export interface TablePupil {
   displayName: string;
   classPoints: number;
   teacherPoints: number;
+  /** How many notes classmates wrote with the points this pupil received (BOOKS-8b). */
+  notes: number;
   chapters: TableChapter[];
 }
+
+/** Why the teacher reports a pupil's points (board G09's three choices). */
+export type PointsReportReason = 'swapped' | 'not_writing' | 'other';
 
 /**
  * Reads one chapter of the table.
@@ -76,6 +82,7 @@ export function classPointsTableFrom(data: Json): TablePupil[] | null {
       displayName: String(pupil['display_name']),
       classPoints: numberFrom(pupil['class_points']),
       teacherPoints: numberFrom(pupil['teacher_points']),
+      notes: numberFrom(pupil['notes']),
       chapters: chapters
         .map((chapter) => tableChapterFrom(chapter))
         .filter((chapter): chapter is TableChapter => chapter !== null),
@@ -102,19 +109,25 @@ export async function fetchClassPointsTable(
 }
 
 /**
- * The teacher reports a chapter's points as suspicious to our moderators.
+ * The teacher reports the class points one pupil received as odd, with a reason and an optional
+ * note (BOOKS-8b; board G09, user story 8.9). The moderators read it and the class log gets a
+ * line; the teacher never learns who gave the points.
  *
  * @param client - the Supabase client
- * @param request - the chapter and an optional line saying what looks wrong
- * @throws ClassPointsError when refused (not_teacher, not_offered, note_*)
+ * @param request - the class, the pupil's handle, the reason and the note ('' for none)
+ * @returns how many chapters' points went to the moderators
+ * @throws ClassPointsError when refused (not_teacher, not_offered, reason, note_*)
  */
-export async function reportClassPoints(
+export async function reportPupilClassPoints(
   client: AppSupabaseClient,
-  request: { chapterId: string; why: string },
-): Promise<void> {
-  const { error } = await client.rpc('report_class_points', {
-    target_chapter_id: request.chapterId,
-    why: request.why,
+  request: { slug: string; handle: string; reason: PointsReportReason; note: string },
+): Promise<number> {
+  const { data, error } = await client.rpc('report_pupil_class_points', {
+    slug: request.slug,
+    pupil_handle: request.handle,
+    reason: request.reason,
+    note: request.note.trim() === '' ? undefined : request.note,
   });
   if (error) throw classPointsErrorFrom(error);
+  return numberFrom(objectFrom(data)?.['reported']);
 }

@@ -2,10 +2,10 @@
  * Class points (bundle CLASS-POINTS, part 1; stories S1-E8-13, S1-E8-14 and S1-E8-16): the calls
  * a pupil and a teacher make, and the shapes the screens read.
  *
- * Who calls it: hooks/useClassPoints.ts. What it calls next: class_points_summary(),
- * set_class_points(), class_chapter_points(), give_class_points(), set_teacher_points(),
- * and class_thread_teacher_points() in
- * supabase/migrations/…_classpoints1_02_class_points.sql.
+ * Who calls it: hooks/useClassPoints.ts. What it calls next: class_chapter_points(),
+ * give_class_points(), set_teacher_points() and class_thread_teacher_points() in
+ * supabase/migrations/…_classpoints1_02_class_points.sql. The class page's summary and the
+ * teacher's switch are in classPointsSummary.ts.
  *
  * The database decides who sees what (Robert, 13 Nov 2026): a pupil sees only the points their
  * own chapters received, the teacher sees totals, and nobody but our moderators ever sees who
@@ -22,6 +22,7 @@ export type ClassPointsFailure =
   | 'budget'
   | 'range'
   | 'not_teacher'
+  | 'reason'
   | 'note_off'
   | 'note_too_long'
   | 'note_html'
@@ -48,6 +49,7 @@ const failureForHint: Record<string, ClassPointsFailure> = {
   'points:budget': 'budget',
   'points:range': 'range',
   'points:not_teacher': 'not_teacher',
+  'report:reason': 'reason',
   'note:off': 'note_off',
   'note:too_long': 'note_too_long',
   'note:html': 'note_html',
@@ -110,79 +112,6 @@ function textFrom(value: Json | undefined): string | null {
   return typeof value === 'string' && value !== '' ? value : null;
 }
 
-/** Class points on a class page, for the person looking. */
-export interface ClassPointsSummary {
-  isEnabled: boolean;
-  role: 'teacher' | 'pupil';
-  /** True for the teacher of a class that isn't archived. */
-  canSwitch: boolean;
-  /** How many points every pupil may give in a week, and at most to one chapter. */
-  budget: number;
-  cap: number;
-  /** A pupil's week: what is left and the day a new budget starts. Null for a teacher. */
-  week: { left: number; resetsOn: string } | null;
-  /** The points the pupil's own chapters received in this class. Null for a teacher. */
-  receivedTotal: number | null;
-  /** The chapters the pupil gave points to this week, newest first (BOOKS-8). Empty for a teacher. */
-  given: GivenPoints[];
-}
-
-/** One chapter a pupil gave points to this week: only ever their own gifts (board G03). */
-export interface GivenPoints {
-  storySlug: string;
-  storyTitle: string;
-  chapterCode: string;
-  chapterPosition: number;
-  writerName: string;
-  points: number;
-}
-
-/**
- * Reads the 'given' list of class_points_summary().
- *
- * @param value - the list, or null for a teacher
- * @returns the gifts; empty when there are none
- */
-function givenPointsFrom(value: Json | undefined): GivenPoints[] {
-  if (!Array.isArray(value)) return [];
-  const gifts: GivenPoints[] = [];
-  for (const item of value) {
-    const row = objectFrom(item);
-    if (row === null) continue;
-    gifts.push({
-      storySlug: String(row['story_slug']),
-      storyTitle: String(row['story_title']),
-      chapterCode: String(row['chapter_code']),
-      chapterPosition: numberFrom(row['chapter_position']),
-      writerName: String(row['writer_name']),
-      points: numberFrom(row['points']),
-    });
-  }
-  return gifts;
-}
-
-/**
- * Reads class_points_summary()'s answer.
- *
- * @param data - the answer
- * @returns the summary, or null for someone who is neither the teacher nor a pupil
- */
-export function classPointsSummaryFrom(data: Json): ClassPointsSummary | null {
-  const row = objectFrom(data);
-  if (row === null) return null;
-  const isPupil = row['role'] !== 'teacher';
-  return {
-    isEnabled: row['enabled'] === true,
-    role: isPupil ? 'pupil' : 'teacher',
-    canSwitch: row['can_switch'] === true,
-    budget: numberFrom(row['budget']),
-    cap: numberFrom(row['cap']),
-    week: isPupil ? { left: numberFrom(row['left']), resetsOn: String(row['resets_on']) } : null,
-    receivedTotal: isPupil ? numberFrom(row['received_total']) : null,
-    given: givenPointsFrom(row['given']),
-  };
-}
-
 /** A teacher's points on one piece of work. */
 export interface TeacherPoints {
   /** The row's ID, which the Report button sends for the note. */
@@ -233,8 +162,16 @@ export interface ChapterClassPoints {
   isLocked: boolean;
   /** For a classmate only. */
   giving: ChapterGiving | null;
-  /** The total for the writer and the teacher; the notes for the writer only. */
-  received: { total: number; notes: ReceivedNote[] } | null;
+  /**
+   * The total for the writer and the teacher; the notes' words for the writer only, and how many
+   * notes for both (the teacher never reads the words, BOOKS-8b, user story 8.10).
+   */
+  received: { total: number; notes: ReceivedNote[]; noteCount: number } | null;
+  /**
+   * For the teacher: true once a competition the writer entered is published, so teacher points
+   * can't change (BOOKS-8b). Always false for anyone else.
+   */
+  isTeacherLocked: boolean;
   /** The teacher's points, for the writer and the teacher. */
   teacher: TeacherPoints | null;
   /** For the teacher: the most points they may give, whether notes are on and the longest note. */
@@ -279,7 +216,9 @@ function receivedFrom(value: Json | undefined): ChapterClassPoints['received'] {
     const words = textFrom(note?.['note']);
     if (note !== null && words !== null) notes.push({ id: String(note['id']), note: words });
   }
-  return { total: numberFrom(row['total']), notes };
+  // The writer gets the notes themselves; the teacher gets only how many there are.
+  const noteCount = Array.isArray(row['notes']) ? notes.length : numberFrom(row['notes']);
+  return { total: numberFrom(row['total']), notes, noteCount };
 }
 
 /**
@@ -305,6 +244,7 @@ export function chapterClassPointsFrom(data: Json): ChapterClassPoints | null {
     teacherMax: numberFrom(row['teacher_max']),
     areNotesOn: row['notes_on'] === true,
     teacherNoteMax: numberFrom(row['note_max']),
+    isTeacherLocked: row['teacher_locked'] === true,
   };
 }
 
@@ -343,43 +283,6 @@ export function threadTeacherPointsFrom(data: Json): ThreadTeacherPoints | null 
     isLocked: row['is_locked'] === true,
     byPostId,
   };
-}
-
-/**
- * Class points on a class page.
- *
- * @param client - the Supabase client
- * @param slug - the class's address
- * @returns the summary, or null for someone who is neither the teacher nor a pupil
- * @throws ClassPointsError when the database can't be reached
- */
-export async function fetchClassPointsSummary(
-  client: AppSupabaseClient,
-  slug: string,
-): Promise<ClassPointsSummary | null> {
-  const { data, error } = await client.rpc('class_points_summary', { slug });
-  if (error) throw classPointsErrorFrom(error);
-  return classPointsSummaryFrom(data);
-}
-
-/**
- * The teacher turns class points on or off.
- *
- * @param client - the Supabase client
- * @param request - the class and the new state
- * @returns the summary after the change
- * @throws ClassPointsError when refused (not_class, archived, not_allowed)
- */
-export async function setClassPoints(
-  client: AppSupabaseClient,
-  request: { slug: string; isOn: boolean },
-): Promise<ClassPointsSummary | null> {
-  const { data, error } = await client.rpc('set_class_points', {
-    slug: request.slug,
-    turn_on: request.isOn,
-  });
-  if (error) throw classPointsErrorFrom(error);
-  return classPointsSummaryFrom(data);
 }
 
 /**

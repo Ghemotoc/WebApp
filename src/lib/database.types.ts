@@ -14189,10 +14189,15 @@ export type Database = {
         };
         Returns: Json;
       };
+      class_teacher_points_locked: {
+        Args: { chapter_id: string; class_id: string };
+        Returns: boolean;
+      };
       class_thread_replies: { Args: { target_thread_id: string }; Returns: Json };
       class_thread_teacher_points: { Args: { target_thread_id: string }; Returns: Json };
       class_today: { Args: Record<PropertyKey, never>; Returns: string };
       class_waiting_members: { Args: { slug: string }; Returns: Json };
+      class_week_totals: { Args: { class_id: string; week: string }; Returns: Json };
       class_winners_allowed: { Args: { grade: number }; Returns: boolean };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
       classic_cover_colour: { Args: { story_id: string }; Returns: string };
@@ -14583,8 +14588,10 @@ export type Database = {
         Args: {
           banner?: Database['public']['Enums']['space_banner'];
           description: string;
+          grade?: number;
           name: string;
           rules?: string;
+          school?: string;
         };
         Returns: Json;
       };
@@ -17419,6 +17426,10 @@ export type Database = {
         Args: { decision: Database['public']['Enums']['moderation_action'] };
         Returns: string;
       };
+      report_pupil_class_points: {
+        Args: { note?: string; pupil_handle: string; reason: string; slug: string };
+        Returns: Json;
+      };
       reportable_item_owner: {
         Args: { item_reference: string; item_type: Database['public']['Enums']['reportable_type'] };
         Returns: {
@@ -17873,6 +17884,7 @@ export type Database = {
       set_class_grade: { Args: { grade: number; slug: string }; Returns: Json };
       set_class_lock: { Args: { new_locks_at?: string; slug: string }; Returns: Json };
       set_class_points: { Args: { slug: string; turn_on: boolean }; Returns: Json };
+      set_class_school: { Args: { school_name: string; slug: string }; Returns: Json };
       set_forum_thread_due_date: {
         Args: { due: string; target_thread_id: string };
         Returns: undefined;

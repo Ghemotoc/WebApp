@@ -15,7 +15,8 @@
  * database checks again. A new name keeps the space's address, so links to it still work.
  * What it calls: useSpace → space_page(); useUpdateSpace → update_space(); SpaceLogoCard; SpaceBannerPictureCard;
  * SpaceModeratorsCard; ClassInviteCard; ClassWaitingCard; ClassLockCard; ClassArchiveCard; and the
- * teacher's ClassPointsSettingsCard and ClassGradeCard (the class's school year; CLASS-POINTS; S1-E8-15) and
+ * teacher's ClassSchoolCard (BOOKS-8b), ClassAboutCard ("How a class space starts", moved here from
+ * the class page by BOOKS-8b), ClassPointsSettingsCard and ClassGradeCard (the class's school year; CLASS-POINTS; S1-E8-15) and
  * ClassCertificatesCard (CLASSES-e, S1-E8-12); SpaceWelcomeNoteCard → set_space_welcome_note(),
  * the welcome note new members see once (bundle 14d IDEAS-3, part d), for the settings power.
  */
@@ -34,7 +35,9 @@ import { useSpacesTranslation } from '../registerSpacesTranslations';
 
 import { ClassArchiveCard } from './ClassArchiveCard';
 import { ClassInviteCard } from './ClassInviteCard';
+import { ClassAboutCard } from './ClassAboutCard';
 import { ClassLockCard } from './ClassLockCard';
+import { ClassSchoolCard } from './ClassSchoolCard';
 import { ClassWaitingCard } from './ClassWaitingCard';
 import { SpaceBannerPictureCard } from './SpaceBannerPictureCard';
 import { SpaceBreadcrumb } from './SpaceBreadcrumb';
@@ -116,9 +119,26 @@ function ClassCards({ space }: { space: Space }) {
       {canInvite && <ClassWaitingCard space={space} />}
       {canManage && <ClassLockCard space={space} />}
       {canManage && <ClassArchiveCard space={space} />}
-      {space.viewer.membership === 'owner' && <ClassPointsSettingsCard slug={space.slug} />}
-      {space.viewer.membership === 'owner' && <ClassGradeCard slug={space.slug} />}
-      {space.viewer.membership === 'owner' && <ClassCertificatesCard slug={space.slug} />}
+      {space.viewer.membership === 'owner' && <TeacherClassCards space={space} />}
+    </>
+  );
+}
+
+/**
+ * The cards only the class's teacher gets: the school, class points, the school year, how a
+ * class space starts and certificates.
+ *
+ * @param props.space - the class
+ * @returns the cards
+ */
+function TeacherClassCards({ space }: { space: Space }) {
+  return (
+    <>
+      <ClassSchoolCard space={space} />
+      <ClassPointsSettingsCard slug={space.slug} />
+      <ClassGradeCard slug={space.slug} />
+      <ClassAboutCard space={space} />
+      <ClassCertificatesCard slug={space.slug} />
     </>
   );
 }

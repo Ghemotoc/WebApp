@@ -16,7 +16,7 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 
-import type { ClassPointsSummary } from '../api/classPoints';
+import type { ClassPointsSummary } from '../api/classPointsSummary';
 import { useClassPointsSummary, useSetClassPoints } from '../hooks/useClassPoints';
 import { useClassPointsTranslation } from '../registerClassPointsTranslations';
 
