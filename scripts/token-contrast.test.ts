@@ -214,8 +214,9 @@ describe('design token contrast', () => {
     expect(failingPairs(themes.staffNight)).toEqual([]);
   });
 
-  it('uses the Lilac mist colours of the approved design by day, on the flat Isabelline page (bundle G1; CALM-1b; flat themes, 23 Nov 2026)', () => {
-    expect(themes.light.get('paper')).toBe('#f4f0ec');
+  it('uses the Lilac mist colours of the approved design by day, on the white page with Isabelline boxes (bundle G1; CALM-1b; flat themes, 23 Nov 2026; white page, 26 Nov 2026)', () => {
+    expect(themes.light.get('paper')).toBe('#ffffff');
+    expect(themes.light.get('surface-box')).toBe('#f4f0ec');
     expect(themes.light.get('ink')).toBe('#24133a');
     expect(themes.light.get('heading')).toBe('#2a0e33');
     expect(themes.light.get('body')).toBe('#4a3e60');

@@ -14195,6 +14195,8 @@ export type Database = {
       class_waiting_members: { Args: { slug: string }; Returns: Json };
       class_winners_allowed: { Args: { grade: number }; Returns: boolean };
       classic_authors_dying_in: { Args: { died: number }; Returns: Json };
+      classic_cover_colour: { Args: { story_id: string }; Returns: string };
+      classic_cover_design: { Args: { story_slug: string }; Returns: string };
       classic_edition_details: {
         Args: { details: Json; edition_id: string; first_edition_id: string };
         Returns: Json;

@@ -57,10 +57,14 @@ test.describe('getting around as a writer (NAV-1)', () => {
     browser,
   }) => {
     const page = await openAsWriter(browser, '/discover');
-    // Step 1: the menu's first row is the person, linking to their own public profile.
+    // Step 1: the menu's first row is the person's card, one link to their own public profile,
+    // named by its words: the name, the @username and "View public profile" (DESIGN, 26 Nov 2026).
     await page.getByRole('button', { name: 'Account' }).click();
-    const profileLink = page.getByRole('link', { name: /@adult_writer/ });
+    const profileLink = page
+      .locator('#account-menu-panel')
+      .getByRole('link', { name: /@adult_writer View public profile$/ });
     await expect(profileLink).toHaveAttribute('href', '/u/adult_writer');
+    await expect(profileLink).toContainText('@adult_writer');
     await expect(profileLink).toContainText('View public profile');
     await profileLink.click();
     await expect(page).toHaveURL(/\/u\/adult_writer$/);
@@ -119,7 +123,12 @@ test.describe('getting around as a writer (NAV-1)', () => {
         async (screen) => {
           const accountName = language === 'ro' ? 'Cont' : 'Account';
           await screen.getByRole('button', { name: accountName }).click();
-          await expect(screen.getByRole('link', { name: /@adult_writer/ })).toBeVisible();
+          // The profile card, named by its words, ending in the link's purpose.
+          const profileCardName =
+            language === 'ro'
+              ? /@adult_writer Vezi profilul public$/
+              : /@adult_writer View public profile$/;
+          await expect(screen.getByRole('link', { name: profileCardName })).toBeVisible();
         },
       );
       await page.context().close();

@@ -26,6 +26,8 @@
  * beside it. The title font is Literata 600 unless the writer picked another (choice.titleFont).
  * These replace the per-size padding and title tables of S1-E3-01; `size` stays as a label for
  * tests and styles.
+ * Classic covers (Robert, 26 Nov 2026): three classics draw an approved backdrop picture under the
+ * same paper label instead of a pattern (ArtworkBackdrop); the other classics are plain colours.
  * Who uses it: StoryCard (shelves), DrawnCoverPicker and StoryPreviewAside (the new story form),
  * WriterStoryCard (Your writing), and later the story page and the teaser.
  */
@@ -35,12 +37,12 @@ import { coverTitleFit } from '@/lib/cover-title';
 import { cn } from '@/lib/utils';
 
 import {
-  coverArtwork,
   coverDesignByKey,
   coverPalette,
   titleColourOn,
   type DrawnCoverChoice,
 } from './coverDesigns';
+import { coverArtwork } from './coverArtwork';
 
 /**
  * The places a drawn cover is shown. Since CALM-4 the sizes inside the cover follow its width, so
@@ -93,6 +95,42 @@ function CoverArtwork({ choice }: { choice: DrawnCoverChoice }) {
         />
       )}
     </svg>
+  );
+}
+
+/**
+ * Draws an artwork design's backdrop picture (the classic covers' three approved backdrops),
+ * filling the 2:3 cover behind the label. It is decoration, so it has empty alt text.
+ *
+ * @returns the picture, or nothing for a design without one
+ */
+function ArtworkBackdrop({ choice }: { choice: DrawnCoverChoice }) {
+  const { artworkUrl } = coverDesignByKey(choice.design);
+  if (artworkUrl === undefined) return null;
+  return (
+    <img
+      src={artworkUrl}
+      alt=""
+      aria-hidden="true"
+      loading="lazy"
+      decoding="async"
+      className="absolute inset-0 h-full w-full object-cover"
+    />
+  );
+}
+
+/**
+ * What a Label cover draws behind its label: the backdrop picture for an artwork design, and the
+ * pattern for a patterned one (a plain colour draws neither).
+ *
+ * @returns the backdrop and the pattern
+ */
+function LabelBackground({ choice }: { choice: DrawnCoverChoice }) {
+  return (
+    <>
+      <ArtworkBackdrop choice={choice} />
+      <CoverArtwork choice={choice} />
+    </>
   );
 }
 
@@ -208,7 +246,7 @@ export function DrawnCover({
       )}
       style={coverStyle}
     >
-      {style === 'label' && <CoverArtwork choice={choice} />}
+      {style === 'label' && <LabelBackground choice={choice} />}
       {style === 'label' && <LabelWords title={title} penName={penName} />}
       {style === 'big_title' && <BigTitleWords title={title} penName={penName} />}
       {style === 'initial' && <InitialWords title={title} penName={penName} />}

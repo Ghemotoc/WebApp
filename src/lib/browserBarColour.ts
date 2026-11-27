@@ -4,7 +4,7 @@
  *
  * Why (Robert, 20 Nov 2026, 13:10 UTC: "at the moment it shows black on website on phone"): a
  * phone browser paints its status bar and toolbars in the theme-color the page names, and in
- * black (dark mode) or white when it names none. index.html names #f4f0ec for a light device and
+ * black (dark mode) or white when it names none. index.html names #ffffff for a light device and
  * #0e0e10 for a dark one, but the member can pick night on a light phone, light on a dark one, or
  * a look with its own page colour (Sorbet's peach, for example). So whenever the theme, the look
  * or high contrast changes, both metas are set to --paper as tokens.css works it out on <html>:
@@ -53,7 +53,7 @@ function pageColourElement(): HTMLElement {
  *
  * @param root - the element to read it from; the staff frame or <html> unless a test passes
  *   another
- * @returns the colour as written in tokens.css (for example "#f4f0ec"), or an empty string while
+ * @returns the colour as written in tokens.css (for example "#ffffff"), or an empty string while
  *   the style sheet has not loaded yet
  */
 export function readPageColour(root: HTMLElement = pageColourElement()): string {
