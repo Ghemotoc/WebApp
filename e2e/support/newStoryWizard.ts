@@ -17,6 +17,22 @@ export const newStorySteps = [
 ] as const;
 
 /**
+ * Picks a category when step 2 is open and none is chosen yet. The form starts with no category
+ * (FORMS-1; Robert, 27 Nov 2026: "It shouldn't be preselected by default"), and "Next" stops on
+ * step 2 until one is picked, so the helpers pick Fiction for specs that don't care which.
+ *
+ * @param page - the page on /write/new, in English or Romanian
+ */
+async function pickCategoryIfMissing(page: Page) {
+  const categoryGroup = page.getByRole('radiogroup', { name: /^(Category|Categorie)$/ });
+  // Step 1: only step 2 shows the category chips.
+  if ((await categoryGroup.count()) === 0) return;
+  // Step 2: leave a spec's own choice alone.
+  if ((await categoryGroup.getByRole('radio', { checked: true }).count()) > 0) return;
+  await categoryGroup.getByRole('radio', { name: /^(Fiction|Ficțiune)$/ }).click();
+}
+
+/**
  * Presses "Next" until the named step is open. A step only opens after the ones before it, and
  * the basics need a title first.
  *
@@ -28,6 +44,7 @@ export async function goToNewStoryStep(page: Page, stepTitle: (typeof newStorySt
   for (let presses = 0; presses < newStorySteps.length; presses += 1) {
     const openNow = await openStepTitle.textContent();
     if (openNow === stepTitle) return;
+    await pickCategoryIfMissing(page);
     await page.getByRole('button', { name: /^Next: / }).click();
     // Wait for the next step to open before looking again (a missing title keeps it here).
     await expect(openStepTitle).not.toHaveText(openNow ?? '');
@@ -48,6 +65,7 @@ export async function goToLastNewStoryStep(page: Page) {
     // The last step has no "Next", so stop once it is gone.
     if ((await nextButton.count()) === 0) return;
     const openNow = await openStepTitle.textContent();
+    await pickCategoryIfMissing(page);
     await nextButton.click();
     // Wait for the next step to open before looking again (a missing title keeps it here).
     await expect(openStepTitle).not.toHaveText(openNow ?? '');

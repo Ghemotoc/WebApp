@@ -1,5 +1,5 @@
 -- Database tests for categories and tags (story S1-E3-01).
--- What it proves: the three launch categories and no journalism (Q52); normalise_tag() makes
+-- What it proves: the four forms and no journalism (Q52; FORMS-1); normalise_tag() makes
 -- look-alikes one tag; anyone reads categories and tags (allowed) and nobody writes them through
 -- the API (denied); 'story' is a reportable type (CLAUDE.md rule 6).
 begin;
@@ -11,8 +11,8 @@ select plan(12);
 -- 1. The fixed categories.
 select results_eq(
   $$ select slug from public.categories order by position $$,
-  $$ values ('fiction'), ('poetry'), ('nonfiction_essays') $$,
-  'the launch categories are fiction, poetry and nonfiction essays, in that order (Q52)'
+  $$ values ('fiction'), ('poetry'), ('nonfiction_essays'), ('plays') $$,
+  'the forms are fiction, poetry, nonfiction essays and plays, in that order (Q52; FORMS-1)'
 );
 select is_empty(
   $$ select slug from public.categories where slug like '%journal%' or slug like '%article%' $$,
@@ -34,7 +34,7 @@ select ok(
 
 -- 4. Who reads and writes.
 set local role anon;
-select is((select count(*)::integer from public.categories), 3,
+select is((select count(*)::integer from public.categories), 4,
   'allowed: categories_select_public: a signed-out visitor reads the categories');
 select throws_ok($$ insert into public.categories (slug, position) values ('journalism', 9) $$, '42501', null,
   'denied: categories_select_public: nobody adds a category through the API');

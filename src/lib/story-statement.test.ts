@@ -44,6 +44,7 @@ describe('the story statement', () => {
   it('names the type of writing from the category', () => {
     expect(storyTypeOf('poetry')).toBe('poem');
     expect(storyTypeOf('nonfiction_essays')).toBe('essay');
+    expect(storyTypeOf('plays')).toBe('play');
     expect(storyTypeOf('fiction')).toBe('story');
     expect(storyTypeOf(null)).toBe('story');
   });

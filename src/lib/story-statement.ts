@@ -8,7 +8,7 @@
  * The same words fill the footer of the story page and the reader, the page's <title>, its
  * description, its Open Graph description and its JSON-LD, so every reader of the page, human or
  * machine, gets one consistent statement. The type comes from the category (Fiction is a story,
- * Poetry a poem, Essays an essay); the genre is the story's first recommended tag, when it has one.
+ * Poetry a poem, Non-fiction an essay, Plays a play; FORMS-1, 27 Nov 2026); the genre is the story's first recommended tag, when it has one.
  * The words live in the reading namespace's `storyFooter` keys of the locale files (CLAUDE.md
  * rule 4); the callers pass them in, in the story's own language.
  * Never a real name, an age, the rating (18+ adds only "For mature readers") or chapter text.
@@ -18,7 +18,7 @@
  */
 
 /** What kind of writing a story is, from its category. */
-export type StoryType = 'story' | 'poem' | 'essay';
+export type StoryType = 'story' | 'poem' | 'essay' | 'play';
 
 /** The sentence's words in one language: the reading namespace's `storyFooter` keys. */
 export interface StoryStatementWords {
@@ -26,10 +26,12 @@ export interface StoryStatementWords {
   story: string;
   poem: string;
   essay: string;
+  play: string;
   /** The same with a genre: "{{title}} is {{article}} {{genre}} story published …". */
   storyGenre: string;
   poemGenre: string;
   essayGenre: string;
+  playGenre: string;
   /** "{{site}} is a free website for writing and reading stories, poems, plays and non-fiction." */
   site: string;
   /** "For mature readers", for 18+ only. */
@@ -72,11 +74,13 @@ export const DESCRIPTION_LENGTH = 155;
  * The type of writing a category stands for.
  *
  * @param categorySlug - the category's key, or null
- * @returns "poem" for Poetry, "essay" for Essays and "story" for Fiction or anything else
+ * @returns "poem" for Poetry, "essay" for Non-fiction, "play" for Plays and "story" for Fiction or
+ *   anything else
  */
 export function storyTypeOf(categorySlug: string | null): StoryType {
   if (categorySlug === 'poetry') return 'poem';
   if (categorySlug === 'nonfiction_essays') return 'essay';
+  if (categorySlug === 'plays') return 'play';
   return 'story';
 }
 

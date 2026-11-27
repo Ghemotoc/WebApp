@@ -109,7 +109,7 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
     await card(page, 'Quiet orchard').first().click();
     await page
       .getByRole('navigation', { name: 'Where you are' })
-      .getByRole('link', { name: 'Fiction' })
+      .getByRole('link', { name: 'Fiction', exact: true })
       .click();
     await expect(page).toHaveURL(/\/discover\/c\/fiction$/);
     // The sort lives in the "Filter and sort" panel (user story 1.5); Done closes it.
@@ -144,7 +144,7 @@ test.describe('epic check S1-E5 (S1-E5-QA)', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Quiet orchard' })).toBeVisible();
     await page
       .getByRole('navigation', { name: 'Where you are' })
-      .getByRole('link', { name: 'Fiction' })
+      .getByRole('link', { name: 'Fiction', exact: true })
       .click();
     await expect(page).toHaveURL(/\/discover\/c\/fiction$/);
   });

@@ -340,6 +340,8 @@
     "poemGenre": "{{title}} este o poezie din genul {{genre}}, publicată pe {{site}} de {{writer}}.",
     "essay": "{{title}} este un eseu publicat pe {{site}} de {{writer}}.",
     "essayGenre": "{{title}} este un eseu din genul {{genre}}, publicat pe {{site}} de {{writer}}.",
+    "play": "{{title}} este o piesă de teatru publicată pe {{site}} de {{writer}}.",
+    "playGenre": "{{title}} este o piesă de teatru din genul {{genre}}, publicată pe {{site}} de {{writer}}.",
     "site": "{{site}} este un site gratuit pentru a scrie și a citi povești, poezii, piese de teatru și non-ficțiune.",
     "matureReaders": "Pentru cititori maturi",
     "pageTitle": "{{title}} de {{writer}}, {{genre}}, {{site}}",

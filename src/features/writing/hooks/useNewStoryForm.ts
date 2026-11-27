@@ -28,7 +28,8 @@ import { toStoryFieldErrors, type StoryAnswers, type StoryFieldErrors } from './
 import { myStoriesKey } from './useMyStories';
 
 /**
- * What the form starts with: Romanian (the first market) and fiction, as the board shows, a
+ * What the form starts with: Romanian (the first market), no category picked (the writer
+ * chooses one; Robert, 27 Nov 2026, 18:05 UTC: "It shouldn't be preselected by default"), a
  * fresh story ID, the defaults a new story gets (Ongoing, comments on; S1-E3-05) and no labels
  * ticked (S1-E3-06).
  *
@@ -40,7 +41,8 @@ function emptyAnswers(): StoryAnswers {
     title: '',
     blurb: '',
     languageCode: 'ro',
-    categorySlug: 'fiction',
+    // FORMS-1: empty until the writer picks; the schema says "Choose a category" otherwise.
+    categorySlug: '',
     tags: [],
     cover: { kind: 'automatic' },
     completionStatus: 'ongoing',
