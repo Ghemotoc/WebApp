@@ -35,18 +35,34 @@ def unwrap_verse_tables(soup):
         if "dikt" not in classes and not table.select(".poem"):
             continue
         holder = soup.new_tag("div")
+        # Only this table's own cells: a cell holding a nested table keeps its whole content
+        # (a page laid out in one big table holds the verse beside small nested tables, and
+        # skipping that cell lost whole chapters). Nested tables are unwrapped or dropped later.
         for cell in table.find_all(["td", "th"]):
-            if cell.find(["td", "th"]):
-                continue  # a cell holding a nested table: its inner cells are taken instead
+            if cell.find_parent("table") is not table:
+                continue
             block = soup.new_tag("div")
             for child in list(cell.children):
                 block.append(child.extract())
             holder.append(block)
         table.replace_with(holder)
 
+def drop_line_numbers(soup):
+    """Verse line numbers ("5", "10", "30") printed beside a poem are the editor's, not the
+    author's: a span holding only a number, floated to the margin or carrying the number as
+    its id (pl.wikisource), is dropped so the number doesn't start a line of the poem."""
+    for span in soup.find_all("span"):
+        number = span.get_text().replace("\xa0", " ").strip()
+        if not number.isdigit():
+            continue
+        style = span.get("style", "").replace(" ", "").lower()
+        if "float:right" in style or "float:left" in style or span.get("id") == number:
+            span.decompose()
+
 def clean(html):
     soup = BeautifulSoup(html, "lxml")
     unwrap_verse_tables(soup)
+    drop_line_numbers(soup)
     for selector in DROP_SELECTORS:
         for node in soup.select(selector): node.decompose()
     return soup
@@ -166,6 +182,15 @@ def is_index_page(sub, all_titles, items):
     text = sum(len(i[1]) for i in items if i[0] == "block")
     return has_children and text < 4000
 
+VOLUME_TITLES = re.compile(r"^(tom|volume|vol\.|band|tome|tomo|deel|том|часть)\s+[\divxlc]+\b", re.I)
+
+def is_volume_title_page(sub, items):
+    """A volume's title page ("Tom I": the printer, the year, the subscribers' list) holds no
+    text of the author's; a short subpage named only for its volume is skipped."""
+    name = sub["title"].split("/")[-1].strip()
+    letters = sum(len(re.sub(r"\W", "", i[1])) for i in items if i[0] == "block")
+    return bool(VOLUME_TITLES.match(name)) and letters < 400
+
 def convert(record, work_title, part_word="partea"):
     chapters = []
     if record.get("subpages"):
@@ -175,6 +200,7 @@ def convert(record, work_title, part_word="partea"):
             items = page_items(sub["html"])
             if is_index_page(sub, all_titles, items): continue
             if not any(i[0] == "block" for i in items): continue
+            if is_volume_title_page(sub, items): continue
             sub_title = re.sub(r"(?<=[^\W\d_])(\d{1,2})$", r" \1", sub["title"].split("/")[-1].strip())
             sub_chapters = chapters_from_items(items, sub_title)
             if len(sub_chapters) == 1 or sum(len(c[1]) for c in sub_chapters) < 20000:
@@ -192,6 +218,8 @@ def convert(record, work_title, part_word="partea"):
         body = re.sub(r"\[\[\.\./[^\]]*\]\]\s*(?:→)?", "", body).strip()
         # A row of stars typed in the source is a scene break, not escaped text.
         body = re.sub(r"^(?:\\\* ?){3}$", "* * *", body, flags=re.M)
+        # A <poem> tag typed wrongly in the source shows as text ("\\</poem\\>"); drop it.
+        body = re.sub(r"\\?</?\s*poem\s*\\?>", "", body, flags=re.I)
         if body: out.extend(split_long(title[:120], body, part_word))
     return out
 
