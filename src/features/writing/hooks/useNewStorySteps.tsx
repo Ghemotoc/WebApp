@@ -1,6 +1,6 @@
 /**
  * useNewStorySteps: the five steps of the new story wizard and which answers each holds (CALM-9,
- * board D02: "1 The basics, 2 Type, tags and setting (Category before FORMS-1), 3 Cover, 4 Who can read it, 5 Labels,
+ * board D02: "1 The basics, 2 Format, tags and setting (Category before FORMS-1), 3 Cover, 4 Who can read it, 5 Labels,
  * rating and AI").
  *
  * Who uses it: NewStoryPage, which hands the steps to StepWizard. Each step wraps the same form

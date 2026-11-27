@@ -81,7 +81,7 @@ test.describe('create a story (S1-E3-01)', () => {
     await expect(page.locator('li[aria-current="step"] h2')).toHaveText('The basics');
 
     // Step 2: category, tags and setting. The basics fold to their summary with a Change button.
-    await goToNewStoryStep(page, 'Type, tags and setting');
+    await goToNewStoryStep(page, 'Format, tags and setting');
     // Since S1-E3-01 (26 Nov 2026) the language is named in the interface language, here English.
     await expect(page.getByText(`${longTitle} · Romanian`)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Change The basics' })).toBeVisible();
@@ -200,7 +200,7 @@ test.describe('create a story (S1-E3-01)', () => {
     await page.goto('/write/new');
     await page.getByRole('textbox', { name: 'Title' }).fill('Fata care repara radiouri (teen)');
     // The genre list has loaded, and holds no 18+ genre for a 17-year-old (genres_select_public).
-    await goToNewStoryStep(page, 'Type, tags and setting');
+    await goToNewStoryStep(page, 'Format, tags and setting');
     await expect(page.locator('datalist option[value="Cosy mystery"]')).toHaveCount(1);
     await expect(page.locator('datalist option[value="Erotica"]')).toHaveCount(0);
     await goToLastNewStoryStep(page);
