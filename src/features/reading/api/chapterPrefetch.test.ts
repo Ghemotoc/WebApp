@@ -13,11 +13,34 @@ import {
 const fetchChapter = vi.fn();
 vi.mock('./chapter', () => ({ fetchChapter: (...args: unknown[]) => fetchChapter(...args) }));
 vi.mock('@/lib/supabase', () => ({ getSupabaseClient: async () => ({}) }));
+// The read sent before the library loads; it steps aside unless a test says otherwise.
+const readChapterEarly = vi.fn();
+vi.mock('./chapterEarlyRead', () => ({
+  readChapterEarly: (...args: unknown[]) => readChapterEarly(...args),
+}));
 
 describe('prefetchChapter', () => {
   beforeEach(() => {
     fetchChapter.mockReset();
     fetchChapter.mockResolvedValue({ code: 'abcdefgh' });
+    readChapterEarly.mockReset();
+    readChapterEarly.mockResolvedValue(undefined);
+  });
+
+  it('takes the early answer when it comes, without asking through the library', async () => {
+    readChapterEarly.mockResolvedValueOnce({ code: 'early' });
+    prefetchChapter('statia-meteo', 'abcdefgh');
+    await expect(takePrefetchedChapter('statia-meteo', 'abcdefgh')).resolves.toEqual({
+      code: 'early',
+    });
+    expect(fetchChapter).not.toHaveBeenCalled();
+  });
+
+  it('keeps an early "may not see it" answer instead of asking again', async () => {
+    readChapterEarly.mockResolvedValueOnce(null);
+    prefetchChapter('statia-meteo', 'abcdefgh');
+    await expect(takePrefetchedChapter('statia-meteo', 'abcdefgh')).resolves.toBeNull();
+    expect(fetchChapter).not.toHaveBeenCalled();
   });
 
   it('starts the read at once, and the reader takes it exactly once', async () => {

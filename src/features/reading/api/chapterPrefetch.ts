@@ -12,8 +12,10 @@
  * settle before it looks (reader speed, 23 Nov 2026).
  * Who calls it: the reader route's loader (prefetchChapter) and hooks/useChapter.ts
  * (peekAnsweredChapter, forgetAnsweredChapter, takePrefetchedChapter).
- * What it calls: api/chapter.ts → get_chapter(), through the shared Supabase client, which reads
- * the stored session itself, so the answer is the one the signed-in reader would get; and
+ * What it calls: api/chapterEarlyRead.ts, which sends get_chapter() before the Supabase library
+ * has loaded (27 Nov 2026), and otherwise api/chapter.ts → get_chapter() through the shared
+ * Supabase client; both send the stored session, so the answer is the one the signed-in reader
+ * would get; and
  * prepareShortDateFormat() (src/lib/local-time.ts), so the date in the chapter's meta line is
  * ready before the chapter arrives, and holdForReader() (src/lib/readerFirst.ts), so the app's
  * other requests wait until the first paragraph is painted (the reader speed check, 25 Nov 2026).
@@ -23,6 +25,7 @@ import { holdForReader } from '@/lib/readerFirst';
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { fetchChapter, type ReaderChapter } from './chapter';
+import { readChapterEarly } from './chapterEarlyRead';
 import { errorShownByHook } from '@/lib/errorShownByHook';
 
 /** The answers started early, by "story/chapter"; each is taken once. */
@@ -49,8 +52,11 @@ export function prefetchChapter(storySlug: string, chapterCode: string): void {
   // Step 2: while the network works, make the meta line's date format (the page's language is
   // set before the router starts, in main.tsx).
   prepareShortDateFormat(document.documentElement.lang || 'ro');
-  // Step 3: start the read itself.
+  // Step 3: start the read itself: first straight away, without waiting for the Supabase
+  // library (chapterEarlyRead.ts); when that steps aside or fails, through the library.
   const read = (async () => {
+    const early = await readChapterEarly(storySlug, chapterCode);
+    if (early !== undefined) return early;
     const client = await getSupabaseClient();
     if (client === null) throw new Error('The app is not connected to its database.');
     return fetchChapter(client, storySlug, chapterCode);

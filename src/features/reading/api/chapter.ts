@@ -1,7 +1,8 @@
 /**
  * Reads one chapter for the reader and counts a read (story S1-E4-01a; ADR 0004).
  *
- * Who calls it: hooks/useChapter.ts and hooks/useRecordRead.ts.
+ * Who calls it: hooks/useChapter.ts, hooks/useRecordRead.ts, api/chapterPrefetch.ts and
+ * api/chapterEarlyRead.ts (chapterFromAnswer, for the read sent before the library loads).
  * What it calls next: get_chapter(story_slug, chapter_code), the only way a reader reaches a
  * chapter's text. It answers nothing when the reader may not see the chapter: unpublished,
  * deleted, hidden by a moderator, rated above the reader's age or by someone either side blocks.
@@ -260,17 +261,51 @@ export async function fetchChapter(
   storySlug: string,
   chapterCode: string,
 ): Promise<ReaderChapter | null> {
+  // Step 1: ask get_chapter(), which decides whether this reader may see the chapter.
   const { data, error } = await client.rpc('get_chapter', {
     story_slug: storySlug,
     chapter_code: chapterCode,
   });
   if (error !== null) throw new Error(`Could not read the chapter: ${error.message}`);
-  if (data === null) return null;
+  // Step 2: turn the answer into the reader's shape.
+  return chapterFromAnswer(data, () => Promise.resolve(client));
+}
+
+/**
+ * Turns get_chapter()'s answer into the reader's shape. Shared by fetchChapter() and the early
+ * read in chapterEarlyRead.ts, which asks before the Supabase library has loaded.
+ *
+ * @param data - get_chapter()'s JSON answer; null when the reader may not see the chapter
+ * @param clientForPictures - gives the Supabase client; called only when the text has pictures,
+ *   because only their signed addresses need it
+ * @returns the chapter, or null when the reader may not see it
+ * Errors: throws when the pictures need the client and the app has no database settings.
+ */
+export async function chapterFromAnswer(
+  data: unknown,
+  clientForPictures: () => Promise<AppSupabaseClient | null>,
+): Promise<ReaderChapter | null> {
+  if (data === null || data === undefined) return null;
   // TRANSLATE-1b: this language edition doesn't have the chapter yet.
   if ((data as { missing_translation?: boolean }).missing_translation === true) {
-    return missingChapterFrom(data as unknown as MissingChapterRow);
+    return missingChapterFrom(data as MissingChapterRow);
   }
-  const row = data as unknown as ChapterRow;
+  const row = data as ChapterRow;
+  return {
+    ...chapterFactsFrom(row),
+    // Signed addresses for the pictures the reader may see; Storage refuses the others.
+    pictures: await picturesFrom(row.pictures, clientForPictures),
+    embeds: embedViewsFromJson(row.embeds),
+    editions: storyEditionsFrom(row.editions),
+    edition: editionFactsFrom(row.edition),
+    missingTranslation: null,
+  };
+}
+
+/** The chapter's own facts, everything but pictures, cards and editions. */
+function chapterFactsFrom(
+  row: ChapterRow,
+): Omit<ReaderChapter, 'pictures' | 'embeds' | 'editions' | 'edition' | 'missingTranslation'> {
   return {
     story: storyFrom(row.story),
     id: row.id,
@@ -293,13 +328,33 @@ export async function fetchChapter(
     isPoem: row.is_poem === true,
     textContinues: row.text_continues,
     body: row.body,
-    // Signed addresses for the pictures the reader may see; Storage refuses the others.
-    pictures: await pictureViewsFromJson(client, row.pictures),
-    embeds: embedViewsFromJson(row.embeds),
-    editions: storyEditionsFrom(row.editions),
-    edition: editionFactsFrom(row.edition),
-    missingTranslation: null,
   };
+}
+
+/**
+ * The pictures in the text, with signed addresses. Most chapters have none, and then the
+ * Supabase client isn't needed at all, so an early read never waits for the library.
+ *
+ * @param pictures - the answer's pictures JSON
+ * @param clientForPictures - gives the Supabase client
+ * @returns the pictures by ID; {} for none
+ * Errors: throws when there are pictures and the app has no database settings.
+ */
+async function picturesFrom(
+  pictures: Json | undefined,
+  clientForPictures: () => Promise<AppSupabaseClient | null>,
+): Promise<Record<string, PictureView>> {
+  // Step 1: no pictures (no JSON, or an empty object): nothing to sign.
+  const hasPictures =
+    typeof pictures === 'object' &&
+    pictures !== null &&
+    !Array.isArray(pictures) &&
+    Object.keys(pictures).length > 0;
+  if (!hasPictures) return {};
+  // Step 2: the signed addresses come from Storage through the client.
+  const client = await clientForPictures();
+  if (client === null) throw new Error('The app is not connected to its database.');
+  return pictureViewsFromJson(client, pictures);
 }
 
 /**
