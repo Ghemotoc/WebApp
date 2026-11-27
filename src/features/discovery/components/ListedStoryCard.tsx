@@ -82,6 +82,7 @@ export function ListedStoryCard(props: {
       language={story.languageCode}
       metaLine={props.metaLine ?? t('card.meta', { writer: writerLine, count: story.chapterCount })}
       cover={cover}
+      coverPenName={story.writer.displayName}
       href={`/s/${story.slug}`}
       wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
       pill={

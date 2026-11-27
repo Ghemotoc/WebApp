@@ -70,6 +70,7 @@ export function BookshelfPlaces({ list, places }: { list: ReadingList; places: n
         const drawn = (
           <DrawnCover
             title={story.title}
+            penName={story.writer.displayName}
             choice={covers[index] ?? resolveCoverChoice(story)}
             size="tile"
             isDecorative

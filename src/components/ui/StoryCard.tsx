@@ -15,6 +15,9 @@
  *     dark dot with a white ring at the cover's top right, the same in every theme because covers
  *     keep their colours; the caller says it in words in the meta line too (design books item 16,
  *     "Show what is inside").
+ *   - The cover's paper label carries the writer's pen name under the title (the classic's author
+ *     for a classic), as boards A04-Read, C01-Library and A08-SearchResults draw it (the
+ *     gh-book__by line; Robert, 27 Nov 2026, 19:02 and 19:03 UTC: on every large cover, Home too).
  * Who uses it: rows on Read and Discover (ListedStoryCard), the Library, profiles and /design.
  */
 import type { ReactNode } from 'react';
@@ -46,6 +49,11 @@ export interface StoryCardProps {
    * read it in that language (WCAG 3.1.2; S1-E3-01). Left out, the title takes the page's.
    */
   language?: string;
+  /**
+   * The name drawn on the cover under the title: the writer's pen name, or the author for a
+   * classic (boards A04, C01, A08). Left out, the cover shows the title only.
+   */
+  coverPenName?: string;
 }
 
 /**
@@ -76,11 +84,20 @@ export function StoryCard({
   progressPercent,
   hasNewChapter = false,
   language,
+  coverPenName,
 }: StoryCardProps) {
   const { t } = useTranslation();
-  // The drawn cover: decorative, because the title is repeated as text below.
+  // The drawn cover: decorative, because the title is repeated as text below. The pen name sits
+  // on its label under the title (boards A04, C01, A08).
   const drawnCover = (
-    <DrawnCover title={title} choice={cover} size="shelf" isDecorative className="w-full" />
+    <DrawnCover
+      title={title}
+      penName={coverPenName}
+      choice={cover}
+      size="shelf"
+      isDecorative
+      className="w-full"
+    />
   );
   return (
     // min-w-0 with break-words on the title: a title that is one long word wraps inside the card

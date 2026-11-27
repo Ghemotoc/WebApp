@@ -65,6 +65,7 @@ export function HubContinueReading() {
         title={item.story.title}
         metaLine={placeLine(item, t)}
         cover={resolveCoverChoice(item.story)}
+        coverPenName={item.story.writer.displayName}
         href={continueAddress(item.story.slug, item.place)}
         progressPercent={item.place.percent}
         wrapCover={(drawn) => <StoryCoverArt story={item.story} drawn={drawn} className="w-full" />}
