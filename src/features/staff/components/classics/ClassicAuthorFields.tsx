@@ -5,6 +5,7 @@
  * Who shows it: ClassicWorkForm. What it calls: onChange; the new author is added by the form on
  * Save (admin_add_classic_author()), so nothing is saved until then.
  */
+import { historicalYear, yearFieldText } from '@/lib/historicalYear';
 import { useTranslation } from 'react-i18next';
 
 import { Select } from '@/components/ui/Select';
@@ -48,7 +49,10 @@ export function ClassicAuthorFields({
     { value: '', label: t('classics.form.pickAuthor') },
     ...authors.map((author) => ({
       value: author.id,
-      label: t('classics.form.authorOption', { name: author.name, year: author.diedYear }),
+      label: t('classics.form.authorOption', {
+        name: author.name,
+        year: historicalYear(author.diedYear, t),
+      }),
     })),
     { value: newAuthorChoice, label: t('classics.form.newAuthor') },
   ];
@@ -78,11 +82,12 @@ export function ClassicAuthorFields({
           <TextInput
             id="classic-new-author-died"
             label={t('classics.form.newAuthorDied')}
-            inputMode="numeric"
-            maxLength={4}
+            hint={t('classics.form.yearBeforeChristHint')}
+            maxLength={5}
             value={newAuthor.diedYear}
             onChange={(event) =>
-              onNewAuthor({ ...newAuthor, diedYear: event.target.value.replace(/\D/g, '') })
+              // BC-YEARS: a leading minus marks a year before Christ ("-428").
+              onNewAuthor({ ...newAuthor, diedYear: yearFieldText(event.target.value) })
             }
           />
         </div>

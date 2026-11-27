@@ -12,6 +12,7 @@
  * Who shows it: ClassicEditionsPanel. What it calls: onEdit(storyId). Plain rows with a 1 px line
  * between them (DoD design rules); no doodles (staff screens).
  */
+import { historicalYear } from '@/lib/historicalYear';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -54,7 +55,9 @@ function Cell({ label, children }: { label: string; children: ReactNode }) {
 function RightsText({ edition }: { edition: ClassicWork }) {
   const { t } = useTranslation('staff');
   if (edition.languageCode === edition.originalLanguage) {
-    return t('classics.editions.rightsOriginal', { year: edition.authorDiedYear });
+    return t('classics.editions.rightsOriginal', {
+      year: historicalYear(edition.authorDiedYear, t),
+    });
   }
   if (edition.translationRights === '') return t('classics.editions.notChecked');
   return t(`classics.editions.rightsValues.${edition.translationRights}`);

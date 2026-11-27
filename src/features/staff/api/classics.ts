@@ -8,6 +8,7 @@
  * caller's role (owner and admin) and staff session itself, decides the public-domain check and
  * writes the audit log; this file only passes the answers on.
  */
+import { yearFromField } from '@/lib/historicalYear';
 import type { Enums } from '@/lib/database.types';
 import type { AppSupabaseClient } from '@/lib/supabase';
 
@@ -291,7 +292,8 @@ export async function addClassicAuthor(
  * @returns the details JSON for admin_save_classic_work()
  */
 export function detailsJson(details: ClassicDetails) {
-  const yearOrNull = (text: string) => (text.trim() === '' ? null : Number(text));
+  // BC-YEARS: "-" alone is no year yet; "-428" is 428 BC.
+  const yearOrNull = yearFromField;
   return {
     title: details.title.trim(),
     blurb: details.blurb.trim(),
