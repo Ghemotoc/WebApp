@@ -15,7 +15,8 @@
  * Test data: one chapter made in SQL on adult_writer's seed story "The girl who fixed radios";
  * only that chapter is removed after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { editorSaveStatus } from './support/chapterEditor';
