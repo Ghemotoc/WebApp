@@ -288,10 +288,19 @@
     "insert": "Inserează desenul",
     "cancel": "Renunță"
   },
-  "poemMode": {
-    "hint": "Enter începe un vers nou, iar un al doilea Enter o strofă nouă. Spațiile de la începutul unui vers rămân, iar cititorii văd fiecare vers așa cum l-ai scris.",
-    "failed": "Nu am putut schimba modul poezie. Încearcă din nou.",
-    "button": "Poezie"
+  "layout": {
+    "label": "Așezare",
+    "options": {
+      "prose": "Proză",
+      "play": "Teatru",
+      "poem": "Poezie"
+    },
+    "hints": {
+      "prose": "Proză: paragrafe, ca într-o poveste.",
+      "play": "Teatru: acte și scene, numele personajelor, replici și indicații de scenă.",
+      "poem": "Poezie: Enter începe un vers nou, iar un al doilea Enter o strofă nouă. Spațiile de la începutul unui vers rămân, iar cititorii văd fiecare vers așa cum l-ai scris."
+    },
+    "failed": "Nu am putut schimba așezarea. Încearcă din nou."
   },
   "saveWord": {
     "saved": "Salvat",
