@@ -26,6 +26,7 @@ import {
 
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
 import { hmacHex } from './signup-context';
+import { withLetterLayout } from './letter-email';
 
 /** What the handler needs from its surroundings. */
 export interface NoticeOptions {
@@ -35,6 +36,9 @@ export interface NoticeOptions {
   secret: string | undefined;
   supportEmail: string;
   productName: string;
+  /** VITE_BRAND_COMPANY_NAME and the company's site, for the layout's footer. */
+  companyName?: string;
+  companySiteUrl?: string;
   sendEmail: SendEmail;
   now?: Date;
 }
@@ -226,11 +230,15 @@ export async function handleNotice(request: Request, options: NoticeOptions): Pr
   const saved = await saveNotice(notice, { ...options, secret: options.secret });
   if (saved === 'invalid') return json({ error: 'invalid' }, 400);
   if (saved === 'unavailable') return json({ error: 'unavailable' }, 503);
-  // Step 4: the acknowledgement; the notice is saved even if an email fails.
-  const acknowledged = await sendAcknowledgements(
-    acknowledgementEmails(notice, saved, options),
-    options,
+  // Step 4: the acknowledgement; the notice is saved even if an email fails. The notifier's copy
+  // gets the branded layout (server/letter-email.ts); the staff alert stays plain.
+  const siteUrl = new URL(request.url).origin;
+  const emails = acknowledgementEmails(notice, saved, options).map((email) =>
+    email.to === notice.notifierEmail
+      ? withLetterLayout(email, notice.language, { ...options, siteUrl })
+      : email,
   );
+  const acknowledged = await sendAcknowledgements(emails, options);
   return json({ ...saved, acknowledged }, 200);
 }
 

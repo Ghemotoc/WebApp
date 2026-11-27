@@ -137,13 +137,14 @@ export function userIdOf(accessToken: string): string | null {
 /**
  * Writes and sends one consent email.
  *
+ * @param details - the language, the placeholders' values and the site's address (for the logo)
  * @returns true when it left
  */
 export async function sendConsentEmail(
   options: ReadyOptions,
   kind: ConsentEmailKind,
   to: string,
-  details: { language: ConsentLanguage; values: Record<string, string> },
+  details: { language: ConsentLanguage; values: Record<string, string>; siteUrl: string },
 ): Promise<boolean> {
   const overrides = await options
     .readOverrides(details.language)
@@ -153,6 +154,8 @@ export async function sendConsentEmail(
     overrides,
     productName: options.productName,
     companyName: options.companyName,
+    supportEmail: options.sender.email,
+    siteUrl: details.siteUrl,
   });
   return options.sendEmail(email, options.sender).then(
     () => true,

@@ -49,7 +49,7 @@ afterEach(() => {
 
 describe('writing support emails', () => {
   it('an acknowledgement has the number in the subject and links to the ticket', () => {
-    const email = composeSupportEmail(claimed(), readers, 'https://site.test', sender);
+    const email = composeSupportEmail(claimed(), readers, { siteUrl: 'https://site.test', sender });
     expect(email.subject).toBe(
       'en:acknowledgementSubject{"number":1042,"subject":"Lost drafts","mergedInto":1042}',
     );
@@ -58,12 +58,10 @@ describe('writing support emails', () => {
   });
 
   it('someone without an account gets no link to the app', () => {
-    const email = composeSupportEmail(
-      claimed({ has_account: false }),
-      readers,
-      'https://site.test',
+    const email = composeSupportEmail(claimed({ has_account: false }), readers, {
+      siteUrl: 'https://site.test',
       sender,
-    );
+    });
     expect(email.text).not.toContain('acknowledgementInApp');
   });
 
@@ -71,8 +69,7 @@ describe('writing support emails', () => {
     const email = composeSupportEmail(
       claimed({ language: 'ro', both_languages: true, has_account: false }),
       readers,
-      'https://site.test',
-      sender,
+      { siteUrl: 'https://site.test', sender },
     );
     expect(email.text).toContain('ro:acknowledgementBody');
     expect(email.text).toContain('en:acknowledgementBody');
@@ -82,8 +79,7 @@ describe('writing support emails', () => {
     const email = composeSupportEmail(
       claimed({ kind: 'staff_reply', body: 'Your drafts are safe.', both_languages: true }),
       readers,
-      'https://site.test',
-      sender,
+      { siteUrl: 'https://site.test', sender },
     );
     expect(email.text.startsWith('Your drafts are safe.')).toBe(true);
     expect(email.text).toContain('en:replyHowToAnswer');
@@ -91,12 +87,10 @@ describe('writing support emails', () => {
   });
 
   it('the auto-solved email says so and how to reopen it (part h3a)', () => {
-    const email = composeSupportEmail(
-      claimed({ kind: 'auto_solved' }),
-      readers,
-      'https://site.test',
+    const email = composeSupportEmail(claimed({ kind: 'auto_solved' }), readers, {
+      siteUrl: 'https://site.test',
       sender,
-    );
+    });
     expect(email.subject).toBe(
       'en:autoSolvedSubject{"number":1042,"subject":"Lost drafts","mergedInto":1042}',
     );
@@ -105,12 +99,10 @@ describe('writing support emails', () => {
   });
 
   it('after a merge, says the new number and links to the ticket that stayed (part h4a)', () => {
-    const email = composeSupportEmail(
-      claimed({ kind: 'merged', merged_into: 1050 }),
-      readers,
-      'https://site.test',
+    const email = composeSupportEmail(claimed({ kind: 'merged', merged_into: 1050 }), readers, {
+      siteUrl: 'https://site.test',
       sender,
-    );
+    });
     expect(email.subject).toBe(
       'en:mergedSubject{"number":1042,"subject":"Lost drafts","mergedInto":1050}',
     );
@@ -119,12 +111,10 @@ describe('writing support emails', () => {
   });
 
   it('sets our Message-ID and threads under the person’s last email', () => {
-    const email = composeSupportEmail(
-      claimed({ in_reply_to: '<m1@example.test>' }),
-      readers,
-      'https://site.test',
+    const email = composeSupportEmail(claimed({ in_reply_to: '<m1@example.test>' }), readers, {
+      siteUrl: 'https://site.test',
       sender,
-    );
+    });
     expect(email.headers).toEqual({
       'Message-ID': '<support-00000000-0000-4000-8000-000000000001@example.test>',
       'In-Reply-To': '<m1@example.test>',

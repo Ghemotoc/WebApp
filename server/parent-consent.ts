@@ -97,6 +97,7 @@ async function requestConsent(request: Request, options: ReadyOptions): Promise<
   const link = `${new URL(request.url).origin}/parent-consent/answer#${token}`;
   const isSent = await sendConsentEmail(options, 'request', parentEmail, {
     language,
+    siteUrl: new URL(request.url).origin,
     values: {
       handle: stored.data.handle,
       link,
@@ -136,6 +137,7 @@ async function sendFollowUp(
     await sendConsentEmail(options, 'refused', stored.writer_email, {
       language: writerLanguage,
       values: { handle },
+      siteUrl: new URL(link).origin,
     });
     return;
   }
@@ -147,6 +149,7 @@ async function sendFollowUp(
   await sendConsentEmail(options, kind, stored.parent_email, {
     language: answer.language,
     values: { handle, link, date, spotlightLink },
+    siteUrl: new URL(link).origin,
   });
 }
 

@@ -87,6 +87,7 @@ export async function requestSpotlight(request: Request, options: ReadyOptions):
   const isSent = await sendConsentEmail(options, 'spotlightRequest', stored.data.parent_email, {
     language: languageOf(stored.data.language),
     values: { handle: stored.data.handle ?? '', link },
+    siteUrl: new URL(request.url).origin,
   });
   return isSent ? json({ sent: true }, 200) : fail('unavailable');
 }
@@ -119,6 +120,7 @@ export async function answerSpotlight(request: Request, options: ReadyOptions): 
     const kind = answer.decision === 'agree' ? 'spotlightAgreed' : 'spotlightWithdrawn';
     await sendConsentEmail(options, kind, stored.data.parent_email, {
       language: answer.language,
+      siteUrl: new URL(request.url).origin,
       values: {
         handle: stored.data.handle ?? '',
         link: `${new URL(request.url).origin}/parent-consent/spotlight#${answer.token}`,

@@ -23,6 +23,8 @@ import englishEmail from '../src/locales/en/email.json';
 import romanianEmail from '../src/locales/ro/email.json';
 
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
+import { escapeHtml, renderEmailBody, renderEmailDocument, type EmailBrand } from './email-layout';
+import { letterBrand, letterContent } from './letter-email';
 import { fillPlaceholders } from './notification-emails';
 import { textOf } from './send-email';
 import { sameText } from './same-text';
@@ -179,14 +181,14 @@ function mainParts(
 }
 
 /**
- * The body of one email in one language.
+ * The paragraphs of one email in one language, before the sign-off.
  *
  * @param claimed - the email
  * @param read - the text reader for the language
  * @param link - the person's ticket in the app ("" for someone without an account)
- * @returns the text
+ * @returns the paragraphs
  */
-function bodyIn(claimed: ClaimedSupportEmail, read: ReadText, link: string): string {
+function linesIn(claimed: ClaimedSupportEmail, read: ReadText, link: string): string[] {
   const values = {
     number: claimed.number,
     subject: claimed.subject,
@@ -196,8 +198,59 @@ function bodyIn(claimed: ClaimedSupportEmail, read: ReadText, link: string): str
   const parts = mainParts(claimed, read, values);
   // Only someone with an account can open the ticket in the app.
   if (claimed.has_account) parts.push(read(emailKeys[claimed.kind].inApp, values));
-  parts.push(read('safetyLine'), read('signOff'));
-  return parts.join('\n\n');
+  parts.push(read('safetyLine'));
+  return parts;
+}
+
+/**
+ * The body of one email in one language.
+ *
+ * @returns the text: the paragraphs, then the sign-off
+ */
+function bodyIn(claimed: ClaimedSupportEmail, read: ReadText, link: string): string {
+  return [...linesIn(claimed, read, link), read('signOff')].join('\n\n');
+}
+
+/** What writing a support email needs besides the email itself. */
+export interface SupportEmailContext {
+  /** The site's address, for the link to the ticket and the logo. */
+  siteUrl: string;
+  /** The support inbox. */
+  sender: EmailSender;
+  /** The branded layout's parts; left out, the email goes as plain text only. */
+  layout?: { brand: EmailBrand; pasteLabels: Record<'ro' | 'en', string> };
+}
+
+/**
+ * The branded HTML part: one card per language, in the same order as the text
+ * (server/letter-email.ts).
+ *
+ * @returns the HTML document
+ */
+function supportEmailHtml(
+  claimed: ClaimedSupportEmail,
+  parts: { languages: ('ro' | 'en')[]; readers: Record<'ro' | 'en', ReadText>; link: string },
+  layout: NonNullable<SupportEmailContext['layout']>,
+  subject: string,
+): string {
+  const bodies = parts.languages.map((language) => {
+    const read = parts.readers[language];
+    const letter = {
+      to: claimed.to,
+      subject,
+      language,
+      lines: linesIn(claimed, read, parts.link),
+      signOff: read('signOff'),
+      pasteLabel: layout.pasteLabels[language],
+      brand: layout.brand,
+    };
+    return renderEmailBody(letterContent(letter), layout.brand);
+  });
+  return renderEmailDocument({
+    lang: escapeHtml(parts.languages[0] ?? 'ro'),
+    title: escapeHtml(subject),
+    body: bodies.join('\n'),
+  });
 }
 
 /**
@@ -206,37 +259,41 @@ function bodyIn(claimed: ClaimedSupportEmail, read: ReadText, link: string): str
  *
  * @param claimed - the email
  * @param readers - a text reader per language
- * @param siteUrl - the site's address, for the link to the ticket
- * @param sender - the support inbox
- * @returns the email
+ * @param context - the site's address, the support inbox and the branded layout's parts
+ * @returns the email; with the layout's parts, it carries the branded HTML part too
  */
 export function composeSupportEmail(
   claimed: ClaimedSupportEmail,
   readers: Record<'ro' | 'en', ReadText>,
-  siteUrl: string,
-  sender: EmailSender,
+  context: SupportEmailContext,
 ): OutgoingEmail {
-  const main = claimed.language === 'en' ? readers.en : readers.ro;
-  // After a merge the conversation lives under the ticket that stayed, so the link goes there.
+  // Step 1: the languages, in order. A staff answer is written once, in the language staff
+  // chose: only the acknowledgement doubles.
+  const languages: ('ro' | 'en')[] = [claimed.language === 'en' ? 'en' : 'ro'];
+  if (claimed.both_languages && claimed.kind === 'acknowledgement') languages.push('en');
+  const main = readers[languages[0] ?? 'ro'];
+  // Step 2: after a merge the conversation lives under the ticket that stayed, so the link goes
+  // there.
   const linkNumber = claimed.merged_into ?? claimed.number;
-  const link = claimed.has_account ? `${siteUrl}/support/${String(linkNumber)}` : '';
-  const subjectKey = emailKeys[claimed.kind].subject;
-  const bodies = [bodyIn(claimed, main, link)];
-  // A staff answer is written once, in the language staff chose: only the acknowledgement doubles.
-  if (claimed.both_languages && claimed.kind === 'acknowledgement') {
-    bodies.push(bodyIn(claimed, readers.en, link));
-  }
-  return {
+  const link = claimed.has_account ? `${context.siteUrl}/support/${String(linkNumber)}` : '';
+  const subject = main(emailKeys[claimed.kind].subject, {
+    number: claimed.number,
+    subject: claimed.subject,
+    mergedInto: linkNumber,
+  });
+  // Step 3: the plain text, each language under the last, and the branded part beside it.
+  const bodies = languages.map((language) => bodyIn(claimed, readers[language], link));
+  const email: OutgoingEmail = {
     to: claimed.to,
-    subject: main(subjectKey, {
-      number: claimed.number,
-      subject: claimed.subject,
-      mergedInto: linkNumber,
-    }),
+    subject,
     text: bodies.join('\n\n— English —\n\n'),
-    replyTo: sender.email,
-    headers: threadingHeaders(claimed, sender),
+    replyTo: context.sender.email,
+    headers: threadingHeaders(claimed, context.sender),
   };
+  if (context.layout !== undefined) {
+    email.html = supportEmailHtml(claimed, { languages, readers, link }, context.layout, subject);
+  }
+  return email;
 }
 
 /**
@@ -258,6 +315,27 @@ async function readersFor(options: SupportEmailOptions): Promise<Record<'ro' | '
 }
 
 /**
+ * The branded layout's parts for the support emails: the brand and the "Or paste this link"
+ * words in each language, with the admins' overrides.
+ *
+ * @param siteUrl - the site's address, where the logo is served
+ * @returns the parts
+ */
+async function layoutFor(
+  options: SupportEmailOptions,
+  siteUrl: string,
+): Promise<NonNullable<SupportEmailContext['layout']>> {
+  const pasteLabelIn = async (locale: 'ro' | 'en') => {
+    const overrides = await options.readOverrides(locale).catch(() => new Map<string, string>());
+    return textOf(defaultTexts[locale], overrides, 'pasteLink', options);
+  };
+  return {
+    brand: letterBrand({ ...options, supportEmail: options.sender.email, siteUrl }),
+    pasteLabels: { ro: await pasteLabelIn('ro'), en: await pasteLabelIn('en') },
+  };
+}
+
+/**
  * Sends each email, carrying on past a failure.
  *
  * @returns the IDs of the emails that left
@@ -268,10 +346,15 @@ async function sendEach(
   options: SupportEmailOptions,
 ): Promise<string[]> {
   const readers = await readersFor(options);
+  const context: SupportEmailContext = {
+    siteUrl,
+    sender: options.sender,
+    layout: await layoutFor(options, siteUrl),
+  };
   const sentIds: string[] = [];
   for (const claimed of claimedEmails) {
     try {
-      const email = composeSupportEmail(claimed, readers, siteUrl, options.sender);
+      const email = composeSupportEmail(claimed, readers, context);
       await options.sendEmail(email, options.sender);
       sentIds.push(claimed.email_id);
     } catch {

@@ -25,6 +25,7 @@ import {
 } from '../src/schemas/teacherCheck';
 
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
+import { letterBrand, letterEmail } from './letter-email';
 import { newConsentToken, userIdOf } from './parent-consent';
 import { bearerToken } from './picture-check';
 import { textOf } from './send-email';
@@ -136,13 +137,28 @@ async function linkEmail(
   language: TeacherCheckLanguage,
   link: string,
 ): Promise<OutgoingEmail> {
+  // Step 1: the wording, with the admins' overrides and the link filled in.
   const overrides = await options.readOverrides(language).catch(() => new Map<string, string>());
   const names = { productName: options.productName, companyName: options.companyName };
   const read = (path: string) =>
     textOf(defaultTexts[language], overrides, path, names).split('{{link}}').join(link);
   const lines = ['teacherCheck.linkBody', 'teacherCheck.linkAction', 'teacherCheck.linkNotYou'];
-  const text = [...lines.map(read), read('signOff'), read('madeBy')].join('\n\n');
-  return { to, subject: read('teacherCheck.linkSubject'), text };
+  // Step 2: the plain text and the branded layout (server/letter-email.ts); the logo is served
+  // from the site the link points at.
+  return letterEmail({
+    to,
+    subject: read('teacherCheck.linkSubject'),
+    language,
+    lines: lines.map(read),
+    signOff: read('signOff'),
+    madeBy: read('madeBy'),
+    pasteLabel: read('pasteLink'),
+    brand: letterBrand({
+      ...names,
+      supportEmail: options.sender.email,
+      siteUrl: new URL(link).origin,
+    }),
+  });
 }
 
 /**

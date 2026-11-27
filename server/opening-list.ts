@@ -30,6 +30,7 @@ import { openingListRequestSchema, type OpeningListRequest } from '../src/schema
 
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
 import { fillPlaceholders } from './notification-emails';
+import { letterBrand, letterEmail } from './letter-email';
 import { textOf } from './send-email';
 import { hmacHex } from './signup-context';
 import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
@@ -148,6 +149,21 @@ async function readerFor(options: SharedOptions, language: OpeningLanguage) {
 }
 
 /**
+ * The layout's brand for the list's emails (server/letter-email.ts).
+ *
+ * @param siteUrl - the site's address, where the logo is served
+ * @returns the brand
+ */
+function brandOf(options: SharedOptions, siteUrl: string) {
+  return letterBrand({
+    productName: options.productName,
+    companyName: options.companyName,
+    supportEmail: options.sender.email,
+    siteUrl,
+  });
+}
+
+/**
  * Writes the confirm email: why it came, the confirm link, what happens if it wasn't them, and
  * the link to leave the list.
  *
@@ -161,9 +177,16 @@ export async function confirmEmail(
 ): Promise<OutgoingEmail> {
   const read = await readerFor(options, language);
   const lines = ['confirmBody', 'confirmAction', 'confirmNotYou', 'confirmRemove'];
-  const body = lines.map((line) => read(`openingList.${line}`, links));
-  const text = [...body, read('signOff'), read('madeBy')].join('\n\n');
-  return { to, subject: read('openingList.confirmSubject', links), text };
+  return letterEmail({
+    to,
+    subject: read('openingList.confirmSubject', links),
+    language,
+    lines: lines.map((line) => read(`openingList.${line}`, links)),
+    signOff: read('signOff'),
+    madeBy: read('madeBy'),
+    pasteLabel: read('pasteLink'),
+    brand: brandOf(options, new URL(links.confirmLink).origin),
+  });
 }
 
 /**
@@ -183,9 +206,16 @@ export async function openingEmail(
     signUpLink: `${siteUrl}/sign-up`,
   };
   const lines = ['openBody', 'openAction', 'openOnce'];
-  const body = lines.map((line) => read(`openingList.${line}`, values));
-  const text = [...body, read('signOff'), read('madeBy')].join('\n\n');
-  return { to: claimed.to, subject: read('openingList.openSubject', values), text };
+  return letterEmail({
+    to: claimed.to,
+    subject: read('openingList.openSubject', values),
+    language,
+    lines: lines.map((line) => read(`openingList.${line}`, values)),
+    signOff: read('signOff'),
+    madeBy: read('madeBy'),
+    pasteLabel: read('pasteLink'),
+    brand: brandOf(options, siteUrl),
+  });
 }
 
 /**
