@@ -43,13 +43,26 @@ function blockAfter(css: string, selectorStart: string): string {
 }
 
 describe('the main website glass on this app (GLASS-2)', () => {
-  it("gives the main look's action buttons one flat plum and cream text", () => {
+  it("gives the main look's action buttons one flat plum and pure white text", () => {
     const mainLook = blockAfter(tokensCss, ':root,');
     // Robert, 20 Nov 2026: flat plum #48125D, replacing the 11 Nov Revolver #2A0E33 (CALM-1).
     expect(mainLook).toContain('--plum-from: #48125d;');
     expect(mainLook).toContain('--plum-to: #48125d;');
-    expect(mainLook).toContain('--on-plum: #fbf7ec;');
+    expect(mainLook).toContain('--on-plum: #ffffff;');
     expect(mainLook).toContain('--plum-hover-from: #672786;');
+  });
+
+  it('writes every text on a dark fill in pure white, day and night', () => {
+    // Robert, 27 Nov 2026: a widget with a dark background always has #ffffff text, never cream.
+    const mainLook = blockAfter(tokensCss, ':root,');
+    for (const token of ['--on-primary', '--chip-on-text', '--band-text', '--on-plum']) {
+      expect(mainLook).toContain(`${token}: #ffffff;`);
+    }
+    expect(tokensCss).toContain('--color-on-featured: #ffffff;');
+    expect(tokensCss).toContain('--color-on-featured-soft: #ffffff;');
+    // At night a deep band is a dark box, so its text is pure white too.
+    const nightBand = blockAfter(indexCss, "[data-theme='night'] :is(.glass-band-deep");
+    expect(nightBand).toContain('--on-primary: #ffffff;');
   });
 
   it('gives every look that sets its own button colours a hover and press colour', () => {

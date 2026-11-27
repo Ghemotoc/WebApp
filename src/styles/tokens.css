@@ -116,9 +116,10 @@
   --note-paper: #fff4cc;
   --on-note: #2a0e33;
   --primary: #48125d;
-  --on-primary: #fbf7ec;
+  /* Text on a plum fill is pure white (Robert, 27 Nov 2026), never cream. */
+  --on-primary: #ffffff;
   --chip-on: #48125d;
-  --chip-on-text: #fbf7ec;
+  --chip-on-text: #ffffff;
   /* The theme accent (buttons, active tab, bars, dots, switches, the logo): Lilac mist is plum.
      Bundle G2 sets one per theme (Robert, 7 Nov 2026, 17:52 and 18:44); at night it is a light
      Valentino #C4A6CE (23 Nov 2026). */
@@ -135,8 +136,9 @@
      keep their own accent gradient until CALM-2 makes every main button flat. */
   --plum-from: #48125d;
   --plum-to: #48125d;
-  /* Text on the main buttons: the website's cream in the main look, white elsewhere. */
-  --on-plum: #fbf7ec;
+  /* Text on the main buttons: pure white, as on every dark fill (Robert, 27 Nov 2026: text on a
+     dark background is always pure white; it replaces the website's cream #fbf7ec). */
+  --on-plum: #ffffff;
   /* Hover, press and current page: the brighter plum of the logo (GLASS-2). Every other look
      uses its own accent made a little lighter, as light as white text still reads at 4.5:1. */
   --plum-hover-from: #672786;
@@ -268,7 +270,7 @@
    * so every rule that reads them goes flat at once. White text reads at 4.5:1 or more on each
    * (contrast-pairs.ts). Staff choosing their own band colours waits for GENRE-LOOK-1.
    */
-  --band-text: #fbf7ec;
+  --band-text: #ffffff;
   --band-plum-from: #48125d;
   --band-plum-to: #48125d;
   --band-sage-from: #005c42;
@@ -1410,12 +1412,13 @@
 /* Tailwind classes from the tokens: bg-paper, text-ink, border-control-border and so on. */
 @theme inline {
   /* Featured this week on Discover (S1-E5-10; board Discover): the board's dark plum card with
-   * light text, the same in both themes; #fbf7ec on #2a0e33 is about 16:1, on #672786 about 9:1. */
+   * pure white text, the same in both themes, the sub-lines included (Robert, 27 Nov 2026: text on a
+   * dark background is always #ffffff); white on #2a0e33 is about 17:1, on #672786 about 9.5:1. */
   --color-featured-from: #2a0e33;
   --color-featured-via: #481c5f;
   --color-featured-to: #672786;
-  --color-on-featured: #fbf7ec;
-  --color-on-featured-soft: #e5d7ea;
+  --color-on-featured: #ffffff;
+  --color-on-featured-soft: #ffffff;
   --color-paper: var(--paper);
   /* Cards paint the see-through glass; --surface stays the solid look-alike for the contrast test. */
   --color-surface: var(--surface-glass);
