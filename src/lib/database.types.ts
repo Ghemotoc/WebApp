@@ -6704,6 +6704,9 @@ export type Database = {
           birthday_month: number | null;
           checks_personal_details: boolean | null;
           colour_mode: string;
+          confirm_reminder_attempts: number;
+          confirm_reminder_claimed_at: string | null;
+          confirm_reminder_sent_at: string | null;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
           country_code: string | null;
@@ -6783,6 +6786,9 @@ export type Database = {
           birthday_month?: number | null;
           checks_personal_details?: boolean | null;
           colour_mode?: string;
+          confirm_reminder_attempts?: number;
+          confirm_reminder_claimed_at?: string | null;
+          confirm_reminder_sent_at?: string | null;
           consent_grace_until?: string | null;
           country_chosen_at?: string | null;
           country_code?: string | null;
@@ -6839,6 +6845,9 @@ export type Database = {
           birthday_month?: number | null;
           checks_personal_details?: boolean | null;
           colour_mode?: string;
+          confirm_reminder_attempts?: number;
+          confirm_reminder_claimed_at?: string | null;
+          confirm_reminder_sent_at?: string | null;
           consent_grace_until?: string | null;
           country_chosen_at?: string | null;
           country_code?: string | null;
@@ -13602,6 +13611,9 @@ export type Database = {
           birthday_month: number | null;
           checks_personal_details: boolean | null;
           colour_mode: string;
+          confirm_reminder_attempts: number;
+          confirm_reminder_claimed_at: string | null;
+          confirm_reminder_sent_at: string | null;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
           country_code: string | null;
@@ -14529,6 +14541,12 @@ export type Database = {
       compute_story_pairs: { Args: Record<PropertyKey, never>; Returns: number };
       compute_story_scores: { Args: Record<PropertyKey, never>; Returns: number };
       confirm_opening_list: { Args: { token: string }; Returns: string };
+      confirm_reminder_claim: { Args: { batch_size?: number; worker_key: string }; Returns: Json };
+      confirm_reminder_is_due: { Args: { profile_id: string }; Returns: boolean };
+      confirm_reminder_mark_sent: {
+        Args: { profile_ids: string[]; worker_key: string };
+        Returns: number;
+      };
       confirm_teacher_email: { Args: { token: string }; Returns: Json };
       contact_topic_subject: { Args: { language: string; topic: string }; Returns: string };
       content_is_held_for_moderation: {
@@ -16042,6 +16060,9 @@ export type Database = {
           birthday_month: number | null;
           checks_personal_details: boolean | null;
           colour_mode: string;
+          confirm_reminder_attempts: number;
+          confirm_reminder_claimed_at: string | null;
+          confirm_reminder_sent_at: string | null;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
           country_code: string | null;
@@ -16912,6 +16933,9 @@ export type Database = {
           birthday_month: number | null;
           checks_personal_details: boolean | null;
           colour_mode: string;
+          confirm_reminder_attempts: number;
+          confirm_reminder_claimed_at: string | null;
+          confirm_reminder_sent_at: string | null;
           consent_grace_until: string | null;
           country_chosen_at: string | null;
           country_code: string | null;
@@ -17796,6 +17820,7 @@ export type Database = {
       rising_writers: { Args: { page_size?: number }; Returns: Json };
       rolling_retention: { Args: { after_days: number; joined_on: string }; Returns: number };
       romania_today: { Args: Record<PropertyKey, never>; Returns: string };
+      run_confirm_reminder_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_daily_metrics: { Args: Record<PropertyKey, never>; Returns: number };
       run_email_worker: { Args: Record<PropertyKey, never>; Returns: boolean };
       run_notification_jobs: { Args: Record<PropertyKey, never>; Returns: number };

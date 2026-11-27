@@ -10,6 +10,13 @@
     "button": "Confirmă adresa de email",
     "linkNote": "Linkul merge o singură dată și expiră după o oră."
   },
+  "confirmationReminder": {
+    "subject": "Contul te așteaptă: confirmă emailul",
+    "heading": "Confirmă adresa de email",
+    "body": "Te-ai înscris pe {{productName}}, dar adresa de email nu e confirmată încă. Apasă butonul ca s-o confirmi și să păstrezi contul. Un cont neconfirmat se închide la 30 de zile după înscriere.",
+    "button": "Confirmă adresa de email",
+    "linkNote": "Linkul merge o singură dată și expiră după o oră."
+  },
   "waitlistConfirmation": {
     "subject": "Ești pe listă: confirmă emailul",
     "heading": "Ești pe lista de așteptare",

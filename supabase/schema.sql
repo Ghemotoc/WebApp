@@ -14107,6 +14107,9 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "suggests_from_reading" boolean,
     "less_motion" boolean DEFAULT false NOT NULL,
     "high_contrast" boolean DEFAULT false NOT NULL,
+    "confirm_reminder_sent_at" timestamp with time zone,
+    "confirm_reminder_claimed_at" timestamp with time zone,
+    "confirm_reminder_attempts" integer DEFAULT 0 NOT NULL,
     CONSTRAINT "profiles_avatar_recipe_shape" CHECK ("public"."avatar_recipe_valid"("avatar_recipe")),
     CONSTRAINT "profiles_bio_length" CHECK (("char_length"("bio") <= 300)),
     CONSTRAINT "profiles_birth_month_is_a_month" CHECK ((("birth_month" >= 1) AND ("birth_month" <= 12))),
@@ -14320,6 +14323,10 @@ COMMENT ON COLUMN "public"."profiles"."less_motion" IS 'Whether the member turne
 
 
 COMMENT ON COLUMN "public"."profiles"."high_contrast" IS 'Whether the member turned "High contrast" on in Settings › Appearance: plain white pages (black at night), darker text and edges, the theme kept in its deep accent (bundle CONTRAST-1). The device''s own contrast setting still counts by itself.';
+
+
+
+COMMENT ON COLUMN "public"."profiles"."confirm_reminder_sent_at" IS 'When the one "confirm your email" reminder left (CONFIRM-1).';
 
 
 
@@ -22468,6 +22475,101 @@ ALTER FUNCTION "public"."confirm_opening_list"("token" "text") OWNER TO "postgre
 
 
 COMMENT ON FUNCTION "public"."confirm_opening_list"("token" "text") IS 'Confirms a "tell me when you open here" address from its emailed link (G5a; GDPR art. 7(1)).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer DEFAULT 20) RETURNS "jsonb"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  claimed jsonb := '[]'::jsonb;
+  due record;
+begin
+  -- Step 1: only our worker may ask.
+  if not public.email_worker_key_matches(worker_key) then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: the oldest due accounts nobody else is sending.
+  for due in
+    select profiles.id, users.email
+    from public.profiles
+    join auth.users on users.id = profiles.id
+    where public.confirm_reminder_is_due(profiles.id)
+      and (profiles.confirm_reminder_claimed_at is null
+           or profiles.confirm_reminder_claimed_at < now() - interval '15 minutes')
+    order by users.created_at
+    limit least(greatest(coalesce(batch_size, 20), 1), 50)
+    for update of profiles skip locked
+  loop
+    -- Step 3: claim it, so a second run doesn't send it too, and count the try.
+    update public.profiles
+    set confirm_reminder_claimed_at = now(),
+        confirm_reminder_attempts = profiles.confirm_reminder_attempts + 1
+    where profiles.id = due.id;
+    claimed := claimed || jsonb_build_array(jsonb_build_object('id', due.id, 'email', due.email));
+  end loop;
+  return claimed;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) IS 'The reminder worker claims the "confirm your email" reminders due now (CONFIRM-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."confirm_reminder_is_due"("profile_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1
+    from public.profiles
+    join auth.users on users.id = profiles.id
+    where profiles.id = profile_id
+      and profiles.deleted_at is null
+      and profiles.confirm_reminder_sent_at is null
+      and profiles.confirm_reminder_attempts < 3
+      and users.email_confirmed_at is null
+      and users.email is not null
+      and users.created_at <= now() - make_interval(days => public.keep_setting('confirm_reminder_days', 7))
+      and coalesce(users.raw_app_meta_data ->> 'seed_persona', 'false') <> 'true'
+  );
+$$;
+
+
+ALTER FUNCTION "public"."confirm_reminder_is_due"("profile_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."confirm_reminder_is_due"("profile_id" "uuid") IS 'Internal: whether an account''s "confirm your email" reminder is due now (CONFIRM-1).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  marked integer;
+begin
+  if not public.email_worker_key_matches(worker_key) then
+    raise exception 'Not allowed.' using errcode = 'insufficient_privilege';
+  end if;
+  update public.profiles set confirm_reminder_sent_at = now()
+  where profiles.id = any(profile_ids) and profiles.confirm_reminder_sent_at is null;
+  get diagnostics marked = row_count;
+  return marked;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) IS 'The reminder worker marks the "confirm your email" reminders that left (CONFIRM-1).';
 
 
 
@@ -45922,6 +46024,36 @@ ALTER FUNCTION "public"."romania_today"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."romania_today"() IS 'Today''s date in Romanian time (S1-E11-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."run_confirm_reminder_worker"() RETURNS boolean
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $_$
+declare
+  worker_url text;
+  worker_key text;
+begin
+  select decrypted_secret into worker_url from vault.decrypted_secrets where name = 'email_worker_url';
+  select decrypted_secret into worker_key from vault.decrypted_secrets where name = 'email_worker_key';
+  if coalesce(worker_url, '') = '' or coalesce(worker_key, '') = ''
+     or not exists (select 1 from public.profiles where public.confirm_reminder_is_due(profiles.id)) then
+    return false;
+  end if;
+  perform net.http_post(
+    url := regexp_replace(worker_url, '/api/[^/?]*$', '/api/confirm-reminders'),
+    headers := jsonb_build_object('Authorization', 'Bearer ' || worker_key, 'Content-Type', 'application/json'),
+    body := '{}'::jsonb);
+  return true;
+end;
+$_$;
+
+
+ALTER FUNCTION "public"."run_confirm_reminder_worker"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."run_confirm_reminder_worker"() IS 'Internal: calls the "confirm your email" reminder worker through pg_net when one is due (CONFIRM-1); pg_cron every hour.';
 
 
 
@@ -74801,6 +74933,22 @@ GRANT ALL ON FUNCTION "public"."confirm_opening_list"("token" "text") TO "authen
 
 
 
+REVOKE ALL ON FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."confirm_reminder_claim"("worker_key" "text", "batch_size" integer) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."confirm_reminder_is_due"("profile_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) TO "anon";
+GRANT ALL ON FUNCTION "public"."confirm_reminder_mark_sent"("worker_key" "text", "profile_ids" "uuid"[]) TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."confirm_teacher_email"("token" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."confirm_teacher_email"("token" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."confirm_teacher_email"("token" "text") TO "authenticated";
@@ -78040,6 +78188,10 @@ GRANT ALL ON FUNCTION "public"."rising_writers"("page_size" integer) TO "authent
 
 
 REVOKE ALL ON FUNCTION "public"."rolling_retention"("joined_on" "date", "after_days" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."run_confirm_reminder_worker"() FROM PUBLIC;
 
 
 

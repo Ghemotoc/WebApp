@@ -40,8 +40,13 @@ export interface SendEmailHookPayload {
   user: {
     email: string;
     new_email?: string;
-    /** joins_waitlist: the sign-up joined the waiting list without a code (WAITLIST-1). */
-    user_metadata?: { locale?: string; joins_waitlist?: boolean };
+    /** When the account was made; a sign-up email a day later is the reminder (CONFIRM-1). */
+    created_at?: string;
+    /**
+     * joins_waitlist: the sign-up joined the waiting list without a code (WAITLIST-1); country:
+     * the country picked on the sign-up form (MARKETS-1), for the reminder's language.
+     */
+    user_metadata?: { locale?: string; joins_waitlist?: boolean; country?: string };
   };
   email_data: {
     token: string;
@@ -321,14 +326,63 @@ const waitlistConfirmation: AuthEmailKind = {
 };
 
 /**
- * Which email this call is: by Supabase's action type, and for a sign-up that joined the waiting
- * list, the "You're on the list" wording.
+ * The reminder for an email still unconfirmed (CONFIRM-1): the same link, worded "Your account is
+ * still waiting". The reminder worker asks Auth to send the sign-up email again 7 days after
+ * sign-up (server/confirm-reminders.ts); a person pressing "Send the link again" a day or more
+ * after signing up gets the same words, which fit them too.
+ */
+export const confirmationReminder: AuthEmailKind = {
+  group: 'confirmationReminder',
+  linkFor: (site, hash) => `${site}/auth/confirm?token_hash=${hash}&type=email`,
+};
+
+/** How old an account is before its sign-up email reads as the reminder: one day. */
+const reminderAfterMilliseconds = 24 * 60 * 60 * 1000;
+
+/**
+ * Whether a sign-up email is the reminder: the account was made a day or more before now.
  *
  * @param payload - Supabase Auth's call
+ * @param nowMilliseconds - the time now
+ * @returns true for the reminder
+ */
+function isConfirmationReminder(payload: SendEmailHookPayload, nowMilliseconds: number): boolean {
+  const createdAt = Date.parse(payload.user.created_at ?? '');
+  if (Number.isNaN(createdAt)) return false;
+  return nowMilliseconds - createdAt >= reminderAfterMilliseconds;
+}
+
+/**
+ * The reminder's language (Robert, 27 Nov 2026, 18:31 UTC: "English, unless they are based in
+ * Romania or Moldova. Or unless they chose their account language to be Romanian").
+ *
+ * @param payload - Supabase Auth's call, with the sign-up form's country and language
+ * @returns 'ro' or 'en'
+ */
+export function reminderLanguageOf(payload: SendEmailHookPayload): 'ro' | 'en' {
+  const metadata = payload.user.user_metadata;
+  const country = (metadata?.country ?? '').toUpperCase();
+  if (country === 'RO' || country === 'MD') return 'ro';
+  return metadata?.locale === 'ro' ? 'ro' : 'en';
+}
+
+/**
+ * Which email this call is: by Supabase's action type; for a sign-up email to an account a day or
+ * more old, the reminder; for a sign-up that joined the waiting list, the "You're on the list"
+ * wording.
+ *
+ * @param payload - Supabase Auth's call
+ * @param nowMilliseconds - the time now (Date.now() unless a test fixes it)
  * @returns the kind, or undefined when it isn't set up
  */
-export function authEmailKindOf(payload: SendEmailHookPayload): AuthEmailKind | undefined {
+export function authEmailKindOf(
+  payload: SendEmailHookPayload,
+  nowMilliseconds: number = Date.now(),
+): AuthEmailKind | undefined {
   const actionType = payload.email_data.email_action_type;
+  if (actionType === 'signup' && isConfirmationReminder(payload, nowMilliseconds)) {
+    return confirmationReminder;
+  }
   if (actionType === 'signup' && payload.user.user_metadata?.joins_waitlist === true) {
     return waitlistConfirmation;
   }
@@ -370,7 +424,8 @@ export async function handleSendEmailHook(
   options: SendEmailHookOptions,
 ): Promise<Response> {
   const body = await request.text();
-  const nowSeconds = Math.floor((options.now?.() ?? Date.now()) / 1000);
+  const nowMilliseconds = options.now?.() ?? Date.now();
+  const nowSeconds = Math.floor(nowMilliseconds / 1000);
   // Step 1: only our Supabase project may ask.
   if (!(await verifyHookSignature(options.hookSecret, request.headers, body, nowSeconds))) {
     return Response.json(
@@ -379,15 +434,19 @@ export async function handleSendEmailHook(
     );
   }
   const payload = JSON.parse(body) as SendEmailHookPayload;
-  const kind = authEmailKindOf(payload);
+  const kind = authEmailKindOf(payload, nowMilliseconds);
   if (kind === undefined) {
     return Response.json(
       { error: { http_code: 400, message: 'This kind of email is not set up.' } },
       { status: 400 },
     );
   }
-  // Step 2: the person's language, Romanian unless they chose English, with the admins' wording.
-  const locale = writtenLanguageFor(payload.user.user_metadata?.locale);
+  // Step 2: the person's language, Romanian unless they chose English (the reminder: English
+  // unless they live in Romania or Moldova or chose Romanian), with the admins' wording.
+  const locale =
+    kind === confirmationReminder
+      ? reminderLanguageOf(payload)
+      : writtenLanguageFor(payload.user.user_metadata?.locale);
   const overrides = await options.readOverrides(locale).catch(() => new Map<string, string>());
   const read = (path: string) => textOf(defaultTexts[locale], overrides, path, options);
   // Step 3: send, and tell Auth plainly when it couldn't be sent.
