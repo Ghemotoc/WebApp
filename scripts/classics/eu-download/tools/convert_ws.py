@@ -103,7 +103,10 @@ BLOCK_TAGS = set(HEADINGS) | {"p", "div", "section", "center", "blockquote", "ul
     "main", "article", "body", "html", "pre", "figure"}
 
 # A row of links to a work's parts ("I • II • III • Примечания"): Wikisource navigation.
-NAVIGATION_LINE = re.compile(r"^[^•|\n]{1,30}(\s*[•|·]\s*[^•|\n]{1,30}){2,}$")
+NAVIGATION_LINE = re.compile(r"^[^•|·\n]{1,30}(?:\s*[•|·]\s*[^•|·\n]{1,30}){2,}$")
+# Only short lines can be a navigation row; testing a long paragraph made the pattern backtrack for
+# minutes on a novel set as one page (Le Rouge et le Noir, 27 Nov 2026).
+NAVIGATION_LINE_MAX = 400
 
 def is_inline(child):
     """True for text and for an inline tag that holds no paragraph of its own."""
@@ -119,7 +122,7 @@ def flush_run(run, items):
     for node in run: holder.append(node.__copy__() if isinstance(node, Tag) else NavigableString(str(node)))
     for piece in re.split(r"(?:  \n\s*){2,}", inline(holder)):
         text = tidy_paragraph(piece)
-        if text and not NAVIGATION_LINE.match(text): items.append(("block", text))
+        if text and not (len(text) <= NAVIGATION_LINE_MAX and NAVIGATION_LINE.match(text)): items.append(("block", text))
     run.clear()
 
 def walk(node, items):
@@ -252,6 +255,8 @@ def convert(record, work_title, part_word="partea"):
         # its tags (notes are dropped everywhere else too), a nowiki tag alone.
         body = re.sub(r"\\?<(ref|red)\\?>.*?\\?</ref\\?>", "", body, flags=re.S)
         body = re.sub(r"\\?</?(nowiki|ref|red)\s*/?\\?>", "", body)
+        # A line break typed as text in the source ("\\<br"): it was meant as a space.
+        body = re.sub(r"\\<br\s*/?\\?>?\s*", " ", body)
         # Unresolved relative links from navigation ("[[../Глава II|Глава II]]") are not text.
         body = re.sub(r"\[\[\.\./[^\]]*\]\]\s*(?:→)?", "", body).strip()
         # A row of stars typed in the source is a scene break, not escaped text.

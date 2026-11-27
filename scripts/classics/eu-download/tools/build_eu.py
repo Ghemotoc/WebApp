@@ -207,6 +207,7 @@ HELD_BACK = {
     "ru-poems-in-prose": "only the contents list came out, not the poems",
     "ru-evenings-on-a-farm-near-dikanka": "only the preface and the glossary came out, not the eight stories",
     "ru-red-cavalry": "only the first few stories of the cycle came out",
+    "fr-the-song-of-roland": "a scholarly edition came out (foreword, glossary, concordance, a modern translation beside the Old French) and some pages did not render",
     "fr-paris-spleen": "only a few of the fifty prose poems came out",
     "fr-the-flowers-of-evil": "only a few poems came out, not the collection",
     "es-songs-of-life-and-hope": "only the first poem came out, not the collection",

@@ -11,14 +11,29 @@
    11547
   ],
   [
+   "es-fuenteovejuna",
+   3,
+   52800
+  ],
+  [
    "es-life-is-a-dream",
    3,
-   102821
+   102839
+  ],
+  [
+   "es-the-mayor-of-zalamea",
+   4,
+   84346
   ],
   [
    "es-the-swindler",
    23,
-   230974
+   230976
+  ],
+  [
+   "es-solitudes",
+   1,
+   1253
   ],
   [
    "es-the-fable-of-polyphemus-and-galatea",
@@ -53,7 +68,7 @@
   [
    "es-moroccan-letters",
    90,
-   325971
+   325973
   ],
   [
    "es-the-lovers-of-teruel",
@@ -73,7 +88,7 @@
   [
    "es-come-back-tomorrow",
    1,
-   19997
+   19901
   ],
   [
    "es-the-seagull",
@@ -103,7 +118,7 @@
   [
    "es-marianela",
    22,
-   292130
+   292202
   ],
   [
    "es-compassion",
@@ -118,12 +133,12 @@
   [
    "es-the-regent-s-wife",
    31,
-   1778502
+   1778889
   ],
   [
    "es-goodbye-cordera",
    1,
-   20069
+   20057
   ],
   [
    "es-his-only-son",
@@ -138,7 +153,7 @@
   [
    "es-midsummer-madness",
    22,
-   246477
+   246481
   ],
   [
    "es-sotileza",
@@ -148,7 +163,7 @@
   [
    "es-up-the-mountains",
    35,
-   751008
+   751012
   ],
   [
    "es-the-cabin",
@@ -158,22 +173,22 @@
   [
    "es-reeds-and-mud",
    10,
-   439324
+   439340
   ],
   [
    "es-the-four-horsemen-of-the-apocalypse",
    20,
-   802979
+   803328
   ],
   [
    "es-mist",
    36,
-   319195
+   319421
   ],
   [
    "es-abel-sanchez",
    39,
-   165993
+   166007
   ],
   [
    "es-aunt-tula",
@@ -188,7 +203,7 @@
   [
    "es-bohemian-lights",
    16,
-   123987
+   123995
   ],
   [
    "es-the-bonds-of-interest",
@@ -198,12 +213,12 @@
   [
    "es-clemencia",
    38,
-   295157
+   295416
   ],
   [
    "es-el-zarco-the-bandit",
    25,
-   296161
+   296165
   ],
   [
    "es-the-motionless-beloved",
@@ -218,7 +233,7 @@
   [
    "es-niagara",
    1,
-   4865
+   4994
   ],
   [
    "es-simple-verses",
@@ -238,7 +253,7 @@
   [
    "es-maria",
    67,
-   511120
+   511463
   ],
   [
    "es-nocturne",
@@ -253,7 +268,7 @@
   [
    "es-the-vortex",
    10,
-   484807
+   485647
   ],
   [
    "es-ode-to-tropical-agriculture",
@@ -263,17 +278,17 @@
   [
    "es-cumanda",
    21,
-   403301
+   403305
   ],
   [
    "es-birds-without-a-nest",
    52,
-   314526
+   314556
   ],
   [
    "es-the-knight-carmelo",
    1,
-   21039
+   21059
   ],
   [
    "es-trilce",
@@ -283,7 +298,7 @@
   [
    "es-equatorial",
    1,
-   7942
+   8002
   ],
   [
    "es-the-slaughterhouse",
@@ -298,7 +313,7 @@
   [
    "es-amalia",
    79,
-   1335408
+   1335460
   ],
   [
    "es-faust",
@@ -308,7 +323,7 @@
   [
    "es-an-expedition-to-the-ranquel-indians",
    69,
-   914176
+   914178
   ],
   [
    "es-aimless",
@@ -348,7 +363,7 @@
   [
    "es-my-son-the-doctor",
    3,
-   81242
+   81250
   ],
   [
    "es-anaconda",
@@ -384,7 +399,7 @@
   ],
   [
    "es-don-quixote",
-   "only 3644 characters came out, too short for a novel",
+   "only 3646 characters came out, too short for a novel",
    "Don Quijote de la Mancha"
   ],
   [
@@ -398,11 +413,6 @@
    "Ocho comedias y ocho entremeses nuevos, nunca representados"
   ],
   [
-   "es-fuenteovejuna",
-   "only 3039 characters came out, too short for a play",
-   "Fuenteovejuna"
-  ],
-  [
    "es-the-dog-in-the-manger",
    0,
    "El perro del hortelano"
@@ -413,19 +423,9 @@
    "El caballero de Olmedo"
   ],
   [
-   "es-the-mayor-of-zalamea",
-   324,
-   "El alcalde de Zalamea"
-  ],
-  [
    "es-the-trickster-of-seville",
    75,
    "El burlador de Sevilla"
-  ],
-  [
-   "es-solitudes",
-   0,
-   "Soledades (al Duque de Béjar)"
   ],
   [
    "es-guzman-de-alfarache",
@@ -449,7 +449,7 @@
   ],
   [
    "es-moral-fables",
-   132,
+   137,
    "Fábulas de Samaniego"
   ],
   [
@@ -464,7 +464,7 @@
   ],
   [
    "es-don-alvaro-or-the-force-of-fate",
-   "only 10325 characters came out, too short for a play",
+   "only 10333 characters came out, too short for a play",
    "Don Álvaro o La fuerza del sino"
   ],
   [
@@ -519,7 +519,7 @@
   ],
   [
    "es-gypsy-ballads",
-   286,
+   294,
    "Romancero gitano"
   ],
   [
@@ -592,7 +592,7 @@
   ],
   [
    "es-ochre",
-   209,
+   197,
    "Ocre"
   ],
   [
