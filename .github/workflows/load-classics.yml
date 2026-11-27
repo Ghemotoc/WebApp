@@ -67,9 +67,12 @@ jobs:
 
       # Each part is one transaction; ON_ERROR_STOP makes psql stop at the first error, and the
       # loop stops too, so a failed part leaves the database as the parts before it left it.
+      # PGOPTIONS lifts Supabase's statement timeout (about 2 minutes) for these sessions only:
+      # one part holding a long work (the Russian pack) ran past it on 27 Nov 2026.
       - name: Run the SQL parts in order
         env:
           DATABASE_URL: ${{ secrets.CLASSICS_DATABASE_URL }}
+          PGOPTIONS: '-c statement_timeout=0'
         run: |
           count=$(ls "$RUNNER_TEMP"/classics-sql/part-*.sql | wc -l)
           number=0
