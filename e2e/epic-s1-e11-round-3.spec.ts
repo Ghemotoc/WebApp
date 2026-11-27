@@ -178,7 +178,7 @@ test.describe('Epic S1-E11, round three: landing pages and contests', () => {
 
     // Step 7: the writer opens the certificate; the visitor checks its code (S1-E8-12).
     await writer.goto('/certificates');
-    await writer.getByRole('link', { name: `Open “${contestName}”` }).click();
+    await writer.getByRole('link', { name: new RegExp(`^${contestName} ?, Winner$`) }).click();
     await expect(
       writer.getByText(`for winning the writing contest “${contestName}”.`),
     ).toBeVisible();
@@ -187,7 +187,7 @@ test.describe('Epic S1-E11, round three: landing pages and contests', () => {
     ).trim();
     await expect(writer.getByText(code).first()).toBeVisible();
     await visitor.goto(`/verify?code=${code}`);
-    await expect(visitor.getByText('This certificate is valid.')).toBeVisible();
+    await expect(visitor.getByRole('region', { name: 'This certificate is real.' })).toBeVisible();
     await expect(visitor.getByText(contestName)).toBeVisible();
     await visitor.context().close();
     await writer.context().close();
