@@ -13580,6 +13580,7 @@ export type Database = {
           completion?: Database['public']['Enums']['completion_status'];
           genre_slug?: string;
           language?: string;
+          languages_first?: string;
           list_key?: string;
           list_kind: string;
           page_offset?: number;

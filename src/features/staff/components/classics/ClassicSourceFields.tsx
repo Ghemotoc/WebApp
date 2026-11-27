@@ -5,12 +5,16 @@
  * its own copyright, so staff say why it may be shown.
  *
  * Who shows it: ClassicWorkForm. What it calls: onChange. Language names come from Intl in the
- * interface language, so the code holds none.
+ * interface language, so the code holds none; the choices are every world language
+ * (src/lib/world-languages.ts).
  */
 import { useTranslation } from 'react-i18next';
 
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
+
+import { languageChoices } from '@/lib/language-names';
+import { worldLanguageCodes } from '@/lib/world-languages';
 
 import type { ClassicKind } from '../../api/classics';
 
@@ -19,20 +23,6 @@ import { TranslationRightsSelect } from './TranslationRightsSelect';
 
 /** The kinds of work (the classic_kind enum). */
 const kinds: ClassicKind[] = ['novel', 'short_story', 'fairy_tale', 'poem', 'play', 'essay'];
-
-/** Original languages staff are likely to need; more can be added here. */
-const originalLanguages = ['ro', 'en', 'fr', 'de', 'it', 'es', 'ru', 'el', 'la'];
-
-/**
- * A language's name in the interface language.
- *
- * @param code - a two-letter code
- * @param interfaceLanguage - the language to name it in
- * @returns the name, or the code if Intl can't name it
- */
-function languageName(code: string, interfaceLanguage: string): string {
-  return new Intl.DisplayNames([interfaceLanguage], { type: 'language' }).of(code) ?? code;
-}
 
 /**
  * The kind of work and its original language.
@@ -59,9 +49,11 @@ function KindAndLanguage({ details, onChange }: ClassicFieldsProps) {
         placement="form"
         value={details.originalLanguage}
         onChange={(value) => onChange('originalLanguage', value)}
-        options={originalLanguages.map((code) => ({
+        // Every ISO 639-1 language, the same list a story may be written in (S1-E3-01): the
+        // classics come from far more languages than the first few (Robert, 27 Nov 2026).
+        options={languageChoices(worldLanguageCodes, i18n.language).map(({ code, label }) => ({
           value: code,
-          label: languageName(code, i18n.language),
+          label,
         }))}
       />
     </div>
