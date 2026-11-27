@@ -11,8 +11,8 @@
  * filtered list can be shared (S1-E5-09, fourth criterion); Done closes the panel.
  * Not yet in the panel: rating up to the reader's age, length and content labels to leave out,
  * which need new browse_stories() filters (a follow-up of user story 1.5).
- * Who uses it: StoryListPage. What it calls: Sheet, useStoryFormOptions (categories and
- * languages).
+ * Who uses it: StoryListPage. What it calls: Sheet, useStoryCategories (the categories) and
+ * useLanguagesWrittenIn (only the languages stories are written in, S1-E3-01).
  */
 import { useState } from 'react';
 
@@ -22,7 +22,7 @@ import { ChoiceChips, type ChoiceOption } from '@/components/ui/ChoiceChips';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Select } from '@/components/ui/Select';
 import { Sheet } from '@/components/ui/Sheet';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
+import { useStoryCategories } from '@/features/writing/hooks/useStoryCategories';
 
 import {
   everyLanguage,
@@ -31,6 +31,7 @@ import {
   type ListRequest,
   type SortOrder,
 } from '../api/storyLists';
+import { useLanguagesWrittenIn } from '../hooks/useLanguagesWrittenIn';
 import { categoryAccent } from '../lib/categoryAccents';
 import { sortChoicesFor } from '../lib/listAddresses';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
@@ -57,7 +58,7 @@ const anyValue = '';
  */
 function useCategoryOptions(): ChoiceOption[] {
   const { t } = useDiscoveryTranslation();
-  const { categories } = useStoryFormOptions();
+  const { categories } = useStoryCategories();
   return [
     { value: anyValue, label: t('seeAll.anyCategory') },
     ...categories.map((category) => ({
@@ -99,15 +100,19 @@ function StatusSegments({ request, onChange }: Omit<StoryListFiltersProps, 'sort
 }
 
 /**
- * The language drop-down: every language stories may be written in, open or not, so an older
- * story still filters. On the lists that follow the languages someone reads (MARKETS-2c), the
- * first choice is "Languages I read" and "Every language" turns the filter off.
+ * The language drop-down: only the languages at least one story this reader may see is written
+ * in (S1-E3-01; Robert, 26 Nov 2026), plus the one in the address, so a shared link still shows
+ * its filter. A list of codes ("sv,en", the reading languages) is not one choice. On the lists
+ * that follow the languages someone reads (MARKETS-2c), the first choice is "Languages I read"
+ * and "Every language" turns the filter off.
  *
  * @returns the drop-down
  */
 function LanguageSelect({ request, onChange }: Omit<StoryListFiltersProps, 'sortOrder'>) {
   const { t } = useDiscoveryTranslation();
-  const { languages } = useStoryFormOptions();
+  const chosen = request.languageCode;
+  const isOneLanguage = chosen !== null && chosen !== everyLanguage && !chosen.includes(',');
+  const { languages } = useLanguagesWrittenIn(isOneLanguage ? [chosen] : []);
   const firstOptions = followsReadingLanguages(request.kind)
     ? [
         { value: anyValue, label: t('seeAll.readingLanguages') },
@@ -116,11 +121,7 @@ function LanguageSelect({ request, onChange }: Omit<StoryListFiltersProps, 'sort
     : [{ value: anyValue, label: t('seeAll.anyLanguage') }];
   const languageOptions = [
     ...firstOptions,
-    ...languages.map(({ code }) => ({
-      value: code,
-      label: t(`languages.${code}`, { ns: 'writing', defaultValue: code }),
-      lang: code,
-    })),
+    ...languages.map(({ code, label }) => ({ value: code, label })),
   ];
   return (
     <Select

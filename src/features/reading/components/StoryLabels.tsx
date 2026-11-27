@@ -19,6 +19,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { runningPauseEnd } from '@/lib/comment-pause';
+import { languageMenuName } from '@/lib/language-names';
 import { formatLocalDayAndTime } from '@/lib/local-time';
 import { ratingMinimumAge } from '@/schemas/story';
 
@@ -109,7 +110,7 @@ function commentsRows(story: StoryPageData, t: TFunction<'reading'>, language: s
  *
  * @param story - the story page's data
  * @param t - the reading namespace's translate function
- * @param language - the interface language, for dates
+ * @param language - the interface language, for dates and the story language's name
  * @returns the rows
  */
 function labelRowsFor(
@@ -128,14 +129,8 @@ function labelRowsFor(
     { label: t('storyPage.aiLabel'), value: aiRowText(labels, t) },
     {
       label: t('storyPage.languageLabel'),
-      value: (
-        <span lang={story.languageCode}>
-          {t(`languages.${story.languageCode}`, {
-            ns: 'writing',
-            defaultValue: story.languageCode,
-          })}
-        </span>
-      ),
+      // S1-E3-01: any language of the world, named in the interface language by the browser.
+      value: languageMenuName(story.languageCode, language),
     },
     { label: t('storyPage.whereToReadLabel'), value: whereToReadText(story, t) },
     ...firstPublishedRows(story, t),

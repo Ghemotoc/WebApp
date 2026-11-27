@@ -3,8 +3,8 @@
  *
  * Who calls it: the hooks in src/features/writing/hooks/.
  * What it calls next: Supabase.
- * - Reading the form's choices: story_language_choices() (every language, open or coming) and
- *   the categories table (categories_select_public).
+ * - Reading the form's categories: the categories table (categories_select_public). The languages
+ *   need no read: every language of the world may be picked (src/lib/world-languages.ts, S1-E3-01).
  * - Making a story: create_story() (supabase/migrations/…_s1_e3_01_stories.sql), which answers
  *   {outcome: 'ok', slug} or {outcome: 'not_active'} when the account may not write yet.
  * - Reading the writer's own stories: stories with their tags, category and live chapters,
@@ -144,27 +144,6 @@ function toLabelsJson(labels: StoryLabelsPayload) {
 
 /** What the settings functions answer. */
 export type SettingsOutcome = 'ok' | 'not_active' | 'not_found';
-
-/** One language on the new story form: open ones can be chosen, the rest are "coming". */
-export interface StoryLanguageChoice {
-  code: string;
-  isOpen: boolean;
-}
-
-/**
- * Reads every language with whether a story may be written in it yet (S1-E11-05, criterion 5).
- *
- * @param client - the shared Supabase client
- * @returns the languages, interface languages first, for example [{ code: 'en', isOpen: true }]
- * Errors: throws with Supabase's message when the database can't be reached.
- */
-export async function fetchStoryLanguages(
-  client: AppSupabaseClient,
-): Promise<StoryLanguageChoice[]> {
-  const { data, error } = await client.rpc('story_language_choices');
-  if (error !== null) throw new Error(`Could not read the languages: ${error.message}`);
-  return data.map((row) => ({ code: row.code, isOpen: row.is_open }));
-}
 
 /**
  * Reads the story categories in the order the form shows them.

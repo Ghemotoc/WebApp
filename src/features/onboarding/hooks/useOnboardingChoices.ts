@@ -3,14 +3,14 @@
  * page's language (story S1-E2-06).
  *
  * Who calls it: NameStep, LikesFields. What it calls: api/onboarding.ts (the regions table and
- * onboarding_topics()) and useStoryFormOptions for the categories (S1-E3-01). Works signed out,
+ * onboarding_topics()) and useStoryCategories for the categories (S1-E3-01). Works signed out,
  * but only signed-in pages use it.
  */
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { requireClient } from '@/features/account/hooks/useMyNames';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
+import { useStoryCategories } from '@/features/writing/hooks/useStoryCategories';
 
 import { fetchRegions, fetchTopics } from '../api/onboarding';
 import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
@@ -23,7 +23,7 @@ import { writtenLanguageFor } from '@/schemas/interfaceLanguages';
 export function useOnboardingChoices() {
   const { i18n } = useTranslation();
   const language = writtenLanguageFor(i18n.language);
-  const { categories, loadFailed: categoriesFailed } = useStoryFormOptions();
+  const { categories, loadFailed: categoriesFailed } = useStoryCategories();
   const regions = useQuery({
     queryKey: ['regions'],
     staleTime: Infinity,

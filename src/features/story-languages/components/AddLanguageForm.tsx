@@ -2,22 +2,23 @@
  * AddLanguageForm: "Add a language" under the table of languages (bundle TRANSLATE-1c; Robert,
  * 16 Nov 2026), as board D08 draws it (CALM-9, user story 5.8).
  *
- * What it shows: a group under a fine line, not a card: the heading, then the language (the
- * ones open for writing that this story doesn't have yet, each in its own name), the title and
+ * What it shows: a group under a fine line, not a card: the heading, then the language (any
+ * language of the world this story doesn't have yet, named in the interface language, in the
+ * searchable LanguagePicker; S1-E3-01, Robert, 26 Nov 2026), the title and
  * the blurb in that language, one stacked column of fields at most 480 px wide, the line "You
  * translate it yourself…", and "Add the language" with Cancel beside it. A story at its limit,
- * or already in every open language, gets one line saying so instead of the form.
+ * gets one line saying so instead of the form.
  * Who shows it: StoryLanguagesPage. What it calls: hooks/useAddLanguage.ts, and the writing
- * feature's useStoryFormOptions for the open languages (story_language_choices()).
+ * feature's useWorldLanguageChoices and LanguagePicker.
  */
 import { ButtonRow } from '@/components/ui/ButtonRow';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
-import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 import { TextInput } from '@/components/ui/TextInput';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
-import { languageOwnName } from '@/lib/language-names';
+import { LanguagePicker } from '@/features/writing/components/LanguagePicker';
+import { useWorldLanguageChoices } from '@/features/writing/hooks/useStoryFormOptions';
+import type { LanguageChoice } from '@/lib/language-names';
 import { MAXIMUM_BLURB_LENGTH, MAXIMUM_TITLE_LENGTH } from '@/schemas/story';
 
 import type { StoryLanguages } from '../api/storyLanguages';
@@ -31,36 +32,32 @@ export interface AddLanguageFormProps {
 }
 
 /**
- * The languages that can still be added: open for writing and not one the story has.
+ * The languages that can still be added: any language of the world the story isn't in yet.
  *
- * @returns their codes, in the order the new story form lists them
+ * @returns their choices, in the order the new story form lists them
  */
-function useLanguagesLeft(languages: StoryLanguages): string[] {
-  const options = useStoryFormOptions();
+function useLanguagesLeft(languages: StoryLanguages): LanguageChoice[] {
+  const choices = useWorldLanguageChoices();
   const taken = new Set(languages.editions.map((edition) => edition.languageCode));
-  return options.languages
-    .filter((choice) => choice.isOpen && !taken.has(choice.code))
-    .map((choice) => choice.code);
+  return choices.filter((choice) => !taken.has(choice.code));
 }
 
 /** The three fields, one under another, as wide as the board's (480 px). */
-function AddLanguageFields(props: { form: ReturnType<typeof useAddLanguage>; left: string[] }) {
+function AddLanguageFields(props: {
+  form: ReturnType<typeof useAddLanguage>;
+  left: LanguageChoice[];
+}) {
   const { form, left } = props;
   const { t } = useStoryLanguagesTranslation();
   const chosen = form.answers.languageCode === '' ? undefined : form.answers.languageCode;
   return (
     <>
       <div className="flex max-w-[480px] flex-col gap-4">
-        <Select
+        <LanguagePicker
           id="add-language-code"
           label={t('add.language')}
-          isLabelVisible
-          isLabelAbove
-          placement="form"
-          options={[
-            { value: '', label: t('add.chooseLanguage') },
-            ...left.map((code) => ({ value: code, label: languageOwnName(code), lang: code })),
-          ]}
+          choices={left}
+          emptyLabel={t('add.chooseLanguage')}
           value={form.answers.languageCode}
           onChange={(value) => form.set('languageCode', value)}
         />
@@ -112,8 +109,9 @@ export function AddLanguageForm({ storySlug, languages }: AddLanguageFormProps) 
           {t('add.problems.tooMany', { max: languages.languagesMax })}
         </p>
       )}
-      {!isAtLimit && left.length === 0 && <p className="m-0 text-ink-muted">{t('add.noneLeft')}</p>}
-      {!isAtLimit && left.length > 0 && (
+      {/* No "every language taken" line: the limit (story_languages_max) comes long before the
+          world's languages run out (S1-E3-01). */}
+      {!isAtLimit && (
         <form
           noValidate
           className="flex flex-col gap-4"

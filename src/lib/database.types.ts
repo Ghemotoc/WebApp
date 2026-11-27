@@ -15465,6 +15465,7 @@ export type Database = {
         Returns: boolean;
       };
       is_staff_session: { Args: Record<PropertyKey, never>; Returns: boolean };
+      is_story_language_code: { Args: { code: string }; Returns: boolean };
       is_story_list_kind: { Args: { list_kind: string }; Returns: boolean };
       is_story_restricted: { Args: { target_story_id: string }; Returns: boolean };
       is_under_18_or_unknown: { Args: { person_id: string }; Returns: boolean };
@@ -18860,6 +18861,7 @@ export type Database = {
         }[];
       };
       story_languages: { Args: { story_slug: string }; Returns: Json };
+      story_languages_written_in: { Args: Record<PropertyKey, never>; Returns: string[] };
       story_last_chapter_number: { Args: { target_story_id: string }; Returns: number };
       story_library_state: { Args: { story_slug: string }; Returns: Json };
       story_like_state: { Args: { story_slug: string }; Returns: Json };
@@ -19292,6 +19294,7 @@ export type Database = {
       word_total: { Args: { any_text: string }; Returns: number };
       working_days_after: { Args: { day_count: number; start_moment: string }; Returns: string };
       workspace_sign_in_holds: { Args: Record<PropertyKey, never>; Returns: boolean };
+      world_language_codes: { Args: Record<PropertyKey, never>; Returns: string[] };
       write_class_certificate: {
         Args: {
           clean_programme: string;

@@ -27,7 +27,10 @@ import { hmacHex } from './signup-context';
 export interface OutgoingEmail {
   to: string;
   subject: string;
+  /** The plain-text part, which every email keeps for apps that show no HTML (S1-E11-19). */
   text: string;
+  /** The branded HTML part (server/email-layout.ts), when the email has one. */
+  html?: string;
   /** The address a reply goes to, when it isn't the sender. */
   replyTo?: string;
   /** Extra headers, such as List-Unsubscribe on notification emails (S1-E7-02; RFC 8058). */
@@ -276,6 +279,7 @@ export function sendWithBrevo(apiKey: string): SendEmail {
         headers: email.headers,
         subject: email.subject,
         textContent: email.text,
+        htmlContent: email.html,
       }),
     });
     if (!response.ok) throw new Error(`Brevo answered ${String(response.status)}`);
@@ -302,6 +306,7 @@ export function sendWithMailpit(mailpitUrl: string): SendEmail {
         Headers: email.headers,
         Subject: email.subject,
         Text: email.text,
+        HTML: email.html,
       }),
     });
     if (!response.ok) throw new Error(`Mailpit answered ${String(response.status)}`);

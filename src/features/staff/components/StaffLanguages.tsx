@@ -2,9 +2,9 @@
  * StaffLanguages: the languages a staff member reads, as tick boxes with a Save button (story
  * S1-E11-05; board AdminSettings: "Staff add the languages they read in Users").
  *
- * The list of languages comes from the database (story_language_choices()), so a story language
- * added later shows here too. Who shows it: StaffMemberCard. What it calls: useStaffLanguages and
- * useStoryFormOptions (the languages).
+ * The list of languages comes from the database's languages table (story_language_choices()), so
+ * a language added later shows here too; it is not every story language (S1-E3-01).
+ * Who shows it: StaffMemberCard. What it calls: useStaffLanguages (the languages and saving them).
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { languageNameOf } from '@/features/settings/lib/marketNames';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
 
 import { useStaffLanguages } from '../hooks/useStaffLanguages';
 
@@ -23,8 +22,7 @@ import { useStaffLanguages } from '../hooks/useStaffLanguages';
  */
 function LanguageChecks(props: { userId: string; handle: string; saved: string[] }) {
   const { t, i18n } = useTranslation('staff');
-  const { languages } = useStoryFormOptions();
-  const { save, isSaving, isSaved, hasFailed } = useStaffLanguages(props.userId);
+  const { offeredCodes, save, isSaving, isSaved, hasFailed } = useStaffLanguages(props.userId);
   const [chosen, setChosen] = useState<string[]>(props.saved);
   const toggle = (code: string) =>
     setChosen((current) =>
@@ -35,7 +33,7 @@ function LanguageChecks(props: { userId: string; handle: string; saved: string[]
       <legend className="text-sm font-semibold text-ink">{t('languages.heading')}</legend>
       <p className="m-0 text-[13px] text-meta">{t('languages.hint')}</p>
       <div className="flex flex-wrap gap-x-4">
-        {languages.map(({ code }) => (
+        {offeredCodes.map((code) => (
           <label key={code} className="inline-flex min-h-11 items-center gap-2 text-sm text-ink">
             <input
               type="checkbox"

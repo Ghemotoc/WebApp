@@ -7,7 +7,7 @@
  */
 import type { TFunction } from 'i18next';
 
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
+import { useStoryCategories } from '@/features/writing/hooks/useStoryCategories';
 
 import type { ListedStory, ListKind, ListRequest } from '../api/storyLists';
 import { useDiscoveryTranslation } from '../registerDiscoveryTranslations';
@@ -58,7 +58,7 @@ function namedListTitle(kind: ListKind, key: string, t: TFunction<'discovery'>):
  */
 export function useListTitle(request: ListRequest, stories: ListedStory[]): ListTitle {
   const { t } = useDiscoveryTranslation();
-  const { categories, isLoaded } = useStoryFormOptions();
+  const { categories, isLoaded } = useStoryCategories();
   const key = request.key ?? '';
   switch (request.kind) {
     case 'category': {

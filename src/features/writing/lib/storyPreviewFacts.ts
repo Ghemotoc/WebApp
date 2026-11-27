@@ -11,6 +11,7 @@
 import type { TFunction } from 'i18next';
 
 import type { MetaFact } from '@/components/ui/MetaLine';
+import { languageMenuName } from '@/lib/language-names';
 
 import type { StoryAnswers } from '../hooks/storyAnswers';
 
@@ -19,13 +20,19 @@ import type { StoryAnswers } from '../hooks/storyAnswers';
  *
  * @param answers - what the writer has filled in so far
  * @param t - the writing namespace's translate function
+ * @param interfaceLanguage - the interface language, to name the story's language in (S1-E3-01:
+ *   any language of the world, so the name comes from the browser, not the locale files)
  * @returns the facts, in reading order
  */
-export function storyPreviewFacts(answers: StoryAnswers, t: TFunction<'writing'>): MetaFact[] {
+export function storyPreviewFacts(
+  answers: StoryAnswers,
+  t: TFunction<'writing'>,
+  interfaceLanguage: string,
+): MetaFact[] {
   // Step 1: the category and the language, named in the interface language.
   const facts: MetaFact[] = [
     { text: t(`categories.${answers.categorySlug}`, { defaultValue: answers.categorySlug }) },
-    { text: t(`languages.${answers.languageCode}`, { defaultValue: answers.languageCode }) },
+    { text: languageMenuName(answers.languageCode, interfaceLanguage) },
   ];
   // Step 2: the rating, only when it limits who can read (All ages says nothing new).
   if (answers.rating !== null && answers.rating !== 'all_ages') {

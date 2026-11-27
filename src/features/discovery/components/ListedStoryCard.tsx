@@ -79,6 +79,7 @@ export function ListedStoryCard(props: {
   return (
     <StoryCard
       title={story.title}
+      language={story.languageCode}
       metaLine={props.metaLine ?? t('card.meta', { writer: writerLine, count: story.chapterCount })}
       cover={cover}
       href={`/s/${story.slug}`}

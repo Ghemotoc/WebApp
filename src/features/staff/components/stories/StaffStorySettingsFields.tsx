@@ -7,7 +7,7 @@
  * Never the title, blurb, content note or a chapter's words: those are the writer's (Q14). The
  * labels use the writer's own words from the writing namespace, so staff and writers see the same.
  * Who shows it: StaffStorySettingsForm. What it calls: useStoryFormOptions for the categories and
- * open languages.
+ * the languages (any language of the world since S1-E3-01).
  */
 import { useTranslation } from 'react-i18next';
 
@@ -116,11 +116,7 @@ function CategoryAndLanguage({
         placement="form"
         value={settings.languageCode}
         onChange={(value) => onChange({ ...settings, languageCode: value })}
-        options={languages.map((language) => ({
-          value: language.code,
-          label: words.language(language.code),
-          lang: language.code,
-        }))}
+        options={languages.map((language) => ({ value: language.code, label: language.label }))}
       />
     </>
   );

@@ -68,11 +68,8 @@
     },
     "status": "Status",
     "language": "Language",
-    "languages": {
-      "en": "English",
-      "ro": "Romanian"
-    },
     "both": "Both",
+    "anyLanguage": "Any language",
     "rating": "Rating",
     "anyRating": "Any rating",
     "ratingHint": "Ratings above your age never show.",

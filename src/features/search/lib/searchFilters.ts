@@ -21,9 +21,6 @@ export type SearchTab = (typeof searchTabs)[number];
 /** The sorts board A08 offers: Best match, Most read and Newest chapter. */
 export const searchSorts: readonly SortOrder[] = ['relevance', 'popular', 'updated'];
 
-/** The languages the Language filter offers (the two interface languages); "Both" is no filter. */
-export const searchLanguages = ['en', 'ro'] as const;
-
 /**
  * The tab the address asks for; anything else is Stories.
  *

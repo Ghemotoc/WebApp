@@ -2,6 +2,8 @@
   "signOff": "Echipa {{productName}}",
   "madeBy": "O aplicație de la {{companyName}}",
   "notYou": "Dacă nu ai cerut asta, poți ignora acest email. Nu se schimbă nimic.",
+  "pasteLink": "Sau lipește acest link în browser:",
+  "questions": "Întrebări? Scrie-ne la {{supportEmail}}",
   "confirmation": {
     "subject": "Confirmă adresa de email",
     "heading": "Confirmă adresa de email",
