@@ -72,23 +72,29 @@ async function openAs(
   return page;
 }
 
+/** How long a filtered search may take to show its results on a busy CI runner. */
+const filteredSearchTimeout = 15_000;
+
 /**
  * The results' kind and title, top to bottom ("Thread …", "Post 3 Re: …"), keeping only this
  * spec's threads. Board F02 (BOOKS-7): the title comes first, the kind leads the meta line under it.
  */
-/** How long a filtered search may take to show its results on a busy CI runner. */
-const filteredSearchTimeout = 15_000;
 
 async function resultsShown(page: Page): Promise<string[]> {
   const rows = page.getByRole('region', { name: /results? for/ }).locator('ol > li');
   await expect(rows.first()).toBeVisible();
-  const shown: string[] = [];
-  for (const row of await rows.all()) {
-    const title = await row.getByRole('link').innerText();
-    const kind = await row.locator('.meta-line li').first().innerText();
-    if (title.includes('e2e search')) shown.push(`${kind} ${title}`);
-  }
-  return shown;
+  // Read every row in one go inside the page. Reading them one by one raced a new search: when
+  // the list shrank from three rows to one between two reads, waiting on the third row's text
+  // hung until the poll gave up ("waiting on the predicate").
+  const rowTexts = await rows.evaluateAll((items) =>
+    items.map((item) => ({
+      title: item.querySelector<HTMLElement>('a[href]')?.innerText ?? '',
+      kind: item.querySelector<HTMLElement>('.meta-line li')?.innerText ?? '',
+    })),
+  );
+  return rowTexts
+    .filter((row) => row.title.includes('e2e search'))
+    .map((row) => `${row.kind} ${row.title}`);
 }
 
 test.describe('forum search (FORUMS-1f, S1-E8-10)', () => {
