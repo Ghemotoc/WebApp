@@ -14,7 +14,8 @@
  * /forums/space-<space>/<n>, its breadcrumb goes through the space and its reply card says how to
  * join (S1-E8-06). IDEAS-3f links the reply the starter marked "This answered it" above the posts
  * (ThreadAnswerNote, IDEA-20261102-8). GAPS-9 shows the forum's rules thread in a strip under
- * the heading (ThreadRulesStrip).
+ * the heading (ThreadRulesStrip). GROWTH-4: a visitor who isn't logged in reads the opening post
+ * and 2 replies, then a card asks them to get in for the rest (ThreadMembersOnlyNote).
  * What it calls: useForumThread → forum_thread(); useForumIndex for the breadcrumb;
  * useQuotePicks.
  */
@@ -40,6 +41,7 @@ import { ForumPostCard } from './ForumPostCard';
 import { ReplyForm } from './ReplyForm';
 import { ThreadAnswerNote } from './ThreadAnswerNote';
 import { ThreadHeader } from './ThreadHeader';
+import { ThreadMembersOnlyNote } from './ThreadMembersOnlyNote';
 import { ThreadModeration } from './ThreadModeration';
 import { ThreadRulesStrip } from './ThreadRulesStrip';
 import { ThreadSidePanel } from './ThreadSidePanel';
@@ -113,6 +115,7 @@ function ThreadPosts({
           </Button>
         </div>
       )}
+      {read.moreForMembers && <ThreadMembersOnlyNote />}
       <ReplyForm
         target={{ forumSlug: thread.forumSlug, threadNumber, posts: read.posts, quotePicks }}
         canReply={thread.canReply}

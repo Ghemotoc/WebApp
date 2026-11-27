@@ -7,7 +7,7 @@
  * - it opens the log-in page, where "Join for free" under the form leads to sign-up.
  * Test data: the home page as a visitor; nothing is changed.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 

@@ -15,7 +15,8 @@
  * Everything changed is put back at the start and the end. adults_only is switched off for the
  * run (minors' profiles are hidden while it is on) and put back as it was.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -14,7 +14,8 @@
  * Test data: seed personas; a chapter is made in SQL on adult_writer's first seed story, and the
  * report, case, question and note made here are removed afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

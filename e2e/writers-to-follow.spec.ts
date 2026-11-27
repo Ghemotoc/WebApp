@@ -14,7 +14,8 @@
  * Test data: one story of the spec's own for adult_writer and one for kid_14_ok, both with a
  * chapter out two days ago, and a known link on kid_14_ok's agreed consent; all put back after.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

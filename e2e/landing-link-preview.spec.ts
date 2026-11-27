@@ -8,7 +8,7 @@
  * still opens in the browser.
  * Test data: the page /c/preview-e2e, published straight into the database, deleted afterwards.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { runSql } from './support/database';
 

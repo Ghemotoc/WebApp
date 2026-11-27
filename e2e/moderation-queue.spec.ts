@@ -14,7 +14,8 @@
  * - the queue and a case page pass axe and don't scroll sideways at 390, 768 and 1440 px.
  * Test data: seed personas and the seeded cases; the report made here is removed afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

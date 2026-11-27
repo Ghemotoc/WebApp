@@ -21,7 +21,8 @@
  * Test data: seed personas; three stories of the spec's own tagged "e2e-epic5", removed after
  * with their likes, and the personas' language put back.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

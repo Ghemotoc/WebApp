@@ -15,7 +15,8 @@
  * one yesterday) and a draft third chapter, and teacher's place in chapter 1 three days ago; all
  * removed after. teacher's other places are moved back a month so this story is the latest.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

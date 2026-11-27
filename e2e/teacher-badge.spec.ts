@@ -19,7 +19,8 @@
  * signing secret in Vault and a 1 by 1 pixel PNG. Accounts the audit log names keep their profile
  * (audit rows are never deleted).
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

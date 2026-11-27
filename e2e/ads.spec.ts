@@ -20,7 +20,8 @@
  * made here so readers can open it; the chapter is removed and the class-only switch put back
  * afterwards. Pages are opened signed in as the teacher persona, a reader who isn't the writer.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { rememberAdReaderLanguage, signInAdReader } from './support/adReader';

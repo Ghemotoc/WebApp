@@ -21,7 +21,8 @@
  * classmate. The journeys with teen_17 and kid_14_ok are in the bundle's closing check
  * (S1-E8-QA2). Everything is removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { THEME_STORAGE_KEY } from '../src/lib/theme';
 

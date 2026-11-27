@@ -19,7 +19,8 @@
 import { readFile } from 'node:fs/promises';
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 import JSZip from 'jszip';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';

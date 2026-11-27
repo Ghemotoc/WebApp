@@ -10,7 +10,11 @@
  */
 import { z } from 'zod';
 
-import { coverColourKeys, coverDesignKeys } from '@/components/covers/coverDesigns';
+import {
+  writerColourKeys,
+  writerCoverDesignKeys,
+  type CoverColourKey,
+} from '@/components/covers/coverDesigns';
 import { MAXIMUM_TAG_LENGTH, MAXIMUM_TAGS, normaliseTag } from '@/features/writing/lib/tags';
 import type { Database } from '@/lib/database.types';
 
@@ -29,9 +33,11 @@ export const storyCoverSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('upload'), tallPath: z.string().min(1).max(200) }),
   z.object({
     kind: z.literal('drawn'),
-    design: z.enum(coverDesignKeys),
-    background: z.enum(coverColourKeys),
-    accent: z.enum(coverColourKeys),
+    // Only what a writer can pick: the classic covers' colours and backdrops are the classics
+    // account's (Robert, 26 Nov 2026), and the database refuses them on anyone else's story.
+    design: z.enum(writerCoverDesignKeys),
+    background: z.enum(writerColourKeys as [CoverColourKey, ...CoverColourKey[]]),
+    accent: z.enum(writerColourKeys as [CoverColourKey, ...CoverColourKey[]]),
   }),
 ]);
 

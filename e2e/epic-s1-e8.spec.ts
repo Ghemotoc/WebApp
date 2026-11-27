@@ -18,7 +18,8 @@
  * Test data: one thread and one class, removed before and after; pending_check is the student who
  * can post (an invited adult is fully active while adults_only is on).
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -4,9 +4,11 @@
  * Board values (AdminSettings, AdminUsers): the wordmark with the Staff pill, "An app by …", the
  * staff links, "Every action and sensitive read is logged" and the language drop-down. Links
  * appear only when their page exists (the person's own menu). Plain components, no doodles.
+ * The company name links to the company's own site, as everywhere "An app by …" appears (Robert,
+ * 26 Nov 2026).
  * Who uses it: StaffLayout.
  */
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { InfoPill } from '@/components/ui/InfoPill';
@@ -38,7 +40,22 @@ export function StaffFooter({ menuItems }: { menuItems: StaffAreaPage[] }) {
             </span>
             <InfoPill tone="plum">{t('staff.pill')}</InfoPill>
           </span>
-          <span>{tStaff('shell.byCompany', { companyName: brand.companyName })}</span>
+          <span>
+            {/* The company name opens the company's site (brand.companySiteUrl; Robert, 26 Nov 2026). */}
+            <Trans
+              t={tStaff}
+              i18nKey="shell.byCompany"
+              values={{ companyName: brand.companyName }}
+              components={{
+                company: (
+                  // Trans puts the translated name inside; the brand name here is only its stand-in.
+                  <a href={brand.companySiteUrl} className="text-body underline">
+                    {brand.companyName}
+                  </a>
+                ),
+              }}
+            />
+          </span>
         </div>
         {menuItems.length > 0 && (
           <ul className="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">

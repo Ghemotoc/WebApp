@@ -23,7 +23,8 @@
  * Test data: adult_writer's story "Raftul bibliotecii" with two chapters (the first long enough to
  *   scroll); teen_17 reads it. All removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

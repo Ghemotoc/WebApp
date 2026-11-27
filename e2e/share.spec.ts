@@ -21,13 +21,8 @@
  *   reader spec signs in as blocked). All removed afterwards.
  */
 import AxeBuilder from '@axe-core/playwright';
-import {
-  expect,
-  test,
-  type Browser,
-  type BrowserContextOptions,
-  type Page,
-} from '@playwright/test';
+import { type Browser, type BrowserContextOptions, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -16,7 +16,8 @@
  * Test data: the seed's adult_writer and admin, who read in Romanian; the ticks are removed and
  * the changed title is put back afterwards (the audit log keeps its rows: append-only).
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen } from './support/accessibility';
 import { runSql } from './support/database';

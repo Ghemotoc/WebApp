@@ -16,7 +16,8 @@
  * Test data: seed personas; the tickets made here are removed afterwards. The local Vault secret
  * stays, because e2e/support-emails.spec.ts may be using it at the same time.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

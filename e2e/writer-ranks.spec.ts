@@ -14,7 +14,8 @@
  * Test data: one story "Ranguri e2e" with 15 published chapters by the pending_check persona, and
  * one thread "Ranguri e2e" they start here. Both are removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

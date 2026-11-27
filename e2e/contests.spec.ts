@@ -22,7 +22,8 @@
  * story, all made by SQL and deleted afterwards (the audit log keeps its rows).
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { brandDefaults } from '../src/config/brand';
 

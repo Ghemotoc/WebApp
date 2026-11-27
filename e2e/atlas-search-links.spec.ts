@@ -20,7 +20,8 @@
  * Story Atlas specs change, one at a time) gets "atlas-search-seed02" for the accessibility
  * checks. Both go at the end.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

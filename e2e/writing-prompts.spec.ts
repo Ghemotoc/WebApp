@@ -15,7 +15,8 @@
  * Test data: the seed's admin and adult_writer, who both read in Romanian; an earlier prompt
  * made in SQL; everything is removed afterwards (the audit log keeps its rows: append-only).
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen } from './support/accessibility';
 import { goToLastNewStoryStep } from './support/newStoryWizard';
