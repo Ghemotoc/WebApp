@@ -1773,6 +1773,8 @@ email link /unsubscribe?key= (button) or the List-Unsubscribe header (POST /api/
 
 The worker key is the Vault secret `email_worker_key` and Cloudflare's `EMAIL_WORKER_KEY` (the same value); `email_worker_url` in the Vault turns the calls on (not set locally, so local pg_cron never calls out; the e2e test wakes the worker itself). Marketing email has a gate before any sender exists: `marketing_email_allowed()` is true only for an adult who opted in, and `set_marketing_email_opt_in()` refuses anyone under 18 (Q50).
 
+Each email is written as plain text and as the branded HTML of board E03 (`server/email-layout.ts`, S1-E11-19): a round-up lists its lines, the link back is the button, and why it came and the unsubscribe link sit under the card.
+
 Tests: `183-notification-emails.test.sql`, `server/notification-emails.test.ts`, `e2e/notification-emails.spec.ts`.
 
 ## Discover and the story lists (S1-E5-01, S1-E5-09, S1-E5-02)
@@ -2088,7 +2090,8 @@ Admins change the app's own words, and the Auth emails', from Staff › Website 
 - **Where it starts (staff):** `/staff/website/interface-text` and `/staff/website/emails` (`src/features/interface-text/`). The key list comes from the bundled locale files (`lib/localeCatalogue.ts`), so the admin site can't invent a key.
 - **How one click travels:** Publish → `useInterfaceTextEditor().act()` → `admin_save_interface_text()` (checks the role, refuses an empty text, changed placeholders or the literal product name, fixes ş and ţ) → `admin_publish_interface_text()` (logs `interface_text.published` with the before and after text) → every visitor's app shows it on its next load.
 - **Emails:** `functions/api/send-email.ts` → `server/send-email.ts` is the Supabase Auth Send Email hook: it checks the Standard Webhooks signature, picks the email and language, lays the `email:` overrides over `email.json` and sends through Brevo. Every link opens our own site (`VITE_BRAND_SITE_DOMAIN`: `/auth/confirm`, `/reset-password`), never the Auth address Supabase sends as `site_url`; a change of email sends `token` to the current address and `token_new` to the new one (Supabase's names are reversed). It is switched on by hand (GO-LIVE); until then Auth uses `supabase/templates/`.
-- **Tests:** `supabase/tests/database/173-interface-text.test.sql`, `e2e/interface-text.spec.ts`, `server/send-email.test.ts` and the unit tests next to each file.
+- **Branded HTML emails (boards E01 to E05):** every Auth and notification email has a plain-text part and an HTML part drawn by `server/email-layout.ts`: a 600 px table layout on a white page, the PNG logo (`public/brand/email-logo.png`, by the site's absolute address) and the product name, one card (#F4F0EC, #E4DCD3 edge, 16 px corners), one pill button (#48125D) with the full link as text under it, and a footer where the company name links to `companySiteUrl` and "Questions? Write to …" names the support address (both from the brand config). The link note is also the hidden preheader. The words are the same `email.json` keys with the admins' overrides (`pasteLink` and `questions` are shared ones); a line that ends in `{{link}}` becomes a link or the button's label. `scripts/build-auth-email-templates.ts` draws `supabase/templates/` with the same layout. Notification emails keep their one-click unsubscribe link and headers; Auth emails never have them.
+- **Tests:** `supabase/tests/database/173-interface-text.test.sql`, `e2e/interface-text.spec.ts`, `server/send-email.test.ts`, `server/email-layout.test.ts` and the unit tests next to each file.
 
 
 ## Logo and emblem (BRAND-1a, BRAND-1b)

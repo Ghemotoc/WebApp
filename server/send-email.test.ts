@@ -78,6 +78,8 @@ async function run(
       sender: { name: 'Product', email: 'hello@example.test' },
       productName: 'Product',
       companyName: 'Company',
+      companySiteUrl: 'https://company.test',
+      supportEmail: 'hello@example.test',
       sendEmail: (email) =>
         failSend ? Promise.reject(new Error('down')) : Promise.resolve(void sent.push(email)),
       readOverrides: () => Promise.resolve(overrides),
@@ -169,6 +171,36 @@ describe('the Send Email hook', () => {
     expect(sent[0]?.to).toBe('reader@example.com');
     expect(sent[0]?.subject).toBe('Code to confirm it’s you');
     expect(sent[0]?.text).toContain('Code: 123456');
+  });
+
+  it('sends a branded HTML part in the person’s language, with the full link under the button (S1-E11-19)', async () => {
+    const { sent } = await run(payloadFor('signup'));
+    const html = sent[0]?.html ?? '';
+    const link = 'https://example.test/auth/confirm?token_hash=hash&amp;type=email';
+    expect(html).toContain('<html lang="ro">');
+    expect(html).toContain('>Confirmă adresa de email</h1>');
+    // The link note is the hidden preheader and the note under the button.
+    expect(html).toMatch(/display:none[^>]*>Linkul merge o singură dată și expiră după o oră\.</);
+    expect(html).toContain(`Sau lipește acest link în browser:<br><a href="${link}"`);
+    expect(html).toContain('<a href="https://company.test"');
+    expect(html).toContain('Întrebări? Scrie-ne la <a href="mailto:hello@example.test"');
+    expect(html).toContain('src="https://example.test/brand/email-logo.png"');
+    // Auth emails are about the account: never an unsubscribe link or header.
+    expect(html).not.toContain('unsubscribe');
+    expect(sent[0]?.headers).toBeUndefined();
+    expect(sent[0]?.text).toContain('O aplicație de la Company: https://company.test');
+  });
+
+  it('shows a change of email’s code in the HTML part, with no button', async () => {
+    const { sent } = await run(payloadFor('email_change', 'en'));
+    expect(sent[0]?.html).toContain('123456');
+    expect(sent[0]?.html).not.toContain('class="email-button"');
+  });
+
+  it("uses the admin's published wording in the HTML part too", async () => {
+    const overrides = new Map([['email:confirmation.button', 'Yes, it’s me']]);
+    const { sent } = await run(payloadFor('signup', 'en'), overrides);
+    expect(sent[0]?.html).toContain('>Yes, it’s me</a>');
   });
 
   it('an unknown kind of email is refused and a failed send is a plain 500', async () => {

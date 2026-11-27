@@ -9,9 +9,10 @@
  * - EMAIL_WORKER_KEY: the same value as the Vault secret email_worker_key;
  * - BREVO_API_KEY: the emails;
  * - VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY: the database, as the front end reads it;
- * - VITE_BRAND_NAME, VITE_BRAND_COMPANY_NAME and VITE_BRAND_SUPPORT_EMAIL (today's values when unset).
+ * - VITE_BRAND_NAME, VITE_BRAND_COMPANY_NAME, VITE_BRAND_SUPPORT_EMAIL and
+ *   VITE_BRAND_COMPANY_SITE_URL (today's values when unset).
  */
-import { brandDefaults } from '../../src/config/brand';
+import { brandDefaults, readBrand } from '../../src/config/brand';
 import { sendWithBrevo } from '../../server/contact';
 import { handleNotificationEmails } from '../../server/notification-emails';
 import { overridesFromDatabase } from '../../server/send-email';
@@ -27,6 +28,7 @@ interface PagesContext {
     VITE_BRAND_NAME?: string;
     VITE_BRAND_COMPANY_NAME?: string;
     VITE_BRAND_SUPPORT_EMAIL?: string;
+    VITE_BRAND_COMPANY_SITE_URL?: string;
   };
 }
 
@@ -52,6 +54,8 @@ export const onRequestPost = (context: PagesContext): Promise<Response> => {
     },
     productName,
     companyName: env.VITE_BRAND_COMPANY_NAME ?? brandDefaults.companyName,
+    // The footer's company link (boards E01 and E03).
+    companySiteUrl: readBrand(env).companySiteUrl,
     // Without the Brevo key nothing is sent and nothing is marked: the emails stay due.
     sendEmail:
       apiKey === ''

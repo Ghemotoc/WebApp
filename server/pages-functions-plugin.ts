@@ -249,6 +249,7 @@ function notificationEmailOptions(environment: Record<string, string>): Notifica
     },
     productName,
     companyName: process.env.VITE_BRAND_COMPANY_NAME ?? brandDefaults.companyName,
+    companySiteUrl: process.env.VITE_BRAND_COMPANY_SITE_URL ?? brandDefaults.companySiteUrl,
     sendEmail: sendWithMailpit('http://127.0.0.1:54324/api/v1'),
     readOverrides: overridesFromDatabase(supabaseUrl, anonKey),
   };

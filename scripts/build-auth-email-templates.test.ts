@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { brandDefaults } from '../src/config/brand';
+import { escapeHtml } from '../server/email-layout';
 
 import { authEmails, buildAuthEmail } from './build-auth-email-templates';
 
@@ -25,8 +25,9 @@ describe('the Supabase Auth email templates', () => {
     const html = buildAuthEmail(email, localesFolder);
     expect(html).toContain('lang="ro"');
     expect(html).toContain('lang="en"');
+    // The link sits in an href, where "&" is written "&amp;" as HTML asks.
     expect(html).toContain(
-      email.showsCode === true ? '{{ .Token }}' : (email.linkTemplate ?? 'missing'),
+      email.showsCode === true ? '{{ .Token }}' : escapeHtml(email.linkTemplate ?? 'missing'),
     );
   });
 
@@ -44,8 +45,8 @@ describe('the Supabase Auth email templates', () => {
     if (emailChange === undefined) throw new Error('email_change.html is missing from authEmails.');
     const html = buildAuthEmail(emailChange, localesFolder);
     expect(html).toContain('{{ .Token }}');
-    // The only link is the company's name in the sign-off (Robert, 26 Nov 2026): no action link.
-    const links = html.match(/href="[^"]*"/g) ?? [];
-    expect(links.every((link) => link === `href="${brandDefaults.companySiteUrl}"`)).toBe(true);
+    // No link into the site and no button: only the footer's company and support links.
+    expect(html).not.toContain('{{ .SiteURL }}');
+    expect(html).not.toContain('class="email-button"');
   });
 });

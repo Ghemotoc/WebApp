@@ -7,7 +7,8 @@
  * SEND_EMAIL_HOOK_SECRET (from Supabase › Authentication › Hooks), BREVO_API_KEY, and the public
  * VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY for the overrides read. Brand values come from the
  * same VITE_BRAND_* variables as the front end (names are settings, not code), and so does the
- * site the links open (VITE_BRAND_SITE_DOMAIN, or the default in src/config/brand.ts), never Supabase's own address.
+ * site the links open (VITE_BRAND_SITE_DOMAIN, or the default in src/config/brand.ts), never Supabase's own address,
+ * and the footer's company site (VITE_BRAND_COMPANY_SITE_URL) and support address.
  */
 import { brandDefaults, readBrand } from '../../src/config/brand';
 import { sendWithBrevo } from '../../server/contact';
@@ -25,6 +26,7 @@ interface PagesContext {
     VITE_BRAND_SITE_DOMAIN?: string;
     VITE_BRAND_COMPANY_NAME?: string;
     VITE_BRAND_SUPPORT_EMAIL?: string;
+    VITE_BRAND_COMPANY_SITE_URL?: string;
   };
 }
 
@@ -48,16 +50,20 @@ export const onRequestPost = (context: PagesContext): Promise<Response> => {
     );
   }
   const productName = env.VITE_BRAND_NAME ?? brandDefaults.productName;
+  const brand = readBrand(env);
   return handleSendEmailHook(context.request, {
     hookSecret,
     // The links open our own pages (/auth/confirm, /reset-password), which hand the code to Auth.
-    siteUrl: readBrand(env).siteUrl,
+    siteUrl: brand.siteUrl,
     sender: {
       name: productName,
       email: env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
     },
     productName,
     companyName: env.VITE_BRAND_COMPANY_NAME ?? brandDefaults.companyName,
+    // The footer's company link and "Questions? Write to …" (boards E01 to E05).
+    companySiteUrl: brand.companySiteUrl,
+    supportEmail: brand.supportEmail,
     sendEmail: sendWithBrevo(apiKey),
     readOverrides: overridesFromDatabase(
       env.VITE_SUPABASE_URL ?? '',
