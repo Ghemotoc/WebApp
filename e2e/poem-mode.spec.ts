@@ -3,7 +3,8 @@
  *
  * Who runs it: `npm run test:e2e`, and CI on every pull request (Supabase started first).
  * What it proves (the idea's three criteria):
- * 1. the writer presses "Poem" in the toolbar (a toggle button, board D05); Enter starts a new line, a second Enter a new stanza, and the
+ * 1. the writer picks Poem under "Layout" on the paper (LAYOUTS-1, board D15; it replaced the
+ *    toolbar's Poem button of MUST-2); Enter starts a new line, a second Enter a new stanza, and the
  *    spaces a line starts with are kept: the stored Markdown holds hard breaks and non-breaking
  *    spaces exactly where they were typed; a long line wraps under a hanging indent;
  * 2. a reader on a 390 px phone sees the stanzas apart and nothing scrolls sideways;
@@ -72,14 +73,16 @@ test.describe('poem mode (MUST-2)', () => {
     browser,
   }) => {
     const page = await openAsPersona(browser, 'adult_writer', `/write/s/${slug}/c/${code}`);
-    // A text button that stays pressed while the chapter is a poem (board D05, user story 5.5).
-    const poemSwitch = page.getByRole('button', { name: 'Poem', exact: true });
-    await expect(poemSwitch).toHaveAttribute('aria-pressed', 'false');
-    await poemSwitch.click();
-    await expect(poemSwitch).toHaveAttribute('aria-pressed', 'true');
+    // The Layout choice at the top of the paper, a radio group (LAYOUTS-1, board D15).
+    const layout = page.getByRole('group', { name: 'Layout' });
+    await expect(layout.getByRole('radio', { name: 'Prose' })).toBeChecked();
+    await layout.getByText('Poem', { exact: true }).click();
+    await expect(layout.getByRole('radio', { name: 'Poem' })).toBeChecked();
     await expect
-      .poll(() => runSql(`select is_poem from public.chapters where code = '${code}'`))
-      .toBe('t');
+      .poll(() =>
+        runSql(`select layout || '/' || is_poem from public.chapters where code = '${code}'`),
+      )
+      .toBe('poem/true');
 
     // Enter is a new line, two Enters a new stanza, and the spaces before "încet" stay.
     const text = page.getByRole('textbox', { name: 'Chapter text' });
