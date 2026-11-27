@@ -13,7 +13,7 @@ import convert_ws
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KIND = {"novel": "novel", "novella": "novel", "poetry": "poem", "poem": "poem", "epic": "poem", "play": "play",
         "short stories": "short_story", "children": "novel", "folk tales": "fairy_tale", "essay": "essay"}
-CATEGORY_OF_KIND = {"poem": "poetry", "essay": "nonfiction_essays"}
+CATEGORY_OF_KIND = {"poem": "poetry", "essay": "nonfiction_essays", "play": "plays"}  # Plays: FORMS-1, 27 Nov 2026
 PART_WORD = {"ru": "часть", "pl": "część", "fr": "partie", "de": "Teil", "es": "parte", "it": "parte", "pt": "parte", "nl": "deel"}
 # "Formatting adapted" in each language, after the CC BY-SA credit.
 ADAPTED = {"ru": "оформление изменено", "pl": "formatowanie dostosowane", "fr": "mise en forme adaptée",

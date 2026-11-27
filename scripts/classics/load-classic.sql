@@ -14,7 +14,7 @@
 -- Safe to run twice: a work is found again by its title and author, and a chapter by its number.
 -- A second run also repairs (book-by-book check, 27 Nov 2026): a chapter already loaded whose text
 -- or title differs from the pack gets the pack's version (live at once, kept in its versions), a
--- changed blurb is saved, and chapters past the work's new last one are removed. Each repair is in
+-- changed blurb or form is saved, and chapters past the work's new last one are removed. Each repair is in
 -- the audit log; a run with nothing to repair changes nothing.
 -- Followers are not told (tell_followers false), so the load sends no notifications.
 -- pg_temp.repair_classic_chapter(saved, new_title, new_body, owner): gives a loaded classic chapter
@@ -74,17 +74,25 @@ begin
   join public.classic_works on classic_works.story_id = stories.id
   where stories.classic_author_id = author_id and stories.title = clean_title
     and stories.deleted_at is null and stories.edition_of_story_id is null;
+  -- The work's form: Plays exists from FORMS-1 (27 Nov 2026); a database without it yet files a
+  -- play under Fiction, and the next run moves it.
+  if not exists (select 1 from public.categories where categories.slug = work ->> 'category') then
+    work := jsonb_set(work, '{category}', '"fiction"');
+  end if;
   details := jsonb_build_object('title', clean_title, 'blurb', coalesce(work ->> 'blurb', ''),
     'language_code', work ->> 'language', 'rating', work ->> 'rating', 'content_note', '',
     'author_id', author_id, 'category_slug', work ->> 'category');
-  if saved_story_id is not null
-     and (select stories.blurb from public.stories where stories.id = saved_story_id) is distinct from details ->> 'blurb' then
-    -- Step 3a: a story already loaded keeps its settings; only a rewritten blurb is saved. The blurb
-    -- is also the page's description for search engines and link previews (CALM-9s).
-    update public.stories set blurb = details ->> 'blurb' where stories.id = saved_story_id;
+  if saved_story_id is not null and exists (select 1 from public.stories where stories.id = saved_story_id
+       and (stories.blurb is distinct from details ->> 'blurb'
+            or stories.category_id is distinct from public.classic_story_category(details))) then
+    -- Step 3a: a story already loaded keeps its settings; only a rewritten blurb and a new form
+    -- (a play moved to Plays) are saved. The blurb is also the page's description for search
+    -- engines and link previews (CALM-9s).
+    update public.stories set blurb = details ->> 'blurb', category_id = public.classic_story_category(details)
+    where stories.id = saved_story_id;
     insert into public.audit_log (user_id, action, target_type, target_id, target_user_id, reason, after_values)
     values (owner_id, 'classics.work_saved', 'stories', saved_story_id::text, classics_id,
-      'Blurb rewritten after the book-by-book check (27 Nov 2026)', public.classic_work_json(saved_story_id));
+      'Blurb or form updated after the book-by-book check (27 Nov 2026)', public.classic_work_json(saved_story_id));
   end if;
   if saved_story_id is null then
     saved_story_id := public.classic_upsert_story(null, details, public.classic_story_category(details));
