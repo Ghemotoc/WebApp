@@ -22,7 +22,7 @@
  * readers (no doodles; the boards' QR code is left out).
  */
 import type { TFunction } from 'i18next';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import { brand } from '@/config/brand';
 
@@ -175,7 +175,7 @@ function CertificateFooter({
 }
 
 /**
- * The sheet's header: the product, the maker's line and the school the programme ran with.
+ * The sheet's header: the product and the school the programme ran with.
  *
  * @param props.school - the school's name, or null
  * @param props.language - the language the sheet prints in
@@ -195,16 +195,6 @@ function SheetHeader({
       <div className="flex flex-col">
         <p className={`m-0 font-heading type-heading font-bold ${ink.heading}`}>
           {brand.productName}
-        </p>
-        <p className={`m-0 type-body ${ink.muted}`}>
-          {/* The maker's line has a <company> tag around the name; Trans fills it, so the sheet
-              never prints the tag itself (bundle BOOKS-8, part 8c). */}
-          <Trans
-            t={i18n.getFixedT(language, 'common')}
-            i18nKey="shell.madeBy"
-            values={{ companyName: brand.companyName }}
-            components={{ company: <span /> }}
-          />
         </p>
       </div>
       {school !== null && (

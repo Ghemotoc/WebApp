@@ -78,14 +78,13 @@ export function parentEmail(
   // Step 1: each text with the admins' wording when there is one, then the placeholders.
   const read = (path: string) =>
     fill(textOf(defaultTexts[context.language], context.overrides, path, names), values);
-  // Step 2: the lines, then the sign-off and "An app by …", in both parts of the email.
+  // Step 2: the lines, then the sign-off, in both parts of the email.
   return letterEmail({
     to,
     subject: read(`dataRequestParent.${kind}Subject`),
     language: context.language,
     lines: bodyLines[kind].map((line) => read(`dataRequestParent.${line}`)),
     signOff: read('signOff'),
-    madeBy: read('madeBy'),
     pasteLabel: read('pasteLink'),
     brand: letterBrand({ ...names, supportEmail: context.supportEmail, siteUrl: context.siteUrl }),
   });

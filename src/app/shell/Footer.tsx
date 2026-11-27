@@ -5,21 +5,21 @@
  * Design values: a 1 px hairline on top; a few words about the site (or, on a story's pages, the
  * story's sentence and blurb), then three columns of links (Read, Write and talk, Help and legal),
  * four across from 1024 px, two from 640 px and the words above two columns on phones; then
- * "An app by …", the Night mode button and the language drop-down, placed as each size draws them.
+ * the Night mode button and the language drop-down, placed as each size draws them.
  * Headings are 15 px semibold, links 15 px at least 32 px tall with a 44 px row.
- * Decisions: the company name comes from the brand config ("An app by {{companyName}}", canvas
- * comment, 16 Oct 2026); the full Device / Light / Night choice stays in Settings › Appearance and
+ * Decisions: no company line: "An app by …" was taken out everywhere (Robert, 27 Nov 2026,
+ * replacing the canvas comment of 16 Oct 2026); the full Device / Light / Night choice stays in
+ * Settings › Appearance and
  * the staff footer; the end slot holds the language drop-down from S1-E1-04. Links are listed in
  * src/app/navigation.ts and appear only when their page exists.
  * Robert, 24 Nov 2026, 07:06 UTC: the emblem and the name sit at the top of the first column,
  * above the words, as the same "<brand name>, Home" link the top bar draws (BrandMark, so the logo
- * colour rules are the same), lined up with the words' left edge with 16 px below it. Robert,
- * 23 Nov 2026: the company name links to the company's own site (brand.companySiteUrl).
+ * colour rules are the same), lined up with the words' left edge with 16 px below it.
  * Who uses it: AppLayout. What it calls: BrandMark, useHomeAddress, FooterLinkColumn and
  * NightModeButton.
  */
 import type { ReactNode } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { type FooterColumn, footerColumns } from '@/app/navigation';
@@ -71,9 +71,9 @@ function FooterLinkColumn({ column }: { column: FooterColumn }) {
  * Renders the footer. One grid holds every part, so each screen size only moves the parts around
  * (the design files' footer at 1440, 768 and 390 px):
  * - phones: the words across the top, then two columns (Read and Write and talk, then Help and
- *   legal beside Night mode and the language), then "An app by …" at the bottom;
+ *   legal beside Night mode and the language);
  * - from 640 px: two columns (the words beside Read, then Write and talk beside Help and legal),
- *   then a bottom row with "An app by …" on the left and the controls on the right;
+ *   then a bottom row with the controls on the right;
  * - from 1024 px: the words and the three columns in one line of four, then the same bottom row.
  *
  * @param props.about - the words in the first place; the site's own words when left out
@@ -114,29 +114,11 @@ export function Footer({ about, endSlot }: FooterProps) {
               <FooterLinkColumn key={column.titleKey} column={column} />
             ))}
             {/* Step 3: Night mode and the language: beside Help and legal on phones, at the right
-                of the bottom row from 640 px (order-last puts it after "An app by …"). */}
+                of the bottom row from 640 px. */}
             <div className="flex flex-col items-start gap-3 self-start sm:order-last sm:flex-row sm:flex-wrap sm:items-center sm:self-center sm:justify-self-end lg:col-span-2">
               <NightModeButton />
               {endSlot}
             </div>
-            {/* Step 4: the maker's line: the last line on phones, the left of the bottom row after. */}
-            <p className="col-span-2 m-0 self-center type-meta leading-[18px] text-ink-muted sm:col-span-1 lg:col-span-2">
-              {/* The company name opens the company's site in this tab (Robert, 23 Nov 2026). */}
-              <Trans
-                i18nKey="shell.madeBy"
-                components={{
-                  company: (
-                    // Trans puts the translated name inside; the brand name here is only its stand-in.
-                    <a
-                      href={brand.companySiteUrl}
-                      className="text-ink-muted underline hover:text-ink"
-                    >
-                      {brand.companyName}
-                    </a>
-                  ),
-                }}
-              />
-            </p>
           </div>
         </div>
       </PageContainer>

@@ -94,8 +94,7 @@
   },
   "shell": {
     "eyebrow": "Staff",
-    "noHandle": "(no username yet)",
-    "byCompany": "An app by <company>{{companyName}}</company>"
+    "noHandle": "(no username yet)"
   },
   "refused": {
     "documentTitle": "Staff only · {{productName}}",

@@ -32,7 +32,6 @@ function letter(changes: Partial<Letter> = {}): Letter {
       'The link works for 7 days.',
     ],
     signOff: 'The App team',
-    madeBy: 'An app by Company',
     pasteLabel: 'Or paste this link into your browser:',
     brand,
     ...changes,
@@ -43,7 +42,7 @@ describe('letters in the branded layout', () => {
   it('keeps the plain text exactly as the email always sent it', () => {
     const email = letterEmail(letter());
     expect(email.text).toBe(
-      'Someone asked for this.\n\nConfirm here: https://site.test/confirm#token\n\nThe link works for 7 days.\n\nThe App team\n\nAn app by Company',
+      'Someone asked for this.\n\nConfirm here: https://site.test/confirm#token\n\nThe link works for 7 days.\n\nThe App team',
     );
   });
 
@@ -59,12 +58,12 @@ describe('letters in the branded layout', () => {
     expect(content.afterAction).toEqual(['The link works for 7 days.']);
   });
 
-  it('draws the logo from the site, the button and the company link in the footer', () => {
+  it('draws the logo from the site and the button, and names no company', () => {
     const html = letterEmail(letter()).html ?? '';
     expect(html).toContain('<html lang="en">');
     expect(html).toContain('https://site.test/brand/email-logo.png');
     expect(html).toContain('href="https://site.test/confirm#token"');
-    expect(html).toContain('<a href="https://company.test"');
+    expect(html).not.toContain('https://company.test');
     // The words after the button come after it in the card.
     expect(html.indexOf('The link works')).toBeGreaterThan(html.indexOf('Confirm here'));
   });
@@ -83,8 +82,8 @@ describe('letters in the branded layout', () => {
     expect(html).toContain('&lt;script&gt;');
   });
 
-  it('a staff alert without "An app by" keeps its text and has no empty footer line', () => {
-    const email = letterEmail(letter({ madeBy: undefined }));
+  it('ends its text with the sign-off and has no "An app by" line', () => {
+    const email = letterEmail(letter());
     expect(email.text.endsWith('The App team')).toBe(true);
     expect(email.html).not.toContain('An app by');
   });
@@ -104,6 +103,6 @@ describe('letters in the branded layout', () => {
     expect(email.text).toBe(plain.text);
     expect(email.html).toContain('We removed the content you reported.');
     expect(email.html).toContain('The App team');
-    expect(email.html).toContain('An app by');
+    expect(email.html).not.toContain('An app by');
   });
 });

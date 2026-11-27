@@ -80,15 +80,12 @@ describe('the app shell', () => {
     for (const brandLink of brandLinks) expect(brandLink).toHaveAttribute('href', '/');
   });
 
-  it('says "An app by" with the company name from the brand config in the footer', () => {
+  it('names no company in the footer: no "An app by" line and no company link', () => {
     renderApp();
 
-    expect(screen.getByText(/An app by/)).toHaveTextContent(`An app by ${brand.companyName}`);
-    // The company name opens the company's own site (Robert, 23 Nov 2026).
-    expect(screen.getByRole('link', { name: brand.companyName })).toHaveAttribute(
-      'href',
-      brand.companySiteUrl,
-    );
+    // Robert, 27 Nov 2026: every mention of the company was taken out of the site.
+    expect(screen.queryByText(/An app by/)).toBeNull();
+    expect(screen.queryByRole('link', { name: brand.companyName })).toBeNull();
   });
 
   it("switches to night mode from the footer's Night mode button and remembers it on this device", () => {

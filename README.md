@@ -1,6 +1,6 @@
 # Ghemotoc
 
-An app by The Magic Coffin: a writer-first platform for stories, poems and essays, for Romania and English-speaking readers, with minors (13+) as users from day one.
+A writer-first platform for stories, poems and essays, for Romania and English-speaking readers, with minors (13+) as users from day one.
 
 This repository is built with Claude Code, one user story per pull request.
 

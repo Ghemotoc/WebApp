@@ -151,7 +151,6 @@ async function linkEmail(
     language,
     lines: lines.map(read),
     signOff: read('signOff'),
-    madeBy: read('madeBy'),
     pasteLabel: read('pasteLink'),
     brand: letterBrand({
       ...names,

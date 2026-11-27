@@ -373,10 +373,10 @@ describe('the notification email worker', () => {
     expect(html).toContain(
       `<a href="https://site.test/unsubscribe?key=${unsubscribeKey}" style="color:#3D4290">Stop these emails with one click</a>`,
     );
-    expect(html).toContain('<a href="https://company.test"');
+    expect(html).not.toContain('https://company.test');
     expect(html).toContain('src="https://site.test/brand/email-logo.png"');
-    // The plain text keeps the company's address after its name.
-    expect(email?.text).toContain('An app by Company: https://company.test');
+    // Robert, 27 Nov 2026: neither part names the company.
+    expect(email?.text).not.toContain('An app by');
   });
 
   it('lists a Romanian round-up’s lines in the HTML part, in Romanian', async () => {

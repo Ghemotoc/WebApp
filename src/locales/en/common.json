@@ -10,7 +10,6 @@
     "skipToContent": "Skip to content",
     "pageTitle": "{{title}} · {{productName}}",
     "mainNavigation": "Main",
-    "madeBy": "An app by <company>{{companyName}}</company>",
     "footer": {
       "about": "A free website for writing and reading stories, poems and essays. Writers keep the rights to their work, and there are no tracking ads. In Romanian and English, starting in Romania.",
       "read": "Read",
