@@ -109,6 +109,22 @@ begin
     values (owner_id, 'classics.work_saved', 'stories', saved_story_id::text, classics_id,
       'Bulk load of public-domain classics (Robert, 26 Nov 2026)', public.classic_work_json(saved_story_id));
   end if;
+  -- Step 3b: a work still protected in some countries (Orwell in the United States, Peter Pan in
+  -- the United Kingdom; Robert, 27 Nov 2026) is hidden there through COUNTRY-1's column, which
+  -- also keeps it out of sitemaps and marks its pages noindex (CALM-9s). This runs on every part,
+  -- before Step 5 publishes anything, so the work is never shown in those countries, not even for
+  -- a moment. A work without the field is left as it is.
+  if work ? 'hidden_in_countries' and exists (select 1 from public.stories where stories.id = saved_story_id
+       and stories.hidden_in_countries is distinct from
+           array(select jsonb_array_elements_text(work -> 'hidden_in_countries'))) then
+    update public.stories
+    set hidden_in_countries = array(select jsonb_array_elements_text(work -> 'hidden_in_countries'))
+    where stories.id = saved_story_id;
+    insert into public.audit_log (user_id, action, target_type, target_id, target_user_id, reason, after_values)
+    values (owner_id, 'classics.work_saved', 'stories', saved_story_id::text, classics_id,
+      'Hidden where still under copyright (Robert, 27 Nov 2026)',
+      jsonb_build_object('hidden_in_countries', work -> 'hidden_in_countries'));
+  end if;
   -- Step 4: the chapters this part carries, each checked like a writer's chapter.
   for chapter in select * from jsonb_array_elements(work -> 'chapters') loop
     clean_body := public.check_chapter_text(chapter ->> 'body');

@@ -22,6 +22,10 @@ on:
         description: 'Type LOAD to add the classics to the database in the CLASSICS_DATABASE_URL secret'
         required: true
         default: ''
+      pack:
+        description: 'Optional: load only one pack, by the word after works- (for example hidden). Empty loads every pack'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -30,7 +34,8 @@ jobs:
   load:
     name: Load the classics
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    # 945 parts took longer than two hours on 27 Nov 2026; GitHub's hosted runners allow six.
+    timeout-minutes: 350
     # One load at a time, so two presses never write the same works side by side.
     concurrency:
       group: load-classics
@@ -62,8 +67,20 @@ jobs:
       - name: Make sure psql is installed
         run: command -v psql || (sudo apt-get update && sudo apt-get install -y postgresql-client)
 
+      # With a pack named, only that file is loaded (letters only, so the name can't reach a
+      # path outside the folder); without one, every pack is.
       - name: Write the SQL parts
-        run: python3 scripts/classics/build-load-sql.py "$RUNNER_TEMP/classics-sql"
+        env:
+          PACK: ${{ inputs.pack }}
+        run: |
+          if [ -z "$PACK" ]; then
+            python3 scripts/classics/build-load-sql.py "$RUNNER_TEMP/classics-sql"
+          elif printf '%s' "$PACK" | grep -Eq '^[a-z]+$' && [ -f "content/classics/bulk-2026-11/works-$PACK.jsonl.gz" ]; then
+            python3 scripts/classics/build-load-sql.py "$RUNNER_TEMP/classics-sql" "content/classics/bulk-2026-11/works-$PACK.jsonl.gz"
+          else
+            echo "There is no pack called '$PACK' in content/classics/bulk-2026-11/." >&2
+            exit 1
+          fi
 
       # Each part is one transaction; ON_ERROR_STOP makes psql stop at the first error, and the
       # loop stops too, so a failed part leaves the database as the parts before it left it.

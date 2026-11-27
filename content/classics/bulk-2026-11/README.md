@@ -5,6 +5,7 @@ Robert asked on 26 Nov 2026 for every work on the research list "Research: publi
 | File | What it is |
 | --- | --- |
 | `works-en.jsonl.gz`, `works-ro.jsonl.gz`, `works-nordic.jsonl.gz`, `works-ru.jsonl.gz`, and `works-pl`, `-fr`, `-de`, `-es`, `-it`, `-pt`, `-nl.jsonl.gz` | The works, one JSON object per line, gzip-compressed: title, author, the author's death year, language, kind, rating, first publication, blurb, credit line and the chapters in the Markdown subset |
+| `works-hidden.jsonl.gz` | Works free in most countries but still protected in a few, each with `hidden_in_countries` (below) |
 | `works-index.csv` | One row per work, to read without unzipping: title, author, language, year, kind, rating, chapters, length and source |
 | `not-loaded.csv` | Works on the list whose text could not be fetched, and why |
 
@@ -22,6 +23,15 @@ The rule (research doc, Summary tab): free in all 11 markets in 2026 means the a
 - the 20 classics already on staging.
 
 A translation names its translator and why it may be shown (`translation_rights` public_domain): *A Doll's House*, translated by R. Farquharson Sharp (died 1945).
+
+## Works hidden in some countries (Robert, 27 Nov 2026)
+
+Robert decided to add George Orwell and Peter Pan even though a few countries still protect them, and to hide them only there. `works-hidden.jsonl.gz` carries a `hidden_in_countries` list per work; the loader writes it to `stories.hidden_in_countries` (COUNTRY-1) before any chapter goes live, so the work never shows in those countries. A story hidden anywhere also stays out of the sitemap and its pages are noindex everywhere (CALM-9s), so these books get no search traffic. The block follows the reader's connection, so a VPN can get around it (board D07).
+
+| Works | Hidden in | Why |
+| --- | --- | --- |
+| Orwell: *Nineteen Eighty-Four*, *Animal Farm*, *Burmese Days*, *A Clergyman's Daughter*, *Keep the Aspidistra Flying*, *Coming Up for Air*, *Down and Out in Paris and London*, *The Road to Wigan Pier*, *Homage to Catalonia* (Project Gutenberg Australia) | US and its territories (PR, GU, VI, AS, MP, UM), ES, MX, CO, CI | Orwell died in 1950, so life + 70 freed him in the EU, UK, Nordics, Romania, Moldova, Canada, Australia and New Zealand on 1 Jan 2021. The US protects works first published from 1931 for 95 years (*Down and Out* until 2029, *Animal Farm* until 2041, *Nineteen Eighty-Four* until 2045). Spain keeps life + 80 for authors who died before 7 Dec 1987 (until the end of 2030); Mexico life + 100, Colombia life + 80, Côte d'Ivoire life + 99 |
+| *Peter and Wendy* (Standard Ebooks) | GB, IM, JE, GG | Barrie died in 1937, so the text is free everywhere, but the UK gives Great Ormond Street Hospital a royalty for publishing *Peter Pan* or an adaptation, with no end date (CDPA 1988, s. 301 and Schedule 6). The Isle of Man and the Channel Islands are hidden too, to be safe |
 
 ## Where the texts come from
 
