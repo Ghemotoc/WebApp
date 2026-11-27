@@ -681,6 +681,31 @@ dialog.bg-surface,
   backdrop-filter: none;
 }
 
+/*
+ * Menus and pop-overs float over the page, so in Lilac mist they are white like the page while the
+ * cards inside them take the Isabelline box colour (Robert, DESIGN card, 26 Nov 2026, 21:07 UTC:
+ * the account menu is white with an Isabelline profile card). --surface-box-inner is white by day
+ * and the box colour at night, so night menus don't change.
+ */
+.bg-surface.shadow-popover:not(dialog) {
+  background-color: var(--surface-box-inner);
+}
+
+/*
+ * The profile card at the top of the account menu (AccountMenu.tsx): the box colour and edge, and
+ * the soft-button lilac with a slightly darker edge on hover, so it clearly reacts to the pointer
+ * (Robert, DESIGN card, 26 Nov 2026, 21:07 UTC). Keyboard focus keeps the usual ring.
+ */
+.profile-card {
+  background-color: var(--surface-box);
+  border-color: var(--line-box);
+}
+
+.profile-card:hover {
+  background-color: var(--tint);
+  border-color: color-mix(in srgb, var(--tint), var(--ink) 18%);
+}
+
 [data-area='staff'] dialog.bg-surface,
 [data-area='staff'] .bg-surface.shadow-popover {
   background-color: var(--surface);
@@ -737,7 +762,9 @@ dialog.bg-surface,
  */
 @utility glass-float {
   background-color: transparent;
-  background-image: var(--lg-float-bg);
+  /* --nav-bar-bg is set only for Lilac mist by day (tokens.css); every other look, night, high
+     contrast and staff keep the near-white glass of --lg-float-bg. */
+  background-image: var(--nav-bar-bg, var(--lg-float-bg));
   /* The one glass left (Robert, 23 Nov 2026, 19:26 UTC): only the nav bars use glass-float. */
   -webkit-backdrop-filter: var(--nav-blur);
   backdrop-filter: var(--nav-blur);
@@ -746,12 +773,15 @@ dialog.bg-surface,
 }
 
 /*
- * The top bar's links as the website's nav pills (GLASS-2): no recess, each link a pill, and the
- * current page on a raised glass pill (the website's hover and active state) that NavTrack slides
+ * The top bar's links as the website's nav pills (GLASS-2): each link a pill in the lilac track,
+ * and the current page on a raised white pill (the website's hover and active state) that NavTrack slides
  * under it. Hovering a link shows the same pill, fainter.
  */
 .nav-track {
-  background-color: transparent;
+  /* The links sit in one lilac track (the surface tint, 4 px inside, full corners), with the
+     current page as a white chip (Robert, DESIGN thread, 26 Nov 2026, 20:56 UTC: the purplish
+     track behind Home, Read, Library and Together had gone flat). */
+  background-color: var(--tint);
   box-shadow: none;
 }
 
@@ -1042,6 +1072,21 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   border-color: var(--line-box);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+}
+
+/*
+ * A card inside a box (the Hub hero's Continue reading and Writing month) is white with the same
+ * edge, so it stands out from the Isabelline box around it (Robert, DESIGN card, 26 Nov 2026,
+ * 20:55 UTC). --surface-box-inner is white by day and the box colour itself at night and in high
+ * contrast, so nothing changes there. The two selectors match the two ways a box is drawn above.
+ */
+.box-surface:not([data-area='staff'] *) .box-surface,
+.box-surface:not([data-area='staff'] *)
+  :is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surface.border-border:not(
+    dialog,
+    .shadow-popover
+  ) {
+  background-color: var(--surface-box-inner);
 }
 
 /*

@@ -17,7 +17,8 @@
  * Test data: chapters made in SQL on the seed story "Stația meteo"; deleted after.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Locator, type Page } from '@playwright/test';
+import { type Browser, type Locator, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -20,13 +20,8 @@
  * Test data: one published poem on adult_writer's "Stația meteo"; its comments go with it.
  */
 import AxeBuilder from '@axe-core/playwright';
-import {
-  expect,
-  test,
-  type Browser,
-  type BrowserContextOptions,
-  type Page,
-} from '@playwright/test';
+import { type Browser, type BrowserContextOptions, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { THEME_STORAGE_KEY } from '../src/lib/theme';
 

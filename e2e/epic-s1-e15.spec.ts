@@ -14,7 +14,8 @@
  * Test data: seed personas; a story of the spec's own, removed after with its reads and today's
  * count, and the personas' language put back.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

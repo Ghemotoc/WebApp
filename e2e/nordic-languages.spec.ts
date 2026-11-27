@@ -15,7 +15,8 @@
  * one at a time, playwright.config.ts, so no other spec sees it open).
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { waitForAnimationsToFinish } from './support/animations';

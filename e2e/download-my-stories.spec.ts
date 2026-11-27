@@ -19,7 +19,8 @@
  */
 import { readFile } from 'node:fs/promises';
 
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 import JSZip from 'jszip';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';

@@ -17,7 +17,8 @@
  * Test data: chapters made in SQL on adult_writer's two seed stories (the second made 16+);
  * removed after, with the bios, blocks and locales put back.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

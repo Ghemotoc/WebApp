@@ -22,7 +22,8 @@
  * Test data: adult_writer's story "Lista de ploaie" with one chapter; teacher keeps the lists.
  *   All removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

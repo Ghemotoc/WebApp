@@ -16,7 +16,8 @@
  *   768 and 1440 px, in light and night mode, in Romanian and English.
  * Test data: the seed personas; the story this test makes is deleted at the end.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

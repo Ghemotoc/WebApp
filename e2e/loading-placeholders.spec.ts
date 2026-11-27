@@ -7,7 +7,7 @@
  * the stories arrive the shapes give way to the covers.
  * Test data: the seed stories; nothing is changed.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 

@@ -11,7 +11,8 @@
  * - both tabs pass axe at 390, 768 and 1440 px, light and night, ro and en.
  * Test data: seed personas only; everything this spec saves is deleted afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

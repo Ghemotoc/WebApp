@@ -20,7 +20,8 @@
  * read (an invited adult is active while adults_only is on); kid_14_waiting is the one who waits.
  * The class is removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

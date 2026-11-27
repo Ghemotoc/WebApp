@@ -20,7 +20,8 @@
  * spec (the new "page not found" screen's axe is here); docs/epic-reports/S1-E2.md lists them.
  * Test data: seed personas and one synthetic @example.com account, removed afterwards.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

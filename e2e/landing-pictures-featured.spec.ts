@@ -13,7 +13,8 @@
  * keeps its rows; the small picture file stays in the local bucket, because Storage refuses direct
  * deletes). The local picture check signs with a test value, never a real secret.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

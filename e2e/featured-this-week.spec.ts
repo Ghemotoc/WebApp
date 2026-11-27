@@ -13,7 +13,8 @@
  * Test data: three stories of the spec's own with a chapter out yesterday (two by adult_writer,
  * one by kid_14_ok); the picks and the stories are removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

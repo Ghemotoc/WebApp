@@ -13,7 +13,8 @@
  * Run it on its own when the suite is split across parallel runs on one database: while the new
  * version exists every signed-in persona sees the notice, so other specs fail at random.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';

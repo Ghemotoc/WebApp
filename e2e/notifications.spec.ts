@@ -13,7 +13,8 @@
  * Test data: a throwaway account of its own (so other specs' notifications never mix in) with a
  * story and chapter, removed afterwards with everything that points at it.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { THEME_STORAGE_KEY } from '../src/lib/theme';
 

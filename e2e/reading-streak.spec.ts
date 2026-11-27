@@ -16,7 +16,8 @@
  * Test data: the editor and teen_17 personas, and adult_writer's story "Ceasul de nisip" with one
  * chapter. Everything is removed at the start and the end.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

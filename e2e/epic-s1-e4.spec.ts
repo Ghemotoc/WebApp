@@ -20,7 +20,8 @@
  * The database half is supabase/tests/database/093-epic-s1-e4.test.sql.
  * Test data: seed personas; the seed story's chapters are removed and the story put back after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

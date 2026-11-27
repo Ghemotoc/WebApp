@@ -14,7 +14,8 @@
  *   light and night, ro and en.
  * Test data: the seed story "Stația meteo" (adult_writer); its chapters are deleted after.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

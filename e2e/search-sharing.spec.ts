@@ -13,7 +13,8 @@
  * Test data: the seeded home pages and help pages; a search description is written into the live
  * English home page and taken out again afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
