@@ -2385,9 +2385,16 @@ The liquid glass Library board draws "Your lists": lists of stories a reader mak
 
 ## Poem mode (MUST-2)
 
-- Where it lives: `src/features/writing/lib/poemMode.ts` (the `PoemMode` editor extension: Enter, paste, and `keepLineIndents()` on save), `components/PoemModeSwitch.tsx` above the text in `ChapterEditorPage`, `hooks/usePoemMode.ts` → `setChapterPoemMode()` in `api/chapters.ts`; the reader's `src/features/reading/lib/poemStanzas.ts` (a rehype plugin `ChapterText` runs when `isPoem` is true) and the `.tmc-poem` styles in `src/styles/index.css`; `supabase/migrations/…_must2_poem_mode.sql`.
-- How a poem travels: the writer ticks Poem mode → `set_chapter_poem_mode()` → `chapters.is_poem` → the editor's storage turns on the poem Enter → each save runs `keepLineIndents()` so leading spaces become non-breaking spaces → `save_chapter_draft()` stores Markdown with hard breaks ("  \n") → `get_chapter()` answers `is_poem` → `ChapterText` draws each paragraph as a `role="group"` stanza and each line as a `span.tmc-poem-line`.
-- A new chapter of a Poetry story starts in poem mode (trigger `chapters_start_as_poem`).
+- Where it lives: `src/features/writing/lib/poemMode.ts` (the `PoemMode` editor extension: Enter, paste, and `keepLineIndents()` on save), the Layout choice on the paper (`components/LayoutChoice.tsx`, LAYOUTS-1, below), `hooks/useChapterLayout.ts` → `setChapterLayout()` in `api/chapters.ts`; the reader's `src/features/reading/lib/poemStanzas.ts` (a rehype plugin `ChapterText` runs when `isPoem` is true) and the `.tmc-poem` styles in `src/styles/index.css`; `supabase/migrations/…_must2_poem_mode.sql`.
+- How a poem travels: the writer picks Poem under Layout → `set_chapter_layout()` → `chapters.layout` (and `is_poem`, kept in step) → the editor's storage turns on the poem Enter → each save runs `keepLineIndents()` so leading spaces become non-breaking spaces → `save_chapter_draft()` stores Markdown with hard breaks ("  \n") → `get_chapter()` answers `is_poem` → `ChapterText` draws each paragraph as a `role="group"` stanza and each line as a `span.tmc-poem-line`.
+- A new chapter of a Poetry story starts in poem mode (trigger `chapters_start_layout`, LAYOUTS-1).
+
+## Chapter layouts (LAYOUTS-1; Robert, 27 Nov 2026, 17:34 UTC, boards D14 and D15)
+
+- One Layout per chapter, Prose, Play or Poem, so one story can mix them: `chapters.layout`. The story's form sets a new chapter's layout (Poetry a poem, Plays a play; trigger `chapters_start_layout`); `is_poem` stays and follows it (trigger `chapters_keep_layout_in_step`), so readers and exports that read it keep working.
+- Where it lives: `supabase/migrations/…_layouts1_chapter_layout.sql` (`set_chapter_layout()`, and `story_chapter_progress()` answers `layout`); `src/features/writing/components/LayoutChoice.tsx` (a SegmentedControl on the paper's "Chapter 16" line, in `EditorPaper`) with `hooks/useChapterLayout.ts`; the chapter list's "Play · Draft" in `src/features/atlas/components/WritingChapterList.tsx`.
+- What a play or poem is stored as (shared with the classics loader): the chapter's Markdown subset, one block per paragraph. Play: `## Act`, `### Scene`, a speech `**NAME:** words` (inline directions in italics), a stage direction a whole italic paragraph. Poem: one paragraph a stanza, lines joined by hard breaks, an indent 4 non-breaking spaces a step (up to 4), a poem's title `### Title`. The play editor and reader come in LAYOUTS-2 and 3, the poem's in LAYOUTS-4.
+- Tests: `supabase/tests/database/423-chapter-layouts.test.sql`, `e2e/chapter-layouts.spec.ts`, `e2e/poem-mode.spec.ts`.
 - Tests: `supabase/tests/database/350-poem-mode.test.sql`, `src/features/writing/lib/poemMode.test.ts`, `src/features/reading/components/ChapterText.test.tsx`, `e2e/poem-mode.spec.ts`.
 
 ## Due dates for class assignments (MUST-1d; a date and a time since CALM-7d)

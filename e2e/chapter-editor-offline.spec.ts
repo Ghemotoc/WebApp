@@ -122,8 +122,12 @@ test.describe('the chapter editor offline, in a conflict and on paste (S1-E3-02b
       'Not saved yet. Trying again',
       'Not saved yet. Trying again',
     ]);
+    // Bring Retry to the middle of the screen first, clear of the sticky chapter bar, so the click
+    // lands at once and never races the editor's own retry ten seconds later.
+    const retry = page.getByRole('button', { name: 'Retry' });
+    await retry.evaluate((button) => button.scrollIntoView({ block: 'center' }));
     await page.unroute('**/rest/v1/rpc/save_chapter_draft');
-    await page.getByRole('button', { name: 'Retry' }).click();
+    await retry.click();
     await expect(saveStatus(page)).toHaveText(/^Saved at /);
     await expect(page.getByRole('button', { name: 'Retry' })).toHaveCount(0);
     expect(storedBody(code)).toBe('Început. Din nou.');

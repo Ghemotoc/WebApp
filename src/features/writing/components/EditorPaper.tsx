@@ -7,11 +7,13 @@
  * and the save ("Saved at 14:02") at the right, over a hairline. The paper is the story paper
  * (--story-paper), 48 by 64 px inside from 1024 px, 48 by 32 on tablets and 32 by 16 on phones;
  * poems keep their lines and stanzas through `.tmc-poem` (MUST-2).
+ * Layout (LAYOUTS-1, boards D14 and D15): Prose, Play or Poem at the right of the "Chapter 16"
+ * line (LayoutChoice); it wraps under it on a phone.
  * Footnotes (BOOKS-D05b, board D13): the open note's box sits in the text area, under its number,
  * the chapter's notes are listed under the text ("Notes"), and while there are notes the word
  * count says "notes not counted".
  * Who uses it: ChapterEditorPage. What it calls: TipTap's EditorContent, SaveWord,
- * FootnoteNotePanel and EditorFootnoteList.
+ * FootnoteNotePanel, EditorFootnoteList and LayoutChoice.
  */
 import { EditorContent, type Editor } from '@tiptap/react';
 import { useRef } from 'react';
@@ -19,12 +21,14 @@ import { useRef } from 'react';
 import { MAXIMUM_CHAPTER_TITLE_LENGTH } from '@/schemas/chapter';
 
 import type { SaveState } from '../hooks/useAutosave';
+import type { ChapterLayoutState } from '../hooks/useChapterLayout';
 import type { FootnoteEditing } from '../hooks/useFootnoteEditing';
 import { EditingChapterContext } from '../lib/editingChapter';
 import { useEditorTranslation } from '../registerEditorTranslations';
 
 import { EditorFootnoteList } from './EditorFootnoteList';
 import { FootnoteNotePanel } from './FootnoteNotePanel';
+import { LayoutChoice } from './LayoutChoice';
 import { SaveWord } from './SaveWord';
 
 /** What the paper needs. */
@@ -36,7 +40,8 @@ export interface EditorPaperProps {
   /** Leaving the title saves at once, as leaving the text does. */
   onTitleBlur: () => void;
   editor: Editor | null;
-  isPoem: boolean;
+  /** The chapter's layout and its change (useChapterLayout). */
+  layout: ChapterLayoutState;
   wordCount: number;
   saveState: SaveState;
   /** The chapter's footnotes and the open note (useFootnoteEditing). */
@@ -65,9 +70,12 @@ export function EditorPaper(props: EditorPaperProps) {
   const textAreaRef = useRef<HTMLDivElement>(null);
   return (
     <div className="rounded-card bg-story-paper px-4 py-8 text-ink sm:px-8 sm:py-12 lg:px-16">
-      <p className="m-0 mb-1 type-meta text-ink-muted">
-        {t('chapterNumber', { number: props.chapterNumber })}
-      </p>
+      <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
+        <p className="m-0 type-meta text-ink-muted">
+          {t('chapterNumber', { number: props.chapterNumber })}
+        </p>
+        <LayoutChoice {...props.layout} />
+      </div>
       <label htmlFor="chapter-title" className="sr-only">
         {t('titleLabel')}
       </label>
@@ -83,7 +91,7 @@ export function EditorPaper(props: EditorPaperProps) {
       />
       <div
         ref={textAreaRef}
-        className={`tmc-chapter-text tmc-chapter-text--editor relative mt-6 ${props.isPoem ? 'tmc-poem' : ''}`}
+        className={`tmc-chapter-text tmc-chapter-text--editor relative mt-6 ${props.layout.layout === 'poem' ? 'tmc-poem' : ''}`}
       >
         {/* The blocks inside the text (pictures, cards) read the chapter from here (GAPS-8). */}
         <EditingChapterContext value={props.chapterId}>

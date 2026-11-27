@@ -1850,6 +1850,7 @@ export type Database = {
           is_last: boolean;
           is_poem: boolean;
           last_published_at: string | null;
+          layout: string;
           position: number;
           published_body: string | null;
           published_title: string | null;
@@ -1882,6 +1883,7 @@ export type Database = {
           is_last?: boolean;
           is_poem?: boolean;
           last_published_at?: string | null;
+          layout?: string;
           position: number;
           published_body?: string | null;
           published_title?: string | null;
@@ -1910,6 +1912,7 @@ export type Database = {
           is_last?: boolean;
           is_poem?: boolean;
           last_published_at?: string | null;
+          layout?: string;
           position?: number;
           published_body?: string | null;
           published_title?: string | null;
@@ -16318,6 +16321,7 @@ export type Database = {
           is_last: boolean;
           is_poem: boolean;
           last_published_at: string | null;
+          layout: string;
           position: number;
           published_body: string | null;
           published_title: string | null;
@@ -17168,6 +17172,7 @@ export type Database = {
           is_last: boolean;
           is_poem: boolean;
           last_published_at: string | null;
+          layout: string;
           position: number;
           published_body: string | null;
           published_title: string | null;
@@ -17205,6 +17210,7 @@ export type Database = {
           is_last: boolean;
           is_poem: boolean;
           last_published_at: string | null;
+          layout: string;
           position: number;
           published_body: string | null;
           published_title: string | null;
@@ -18005,6 +18011,10 @@ export type Database = {
         Returns: Json;
       };
       set_chapter_last: { Args: { chapter_code: string; is_last: boolean }; Returns: Json };
+      set_chapter_layout: {
+        Args: { chapter_code: string; chapter_layout: string };
+        Returns: string;
+      };
       set_chapter_order: {
         Args: { chapter_codes: string[]; moved_chapter_code?: string; story_slug: string };
         Returns: Json;

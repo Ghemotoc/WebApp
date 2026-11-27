@@ -613,6 +613,11 @@
       "draft": "Draft",
       "scheduled": "Scheduled",
       "published": "Published"
+    },
+    "layouts": {
+      "prose": "Prose",
+      "play": "Play",
+      "poem": "Poem"
     }
   },
   "storyline": {
