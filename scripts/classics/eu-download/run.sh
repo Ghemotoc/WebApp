@@ -32,7 +32,7 @@ fi
 for lang in "${LANGS[@]}"; do
   # Step 4: turn the pages into chapters (author's text only) and pack them.
   echo "== $lang: building"
-  "$PY" tools/build_eu.py "$lang"
+  "$PY" tools/build_eu.py "$lang" || { echo "$lang: build failed"; continue; }
   "$PY" - "$lang" <<'PYEOF'
 import glob, gzip, json, os, shutil, sys
 lang = sys.argv[1]

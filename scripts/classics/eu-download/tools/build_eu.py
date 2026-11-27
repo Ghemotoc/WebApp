@@ -70,7 +70,7 @@ def chapters_of(record, title, language):
     if record.get("listed"):
         subs = [dict(s, title=re.sub(r"\s*\([^()]*\)$", "", s["title"].split("/")[-1])) for s in subs]
     record["subpages"] = subs
-    chapters = convert_ws.convert(record, title, PART_WORD[language])
+    chapters = convert_ws.convert(record, title, PART_WORD.get(language, "part"))
     chapters = [(t, LICENCE_LINE.sub("", b).strip()) for t, b in chapters]
     chapters = drop_repeats([(t, b) for t, b in chapters if b])
     # An epilogue linked first (from the page header) belongs at the end.
@@ -136,7 +136,7 @@ def main(languages):
             work = dict(id=work_id, title=title[:120], author=row["author"].strip(), author_died=int(died.group()) if died else None,
                         language=language, kind=kind, category=CATEGORY_OF_KIND.get(kind, "fiction"), rating=rating,
                         first_published=int(year.group()) if year else None, blurb=blurb,
-                        source_title=f"Wikisource, CC BY-SA 4.0; {MODERN_SPELLING if modernised else ADAPTED[language]}",
+                        source_title=f"Wikisource, CC BY-SA 4.0; {MODERN_SPELLING if modernised else ADAPTED.get(language, "formatting adapted")}",
                         source_url=f"https://{host}/w/index.php?oldid={record['revid']}",
                         chapters=[{"title": t[:120], "body": safe_text(b)} for t, b in chapters])
             json.dump(work, open(os.path.join(out_dir, work_id + ".json"), "w"), ensure_ascii=False)
