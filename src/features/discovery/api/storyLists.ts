@@ -124,7 +124,8 @@ export const everyLanguage = 'any';
  * Trending, genres and See all"). Personal lists (library, reading lists, someone's profile, the
  * writer's page, following) and search show every language, because the reader chose those
  * stories or asked for them by name. The public-domain classics shelf shows every language too:
- * it is a small curated shelf of Romanian and world classics, meant for every reader.
+ * it is a curated shelf meant for every reader, with the reader's languages first
+ * (languagesFirstFor, CLASSICS-ORDER).
  */
 const readingLanguageKinds: ReadonlySet<ListKind> = new Set<ListKind>([
   'updated',
@@ -165,6 +166,36 @@ export function languageFilterFor(
   // Step 2: otherwise the lists that follow them show the languages the reader reads.
   if (!followsReadingLanguages(request.kind) || readingLanguages.length === 0) return null;
   return readingLanguages.join(',');
+}
+
+/** What languagesFirstFor() needs to know about the reader's languages. */
+export interface ReaderLanguages {
+  /** The languages the reader reads (useReadingLanguageFilter). */
+  languages: readonly string[];
+  /** True when the reader picked none, so the list above is only the default. */
+  isDefault: boolean;
+  /** The language the app is shown in. */
+  interfaceLanguage: string;
+}
+
+/**
+ * The languages whose stories come first on a list (CLASSICS-ORDER; Robert's decision card
+ * "Reader's languages first", 27 Nov 2026, 20:33 UTC): on the classics list only, the reader's
+ * languages (Settings › Reading languages), or the interface language when none are picked. Every
+ * other language follows, so nothing is hidden. A language picked in the filter, or a sort the
+ * reader chose, leaves the list's order alone.
+ *
+ * @param request - the list and its filters
+ * @param reader - the reader's languages and the interface language
+ * @returns the codes separated by commas, or null for the list's own order
+ */
+export function languagesFirstFor(request: ListRequest, reader: ReaderLanguages): string | null {
+  // Step 1: only the classics list, in its own order, with no one language picked.
+  if (request.kind !== 'classics' || request.sortOrder !== null) return null;
+  if (request.languageCode !== null && request.languageCode !== everyLanguage) return null;
+  // Step 2: the reader's own pick, or the interface language when they picked none.
+  if (reader.isDefault || reader.languages.length === 0) return reader.interfaceLanguage;
+  return reader.languages.join(',');
 }
 
 /** One story as a card. */
@@ -327,19 +358,44 @@ function rangeFilterArguments(request: ListRequest): OptionalFilterArguments {
 }
 
 /**
+ * The language inputs browse_stories() gets: only the ones that are set.
+ *
+ * @param language - the language filter (languageFilterFor), or null for every language
+ * @param languagesFirst - the languages that come first (languagesFirstFor), or null
+ * @returns language and languages_first, each only when set
+ */
+function languageArguments(
+  language: string | null,
+  languagesFirst: string | null,
+): { language?: string; languages_first?: string } {
+  const inputs: { language?: string; languages_first?: string } = {};
+  if (language !== null) inputs.language = language;
+  // CLASSICS-ORDER: the reader's languages first on the classics list.
+  if (languagesFirst !== null) inputs.languages_first = languagesFirst;
+  return inputs;
+}
+
+/**
  * Reads one page of a list.
  *
  * @param client - the shared Supabase client
  * @param request - the list and its filters
- * @param page - how many stories (pageSize) from where (offset), and the languages the reader
- *   reads for the lists that follow them (MARKETS-2c)
+ * @param page - how many stories (pageSize) from where (offset), the languages the reader
+ *   reads for the lists that follow them (MARKETS-2c) and the languages that come first
+ *   (CLASSICS-ORDER)
  * @returns the page and the list's total
  * Errors: throws with Supabase's message when the database can't be reached or refuses the list.
  */
 export async function fetchStoryList(
   client: AppSupabaseClient,
   request: ListRequest,
-  page: { pageSize: number; offset: number; readingLanguages?: readonly string[] },
+  page: {
+    pageSize: number;
+    offset: number;
+    readingLanguages?: readonly string[];
+    /** Languages whose stories come first (languagesFirstFor), or null. */
+    languagesFirst?: string | null;
+  },
 ): Promise<StoryListPage> {
   // Step 1: only the filters that are set go to the database; the rest keep their defaults.
   const language = languageFilterFor(request, page.readingLanguages ?? []);
@@ -349,7 +405,7 @@ export async function fetchStoryList(
     ...(request.key === null ? {} : { list_key: request.key }),
     ...(request.categorySlug === null ? {} : { category_slug: request.categorySlug }),
     ...(request.completion === null ? {} : { completion: request.completion }),
-    ...(language === null ? {} : { language }),
+    ...languageArguments(language, page.languagesFirst ?? null),
     ...(request.sortOrder === null ? {} : { sort_order: request.sortOrder }),
     ...(popularIn === null ? {} : { popular_in: popularIn }),
     ...rangeFilterArguments(request),

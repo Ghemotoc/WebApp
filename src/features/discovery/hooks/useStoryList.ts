@@ -15,6 +15,7 @@ import { getSupabaseClient } from '@/lib/supabase';
 
 import {
   fetchStoryList,
+  languagesFirstFor,
   type ListedStory,
   type ListRequest,
   type StoryListPage,
@@ -52,7 +53,7 @@ export function useStoryList(request: ListRequest, isReady = true) {
   const pages = useInfiniteQuery({
     // TRANSLATE-1b: a story in several languages is listed in the page's language, so the
     // list is read again when the interface language changes.
-    queryKey: [storyListQueryKey, 'page', request, userId, reading.languages, i18n.language],
+    queryKey: [storyListQueryKey, 'page', request, userId, reading.languages, reading.isDefault, i18n.language],
     enabled: isReady && isKnown && reading.languages !== null,
     initialPageParam: 0,
     getNextPageParam: nextOffset,
@@ -63,6 +64,12 @@ export function useStoryList(request: ListRequest, isReady = true) {
         pageSize: storiesPerPage,
         offset: pageParam,
         readingLanguages: reading.languages ?? [],
+        // CLASSICS-ORDER: on the classics list, the reader's languages come first.
+        languagesFirst: languagesFirstFor(request, {
+          languages: reading.languages ?? [],
+          isDefault: reading.isDefault,
+          interfaceLanguage: i18n.language,
+        }),
       });
     },
   });
