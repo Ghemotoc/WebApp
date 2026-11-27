@@ -2,13 +2,13 @@
  "built": [
   [
    "pl-pan-tadeusz",
-   14,
-   470586
+   12,
+   452137
   ],
   [
    "pl-konrad-wallenrod",
-   8,
-   90965
+   7,
+   79853
   ],
   [
    "pl-grazyna",
@@ -43,7 +43,7 @@
   [
    "pl-lilla-weneda",
    6,
-   114965
+   114873
   ],
   [
    "pl-mazeppa",
@@ -63,7 +63,7 @@
   [
    "pl-in-switzerland",
    1,
-   17161
+   17138
   ],
   [
    "pl-agamemnon-s-tomb",
@@ -83,7 +83,7 @@
   [
    "pl-mary-stuart",
    5,
-   88994
+   88304
   ],
   [
    "pl-the-un-divine-comedy",
@@ -108,7 +108,7 @@
   [
    "pl-quidam",
    29,
-   158535
+   158380
   ],
   [
    "pl-the-revenge",
@@ -138,7 +138,7 @@
   [
    "pl-mr-moneybags",
    4,
-   61748
+   61725
   ],
   [
    "pl-the-adventures-of-mr-nicholas-wisdom",
@@ -173,7 +173,7 @@
   [
    "pl-songs",
    51,
-   71820
+   71813
   ],
   [
    "pl-chess",
@@ -183,17 +183,12 @@
   [
    "pl-the-envoy-s-return",
    4,
-   78750
-  ],
-  [
-   "pl-memoirs",
-   35,
-   507582
+   78727
   ],
   [
    "pl-the-progress-of-the-chocim-war",
    12,
-   579263
+   579240
   ],
   [
    "pl-maria",
@@ -203,12 +198,457 @@
   [
    "pl-the-castle-of-kaniow",
    3,
-   100207
+   100117
   ],
   [
    "pl-memoirs-of-soplica",
    27,
-   702638
+   702496
+  ],
+  [
+   "pl-the-heathen",
+   15,
+   304563
+  ],
+  [
+   "pl-song-of-our-land",
+   1,
+   35051
+  ],
+  [
+   "pl-chorale-from-the-smoke-of-fires",
+   1,
+   1800
+  ],
+  [
+   "pl-dabrowski-s-mazurka",
+   1,
+   867
+  ],
+  [
+   "pl-pharaoh",
+   68,
+   1313493
+  ],
+  [
+   "pl-the-new-women",
+   76,
+   1158530
+  ],
+  [
+   "pl-the-outpost",
+   11,
+   440592
+  ],
+  [
+   "pl-antek",
+   1,
+   48560
+  ],
+  [
+   "pl-the-waistcoat",
+   1,
+   17940
+  ],
+  [
+   "pl-the-barrel-organ",
+   1,
+   24290
+  ],
+  [
+   "pl-anielka",
+   17,
+   308843
+  ],
+  [
+   "pl-the-returning-wave",
+   7,
+   140495
+  ],
+  [
+   "pl-with-fire-and-sword",
+   64,
+   1558637
+  ],
+  [
+   "pl-the-deluge",
+   52,
+   1156678
+  ],
+  [
+   "pl-fire-in-the-steppe",
+   57,
+   1032171
+  ],
+  [
+   "pl-quo-vadis",
+   75,
+   1094704
+  ],
+  [
+   "pl-the-knights-of-the-cross",
+   81,
+   1411348
+  ],
+  [
+   "pl-in-desert-and-wilderness",
+   47,
+   642154
+  ],
+  [
+   "pl-children-of-the-soil",
+   70,
+   1357091
+  ],
+  [
+   "pl-the-lighthouse-keeper",
+   1,
+   30794
+  ],
+  [
+   "pl-janko-the-musician",
+   1,
+   13837
+  ],
+  [
+   "pl-charcoal-sketches",
+   12,
+   115383
+  ],
+  [
+   "pl-bartek-the-conqueror",
+   10,
+   98749
+  ],
+  [
+   "pl-sachem",
+   1,
+   15837
+  ],
+  [
+   "pl-after-bread",
+   3,
+   126181
+  ],
+  [
+   "pl-the-boor",
+   6,
+   385332
+  ],
+  [
+   "pl-the-good-lady",
+   1,
+   70781
+  ],
+  [
+   "pl-gloria-victis",
+   6,
+   528148
+  ],
+  [
+   "pl-marta",
+   9,
+   417049
+  ],
+  [
+   "pl-of-the-dwarfs-and-little-orphan-mary",
+   43,
+   282907
+  ],
+  [
+   "pl-mendel-of-gdansk",
+   1,
+   45761
+  ],
+  [
+   "pl-our-nag",
+   1,
+   61554
+  ],
+  [
+   "pl-mr-balcer-in-brazil",
+   31,
+   461382
+  ],
+  [
+   "pl-the-oath",
+   1,
+   548
+  ],
+  [
+   "pl-berry-picking",
+   1,
+   11155
+  ],
+  [
+   "pl-the-peasants",
+   49,
+   1945318
+  ],
+  [
+   "pl-ferments",
+   44,
+   787097
+  ],
+  [
+   "pl-the-coming-spring",
+   9,
+   553850
+  ],
+  [
+   "pl-ashes",
+   62,
+   1493072
+  ],
+  [
+   "pl-labours-of-sisyphus",
+   18,
+   423423
+  ],
+  [
+   "pl-the-faithful-river",
+   17,
+   260060
+  ],
+  [
+   "pl-forest-echoes",
+   1,
+   23258
+  ],
+  [
+   "pl-doctor-piotr",
+   1,
+   61685
+  ],
+  [
+   "pl-the-strong-woman",
+   1,
+   41994
+  ],
+  [
+   "pl-the-crows-and-ravens-will-peck-us-to-pieces",
+   1,
+   17358
+  ],
+  [
+   "pl-the-history-of-a-sin",
+   65,
+   984587
+  ],
+  [
+   "pl-the-charm-of-life",
+   42,
+   657534
+  ],
+  [
+   "pl-november-night",
+   10,
+   132895
+  ],
+  [
+   "pl-liberation",
+   3,
+   131267
+  ],
+  [
+   "pl-the-varsovienne",
+   1,
+   42112
+  ],
+  [
+   "pl-the-curse",
+   1,
+   76197
+  ],
+  [
+   "pl-acropolis",
+   5,
+   98834
+  ],
+  [
+   "pl-the-morality-of-mrs-dulska",
+   3,
+   101584
+  ],
+  [
+   "pl-froggy",
+   25,
+   77598
+  ],
+  [
+   "pl-kaska-the-caryatid",
+   15,
+   686320
+  ],
+  [
+   "pl-an-ancient-tale",
+   31,
+   741892
+  ],
+  [
+   "pl-the-cottage-beyond-the-village",
+   5,
+   349757
+  ],
+  [
+   "pl-countess-cosel",
+   30,
+   674668
+  ],
+  [
+   "pl-bruhl",
+   22,
+   554840
+  ],
+  [
+   "pl-jermola-the-potter",
+   22,
+   286500
+  ],
+  [
+   "pl-the-book-of-the-poor",
+   43,
+   78427
+  ],
+  [
+   "pl-the-meadow",
+   2,
+   114553
+  ],
+  [
+   "pl-the-orchard-at-the-crossroads",
+   2,
+   112599
+  ],
+  [
+   "pl-the-adventures-of-sindbad-the-sailor",
+   9,
+   399819
+  ],
+  [
+   "pl-winter-wheat",
+   18,
+   438671
+  ],
+  [
+   "pl-in-the-valleys",
+   22,
+   526483
+  ],
+  [
+   "pl-the-lodgers",
+   13,
+   189469
+  ],
+  [
+   "pl-the-hag",
+   21,
+   652073
+  ],
+  [
+   "pl-on-the-silver-globe",
+   14,
+   552619
+  ],
+  [
+   "pl-the-conqueror",
+   21,
+   549363
+  ],
+  [
+   "pl-the-old-earth",
+   22,
+   457498
+  ],
+  [
+   "pl-the-motion-demon",
+   3,
+   192628
+  ],
+  [
+   "pl-king-matt-the-first",
+   51,
+   435143
+  ],
+  [
+   "pl-king-matt-on-the-desert-island",
+   37,
+   297367
+  ],
+  [
+   "pl-the-bankruptcy-of-little-jack",
+   29,
+   263383
+  ],
+  [
+   "pl-children-of-the-street",
+   16,
+   325823
+  ],
+  [
+   "pl-the-romance-of-teresa-hennert",
+   24,
+   306027
+  ],
+  [
+   "pl-characters",
+   1,
+   48909
+  ],
+  [
+   "pl-dewajtis",
+   12,
+   444215
+  ],
+  [
+   "pl-the-summer-of-the-forest-people",
+   17,
+   296308
+  ],
+  [
+   "pl-the-leper",
+   40,
+   627779
+  ],
+  [
+   "pl-the-life-and-thoughts-of-zygmunt-podfilipski",
+   24,
+   374086
+  ],
+  [
+   "pl-the-hare",
+   27,
+   294054
+  ],
+  [
+   "pl-blue-almonds",
+   1,
+   31279
+  ],
+  [
+   "pl-kisses",
+   1,
+   13888
+  ],
+  [
+   "pl-old-tales-legends-and-folk-stories",
+   3,
+   74236
+  ],
+  [
+   "pl-fables-and-little-tales",
+   2,
+   114267
+  ],
+  [
+   "pl-wiesaw",
+   5,
+   25204
+  ],
+  [
+   "pl-the-story-of-one-bullet",
+   5,
+   405933
   ]
  ],
  "short": [
@@ -236,433 +676,98 @@
    "pl-the-life-of-an-honest-man",
    464,
    "Żywot człowieka poczciwego (Rej, 1881)"
-  ]
- ],
- "missing": [
-  [
-   "pl-the-heathen",
-   "not downloaded yet"
   ],
   [
-   "pl-song-of-our-land",
-   "not downloaded yet"
-  ],
-  [
-   "pl-chorale-from-the-smoke-of-fires",
-   "not downloaded yet"
-  ],
-  [
-   "pl-dabrowski-s-mazurka",
-   "not downloaded yet"
+   "pl-memoirs",
+   "a page did not render on Wikisource",
+   "Pamiętniki (Pasek)"
   ],
   [
    "pl-the-doll",
-   "not downloaded yet"
-  ],
-  [
-   "pl-pharaoh",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-new-women",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-outpost",
-   "not downloaded yet"
-  ],
-  [
-   "pl-antek",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-waistcoat",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-barrel-organ",
-   "not downloaded yet"
-  ],
-  [
-   "pl-anielka",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-returning-wave",
-   "not downloaded yet"
-  ],
-  [
-   "pl-with-fire-and-sword",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-deluge",
-   "not downloaded yet"
-  ],
-  [
-   "pl-fire-in-the-steppe",
-   "not downloaded yet"
-  ],
-  [
-   "pl-quo-vadis",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-knights-of-the-cross",
-   "not downloaded yet"
-  ],
-  [
-   "pl-in-desert-and-wilderness",
-   "not downloaded yet"
+   "a page did not render on Wikisource",
+   "Lalka (Prus)"
   ],
   [
    "pl-without-dogma",
-   "not downloaded yet"
-  ],
-  [
-   "pl-children-of-the-soil",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-lighthouse-keeper",
-   "not downloaded yet"
-  ],
-  [
-   "pl-janko-the-musician",
-   "not downloaded yet"
-  ],
-  [
-   "pl-charcoal-sketches",
-   "not downloaded yet"
-  ],
-  [
-   "pl-bartek-the-conqueror",
-   "not downloaded yet"
-  ],
-  [
-   "pl-sachem",
-   "not downloaded yet"
-  ],
-  [
-   "pl-after-bread",
-   "not downloaded yet"
+   0,
+   "Bez dogmatu"
   ],
   [
    "pl-on-the-niemen",
-   "not downloaded yet"
+   "a page did not render on Wikisource",
+   "Nad Niemnem (wyd. 1899)"
   ],
   [
    "pl-meir-ezofovich",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-boor",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-good-lady",
-   "not downloaded yet"
-  ],
-  [
-   "pl-gloria-victis",
-   "not downloaded yet"
-  ],
-  [
-   "pl-marta",
-   "not downloaded yet"
-  ],
-  [
-   "pl-of-the-dwarfs-and-little-orphan-mary",
-   "not downloaded yet"
-  ],
-  [
-   "pl-mendel-of-gdansk",
-   "not downloaded yet"
-  ],
-  [
-   "pl-our-nag",
-   "not downloaded yet"
-  ],
-  [
-   "pl-mr-balcer-in-brazil",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-oath",
-   "not downloaded yet"
-  ],
-  [
-   "pl-berry-picking",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-peasants",
-   "not downloaded yet"
+   "a page did not render on Wikisource",
+   "Meir Ezofowicz"
   ],
   [
    "pl-the-promised-land",
-   "not downloaded yet"
+   "a page did not render on Wikisource",
+   "Ziemia Obiecana (Reymont, 1899)"
   ],
   [
    "pl-the-comedienne",
-   "not downloaded yet"
-  ],
-  [
-   "pl-ferments",
-   "not downloaded yet"
+   "a page did not render on Wikisource",
+   "Komedyantka"
   ],
   [
    "pl-the-year-1794",
-   "not downloaded yet"
+   0,
+   "Rok 1794"
   ],
   [
    "pl-homeless-people",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-coming-spring",
-   "not downloaded yet"
-  ],
-  [
-   "pl-ashes",
-   "not downloaded yet"
-  ],
-  [
-   "pl-labours-of-sisyphus",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-faithful-river",
-   "not downloaded yet"
-  ],
-  [
-   "pl-forest-echoes",
-   "not downloaded yet"
-  ],
-  [
-   "pl-doctor-piotr",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-strong-woman",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-crows-and-ravens-will-peck-us-to-pieces",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-history-of-a-sin",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-charm-of-life",
-   "not downloaded yet"
+   215,
+   "Ludzie bezdomni"
   ],
   [
    "pl-the-wedding",
-   "not downloaded yet"
-  ],
-  [
-   "pl-november-night",
-   "not downloaded yet"
-  ],
-  [
-   "pl-liberation",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-varsovienne",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-curse",
-   "not downloaded yet"
-  ],
-  [
-   "pl-acropolis",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-morality-of-mrs-dulska",
-   "not downloaded yet"
-  ],
-  [
-   "pl-froggy",
-   "not downloaded yet"
-  ],
-  [
-   "pl-kaska-the-caryatid",
-   "not downloaded yet"
-  ],
-  [
-   "pl-an-ancient-tale",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-cottage-beyond-the-village",
-   "not downloaded yet"
-  ],
-  [
-   "pl-countess-cosel",
-   "not downloaded yet"
-  ],
-  [
-   "pl-bruhl",
-   "not downloaded yet"
-  ],
-  [
-   "pl-jermola-the-potter",
-   "not downloaded yet"
+   "only 3352 characters came out, too short for a play",
+   "Wesele (Wyspiański)"
   ],
   [
    "pl-on-the-rocky-podhale",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-book-of-the-poor",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-meadow",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-orchard-at-the-crossroads",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-adventures-of-sindbad-the-sailor",
-   "not downloaded yet"
-  ],
-  [
-   "pl-winter-wheat",
-   "not downloaded yet"
-  ],
-  [
-   "pl-in-the-valleys",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-lodgers",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-hag",
-   "not downloaded yet"
-  ],
-  [
-   "pl-on-the-silver-globe",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-conqueror",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-old-earth",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-motion-demon",
-   "not downloaded yet"
+   0,
+   "Na Skalnem Podhalu (Przerwa-Tetmajer)"
   ],
   [
    "pl-insatiability",
-   "not downloaded yet"
+   "a page did not render on Wikisource",
+   "Nienasycenie"
   ],
   [
    "pl-farewell-to-autumn",
-   "not downloaded yet"
+   "a page did not render on Wikisource",
+   "Pożegnanie jesieni"
   ],
   [
    "pl-little-words",
-   "not downloaded yet"
+   1032,
+   "Słówka (Boy-Żeleński, 1913)"
   ],
   [
    "pl-lying-in-wait-for-god",
-   "not downloaded yet"
+   1044,
+   "Czyhanie na Boga"
   ],
   [
    "pl-dancing-socrates",
-   "not downloaded yet"
-  ],
-  [
-   "pl-king-matt-the-first",
-   "not downloaded yet"
-  ],
-  [
-   "pl-king-matt-on-the-desert-island",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-bankruptcy-of-little-jack",
-   "not downloaded yet"
-  ],
-  [
-   "pl-children-of-the-street",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-romance-of-teresa-hennert",
-   "not downloaded yet"
-  ],
-  [
-   "pl-characters",
-   "not downloaded yet"
-  ],
-  [
-   "pl-dewajtis",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-summer-of-the-forest-people",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-leper",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-life-and-thoughts-of-zygmunt-podfilipski",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-hare",
-   "not downloaded yet"
-  ],
-  [
-   "pl-blue-almonds",
-   "not downloaded yet"
-  ],
-  [
-   "pl-kisses",
-   "not downloaded yet"
-  ],
-  [
-   "pl-old-tales-legends-and-folk-stories",
-   "not downloaded yet"
-  ],
-  [
-   "pl-fables-and-little-tales",
-   "not downloaded yet"
-  ],
-  [
-   "pl-wiesaw",
-   "not downloaded yet"
+   580,
+   "Sokrates tańczący (tomik)"
   ],
   [
    "pl-general-barcz",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-story-of-one-bullet",
-   "not downloaded yet"
+   "a page did not render on Wikisource",
+   "Generał Barcz"
   ],
   [
    "pl-over-the-depths",
-   "not downloaded yet"
+   30,
+   "Poezye T. 1 (Adam Asnyk)/Nad głębiami"
   ]
  ],
+ "missing": [],
  "no_meta": []
 }

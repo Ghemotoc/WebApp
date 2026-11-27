@@ -11,14 +11,14 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 sys.path.insert(0, __import__("os").path.dirname(__file__))
 from mdtools import inline, tidy_paragraph, split_long
 
-DROP_SELECTORS = [".ws-noexport", ".wst-header", "#headertemplate", ".headertemplate", "table", "style",
+DROP_SELECTORS = ["#interProject", ".interProject", ".ws-noexport", ".wst-header", "#headertemplate", ".headertemplate", "table", "style",
     "link", "sup.reference", "sup", ".reference", "ol.references", ".mw-references-wrap", "#textquality",
     ".noprint", ".mw-editsection", "#ws-data", ".ws-pagenum", ".pagenum", "figure", "img", ".mw-empty-elt",
     ".thumb", ".gallery", ".navbox", ".metadata", ".licenseContainer", ".licence", ".mw-heading .mw-editsection",
     "script", ".catlinks", "#toc", ".toc", ".ws-summary", ".prp-pages-output > .pagetext-link", ".mw-cite-backlink"]
 NOTE_HEADINGS = re.compile(r"^(note|note de subsol|referințe|referinte|bibliografie|notes|references|footnotes|"
                            r"fodnoter|noter|anmärkningar|noter och kommentarer|kilder|källor|vezi și|примечания|комментарии|сноски|"
-                           r"przypisy|uwagi|anmerkungen|fußnoten|fussnoten|einzelnachweise|notas|nota|noten|voetnoten|"
+                           r"przypisy|uwagi|altri progetti|voci correlate|autres projets|articles connexes|andere projekte|otros proyectos|outros projetos|andere projecten|anmerkungen|fußnoten|fussnoten|einzelnachweise|notas|nota|noten|voetnoten|"
                            r"aantekeningen|notes de l'éditeur|commentaires|см\. также|ссылки|декламация|zobacz też|linki zewnętrzne|"
                            r"voir aussi|liens externes|siehe auch|weblinks|véase también|enlaces externos|vedi anche|"
                            r"collegamenti esterni|ver também|ligações externas|zie ook|externe links)(?!\w)", re.I)
@@ -60,7 +60,9 @@ def drop_line_numbers(soup):
         span_id = span.get("id") or ""
         # ru.wikisource marks them <span class="linenum" id="line10">, the others float them.
         if ("float:right" in style or "float:left" in style or span_id == number
-                or "linenum" in classes or span_id == "line" + number):
+                or "linenum" in classes or span_id == "line" + number
+                # it.wikisource: <span class="numeroriga" id="riga16">16</span> (27 Nov 2026).
+                or "numeroriga" in classes or span_id == "riga" + number):
             span.decompose()
     # Krylov's fables on ru.wikisource: "<br /><small>10</small>" opens a line with its number.
     for small in soup.find_all("small"):
@@ -244,6 +246,12 @@ def convert(record, work_title, part_word="partea"):
     for title, body in chapters:
         # A broken template on the source page shows only its name ("Format:Poem"); drop it.
         body = re.sub(r"\n*^Format:\w+$\n*", "\n\n", body, flags=re.M).strip()
+        # A template that failed on the source page prints its error ("Errore Lua in Modulo:…").
+        body = re.sub(r"^.*(Errore Lua|Lua error|Erreur Lua|Lua-Fehler|Error de Lua|Erro Lua) in [^\n]*$\n?", "", body, flags=re.M)
+        # Footnote and nowiki tags typed wrongly in the source show as text: a note's words go with
+        # its tags (notes are dropped everywhere else too), a nowiki tag alone.
+        body = re.sub(r"\\?<(ref|red)\\?>.*?\\?</ref\\?>", "", body, flags=re.S)
+        body = re.sub(r"\\?</?(nowiki|ref|red)\s*/?\\?>", "", body)
         # Unresolved relative links from navigation ("[[../Глава II|Глава II]]") are not text.
         body = re.sub(r"\[\[\.\./[^\]]*\]\]\s*(?:→)?", "", body).strip()
         # A row of stars typed in the source is a scene break, not escaped text.

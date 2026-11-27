@@ -4,7 +4,7 @@ Robert asked on 26 Nov 2026 for every work on the research list "Research: publi
 
 | File | What it is |
 | --- | --- |
-| `works-en.jsonl.gz`, `works-ro.jsonl.gz`, `works-nordic.jsonl.gz`, `works-ru.jsonl.gz` | The works, one JSON object per line, gzip-compressed: title, author, the author's death year, language, kind, rating, first publication, blurb, credit line and the chapters in the Markdown subset |
+| `works-en.jsonl.gz`, `works-ro.jsonl.gz`, `works-nordic.jsonl.gz`, `works-ru.jsonl.gz`, and `works-pl`, `-fr`, `-de`, `-es`, `-it`, `-pt`, `-nl.jsonl.gz` | The works, one JSON object per line, gzip-compressed: title, author, the author's death year, language, kind, rating, first publication, blurb, credit line and the chapters in the Markdown subset |
 | `works-index.csv` | One row per work, to read without unzipping: title, author, language, year, kind, rating, chapters, length and source |
 | `not-loaded.csv` | Works on the list whose text could not be fetched, and why |
 
@@ -33,6 +33,7 @@ The terms for each source are in `../README.md`, "Sources and terms".
 | English Wikisource | 5 English | "Wikisource, CC BY-SA 4.0; formatting adapted" and the exact revision |
 | Romanian Wikisource | 121 Romanian | "Wikisource, CC BY-SA 4.0; formatare adaptată" and the exact revision |
 | Russian Wikisource | 150 Russian (added 27 Nov 2026) | "Wikisource, CC BY-SA 4.0; оформление изменено" and the exact revision; where only a pre-1918 copy exists, the spelling was brought to modern spelling and the credit says so ("оформление и дореформенная орфография изменены"). Built by `scripts/classics/eu-download/` |
+| Polish, French, German, Spanish, Italian, Portuguese and Dutch Wikisource | 598 (added 27 Nov 2026): 130 pl, 105 fr, 88 de, 71 es, 107 it, 72 pt, 25 nl | the same credit in the work's language and the exact revision. Downloaded on a home connection and built by `scripts/classics/eu-download/` |
 | Swedish, Danish and Norwegian Wikisource | 44 | the same credit in the work's language ("anpassad formatering", "tilpasset formatering") and the exact revision. Norwegian works use the language code `nb`, the platform's one Norwegian language |
 
 Only formatting changed: the text was taken out of the page layout into the Markdown subset, very short pieces were joined into chapters of about 30,000 characters with their titles as subheadings, and chapters over 95,000 characters were split into parts. Wikisource's own notes, headers, navigation and footnotes were dropped. Wikisource's API refused this session's address (HTTP 429) on every call, so the texts were read from the ordinary page views, which carry the same text and revision id.

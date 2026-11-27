@@ -6,7 +6,7 @@ works_eu/<id>.json plus works_eu/_report_<lang>.json (built, too short, missing)
 Rules: only the author's text (convert_ws drops notes, editors' pages and Wikisource's own header);
 Russian pre-1918 spelling is brought to modern spelling where no modern copy exists, and the credit says so.
 """
-import csv, json, os, re, sys
+import csv, glob, json, os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import convert_ws
 
@@ -30,7 +30,7 @@ LICENCE_LINE = re.compile(r"^.{0,80}(własnością publiczną|public domain|doma
 
 # Lines that name where the text came from, not the author's words: a scan note, a source or
 # "original here" line, an illustrator credit, a collected-works reference, a printer's imprint.
-SOURCE_LINE = re.compile(r"^\**\s*(Источник( текста)?\s*:|Оригинал здесь|Иллюстрации художника|Skan zawiera grafikę|"
+SOURCE_LINE = re.compile(r"^\**\s*(Fonte\s*:|Source\s*:|Quelle\s*:|Fuente\s*:|Bron\s*:|Источник( текста)?\s*:|Оригинал здесь|Иллюстрации художника|Skan zawiera grafikę|"
                          r"Издательство\s|Тип\.\s|Типография\s|Р\. Ц\.|Тираж\s|Prim\.?$|Впервые[:\s]|#*\s*={5,}|"
                          r"(М|Л|СПб|Мн|М\., Л)\.,?:? .{0,60}\d{4}[;.)]?\s*(\(.*\))?$)|"
                          r"Собрание сочинений в \d|Избранные произведения в \d|Полное собрание сочинений в \d|"
@@ -50,13 +50,27 @@ EDITOR_HEADING = re.compile(r"^#+\s*\**\s*(От редакции|Od redakcji|Not
 NUMERALS_ONLY = re.compile(r"^[\s\d:.*•·IVXLC]*$")
 # A chapter that is an edition's variant readings or notes, not the work.
 NOTES_TITLE = re.compile(r"^(Печатные варианты|Варианты|Примечани|Комментари|Przypisy|Objaśnienia|Notes?$|Anmerkungen|"
-                         r"Notas?$|Aantekeningen)", re.I)
+                         r"Notas?$|Aantekeningen|"
+                         # An edition's own pages: title pages, appendices, contents, glossaries, errata, a
+                         # portrait caption, a historical note by the editor (CONTENT, 27 Nov 2026).
+                         r"Frontespizio|Appendice\b|Tavola$|Nota storica|Ritratto$|Catalogo cronologico|Glossario|"
+                         r"Correzioni e aggiunte|Nomi propri|Indice\b|Errata|Table des matières|Table générale|"
+                         r"Table de concordances|Glossaire|Inhaltsverzeichnis|Índice\b|Inhoud$|Table$|Liste des souscripteurs|Souscripteurs?$|"
+                         r"Audio$|Concordance|Notice$|Variantes|Opinion de la presse|Editionsrichtlinien|Literaturverzeichnis|"
+                         r"Bibliographie|Bibliografía|Bibliografia|Bibliografie)", re.I)
+
+# "Anmerkungen von Wikisource:" and the like: Wikisource's own notes, to the chapter's end.
+WIKISOURCE_NOTES = re.compile(r"^\**\s*(Anmerkungen|Notes|Note|Notas|Aantekeningen)\s+(von|de|di|da|van)\s+Wikisource", re.I)
+# Any paragraph naming Wikisource was written by its editors, not the author (27 Nov 2026).
+NAMES_WIKISOURCE = re.compile(r"wikisource|wikiźródła|wikizdroje|викитека", re.I)
 
 def fix_wiki_leftovers(body):
     """Templates typed wrongly in the source show as text ("{Razr|Name}}", "{{indent|2|"): keep their words."""
     body = body.replace("{{подст:ударение}}", "́")
-    body = re.sub(r"\{\{?\s*(?:razr|rem|indent\|\d+|bold|i|lang\|\w+)\|", "", body, flags=re.I)
-    return body.replace("}}", "")
+    body = re.sub(r"\{\{?\s*(?:razr|rem|indent\|\d+|bold|i|lang\|\w+|smaller|small|larger|asc|sc|c|d|center|right)\|", "", body, flags=re.I)
+    # A citation link pasted into the text by a transcriber ("cita:https://…").
+    body = re.sub(r"\s*cita:\s*https?://\S+", "", body)
+    return body.replace("}}", "").replace("}\\]", "")
 
 def only_authors_text(body):
     """Drop what an editor or the source added inside a chapter: source lines, notes to the end,
@@ -64,7 +78,7 @@ def only_authors_text(body):
     kept, skipping_editor = [], False
     for paragraph in fix_wiki_leftovers(body).split("\n\n"):
         line = paragraph.strip()
-        if NOTES_HEADING.match(line) or NOTES_START.match(line): break
+        if NOTES_HEADING.match(line) or NOTES_START.match(line) or WIKISOURCE_NOTES.match(line): break
         if EDITOR_HEADING.match(line): skipping_editor = True; continue
         if skipping_editor and line.startswith("#"): skipping_editor = False
         if skipping_editor or SOURCE_LINE.search(line): continue
@@ -77,7 +91,25 @@ def only_authors_text(body):
 
 def page_did_not_render(body):
     """A page Wikisource couldn't draw ("template include size too large") shows only its own name."""
-    return len(body) < 400 and bool(re.match(r"^[^\n]*\([^()\n]+\)/[^\n]*$", body.strip()))
+    text = body.strip()
+    if len(text) < 400 and re.match(r"^[^\n]*\([^()\n]+\)/[^\n]*$", text): return True
+    # The same failure without a bracket in the name ("Les Trois Mousquetaires/Chapitre 2").
+    return len(text) < 200 and "\n" not in text and bool(re.match(r"^[^/]{2,}/[^/]+(/[^/]+)*$", text)) and not text.endswith((".", "!", "?"))
+
+# A page listing a work's several editions instead of the work itself (27 Nov 2026).
+EDITIONS_PAGE = re.compile(r"propose plusieurs éditions|mehrere Ausgaben|varias ediciones|diverse edizioni|"
+                           r"várias edições|meerdere edities|kilka wydań", re.I)
+
+def repeated_paragraphs(chapters):
+    """How many long paragraphs appear twice or more: two editions of one work mixed together."""
+    seen, repeats = set(), 0
+    for _, body in chapters:
+        for paragraph in body.split("\n\n"):
+            paragraph = paragraph.strip()
+            if len(paragraph) <= 200: continue
+            if paragraph in seen: repeats += 1
+            seen.add(paragraph)
+    return repeats
 
 def paragraphs(body):
     """The longer paragraphs of a chapter, used to spot a chapter that repeats others."""
@@ -126,6 +158,11 @@ def chapters_of(record, title, language):
         return None, False
     chapters = [(t, only_authors_text(LICENCE_LINE.sub("", b))) for t, b in chapters]
     chapters = [(t, b) for t, b in chapters if not NUMERALS_ONLY.match(b) and not NOTES_TITLE.match(t.strip())]
+    # A chapter that names Wikisource is an editor's page (an introduction, an overview of
+    # printings, a category list): it goes whole.
+    chapters = [(t, b) for t, b in chapters if not NAMES_WIKISOURCE.search(b)]
+    # A footnotes page at the end of a part ("Deel 2, Voetnoot").
+    chapters = [(t, b) for t, b in chapters if not re.search(r"(Voetnoot|Voetnoten|Fußnoten|Footnotes?)$", t.strip(), re.I)]
     chapters = [(t, b) for t, b in chapters if not b.lstrip().upper().startswith("ВАРИАНТЫ ТЕКСТА")]
     chapters = drop_repeats([(t, b) for t, b in chapters if b])
     # An epilogue linked first (from the page header) belongs at the end.
@@ -160,6 +197,8 @@ def link_share(html):
     linked = sum(len(a.get_text(" ", strip=True)) for a in root.select("a"))
     return linked / total
 
+MINIMUM_LENGTH = {"novel": 15000, "play": 15000, "epic": 15000, "novella": 8000}
+
 # Works checked by hand and held back: what came out isn't the work (CONTENT thread, 27 Nov 2026).
 HELD_BACK = {
     "ru-poems": "only poem titles and anthology references came out, not the poems",
@@ -168,6 +207,19 @@ HELD_BACK = {
     "ru-poems-in-prose": "only the contents list came out, not the poems",
     "ru-evenings-on-a-farm-near-dikanka": "only the preface and the glossary came out, not the eight stories",
     "ru-red-cavalry": "only the first few stories of the cycle came out",
+    "fr-paris-spleen": "only a few of the fifty prose poems came out",
+    "fr-the-flowers-of-evil": "only a few poems came out, not the collection",
+    "es-songs-of-life-and-hope": "only the first poem came out, not the collection",
+    "es-tabare": "only the opening came out, not the poem",
+    "es-facundo": "only the opening page came out",
+    "it-the-novellino-of-masuccio": "only a few pages came out, not the fifty tales",
+    "it-gli-asolani": "only the opening page came out",
+    "de-the-smile-of-the-mona-lisa": "only the contents note came out, not the essays",
+    "de-gallows-songs": "only a handful of the songs came out",
+    "it-the-new-life": "an editor's critical study of the manuscripts came out, with only part of the text",
+    "it-roman-sonnets": "only the glossary, corrections and empty contents pages came out, not the sonnets",
+    "it-poems-sonnets-and-odes": "only the editor's foreword and empty contents pages came out",
+    "it-the-life-of-vittorio-alfieri": "the chapters came out out of order, with the book's epochs lost",
     "ru-the-little-humpbacked-horse": "only the 1834 magazine printing of part one came out, with the editor's word",
 }
 # Where a work's own text starts, when the page opens with a modern edition's front matter (editor's
@@ -234,6 +286,9 @@ def main(languages):
                     work_id, rating, blurb = line.rstrip("\n").split("\t")[:3]
                     meta[work_id] = (rating, blurb)
         report = {"built": [], "short": [], "missing": [], "no_meta": []}
+        # Start from an empty set for this language, so a work held back since the last build
+        # doesn't stay behind and get packed.
+        for old in glob.glob(os.path.join(out_dir, language + "-*.json")): os.remove(old)
         for work_id, host, page, author, row in rows[language]:
             raw = os.path.join(BASE, "raw/eu", language, work_id + ".json")
             if not os.path.exists(raw): report["missing"].append([work_id, "not downloaded yet"]); continue
@@ -250,8 +305,15 @@ def main(languages):
             if not re.search(r"\d{3,4}", row["author_death_year"] or ""):
                 report["short"].append([work_id, "no author death year (anonymous)", record["title"]]); continue
             chapters = trim_ends(work_id, chapters)
+            if any(EDITIONS_PAGE.search(body) for _, body in chapters):
+                report["short"].append([work_id, "a list of editions came out, not the work", record["title"]]); continue
+            if repeated_paragraphs(chapters) > 3:
+                report["short"].append([work_id, "two editions mixed: the text repeats", record["title"]]); continue
             length = sum(len(body) for _, body in chapters)
             if length < (400 if row["kind"] == "poem" else 1500): report["short"].append([work_id, length, record["title"]]); continue
+            # A novel, play or epic is never this short: only part of it came out (27 Nov 2026).
+            if length < MINIMUM_LENGTH.get(row["kind"], 0):
+                report["short"].append([work_id, f"only {length} characters came out, too short for a {row['kind']}", record["title"]]); continue
             if work_id not in meta: report["no_meta"].append(work_id); continue
             rating, blurb = meta[work_id]
             kind = KIND.get(row["kind"], "novel")
