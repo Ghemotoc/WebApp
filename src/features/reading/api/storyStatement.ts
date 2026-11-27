@@ -26,7 +26,6 @@ interface StatementRow {
   language_code: string;
   is_listed: boolean;
   is_app_only?: boolean;
-  is_hidden_somewhere?: boolean;
   blurb: string | null;
   writer: { display_name: string; handle?: string | null } | null;
   category_slug: string | null;
@@ -35,14 +34,15 @@ interface StatementRow {
 
 /**
  * Turns the database's answer into the footer's statement, or null when the footer keeps the
- * site's own words: an unlisted, app-only or country-hidden story, or one without a writer
- * (CALM-9s: the same rule as the page's search tags, carriesStatement() on the server).
+ * site's own words: an unlisted or app-only story, or one without a writer (CALM-9s: the same
+ * rule as the page's search tags, carriesStatement() on the server). A story hidden in some
+ * countries carries it, as its book page stays in search (COUNTRY-2, Robert, 27 Nov 2026).
  *
  * @param row - what get_link_preview() answered
  * @returns the statement, or null
  */
 export function statementFromRow(row: StatementRow): StoryStatement | null {
-  if (!row.is_listed || row.is_app_only === true || row.is_hidden_somewhere === true) return null;
+  if (!row.is_listed || row.is_app_only === true) return null;
   if (row.writer === null) return null;
   return {
     facts: {

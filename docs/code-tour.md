@@ -1602,8 +1602,10 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
        ("<Title> is a <genre> <type> published on <site> by <writer>." + the blurb) as its
        description and og:description, the title "<Title> by <writer>, <genre>, <site>", JSON-LD
        Book (CreativeWork for poems and essays) plus a BreadcrumbList, hreflang per edition, and
-       the same words as visible text in the page before the app starts. Unlisted, app-only and
-       country-hidden stories get noindex, no statement and no sitemap row.
+       the same words as visible text in the page before the app starts. Unlisted and app-only
+       stories get noindex, no statement and no sitemap row. A story hidden in some countries
+       keeps its book page, statement and sitemap row, but its chapters are noindex and never in
+       the sitemap, a classic's included (COUNTRY-2, migration 20270205100823).
 2. The visitor's browser: the same page, then the app starts as usual:
    StoryPage and ChapterReaderPage → useStoryStatement → get_link_preview() → the footer's
        about column becomes StoryFooterAbout (FooterAboutContext in AppLayout), the same
@@ -3141,6 +3143,8 @@ Two switches for the invited-adults trial, both off until staff turn them on in 
 ## Hiding a story in chosen countries (COUNTRY-1)
 
 A writer (or staff, for a classic) hides a story in countries; readers connecting from there can't find or open it (migration `20270205100416_country1_hide_in_countries.sql`; boards D07, B11, S29). The shared screen parts live in `src/features/country-block/`.
+
+Search engines (COUNTRY-2, Robert, 27 Nov 2026): the book page of a story hidden in some countries stays indexable and in the sitemap everywhere (`story_is_searchable()`, `sitemap_entries()` step 4); its chapters never are (step 5, and `isIndexable()` in `server/link-preview.ts`). A reader or crawler connecting from a hidden country gets "Sorry, this book isn't available in your country" (`UnavailableHereNotice`), because the story page and every chapter path (reader, teaser, a visitor's full classic chapter) go through `reader_visible_story()` with the signed country. Keeping a book page off search engines altogether is a future premium feature.
 
 ```
 every Supabase request (src/lib/supabase.ts)

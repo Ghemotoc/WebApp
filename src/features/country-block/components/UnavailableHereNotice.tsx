@@ -1,10 +1,11 @@
 /**
- * UnavailableHereNotice: "This page isn't available here", for a story hidden in the reader's
- * country (bundle COUNTRY-1; board B11, Robert, 21 Nov 2026).
+ * UnavailableHereNotice: "Sorry, this book isn't available in your country", for a story hidden
+ * in the reader's country (bundle COUNTRY-1; board B11, Robert, 21 Nov 2026; the words are
+ * Robert's of 27 Nov 2026, 22:21 UTC, COUNTRY-2, as the book page now stays in search engines).
  *
- * As the board draws it: a page title, one line ("Unfortunately, this page is not yet available
- * in your country."), the main action to the home page and the quiet one to search. No reason is
- * given and nothing about the story is shown (board D07: readers "aren't told why").
+ * As the board draws it: a page title, one line pointing to search and the home page, the main
+ * action to the home page and the quiet one to search. No reason is given and nothing about the
+ * story is shown (board D07: readers "aren't told why").
  * Who uses it: StoryPage and ChapterReaderPage, when useUnavailableHere says so.
  */
 import { useTranslation } from 'react-i18next';

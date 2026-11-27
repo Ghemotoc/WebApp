@@ -51016,8 +51016,8 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       and stories.visibility = 'public' and not stories.class_only
       and not public.story_app_only_applies(stories.is_app_only)
       and not public.is_moderated_away('story', stories.id)
-      -- CALM-9s: a story hidden in any country stays out, as search engines list worldwide.
-      and cardinality(stories.hidden_in_countries) = 0
+      -- COUNTRY-2: a story hidden in some countries keeps its book page here; readers there see
+      -- "Sorry, this book isn't available in your country" (Robert, 27 Nov 2026, 22:17 UTC).
     union all
     -- Step 5 (GROWTH-2, narrowed by GROWTH-4): each readable chapter of a public-domain classic
     -- listed in step 4. A writer's chapters stay out of search (Robert, 26 Nov 2026, 19:45 UTC:
@@ -51032,6 +51032,7 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       and stories.rating not in ('16_plus', '18_plus')
       and not public.story_app_only_applies(stories.is_app_only)
       and not public.is_moderated_away('story', stories.id)
+      -- COUNTRY-2: no chapter of a story hidden anywhere is listed, a classic's included.
       and cardinality(stories.hidden_in_countries) = 0
       and stories.classic_author_id is not null
       and public.chapter_is_readable(chapters.id)
@@ -54479,7 +54480,6 @@ CREATE OR REPLACE FUNCTION "public"."story_is_searchable"("target_story_id" "uui
       and stories.visibility = 'public' and not stories.class_only
       and not public.story_app_only_applies(stories.is_app_only)
       and not public.is_moderated_away('story', stories.id)
-      and cardinality(stories.hidden_in_countries) = 0
     from public.stories where stories.id = target_story_id), false);
 $$;
 
@@ -54487,7 +54487,7 @@ $$;
 ALTER FUNCTION "public"."story_is_searchable"("target_story_id" "uuid") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."story_is_searchable"("target_story_id" "uuid") IS 'Internal: a story search engines may list: published, public, web, not moderated or hidden (GROWTH-3).';
+COMMENT ON FUNCTION "public"."story_is_searchable"("target_story_id" "uuid") IS 'Internal: a story whose book page search engines may list: published, public, web, not moderated; a country block keeps only its chapters out (GROWTH-3, COUNTRY-2).';
 
 
 

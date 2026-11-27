@@ -764,7 +764,7 @@
   },
   "whereItShows": {
     "heading": "Unde apare",
-    "intro": "Ascunde povestea în țările pe care le alegi. Contează conexiunea cititorului, așa că funcționează ca o blocare, nu ca un lacăt: un VPN o poate ocoli."
+    "intro": "Ascunde povestea în țările pe care le alegi. Contează conexiunea cititorului, așa că funcționează ca o blocare, nu ca un lacăt: un VPN o poate ocoli. Motoarele de căutare arată în continuare pagina cărții, dar niciodată capitolele."
   },
   "setIn": {
     "label": "Are loc în",

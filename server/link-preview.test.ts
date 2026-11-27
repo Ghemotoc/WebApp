@@ -274,14 +274,30 @@ describe('the page a shared link serves', () => {
     );
   });
 
-  it('keeps an app-only or country-hidden story out of search engines, with the site footer (CALM-9s)', async () => {
-    for (const hidden of [{ isAppOnly: true }, { isHiddenSomewhere: true }]) {
-      const { response, html } = await open('/s/statia-meteo', { ...storyPage, ...hidden });
-      expect(html).toContain('<meta name="robots" content="noindex">');
-      expect(html).not.toContain('application/ld+json');
-      expect(html).toContain('<div id="root"></div>');
-      expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
-    }
+  it('keeps an app-only story out of search engines, with the site footer (CALM-9s)', async () => {
+    const { response, html } = await open('/s/statia-meteo', { ...storyPage, isAppOnly: true });
+    expect(html).toContain('<meta name="robots" content="noindex">');
+    expect(html).not.toContain('application/ld+json');
+    expect(html).toContain('<div id="root"></div>');
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
+  });
+
+  it('keeps the book page of a story hidden in some countries in search engines (COUNTRY-2)', async () => {
+    const { response, html } = await open('/s/statia-meteo', {
+      ...storyPage,
+      isHiddenSomewhere: true,
+    });
+    expect(html).not.toContain('<meta name="robots" content="noindex">');
+    expect(html).toContain('application/ld+json');
+    expect(html).not.toContain('<div id="root"></div>');
+    expect(response.headers.get('X-Robots-Tag')).toBeNull();
+  });
+
+  it("keeps a country-hidden classic's chapters out of search engines (COUNTRY-2)", async () => {
+    const hiddenClassic = { ...chapterPreview, writerHandle: null, isHiddenSomewhere: true };
+    const { response, html } = await open('/s/statia-meteo/ab12cd34', hiddenClassic);
+    expect(html).toContain('<meta name="robots" content="noindex">');
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
   });
 
   it('previews an unlisted story from its link but keeps it out of search engines', async () => {
