@@ -25,8 +25,11 @@ export const buttonStyles = cva(
       },
       // Every button is 44 px tall with its label in Inter 600 15/20 (CALM-2, the simplified
       // design's Button rules). lg and xl only add a little side room now, so older calls keep
-      // working while every button shares one height.
+      // working while every button shares one height. sm is the one exception: the footer's
+      // Night mode button, 32 px tall in the 13 px meta type, so the footer's controls sit
+      // quietly at the side (Robert, 27 Nov 2026); 32 px stays above WCAG 2.2's 24 px minimum.
       size: {
+        sm: 'h-8 px-3 type-meta',
         md: 'h-11 px-4 type-body leading-5',
         lg: 'h-11 px-6 type-body leading-5',
         xl: 'h-11 px-6 type-body leading-5',

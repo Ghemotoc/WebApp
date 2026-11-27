@@ -4,7 +4,7 @@
  *
  * "[Title] is a [genre] [type] published on [site] by [pen name or username]." with the title in
  * <cite> and the name linking to the profile; "For mature readers." for 18+ only; then the blurb;
- * then "[site] is a free website for writing and reading stories, poems and essays." The words
+ * then "[site] is a free website for writing and reading stories, poems, plays and non-fiction." The words
  * come from src/lib/story-statement.ts, the same builder the page's search tags use, so people and
  * search engines read the same statement. Real, visible text: never hidden.
  * Who uses it: AppLayout, in the Footer's first place, while useStoryStatement gives a statement.

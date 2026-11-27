@@ -73,7 +73,7 @@ function FooterLinkColumn({ column }: { column: FooterColumn }) {
  * - phones: the words across the top, then two columns (Read and Write and talk, then Help and
  *   legal beside Night mode and the language);
  * - from 640 px: two columns (the words beside Read, then Write and talk beside Help and legal),
- *   then a bottom row with the controls on the right;
+ *   then a bottom row across the whole width with the small controls at its right edge;
  * - from 1024 px: the words and the three columns in one line of four, then the same bottom row.
  *
  * @param props.about - the words in the first place; the site's own words when left out
@@ -113,9 +113,10 @@ export function Footer({ about, endSlot }: FooterProps) {
             {footerColumns.map((column) => (
               <FooterLinkColumn key={column.titleKey} column={column} />
             ))}
-            {/* Step 3: Night mode and the language: beside Help and legal on phones, at the right
-                of the bottom row from 640 px. */}
-            <div className="flex flex-col items-start gap-3 self-start sm:order-last sm:flex-row sm:flex-wrap sm:items-center sm:self-center sm:justify-self-end lg:col-span-2">
+            {/* Step 3: Night mode and the language, both small: beside Help and legal on phones, and
+                from 640 px a bottom row of its own across the whole width, with the two controls
+                at its right edge (Robert, 27 Nov 2026: smaller and aligned right). */}
+            <div className="flex flex-col items-start gap-3 self-start sm:order-last sm:col-span-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:self-center lg:col-span-4">
               <NightModeButton />
               {endSlot}
             </div>

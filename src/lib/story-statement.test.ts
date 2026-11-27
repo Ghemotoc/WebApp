@@ -115,7 +115,7 @@ describe('the story statement', () => {
 
   it('closes with the line about the site', () => {
     expect(statementSiteLine(english, 'Brand')).toBe(
-      'Brand is a free website for writing and reading stories, poems and essays.',
+      'Brand is a free website for writing and reading stories, poems, plays and non-fiction.',
     );
   });
 });

@@ -237,7 +237,7 @@ describe('the page a shared link serves', () => {
   it('shows the statement as real text before the app starts, never hidden (CALM-9s)', async () => {
     const { html } = await open('/s/statia-meteo', storyPage);
     expect(html).toContain(
-      '<div id="root"><footer lang="ro"><p><cite>Stația meteo</cite> este o poveste din genul mister, publicată pe Brand de <a href="/u/adult_writer">Lia Scrie</a>.</p><p>Bunica notează vremea.</p><p>Brand este un site gratuit pentru a scrie și a citi povești, poezii și eseuri.</p></footer></div>',
+      '<div id="root"><footer lang="ro"><p><cite>Stația meteo</cite> este o poveste din genul mister, publicată pe Brand de <a href="/u/adult_writer">Lia Scrie</a>.</p><p>Bunica notează vremea.</p><p>Brand este un site gratuit pentru a scrie și a citi povești, poezii, piese de teatru și non-ficțiune.</p></footer></div>',
     );
   });
 

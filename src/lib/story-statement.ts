@@ -4,7 +4,7 @@
  * B01 to B06: "this helps for discoverability").
  *
  * "[Title] is a [genre] [type] published on [site] by [pen name or username]." then the blurb,
- * then "[site] is a free website for writing and reading stories, poems and essays."
+ * then "[site] is a free website for writing and reading stories, poems, plays and non-fiction."
  * The same words fill the footer of the story page and the reader, the page's <title>, its
  * description, its Open Graph description and its JSON-LD, so every reader of the page, human or
  * machine, gets one consistent statement. The type comes from the category (Fiction is a story,
@@ -32,7 +32,7 @@ export interface StoryStatementWords {
   poemGenre: string;
   essayGenre: string;
   playGenre: string;
-  /** "{{site}} is a free website for writing and reading stories, poems and essays." */
+  /** "{{site}} is a free website for writing and reading stories, poems, plays and non-fiction." */
   site: string;
   /** "For mature readers", for 18+ only. */
   matureReaders: string;
@@ -212,7 +212,7 @@ export function statementPageTitle(
 }
 
 /**
- * The closing line: "[site] is a free website for writing and reading stories, poems and essays."
+ * The closing line: "[site] is a free website for writing and reading stories, poems, plays and non-fiction."
  *
  * @param words - the words in the story's language
  * @param siteName - the product's name
