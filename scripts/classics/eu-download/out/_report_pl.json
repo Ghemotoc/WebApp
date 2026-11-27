@@ -1,0 +1,633 @@
+{
+ "built": [
+  [
+   "pl-pan-tadeusz",
+   14,
+   429570
+  ],
+  [
+   "pl-konrad-wallenrod",
+   8,
+   51015
+  ],
+  [
+   "pl-grazyna",
+   2,
+   47454
+  ],
+  [
+   "pl-ballads-and-romances",
+   17,
+   68059
+  ],
+  [
+   "pl-crimean-sonnets",
+   1,
+   22280
+  ],
+  [
+   "pl-ordon-s-redoubt",
+   1,
+   5593
+  ],
+  [
+   "pl-kordian",
+   17,
+   123836
+  ],
+  [
+   "pl-balladyna",
+   7,
+   164993
+  ],
+  [
+   "pl-lilla-weneda",
+   6,
+   116446
+  ],
+  [
+   "pl-mazeppa",
+   5,
+   86176
+  ],
+  [
+   "pl-beniowski",
+   5,
+   140428
+  ]
+ ],
+ "short": [
+  [
+   "pl-forefathers-eve",
+   10,
+   "Dziady (Mickiewicz)"
+  ]
+ ],
+ "missing": [
+  [
+   "pl-anhelli",
+   "not downloaded yet"
+  ],
+  [
+   "pl-in-switzerland",
+   "not downloaded yet"
+  ],
+  [
+   "pl-agamemnon-s-tomb",
+   "not downloaded yet"
+  ],
+  [
+   "pl-father-mark",
+   "not downloaded yet"
+  ],
+  [
+   "pl-salomea-s-silver-dream",
+   "not downloaded yet"
+  ],
+  [
+   "pl-mary-stuart",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-un-divine-comedy",
+   "not downloaded yet"
+  ],
+  [
+   "pl-iridion",
+   "not downloaded yet"
+  ],
+  [
+   "pl-before-dawn",
+   "not downloaded yet"
+  ],
+  [
+   "pl-promethidion",
+   "not downloaded yet"
+  ],
+  [
+   "pl-quidam",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-revenge",
+   "not downloaded yet"
+  ],
+  [
+   "pl-maidens-vows",
+   "not downloaded yet"
+  ],
+  [
+   "pl-mr-jowialski",
+   "not downloaded yet"
+  ],
+  [
+   "pl-ladies-and-hussars",
+   "not downloaded yet"
+  ],
+  [
+   "pl-life-annuity",
+   "not downloaded yet"
+  ],
+  [
+   "pl-mr-moneybags",
+   "not downloaded yet"
+  ],
+  [
+   "pl-fables-and-parables",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-adventures-of-mr-nicholas-wisdom",
+   "not downloaded yet"
+  ],
+  [
+   "pl-monachomachia",
+   "not downloaded yet"
+  ],
+  [
+   "pl-satires",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-mouseiad",
+   "not downloaded yet"
+  ],
+  [
+   "pl-laments",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-dismissal-of-the-greek-envoys",
+   "not downloaded yet"
+  ],
+  [
+   "pl-trifles",
+   "not downloaded yet"
+  ],
+  [
+   "pl-songs",
+   "not downloaded yet"
+  ],
+  [
+   "pl-chess",
+   "not downloaded yet"
+  ],
+  [
+   "pl-a-short-discourse-between-a-squire-a-reeve-and-a-p",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-life-of-an-honest-man",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-envoy-s-return",
+   "not downloaded yet"
+  ],
+  [
+   "pl-memoirs",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-progress-of-the-chocim-war",
+   "not downloaded yet"
+  ],
+  [
+   "pl-maria",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-castle-of-kaniow",
+   "not downloaded yet"
+  ],
+  [
+   "pl-memoirs-of-soplica",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-heathen",
+   "not downloaded yet"
+  ],
+  [
+   "pl-song-of-our-land",
+   "not downloaded yet"
+  ],
+  [
+   "pl-chorale-from-the-smoke-of-fires",
+   "not downloaded yet"
+  ],
+  [
+   "pl-dabrowski-s-mazurka",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-doll",
+   "not downloaded yet"
+  ],
+  [
+   "pl-pharaoh",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-new-women",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-outpost",
+   "not downloaded yet"
+  ],
+  [
+   "pl-antek",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-waistcoat",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-barrel-organ",
+   "not downloaded yet"
+  ],
+  [
+   "pl-anielka",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-returning-wave",
+   "not downloaded yet"
+  ],
+  [
+   "pl-with-fire-and-sword",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-deluge",
+   "not downloaded yet"
+  ],
+  [
+   "pl-fire-in-the-steppe",
+   "not downloaded yet"
+  ],
+  [
+   "pl-quo-vadis",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-knights-of-the-cross",
+   "not downloaded yet"
+  ],
+  [
+   "pl-in-desert-and-wilderness",
+   "not downloaded yet"
+  ],
+  [
+   "pl-without-dogma",
+   "not downloaded yet"
+  ],
+  [
+   "pl-children-of-the-soil",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-lighthouse-keeper",
+   "not downloaded yet"
+  ],
+  [
+   "pl-janko-the-musician",
+   "not downloaded yet"
+  ],
+  [
+   "pl-charcoal-sketches",
+   "not downloaded yet"
+  ],
+  [
+   "pl-bartek-the-conqueror",
+   "not downloaded yet"
+  ],
+  [
+   "pl-sachem",
+   "not downloaded yet"
+  ],
+  [
+   "pl-after-bread",
+   "not downloaded yet"
+  ],
+  [
+   "pl-on-the-niemen",
+   "not downloaded yet"
+  ],
+  [
+   "pl-meir-ezofovich",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-boor",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-good-lady",
+   "not downloaded yet"
+  ],
+  [
+   "pl-gloria-victis",
+   "not downloaded yet"
+  ],
+  [
+   "pl-marta",
+   "not downloaded yet"
+  ],
+  [
+   "pl-of-the-dwarfs-and-little-orphan-mary",
+   "not downloaded yet"
+  ],
+  [
+   "pl-mendel-of-gdansk",
+   "not downloaded yet"
+  ],
+  [
+   "pl-our-nag",
+   "not downloaded yet"
+  ],
+  [
+   "pl-mr-balcer-in-brazil",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-oath",
+   "not downloaded yet"
+  ],
+  [
+   "pl-berry-picking",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-peasants",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-promised-land",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-comedienne",
+   "not downloaded yet"
+  ],
+  [
+   "pl-ferments",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-year-1794",
+   "not downloaded yet"
+  ],
+  [
+   "pl-homeless-people",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-coming-spring",
+   "not downloaded yet"
+  ],
+  [
+   "pl-ashes",
+   "not downloaded yet"
+  ],
+  [
+   "pl-labours-of-sisyphus",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-faithful-river",
+   "not downloaded yet"
+  ],
+  [
+   "pl-forest-echoes",
+   "not downloaded yet"
+  ],
+  [
+   "pl-doctor-piotr",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-strong-woman",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-crows-and-ravens-will-peck-us-to-pieces",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-history-of-a-sin",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-charm-of-life",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-wedding",
+   "not downloaded yet"
+  ],
+  [
+   "pl-november-night",
+   "not downloaded yet"
+  ],
+  [
+   "pl-liberation",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-varsovienne",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-curse",
+   "not downloaded yet"
+  ],
+  [
+   "pl-acropolis",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-morality-of-mrs-dulska",
+   "not downloaded yet"
+  ],
+  [
+   "pl-froggy",
+   "not downloaded yet"
+  ],
+  [
+   "pl-kaska-the-caryatid",
+   "not downloaded yet"
+  ],
+  [
+   "pl-an-ancient-tale",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-cottage-beyond-the-village",
+   "not downloaded yet"
+  ],
+  [
+   "pl-countess-cosel",
+   "not downloaded yet"
+  ],
+  [
+   "pl-bruhl",
+   "not downloaded yet"
+  ],
+  [
+   "pl-jermola-the-potter",
+   "not downloaded yet"
+  ],
+  [
+   "pl-on-the-rocky-podhale",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-book-of-the-poor",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-meadow",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-orchard-at-the-crossroads",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-adventures-of-sindbad-the-sailor",
+   "not downloaded yet"
+  ],
+  [
+   "pl-winter-wheat",
+   "not downloaded yet"
+  ],
+  [
+   "pl-in-the-valleys",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-lodgers",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-hag",
+   "not downloaded yet"
+  ],
+  [
+   "pl-on-the-silver-globe",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-conqueror",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-old-earth",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-motion-demon",
+   "not downloaded yet"
+  ],
+  [
+   "pl-insatiability",
+   "not downloaded yet"
+  ],
+  [
+   "pl-farewell-to-autumn",
+   "not downloaded yet"
+  ],
+  [
+   "pl-little-words",
+   "not downloaded yet"
+  ],
+  [
+   "pl-lying-in-wait-for-god",
+   "not downloaded yet"
+  ],
+  [
+   "pl-dancing-socrates",
+   "not downloaded yet"
+  ],
+  [
+   "pl-king-matt-the-first",
+   "not downloaded yet"
+  ],
+  [
+   "pl-king-matt-on-the-desert-island",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-bankruptcy-of-little-jack",
+   "not downloaded yet"
+  ],
+  [
+   "pl-children-of-the-street",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-romance-of-teresa-hennert",
+   "not downloaded yet"
+  ],
+  [
+   "pl-characters",
+   "not downloaded yet"
+  ],
+  [
+   "pl-dewajtis",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-summer-of-the-forest-people",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-leper",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-life-and-thoughts-of-zygmunt-podfilipski",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-hare",
+   "not downloaded yet"
+  ],
+  [
+   "pl-blue-almonds",
+   "not downloaded yet"
+  ],
+  [
+   "pl-kisses",
+   "not downloaded yet"
+  ],
+  [
+   "pl-old-tales-legends-and-folk-stories",
+   "not downloaded yet"
+  ],
+  [
+   "pl-fables-and-little-tales",
+   "not downloaded yet"
+  ],
+  [
+   "pl-wiesaw",
+   "not downloaded yet"
+  ],
+  [
+   "pl-general-barcz",
+   "not downloaded yet"
+  ],
+  [
+   "pl-the-story-of-one-bullet",
+   "not downloaded yet"
+  ],
+  [
+   "pl-over-the-depths",
+   "not downloaded yet"
+  ]
+ ],
+ "no_meta": []
+}
