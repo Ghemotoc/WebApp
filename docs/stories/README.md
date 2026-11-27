@@ -27,7 +27,7 @@ Scope: writing, reading, comments, follows, forums with user-created spaces, pri
 
 - **Positioning (16 Oct 2026):** privacy and owning your work first. Everyone is welcome; students (13 and up) are the first community, so minors are users from day one.
 - **Launch (decided 17 Oct 2026, 11:48, replacing 16 Oct):** Romania first; English-speaking countries open later, each after its legal check. The interface is in Romanian by default for everyone, with English available. Australia stays closed to under-16s until a lawyer says otherwise (decided 16 Oct 2026, late evening, Q19). Our own team moderates in English and Romanian, acting on reports.
-- **Categories at launch (16 Oct 2026, late evening, Q52):** fiction, poetry and nonfiction essays. No journalism or articles at launch; the Stage 2 newsroom stays later.
+- **Categories at launch (16 Oct 2026, late evening, Q52):** fiction, poetry and nonfiction essays (since 27 Nov 2026 four forms: Fiction, Poetry, Non-fiction and Plays, FORMS-1). No journalism or articles at launch; the Stage 2 newsroom stays later.
 - **March 2027 target (16 Oct 2026):** 20 writers publishing, from any open market. No county contest calendars for now.
 - **Supporter money is not in Stage 1.** Paying supporters and the writer programme come in a later stage, well after the March slice (decisions and OPEN points in section 5, question 45).
 

@@ -121,7 +121,9 @@ test.describe('the line under a genre or tag title (BOOKS-A06, BOOKS-A09)', () =
     await page.context().close();
 
     const genrePage = await openAs(browser, false, '/discover/c/fiction');
-    await expect(genrePage.getByRole('heading', { level: 1, name: 'Fiction' })).toBeVisible();
+    await expect(
+      genrePage.getByRole('heading', { level: 1, name: 'Fiction', exact: true }),
+    ).toBeVisible();
     await expect(genrePage.getByText(fictionLine)).toHaveCount(0);
     await genrePage.context().close();
   });

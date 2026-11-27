@@ -80,7 +80,8 @@
   "categories": {
     "fiction": "Fiction",
     "poetry": "Poetry",
-    "nonfiction_essays": "Essays"
+    "nonfiction_essays": "Non-fiction",
+    "plays": "Plays"
   },
   "languages": {
     "ro": "Română",

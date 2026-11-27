@@ -60373,7 +60373,7 @@ ALTER TABLE "public"."categories" OWNER TO "postgres";
 
 
 COMMENT ON TABLE "public"."categories" IS 'kind: platform
-The fixed story categories: fiction, poetry, nonfiction essays (Q52). Changed by migration until S1-E11-03.';
+The fixed story forms: fiction, poetry, nonfiction essays (shown as Non-fiction) and plays (Q52; FORMS-1, 27 Nov 2026). Staff reorder them from Settings (S1-E11-03).';
 
 
 
