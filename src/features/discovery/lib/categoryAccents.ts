@@ -7,11 +7,12 @@
  */
 import type { PillTone } from '@/components/ui/InfoPill';
 
-/** The accent of the three March categories; any other category is neutral. */
+/** The accent of each of the four forms (FORMS-1, 27 Nov 2026); any other category is neutral. */
 const accentByCategory: Record<string, PillTone> = {
   fiction: 'plum',
   poetry: 'gold',
   nonfiction_essays: 'sage',
+  plays: 'blush',
 };
 
 /**

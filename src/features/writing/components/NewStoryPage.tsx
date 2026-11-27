@@ -115,7 +115,7 @@ function useNewStoryWizard(penName: string) {
   const isLastStep = wizard.openIndex === steps.length - 1;
 
   function next() {
-    // Only the basics have a must-have (the title); the other steps start with good answers.
+    // The basics need a title and step 2 a category (FORMS-1); the other steps start with good answers.
     const fields = newStoryStepFields[wizard.openIndex] ?? [];
     if (form.checkFields(fields)) wizard.goToNextStep();
   }
