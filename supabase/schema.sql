@@ -57132,14 +57132,16 @@ begin
   if owner_id is null then
     return false;
   end if;
-  -- Step 2: every optional notification email off, and message emails off.
+  -- Step 2: every optional notification email off. A kind is optional when it has a
+  -- default delivery; required kinds (and in-app-only kinds) have none and are left alone.
   insert into public.notification_email_settings (user_id, kind, delivery)
-  select owner_id, listed.kind, 'off'
-  from unnest(array['comment_reply', 'new_chapter', 'comment_on_chapter', 'new_follower']::public.notification_kind[])
-    as listed (kind)
+  select owner_id, every_kind.kind, 'off'
+  from unnest(enum_range(null::public.notification_kind)) as every_kind (kind)
+  where public.default_email_delivery(every_kind.kind) is not null
   on conflict on constraint notification_email_settings_one_per_kind do update set delivery = 'off';
+  -- Step 3: message emails off too (IDEAS-2 idea 6).
   update public.profiles set message_emails_on = false where profiles.id = owner_id;
-  -- Step 3: emails already waiting stop too, except the required ones.
+  -- Step 4: emails already waiting stop too, except the required ones.
   update public.email_outbox set sent_at = now()
   where email_outbox.user_id = owner_id and email_outbox.sent_at is null and email_outbox.delivery <> 'required';
   return true;
@@ -57150,7 +57152,7 @@ $$;
 ALTER FUNCTION "public"."unsubscribe_from_emails"("unsubscribe_key" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."unsubscribe_from_emails"("unsubscribe_key" "text") IS 'One-click unsubscribe: every optional notification email and message emails off (S1-E7-02, IDEAS-2 idea 6).';
+COMMENT ON FUNCTION "public"."unsubscribe_from_emails"("unsubscribe_key" "text") IS 'One-click unsubscribe: every optional notification email (each kind with a default delivery) and message emails off (S1-E7-02, IDEAS-2 idea 6).';
 
 
 
