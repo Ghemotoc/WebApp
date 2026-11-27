@@ -42,7 +42,7 @@ import { PageAdSlot } from '@/features/ads/components/PageAdSlot';
 import { useSession } from '@/features/auth/hooks/useSession';
 import { usePublicSettings } from '@/features/flags/hooks/usePublicSettings';
 import { BecauseYouReadShelf } from '@/features/suggestions/components/BecauseYouReadShelf';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
+import { useStoryCategories } from '@/features/writing/hooks/useStoryCategories';
 
 import { everyLanguage, type ListKind } from '../api/storyLists';
 import { useFeaturedStories } from '../hooks/useFeaturedStories';
@@ -103,7 +103,7 @@ function shelfCanShow(word: string, isSignedIn: boolean): boolean {
  */
 function GenreShelves({ hasAdBetween }: { hasAdBetween: boolean }) {
   const { t } = useDiscoveryTranslation();
-  const { categories } = useStoryFormOptions();
+  const { categories } = useStoryCategories();
   return categories.map((category, index) => (
     <Fragment key={category.slug}>
       <DiscoverShelf

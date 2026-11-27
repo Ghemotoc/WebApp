@@ -83,6 +83,7 @@ function options(
     sender: { name: 'Product', email: 'hello@example.test' },
     productName: 'Product',
     companyName: 'Company',
+    companySiteUrl: 'https://company.test',
     sendEmail,
     readOverrides: () => Promise.resolve(overrides),
   };
@@ -358,6 +359,61 @@ describe('the notification email worker', () => {
     expect(email?.text).toContain('seven days');
     expect(email?.text).toContain('We never send your data by email.');
     expect(email?.headers).toBeUndefined();
+  });
+
+  it('sends a branded HTML part with the link back as the button and a one-click unsubscribe link (S1-E11-19)', async () => {
+    const [email] = await sendOnce([claimed({})]);
+    const html = email?.html ?? '';
+    expect(html).toContain('<html lang="en">');
+    // Board E03: an instant email is headed by its intro, and its line is the text.
+    expect(html).toContain('>Something new on Product</h1>');
+    expect(html).toContain('Corbu replied to your comment on chapter 3 of “Sarea”.');
+    expect(html).toContain('href="https://site.test/notifications"');
+    expect(html).toContain('>See everything on Product</a>');
+    expect(html).toContain(
+      `<a href="https://site.test/unsubscribe?key=${unsubscribeKey}" style="color:#3D4290">Stop these emails with one click</a>`,
+    );
+    expect(html).toContain('<a href="https://company.test"');
+    expect(html).toContain('src="https://site.test/brand/email-logo.png"');
+    // The plain text keeps the company's address after its name.
+    expect(email?.text).toContain('An app by Company: https://company.test');
+  });
+
+  it('lists a Romanian round-up’s lines in the HTML part, in Romanian', async () => {
+    const [email] = await sendOnce([
+      claimed({ language: 'ro', delivery: 'daily', items: [reply, followers] }),
+    ]);
+    const html = email?.html ?? '';
+    expect(html).toContain('<html lang="ro">');
+    expect(html).toContain('>Rezumat zilnic de pe Product</h1>');
+    expect(html).toContain('Ilinca, Corbu și încă o persoană au început să te urmărească.');
+    expect(html).toContain('>Vezi totul pe Product</a>');
+    expect(html).toContain('Sau lipește acest link în browser:');
+  });
+
+  it('gives an email that is always sent no unsubscribe link in its HTML part either', async () => {
+    const decision: EmailNotificationItem = {
+      ...followers,
+      kind: 'moderation_decision',
+      actors: [],
+      actor_count: 0,
+    };
+    const [email] = await sendOnce([
+      claimed({ delivery: 'required', unsubscribe_key: null, items: [decision] }),
+    ]);
+    expect(email?.html).toContain('we always send it');
+    expect(email?.html).not.toContain('/unsubscribe');
+  });
+
+  it('uses the admins’ wording in the HTML part too', async () => {
+    const overrides = new Map([
+      ['email:notificationEmails.unsubscribe', 'No more of these: {{link}}'],
+    ]);
+    const [email] = await sendOnce([claimed({})], overrides);
+    expect(email?.html).toContain('>No more of these</a>');
+    expect(email?.text).toContain(
+      `No more of these: https://site.test/unsubscribe?key=${unsubscribeKey}`,
+    );
   });
 
   it('uses the admins’ wording when there is an override', async () => {

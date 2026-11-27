@@ -6,17 +6,19 @@
  * Each choice applies at once (board A08: "the filters apply at once"), by rewriting the address
  * in place.
  * Who uses it: SearchStoriesTab, in the left column from 1024 px and in a sheet below.
- * What it calls: FilterRadios and SearchRangeFilters; the parent applies the new request.
+ * What it calls: FilterRadios, SearchLanguageFilter (only the languages stories are written in,
+ * S1-E3-01) and SearchRangeFilters; the parent applies the new request.
  */
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import type { ListRequest } from '@/features/discovery/api/storyLists';
 
-import { filtersOn, searchLanguages, searchSorts, sortInUse } from '../lib/searchFilters';
+import { filtersOn, searchSorts, sortInUse } from '../lib/searchFilters';
 import { useSearchTranslation } from '../registerSearchTranslations';
 
 import { FilterRadios } from './FilterRadios';
+import { SearchLanguageFilter } from './SearchLanguageFilter';
 import { SearchRangeFilters } from './SearchRangeFilters';
 
 /** What the fields need. */
@@ -62,18 +64,7 @@ export function SearchFilterFields({ request, onChange }: SearchFilterFieldsProp
           onChange({ ...request, completion });
         }}
       />
-      <FilterRadios
-        legend={t('filters.language')}
-        choices={[
-          ...searchLanguages.map((code) => ({
-            value: code,
-            label: t(`filters.languages.${code}`),
-          })),
-          { value: both, label: t('filters.both') },
-        ]}
-        value={request.languageCode ?? both}
-        onChoose={(code) => onChange({ ...request, languageCode: code === both ? null : code })}
-      />
+      <SearchLanguageFilter request={request} onChange={onChange} />
       <SearchRangeFilters request={request} onChange={onChange} />
       {filtersOn(request) > 0 && (
         <Button

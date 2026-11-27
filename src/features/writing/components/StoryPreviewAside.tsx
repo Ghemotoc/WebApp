@@ -64,7 +64,7 @@ export function StoryPreviewAside({
   penName,
   hasDeleteNote = true,
 }: StoryPreviewAsideProps) {
-  const { t } = useTranslation('writing');
+  const { t, i18n } = useTranslation('writing');
   const shownTitle = answers.title.trim() === '' ? t('cover.untitled') : answers.title;
 
   return (
@@ -95,7 +95,7 @@ export function StoryPreviewAside({
           <p className="m-0 type-meta">{penName}</p>
           {/* CALM-9c: the story's labels as one meta line, as the story page shows them. */}
           <div className="mt-2">
-            <MetaLine facts={storyPreviewFacts(answers, t)} />
+            <MetaLine facts={storyPreviewFacts(answers, t, i18n.language)} />
           </div>
         </div>
       </div>

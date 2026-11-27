@@ -10,7 +10,7 @@
  * the short line under each page's title, per language (BOOKS-A06, BOOKS-A09). Every change is in
  * the audit log, linked as "Staff history".
  * Who shows it: WebsiteAdminPage at /staff/website/list-pages. What it calls: the hooks in
- * hooks/useListPageBackgrounds.ts, useMarkets, useStoryFormOptions (the genres) and
+ * hooks/useListPageBackgrounds.ts, useMarkets, useStoryCategories (the genres) and
  * ListBackgroundEditor and ListLinesSection.
  */
 import { useState } from 'react';

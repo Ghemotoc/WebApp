@@ -81,7 +81,8 @@ test.describe('create a story (S1-E3-01)', () => {
 
     // Step 2: category, tags and setting. The basics fold to their summary with a Change button.
     await goToNewStoryStep(page, 'Category, tags and setting');
-    await expect(page.getByText(`${longTitle} · Română`)).toBeVisible();
+    // Since S1-E3-01 (26 Nov 2026) the language is named in the interface language, here English.
+    await expect(page.getByText(`${longTitle} · Romanian`)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Change The basics' })).toBeVisible();
     await page.getByRole('radio', { name: 'Fiction' }).click();
 

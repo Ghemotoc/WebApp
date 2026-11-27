@@ -12,8 +12,11 @@
  * 2. claims the due emails (email_worker_claim()), which already leaves out anything the person
  *    wouldn't see on their Notifications page (blocks, ratings, moderation);
  * 3. writes each in the person's language, with the admins' wording laid over email.json
- *    ("email:notificationEmails.*" overrides, S1-E11-19), and adds the one-click unsubscribe
- *    headers (RFC 8058) to every optional email; account, safety and legal emails have none;
+ *    ("email:notificationEmails.*" overrides, S1-E11-19), as plain text and as the branded HTML of
+ *    board E03 (server/email-layout.ts: a round-up's lines as a list, the link back as the
+ *    button, why it came and the one-click unsubscribe link under the card), and adds the
+ *    one-click unsubscribe headers (RFC 8058) to every optional email; account, safety and legal
+ *    emails have none;
  * 4. marks what left (email_worker_mark_sent()); a failed one is tried again later.
  * Private message emails (IDEAS-2 idea 6) come the same way, with delivery 'message': one line
  * naming who wrote and a link to the chat, never the words, held by the database until the
@@ -26,7 +29,15 @@ import englishEmail from '../src/locales/en/email.json';
 import romanianEmail from '../src/locales/ro/email.json';
 
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
-import { textOf } from './send-email';
+import {
+  LINK_MARKER,
+  renderEmailHtml,
+  wordsBeforeLink,
+  type EmailBrand,
+  type EmailContent,
+  type LinkedLine,
+} from './email-layout';
+import { emailBrandOf, textOf } from './send-email';
 import { ACCOUNT_CLOSING_PATH } from '../src/lib/account-closing-path';
 import { writtenLanguageFor } from '../src/schemas/interfaceLanguages';
 
@@ -91,6 +102,8 @@ export interface NotificationEmailOptions {
   sender: EmailSender;
   productName: string;
   companyName: string;
+  /** The company's own site, which the company name in the footer links to (brand config). */
+  companySiteUrl: string;
   sendEmail: SendEmail;
   /** The live "email:" overrides of a locale; failures fall back to the file text. */
   readOverrides: (locale: string) => Promise<Map<string, string>>;
@@ -287,27 +300,34 @@ export function notificationLine(
   return `${line}\n“${item.comment_excerpt}”`;
 }
 
+/** One line of email.json that may carry a link ("Open the chat: {{link}}"), and its address. */
+interface LineWithLink {
+  path: string;
+  link?: string;
+}
+
 /**
  * The closing lines: why the email came and how to stop it, or that it is always sent.
  *
  * @param claimed - the email
  * @param siteUrl - the site's address
- * @param read - the text reader
- * @returns the lines
+ * @returns the lines, each with its link
  */
-function footerLines(claimed: ClaimedEmail, siteUrl: string, read: ReadText): string[] {
+function footerLinesOf(claimed: ClaimedEmail, siteUrl: string): LineWithLink[] {
   if (claimed.delivery === 'required' || claimed.unsubscribe_key === null) {
-    return [read('notificationEmails.required')];
+    return [{ path: 'notificationEmails.required' }];
   }
   // A message email is chosen under Settings › Messages, not Notifications (IDEAS-2 idea 6).
   const isMessage = claimed.delivery === 'message';
   return [
-    read(isMessage ? 'notificationEmails.messageWhy' : 'notificationEmails.why', {
+    {
+      path: isMessage ? 'notificationEmails.messageWhy' : 'notificationEmails.why',
       link: `${siteUrl}/settings#${isMessage ? 'messages' : 'notifications'}`,
-    }),
-    read('notificationEmails.unsubscribe', {
+    },
+    {
+      path: 'notificationEmails.unsubscribe',
       link: `${siteUrl}/unsubscribe?key=${claimed.unsubscribe_key}`,
-    }),
+    },
   ];
 }
 
@@ -351,71 +371,153 @@ function introOf(claimed: ClaimedEmail, read: ReadText): string {
 function unusedAccountLinkOf(
   kind: EmailNotificationItem['kind'] | undefined,
   siteUrl: string,
-  read: ReadText,
-): string | null {
+): LineWithLink | null {
   if (kind === 'account_unused_nudge' || kind === 'account_unused_month') {
-    return read('notificationEmails.accountUnusedSignIn', { link: `${siteUrl}/sign-in` });
+    return { path: 'notificationEmails.accountUnusedSignIn', link: `${siteUrl}/sign-in` };
   }
   if (kind === 'account_unused_closed') {
-    return read('notificationEmails.accountUnusedDownload', {
+    return {
+      path: 'notificationEmails.accountUnusedDownload',
       link: `${siteUrl}/sign-in?next=${encodeURIComponent(ACCOUNT_CLOSING_PATH)}`,
-    });
+    };
   }
   return null;
 }
 
 /**
- * The link back: the chat itself for a private message (by the sender's username), the log-in page
- * for "You're in" and the emails to an unused account (the download page once it is closed), otherwise the
- * Notifications page.
+ * The link back, which the HTML draws as the button: the chat itself for a private message (by
+ * the sender's username), the log-in page for "You're in" and the emails to an unused account
+ * (the download page once it is closed), otherwise the Notifications page.
  *
- * @returns the line
+ * @returns the line and its link
  */
-function seeAllOf(claimed: ClaimedEmail, siteUrl: string, read: ReadText): string {
+function backLinkOf(claimed: ClaimedEmail, siteUrl: string): LineWithLink {
   // "You're in" (WAITLIST-1): a link to log in, never a code (Robert, 6 Nov 2026, 17:27 UTC).
   if (claimed.items[0]?.kind === 'waitlist_admitted') {
-    return read('notificationEmails.waitlistSignIn', { link: `${siteUrl}/sign-in` });
+    return { path: 'notificationEmails.waitlistSignIn', link: `${siteUrl}/sign-in` };
   }
   // An account nobody uses (INACTIVE-2) gets a link of its own.
-  const unusedAccountLink = unusedAccountLinkOf(claimed.items[0]?.kind, siteUrl, read);
+  const unusedAccountLink = unusedAccountLinkOf(claimed.items[0]?.kind, siteUrl);
   if (unusedAccountLink !== null) return unusedAccountLink;
   const sender = claimed.items[0]?.actors[0]?.handle;
   if (claimed.delivery === 'message' && sender !== undefined) {
-    return read('notificationEmails.messageOpen', {
-      link: `${siteUrl}/messages/${encodeURIComponent(sender)}`,
-    });
+    const link = `${siteUrl}/messages/${encodeURIComponent(sender)}`;
+    return { path: 'notificationEmails.messageOpen', link };
   }
-  return read('notificationEmails.seeAll', { link: `${siteUrl}/notifications` });
+  return { path: 'notificationEmails.seeAll', link: `${siteUrl}/notifications` };
 }
 
 /**
- * Writes one claimed email as plain text, with the one-click unsubscribe headers when it has a key.
+ * A line as plain text, with its address after it.
+ *
+ * @returns the text
+ */
+function plainLine(line: LineWithLink, read: ReadText): string {
+  return read(line.path, { link: line.link ?? '' });
+}
+
+/**
+ * A line for the HTML layout: the words with the link's place kept, and the address.
+ *
+ * @returns the linked line
+ */
+function htmlLine(line: LineWithLink, read: ReadText): LinkedLine {
+  return { text: read(line.path, { link: LINK_MARKER }), url: line.link };
+}
+
+/** What writing one notification email needs besides the email itself. */
+export interface NotificationEmailContext {
+  /** The site's address, for the links and the logo. */
+  siteUrl: string;
+  /** The text reader in the person's language. */
+  read: ReadText;
+  brand: EmailBrand;
+}
+
+/**
+ * The heading and the words above the button, by delivery (board E03): an instant email's heading
+ * is its intro ("Something new on …") and its line is the text; a round-up lists its lines under
+ * its intro; a private message is headed by its line, with the intro saying the words stay in the
+ * app; an email that is always sent is headed by its subject.
+ *
+ * @returns the parts of the content that change with the delivery
+ */
+function headingAndWords(
+  claimed: ClaimedEmail,
+  lines: string[],
+  context: NotificationEmailContext,
+): Pick<EmailContent, 'heading' | 'paragraphs' | 'listItems'> {
+  const intro = introOf(claimed, context.read);
+  const subject = subjectOf(claimed, lines, context.read);
+  if (claimed.delivery === 'daily')
+    return { heading: subject, paragraphs: [intro], listItems: lines };
+  // The intros end with a colon that leads into the lines; as a heading or alone they don't.
+  const introAlone = intro.replace(/:\s*$/, '');
+  if (claimed.delivery === 'message') return { heading: subject, paragraphs: [`${introAlone}.`] };
+  if (claimed.delivery === 'instant') return { heading: introAlone, paragraphs: lines };
+  return { heading: subject, paragraphs: lines };
+}
+
+/**
+ * What one notification email says, for the HTML layout.
+ *
+ * @returns the content for renderEmailHtml()
+ */
+function notificationContent(
+  claimed: ClaimedEmail,
+  lines: string[],
+  context: NotificationEmailContext,
+): EmailContent {
+  const read = context.read;
+  // Step 1: the link back becomes the button, its words the label (board E03).
+  const back = htmlLine(backLinkOf(claimed, context.siteUrl), read);
+  const label = wordsBeforeLink(back.text) ?? back.text.split(LINK_MARKER).join('').trim();
+  return {
+    ...headingAndWords(claimed, lines, context),
+    // The first notification is the line an inbox shows beside the subject.
+    preheader: (lines[0] ?? '').split('\n')[0] ?? '',
+    action: { label, url: back.url ?? '', pasteLabel: read('pasteLink') },
+    signOff: read('signOff'),
+    footerLines: footerLinesOf(claimed, context.siteUrl).map((line) => htmlLine(line, read)),
+    madeBy: read('madeBy'),
+  };
+}
+
+/**
+ * Writes one claimed email as plain text and branded HTML, with the one-click unsubscribe headers
+ * when it has a key.
  *
  * @param claimed - the email from email_worker_claim()
- * @param siteUrl - the site's address, for the links
- * @param read - the text reader in the person's language
+ * @param context - the site's address, the text reader in the person's language and the brand
  * @returns the email to send
  */
 export function composeNotificationEmail(
   claimed: ClaimedEmail,
-  siteUrl: string,
-  read: ReadText,
+  context: NotificationEmailContext,
 ): OutgoingEmail {
+  const { siteUrl, read } = context;
   const lines = claimed.items.map((item) => notificationLine(item, read, claimed.language));
   const text = [
     introOf(claimed, read),
     '',
     lines.join('\n\n'),
     '',
-    seeAllOf(claimed, siteUrl, read),
+    plainLine(backLinkOf(claimed, siteUrl), read),
     '',
     read('signOff'),
-    read('madeBy'),
+    // The plain text gives the company's address after its name (board E01, frame 4).
+    `${read('madeBy')}: ${context.brand.companySiteUrl}`,
     '',
     '—',
-    ...footerLines(claimed, siteUrl, read),
+    ...footerLinesOf(claimed, siteUrl).map((line) => plainLine(line, read)),
   ].join('\n');
-  const email: OutgoingEmail = { to: claimed.to, subject: subjectOf(claimed, lines, read), text };
+  const html = renderEmailHtml(
+    claimed.language,
+    notificationContent(claimed, lines, context),
+    context.brand,
+  );
+  const subject = subjectOf(claimed, lines, read);
+  const email: OutgoingEmail = { to: claimed.to, subject, text, html };
   if (claimed.unsubscribe_key !== null && claimed.delivery !== 'required') {
     // RFC 8058: mail apps show an "Unsubscribe" button that posts to this address.
     email.headers = {
@@ -487,11 +589,14 @@ async function sendEach(
   options: NotificationEmailOptions,
 ): Promise<string[]> {
   const readerFor = readersByLanguage(options);
+  // The support address is the sender's (brand config), shown nowhere in these emails today.
+  const brand = emailBrandOf({ ...options, supportEmail: options.sender.email }, siteUrl);
   const sentIds: string[] = [];
   for (const claimed of claimedEmails) {
     try {
       const read = await readerFor(claimed.language);
-      await options.sendEmail(composeNotificationEmail(claimed, siteUrl, read), options.sender);
+      const email = composeNotificationEmail(claimed, { siteUrl, read, brand });
+      await options.sendEmail(email, options.sender);
       sentIds.push(claimed.outbox_id);
     } catch {
       // It stays due and is tried again once its claim runs out (at most 5 times).

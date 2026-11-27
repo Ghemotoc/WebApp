@@ -2,13 +2,15 @@
  * useStaffStoryWords: how Staff › Stories writes a story's category, language, rating, status,
  * audience and dates in the page's language (bundle ADMIN-2, part a; story S1-E11-07).
  *
- * Who calls it: StaffStoryFiltersBar, StaffStoryResults and StaffStoryPage. Category, language and
- * rating names come from the writing namespace, so staff see the same words writers chose.
+ * Who calls it: StaffStoryFiltersBar, StaffStoryResults and StaffStoryPage. Category and rating
+ * names come from the writing namespace, so staff see the same words writers chose; language
+ * names come from the browser (any language of the world, S1-E3-01).
  */
 import { useTranslation } from 'react-i18next';
 
 import type { PillTone } from '@/components/ui/InfoPill';
 import type { Enums } from '@/lib/database.types';
+import { languageMenuName } from '@/lib/language-names';
 
 import type { StaffStoryAudience, StaffStoryStatus } from '../api/staffStories';
 import { dateLocaleFor } from '../../../lib/romania-time';
@@ -34,7 +36,8 @@ export function useStaffStoryWords() {
   return {
     category: (slug: string | null) =>
       slug === null ? t('stories.noCategory') : tWriting(`categories.${slug}`),
-    language: (code: string) => tWriting(`languages.${code}`, { defaultValue: code }),
+    // S1-E3-01: any language of the world, named by the browser in the page's language.
+    language: (code: string) => languageMenuName(code, i18n.language),
     rating: (rating: Enums<'story_rating'>) => tWriting(`rating.${rating}`),
     status: (status: StaffStoryStatus) => t(`stories.statuses.${status}`),
     statusTone: (status: StaffStoryStatus) => statusTones[status],

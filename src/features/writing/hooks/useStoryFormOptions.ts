@@ -1,45 +1,41 @@
 /**
- * useStoryFormOptions: the choices the new story form offers: languages (open or coming) and
- * categories (story S1-E3-01).
+ * useStoryFormOptions: the choices the story forms offer: the languages (every language of the
+ * world) and the categories (story S1-E3-01).
  *
- * Who calls it: NewStoryPage and StorySettingsPage. What it calls: api/stories.ts
- * (story_language_choices() and the categories table). Staff change both on Staff › Settings
- * (S1-E11-03, S1-E11-05), so they are read again after five minutes.
+ * Who calls it: NewStoryPage, StorySettingsPage and the staff story and classic forms;
+ * AddLanguageForm uses useWorldLanguageChoices alone. What it calls: src/lib/world-languages.ts
+ * with languageChoices() for the languages (Robert, 26 Nov 2026: "the writer can pick the
+ * language from an all language list"; until then only the languages staff had opened), and
+ * useStoryCategories for the categories. The languages need no database read: their names come
+ * from the browser in the interface language. Readers' filters list only the languages stories
+ * are written in instead (src/features/discovery/hooks/useLanguagesWrittenIn.ts).
  */
-import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { requireClient } from '@/features/account/hooks/useMyNames';
+import { languageChoices, type LanguageChoice } from '@/lib/language-names';
+import { worldLanguageCodes } from '@/lib/world-languages';
 
-import {
-  fetchCategories,
-  fetchStoryLanguages,
-  type StoryCategory,
-  type StoryLanguageChoice,
-} from '../api/stories';
-
-/** How long the choices stay fresh: staff rarely change them. */
-const choicesFreshMilliseconds = 5 * 60 * 1000;
+import { useStoryCategories } from './useStoryCategories';
 
 /**
- * Loads the languages and categories.
+ * Every language a story may be written in, named and sorted in the interface language.
  *
- * @returns languages, categories, whether both have loaded, and whether a read failed
+ * @returns the choices, worked out again only when the interface language changes
+ */
+export function useWorldLanguageChoices(): LanguageChoice[] {
+  const { i18n } = useTranslation();
+  const interfaceLanguage = i18n.resolvedLanguage ?? i18n.language;
+  return useMemo(() => languageChoices(worldLanguageCodes, interfaceLanguage), [interfaceLanguage]);
+}
+
+/**
+ * Lists the languages and loads the categories.
+ *
+ * @returns languages, categories, whether the categories have loaded, and whether their read failed
  */
 export function useStoryFormOptions() {
-  const languages = useQuery<StoryLanguageChoice[]>({
-    queryKey: ['story-languages'],
-    staleTime: choicesFreshMilliseconds,
-    queryFn: async () => fetchStoryLanguages(await requireClient()),
-  });
-  const categories = useQuery<StoryCategory[]>({
-    queryKey: ['story-categories'],
-    staleTime: choicesFreshMilliseconds,
-    queryFn: async () => fetchCategories(await requireClient()),
-  });
-  return {
-    languages: languages.data ?? [],
-    categories: categories.data ?? [],
-    isLoaded: languages.isSuccess && categories.isSuccess,
-    loadFailed: languages.isError || categories.isError,
-  };
+  const languages = useWorldLanguageChoices();
+  const { categories, isLoaded, loadFailed } = useStoryCategories();
+  return { languages, categories, isLoaded, loadFailed };
 }

@@ -124,11 +124,7 @@ function useDropDownOptions() {
     ),
     languages: withAll(
       t('stories.allLanguages'),
-      languages.map((language) => ({
-        value: language.code,
-        label: words.language(language.code),
-        lang: language.code,
-      })),
+      languages.map((language) => ({ value: language.code, label: language.label })),
     ),
     ratings: withAll(
       t('stories.allRatings'),

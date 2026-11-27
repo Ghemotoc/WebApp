@@ -83,8 +83,8 @@ select throws_ok($$ insert into public.story_tags (story_id, tag_id, user_id)
 select throws_ok($$ select public.create_story('Too many', '', 'ro', 'fiction',
   array['a','b','c','d','e','f','g','h','i','j','k'], '{"kind": "automatic"}', null, pg_temp.labels()) $$, '23514', null,
   'an eleventh tag is refused');
-select throws_ok($$ select public.create_story('Closed language', '', 'hu', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels()) $$,
-  '23514', null, 'a language with no open market is refused');
+select throws_ok($$ select public.create_story('No language', '', 'xx', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels()) $$,
+  '23514', null, 'a code that is no language is refused (any language of the world is fine since S1-E3-01, 26 Nov 2026)');
 select throws_ok($$ select public.create_story('Unknown category', '', 'ro', 'journalism', '{}', '{"kind": "automatic"}', null, pg_temp.labels()) $$,
   '23514', null, 'an unknown category (such as journalism) is refused');
 select throws_ok($$ select public.create_story('', '', 'ro', 'fiction', '{}', '{"kind": "automatic"}', null, pg_temp.labels()) $$,
