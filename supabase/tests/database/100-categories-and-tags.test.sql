@@ -34,7 +34,7 @@ select ok(
 
 -- 4. Who reads and writes.
 set local role anon;
-select is((select count(*)::integer from public.categories), 3,
+select is((select count(*)::integer from public.categories), 4,
   'allowed: categories_select_public: a signed-out visitor reads the categories');
 select throws_ok($$ insert into public.categories (slug, position) values ('journalism', 9) $$, '42501', null,
   'denied: categories_select_public: nobody adds a category through the API');
