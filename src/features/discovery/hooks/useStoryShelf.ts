@@ -40,7 +40,15 @@ export function useStoryShelf(request: ListRequest) {
     // What each person sees differs (ratings, blocks, follows), so the key names them.
     // TRANSLATE-1b: a story in several languages is listed in the page's language, so the
     // list is read again when the interface language changes.
-    queryKey: [storyListQueryKey, 'shelf', request, userId, reading.languages, reading.isDefault, i18n.language],
+    queryKey: [
+      storyListQueryKey,
+      'shelf',
+      request,
+      userId,
+      reading.languages,
+      reading.isDefault,
+      i18n.language,
+    ],
     // A shelf whose filter changes (the home page's genre chips, LOOK-3) keeps its stories until
     // the new ones arrive, so the row and its controls never vanish while it loads.
     placeholderData: keepPreviousData,

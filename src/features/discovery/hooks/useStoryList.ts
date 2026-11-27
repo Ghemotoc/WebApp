@@ -53,7 +53,15 @@ export function useStoryList(request: ListRequest, isReady = true) {
   const pages = useInfiniteQuery({
     // TRANSLATE-1b: a story in several languages is listed in the page's language, so the
     // list is read again when the interface language changes.
-    queryKey: [storyListQueryKey, 'page', request, userId, reading.languages, reading.isDefault, i18n.language],
+    queryKey: [
+      storyListQueryKey,
+      'page',
+      request,
+      userId,
+      reading.languages,
+      reading.isDefault,
+      i18n.language,
+    ],
     enabled: isReady && isKnown && reading.languages !== null,
     initialPageParam: 0,
     getNextPageParam: nextOffset,
