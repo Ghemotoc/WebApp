@@ -16,7 +16,8 @@
  * Test data: a synthetic @example.com account made through the sign-up form with the seeded
  * invite, removed afterwards (seed personas untouched).
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

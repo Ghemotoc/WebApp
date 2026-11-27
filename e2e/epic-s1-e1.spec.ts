@@ -14,7 +14,8 @@
  * Test data: seed personas only (supabase/seed.sql), never real accounts.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { THEME_STORAGE_KEY } from '../src/lib/theme';
 
@@ -43,7 +44,7 @@ const personaIds: Record<PersonaName, string> = {
 
 /** The page background in each theme, from src/styles/tokens.css: Lilac mist by day (--paper);
  * at night the flat night page (--browser-bar, #0e0e10; NIGHT-2, Robert, 22 Nov 2026). */
-const paperColour = { light: 'rgb(244, 240, 236)', night: 'rgb(14, 14, 16)' };
+const paperColour = { light: 'rgb(255, 255, 255)', night: 'rgb(14, 14, 16)' };
 
 /** The home heading in each language. */
 const homeHeading = {

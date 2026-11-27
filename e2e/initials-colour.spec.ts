@@ -12,7 +12,8 @@
  * Test data: the seed persona teacher (no drawn avatar); the colour is set back to plum afterwards
  * (the column is never empty since CALM-3).
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, screenWidths, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

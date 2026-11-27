@@ -4,7 +4,7 @@
  *
  * Skipped unless SCREENSHOT_ADDRESSES is set, so CI never runs it.
  */
-import { test } from '@playwright/test';
+import { test } from './support/test';
 
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser, type SignInPersonaName } from './support/personas';

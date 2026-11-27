@@ -16,7 +16,8 @@
  * adult_writer is the outsider. Everything is removed before and after; the class's name never
  * ends in "e2e", so spaces.spec leaves it alone.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -22,7 +22,8 @@
  */
 import { randomUUID } from 'node:crypto';
 
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { memberHomeAddressPattern } from './support/homeAddress';

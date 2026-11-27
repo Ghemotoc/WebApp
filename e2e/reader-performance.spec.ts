@@ -16,7 +16,8 @@
  *   twice the pixel density; nothing scrolls sideways and no text runs past the edge.
  * Test data: one long chapter on adult_writer's seed story; removed after.
  */
-import { expect, test, type Browser, type BrowserContext } from '@playwright/test';
+import { type Browser, type BrowserContext } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { runSql } from './support/database';
 import { signInPersona, useSessionInBrowser } from './support/personas';

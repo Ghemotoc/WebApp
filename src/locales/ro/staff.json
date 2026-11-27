@@ -95,7 +95,7 @@
   "shell": {
     "eyebrow": "Echipă",
     "noHandle": "(încă fără nume de utilizator)",
-    "byCompany": "O aplicație de la {{companyName}}"
+    "byCompany": "O aplicație de la <company>{{companyName}}</company>"
   },
   "refused": {
     "documentTitle": "Doar pentru echipă · {{productName}}",

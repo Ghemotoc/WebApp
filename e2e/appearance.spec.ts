@@ -17,7 +17,8 @@
  * The "High contrast" switch (bundle CONTRAST-1) has its own file, e2e/high-contrast.spec.ts.
  * Uses the seed persona adult_writer and puts their profile back afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

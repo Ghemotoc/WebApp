@@ -14,7 +14,8 @@
  * whom no other spec gives a rank notice. The story, the notices and the "highest rank told" mark
  * are removed before and after, so the next run starts from no rank.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';

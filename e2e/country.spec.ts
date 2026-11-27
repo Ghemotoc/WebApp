@@ -17,7 +17,8 @@
  * How the country is faked: the local server reads an X-Fake-Country header (never on Cloudflare).
  * Test data: synthetic @example.com addresses, removed afterwards; flags and markets are put back.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

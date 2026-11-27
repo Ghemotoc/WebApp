@@ -15,7 +15,8 @@
  * Test data: seed personas; every note this spec writes starts with its stamp and is deleted
  * afterwards (the test database user may delete; signed-in staff never can).
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -16,7 +16,8 @@
  * Test data: the seed's adult_writer and teacher, reading in English, and one chapter this spec
  * adds to the seed story "Stația meteo" and removes afterwards; the story's countries are put back.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen } from './support/accessibility';
 import { runSql } from './support/database';

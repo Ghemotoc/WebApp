@@ -14,7 +14,8 @@
  * Test data: the seed stories, one chapter added to story 1; everything is put back afterwards
  * except the audit log, which nobody may change.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

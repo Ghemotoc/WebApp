@@ -28,6 +28,8 @@ const sizeClasses = {
   small: 'size-8 type-meta',
   medium: 'size-9 type-meta',
   large: 'size-9 type-meta',
+  /** 44 px: the profile card at the top of the account menu (DESIGN, Robert, 26 Nov 2026). */
+  card: 'size-11 type-body',
   xlarge: 'size-12 type-long',
 } as const;
 

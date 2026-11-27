@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { brandDefaults } from '../src/config/brand';
+
 import { authEmails, buildAuthEmail } from './build-auth-email-templates';
 
 const localesFolder = fileURLToPath(new URL('../src/locales', import.meta.url));
@@ -42,6 +44,8 @@ describe('the Supabase Auth email templates', () => {
     if (emailChange === undefined) throw new Error('email_change.html is missing from authEmails.');
     const html = buildAuthEmail(emailChange, localesFolder);
     expect(html).toContain('{{ .Token }}');
-    expect(html).not.toContain('href=');
+    // The only link is the company's name in the sign-off (Robert, 26 Nov 2026): no action link.
+    const links = html.match(/href="[^"]*"/g) ?? [];
+    expect(links.every((link) => link === `href="${brandDefaults.companySiteUrl}"`)).toBe(true);
   });
 });

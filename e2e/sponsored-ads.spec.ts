@@ -17,7 +17,8 @@
  * database (the staff screens have their own test, sponsors-admin.spec.ts), and one published
  * chapter of the seed story so Discover has a shelf; all removed afterwards.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
