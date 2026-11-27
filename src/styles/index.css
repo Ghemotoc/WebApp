@@ -1502,6 +1502,66 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   color: var(--link);
   text-decoration: underline;
 }
+/* Footnotes (BOOKS-D05b; boards D13-EditorFootnotes and B15-ReaderFootnotes). The number in the
+   text is a button: a small raised number in the link colour, in a 24 px box so it is a WCAG 2.2
+   target, lifted half a line by `top` (which moves it without making the line taller). In the
+   editor it sits in a soft tint chip, so the writer sees it isn't typed text; an open note fills
+   the chip with the main colour there and with the tint in the reader. */
+.tmc-footnote-marker {
+  position: relative;
+  top: -0.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  margin: 0 1px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 9999px;
+  background: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  color: var(--link);
+  cursor: pointer;
+}
+.tmc-footnote-marker[aria-expanded='true'] {
+  background: var(--tint);
+  color: var(--heading);
+}
+.tmc-chapter-text--editor .tmc-footnote-marker {
+  background: var(--tint);
+}
+.tmc-chapter-text--editor .tmc-footnote-marker[aria-expanded='true'] {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+/* The toolbar's Footnote button draws "fn" here, so the letters aren't part of its name. */
+.tmc-footnote-mark::before {
+  content: 'fn';
+}
+/* The reader's note box, under its number (from 768 px; a sheet below that). */
+.tmc-footnote-host {
+  position: relative;
+}
+.tmc-footnote-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: -24px;
+  z-index: 6;
+  width: min(360px, 80vw);
+  white-space: normal;
+}
+/* A note in the list under the reader's text that the reader came to by its address: tinted, as
+   the open note's row is in the editor (board B15). */
+.tmc-footnote-row:target {
+  margin-inline: -12px;
+  padding: 4px 12px;
+  border-radius: var(--radius-field);
+  background: var(--tint);
+}
 /* A shared passage opened from its link (S1-E4-11): a soft tinted box, never a side bar
    (NO-BARS, Robert, 23 Nov 2026). Colour is not the only sign: the notice above the text says it
    is highlighted. The tint keeps the text's own colour readable in every theme; the passage takes

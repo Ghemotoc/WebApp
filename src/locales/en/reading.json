@@ -354,5 +354,13 @@
     "youAreHere": "You are here",
     "loading": "Loading the chapters…",
     "row": "{{number}}. {{title}}"
+  },
+  "footnote": {
+    "label": "Footnote {{number}}",
+    "heading": "Note {{number}}",
+    "close": "Close",
+    "notesHeading": "Notes",
+    "back": "Back",
+    "backLabel": "Back to the text, note {{number}}"
   }
 }

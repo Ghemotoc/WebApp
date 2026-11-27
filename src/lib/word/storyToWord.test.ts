@@ -88,6 +88,7 @@ async function wordXml(chapterText: string) {
     document: await read('word/document.xml'),
     styles: await read('word/styles.xml'),
     core: await read('docProps/core.xml'),
+    footnotes: await read('word/footnotes.xml'),
   };
 }
 
@@ -155,5 +156,14 @@ describe('storyToWord', () => {
     const { core } = await wordXml('Text.');
     expect(core).toContain('Țara de sub ape');
     expect(core).toContain('Lia Scrie');
+  });
+
+  it('turns footnotes into real Word footnotes at the foot of the page (BOOKS-D05b)', async () => {
+    const { document, footnotes } = await wordXml(
+      'Liftul e vopsit[Se vopsește în fiecare primăvară.](footnote:) din nou.',
+    );
+    expect(document).toContain('<w:footnoteReference w:id="1"/>');
+    expect(document).not.toContain('Se vopsește');
+    expect(footnotes).toContain('Se vopsește în fiecare primăvară.');
   });
 });

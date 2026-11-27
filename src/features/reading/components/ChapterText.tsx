@@ -25,6 +25,9 @@
  * after the first paint (lib/firstScreenful.ts). Reading the whole of a 2,000-word chapter's
  * Markdown took about 280 ms on a phone with the CPU four times slower, all of it in front of
  * the first paragraph. The blocks keep their numbers, so links to a spot and comments still match.
+ * Footnotes (BOOKS-D05b, board B15): a "footnote:" link is drawn as its raised number
+ * (FootnoteMarker, numbered by lib/numberFootnotes.ts) and the notes are listed under the text
+ * (ChapterFootnoteList) once the whole text is drawn; both are fetched only for a chapter with a note.
  * Look: the shared `.tmc-chapter-text` styles (src/styles/index.css), board 4.3 and 3.5.
  * Who uses it: ChapterPreviewDialog (src/features/writing/); the chapter reader.
  */
@@ -32,9 +35,11 @@ import type { Element, ElementContent } from 'hast';
 import type { Components, ExtraProps, Options } from 'react-markdown';
 import {
   createContext,
+  lazy,
   Suspense,
   useContext,
   useEffect,
+  useId,
   useMemo,
   useState,
   type ComponentPropsWithoutRef,
@@ -50,12 +55,28 @@ import type { PictureView } from '@/features/pictures/api/pictures';
 import { ChapterPicture } from '@/features/pictures/components/ChapterPicture';
 import { chapterBlocks, type SpotRange } from '@/lib/chapter-blocks';
 import { embedIdFromAddress } from '@/lib/chapter-embeds';
+import { FOOTNOTE_ADDRESS, isFootnoteAddress } from '@/lib/chapter-footnotes';
 import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
 import { firstScreenful } from '../lib/firstScreenful';
 import { numberBlocks } from '../lib/numberBlocks';
+import { numberFootnotes } from '../lib/numberFootnotes';
 import { poemStanzas } from '../lib/poemStanzas';
+
+/**
+ * The footnote pieces (BOOKS-D05b), fetched only for a chapter that has a note, so a plain
+ * chapter's first load stays inside the reader's script budget (1,300 KB, S1-E4-01b;
+ * e2e/reader-performance.spec.ts).
+ */
+const FootnoteMarker = lazy(async () => {
+  const module = await import('./FootnoteMarker');
+  return { default: module.FootnoteMarker };
+});
+const ChapterFootnoteList = lazy(async () => {
+  const module = await import('./ChapterFootnoteList');
+  return { default: module.ChapterFootnoteList };
+});
 
 /**
  * Whether an image address is one of ours: a chapter picture or a music or video card.
@@ -68,13 +89,14 @@ function isMediaAddress(address: string): boolean {
 }
 
 /**
- * Whether to keep an address: only a safe link, a chapter picture or a music or video card.
+ * Whether to keep an address: only a safe link, a chapter picture, a music or video card or a
+ * footnote (BOOKS-D05b).
  *
  * @param url - the address from the Markdown
  * @returns true to keep it; SafeMarkdown drops the rest
  */
 function isKeptAddress(url: string): boolean {
-  return isAllowedLink(url) || isMediaAddress(url);
+  return isAllowedLink(url) || isMediaAddress(url) || isFootnoteAddress(url);
 }
 
 /**
@@ -148,6 +170,8 @@ interface ChapterMedia {
   canReport: boolean;
   pictureShare: ComponentType<PictureShareProps> | null;
   paragraphAddon: ComponentType<{ block: number }> | null;
+  /** The start of this text's footnote ids (BOOKS-D05b). */
+  idPrefix: string;
 }
 
 /** What the drawers below read; set by ChapterText around the text. */
@@ -158,6 +182,7 @@ const ChapterMediaContext = createContext<ChapterMedia>({
   canReport: false,
   pictureShare: null,
   paragraphAddon: null,
+  idPrefix: 'chapter',
 });
 
 /**
@@ -225,17 +250,48 @@ function ChapterParagraph({ node, ...props }: ComponentPropsWithoutRef<'p'> & Ex
   );
 }
 
+/**
+ * Whether the chapter has at least one footnote, so the notes' code is fetched only then.
+ *
+ * @param markdown - the chapter as stored
+ * @returns true when a "(footnote:)" address is in the text
+ */
+function hasFootnote(markdown: string): boolean {
+  return markdown.includes(`](${FOOTNOTE_ADDRESS})`);
+}
+
+/**
+ * Draws one link: a footnote as its raised number (BOOKS-D05b), a safe address as a link that is
+ * never followed for ranking and never given the page's opener (CLAUDE.md rule 8), anything else
+ * as its words only.
+ *
+ * @param props - the link's address, its words and its hast node
+ * @returns the drawn link
+ */
+function ChapterLink({ href, children, ...props }: ComponentPropsWithoutRef<'a'> & ExtraProps) {
+  const media = useContext(ChapterMediaContext);
+  const footnoteNumber = Number((props as Record<string, unknown>)['data-footnote']);
+  if (href !== undefined && isFootnoteAddress(href) && Number.isInteger(footnoteNumber)) {
+    // While the marker's code arrives, the number shows raised as plain text in its place.
+    return (
+      <Suspense fallback={<sup>{footnoteNumber}</sup>}>
+        <FootnoteMarker number={footnoteNumber} idPrefix={media.idPrefix}>
+          {children}
+        </FootnoteMarker>
+      </Suspense>
+    );
+  }
+  if (href === undefined || !isAllowedLink(href)) return <>{children}</>;
+  return (
+    <a href={href} rel="nofollow ugc noopener" target="_blank">
+      {children}
+    </a>
+  );
+}
+
 /** The element drawers: links, the stray heading 1, paragraphs, pictures and cards. Defined once. */
 const chapterComponents: Components = {
-  // Links: safe address only, never followed for ranking, never given the page's opener.
-  a: ({ href, children }) =>
-    href !== undefined && isAllowedLink(href) ? (
-      <a href={href} rel="nofollow ugc noopener" target="_blank">
-        {children}
-      </a>
-    ) : (
-      <>{children}</>
-    ),
+  a: ChapterLink,
   // A heading 1 can't be stored (the editor snaps it), but if one ever arrives it reads as h2.
   h1: ({ children }) => <h2>{children}</h2>,
   // The block marks (data-block, the highlight) are passed on, so a picture's block keeps them.
@@ -259,6 +315,7 @@ function useChapterPlugins(markdown: string, spot: SpotRange | null, isPoem: boo
   return useMemo<Options['rehypePlugins']>(() => {
     const numbered: NonNullable<Options['rehypePlugins']> = [
       [numberBlocks, { blocks: chapterBlocks(markdown), highlight: spot }],
+      numberFootnotes,
     ];
     if (!isPoem) return numbered;
     const stanzaLabel = (number: number) => t('poem.stanza', { number });
@@ -317,26 +374,19 @@ function useDrawnMarkdown(
 }
 
 /**
- * Renders the text.
+ * What the drawers read for one text: its pictures, cards, the writer's name, the Share button,
+ * the paragraph addon and the start of its footnote ids. Kept the same object while nothing in it
+ * changes, so the drawers don't rebuild a playing card.
  *
- * @returns the chapter's words as HTML, with its pictures and cards where they sit
+ * @param props - the text's props
+ * @returns the media for ChapterMediaContext
  */
-export function ChapterText({
-  markdown,
-  language,
-  isPoem = false,
-  className = '',
-  pictures = {},
-  embeds = {},
-  writerName = null,
-  canReportMedia = false,
-  spot = null,
-  pictureShare,
-  paragraphAddon,
-  firstDrawBlocks,
-}: ChapterTextProps) {
-  // The media for the drawers, kept the same object while nothing in it changes.
-  const media = useMemo(
+function useChapterMedia(props: ChapterTextProps): ChapterMedia {
+  const { pictures = {}, embeds = {}, writerName = null, canReportMedia = false } = props;
+  const { pictureShare, paragraphAddon } = props;
+  // The start of this text's footnote ids, safe in an address (#…-footnote-ref-2; BOOKS-D05b).
+  const idPrefix = `chapter-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  return useMemo(
     () => ({
       pictures,
       embeds,
@@ -344,11 +394,22 @@ export function ChapterText({
       canReport: canReportMedia,
       pictureShare: pictureShare ?? null,
       paragraphAddon: paragraphAddon ?? null,
+      idPrefix,
     }),
-    [pictures, embeds, writerName, canReportMedia, pictureShare, paragraphAddon],
+    [pictures, embeds, writerName, canReportMedia, pictureShare, paragraphAddon, idPrefix],
   );
+}
+
+/**
+ * Renders the text.
+ *
+ * @returns the chapter's words as HTML, with its pictures and cards where they sit
+ */
+export function ChapterText(props: ChapterTextProps) {
+  const { markdown, language, isPoem = false, className = '', spot = null } = props;
+  const media = useChapterMedia(props);
   // The first screenful first, when the caller asks for it; then the whole text.
-  const { drawnMarkdown, isPartial } = useDrawnMarkdown(markdown, firstDrawBlocks);
+  const { drawnMarkdown, isPartial } = useDrawnMarkdown(markdown, props.firstDrawBlocks);
   const rehypePlugins = useChapterPlugins(drawnMarkdown, spot, isPoem);
   // The words themselves, read from the Markdown again only when the text, the spot or poem mode
   // changes. react-markdown reads the whole text on every draw, and the reader draws again for
@@ -370,18 +431,27 @@ export function ChapterText({
   // data-story-text marks the reader's own text size (Aa), which the look check leaves out
   // (e2e/support/lookCheck.ts; design books look rules, Section 1).
   return (
-    <div
-      lang={language}
-      data-story-text=""
-      className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}
-    >
-      <ChapterMediaContext.Provider value={media}>{words}</ChapterMediaContext.Provider>
-      {/* While only the first blocks are drawn, an empty block holds the rest's place for that one
+    <>
+      <div
+        lang={language}
+        data-story-text=""
+        className={`tmc-chapter-text ${isPoem ? 'tmc-poem' : ''} ${className}`}
+      >
+        <ChapterMediaContext.Provider value={media}>{words}</ChapterMediaContext.Provider>
+        {/* While only the first blocks are drawn, an empty block holds the rest's place for that one
           frame, so the end of the chapter stays far below the screen: without it the end row
           would come within reach for a moment and fetch the Share button and the comments, which
           wait until the reader is near the end (ShareButtonWhenNear; the reader's script budget,
           e2e/reader-performance.spec.ts). */}
-      {isPartial && <div aria-hidden="true" style={{ height: '200vh' }} />}
-    </div>
+        {isPartial && <div aria-hidden="true" style={{ height: '200vh' }} />}
+      </div>
+      {/* The notes under the text (board B15), once the whole text is drawn. They sit after the
+          text's box, so the chapter text's list and heading styles don't reach them. */}
+      {!isPartial && hasFootnote(markdown) && (
+        <Suspense fallback={null}>
+          <ChapterFootnoteList markdown={markdown} language={language} idPrefix={media.idPrefix} />
+        </Suspense>
+      )}
+    </>
   );
 }

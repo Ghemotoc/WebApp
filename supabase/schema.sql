@@ -22956,8 +22956,11 @@ CREATE OR REPLACE FUNCTION "public"."count_words"("body" "text") RETURNS integer
     AS $$
   select coalesce(array_length(
     array_remove(regexp_split_to_array(regexp_replace(
-      regexp_replace(coalesce(body, ''),
-        '!\[((?:[^]\\]|\\.)*)\]\((picture|embed):[0-9a-f-]{36}\)', ' ', 'g'),
+      regexp_replace(
+        regexp_replace(coalesce(body, ''),
+          '!\[((?:[^]\\]|\\.)*)\]\((picture|embed):[0-9a-f-]{36}\)', ' ', 'g'),
+        -- A footnote: "[" then its words (any escaped character allowed) then "](footnote:)".
+        '\[((?:[^]\\]|\\.)*)\]\(footnote:\)', ' ', 'g'),
       '[^[:alnum:]'']+', ' ', 'g'), '\s+'), ''),
     1), 0);
 $$;
@@ -22966,7 +22969,7 @@ $$;
 ALTER FUNCTION "public"."count_words"("body" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."count_words"("body" "text") IS 'Words in a chapter body, Markdown marks ignored (S1-E3-02a).';
+COMMENT ON FUNCTION "public"."count_words"("body" "text") IS 'Words in a chapter body, Markdown marks, pictures, cards and footnotes ignored (S1-E3-02a, BOOKS-D05b).';
 
 
 

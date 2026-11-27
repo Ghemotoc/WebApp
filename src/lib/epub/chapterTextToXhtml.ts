@@ -8,7 +8,10 @@
  * - links are kept only when they are allowed (src/lib/safe-links.ts); anything else keeps its
  *   words and loses the rest, so nothing the writer typed can run as code in an e-reader;
  * - a chapter picture is included with its alt text, or its alt text alone when it couldn't be
- *   loaded; a music or video card becomes a line with its link.
+ *   loaded; a music or video card becomes a line with its link;
+ * - a footnote, `[note](footnote:)` (BOOKS-D05b), becomes a raised number linked to its note
+ *   (epub:type="noteref"), and the chapter's notes follow its text as endnotes, each with a link
+ *   back to its number, so e-readers that show notes in a pop-up do so (board D13).
  * Every piece of text is escaped, so the file is always well-formed XML.
  * Who calls it: buildEpub(). What it calls: mdast-util-from-markdown, as the Word builder does.
  */
@@ -16,6 +19,7 @@ import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { List, Paragraph, PhrasingContent, RootContent } from 'mdast';
 
 import { embedIdFromAddress } from '@/lib/chapter-embeds';
+import { takeFootnotes } from '@/lib/chapter-footnotes';
 import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
@@ -62,6 +66,7 @@ function inlineToXhtml(nodes: PhrasingContent[]): string {
       if (node.type === 'strong') return `<strong>${inlineToXhtml(node.children)}</strong>`;
       if (node.type === 'emphasis') return `<em>${inlineToXhtml(node.children)}</em>`;
       if (node.type === 'break') return '<br/>';
+      if (node.type === 'footnoteReference') return noteReference(node.identifier);
       if (node.type === 'link' && isAllowedLink(node.url)) {
         const words = inlineToXhtml(node.children);
         return `<a href="${escapeXml(node.url)}">${words === '' ? escapeXml(node.url) : words}</a>`;
@@ -70,6 +75,29 @@ function inlineToXhtml(nodes: PhrasingContent[]): string {
       return escapeXml(plainTextOf(node));
     })
     .join('');
+}
+
+/** A footnote's raised number, linked to its note below the text (BOOKS-D05b). */
+function noteReference(number: string): string {
+  const safe = escapeXml(number);
+  return `<sup><a id="note-ref-${safe}" href="#note-${safe}" epub:type="noteref" role="doc-noteref">${safe}</a></sup>`;
+}
+
+/**
+ * The chapter's notes after its text (BOOKS-D05b): each one with its number, which links back to
+ * the number in the text.
+ *
+ * @param notes - the chapter's notes, in order
+ * @returns the endnotes section, or nothing when the chapter has none
+ */
+function notesToXhtml(notes: string[]): string {
+  if (notes.length === 0) return '';
+  const items = notes.map((note, index) => {
+    const number = index + 1;
+    const back = `<a href="#note-ref-${number}" role="doc-backlink">${number}.</a>`;
+    return `<aside id="note-${number}" epub:type="endnote" role="doc-endnote"><p>${back} ${escapeXml(note)}</p></aside>`;
+  });
+  return `<section epub:type="endnotes" role="doc-endnotes">\n<hr/>\n${items.join('\n')}\n</section>`;
 }
 
 /** A chapter picture, or its alt text alone when it isn't in the book. */
@@ -141,5 +169,10 @@ function blockToXhtml(node: RootContent, conversion: XhtmlConversion): string {
  */
 export function chapterTextToXhtml(markdown: string, conversion: XhtmlConversion): string {
   const tree = fromMarkdown(markdown);
-  return tree.children.map((node) => blockToXhtml(node, conversion)).join('\n');
+  // Step 1: the footnotes become numbers in the text, and their notes are kept for the end.
+  const notes = takeFootnotes(tree);
+  // Step 2: the text, then its notes.
+  const text = tree.children.map((node) => blockToXhtml(node, conversion)).join('\n');
+  const endnotes = notesToXhtml(notes);
+  return endnotes === '' ? text : `${text}\n${endnotes}`;
 }

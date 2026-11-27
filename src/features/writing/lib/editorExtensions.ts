@@ -5,10 +5,11 @@
  * paragraphs, headings 2 and 3, bold, italic, quote, bullet and numbered lists, the scene
  * break, links (http, https, mailto; never opened by a click inside the editor) and chapter
  * pictures (S1-E3-09, chapterPictureNode.ts) and music and video cards (S1-E3-10,
- * chapterEmbedNode.ts), and poem mode (MUST-2, poemMode.ts), which keeps a poem's lines. Code, strike-through and underline are switched off because the stored Markdown subset has no
+ * chapterEmbedNode.ts), footnotes (BOOKS-D05b, chapterFootnoteNode.ts), and poem mode (MUST-2, poemMode.ts), which keeps a poem's lines. Code, strike-through and underline are switched off because the stored Markdown subset has no
  * place for them (CLAUDE.md rule 8).
  * Keyboard shortcuts follow board 4.3: Bold Ctrl+B and Italic Ctrl+I (TipTap's own), Heading
- * Ctrl+Alt+2, Quote Ctrl+Shift+9, List Ctrl+Shift+8, Link Ctrl+K, Scene break Ctrl+Enter.
+ * Ctrl+Alt+2, Quote Ctrl+Shift+9, List Ctrl+Shift+8, Link Ctrl+K, Scene break Ctrl+Enter, and
+ * Footnote Ctrl+Alt+F (board D13, in chapterFootnoteNode.ts).
  * Who uses it: useChapterEditor (src/features/writing/hooks/).
  */
 import { Extension } from '@tiptap/core';
@@ -16,6 +17,7 @@ import StarterKit from '@tiptap/starter-kit';
 
 import { isAllowedLink } from './chapterMarkdown';
 import { ChapterEmbedNode } from './chapterEmbedNode';
+import { ChapterFootnoteNode } from './chapterFootnoteNode';
 import { ChapterPictureNode } from './chapterPictureNode';
 import { PoemMode } from './poemMode';
 
@@ -73,6 +75,8 @@ export function chapterEditorExtensions(options: ChapterShortcutOptions) {
     // Pictures (S1-E3-09): only through Insert › Picture, never pasted.
     ChapterPictureNode,
     ChapterEmbedNode,
+    // Footnotes (BOOKS-D05b): only through the toolbar's fn button or Ctrl+Alt+F, never pasted.
+    ChapterFootnoteNode,
     // Poem mode (MUST-2): idle until the chapter is switched to a poem.
     PoemMode,
   ];
