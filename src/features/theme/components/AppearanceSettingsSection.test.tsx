@@ -31,7 +31,7 @@ describe('AppearanceSettingsSection', () => {
     const themes = screen.getByRole('group', { name: 'Theme' });
     expect(themes).toBeInTheDocument();
     expect(
-      screen.getAllByRole('radio', { name: /mist|sorbet|glass|butter|floss|cream/ }),
+      screen.getAllByRole('radio', { name: /mist|sorbet|glass|butter|floss|cream/i }),
     ).toHaveLength(6);
     expect(screen.getByRole('radio', { name: 'Lilac mist' })).toBeChecked();
   });

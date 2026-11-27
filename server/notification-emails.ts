@@ -479,7 +479,6 @@ function notificationContent(
     action: { label, url: back.url ?? '', pasteLabel: read('pasteLink') },
     signOff: read('signOff'),
     footerLines: footerLinesOf(claimed, context.siteUrl).map((line) => htmlLine(line, read)),
-    madeBy: read('madeBy'),
   };
 }
 
@@ -505,8 +504,6 @@ export function composeNotificationEmail(
     plainLine(backLinkOf(claimed, siteUrl), read),
     '',
     read('signOff'),
-    // The plain text gives the company's address after its name (board E01, frame 4).
-    `${read('madeBy')}: ${context.brand.companySiteUrl}`,
     '',
     '—',
     ...footerLinesOf(claimed, siteUrl).map((line) => plainLine(line, read)),

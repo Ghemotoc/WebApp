@@ -41,9 +41,9 @@ export interface Brand {
   authoritiesEmail: string;
   /** The handle we use on social networks, with the leading "@". */
   socialHandle: string;
-  /** The company behind the product, for the footer line "An app by …" (S1-E1-03). */
+  /** The company behind the product, for the legal texts' {{companyName}} placeholder (S1-E1-03). */
   companyName: string;
-  /** The company's own website, which the company name in the footer links to (Robert, 23 Nov 2026). */
+  /** The company's own website; nothing links to it since 27 Nov 2026 (no company line). */
   companySiteUrl: string;
 }
 
@@ -73,8 +73,9 @@ export interface BrandEnvironment {
  * 12:50); the contact and support address hello@ghemotoc.tech (Robert, 24 Nov 2026, 09:12 UTC; it replaces
  * hello@themagiccoffin.com of 17 Oct 2026, 12:50); the privacy address is the same inbox until the company exists
  * (decided 17 Oct 2026, 19:43, Q16), and so is the authorities' address; handle @ghemotoc everywhere (architecture.md, section 1.2);
- * the footer line "An app by The Magic Coffin" (canvas comment, 16 Oct 2026), its name linking to the
- * company's site (Robert, 23 Nov 2026).
+ * the company name fills the legal texts' {{companyName}} placeholder only: the "An app by …" line
+ * was taken out of the site, the emails, the staff pages and the certificates (Robert, 27 Nov 2026;
+ * the company will probably be renamed, so its name here changes with it).
  */
 export const brandDefaults: Readonly<Omit<Brand, 'siteUrl'>> = {
   productName: 'ghemotoc',

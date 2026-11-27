@@ -1,19 +1,17 @@
 /**
  * StaffFooter: the bottom of every admin page (story S1-E11-01).
  *
- * Board values (AdminSettings, AdminUsers): the wordmark with the Staff pill, "An app by …", the
- * staff links, "Every action and sensitive read is logged" and the language drop-down. Links
- * appear only when their page exists (the person's own menu). Plain components, no doodles.
- * The company name links to the company's own site, as everywhere "An app by …" appears (Robert,
- * 26 Nov 2026).
+ * Board values (AdminSettings, AdminUsers): the wordmark with the Staff pill, the staff links,
+ * "Every action and sensitive read is logged" and the language drop-down. Links appear only when
+ * their page exists (the person's own menu). Plain components, no doodles. No company line:
+ * "An app by …" was taken out everywhere (Robert, 27 Nov 2026).
  * Who uses it: StaffLayout.
  */
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { InfoPill } from '@/components/ui/InfoPill';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { brand } from '@/config/brand';
 import { BrandMark } from '@/features/branding/components/BrandMark';
 import { LanguageSelect } from '@/features/language/components/LanguageSelect';
 import { ThemeSelect } from '@/features/theme/components/ThemeSelect';
@@ -39,22 +37,6 @@ export function StaffFooter({ menuItems }: { menuItems: StaffAreaPage[] }) {
               <BrandMark />
             </span>
             <InfoPill tone="plum">{t('staff.pill')}</InfoPill>
-          </span>
-          <span>
-            {/* The company name opens the company's site (brand.companySiteUrl; Robert, 26 Nov 2026). */}
-            <Trans
-              t={tStaff}
-              i18nKey="shell.byCompany"
-              values={{ companyName: brand.companyName }}
-              components={{
-                company: (
-                  // Trans puts the translated name inside; the brand name here is only its stand-in.
-                  <a href={brand.companySiteUrl} className="text-body underline">
-                    {brand.companyName}
-                  </a>
-                ),
-              }}
-            />
           </span>
         </div>
         {menuItems.length > 0 && (

@@ -1,6 +1,5 @@
 {
   "signOff": "The {{productName}} team",
-  "madeBy": "An app by {{companyName}}",
   "notYou": "If you didn’t ask for this, you can ignore this email. Nothing will change.",
   "pasteLink": "Or paste this link into your browser:",
   "questions": "Questions? Write to {{supportEmail}}",

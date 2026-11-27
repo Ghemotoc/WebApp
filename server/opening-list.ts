@@ -183,7 +183,6 @@ export async function confirmEmail(
     language,
     lines: lines.map((line) => read(`openingList.${line}`, links)),
     signOff: read('signOff'),
-    madeBy: read('madeBy'),
     pasteLabel: read('pasteLink'),
     brand: brandOf(options, new URL(links.confirmLink).origin),
   });
@@ -212,7 +211,6 @@ export async function openingEmail(
     language,
     lines: lines.map((line) => read(`openingList.${line}`, values)),
     signOff: read('signOff'),
-    madeBy: read('madeBy'),
     pasteLabel: read('pasteLink'),
     brand: brandOf(options, siteUrl),
   });

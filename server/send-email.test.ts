@@ -182,13 +182,13 @@ describe('the Send Email hook', () => {
     // The link note is the hidden preheader and the note under the button.
     expect(html).toMatch(/display:none[^>]*>Linkul merge o singură dată și expiră după o oră\.</);
     expect(html).toContain(`Sau lipește acest link în browser:<br><a href="${link}"`);
-    expect(html).toContain('<a href="https://company.test"');
+    expect(html).not.toContain('https://company.test');
     expect(html).toContain('Întrebări? Scrie-ne la <a href="mailto:hello@example.test"');
     expect(html).toContain('src="https://example.test/brand/email-logo.png"');
     // Auth emails are about the account: never an unsubscribe link or header.
     expect(html).not.toContain('unsubscribe');
     expect(sent[0]?.headers).toBeUndefined();
-    expect(sent[0]?.text).toContain('O aplicație de la Company: https://company.test');
+    expect(sent[0]?.text).not.toContain('O aplicație de la');
   });
 
   it('shows a change of email’s code in the HTML part, with no button', async () => {

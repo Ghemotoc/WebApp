@@ -6,12 +6,12 @@
  * consent and spotlight, the data request emails to parents, the teacher check, support tickets,
  * the opening list, the waitlist alert, decision emails, and the Contact us and public notice
  * acknowledgements) still went out as plain text only. They all write their email the same way,
- * as lines followed by the sign-off and "An app by …", so one helper turns those same lines into
+ * as lines followed by the sign-off, so one helper turns those same lines into
  * the layout, and the plain text stays exactly as it was for apps that show no HTML.
  * How a letter is drawn: the subject is the heading; the first line that ends with "words:
  * address" becomes the one button, with the full address under it; lines before it sit above,
- * lines after it below; any other address in a line becomes a link; the sign-off ends the card,
- * and "An app by …" sits under it with the company's name linking to its site (Robert, 23 Nov 2026).
+ * lines after it below; any other address in a line becomes a link; the sign-off ends the card.
+ * No "An app by …" line follows it (Robert, 27 Nov 2026).
  * Emails whose words are written in code rather than email.json (the legal acknowledgements
  * and decisions) go through withLetterLayout(), which reads the same shape from the finished text:
  * paragraphs split on blank lines, the last one the sign-off.
@@ -42,8 +42,6 @@ export interface Letter {
   lines: string[];
   /** The sign-off line, such as "The {{productName}} team" (email.json signOff). */
   signOff: string;
-  /** "An app by …" (email.json madeBy); left out of staff alerts, which have no footer line. */
-  madeBy?: string;
   /** "Or paste this link into your browser:" (email.json pasteLink), shown above the full link. */
   pasteLabel: string;
   brand: EmailBrand;
@@ -136,19 +134,18 @@ export function letterContent(letter: Letter): EmailContent {
     action,
     afterAction: after,
     signOff: letter.signOff,
-    madeBy: letter.madeBy ?? '',
   };
 }
 
 /**
- * The plain text the letter has always sent: the lines, the sign-off and "An app by …".
+ * The plain text the letter sends: the lines and the sign-off (no "An app by …" line since
+ * Robert's 27 Nov 2026 answer).
  *
  * @param letter - the email's lines and names
  * @returns the text part
  */
 export function letterText(letter: Letter): string {
-  const closing = letter.madeBy === undefined ? [letter.signOff] : [letter.signOff, letter.madeBy];
-  return [...letter.lines, ...closing].join('\n\n');
+  return [...letter.lines, letter.signOff].join('\n\n');
 }
 
 /**
@@ -184,7 +181,6 @@ export function withLetterLayout(
     language,
     lines: paragraphs,
     signOff,
-    madeBy: words.madeBy.split('{{companyName}}').join(companyName),
     pasteLabel: words.pasteLink,
     brand,
   };

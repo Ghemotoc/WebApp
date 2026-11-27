@@ -5,8 +5,8 @@
  * What it draws: a 600 px table layout that email apps understand (no flexbox, no grid, every style
  * inline), on a white page: the logo and the product name, one card (#F4F0EC, a 1 px #E4DCD3 edge,
  * 16 px corners) holding the heading, the words, one pill button (#48125D with #FBF7EC text) or a
- * code, the full link as text under the button, then the footer under the card ("An app by" and
- * the company's name, linking to its site, and the support address or the unsubscribe lines).
+ * code, the full link as text under the button, then the footer under the card (the support
+ * address or the unsubscribe lines; no company line since Robert's answer of 27 Nov 2026).
  * The link note doubles as the hidden preheader, the first line an inbox shows. Under 480 px wide
  * the card's padding shrinks and the button fills the width, so nothing scrolls sideways on a
  * phone. Emails are drawn in day colours only: email apps decide their own dark mode (board E01).
@@ -80,10 +80,8 @@ export interface EmailContent {
   /** "If you didn't ask for this…", under a fine rule. */
   notYou?: string;
   signOff: string;
-  /** Lines under the card before "An app by …": why the email came and how to stop it. */
+  /** Lines under the card: why the email came and how to stop it. */
   footerLines?: LinkedLine[];
-  /** "An app by <company>" (email.json madeBy): the company name in it links to its site. */
-  madeBy: string;
   /** "Questions? Write to hello@…": the address in it becomes a mailto link. */
   questions?: string;
 }
@@ -303,8 +301,8 @@ function lineWithLinkedWord(line: string, word: string, url: string): string {
 }
 
 /**
- * The footer under the card: why the email came and how to stop it, "An app by …" and the
- * support address.
+ * The footer under the card: why the email came and how to stop it, and the support address.
+ * It names no company: the "An app by …" line was taken out everywhere (Robert, 27 Nov 2026).
  *
  * @returns HTML
  */
@@ -312,15 +310,6 @@ function footerHtml(content: EmailContent, brand: EmailBrand): string {
   const lines = (content.footerLines ?? []).map((line) =>
     smallParagraph(linkedLineHtml(line), 'footer'),
   );
-  // Robert, 23 Nov 2026: the company's name links to its own site. A staff alert has no line.
-  if (content.madeBy !== '') {
-    lines.push(
-      smallParagraph(
-        lineWithLinkedWord(content.madeBy, brand.companyName, brand.companySiteUrl),
-        'footer',
-      ),
-    );
-  }
   if (content.questions !== undefined) {
     const mailto = `mailto:${brand.supportEmail}`;
     lines.push(

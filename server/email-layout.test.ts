@@ -39,7 +39,6 @@ function confirmation(overrides: Partial<EmailContent> = {}): EmailContent {
     linkNote: 'The link works once.',
     notYou: 'If you didn’t ask for this, ignore it.',
     signOff: 'The Product team',
-    madeBy: 'An app by Company Ltd',
     questions: 'Questions? Write to help@product.test',
     ...overrides,
   };
@@ -75,10 +74,11 @@ describe('the branded email layout', () => {
     expect(html).toContain('>Product</td>');
   });
 
-  it('links the company name to its site and the support address to a new email', () => {
+  it('names no company in the footer and links the support address to a new email', () => {
     const html = renderEmailHtml('en', confirmation(), brand);
-    expect(html).toContain('An app by <a href="https://company.test"');
-    expect(html).toContain('>Company Ltd</a>');
+    // Robert, 27 Nov 2026: no "An app by …" line anywhere.
+    expect(html).not.toContain('An app by');
+    expect(html).not.toContain('https://company.test');
     expect(html).toContain('<a href="mailto:help@product.test"');
   });
 

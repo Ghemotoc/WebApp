@@ -144,7 +144,7 @@ export async function waitlistAlertEmail(
     staffLink: `${siteUrl}/staff/waitlist`,
   };
   // Step 3: the email, one paragraph a part, in plain text and the branded layout
-  // (server/letter-email.ts); a staff alert has no "An app by …" line.
+  // (server/letter-email.ts).
   const lines = ['body', 'details', 'action', 'why'];
   return letterEmail({
     to: alertMailbox(claimed.alert_to, options.sender),

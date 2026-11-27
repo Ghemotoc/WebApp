@@ -717,7 +717,7 @@
   --logo: #a3205d;
 }
 
-/* Magic Coffin cream: page #faf2e4, button #9f1239 (Magic Coffin red). */
+/* Cream and cherry: page #faf2e4, button #9f1239 (cherry red). */
 [data-theme='light'][data-look='tmc'],
 [data-look-swatch='tmc'] {
   --paper: #faf2e4;

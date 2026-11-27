@@ -29,9 +29,9 @@ const reviewedHosts: Record<string, string> = {
   'json-schema.org': 'the JSON Schema identifier inside zod; never loaded',
   'tailwindcss.com': 'the licence comment in the built stylesheet; never loaded',
   'prosemirror.net': 'a link in an editor warning; never loaded',
-  // The company's own site (Robert, 23 Nov 2026): the footer's "An app by …" links to it through
-  // brand.companySiteUrl. A plain link a person follows; nothing is loaded from it.
-  'themagiccoffin.com': 'the company name link in the footer (brand.companySiteUrl); never loaded',
+  // The company's own site (brand.companySiteUrl, in the brand config). Nothing links to it since
+  // the company line was removed (Robert, 27 Nov 2026), but the config still carries it; never loaded.
+  'themagiccoffin.com': "the brand config's company site address; never loaded",
   // The FAQPage data on the home page and Help (G5b) names its vocabulary; search engines read
   // it, the browser never runs it and nothing is loaded from it.
   'schema.org': 'the vocabulary name in FAQPage structured data (G5b); never loaded',

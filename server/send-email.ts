@@ -215,7 +215,6 @@ export function authEmailContent(
     paragraphs: [read(`${kind.group}.body`)],
     linkNote,
     signOff: read('signOff'),
-    madeBy: read('madeBy'),
     questions: read('questions'),
   };
   // The one action: the code Supabase made, or the button with its link.
@@ -250,8 +249,7 @@ export function composeAuthEmail(
   else lines.push(`${read(`${kind.group}.button`)}: ${action.link ?? ''}`, '');
   lines.push(read(`${kind.group}.linkNote`));
   if (kind.includesIgnoreLine !== false) lines.push('', read('notYou'));
-  // The plain text gives the company's address after its name (board E01, frame 4).
-  lines.push('', read('signOff'), `${read('madeBy')}: ${context.brand.companySiteUrl}`);
+  lines.push('', read('signOff'));
   const html = renderEmailHtml(
     context.language,
     authEmailContent(kind, action, read),

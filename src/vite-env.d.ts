@@ -19,9 +19,9 @@ interface ImportMetaEnv {
   readonly VITE_BRAND_SUPPORT_EMAIL?: string;
   /** Social handle with the leading "@". */
   readonly VITE_BRAND_SOCIAL_HANDLE?: string;
-  /** Company name for the footer line "An app by …". */
+  /** The operating company's name, for the legal texts' {{companyName}} placeholder. */
   readonly VITE_BRAND_COMPANY_NAME?: string;
-  /** The company's website, linked from the company name in the footer. */
+  /** The company's website. Nothing links to it since the company line was removed (27 Nov 2026). */
   readonly VITE_BRAND_COMPANY_SITE_URL?: string;
   /** "true" includes the /design page in a build (staging only, decided 17 Oct 2026). */
   readonly VITE_SHOW_DESIGN_PAGE?: string;
