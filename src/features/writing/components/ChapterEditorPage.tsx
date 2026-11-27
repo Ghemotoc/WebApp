@@ -47,12 +47,12 @@ import type { MyChapter } from '../api/chapters';
 import type { MyStory } from '../api/stories';
 import { useAutosave } from '../hooks/useAutosave';
 import { useChapterDraft } from '../hooks/useChapterDraft';
+import { useChapterLayout } from '../hooks/useChapterLayout';
 import { useChapterEditor } from '../hooks/useChapterEditor';
 import { useChapterPublishing } from '../hooks/useChapterPublishing';
 import { useDeviceDraft } from '../hooks/useDeviceDraft';
 import { useFootnoteEditing } from '../hooks/useFootnoteEditing';
 import { useMyStories } from '../hooks/useMyStories';
-import { usePoemMode } from '../hooks/usePoemMode';
 import { useRememberedCaret } from '../hooks/useRememberedCaret';
 import { markdownToEditorDocument } from '../lib/chapterMarkdown';
 import type { DeviceDraft } from '../lib/draftStore';
@@ -143,12 +143,12 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     readDraft: () => ({ title, body: editing.readBody() }),
     isOnline,
   });
-  // Poem mode (MUST-2): the switch, which the editor and the saved Markdown follow.
-  const poem = usePoemMode(chapter);
+  // The Layout (LAYOUTS-1): Prose, Play or Poem; the editor and the saved Markdown follow it.
+  const layout = useChapterLayout(chapter);
   const editing = useChapterEditor({
     initialBody: start.body,
     label: t('bodyLabel'),
-    isPoem: poem.isPoem,
+    isPoem: layout.layout === 'poem',
     onChange: () => {
       autosave.markChanged();
       const text = editing.editor?.getText() ?? '';
@@ -184,7 +184,7 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     autosave,
     editing,
     loadOther,
-    poem,
+    layout,
     footnotes,
   };
 }
@@ -326,13 +326,13 @@ function ChaptersColumn({ chapter }: { chapter: MyChapter }) {
   );
 }
 
-/** What shows above the paper: a save the writer must act on, and poem mode's failure. */
+/** What shows above the paper: a save the writer must act on, and a failed layout change. */
 function AboveThePaper(props: {
   loaded: ReturnType<typeof useLoadedEditor>;
   conflict: ReturnType<typeof useConflictChoices>;
 }) {
   const { t } = useEditorTranslation();
-  const { autosave, poem } = props.loaded;
+  const { autosave, layout } = props.loaded;
   return (
     <>
       <SaveStatus state={autosave.state} />
@@ -352,7 +352,7 @@ function AboveThePaper(props: {
           </Button>
         </ButtonRow>
       )}
-      {poem.hasFailed && <Notice tone="error">{t('poemMode.failed')}</Notice>}
+      {layout.hasFailed && <Notice tone="error">{t('layout.failed')}</Notice>}
     </>
   );
 }
@@ -375,7 +375,6 @@ function PaperColumn(props: {
           onFootnote={loaded.footnotes.insert}
           isFootnoteOpen={loaded.footnotes.openNote !== null}
           chapterId={chapter.id}
-          poem={loaded.poem}
           onOpenPlan={props.onOpenPlan}
         />
       )}
@@ -387,7 +386,7 @@ function PaperColumn(props: {
         onTitleChange={loaded.changeTitle}
         onTitleBlur={() => void autosave.saveNow()}
         editor={editing.editor}
-        isPoem={loaded.poem.isPoem}
+        layout={loaded.layout}
         wordCount={loaded.wordCount}
         saveState={autosave.state}
         footnotes={loaded.footnotes}
@@ -423,7 +422,7 @@ function EditorSheets(props: {
         isOpen={panels.isPreviewOpen}
         title={loaded.title}
         markdown={panels.isPreviewOpen ? loaded.editing.readBody() : ''}
-        isPoem={loaded.poem.isPoem}
+        isPoem={loaded.layout.layout === 'poem'}
         language={props.language}
         onClose={() => panels.setPreviewOpen(false)}
       />

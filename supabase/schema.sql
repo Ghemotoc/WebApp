@@ -13098,9 +13098,11 @@ CREATE TABLE IF NOT EXISTS "public"."chapters" (
     "translation_of_chapter_id" "uuid",
     "is_last" boolean DEFAULT false NOT NULL,
     "tell_followers" boolean DEFAULT true NOT NULL,
+    "layout" "text" DEFAULT 'prose'::"text" NOT NULL,
     CONSTRAINT "chapters_code_shape" CHECK (("code" ~ '^[a-z0-9]{8}$'::"text")),
     CONSTRAINT "chapters_draft_title_length" CHECK (("char_length"("draft_title") <= 120)),
     CONSTRAINT "chapters_draft_version_positive" CHECK (("draft_version" >= 1)),
+    CONSTRAINT "chapters_layout_known" CHECK (("layout" = ANY (ARRAY['prose'::"text", 'play'::"text", 'poem'::"text"]))),
     CONSTRAINT "chapters_position_positive" CHECK (("position" >= 1)),
     CONSTRAINT "chapters_published_has_copy" CHECK ((("status" <> 'published'::"public"."chapter_status") OR ("published_body" IS NOT NULL))),
     CONSTRAINT "chapters_scheduled_has_time" CHECK ((("status" <> 'scheduled'::"public"."chapter_status") OR ("scheduled_for" IS NOT NULL))),
@@ -13149,6 +13151,10 @@ COMMENT ON COLUMN "public"."chapters"."is_last" IS 'The writer marked this as th
 
 
 COMMENT ON COLUMN "public"."chapters"."tell_followers" IS 'Whether followers hear when this chapter goes out (board D06 "Tell followers"); set by publish_chapter() and schedule_chapter().';
+
+
+
+COMMENT ON COLUMN "public"."chapters"."layout" IS 'How the chapter is written and drawn: prose, play or poem (LAYOUTS-1). A new chapter takes it from the story''s form; the writer changes it with set_chapter_layout(). is_poem follows it.';
 
 
 
@@ -17900,6 +17906,28 @@ COMMENT ON FUNCTION "public"."chapter_translation_source"("chapter_code" "text")
 
 
 
+CREATE OR REPLACE FUNCTION "public"."chapters_keep_layout_in_step"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+begin
+  if new.layout is distinct from old.layout then
+    new.is_poem := new.layout = 'poem';
+  elsif new.is_poem is distinct from old.is_poem then
+    new.layout := case when new.is_poem then 'poem' else 'prose' end;
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."chapters_keep_layout_in_step"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."chapters_keep_layout_in_step"() IS 'Trigger: is_poem follows the layout, and the layout follows a change of is_poem alone (LAYOUTS-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."chapters_refresh_writer_rank"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -17922,26 +17950,35 @@ COMMENT ON FUNCTION "public"."chapters_refresh_writer_rank"() IS 'Trigger: works
 
 
 
-CREATE OR REPLACE FUNCTION "public"."chapters_start_as_poem"() RETURNS "trigger"
+CREATE OR REPLACE FUNCTION "public"."chapters_start_layout"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+declare
+  form text;
 begin
-  -- Step 1: only when the story's category is Poetry (the fixed key 'poetry', S1-E3-01).
-  if exists (select 1 from public.stories
-             join public.categories on categories.id = stories.category_id
-             where stories.id = new.story_id and categories.slug = 'poetry') then
-    new.is_poem := true;
+  -- Step 1: a chapter made as a poem (MUST-2's column) or with a layout given keeps it.
+  if new.is_poem then
+    new.layout := 'poem';
+  elsif new.layout = 'prose' then
+    -- Step 2: otherwise the story's form decides (the fixed keys of S1-E3-01 and FORMS-1).
+    select categories.slug into form
+    from public.stories
+    join public.categories on categories.id = stories.category_id
+    where stories.id = new.story_id;
+    new.layout := case form when 'poetry' then 'poem' when 'plays' then 'play' else 'prose' end;
   end if;
+  -- Step 3: the old column follows.
+  new.is_poem := new.layout = 'poem';
   return new;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."chapters_start_as_poem"() OWNER TO "postgres";
+ALTER FUNCTION "public"."chapters_start_layout"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."chapters_start_as_poem"() IS 'Trigger: a new chapter of a Poetry story starts in poem mode (MUST-2).';
+COMMENT ON FUNCTION "public"."chapters_start_layout"() IS 'Trigger: a new chapter''s layout comes from the story''s form, Poetry a poem and Plays a play (LAYOUTS-1).';
 
 
 
@@ -48165,6 +48202,40 @@ COMMENT ON FUNCTION "public"."set_chapter_last"("chapter_code" "text", "is_last"
 
 
 
+CREATE OR REPLACE FUNCTION "public"."set_chapter_layout"("chapter_code" "text", "chapter_layout" "text") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+begin
+  -- Step 1: a signed-in writer, and one of the three layouts.
+  if caller_id is null then
+    raise exception 'Sign in to change a chapter.' using errcode = 'insufficient_privilege';
+  end if;
+  if chapter_layout is null or chapter_layout not in ('prose', 'play', 'poem') then
+    return 'unknown_layout';
+  end if;
+  -- Step 2: only their own live chapter.
+  update public.chapters set layout = chapter_layout, updated_at = now()
+  where chapters.code = chapter_code
+    and chapters.user_id = caller_id
+    and chapters.deleted_at is null;
+  if not found then
+    return 'not_found';
+  end if;
+  return 'ok';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_chapter_layout"("chapter_code" "text", "chapter_layout" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_chapter_layout"("chapter_code" "text", "chapter_layout" "text") IS 'Changes the caller''s own chapter''s layout: prose, play or poem (LAYOUTS-1).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."set_chapter_order"("story_slug" "text", "chapter_codes" "text"[], "moved_chapter_code" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -53999,6 +54070,7 @@ begin
     select jsonb_agg(jsonb_build_object(
         'code', chapters.code, 'position', chapters.position, 'title', chapters.draft_title,
         'status', chapters.status, 'kind', coalesce(plans.kind, 'chapter'),
+        'layout', chapters.layout,
         'word_count', chapters.word_count, 'word_target', plans.word_target)
       order by chapters.position)
     from public.chapters
@@ -66704,6 +66776,10 @@ CREATE OR REPLACE TRIGGER "chapters_count_writing_day" AFTER INSERT OR UPDATE OF
 
 
 
+CREATE OR REPLACE TRIGGER "chapters_keep_layout_in_step" BEFORE UPDATE OF "layout", "is_poem" ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."chapters_keep_layout_in_step"();
+
+
+
 CREATE OR REPLACE TRIGGER "chapters_make_chapter_plan" AFTER INSERT ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."make_chapter_plan"();
 
 
@@ -66720,7 +66796,7 @@ CREATE OR REPLACE TRIGGER "chapters_set_updated_at" BEFORE UPDATE ON "public"."c
 
 
 
-CREATE OR REPLACE TRIGGER "chapters_start_as_poem" BEFORE INSERT ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."chapters_start_as_poem"();
+CREATE OR REPLACE TRIGGER "chapters_start_layout" BEFORE INSERT ON "public"."chapters" FOR EACH ROW EXECUTE FUNCTION "public"."chapters_start_layout"();
 
 
 
@@ -74346,11 +74422,15 @@ GRANT ALL ON FUNCTION "public"."chapter_translation_source"("chapter_code" "text
 
 
 
+REVOKE ALL ON FUNCTION "public"."chapters_keep_layout_in_step"() FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."chapters_refresh_writer_rank"() FROM PUBLIC;
 
 
 
-REVOKE ALL ON FUNCTION "public"."chapters_start_as_poem"() FROM PUBLIC;
+REVOKE ALL ON FUNCTION "public"."chapters_start_layout"() FROM PUBLIC;
 
 
 
@@ -78451,6 +78531,11 @@ GRANT ALL ON FUNCTION "public"."set_chapter_character_present"("chapter_code" "t
 
 REVOKE ALL ON FUNCTION "public"."set_chapter_last"("chapter_code" "text", "is_last" boolean) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_chapter_last"("chapter_code" "text", "is_last" boolean) TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_chapter_layout"("chapter_code" "text", "chapter_layout" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_chapter_layout"("chapter_code" "text", "chapter_layout" "text") TO "authenticated";
 
 
 

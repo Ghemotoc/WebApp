@@ -40,8 +40,22 @@ export interface MyChapter {
   /** When it was last put live, and when it goes live if scheduled (S1-E3-03). */
   lastPublishedAt: string | null;
   scheduledFor: string | null;
-  /** True when the chapter is a poem: lines and indents kept as written (MUST-2). */
-  isPoem: boolean;
+  /** How the chapter is written and drawn: prose, play or poem (LAYOUTS-1). */
+  layout: ChapterLayout;
+}
+
+/** The three layouts a chapter can have (LAYOUTS-1; the database's chapters_layout_known). */
+export const chapterLayouts = ['prose', 'play', 'poem'] as const;
+export type ChapterLayout = (typeof chapterLayouts)[number];
+
+/**
+ * Reads a stored layout, treating anything unknown as prose (the column's default).
+ *
+ * @param value - chapters.layout as the database answers it
+ * @returns one of the three layouts
+ */
+export function chapterLayoutOf(value: string | null | undefined): ChapterLayout {
+  return chapterLayouts.find((layout) => layout === value) ?? 'prose';
 }
 
 /** What create_chapter() answers. */
@@ -72,7 +86,7 @@ export async function fetchMyChapter(
   const { data, error } = await client
     .from('chapters')
     .select(
-      'id, code, position, draft_title, draft_body, draft_version, draft_saved_at, status, word_count, published_title, published_body, last_published_at, scheduled_for, is_poem, stories!inner(slug, title)',
+      'id, code, position, draft_title, draft_body, draft_version, draft_saved_at, status, word_count, published_title, published_body, last_published_at, scheduled_for, layout, stories!inner(slug, title)',
     )
     .eq('code', code)
     .is('deleted_at', null)
@@ -94,32 +108,32 @@ export async function fetchMyChapter(
     publishedBody: data.published_body,
     lastPublishedAt: data.last_published_at,
     scheduledFor: data.scheduled_for,
-    isPoem: data.is_poem,
+    layout: chapterLayoutOf(data.layout),
   };
 }
 
 /**
- * Switches the writer's own chapter to poem mode or back (MUST-2). Only how the words are drawn
- * changes; the words stay as they are.
+ * Changes the layout of the writer's own chapter (LAYOUTS-1). Only how the words are written and
+ * drawn changes; the words stay as they are.
  *
  * @param client - the shared Supabase client
  * @param code - the chapter's code
- * @param isPoem - true for poem mode
+ * @param layout - prose, play or poem
  * @returns 'ok', or 'not_found' when the writer has no live chapter at that code
  * Errors: throws when the database can't be reached or answers something unexpected.
  */
-export async function setChapterPoemMode(
+export async function setChapterLayout(
   client: AppSupabaseClient,
   code: string,
-  isPoem: boolean,
+  layout: ChapterLayout,
 ): Promise<'ok' | 'not_found'> {
-  const { data, error } = await client.rpc('set_chapter_poem_mode', {
+  const { data, error } = await client.rpc('set_chapter_layout', {
     chapter_code: code,
-    poem: isPoem,
+    chapter_layout: layout,
   });
-  if (error !== null) throw new Error(`Could not change poem mode: ${error.message}`);
+  if (error !== null) throw new Error(`Could not change the layout: ${error.message}`);
   if (data === 'ok' || data === 'not_found') return data;
-  throw new Error(`Unexpected answer from set_chapter_poem_mode: ${JSON.stringify(data)}`);
+  throw new Error(`Unexpected answer from set_chapter_layout: ${JSON.stringify(data)}`);
 }
 
 /**
