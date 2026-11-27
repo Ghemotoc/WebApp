@@ -13,7 +13,8 @@
  * - the log-in and password screens pass axe and don't scroll sideways at 390, 768 and 1440 px.
  * Test data: throwaway @example.com accounts made and removed by e2e/support/testAccounts.ts.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
@@ -29,7 +30,7 @@ function newAccount() {
   return { email: `sign-in-${stamp}@example.com`, handle: `sign.in.${stamp}` };
 }
 
-/** Opens /sign-in in English in a fresh browser context (one "device"). */
+/** Opens /sign-in in English in a fresh browser context (one "device"); support/test closes it. */
 async function openSignIn(browser: Browser): Promise<Page> {
   const context = await browser.newContext();
   await context.addInitScript((key) => localStorage.setItem(key, 'en'), LANGUAGE_STORAGE_KEY);
@@ -139,6 +140,9 @@ test('a person logs in, sees their devices and logs the others out', async ({ br
 test('a password reset by email logs other devices out and sends a "password changed" email', async ({
   browser,
 }) => {
+  // Three devices, two emails and three logins: about 22 seconds on CI, close to the default 30,
+  // and it ran out of time on a busy runner (26 Nov 2026). Give it a minute.
+  test.setTimeout(60_000);
   const account = newAccount();
   const newPassword = 'second secret passphrase';
   createTestAccount(account.email, firstPassword, account.handle);

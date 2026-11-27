@@ -16,7 +16,8 @@
  * teacher and adult_writer. The report, its case and the block are deleted at the end (the audit
  * log's sensitive reads stay: it is append-only).
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

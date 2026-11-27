@@ -18,7 +18,8 @@
  * this spec adds to the seed story "Stația meteo" and removes afterwards (the audit log keeps
  * its rows: append-only).
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen } from './support/accessibility';
 import { runSql } from './support/database';

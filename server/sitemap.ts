@@ -9,12 +9,16 @@
  *   its live help pages, live landing pages and public stories, never anything private, unlisted,
  *   class-only, app-only, hidden by a moderator or hidden from search engines by staff.
  * - /robots.txt points to the sitemap and keeps crawlers out of the staff site, the writing
- *   screens and every member's own screens. A Cloudflare preview copy of the site
+ *   screens and every member's own screens. AI crawlers get a shorter list (GROWTH-4, Robert,
+ *   26 Nov 2026, 19:45 to 19:48 UTC): story pages, a classic's chapters but no writer's (20:01
+ *   UTC: "Ai crawlers maybe should read all classics chapters"), Discover and its lists, and the
+ *   open forums, threads and public spaces, nothing else. A Cloudflare preview copy of the site
  *   (<preview>.<project>.pages.dev) tells every crawler to stay out, so a pull request's preview is
  *   never listed next to the real site.
  * Who calls it: functions/sitemap.xml.ts and functions/robots.txt.ts on Cloudflare Pages, and
  * server/pages-functions-plugin.ts locally.
- * What it calls: the Supabase REST endpoint /rest/v1/rpc/sitemap_entries with the public anon key.
+ * What it calls: the Supabase REST endpoint /rest/v1/rpc/sitemap_entries with the public anon key,
+ * for both files.
  * Never logged: the request or the visitor (CLAUDE.md rule 12).
  */
 import { escapeHtml, type DatabaseSettings } from './link-preview.ts';
@@ -55,6 +59,71 @@ export const privatePathPrefixes = [
   '/data-request',
   '/teacher-check',
   '/unsubscribe',
+] as const;
+
+/**
+ * Addresses inside a private prefix that are still open to search engines: one public reading
+ * list (GROWTH-3), which sits under /library like the member's own Library.
+ */
+export const publicPathsInsidePrivate = ['/library/lists/'] as const;
+
+/**
+ * Addresses under an open prefix that only a member can use: starting a space, and a space's
+ * tools. A space's own page and its threads stay open; each one tells search engines whether it
+ * may be listed (server/space-head.ts).
+ */
+export const memberOnlySpacePaths = [
+  '/spaces/new',
+  '/spaces/*/new',
+  '/spaces/*/settings',
+  '/spaces/*/stories',
+  '/spaces/*/points',
+  '/spaces/*/competition',
+  '/spaces/*/certificates',
+  '/spaces/*/members',
+  '/spaces/*/log',
+  '/forums/*/new',
+  '/forums/search',
+] as const;
+
+/**
+ * The crawlers that gather text for AI tools, by the name each one gives in robots.txt. They may
+ * read only the pages in aiCrawlerOpenPaths (GROWTH-4; Robert, 26 Nov 2026, 19:45 to 19:48 UTC).
+ * A crawler obeys the most specific group that names it, so their group repeats the private list.
+ */
+export const aiCrawlerNames = [
+  'GPTBot',
+  'ChatGPT-User',
+  'OAI-SearchBot',
+  'ClaudeBot',
+  'Claude-User',
+  'Claude-SearchBot',
+  'anthropic-ai',
+  'PerplexityBot',
+  'Perplexity-User',
+  'Google-Extended',
+  'Applebot-Extended',
+  'CCBot',
+  'Bytespider',
+  'Amazonbot',
+  'meta-externalagent',
+  'cohere-ai',
+  'Diffbot',
+  'DuckAssistBot',
+  'MistralAI-User',
+] as const;
+
+/**
+ * What AI crawlers may read: a story's own page but none of its chapters ("/s/<story>/" and
+ * anything after it), except a classic's (robotsTxt() adds one Allow line per classic), Discover and its lists, and the forums, threads and spaces. Each forum
+ * thread or space page still says noindex when it is not fully public (server/space-head.ts).
+ */
+export const aiCrawlerRules = [
+  'Allow: /s/',
+  'Disallow: /s/*/',
+  'Allow: /discover',
+  'Allow: /forums',
+  'Allow: /spaces/',
 ] as const;
 
 /**
@@ -115,18 +184,62 @@ export function isPreviewHost(hostname: string): boolean {
 }
 
 /**
+ * The classics whose chapters the sitemap lists, by their slug. Since GROWTH-4 sitemap_entries()
+ * lists chapters of public-domain classics only, so every chapter address in it ("/s/<story>/<code>")
+ * names a classic.
+ *
+ * @param entries - what sitemap_entries() answered
+ * @returns each classic's slug once, in the order first seen
+ */
+export function classicSlugsFrom(entries: SitemapEntry[]): string[] {
+  const slugs = new Set<string>();
+  for (const entry of entries) {
+    const match = /^\/s\/([^/]+)\/[^/]+$/.exec(entry.path);
+    if (match?.[1] !== undefined) slugs.add(match[1]);
+  }
+  return [...slugs];
+}
+
+/**
  * Writes the robots file.
  *
  * @param origin - the site's origin
  * @param hostname - the request's host name, to spot a preview copy
+ * @param classicSlugs - the classics whose chapters AI crawlers may read (classicSlugsFrom());
+ *   none when the database can't be reached, so only a classic's own page stays open to them
  * @returns the text of robots.txt
  */
-export function robotsTxt(origin: string, hostname: string): string {
+export function robotsTxt(origin: string, hostname: string, classicSlugs: string[] = []): string {
   // Step 1: a preview copy keeps every crawler out, and points nowhere.
   if (isPreviewHost(hostname)) return 'User-agent: *\nDisallow: /\n';
-  // Step 2: the real site: everything but the private screens, and where the sitemap is.
-  const disallowed = privatePathPrefixes.map((prefix) => `Disallow: ${prefix}`);
-  return ['User-agent: *', ...disallowed, '', `Sitemap: ${origin}/sitemap.xml`, ''].join('\n');
+  // Step 2: the rules every crawler shares: the open exceptions first (the longest rule wins, so
+  // their order is for the reader), then the private screens and a space's member-only tools.
+  const allowed = publicPathsInsidePrivate.map((path) => `Allow: ${path}`);
+  const disallowed = [...privatePathPrefixes, ...memberOnlySpacePaths].map(
+    (prefix) => `Disallow: ${prefix}`,
+  );
+  // Step 3: AI crawlers: the same private rules, the few pages they may read, each classic's
+  // chapters (a longer rule than "Disallow: /s/*/", so it wins), and nothing else.
+  const classicChapters = classicSlugs.map((slug) => `Allow: /s/${slug}/`);
+  const aiGroup = [
+    ...aiCrawlerNames.map((name) => `User-agent: ${name}`),
+    ...aiCrawlerRules,
+    ...classicChapters,
+    ...disallowed,
+    'Disallow: /',
+  ];
+  // Step 4: every other crawler (Google, Bing and the rest): everything but the private screens,
+  // and where the sitemap is.
+  return [
+    ...aiGroup,
+    '',
+    'User-agent: *',
+    ...allowed,
+    ...disallowed,
+    '',
+    `Sitemap: ${origin}/sitemap.xml`,
+    '',
+  ].join('\n');
 }
 
 /** What the handler needs from its host (Cloudflare or the local plugin). */
@@ -147,9 +260,18 @@ export async function handleSitemapFiles(
   host: SitemapHost,
 ): Promise<Response | null> {
   const url = new URL(request.url);
-  // Step 1: the robots file needs no database.
+  // Step 1: the robots file. It reads the sitemap's addresses for the classics AI crawlers may
+  // read in full; if the database can't be reached it still answers, with no classic's chapters.
   if (url.pathname === '/robots.txt') {
-    return new Response(robotsTxt(url.origin, url.hostname), {
+    let classicSlugs: string[] = [];
+    if (!isPreviewHost(url.hostname)) {
+      try {
+        classicSlugs = classicSlugsFrom(await host.findEntries());
+      } catch {
+        console.warn('Robots: the database could not be reached; no classic chapters were opened.');
+      }
+    }
+    return new Response(robotsTxt(url.origin, url.hostname, classicSlugs), {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Cache-Control': 'public, max-age=3600',

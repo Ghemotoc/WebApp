@@ -14,7 +14,8 @@
  * Test data: one published chapter on adult_writer's "Stația meteo", opened 12 times; removed
  * after (its story likes are removed too).
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

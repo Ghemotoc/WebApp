@@ -17,7 +17,8 @@
  * (each request approved); teacher joins the first, blocker asks to join the second. Removed
  * before and after; the names never end in "e2e", so spaces.spec leaves them alone.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

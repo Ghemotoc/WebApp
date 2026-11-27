@@ -10,6 +10,8 @@ import {
   homeExtraTags,
   parseWebsiteAddress,
   plainWordsOf,
+  visibleWordsHtml,
+  visibleWordsOf,
   websiteHeadFrom,
   type WebsiteAddress,
   type WebsiteHead,
@@ -117,6 +119,7 @@ describe('websiteHeadFrom', () => {
       language: 'en',
       isHidden: false,
       homeExtras: { googleCode: '', bingCode: '' },
+      visible: { heading: 'Write here', paragraphs: ['The lede.'] },
     });
   });
 
@@ -152,6 +155,52 @@ describe('websiteHeadFrom', () => {
     expect(head.description.startsWith('Cum raportezi Apasă Raportează sau scrie-ne.')).toBe(true);
     expect(head.description.length).toBeLessThanOrEqual(161);
     expect(head.description.endsWith('…')).toBe(true);
+  });
+});
+
+describe('visibleWordsOf', () => {
+  it('gives the home page’s headline, introduction, points and reasons, never the search fields', () => {
+    const words = visibleWordsOf('home_page', {
+      headlineFirst: 'Write stories.',
+      headlineSecond: 'Get read.',
+      lede: 'Post stories one chapter at a time.',
+      points: ['You keep your rights', '', 'Free to read and write'],
+      whyHeading: 'You own your work.',
+      whyCards: [{ title: 'No tracking ads', body: 'Banners match the page.' }, 'not a card'],
+      search: { title: 'Search title', description: 'Search description' },
+    });
+    expect(words).toEqual({
+      heading: 'Write stories. Get read.',
+      paragraphs: [
+        'Post stories one chapter at a time.',
+        'You keep your rights. Free to read and write',
+        'You own your work.',
+        'No tracking ads. Banners match the page.',
+      ],
+    });
+  });
+
+  it('gives a help page’s title and the plain words of its body', () => {
+    const words = visibleWordsOf('help_page', {
+      title: 'Raportare',
+      body: '## Cum\n\nApasă **Raportează**.',
+    });
+    expect(words).toEqual({ heading: 'Raportare', paragraphs: ['Cum Apasă Raportează.'] });
+  });
+
+  it('gives nothing when the page has no heading, so no empty <main> is written', () => {
+    expect(visibleWordsOf('home_page', { lede: 'Only a lede.' })).toBeUndefined();
+    expect(visibleWordsHtml(undefined, 'Brand')).toBe('');
+  });
+
+  it('escapes every word and names the product where the CMS text says {{productName}}', () => {
+    const html = visibleWordsHtml(
+      { heading: '<b>Hi</b>', paragraphs: ['{{productName}} only shows it & you keep it.'] },
+      'Brand',
+    );
+    expect(html).toBe(
+      '<main><h1>&lt;b&gt;Hi&lt;/b&gt;</h1><p>Brand only shows it &amp; you keep it.</p></main>',
+    );
   });
 });
 
@@ -249,6 +298,20 @@ describe('handleWebsitePage', () => {
     });
     expect(html).not.toContain('noindex');
     expect(response.headers.get('ETag')).toBeNull();
+  });
+
+  it('writes the page’s own words into the first HTML, for crawlers that never run JavaScript', async () => {
+    const response = await handleWebsitePage(
+      new Request('https://example.test/ro/ro'),
+      fakeHost({
+        ...romanianHome,
+        visible: { heading: 'Scrie povești.', paragraphs: ['Publică.'] },
+      }),
+    );
+    const html = await response.text();
+    expect(html).toContain(
+      '<div id="root"><main><h1>Scrie povești.</h1><p>Publică.</p></main></div>',
+    );
   });
 
   it('escapes what staff wrote, so a title like <script> stays text', async () => {

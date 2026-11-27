@@ -15,7 +15,8 @@
  *   Romanian and English.
  * Test data: one published chapter on adult_writer's "Stația meteo"; its comments go with it.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

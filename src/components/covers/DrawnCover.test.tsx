@@ -31,17 +31,22 @@ describe('DrawnCover', () => {
     }
   });
 
-  it('steps the title size down with its length through --fit', () => {
+  it('keeps a title of short words at one size whatever its length, through --fit', () => {
+    // Robert, DESIGN card, 26 Nov 2026, 21:07 UTC: titles no longer change size with length.
     const { container: short } = render(
       <DrawnCover title="Zori" choice={defaultChoiceFor('plum')} size="card" />,
     );
-    const { container: long } = render(
-      <DrawnCover title={longTitle} choice={defaultChoiceFor('plum')} size="card" />,
+    const { container: longer } = render(
+      <DrawnCover
+        title="Ghemul de ață și pisica bunicii"
+        choice={defaultChoiceFor('plum')}
+        size="card"
+      />,
     );
     const fitOf = (element: Element) =>
       (element.firstElementChild as HTMLElement).style.getPropertyValue('--fit');
     expect(fitOf(short)).toBe('1');
-    expect(fitOf(long)).toBe('0.62');
+    expect(fitOf(longer)).toBe('1');
   });
 
   it('draws the label look by default, so covers saved before CALM-4 keep a label', () => {
@@ -92,6 +97,30 @@ describe('DrawnCover', () => {
         unmount();
       }
     }
+  });
+
+  it('draws a classic artwork backdrop behind the label, hidden from screen readers', () => {
+    // Robert, 26 Nov 2026: The Raven, Luceafărul and Goblin Market keep their artwork.
+    const { container } = render(
+      <DrawnCover
+        title="The Raven"
+        penName="Edgar Allan Poe"
+        choice={defaultChoiceFor('classic_the_raven')}
+        size="card"
+      />,
+    );
+    const backdrop = container.querySelector('img');
+    expect(backdrop).toHaveAttribute('alt', '');
+    expect(backdrop).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.cover-label')).toHaveTextContent('The Raven');
+  });
+
+  it('draws a solid classic colour as a plain label, with no picture', () => {
+    const { container } = render(
+      <DrawnCover title="Ion" choice={defaultChoiceFor('seaglass')} size="card" />,
+    );
+    expect(container.querySelector('img')).toBeNull();
+    expect(container.firstElementChild).toHaveStyle({ backgroundColor: '#0F766E' });
   });
 
   it('can be hidden entirely when the title is repeated as text beside it', () => {

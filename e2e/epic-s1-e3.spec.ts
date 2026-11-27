@@ -21,7 +21,8 @@
  * Test data: seed personas; the story made here and the seed story's chapters are removed after.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { goToLastNewStoryStep, goToNewStoryStep } from './support/newStoryWizard';
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';

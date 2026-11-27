@@ -10,7 +10,8 @@
  * Test data: synthetic @example.com addresses; nothing is stored, which the test checks.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { runSql } from './support/database';
 

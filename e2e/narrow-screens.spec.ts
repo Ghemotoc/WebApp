@@ -12,7 +12,8 @@
  * Test data: one story of adult_writer's with two published chapters, removed afterwards. Pages
  * that need a row this spec doesn't make (a case, a ticket, a class) are opened at their list.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

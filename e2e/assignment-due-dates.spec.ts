@@ -17,7 +17,8 @@
  * and put back afterwards. Removed before and after; the name never ends in "e2e", so spaces.spec
  * leaves it alone.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';

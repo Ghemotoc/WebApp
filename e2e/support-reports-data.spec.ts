@@ -10,7 +10,8 @@
  * - a ticket from someone without an account says the request must be answered by email.
  * Test data: seed personas; the tickets, notices and requests made here are removed afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

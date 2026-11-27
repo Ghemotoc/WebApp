@@ -14,7 +14,8 @@
  * Test data: two stories by adult_writer (one 16+), a chapter with teacher's comments and the
  *   writer's notifications about them, and this week's share totals. All removed afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -14,7 +14,8 @@
  * blocker (the chapter for ranking, the story for the stats row), read 3 times and commented on
  * by teacher; removed afterwards, and the setting restored.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

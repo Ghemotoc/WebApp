@@ -106,6 +106,20 @@ function actionLine(email: AuthEmail, group: Record<string, string>): string {
 }
 
 /**
+ * "An app by The Magic Coffin" with the company's name as a link to its site (Robert, 26 Nov
+ * 2026, 21:01 UTC: wherever the line appears, "The Magic Coffin" links to the company).
+ *
+ * @param escapedLine - the madeBy text, already filled and escaped by fillAndEscape()
+ * @returns the line with the company's name wrapped in a link
+ */
+function madeByLine(escapedLine: string): string {
+  // The name and the address come from the brand settings, so a rename changes them here too.
+  const escapedName = fillAndEscape(brandDefaults.companyName);
+  const link = `<a href="${brandDefaults.companySiteUrl}" style="color:#6B5A73;text-decoration:underline">${escapedName}</a>`;
+  return escapedLine.split(escapedName).join(link);
+}
+
+/**
  * The body of one email in one language.
  *
  * @param texts - that language's email.json
@@ -123,7 +137,7 @@ function emailBody(texts: EmailTexts, email: AuthEmail): string {
     email.includesIgnoreLine === false
       ? ''
       : `<p style="margin:0 0 24px;font-size:14px;color:#5C4965">${shared('notYou')}</p>`,
-    `<p style="margin:0">${shared('signOff')}<br><span style="font-size:13px;color:#6B5A73">${shared('madeBy')}</span></p>`,
+    `<p style="margin:0">${shared('signOff')}<br><span style="font-size:13px;color:#6B5A73">${madeByLine(shared('madeBy'))}</span></p>`,
   ].join('\n    ');
 }
 

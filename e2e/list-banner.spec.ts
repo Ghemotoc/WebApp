@@ -12,7 +12,8 @@
  * Test data: 14 published stories by the adult_writer persona, each with the tag "banner-e2e",
  * removed afterwards. Pages are opened signed in as the ad reader (only signed-in readers see ads).
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { rememberAdReaderLanguage, signInAdReader } from './support/adReader';

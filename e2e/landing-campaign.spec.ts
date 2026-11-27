@@ -14,7 +14,7 @@
  * Test data: the page "writing-month-e2e" and five writing days marked with 1234567 words, on
  * accounts no writing month spec uses; removed afterwards.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

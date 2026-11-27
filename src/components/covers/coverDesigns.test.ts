@@ -6,8 +6,9 @@ import { describe, expect, it } from 'vitest';
 import { contrastRatio } from '@/lib/contrast';
 
 import {
+  classicCoverColourKeys,
+  classicOnlyColourKeys,
   coverAccentPart,
-  coverArtwork,
   coverColourKeys,
   coverDesignKeys,
   coverDesigns,
@@ -15,14 +16,19 @@ import {
   defaultChoiceFor,
   titleColourOn,
   titleSurfaceFor,
+  writerColourKeys,
+  writerCoverDesignKeys,
+  writerCoverDesigns,
 } from './coverDesigns';
+import { coverArtwork } from './coverArtwork';
 
 describe('cover designs', () => {
   it('are the 22 approved backgrounds: 9 plain colours, 10 patterns and the 3 new ones', () => {
-    expect(coverDesigns).toHaveLength(22);
-    expect(coverDesigns.filter((design) => design.kind === 'plain')).toHaveLength(9);
-    expect(coverDesigns.filter((design) => design.kind !== 'plain')).toHaveLength(13);
+    expect(writerCoverDesigns).toHaveLength(22);
+    expect(writerCoverDesigns.filter((design) => design.kind === 'plain')).toHaveLength(9);
+    expect(writerCoverDesigns.filter((design) => design.kind !== 'plain')).toHaveLength(13);
     expect(coverDesigns.map((design) => design.key)).toEqual([...coverDesignKeys]);
+    expect(writerCoverDesigns.map((design) => design.key)).toEqual([...writerCoverDesignKeys]);
     // G9c's three and the brand page's three (23 Nov 2026) are marked "New" and come last.
     expect(
       coverDesigns.filter((design) => design.isNew === true).map((design) => design.key),
@@ -30,18 +36,47 @@ describe('cover designs', () => {
   });
 
   it('use a 9-colour palette, and every default colour is in it', () => {
-    expect(coverColourKeys).toHaveLength(9);
-    for (const design of coverDesigns) {
-      expect(coverColourKeys).toContain(design.background);
-      expect(coverColourKeys).toContain(design.accent);
+    expect(writerColourKeys).toHaveLength(9);
+    for (const design of writerCoverDesigns) {
+      expect(writerColourKeys).toContain(design.background);
+      expect(writerColourKeys).toContain(design.accent);
+    }
+  });
+
+  it('keep the classic covers’ 6 plain colours and 3 artworks to the classics', () => {
+    // Robert, 26 Nov 2026: classics are solid colours, except three with artwork.
+    const classicDesigns = coverDesigns.filter((design) => design.classicOnly === true);
+    expect(coverDesigns).toHaveLength(31);
+    expect(classicDesigns.map((design) => design.key)).toEqual([
+      'crimson',
+      'seaglass',
+      'peach',
+      'pistachio',
+      'candy',
+      'linkblue',
+      'classic_luceafarul',
+      'classic_the_raven',
+      'classic_goblin_market',
+    ]);
+    expect(classicDesigns.filter((design) => design.artworkUrl !== undefined)).toHaveLength(3);
+    expect(coverColourKeys).toHaveLength(15);
+    expect(classicCoverColourKeys).toHaveLength(10);
+    for (const colour of classicCoverColourKeys) expect(coverColourKeys).toContain(colour);
+    for (const colour of classicOnlyColourKeys) expect(writerColourKeys).not.toContain(colour);
+  });
+
+  it('give the title at least 4.5:1 on every classic colour', () => {
+    for (const colour of classicCoverColourKeys) {
+      const surface = coverPalette[colour];
+      expect(contrastRatio(surface, titleColourOn(surface))).toBeGreaterThanOrEqual(4.5);
     }
   });
 
   it('give the title at least 4.5:1 contrast for every background and accent pair', () => {
     // Every design × background × accent: 22 × 9 × 9 = 1,782 choices.
-    const choices = coverDesigns.flatMap((design) =>
-      coverColourKeys.flatMap((background) =>
-        coverColourKeys.map((accent) => ({ design: design.key, background, accent })),
+    const choices = writerCoverDesigns.flatMap((design) =>
+      writerColourKeys.flatMap((background) =>
+        writerColourKeys.map((accent) => ({ design: design.key, background, accent })),
       ),
     );
     const weakPairs = choices
@@ -56,9 +91,9 @@ describe('cover designs', () => {
 
   it('put a solid box behind the title on every patterned design, so no line crosses it', () => {
     // Bundle FIXES-1b (Robert, 5 Nov 2026): the grid's lines used to run through the title.
-    const choices = coverDesigns.flatMap((design) =>
-      coverColourKeys.flatMap((background) =>
-        coverColourKeys.map((accent) => ({ design, background, accent })),
+    const choices = writerCoverDesigns.flatMap((design) =>
+      writerColourKeys.flatMap((background) =>
+        writerColourKeys.map((accent) => ({ design, background, accent })),
       ),
     );
     for (const { design, background, accent } of choices) {

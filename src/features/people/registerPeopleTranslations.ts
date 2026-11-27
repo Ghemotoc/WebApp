@@ -10,10 +10,11 @@
  * through usePeopleTranslation().
  */
 import { createNamespaceTranslations } from '@/lib/namespace-translations';
-import englishPeople from '@/locales/en/people.json';
 import romanianPeople from '@/locales/ro/people.json';
 
-const peopleTranslations = createNamespaceTranslations('people', romanianPeople, englishPeople);
+// The English text is left out here: the chapter reader shows this namespace, so its English
+// loads with the rest of the English text (readerFeatureNamespaces in src/lib/i18n-loading.ts).
+const peopleTranslations = createNamespaceTranslations('people', romanianPeople);
 
 /**
  * Registers the people texts once; calling it again does nothing.

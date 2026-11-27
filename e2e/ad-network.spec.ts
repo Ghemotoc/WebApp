@@ -12,7 +12,8 @@
  * Test data: the flag and the two settings, put back afterwards, and one published chapter of the
  * seed story so Discover has shelves.
  */
-import { expect, test, type Page, type Request } from '@playwright/test';
+import { type Page, type Request } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

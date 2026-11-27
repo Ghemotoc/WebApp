@@ -163,7 +163,7 @@ describe('the preview card', () => {
 });
 
 describe('the page a shared link serves', () => {
-  it('puts the Open Graph tags into a chapter page, with noindex in the page and the header', async () => {
+  it("puts the Open Graph tags into a chapter page and keeps a writer's chapter out of search engines (GROWTH-4)", async () => {
     const { response, html } = await open('/s/statia-meteo/ab12cd34?utm_source=x', chapterPreview);
     expect(html).toContain('<title>Stația meteo · Caietele bunicii</title>');
     expect(html).toContain('<meta property="og:title" content="Stația meteo · Caietele bunicii">');
@@ -172,10 +172,27 @@ describe('the page a shared link serves', () => {
       '<meta property="og:url" content="https://example.com/s/statia-meteo/ab12cd34">',
     );
     expect(html).toContain('content="https://example.com/link-previews/sky.png"');
+    // A writer's chapter stays out of search engines; only the story's page is listed (Robert,
+    // 26 Nov 2026, 19:45 UTC). The structured data describes the story, so the chapter has none.
     expect(html).toContain('<meta name="robots" content="noindex">');
     expect(html).not.toContain('application/ld+json');
     expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
     expect(response.headers.get('ETag')).toBeNull();
+  });
+
+  it("lets search engines list a classic's chapter, which visitors read whole (GROWTH-2 and 4)", async () => {
+    const classic = { ...chapterPreview, writerHandle: null };
+    const { response, html } = await open('/s/statia-meteo/ab12cd34', classic);
+    expect(html).not.toContain('noindex');
+    expect(html).not.toContain('application/ld+json');
+    expect(response.headers.get('X-Robots-Tag')).toBeNull();
+  });
+
+  it('keeps a 16+ or 18+ chapter out of search engines, as visitors get no text from it', async () => {
+    const hidden = { ...chapterPreview, rating: '16_plus' as const, hidesText: true };
+    const { response, html } = await open('/s/statia-meteo/ab12cd34', hidden);
+    expect(html).toContain('<meta name="robots" content="noindex">');
+    expect(response.headers.get('X-Robots-Tag')).toBe('noindex');
   });
 
   it('describes a story page for search engines with the story statement, writer, dates and trail (CALM-9s)', async () => {

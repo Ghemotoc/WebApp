@@ -95,7 +95,7 @@
   "shell": {
     "eyebrow": "Staff",
     "noHandle": "(no username yet)",
-    "byCompany": "An app by {{companyName}}"
+    "byCompany": "An app by <company>{{companyName}}</company>"
   },
   "refused": {
     "documentTitle": "Staff only · {{productName}}",
@@ -389,7 +389,8 @@
       "handle_missing": "No username yet",
       "staff_account": "Staff",
       "suspended": "Suspended",
-      "banned": "Banned"
+      "banned": "Banned",
+      "waitlisted": "On the waitlist"
     },
     "ageBands": {
       "under_13": "Under 13",
@@ -544,7 +545,10 @@
     },
     "list": {
       "heading": "Members",
-      "intro": "Every account, newest first. Only owners and admins see this list, and each page opened goes to the audit log.",
+      "intro": "Accounts, newest first. Deleted accounts show only under the Deleted status. Only owners and admins see this list, and each page opened goes to the audit log.",
+      "statusLabel": "Status",
+      "anyStatus": "Any status",
+      "perPageLabel": "Per page",
       "loading": "Loading accounts…",
       "count_one": "{{count}} account",
       "count_few": "{{count}} accounts",

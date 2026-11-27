@@ -16,7 +16,8 @@
  * replaced, with the same shape the function returns.
  * Test data: seed personas only; example.com is a test domain, never the real one.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

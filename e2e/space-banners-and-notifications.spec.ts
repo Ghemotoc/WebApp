@@ -15,7 +15,8 @@
  * Test data: a 16+ space "Banner club e2e" made here, owned by teacher; blocker asks to join. Both
  * are removed before and after, with the notifications and pictures they made.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

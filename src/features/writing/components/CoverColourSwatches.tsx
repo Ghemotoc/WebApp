@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@/components/icons/CheckIcon';
 import {
   coverAccentPart,
-  coverColourKeys,
+  writerColourKeys,
   coverDesignByKey,
   coverPalette,
   titleColourOn,
@@ -45,7 +45,7 @@ function SwatchRow({
     <div className="flex flex-col gap-2">
       <span className="type-meta font-semibold text-ink-muted">{label}</span>
       <div role="radiogroup" aria-label={label} className="flex flex-wrap gap-2">
-        {coverColourKeys.map((colour) => {
+        {writerColourKeys.map((colour) => {
           const isChosen = colour === value;
           return (
             <button

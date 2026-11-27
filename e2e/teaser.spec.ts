@@ -15,13 +15,15 @@
  *   and a chapter asks "I'm 18 or over" first: no text before the answer, the teaser after it,
  *   and the answer stays in the browser for the next chapter;
  * - the HTML a link preview reads carries the Open Graph tags (title, pen name, blurb, the cover's
- *   colour), chapter pages carry noindex in the page and the header, story pages carry JSON-LD
+ *   colour), a writer's chapter pages carry noindex (GROWTH-4) and the teaser only, story pages are
+ *   indexable and carry JSON-LD
  *   without chapter text, and a 16+ story's tags hold its title only;
  * - axe finds nothing serious in all 12 views of the teaser and the notice, nothing scrolls
  *   sideways, and the teaser draws no doodle at 390, 768 and 1440 px.
  * Test data: two chapters on adult_writer's seed story; removed, and the story put back, after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import {
   checkScreen,
@@ -167,10 +169,11 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     await expect(page.getByRole('heading', { name: 'For mature readers' })).toHaveCount(0);
   });
 
-  test('a shared link’s HTML carries the preview, and only story pages are indexable', async ({
+  test('a shared link’s HTML carries the preview, story pages are indexable and a writer’s chapters are not', async ({
     request,
   }) => {
-    // A chapter: Open Graph tags, noindex in the page and in the header, no structured data.
+    // A writer's chapter: Open Graph tags, kept out of search engines (GROWTH-4; Robert, 26 Nov
+    // 2026, 19:45 UTC: only the book page), no structured data, and only the teaser's words.
     const chapter = await request.get(chapterAddress);
     const chapterHtml = await chapter.text();
     expect(chapterHtml).toContain(

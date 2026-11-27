@@ -15,7 +15,8 @@
  *   night, ro and en, and no doodle is drawn.
  * Test data: the forums the admin adds, removed by the test and again afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -16,7 +16,8 @@
  * Test data: adult_writer's signature and one thread "Semnături e2e" they start here. Everything
  * is removed before and after, with the requests, notifications and pictures made here.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

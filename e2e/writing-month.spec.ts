@@ -14,7 +14,8 @@
  * Test data: the seed's adult_writer and teacher, who read in Romanian; the days are written in
  * SQL and removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen } from './support/accessibility';
 import { runSql } from './support/database';

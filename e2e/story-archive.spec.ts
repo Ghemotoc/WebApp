@@ -16,7 +16,7 @@
  * Test data: an archive row made from a story of the spec's own, filed under adult_writer's
  * email as if an older account of theirs had closed; removed at the start and the end.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -15,7 +15,8 @@
  * Test data: one published chapter on adult_writer's "Stația meteo"; teacher's follows; removed
  * after.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

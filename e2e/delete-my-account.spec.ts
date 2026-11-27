@@ -15,7 +15,7 @@
  * Test data: the failed_check persona, whose requests are removed and whose profile is reopened
  * at the start and the end; the fresh log-in setting goes back to 10 minutes.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

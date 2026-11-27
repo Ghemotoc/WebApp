@@ -24,7 +24,8 @@
  * and put back; teacher starts the class with SQL; teen_17, kid_14_ok and adult_writer join.
  * Everything is removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

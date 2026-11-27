@@ -23,6 +23,10 @@
  * canonical link names the address with the place, so search engines list one address per page.
  * Each page also names its other languages and countries (hreflang) for every open market. An
  * address whose place isn't a market gets noindex.
+ * The page's own words (the home page's headline, introduction and reasons, or a help page's
+ * title and body) also go into the app's root as real HTML text (GROWTH-1, the SEO review of
+ * 26 Nov 2026): Bing and most AI crawlers never run JavaScript, so without it they read an empty
+ * page. The app replaces those words with the same words when it starts.
  * Who calls it: functions/index.ts and functions/help/[[path]].ts on Cloudflare Pages, and
  * server/pages-functions-plugin.ts locally (npm run dev, npm run preview and the end-to-end tests).
  * What it calls: the Supabase REST endpoint /rest/v1/rpc/website_content with the public anon key,
@@ -30,9 +34,15 @@
  * with Staff › Website › Search and sharing, S1-E11-39).
  * Never logged: the request, the visitor or any page text (CLAUDE.md rule 12).
  */
-import { escapeHtml, injectIntoHead, siteNameOf, type DatabaseSettings } from './link-preview.ts';
+import {
+  escapeHtml,
+  injectIntoHead,
+  injectIntoRoot,
+  siteNameOf,
+  type DatabaseSettings,
+} from './link-preview.ts';
 import { countryOfConnection } from './signup-context.ts';
-import { textOf, websitePageWords } from '../src/lib/searchWords';
+import { plainWordsOf, textOf, websitePageWords } from '../src/lib/searchWords';
 import {
   isKnownPlace,
   pathAtPlace,
@@ -82,6 +92,18 @@ export interface WebsiteHead {
    * (S1-E11-38); null on every other page, which carries neither the codes nor the organisation.
    */
   homeExtras: { googleCode: string; bingCode: string } | null;
+  /**
+   * The page's own words, written into the first HTML as real text (GROWTH-1): search and answer
+   * engines that never run JavaScript (Bing's and most AI crawlers) read the same headline and
+   * paragraphs a visitor sees. Missing when the page has no words to show.
+   */
+  visible?: VisibleWords;
+}
+
+/** A heading and its paragraphs, as plain text (never HTML). */
+export interface VisibleWords {
+  heading: string;
+  paragraphs: string[];
 }
 
 /** What the handler needs from its host (Cloudflare or the local plugin). */
@@ -168,7 +190,71 @@ export function websiteHeadFrom(address: WebsiteAddress, row: WebsiteContentRow)
     language: row.language_code,
     isHidden: words.isHidden,
     homeExtras: address.kind === 'home_page' ? { googleCode: '', bingCode: '' } : null,
+    visible: visibleWordsOf(address.kind, row.content),
   };
+}
+
+/**
+ * The page's own words for the first HTML (GROWTH-1): the home page's headline, introduction,
+ * points and reasons, or a help page's title and its body as plain words. Only what the live page
+ * already shows; staff's search fields never appear as page text.
+ *
+ * @param kind - the home page or a help page
+ * @param content - the live version's content
+ * @returns the words, or undefined when there is no heading to show
+ */
+export function visibleWordsOf(
+  kind: 'home_page' | 'help_page',
+  content: Record<string, unknown>,
+): VisibleWords | undefined {
+  // Step 1: a help page is its title and its body's words.
+  if (kind === 'help_page') {
+    const heading = textOf(content.title);
+    const body = plainWordsOf(textOf(content.body));
+    return heading === '' ? undefined : { heading, paragraphs: body === '' ? [] : [body] };
+  }
+  // Step 2: the home page is its headline, then its introduction, points and reasons.
+  const heading = `${textOf(content.headlineFirst)} ${textOf(content.headlineSecond)}`.trim();
+  if (heading === '') return undefined;
+  const points = listOf(content.points)
+    .map(textOf)
+    .filter((point) => point !== '');
+  const reasons = listOf(content.whyCards).map(reasonOf);
+  const paragraphs = [
+    textOf(content.lede),
+    points.join('. '),
+    textOf(content.whyHeading),
+    ...reasons,
+  ];
+  return { heading, paragraphs: paragraphs.filter((paragraph) => paragraph !== '') };
+}
+
+/** A stored list, or an empty one when the content holds anything else. */
+function listOf(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+/** One "why" card as one sentence pair: "You keep your rights. Everything you write …". */
+function reasonOf(card: unknown): string {
+  if (typeof card !== 'object' || card === null) return '';
+  const { title, body } = card as { title?: unknown; body?: unknown };
+  return [textOf(title), textOf(body)].filter((part) => part !== '').join('. ');
+}
+
+/**
+ * Writes the page's own words as HTML for the app's root, where they show until the app starts
+ * and the app replaces them with the same words (as the story page's footer does, CALM-9s). It is
+ * never hidden text. Every word is escaped; "{{productName}}" in CMS text becomes the site's name.
+ *
+ * @param words - the heading and paragraphs, or undefined
+ * @param siteName - the site's name from index.html
+ * @returns the HTML, or an empty text when there is nothing to show
+ */
+export function visibleWordsHtml(words: VisibleWords | undefined, siteName: string): string {
+  if (words === undefined) return '';
+  const named = (text: string) => escapeHtml(text.replaceAll('{{productName}}', siteName));
+  const paragraphs = words.paragraphs.map((paragraph) => `<p>${named(paragraph)}</p>`).join('');
+  return `<main><h1>${named(words.heading)}</h1>${paragraphs}</main>`;
 }
 
 /**
@@ -523,5 +609,7 @@ export async function handleWebsitePage(
     siteName,
   );
   const changed = injectIntoHead(titled, null, tags);
-  return new Response(changed, { status: page.status, headers });
+  // Step 5: the page's own words as real text in the first HTML (GROWTH-1).
+  const withWords = injectIntoRoot(changed, visibleWordsHtml(read.head.visible, siteName));
+  return new Response(withWords, { status: page.status, headers });
 }

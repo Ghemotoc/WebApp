@@ -13,7 +13,8 @@
  * - the page passes axe and doesn't scroll sideways at 390, 768 and 1440 px, signed in and out.
  * Test data: seed personas and synthetic @example.com addresses.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { brand } from '../src/config/brand';
 
