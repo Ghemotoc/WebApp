@@ -15,7 +15,8 @@
  * Test data: two chapters made in SQL on adult_writer's seed story "Stația meteo" (one published,
  * one draft); the edition and its chapters are made through the screens; removed after.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

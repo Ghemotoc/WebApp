@@ -14,7 +14,8 @@
  * Test data: seed personas only (supabase/seed.sql), never real accounts.
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { THEME_STORAGE_KEY } from '../src/lib/theme';
 

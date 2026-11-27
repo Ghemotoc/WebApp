@@ -17,7 +17,8 @@
  * docs/epic-reports/S1-E10.md. The axe runs for every screen of the epic live in each story's own
  * spec. Test data: seed personas only; what the journey makes is removed afterwards.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

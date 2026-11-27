@@ -12,7 +12,8 @@
  * - the page passes axe and doesn't scroll sideways at 390, 768 and 1440 px.
  * Test data: seed personas only; the blocker persona's role is removed again afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

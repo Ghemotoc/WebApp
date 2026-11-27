@@ -17,7 +17,8 @@
  * Test data: @example.com accounts unique to each run and the local signing secret in Vault. An
  * account the audit log names keeps its profile (audit rows are never deleted).
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

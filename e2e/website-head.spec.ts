@@ -6,7 +6,7 @@
  * The local server answers from the seeded CMS content with Romania as the country, as
  * server/pages-functions-plugin.ts sets it.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 test('the home page carries its description, canonical link and share tags for search engines', async ({
   request,

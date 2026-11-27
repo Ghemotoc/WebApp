@@ -8,7 +8,7 @@
  * (390, 768 and 1440 px; CLAUDE.md rule 21).
  */
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { brand } from '../src/config/brand';
 

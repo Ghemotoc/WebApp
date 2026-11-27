@@ -16,7 +16,8 @@
  * leaning on what an earlier spec in the same shard published; and teacher's genre and tag
  * follows. Both are removed after.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

@@ -15,7 +15,8 @@
  * Test data: synthetic @example.com accounts made by this run, removed afterwards; seed personas
  * only get their language set back.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

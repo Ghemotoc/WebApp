@@ -11,7 +11,8 @@
  * - the staff section passes axe at 390 px by day, in English and Romanian.
  * Test data: one story with a chapter out for adult_writer; the picks are cleared after.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

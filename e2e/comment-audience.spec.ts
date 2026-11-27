@@ -11,7 +11,8 @@
  * Test data: one published chapter on adult_writer's "Stația meteo", set to Followers only, and
  * blocker following adult_writer; all put back before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';
