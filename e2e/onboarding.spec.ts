@@ -253,7 +253,7 @@ test.describe('onboarding (S1-E2-06)', () => {
     await section.getByLabel('County (optional)').selectOption('');
     await section
       .getByRole('group', { name: 'I want to write' })
-      .getByRole('button', { name: 'Fiction' })
+      .getByRole('button', { name: 'Fiction', exact: true })
       .click();
     await section.getByRole('button', { name: 'Save' }).click();
     await expect(section.getByText('Saved.')).toBeVisible();

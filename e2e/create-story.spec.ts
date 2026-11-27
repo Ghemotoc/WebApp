@@ -90,7 +90,7 @@ test.describe('create a story (S1-E3-01)', () => {
     await expect(categoryGroup.getByRole('radio', { checked: true })).toHaveCount(0);
     await page.getByRole('button', { name: /^Next: / }).click();
     await expect(page.getByText('Choose a category.')).toBeVisible();
-    await page.getByRole('radio', { name: 'Fiction' }).click();
+    await page.getByRole('radio', { name: 'Fiction', exact: true }).click();
 
     // "Set in" (board D02): Romania is a country chip with a pin, not a tag, and the preview says
     // so on its own line.
