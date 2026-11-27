@@ -26,6 +26,8 @@ export interface LanguageSelectProps {
   id: string;
   /** Shown in the footer; hidden (but read by screen readers) where a frame has no room. */
   isLabelVisible?: boolean;
+  /** sm in the member footer, beside the small Night mode button (Robert, 27 Nov 2026). */
+  size?: 'md' | 'sm';
 }
 
 /** The message key for each save result; nothing is said before a choice is made. */
@@ -38,9 +40,10 @@ const saveMessageKeys: Record<LanguageSaveStatus, string | null> = {
 /**
  * Renders the labelled drop-down and the message about where the choice was saved.
  *
+ * @param props.size - md, the usual 44 px field, or sm in the member footer
  * @returns the drop-down
  */
-export function LanguageSelect({ id, isLabelVisible = false }: LanguageSelectProps) {
+export function LanguageSelect({ id, isLabelVisible = false, size = 'md' }: LanguageSelectProps) {
   const { t } = useTranslation();
   const { language, changeLanguage, saveStatus } = useInterfaceLanguage();
 
@@ -56,6 +59,7 @@ export function LanguageSelect({ id, isLabelVisible = false }: LanguageSelectPro
         label={t('language.label')}
         isLabelVisible={isLabelVisible}
         placement="bar"
+        size={size}
         options={options}
         value={language}
         onChange={(value) => {

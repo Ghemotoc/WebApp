@@ -47,6 +47,11 @@ export interface SelectProps {
   onChange: (value: string) => void;
   /** 'bar' in the top bar and footer (plum chevron), 'form' in forms (ink chevron), as on the boards. */
   placement?: 'bar' | 'form';
+  /**
+   * md (the default): the 44 px field every form uses. sm: 32 px in the 13 px meta type, only
+   * for the footer's language drop-down beside the small Night mode button (Robert, 27 Nov 2026).
+   */
+  size?: 'md' | 'sm';
   /** The id of a hint under the drop-down, read with it by screen readers (S1-E2-06). */
   descriptionId?: string;
   /**
@@ -63,6 +68,12 @@ export interface SelectProps {
   /** True while the choice is missing or wrong after a send, so screen readers say so. */
   isInvalid?: boolean;
 }
+
+/** The height, left padding and type for each size of field. */
+const selectSizeClasses: Record<'md' | 'sm', string> = {
+  md: 'h-11 pl-4 type-body',
+  sm: 'h-8 pl-3 type-meta',
+};
 
 /**
  * The classes of the wrapper and the label: side by side and small, or stacked like a text
@@ -125,6 +136,7 @@ export function Select({
   value,
   onChange,
   placement = 'form',
+  size = 'md',
   descriptionId,
   isLabelAbove = false,
   isLabelStrong = false,
@@ -150,7 +162,11 @@ export function Select({
           aria-describedby={descriptionId}
           aria-invalid={isInvalid || undefined}
           onChange={handleChange}
-          className="h-11 w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-field in-data-[area=staff]:rounded-full border border-control-border bg-surface pr-9 pl-4 font-body type-body font-semibold text-ink"
+          className={cn(
+            'w-auto max-w-full cursor-pointer appearance-none text-ellipsis rounded-field in-data-[area=staff]:rounded-full border border-control-border bg-surface pr-9 font-body font-semibold text-ink',
+            // Step: the height and type for the size (the footer's small one, or the usual 44 px).
+            selectSizeClasses[size],
+          )}
         >
           {groups === undefined ? (
             <SelectOptions options={options} />

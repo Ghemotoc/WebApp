@@ -340,7 +340,7 @@
     "poemGenre": "{{title}} is {{article}} {{genre}} poem published on {{site}} by {{writer}}.",
     "essay": "{{title}} is {{article}} essay published on {{site}} by {{writer}}.",
     "essayGenre": "{{title}} is {{article}} {{genre}} essay published on {{site}} by {{writer}}.",
-    "site": "{{site}} is a free website for writing and reading stories, poems and essays.",
+    "site": "{{site}} is a free website for writing and reading stories, poems, plays and non-fiction.",
     "matureReaders": "For mature readers",
     "pageTitle": "{{title}} by {{writer}}, {{genre}}, {{site}}",
     "pageTitlePlain": "{{title}} by {{writer}}, {{site}}",
