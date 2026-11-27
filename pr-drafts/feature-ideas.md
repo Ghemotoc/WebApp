@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 27 Nov 2026 (doc "Product: feature ideas", by category; Notion Feature ideas database)
+
+10 ideas, IDEA-20261127-1 to 10: reading time on each chapter, stories like a classic I finished, listen to my draft before I publish, thank beta readers on the story page, translate a comment in another language, merge two threads on the same topic, a private link for a parent to read a class story, report a whole conversation at once, pictures in chapters dimmed at night, show Nordic neighbour languages too.
+
 ### Sent 26 Nov 2026 (doc "Product: feature ideas", by category; Notion Feature ideas database)
 
 10 ideas, IDEA-20261126-1 to 10: preview a chapter at phone width, named snapshots before a big rewrite, chapter lengths at a glance, choose what I hear from each writer, a reading schedule for book clubs, a comment bank for teachers, freeze my account if someone else got in, bigger buttons and links, read two language editions side by side, the story so far (spoiler-safe).
