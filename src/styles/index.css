@@ -1126,9 +1126,18 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
  */
 .glass-band-deep,
 .rounded-3xl.bg-primary:not([data-area='staff'] *) {
+  /* Text on a dark band is pure white by default, its sub-lines and links included (Robert,
+     27 Nov 2026); a paper card inside the band sets its own dark text. */
+  color: var(--on-primary);
   background-image: var(--lg-dark-sheen);
   border: 1px solid rgb(255 255 255 / 0.28);
   box-shadow: var(--lg-dark-shadow);
+}
+
+/* A light paper card inside a dark band (the hub's prompt) goes back to the page's ink. */
+:is(.glass-band-deep, .rounded-3xl.bg-primary:not([data-area='staff'] *))
+  :is(.box-surface, .bg-surface, .bg-paper) {
+  color: var(--ink);
 }
 
 .glass-band-tint,
@@ -1155,13 +1164,14 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
 /*
  * At night a deep band is one quiet box (NIGHT-2; night design file: "Hero and bands: one quiet
  * box each, no purple and no glow"): the box colour with its grey edge, no sheen and no shadow.
- * The band's own --primary and --on-primary are set to the box and the soft white text, so the
- * band and everything in it that reads them follow. Its gold first button, white at night,
+ * The band's own --primary and --on-primary are set to the box and pure white text (Robert,
+ * 27 Nov 2026: text on a dark background is always #ffffff, day and night), so the band and
+ * everything in it that reads them follow. Its gold first button, white at night,
  * becomes the main button (GLASS-2 break test: it vanished white on white).
  */
 [data-theme='night'] :is(.glass-band-deep, .rounded-3xl.bg-primary) {
   --primary: var(--surface-box);
-  --on-primary: var(--ink);
+  --on-primary: #ffffff;
   background-image: none;
   border-color: var(--line-box);
   box-shadow: none;
