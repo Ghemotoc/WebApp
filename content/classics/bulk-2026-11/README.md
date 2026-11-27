@@ -6,6 +6,7 @@ Robert asked on 26 Nov 2026 for every work on the research list "Research: publi
 | --- | --- |
 | `works-en.jsonl.gz`, `works-ro.jsonl.gz`, `works-nordic.jsonl.gz`, `works-ru.jsonl.gz`, and `works-pl`, `-fr`, `-de`, `-es`, `-it`, `-pt`, `-nl.jsonl.gz` | The works, one JSON object per line, gzip-compressed: title, author, the author's death year, language, kind, rating, first publication, blurb, credit line and the chapters in the Markdown subset |
 | `works-hidden.jsonl.gz` | Works free in most countries but still protected in a few, each with `hidden_in_countries` (below) |
+| `works-nonfiction.jsonl.gz` | 27 English books for Non-fiction (and *The Prophet* under Poetry) from Standard Ebooks, the most-read free philosophy, history, science and memoir; every translator died by 1938 (below) |
 | `works-index.csv` | One row per work, to read without unzipping: title, author, language, year, kind, rating, chapters, length and source |
 | `not-loaded.csv` | Works on the list whose text could not be fetched, and why |
 
@@ -23,6 +24,12 @@ The rule (research doc, Summary tab): free in all 11 markets in 2026 means the a
 - the 20 classics already on staging.
 
 A translation names its translator and why it may be shown (`translation_rights` public_domain): *A Doll's House*, translated by R. Farquharson Sharp (died 1945).
+
+## English non-fiction (Robert, 27 Nov 2026)
+
+Robert asked for non-fiction once the Non-fiction category existed. `works-nonfiction.jsonl.gz` holds the most-read free non-fiction on Standard Ebooks: Marcus Aurelius, Epictetus, Seneca's *Dialogues*, Machiavelli, Descartes, Hobbes, Locke, Hume, Burke, Adam Smith, Mill, Darwin (two), Emerson, Thoreau, Franklin, Wollstonecraft, Douglass, the Federalist Papers, Marx and Engels, Nietzsche (two), Tolstoy's *A Confession*, William James (two) and Gibran's *The Prophet*. Translators and their death years are in each work (`translator_name`, `translator_died_year`); the latest is Aylmer Maude, 1938. Runs of tiny sections (aphorisms, short chapters) are joined into chapters of about 30,000 characters, each piece keeping its title as a heading (`group_small`).
+
+Left out for now: Plato, Laozi, Confucius, Thucydides, Herodotus and Cicero, because the database stores years from 1 only (`classic_authors.died_year`, `classic_works.first_published_year`), so an author who died before year 1 can't be saved yet; and Aristotle (F. H. Peters), Boethius (H. R. James) and Augustine (Dods, Wilson and Smith), whose translators' death years are not checked yet. The texts are downloaded and ready.
 
 ## Works hidden in some countries (Robert, 27 Nov 2026)
 

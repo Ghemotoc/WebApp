@@ -23,7 +23,7 @@ on:
         required: true
         default: ''
       pack:
-        description: 'Optional: load only one pack, by the word after works- (for example hidden). Empty loads every pack'
+        description: 'Optional: load only some packs, by the word after works-, separated by spaces (for example: hidden nonfiction). Empty loads every pack'
         required: false
         default: ''
 
@@ -67,20 +67,25 @@ jobs:
       - name: Make sure psql is installed
         run: command -v psql || (sudo apt-get update && sudo apt-get install -y postgresql-client)
 
-      # With a pack named, only that file is loaded (letters only, so the name can't reach a
-      # path outside the folder); without one, every pack is.
+      # With packs named, only those files are loaded (letters only, so a name can't reach a
+      # path outside the folder); without any, every pack is.
       - name: Write the SQL parts
         env:
           PACK: ${{ inputs.pack }}
         run: |
           if [ -z "$PACK" ]; then
             python3 scripts/classics/build-load-sql.py "$RUNNER_TEMP/classics-sql"
-          elif printf '%s' "$PACK" | grep -Eq '^[a-z]+$' && [ -f "content/classics/bulk-2026-11/works-$PACK.jsonl.gz" ]; then
-            python3 scripts/classics/build-load-sql.py "$RUNNER_TEMP/classics-sql" "content/classics/bulk-2026-11/works-$PACK.jsonl.gz"
-          else
-            echo "There is no pack called '$PACK' in content/classics/bulk-2026-11/." >&2
-            exit 1
+            exit 0
           fi
+          files=()
+          for name in $PACK; do
+            if ! printf '%s' "$name" | grep -Eq '^[a-z]+$' || [ ! -f "content/classics/bulk-2026-11/works-$name.jsonl.gz" ]; then
+              echo "There is no pack called '$name' in content/classics/bulk-2026-11/." >&2
+              exit 1
+            fi
+            files+=("content/classics/bulk-2026-11/works-$name.jsonl.gz")
+          done
+          python3 scripts/classics/build-load-sql.py "$RUNNER_TEMP/classics-sql" "${files[@]}"
 
       # Each part is one transaction; ON_ERROR_STOP makes psql stop at the first error, and the
       # loop stops too, so a failed part leaves the database as the parts before it left it.
