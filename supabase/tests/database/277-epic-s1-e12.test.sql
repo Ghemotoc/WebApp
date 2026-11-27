@@ -14,7 +14,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(14);
+select plan(15);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -92,8 +92,13 @@ select is(public.page_ads('story', '{"story_slug": "statia-meteo-seed01"}') #>> 
 reset role;
 update public.stories set rating = '18_plus', rating_reasons = '{sexual_content}' where slug = 'statia-meteo-seed01';
 select pg_temp.as_visitor();
+select is(public.page_ads('story', '{"story_slug": "statia-meteo-seed01"}') #>> '{0,ad,label}', 'ad',
+  'an 18+ story with sexual content ticked still gets the network (Robert, 27 Nov 2026)');
+reset role;
+update public.stories set genre_slugs = '{erotica}' where slug = 'statia-meteo-seed01';
+select pg_temp.as_visitor();
 select is(public.page_ads('story', '{"story_slug": "statia-meteo-seed01"}') #>> '{0,ad,label}', 'house',
-  'once it is 18+ with sexual content ticked, our own ad fills the slot instead (S1-E12-04 × S1-E3-06)');
+  'once it is labelled Erotica, our own ad fills the slot instead (S1-E12-04 × S1-E3-01, AD-GATES)');
 reset role;
 -- adult_writer's second seed story is shared only with a class; its address is kept for the visitor.
 update public.stories set class_only = true where id = '00000000-0000-4000-9000-000000000002';
