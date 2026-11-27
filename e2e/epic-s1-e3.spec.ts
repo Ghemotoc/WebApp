@@ -177,7 +177,7 @@ test.describe('epic S1-E3 journeys', () => {
     await page.getByRole('textbox', { name: 'Title' }).fill(storyTitle);
     await page.getByLabel('Language of the story').selectOption('ro');
     // The form is a five-step wizard (CALM-9, board D02): the category is step 2, the rating step 5.
-    await goToNewStoryStep(page, 'Format, tags and setting');
+    await goToNewStoryStep(page, 'Category, tags and setting');
     await page.getByRole('radio', { name: 'Fiction' }).click();
     await goToLastNewStoryStep(page);
     await page.getByRole('radio', { name: 'All ages', exact: true }).click();

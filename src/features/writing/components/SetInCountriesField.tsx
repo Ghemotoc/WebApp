@@ -1,6 +1,6 @@
 /**
  * SetInCountriesField: "Set in", the countries a story takes place in (CALM-9, board D02, step 2
- * "Format, tags and setting", next to Format; the field was Category before FORMS-1).
+ * "Category, tags and setting", next to Category).
  *
  * Board values: up to five countries as chips, each with a pin icon and a remove button, plus a
  * search field. Picking a country from the field's list (or typing its name and pressing Enter)
