@@ -45,17 +45,17 @@ function ChapterLine({
   const { t, i18n } = useAtlasTranslation();
   const numbers = new Intl.NumberFormat(i18n.language);
   const name = chapter.title === '' ? t('chapterPlan.untitled') : chapter.title;
-  // The state line: the chapter's layout and state, then its words against its target.
+  // The state line: the chapter's layout and state, then its words against its target. Each
+  // part is its own span, so the state reads on its own ("Published") as it did before LAYOUTS-1.
   const layoutWord = t(`chapterPlan.layouts.${chapter.layout}`, { defaultValue: chapter.layout });
   const status = t(`chapterPlan.chapterStates.${chapter.status}`, { defaultValue: chapter.status });
-  const state = `${layoutWord} · ${status}`;
-  const stateLine =
+  const wordsLine =
     chapter.wordTarget === null
-      ? state
-      : `${state} · ${t('chapterPlan.wordsOfTarget', {
+      ? null
+      : t('chapterPlan.wordsOfTarget', {
           words: numbers.format(chapter.wordCount),
           target: numbers.format(chapter.wordTarget),
-        })}`;
+        });
   return (
     <li>
       <Link
@@ -70,7 +70,10 @@ function ChapterLine({
           {t(`chapterPlan.listKinds.${chapter.kind}`, { number: number ?? chapter.position })}{' '}
           {name}
         </span>
-        <span className="type-meta font-normal text-ink-muted">{stateLine}</span>
+        <span className="type-meta font-normal text-ink-muted">
+          <span>{layoutWord}</span> · <span>{status}</span>
+          {wordsLine !== null && <> · {wordsLine}</>}
+        </span>
       </Link>
     </li>
   );
