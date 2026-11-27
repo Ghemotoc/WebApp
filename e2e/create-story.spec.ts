@@ -85,6 +85,11 @@ test.describe('create a story (S1-E3-01)', () => {
     // Since S1-E3-01 (26 Nov 2026) the language is named in the interface language, here English.
     await expect(page.getByText(`${longTitle} · Romanian`)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Change The basics' })).toBeVisible();
+    // FORMS-1 (Robert, 27 Nov 2026): no category is picked at first, and "Next" says one is missing.
+    const categoryGroup = page.getByRole('radiogroup', { name: 'Category', exact: true });
+    await expect(categoryGroup.getByRole('radio', { checked: true })).toHaveCount(0);
+    await page.getByRole('button', { name: /^Next: / }).click();
+    await expect(page.getByText('Choose a category.')).toBeVisible();
     await page.getByRole('radio', { name: 'Fiction' }).click();
 
     // "Set in" (board D02): Romania is a country chip with a pin, not a tag, and the preview says
