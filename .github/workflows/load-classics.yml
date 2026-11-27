@@ -67,19 +67,20 @@ jobs:
 
       # Each part is one transaction; ON_ERROR_STOP makes psql stop at the first error, and the
       # loop stops too, so a failed part leaves the database as the parts before it left it.
-      # PGOPTIONS lifts Supabase's statement timeout (about 2 minutes) for these sessions only:
-      # one part holding a long work (the Russian pack) ran past it on 27 Nov 2026.
+      # "set statement_timeout = 0" lifts Supabase's statement timeout (about 2 minutes) for each
+      # part's own session only: one part holding a long work (the Russian pack) ran past it on
+      # 27 Nov 2026. PGOPTIONS alone did not reach the database through the session pooler.
       - name: Run the SQL parts in order
         env:
           DATABASE_URL: ${{ secrets.CLASSICS_DATABASE_URL }}
-          PGOPTIONS: '-c statement_timeout=0'
         run: |
           count=$(ls "$RUNNER_TEMP"/classics-sql/part-*.sql | wc -l)
           number=0
           for part in "$RUNNER_TEMP"/classics-sql/part-*.sql; do
             number=$((number + 1))
             echo "Part $number of $count: $(basename "$part")"
-            psql "$DATABASE_URL" --quiet --no-psqlrc -v ON_ERROR_STOP=1 --file "$part" > /dev/null
+            psql "$DATABASE_URL" --quiet --no-psqlrc -v ON_ERROR_STOP=1 \
+              --command "set statement_timeout = 0" --file "$part" > /dev/null
           done
 
       # Print the totals so the run's log says what is now on the shelf.
