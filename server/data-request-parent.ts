@@ -180,6 +180,8 @@ async function sendParentEmail(
     overrides,
     productName: options.productName,
     companyName: options.companyName,
+    supportEmail: options.sender.email,
+    siteUrl: new URL(link).origin,
   });
   return options.sendEmail(email, options.sender).then(
     () => true,

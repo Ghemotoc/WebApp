@@ -13,6 +13,7 @@ import englishEmail from '../../src/locales/en/email.json';
 import romanianEmail from '../../src/locales/ro/email.json';
 import type { ConsentLanguage } from '../../src/schemas/parentConsent';
 import type { OutgoingEmail } from '../contact';
+import { letterBrand, letterEmail } from '../letter-email';
 import { textOf } from '../send-email';
 
 /** The texts of one language, as in email.json. */
@@ -62,6 +63,10 @@ export interface ConsentEmailContext {
   overrides: Map<string, string>;
   productName: string;
   companyName: string;
+  /** The support address, for the layout's brand. */
+  supportEmail: string;
+  /** The site's address, where the email's logo is served. */
+  siteUrl: string;
 }
 
 /**
@@ -94,7 +99,7 @@ export function consentDate(moment: string, language: ConsentLanguage): string {
 }
 
 /**
- * Writes one consent email as plain text.
+ * Writes one consent email: the plain text and the branded layout (server/letter-email.ts).
  *
  * @param kind - which email
  * @param to - the address
@@ -112,8 +117,15 @@ export function consentEmail(
   // Step 1: each text with the admins' wording when there is one, then the placeholders.
   const read = (path: string) =>
     fill(textOf(defaultTexts[context.language], context.overrides, path, names), values);
-  // Step 2: the lines, separated by a blank line, then the sign-off.
-  const lines = bodyLines[kind].map((line) => read(`parentConsent.${line}`));
-  const text = [...lines, read('signOff'), read('madeBy')].join('\n\n');
-  return { to, subject: read(`parentConsent.${subjectOf[kind]}`), text };
+  // Step 2: the lines, then the sign-off and "An app by …", in both parts of the email.
+  return letterEmail({
+    to,
+    subject: read(`parentConsent.${subjectOf[kind]}`),
+    language: context.language,
+    lines: bodyLines[kind].map((line) => read(`parentConsent.${line}`)),
+    signOff: read('signOff'),
+    madeBy: read('madeBy'),
+    pasteLabel: read('pasteLink'),
+    brand: letterBrand({ ...names, supportEmail: context.supportEmail, siteUrl: context.siteUrl }),
+  });
 }

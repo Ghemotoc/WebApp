@@ -13,7 +13,8 @@
  * Nothing here is product-specific: every name, address and word comes in from the caller, which
  * reads them from the brand config and email.json with the admins' overrides (CLAUDE.md: names are
  * settings, not code).
- * Who calls it: server/send-email.ts (Auth emails), server/notification-emails.ts and
+ * Who calls it: server/send-email.ts (Auth emails), server/notification-emails.ts,
+ * server/letter-email.ts (every other email, written as lines of text) and
  * scripts/build-auth-email-templates.ts (the Supabase Auth templates used until the hook is on).
  * What it calls: nothing; it only builds text.
  */
@@ -71,6 +72,11 @@ export interface EmailContent {
   code?: { label: string; value: string };
   /** "The link works once and expires after an hour." */
   linkNote?: string;
+  /**
+   * Words that come after the button in the email's own order ("The link works for 7 days"),
+   * for the plain letters that server/letter-email.ts draws.
+   */
+  afterAction?: string[];
   /** "If you didn't ask for this…", under a fine rule. */
   notYou?: string;
   signOff: string;
@@ -123,6 +129,24 @@ export function escapeHtml(text: string): string {
  */
 function textWithBreaks(text: string): string {
   return escapeHtml(text).split('\n').join('<br>');
+}
+
+/** A web address inside running text; a full stop, comma or bracket after it isn't part of it. */
+const addressInText = /https?:\/\/[^\s<]*[^\s<.,;:!?)]/g;
+
+/**
+ * Escaped text with its line breaks kept and every web address in it made a link, for the
+ * letters whose words carry their own addresses (an acknowledgement's "your ticket: https://…").
+ *
+ * @returns HTML text
+ */
+function textWithLinks(text: string): string {
+  // The text is escaped first, so an address can't carry markup; & in it is already &amp;.
+  return textWithBreaks(text).replace(
+    addressInText,
+    (address) =>
+      `<a href="${address}" style="color:${colours.link};word-break:break-all">${address}</a>`,
+  );
 }
 
 /**
@@ -237,7 +261,7 @@ function linkNoteHtml(content: EmailContent): string {
 function cardInsideHtml(content: EmailContent): string {
   const parts = [
     `<h1 class="email-heading" style="margin:0 0 16px;font:700 28px/34px ${fonts.heading};color:${colours.heading}">${escapeHtml(content.heading)}</h1>`,
-    ...content.paragraphs.map((paragraph) => bodyParagraph(textWithBreaks(paragraph))),
+    ...content.paragraphs.map((paragraph) => bodyParagraph(textWithLinks(paragraph))),
     listHtml(content.listItems ?? []),
   ];
   // Step 1: the one action, a code or a button, with the link note between the button and the link.
@@ -246,6 +270,8 @@ function cardInsideHtml(content: EmailContent): string {
     const { button, fullLink } = actionHtml(content.action);
     parts.push(button, linkNoteHtml(content), fullLink);
   }
+  // The words that follow the button in a plain letter keep their place after it.
+  parts.push(...(content.afterAction ?? []).map((line) => bodyParagraph(textWithLinks(line))));
   if (content.action === undefined && content.code === undefined) parts.push(linkNoteHtml(content));
   // Step 2: "if it wasn't you", under a fine rule, then the sign-off.
   if (content.notYou !== undefined) {
@@ -286,13 +312,15 @@ function footerHtml(content: EmailContent, brand: EmailBrand): string {
   const lines = (content.footerLines ?? []).map((line) =>
     smallParagraph(linkedLineHtml(line), 'footer'),
   );
-  // Robert, 23 Nov 2026: the company's name links to its own site.
-  lines.push(
-    smallParagraph(
-      lineWithLinkedWord(content.madeBy, brand.companyName, brand.companySiteUrl),
-      'footer',
-    ),
-  );
+  // Robert, 23 Nov 2026: the company's name links to its own site. A staff alert has no line.
+  if (content.madeBy !== '') {
+    lines.push(
+      smallParagraph(
+        lineWithLinkedWord(content.madeBy, brand.companyName, brand.companySiteUrl),
+        'footer',
+      ),
+    );
+  }
   if (content.questions !== undefined) {
     const mailto = `mailto:${brand.supportEmail}`;
     lines.push(

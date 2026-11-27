@@ -26,6 +26,8 @@ interface PagesContext {
     VITE_SUPABASE_ANON_KEY?: string;
     VITE_BRAND_SUPPORT_EMAIL?: string;
     VITE_BRAND_NAME?: string;
+    VITE_BRAND_COMPANY_NAME?: string;
+    VITE_BRAND_COMPANY_SITE_URL?: string;
   };
 }
 
@@ -43,6 +45,9 @@ export const onRequestPost = (context: PagesContext): Promise<Response> => {
     secret: context.env.NOTICE_SECRET,
     supportEmail: context.env.VITE_BRAND_SUPPORT_EMAIL ?? brandDefaults.supportEmail,
     productName: context.env.VITE_BRAND_NAME ?? brandDefaults.productName,
+    // The branded layout's footer: "An app by" and the company's site (server/letter-email.ts).
+    companyName: context.env.VITE_BRAND_COMPANY_NAME ?? brandDefaults.companyName,
+    companySiteUrl: context.env.VITE_BRAND_COMPANY_SITE_URL ?? brandDefaults.companySiteUrl,
     // Without the key the notice is still saved; the answer says the email wasn't sent.
     sendEmail:
       apiKey === ''

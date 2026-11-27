@@ -25,6 +25,7 @@ import englishEmail from '../src/locales/en/email.json';
 
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
 import { fillPlaceholders } from './notification-emails';
+import { letterBrand, letterEmail } from './letter-email';
 import { textOf } from './send-email';
 
 /** The texts of one language, as in email.json. */
@@ -142,14 +143,18 @@ export async function waitlistAlertEmail(
     joinedAt: new Date(claimed.joined_at).toUTCString(),
     staffLink: `${siteUrl}/staff/waitlist`,
   };
-  // Step 3: the email, one paragraph a part.
+  // Step 3: the email, one paragraph a part, in plain text and the branded layout
+  // (server/letter-email.ts); a staff alert has no "An app by …" line.
   const lines = ['body', 'details', 'action', 'why'];
-  const body = lines.map((line) => read(`waitlistAlert.${line}`, values));
-  return {
+  return letterEmail({
     to: alertMailbox(claimed.alert_to, options.sender),
     subject: read('waitlistAlert.subject', values),
-    text: [...body, read('signOff')].join('\n\n'),
-  };
+    language: 'en',
+    lines: lines.map((line) => read(`waitlistAlert.${line}`, values)),
+    signOff: read('signOff'),
+    pasteLabel: read('pasteLink'),
+    brand: letterBrand({ ...names, supportEmail: options.sender.email, siteUrl }),
+  });
 }
 
 /**

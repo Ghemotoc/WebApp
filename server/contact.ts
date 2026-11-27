@@ -22,6 +22,7 @@
 import { contactRequestSchema, type ContactRequest } from '../src/schemas/contact';
 
 import { hmacHex } from './signup-context';
+import { withLetterLayout } from './letter-email';
 
 /** One email to send. */
 export interface OutgoingEmail {
@@ -51,6 +52,9 @@ export interface ContactOptions {
   /** The support inbox, from the brand settings (CLAUDE.md: addresses are settings). */
   supportEmail: string;
   productName: string;
+  /** VITE_BRAND_COMPANY_NAME and the company's site, for the layout's footer. */
+  companyName?: string;
+  companySiteUrl?: string;
   sendEmail: SendEmail;
   /**
    * Where support tickets are saved (S1-E11-13): the database, as the front end reads it, and the
@@ -241,12 +245,15 @@ export async function handleContact(request: Request, options: ContactOptions): 
   const acknowledgement = acknowledgements[message.language];
   try {
     await options.sendEmail(staffEmail(message, reference, options.supportEmail), from);
+    // The sender's copy gets the branded layout (server/letter-email.ts); staff's stays plain.
+    const plain = {
+      to: message.email,
+      subject: acknowledgement.subject(reference, options.productName),
+      text: acknowledgement.body(reference, options.productName),
+    };
+    const siteUrl = new URL(request.url).origin;
     await options.sendEmail(
-      {
-        to: message.email,
-        subject: acknowledgement.subject(reference, options.productName),
-        text: acknowledgement.body(reference, options.productName),
-      },
+      withLetterLayout(plain, message.language, { ...options, siteUrl }),
       from,
     );
   } catch {

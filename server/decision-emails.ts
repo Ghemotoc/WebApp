@@ -21,6 +21,7 @@
  */
 import type { EmailSender, OutgoingEmail, SendEmail } from './contact';
 import { formatReceiptTime } from './notice';
+import { withLetterLayout } from './letter-email';
 
 /** What the handler needs from its surroundings. */
 export interface DecisionEmailOptions {
@@ -28,6 +29,9 @@ export interface DecisionEmailOptions {
   anonKey: string;
   supportEmail: string;
   productName: string;
+  /** VITE_BRAND_COMPANY_NAME and the company's site, for the layout's footer. */
+  companyName?: string;
+  companySiteUrl?: string;
   sendEmail: SendEmail;
 }
 
@@ -145,18 +149,24 @@ async function callAsModerator(
  * Sends each email, carrying on past a failure.
  *
  * @param dueEmails - what is due
- * @param options - the inbox, the product name and how to send
+ * @param options - the inbox, the names, the site's address (for the logo) and how to send
  * @returns the IDs of the notices whose email left
  */
 async function sendEach(
   dueEmails: DueDecisionEmail[],
-  options: DecisionEmailOptions,
+  options: DecisionEmailOptions & { siteUrl: string },
 ): Promise<string[]> {
   const from: EmailSender = { name: `${options.productName} team`, email: options.supportEmail };
   const sentIds: string[] = [];
   for (const due of dueEmails) {
     try {
-      await options.sendEmail(decisionEmail(due, options.productName), from);
+      // The plain text and the branded layout (server/letter-email.ts).
+      const email = withLetterLayout(
+        decisionEmail(due, options.productName),
+        due.language,
+        options,
+      );
+      await options.sendEmail(email, from);
       sentIds.push(due.notice_id);
     } catch {
       // It stays due; the queue's button tries again.
@@ -192,7 +202,7 @@ export async function handleDecisionEmails(
   if (!dueResponse.ok) return json({ error: 'forbidden' }, 403);
   const dueEmails = (await dueResponse.json()) as DueDecisionEmail[];
   // Step 3: send, then mark only what left.
-  const sentIds = await sendEach(dueEmails, options);
+  const sentIds = await sendEach(dueEmails, { ...options, siteUrl: new URL(request.url).origin });
   if (sentIds.length > 0) {
     const marked = await callAsModerator(
       'admin_mark_decision_emails_sent',
