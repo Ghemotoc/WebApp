@@ -15,7 +15,8 @@
  *   "Ploaia de test" with one chapter; teacher reads it and starts a Book talk thread. Every
  *   thread title ends in "e2e help"; all removed before and after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

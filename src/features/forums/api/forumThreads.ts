@@ -171,6 +171,11 @@ export interface ForumThreadPage {
   thread: ForumThreadHeader;
   posts: ForumPost[];
   hasMore: boolean;
+  /**
+   * A visitor who isn't logged in read the opening post and 2 replies, and the thread has more
+   * that only members get (GROWTH-4).
+   */
+  moreForMembers: boolean;
 }
 
 /** One thread in a forum's list. */
@@ -528,5 +533,6 @@ export async function fetchThread(
     thread: headerFrom(objectOf(page['thread'])),
     posts: listOf(page['posts']).map(postFrom),
     hasMore: page['has_more'] === true,
+    moreForMembers: page['more_for_members'] === true,
   };
 }

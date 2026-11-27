@@ -15,7 +15,7 @@ import { useId, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-  coverDesigns,
+  writerCoverDesigns,
   type CoverDesign,
   type CoverDesignKey,
   type DrawnCoverChoice,
@@ -105,15 +105,15 @@ function CoverTile({
 export function DrawnCoverPicker({ choice, onPick }: DrawnCoverPickerProps) {
   const { t } = useTranslation('writing');
   const groupId = useId();
-  const chosenIndex = coverDesigns.findIndex((design) => design.key === choice?.design);
+  const chosenIndex = writerCoverDesigns.findIndex((design) => design.key === choice?.design);
 
   /** Arrow keys move the choice; the picked tile takes focus. */
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
     if (step === undefined) return;
     event.preventDefault();
-    const next = (index + step + coverDesigns.length) % coverDesigns.length;
-    const design = coverDesigns[next];
+    const next = (index + step + writerCoverDesigns.length) % writerCoverDesigns.length;
+    const design = writerCoverDesigns[next];
     if (design === undefined) return;
     onPick(design.key);
     document.getElementById(`${groupId}-${next}`)?.focus();
@@ -125,7 +125,7 @@ export function DrawnCoverPicker({ choice, onPick }: DrawnCoverPickerProps) {
       aria-label={t('cover.designs')}
       className="grid grid-cols-[repeat(auto-fill,minmax(76px,1fr))] gap-2"
     >
-      {coverDesigns.map((design, index) => {
+      {writerCoverDesigns.map((design, index) => {
         const isChosen = choice?.design === design.key;
         // The chosen tile shows the writer's colours; the others show their board defaults.
         const tileChoice =

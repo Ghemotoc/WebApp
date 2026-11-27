@@ -72,6 +72,9 @@
     "loadFailed": "We couldn’t load this thread. Check your connection and try again.",
     "hiddenNote": "Our moderation team hid this thread. Only you can see it.",
     "showMore": "Show more replies",
+    "membersOnlyTitle": "Get in to read the rest",
+    "membersOnlyBody": "Visitors read the opening post and the first 2 replies. Get in to read the whole thread and reply.",
+    "membersOnlyLogIn": "Get in",
     "facts": {
       "title": "This thread",
       "replies": "Replies",

@@ -12,7 +12,8 @@
  * Test data: one published chapter of the seed story "Stația meteo"; the story is put back to
  * public and the chapter removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, screenWidths, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

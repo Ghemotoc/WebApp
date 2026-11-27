@@ -32,6 +32,8 @@
  * local Supabase with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, as on Cloudflare).
  * GET /c/… (server/landing-preview.ts, S1-E11-14: a landing page's Open Graph tags, the same way).
  * GET /u/… (server/profile-head.ts, GROWTH-3: a profile's search and share tags, the same way).
+ * GET /spaces/<slug>… and /forums/space-<slug>/… (server/space-head.ts, GROWTH-4: noindex unless
+ *   the space is fully public).
  * GET / and GET /help/… (server/website-head.ts, S1-E11-37: the home page's and help pages' search
  * and share tags, the same way; the country is LOCAL_FAKE_COUNTRY or the X-Fake-Country header).
  * GET /sitemap.xml and GET /robots.txt (server/sitemap.ts, S1-E11-38), from the local Supabase.
@@ -64,6 +66,7 @@ import { handleEmbed } from './embeds.ts';
 import { oembedLookup } from './embeds/oembed.ts';
 import { fetchLandingPreview, handleLandingLink, parseLandingAddress } from './landing-preview.ts';
 import { fetchProfileHead, handleProfilePage, parseProfileAddress } from './profile-head.ts';
+import { fetchSpaceSearchable, handleSpacePage, parseSpaceAddress } from './space-head.ts';
 import { fetchLinkPreview, handleSharedLink, parseSharedAddress } from './link-preview.ts';
 import { fetchSitemapEntries, handleSitemapFiles } from './sitemap.ts';
 import {
@@ -179,6 +182,13 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
         findHead: (handle) => fetchProfileHead(settings, handle),
       });
     }
+    // A space's page or thread says noindex unless the space is fully public (GROWTH-4).
+    if (parseSpaceAddress(new URL(request.url).pathname) !== null) {
+      return handleSpacePage(request, {
+        fetchIndexHtml,
+        isSearchable: (spaceSlug) => fetchSpaceSearchable(settings, spaceSlug),
+      });
+    }
     // A landing page at /c/<name> has a preview of its own (S1-E11-14; CONTESTS-13a2c).
     if (parseLandingAddress(new URL(request.url).pathname) !== null) {
       return handleLandingLink(request, {
@@ -199,7 +209,8 @@ function sharedLinkHandler(readIndexHtml: ReadIndexHtml, environment: Record<str
  * Cloudflare.
  *
  * @param url - the request's address
- * @returns true for /s/…, /c/<name>, /u/<handle> (GROWTH-3), / and /help/<address>, and for the
+ * @returns true for /s/…, /c/<name>, /u/<handle> (GROWTH-3), a space's page or thread (GROWTH-4),
+ *   / and /help/<address>, and for the
  *   home and help pages with a country and language in front ("/se/sv/help/<address>", LOCALISE-1)
  */
 function isPreviewAddress(url: string | undefined): boolean {
@@ -208,6 +219,7 @@ function isPreviewAddress(url: string | undefined): boolean {
     parseSharedAddress(pathname) !== null ||
     parseLandingAddress(pathname) !== null ||
     parseProfileAddress(pathname) !== null ||
+    parseSpaceAddress(pathname) !== null ||
     parseWebsiteAddress(pathname) !== null
   );
 }

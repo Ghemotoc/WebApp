@@ -16,7 +16,7 @@
  * Test data: four stories of its own by adult_writer, one of each rating, scored by the ranking
  * job; removed afterwards.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';

@@ -3445,7 +3445,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     CONSTRAINT "stories_class_link_only_when_class_only" CHECK (("class_only" OR ("class_space_id" IS NULL))),
     CONSTRAINT "stories_comment_audience_known" CHECK (("comment_audience" = ANY (ARRAY['everyone'::"text", 'followers'::"text"]))),
     CONSTRAINT "stories_content_note_length" CHECK (("char_length"("content_note") <= 300)),
-    CONSTRAINT "stories_cover_colours_are_in_the_palette" CHECK (((("cover_background" IS NULL) OR ("cover_background" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"]))) AND (("cover_accent" IS NULL) OR ("cover_accent" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"]))))),
+    CONSTRAINT "stories_cover_colours_are_in_the_palette" CHECK (((("cover_background" IS NULL) OR ("cover_background" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'crimson'::"text", 'seaglass'::"text", 'peach'::"text", 'pistachio'::"text", 'candy'::"text", 'linkblue'::"text"]))) AND (("cover_accent" IS NULL) OR ("cover_accent" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'crimson'::"text", 'seaglass'::"text", 'peach'::"text", 'pistachio'::"text", 'candy'::"text", 'linkblue'::"text"]))))),
     CONSTRAINT "stories_cover_columns_match_kind" CHECK (
 CASE "cover_kind"
     WHEN 'automatic'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NULL) AND ("cover_square_path" IS NULL))
@@ -3453,7 +3453,7 @@ CASE "cover_kind"
     WHEN 'upload'::"public"."cover_kind" THEN (("cover_design" IS NULL) AND ("cover_background" IS NULL) AND ("cover_accent" IS NULL) AND ("cover_tall_path" IS NOT NULL))
     ELSE NULL::boolean
 END),
-    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text", 'blushdots'::"text", 'skylines'::"text", 'goldgrid'::"text"])))),
+    CONSTRAINT "stories_cover_design_is_approved" CHECK ((("cover_design" IS NULL) OR ("cover_design" = ANY (ARRAY['plum'::"text", 'ink'::"text", 'violet'::"text", 'gold'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text", 'stripes'::"text", 'dots'::"text", 'grid'::"text", 'waves'::"text", 'starry'::"text", 'sparkles'::"text", 'twotone'::"text", 'arches'::"text", 'rings'::"text", 'forestwaves'::"text", 'blushdots'::"text", 'skylines'::"text", 'goldgrid'::"text", 'crimson'::"text", 'seaglass'::"text", 'peach'::"text", 'pistachio'::"text", 'candy'::"text", 'linkblue'::"text", 'classic_luceafarul'::"text", 'classic_the_raven'::"text", 'classic_goblin_market'::"text"])))),
     CONSTRAINT "stories_cover_style_fits_kind" CHECK (
 CASE "cover_kind"
     WHEN 'automatic'::"public"."cover_kind" THEN ("cover_style" = 'label'::"public"."cover_style")
@@ -3596,7 +3596,11 @@ COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the st
 
 
 
-COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); "doodles" was renamed "sparkles" in NO-DOODLES, G9c added arches, rings and forestwaves, and the design books added blushdots, skylines and goldgrid.';
+COMMENT ON CONSTRAINT "stories_cover_colours_are_in_the_palette" ON "public"."stories" IS 'A drawn cover uses the 9-colour palette (16 Oct 2026); the last six colours are for the classics account only (classic covers, 26 Nov 2026).';
+
+
+
+COMMENT ON CONSTRAINT "stories_cover_design_is_approved" ON "public"."stories" IS 'A drawn cover uses one of the designs the app can draw (src/components/covers/coverDesigns.ts); the last nine (six plain colours and three artwork backdrops) are for the classics account only (classic covers, 26 Nov 2026).';
 
 
 
@@ -7082,14 +7086,13 @@ COMMENT ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uuid"
 
 
 
-CREATE OR REPLACE FUNCTION "public"."admin_list_accounts"("page_number" integer DEFAULT 1, "page_size" integer DEFAULT 50) RETURNS TABLE("user_id" "uuid", "handle" "text", "pen_name" "text", "email_masked" "text", "country_code" "text", "age_band" "public"."age_band", "joined_at" timestamp with time zone, "last_used_on" "date", "account_status" "public"."account_status", "sanction_kinds" "public"."sanction_kind"[], "open_case_count" integer, "total_count" bigint)
+CREATE OR REPLACE FUNCTION "public"."admin_list_accounts"("page_number" integer DEFAULT 1, "page_size" integer DEFAULT 5, "status_filter" "public"."account_status" DEFAULT NULL::"public"."account_status") RETURNS TABLE("user_id" "uuid", "handle" "text", "pen_name" "text", "email_masked" "text", "country_code" "text", "age_band" "public"."age_band", "joined_at" timestamp with time zone, "last_used_on" "date", "account_status" "public"."account_status", "sanction_kinds" "public"."sanction_kind"[], "open_case_count" integer, "total_count" bigint)
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
 declare
   -- Today in Romania, so the age group matches what age_band() says elsewhere.
   today date := (now() at time zone 'Europe/Bucharest')::date;
-  every_account bigint;
 begin
   -- Step 1: the owner and admins only, in a staff session (staff_may checks the session).
   if not (public.staff_may('users', 'view')
@@ -7103,42 +7106,54 @@ begin
       using errcode = 'invalid_parameter_value', hint = 'refused';
   end if;
 
-  -- Step 3: the list itself is a sensitive read: who looked, which page (architecture 1.8.3).
+  -- Step 3: the list itself is a sensitive read: who looked, which page and which filter
+  -- (architecture 1.8.3).
   perform public.log_staff_action('sensitive_read.account_list', 'profiles',
-    'page ' || page_number::text);
+    'page ' || page_number::text || ', ' || page_size::text || ' a page'
+      || coalesce(', status ' || status_filter::text, ''));
 
-  -- Step 4: one page, newest first; deleted accounts too, so staff can still find them.
-  select count(*) into every_account from public.profiles;
+  -- Step 4: work out each account's status once, keep the ones the filter asks for (no filter:
+  -- everything but deleted), count them for the pager, and return one page, newest first.
   return query
-    select profiles.id,
-           profiles.handle,
-           profiles.pen_name,
+    with stated as (
+      select profiles.*, public.account_state(profiles.id) as state
+      from public.profiles
+    ),
+    matching as (
+      select stated.*, count(*) over () as matching_count
+      from stated
+      where (status_filter is null and stated.state <> 'deleted')
+         or stated.state = status_filter
+    )
+    select matching.id,
+           matching.handle,
+           matching.pen_name,
            public.mask_email(users.email),
-           profiles.country_code,
-           coalesce(public.age_band_from_birth(profiles.birth_year, profiles.birth_month,
-             profiles.age_check_result, today), 'unknown'::public.age_band),
-           profiles.created_at,
-           public.account_last_used_on(profiles.id),
-           public.account_state(profiles.id),
+           matching.country_code,
+           coalesce(public.age_band_from_birth(matching.birth_year, matching.birth_month,
+             matching.age_check_result, today), 'unknown'::public.age_band),
+           matching.created_at,
+           public.account_last_used_on(matching.id),
+           matching.state,
            coalesce((select array_agg(distinct sanctions.kind) from public.sanctions
-                     where sanctions.user_id = profiles.id), '{}'),
+                     where sanctions.user_id = matching.id), '{}'),
            (select count(*)::integer from public.cases
-            where cases.user_id = profiles.id and cases.status = 'open'
+            where cases.user_id = matching.id and cases.status = 'open'
               and public.may_see_case(cases.is_safeguarding)),
-           every_account
-    from public.profiles
-    left join auth.users on users.id = profiles.id
-    order by profiles.created_at desc, profiles.id
+           matching.matching_count
+    from matching
+    left join auth.users on users.id = matching.id
+    order by matching.created_at desc, matching.id
     limit page_size
     offset (page_number - 1) * page_size;
 end;
 $$;
 
 
-ALTER FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) OWNER TO "postgres";
+ALTER FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer, "status_filter" "public"."account_status") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) IS 'Every account, a page at a time, newest first, for the owner and admins; each page read logged (Staff › Users full list, 26 Nov 2026).';
+COMMENT ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer, "status_filter" "public"."account_status") IS 'Accounts a page at a time, newest first, by status (deleted left out unless asked for), for the owner and admins; each page read logged (Staff › Users, 26 Nov 2026).';
 
 
 
@@ -20436,6 +20451,42 @@ COMMENT ON FUNCTION "public"."classic_authors_dying_in"("died" integer) IS 'Inte
 
 
 
+CREATE OR REPLACE FUNCTION "public"."classic_cover_colour"("story_id" "uuid") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select (array['plum', 'violet', 'ink', 'gold', 'crimson', 'seaglass', 'peach', 'pistachio',
+                'candy', 'linkblue'])[
+    1 + (('x' || lpad(substr(md5(story_id::text), 1, 8), 16, '0'))::bit(64)::bigint % 10)::int];
+$$;
+
+
+ALTER FUNCTION "public"."classic_cover_colour"("story_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."classic_cover_colour"("story_id" "uuid") IS 'The solid colour a classic cover takes, picked from the story ID so it never changes (classic covers, 26 Nov 2026).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."classic_cover_design"("story_slug" "text") RETURNS "text"
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  select case story_slug
+    when 'luceafarul-classic' then 'classic_luceafarul'
+    when 'the-raven-classic' then 'classic_the_raven'
+    when 'goblin-market-classic' then 'classic_goblin_market'
+  end;
+$$;
+
+
+ALTER FUNCTION "public"."classic_cover_design"("story_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."classic_cover_design"("story_slug" "text") IS 'The artwork backdrop for Luceafărul, The Raven and Goblin Market; null for other classics (classic covers, 26 Nov 2026).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."classic_edition_details"("first_edition_id" "uuid", "edition_id" "uuid", "details" "jsonb") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -27842,19 +27893,39 @@ declare
   wanted integer;
   page jsonb;
   last_number integer;
+  -- GROWTH-4: a visitor who isn't logged in reads the opening post and 2 replies, then is asked
+  -- to log in (Robert, 26 Nov 2026, 19:45 UTC: "after the 2nd reply to the poster they need to
+  -- log in to read the rest").
+  is_visitor boolean := (select auth.uid()) is null;
+  visitor_post_limit constant integer := 3;
+  visitor_last integer;
+  more_after boolean;
 begin
   -- Step 1: the thread, if the caller may open it.
   select * into thread from public.forum_threads where forum_threads.thread_number = forum_thread.thread_number;
   if thread.id is null or not public.forum_thread_is_shown(thread) then
     return null;
   end if;
-  -- Step 2: how far to read: a page, or as far as the permalink's post.
+  -- Step 2: for a visitor, the number of the last post they may read: the third post they can
+  -- see. Null when the thread has three visible posts or fewer, so there is nothing to hold back.
+  if is_visitor then
+    select visible.post_number into visitor_last
+    from (select forum_posts.post_number from public.forum_posts
+          where forum_posts.thread_id = thread.id
+            and public.forum_post_state_for_caller(forum_posts) is not null
+          order by forum_posts.post_number
+          offset visitor_post_limit - 1
+          limit 1) as visible;
+  end if;
+  -- Step 3: how far to read: a page, or as far as the permalink's post.
   wanted := greatest(page_size, coalesce(up_to_post, 0) - coalesce(after_post, 0));
-  -- Step 3: the posts after after_post, in number order, without the ones the caller can't see.
+  -- Step 4: the posts after after_post, in number order, without the ones the caller can't see,
+  -- and for a visitor none after visitor_last.
   with listed as (
     select forum_posts.* from public.forum_posts
     where forum_posts.thread_id = thread.id
       and forum_posts.post_number > coalesce(after_post, 0)
+      and (visitor_last is null or forum_posts.post_number <= visitor_last)
       and public.forum_post_state_for_caller(forum_posts) is not null
     order by forum_posts.post_number
     limit wanted
@@ -27863,14 +27934,23 @@ begin
          max(listed.post_number)
   into page, last_number
   from listed;
-  -- Step 4: more when a visible post comes after the last one read.
+  -- Step 5: is there a visible post after the last one read? For a member that is "Show more
+  -- replies". For a visitor, posts up to visitor_last still page as before; the posts after it
+  -- are never sent, and more_for_members tells the page to ask them to log in.
+  more_after := exists (select 1 from public.forum_posts
+                        where forum_posts.thread_id = thread.id
+                          and forum_posts.post_number > coalesce(last_number, coalesce(after_post, 0))
+                          and (visitor_last is null or forum_posts.post_number <= visitor_last)
+                          and public.forum_post_state_for_caller(forum_posts) is not null);
   return jsonb_build_object(
     'thread', public.forum_thread_header_json(thread),
     'posts', page,
-    'has_more', exists (select 1 from public.forum_posts
-                        where forum_posts.thread_id = thread.id
-                          and forum_posts.post_number > coalesce(last_number, coalesce(after_post, 0))
-                          and public.forum_post_state_for_caller(forum_posts) is not null));
+    'has_more', more_after,
+    'more_for_members', visitor_last is not null and exists (
+      select 1 from public.forum_posts
+      where forum_posts.thread_id = thread.id
+        and forum_posts.post_number > visitor_last
+        and public.forum_post_state_for_caller(forum_posts) is not null));
 end;
 $$;
 
@@ -27878,7 +27958,7 @@ $$;
 ALTER FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) IS 'A thread with its numbered posts in order, for the thread page; never a user ID (S1-E8-02).';
+COMMENT ON FUNCTION "public"."forum_thread"("thread_number" bigint, "after_post" integer, "up_to_post" integer) IS 'A thread with its numbered posts in order, for the thread page; a visitor gets the first three only (S1-E8-02, GROWTH-4).';
 
 
 
@@ -33403,17 +33483,33 @@ CREATE OR REPLACE FUNCTION "public"."more_by_writer"("story_slug" "text") RETURN
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+  -- Step 1: the story the row sits beside, only when the caller may see it, with its real author
+  -- (null for a writer's own story).
   with shown_beside as (
-    select * from public.visible_story_by_slug(story_slug)
+    select visible.story_id, visible.writer_id, stories.classic_author_id
+    from public.visible_story_by_slug(story_slug) as visible
+    join public.stories on stories.id = visible.story_id
   ),
+  -- Step 2: the other listed stories with the same byline, most popular first.
   others as (
     select listed.id, coalesce(scores.score, 0) as score, listed.first_published_at
     from public.listed_stories('popular', null, null, null, null) as listed
-    join shown_beside on shown_beside.writer_id = listed.user_id and listed.id <> shown_beside.story_id
+    join public.stories as other_story on other_story.id = listed.id
+    join shown_beside on listed.id <> shown_beside.story_id
+      and (
+        -- A classic: the same real author, whichever account published it.
+        (shown_beside.classic_author_id is not null
+          and other_story.classic_author_id = shown_beside.classic_author_id)
+        -- A writer's own story: the same writer's own stories, never a classic.
+        or (shown_beside.classic_author_id is null
+          and other_story.classic_author_id is null
+          and listed.user_id = shown_beside.writer_id)
+      )
     left join public.story_scores as scores on scores.story_id = listed.id
     order by score desc, listed.first_published_at desc nulls last
     limit public.suggestion_row_size()
   )
+  -- Step 3: the cards, in the same order.
   select jsonb_build_object('stories', coalesce(
     (select jsonb_agg(public.story_card_json(others.id) order by others.score desc,
                       others.first_published_at desc nulls last) from others), '[]'::jsonb));
@@ -33423,7 +33519,7 @@ $$;
 ALTER FUNCTION "public"."more_by_writer"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."more_by_writer"("story_slug" "text") IS 'More by this writer: the writer''s other stories the caller may see, most popular first (S1-E15-06).';
+COMMENT ON FUNCTION "public"."more_by_writer"("story_slug" "text") IS 'More by: the other stories with the same byline the caller may see (a classic''s real author, or the writer), most popular first (S1-E15-06; BUGS, 26 Nov 2026).';
 
 
 
@@ -50327,9 +50423,10 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       -- CALM-9s: a story hidden in any country stays out, as search engines list worldwide.
       and cardinality(stories.hidden_in_countries) = 0
     union all
-    -- Step 5 (GROWTH-2): each readable chapter of a story listed in step 4 that visitors get
-    -- text from: the whole chapter for a classic, the teaser for a writer's story. 16+ and 18+
-    -- chapters show visitors no text, so they stay out.
+    -- Step 5 (GROWTH-2, narrowed by GROWTH-4): each readable chapter of a public-domain classic
+    -- listed in step 4. A writer's chapters stay out of search (Robert, 26 Nov 2026, 19:45 UTC:
+    -- "the chapters of user generated content should not be crawlable, just the book page").
+    -- 16+ and 18+ chapters show visitors no text, so they stay out too.
     select '/s/' || stories.slug || '/' || chapters.code,
       coalesce(chapters.edited_at, chapters.first_published_at)::date
     from public.stories
@@ -50340,6 +50437,7 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
       and not public.story_app_only_applies(stories.is_app_only)
       and not public.is_moderated_away('story', stories.id)
       and cardinality(stories.hidden_in_countries) = 0
+      and stories.classic_author_id is not null
       and public.chapter_is_readable(chapters.id)
     union all
     -- Step 6 (GROWTH-3): the profile of each adult who shows it to everyone and has a story in
@@ -50364,6 +50462,22 @@ CREATE OR REPLACE FUNCTION "public"."sitemap_entries"() RETURNS TABLE("path" "te
     from public.categories
     where exists (select 1 from public.stories
                   where stories.category_id = categories.id and public.story_is_searchable(stories.id))
+    union all
+    -- Step 9 (GROWTH-4): each live thread in a staff forum or in a fully public space (Robert,
+    -- 26 Nov 2026, 19:47 and 19:48 UTC: "public forum threads"; "fully public spaces can be
+    -- crawlable and indexable"). Private spaces and classes never appear.
+    select '/forums/' || forums.slug || '/' || forum_threads.thread_number,
+      forum_threads.last_post_at::date
+    from public.forum_threads
+    join public.forums on forums.id = forum_threads.forum_id and forums.deleted_at is null
+    where forum_threads.deleted_at is null
+      and not public.is_moderated_away('forum_thread', forum_threads.id)
+      and (forums.space_id is null or public.space_is_searchable(forums.space_id))
+    union all
+    -- Step 10 (GROWTH-4): each fully public space's own page.
+    select '/spaces/' || spaces.slug, spaces.updated_at::date
+    from public.spaces
+    where public.space_is_searchable(spaces.id)
   )
   limit 50000;
 $$;
@@ -50801,6 +50915,28 @@ ALTER FUNCTION "public"."space_is_member"("target_space_id" "uuid") OWNER TO "po
 
 
 COMMENT ON FUNCTION "public"."space_is_member"("target_space_id" "uuid") IS 'Internal: whether the caller is an active member of a space (S1-E8-06).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") RETURNS boolean
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select exists (
+    select 1 from public.spaces
+    where spaces.id = target_space_id
+      and spaces.kind = 'open'
+      and spaces.age_group = '16_plus'
+      and spaces.deleted_at is null
+      and spaces.archived_at is null
+      and not public.is_moderated_away('space', spaces.id));
+$$;
+
+
+ALTER FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") IS 'Internal: whether search engines may list a space and its threads: open, for 16+, live (GROWTH-4).';
 
 
 
@@ -51477,6 +51613,24 @@ ALTER FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") OWN
 
 
 COMMENT ON FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") IS 'Internal: the caller''s powers in a space (S1-E8-07).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."space_search_head"("wanted_slug" "text") RETURNS "jsonb"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  select jsonb_build_object('indexable', coalesce((
+    select public.space_is_searchable(spaces.id) from public.spaces
+    where spaces.slug = wanted_slug and spaces.deleted_at is null
+    limit 1), false));
+$$;
+
+
+ALTER FUNCTION "public"."space_search_head"("wanted_slug" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."space_search_head"("wanted_slug" "text") IS 'Whether a space''s pages may be listed by search engines, by slug (GROWTH-4).';
 
 
 
@@ -52560,6 +52714,48 @@ ALTER FUNCTION "public"."storage_files_to_sweep"("max_files" integer) OWNER TO "
 
 
 COMMENT ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) IS 'Lists Storage files no row points at any more, for the storage-sweep Edge Function (S1-E13-04).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."stories_classic_cover"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  classic_only_keys text[] := array['crimson', 'seaglass', 'peach', 'pistachio', 'candy',
+    'linkblue', 'classic_luceafarul', 'classic_the_raven', 'classic_goblin_market'];
+  is_classic boolean := public.is_classics_account(new.user_id);
+begin
+  -- Step 1: only the classics account may use the classic covers' designs and colours.
+  if not is_classic and (new.cover_design = any (classic_only_keys)
+      or new.cover_background = any (classic_only_keys)
+      or new.cover_accent = any (classic_only_keys)) then
+    raise exception 'This cover is only for classics.'
+      using errcode = 'check_violation', hint = 'classic_cover_only';
+  end if;
+
+  -- Step 2: a new classic (a first edition, not an uploaded picture) gets its classic cover.
+  if tg_op = 'INSERT' and is_classic and new.edition_of_story_id is null
+      and new.cover_kind in ('automatic', 'drawn') then
+    new.cover_kind := 'drawn';
+    new.cover_style := 'label';
+    new.cover_accent := 'paper';
+    new.cover_design := coalesce(public.classic_cover_design(new.slug),
+                                 public.classic_cover_colour(new.id));
+    -- An artwork backdrop is plum underneath, so plum is its fall-back colour.
+    new.cover_background := case
+      when public.classic_cover_design(new.slug) is not null then 'plum'
+      else public.classic_cover_colour(new.id) end;
+  end if;
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."stories_classic_cover"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."stories_classic_cover"() IS 'Gives a new classic its solid colour or artwork Label cover, and keeps the classic-only covers off other accounts'' stories (classic covers, 26 Nov 2026).';
 
 
 
@@ -66546,6 +66742,14 @@ CREATE OR REPLACE TRIGGER "stories_a_edition_rules" BEFORE INSERT OR UPDATE ON "
 
 
 
+CREATE OR REPLACE TRIGGER "stories_b_classic_cover" BEFORE INSERT OR UPDATE OF "cover_design", "cover_background", "cover_accent" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_classic_cover"();
+
+
+
+COMMENT ON TRIGGER "stories_b_classic_cover" ON "public"."stories" IS 'Classic covers (26 Nov 2026): a new classic gets its Label cover; nobody else may use the classic-only designs and colours.';
+
+
+
 CREATE OR REPLACE TRIGGER "stories_clear_hidden_presentation" BEFORE UPDATE OF "title", "cover_kind", "cover_design", "cover_background", "cover_accent", "cover_tall_path" ON "public"."stories" FOR EACH ROW EXECUTE FUNCTION "public"."stories_clear_hidden_presentation"();
 
 
@@ -71960,8 +72164,8 @@ GRANT ALL ON FUNCTION "public"."admin_link_returning_user"("target_case_id" "uui
 
 
 
-REVOKE ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer) TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer, "status_filter" "public"."account_status") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."admin_list_accounts"("page_number" integer, "page_size" integer, "status_filter" "public"."account_status") TO "authenticated";
 
 
 
@@ -73723,6 +73927,14 @@ REVOKE ALL ON FUNCTION "public"."class_winners_allowed"("grade" smallint) FROM P
 
 
 REVOKE ALL ON FUNCTION "public"."classic_authors_dying_in"("died" integer) FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."classic_cover_colour"("story_id" "uuid") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."classic_cover_design"("story_slug" "text") FROM PUBLIC;
 
 
 
@@ -77876,6 +78088,10 @@ REVOKE ALL ON FUNCTION "public"."space_is_member"("target_space_id" "uuid") FROM
 
 
 
+REVOKE ALL ON FUNCTION "public"."space_is_searchable"("target_space_id" "uuid") FROM PUBLIC;
+
+
+
 GRANT REFERENCES,TRIGGER,TRUNCATE,MAINTAIN ON TABLE "public"."space_members" TO "service_role";
 GRANT SELECT ON TABLE "public"."space_members" TO "authenticated";
 
@@ -77975,6 +78191,12 @@ REVOKE ALL ON FUNCTION "public"."space_post_for_moderation"("post_id" "uuid", "r
 
 
 REVOKE ALL ON FUNCTION "public"."space_powers_of_caller"("target" "public"."spaces") FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."space_search_head"("wanted_slug" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."space_search_head"("wanted_slug" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."space_search_head"("wanted_slug" "text") TO "authenticated";
 
 
 
@@ -78108,6 +78330,10 @@ GRANT ALL ON FUNCTION "public"."stop_reading_habit"() TO "authenticated";
 
 REVOKE ALL ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."storage_files_to_sweep"("max_files" integer) TO "service_role";
+
+
+
+REVOKE ALL ON FUNCTION "public"."stories_classic_cover"() FROM PUBLIC;
 
 
 

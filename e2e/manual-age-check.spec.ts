@@ -17,7 +17,8 @@
  * log names the account once a moderator decides, so its profile stays (audit rows are never
  * deleted); the address and username are unique per run.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

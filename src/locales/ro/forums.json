@@ -73,6 +73,9 @@
     "loadFailed": "Nu am putut încărca discuția. Verifică-ți conexiunea și încearcă din nou.",
     "hiddenNote": "Echipa de moderare a ascuns această discuție. Doar tu o poți vedea.",
     "showMore": "Arată mai multe răspunsuri",
+    "membersOnlyTitle": "Intră în cont ca să citești restul",
+    "membersOnlyBody": "Vizitatorii citesc prima postare și primele 2 răspunsuri. Intră în cont ca să citești toată discuția și să răspunzi.",
+    "membersOnlyLogIn": "Intră în cont",
     "facts": {
       "title": "Despre discuție",
       "replies": "Răspunsuri",

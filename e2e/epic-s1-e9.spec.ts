@@ -18,7 +18,8 @@
  * Test data: everything this file makes is deleted at the start and the end; adults_only is
  * switched off for the run and put back as it was.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

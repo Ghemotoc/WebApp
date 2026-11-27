@@ -14,7 +14,8 @@
  * Test data: two of Lia's stories, one ongoing and one completed, each with a published chapter,
  * made here and removed afterwards.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

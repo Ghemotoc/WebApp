@@ -23,7 +23,7 @@
  * - the search pages pass axe at 390, 768 and 1440 px, light and night, ro and en.
  * Test data: 22 stories of the spec's own by teacher (one of them 16+), removed afterwards.
  */
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

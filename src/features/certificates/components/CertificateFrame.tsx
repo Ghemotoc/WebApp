@@ -13,7 +13,7 @@
  */
 import type { ReactNode } from 'react';
 
-import { coverArtwork } from '@/components/covers/coverDesigns';
+import { coverArtwork } from '@/components/covers/coverArtwork';
 
 import {
   certificateColourHex,

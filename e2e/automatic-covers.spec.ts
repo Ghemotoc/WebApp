@@ -12,7 +12,8 @@
  * - the design named in the form is the one the card shows, whatever the title.
  * Test data: the seed personas; the stories this test makes are deleted at the end.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { goToLastNewStoryStep, goToNewStoryStep } from './support/newStoryWizard';
 import { LANGUAGE_STORAGE_KEY } from './support/accessibility';

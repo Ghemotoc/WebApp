@@ -10,7 +10,8 @@
  * - both pages pass axe at 390, 768 and 1440 px, light and night, ro and en.
  * Test data: the two pages the migration seeds; nothing is written.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 

@@ -12,7 +12,8 @@
  * Test data: adult_writer starts "Cercul de predare test" (open), teacher joins and is made a
  * moderator. Removed before and after; the name never ends in "e2e", so spaces.spec leaves it.
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

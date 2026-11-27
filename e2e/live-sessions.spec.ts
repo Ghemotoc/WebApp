@@ -18,7 +18,8 @@
  * Test data: the seed's adult_writer, teen_17 and admin; the sessions, reminders and
  * notifications made here are removed afterwards (the audit log keeps its rows: append-only).
  */
-import { expect, test, type Browser } from '@playwright/test';
+import { type Browser } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen } from './support/accessibility';
 import { runSql } from './support/database';

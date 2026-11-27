@@ -21,7 +21,8 @@
  * is caught and checked, and a provider account is made in SQL the way Supabase Auth makes one.
  * Test data: throwaway @example.com accounts made and removed here; the flags are put back off.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';

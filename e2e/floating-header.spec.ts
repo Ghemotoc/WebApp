@@ -12,7 +12,8 @@
  * - nothing scrolls sideways.
  * Test data: the seed's public pages; nothing is changed.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { signInPersona, useSessionInBrowser } from './support/personas';
 

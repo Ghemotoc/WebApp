@@ -17,7 +17,8 @@
  *   English, light and night.
  * Test data: one @example.com account, removed afterwards, and the local signing secret in Vault.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { runSql } from './support/database';

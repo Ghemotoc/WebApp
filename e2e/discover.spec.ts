@@ -17,7 +17,8 @@
  * "e2e-farul", removed afterwards. Assertions use only these stories, so other specs publishing
  * at the same time don't change the result.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView, LANGUAGE_STORAGE_KEY } from './support/accessibility';
 import { runSql } from './support/database';

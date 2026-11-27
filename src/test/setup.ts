@@ -13,9 +13,12 @@ import { afterEach } from 'vitest';
 
 import { registerPreloadedLanguage } from '@/lib/i18n-loading';
 import englishAccount from '@/locales/en/account.json';
+import englishAds from '@/locales/en/ads.json';
 import englishAuth from '@/locales/en/auth.json';
 import englishCommon from '@/locales/en/common.json';
 import englishLegal from '@/locales/en/legal.json';
+import englishLibrary from '@/locales/en/library.json';
+import englishPeople from '@/locales/en/people.json';
 import englishReading from '@/locales/en/reading.json';
 import englishWriting from '@/locales/en/writing.json';
 
@@ -27,6 +30,10 @@ registerPreloadedLanguage('en', {
   account: englishAccount,
   writing: englishWriting,
   reading: englishReading,
+  // The reader's feature namespaces, whose English loads with the eager files (i18n-loading).
+  people: englishPeople,
+  ads: englishAds,
+  library: englishLibrary,
 });
 
 afterEach(() => {

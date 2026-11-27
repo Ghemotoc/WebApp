@@ -20,7 +20,8 @@
  * The database half is supabase/tests/database/093-epic-s1-e4.test.sql.
  * Test data: seed personas; the seed story's chapters are removed and the story put back after.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, LANGUAGE_STORAGE_KEY, screenWidths } from './support/accessibility';
 import { runSql } from './support/database';
@@ -142,13 +143,13 @@ test.describe('epic check: reading (S1-E4-QA)', () => {
     browser,
     request,
   }) => {
-    // What WhatsApp reads: the server-rendered preview. A chapter visitors get text from may be
-    // listed by search engines (GROWTH-2), so it carries no noindex.
+    // What WhatsApp reads: the server-rendered preview. A writer's chapter is kept out of search
+    // engines (GROWTH-4; only the story's page is listed), so it carries noindex.
     const preview = await request.get(firstChapter);
     expect(await preview.text()).toContain(
       '<meta property="og:title" content="Stația meteo · Caietele bunicii">',
     );
-    expect(preview.headers()['x-robots-tag']).toBeUndefined();
+    expect(preview.headers()['x-robots-tag']).toBe('noindex');
     // The visitor's browser: the teaser, copy-protected, and the prompt.
     const visitorContext = await browser.newContext({
       permissions: ['clipboard-read', 'clipboard-write'],

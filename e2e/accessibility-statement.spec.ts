@@ -12,7 +12,8 @@
  * - the statement passes axe at 390, 768 and 1440 px.
  * Test data: seed personas only.
  */
-import { expect, test, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
+import { expect, test } from './support/test';
 
 import { checkScreen, everyView } from './support/accessibility';
 import { signInPersona, useSessionInBrowser } from './support/personas';
