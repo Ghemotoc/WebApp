@@ -23,7 +23,8 @@
  * expectLookRulesByDayAndNight() to open a page as a persona in both themes first (BOOKS-8b).
  * What it calls: Playwright's page.evaluate, so the measuring runs inside the page.
  */
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { type Browser, type Page } from '@playwright/test';
+import { expect, test } from './test';
 
 import { THEME_STORAGE_KEY } from '../../src/lib/theme';
 
