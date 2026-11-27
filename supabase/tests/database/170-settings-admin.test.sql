@@ -68,7 +68,7 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000009');
 select is(public.admin_move_category('poetry', -1), 1, 'poetry moves to the top');
 select is(public.admin_move_category('poetry', -1), 1, 'and stays there when moved up again');
 select results_eq($$ select slug from public.categories order by position $$,
-  $$ values ('poetry'), ('fiction'), ('nonfiction_essays') $$, 'the order readers see changed');
+  $$ values ('poetry'), ('fiction'), ('nonfiction_essays'), ('plays') $$, 'the order readers see changed');
 
 /* ---------- Reserved names and words ---------- */
 

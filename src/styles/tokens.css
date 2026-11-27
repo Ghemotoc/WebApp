@@ -206,6 +206,7 @@
   --category-fiction: #4d1b5e;
   --category-poetry: #2e4a8c;
   --category-essays: #2f6b4f;
+  --category-plays: #8a3b46;
 
   /* Story paper: only where story text sits (reader, editor; rulebook 3). */
   --story-paper: #fffbf2;
@@ -505,6 +506,7 @@
   --category-fiction: #4d1b5e;
   --category-poetry: #2e4a8c;
   --category-essays: #2f6b4f;
+  --category-plays: #8a3b46;
 }
 
 /*
