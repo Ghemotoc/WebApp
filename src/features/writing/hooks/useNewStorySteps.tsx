@@ -12,8 +12,9 @@ import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import type { WizardStep } from '@/components/ui/StepWizard';
+import { languageMenuName, type LanguageChoice } from '@/lib/language-names';
 
-import type { StoryCategory, StoryLanguageChoice } from '../api/stories';
+import type { StoryCategory } from '../api/stories';
 import type { SetStoryAnswer, StoryAnswers, StoryFieldErrors } from './storyAnswers';
 import { setInPhrase } from '../lib/setInCountries';
 
@@ -48,7 +49,7 @@ export interface NewStoryStepsInput {
   answers: StoryAnswers;
   errors: StoryFieldErrors;
   set: SetStoryAnswer;
-  languages: StoryLanguageChoice[];
+  languages: readonly LanguageChoice[];
   categories: StoryCategory[];
   penName: string;
 }
@@ -69,7 +70,8 @@ function stepSummaries(answers: StoryAnswers, t: TFunction<'writing'>, language:
     upload: 'newStory.summary.coverUpload',
   } as const;
   return [
-    `${title} · ${t(`languages.${answers.languageCode}`, { defaultValue: answers.languageCode })}`,
+    // S1-E3-01: any language of the world, named in the interface language.
+    `${title} · ${languageMenuName(answers.languageCode, language)}`,
     categoryTags.filter((part) => part !== '').join(' · '),
     t(coverKeys[answers.cover.kind]),
     t(`visibility.options.${answers.visibility}`),

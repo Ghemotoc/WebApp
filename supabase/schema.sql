@@ -18888,16 +18888,19 @@ CREATE OR REPLACE FUNCTION "public"."check_story_basics"("clean_title" "text", "
 declare
   chosen_category_id uuid;
 begin
+  -- Step 1: the title and the blurb fit their limits (S1-E3-01).
   if char_length(clean_title) not between 1 and 120 then
     raise exception 'A title needs 1 to 120 characters (S1-E3-01).' using errcode = 'check_violation';
   end if;
   if char_length(clean_blurb) > 500 then
     raise exception 'A blurb can have at most 500 characters (S1-E3-01).' using errcode = 'check_violation';
   end if;
-  if language_code is null or language_code not in (select public.open_story_languages()) then
-    raise exception 'Stories can be written only in an open language (S1-E3-01, architecture 1.7.9).'
+  -- Step 2: any language of the world (Robert, 26 Nov 2026), no longer only an open one.
+  if not public.is_story_language_code(language_code) then
+    raise exception 'A story''s language must be a language code such as "ro" (S1-E3-01).'
       using errcode = 'check_violation';
   end if;
+  -- Step 3: a category the platform has.
   select categories.id into chosen_category_id from public.categories where categories.slug = category_slug;
   if chosen_category_id is null then
     raise exception 'Unknown category "%" (S1-E3-01).', coalesce(category_slug, 'none') using errcode = 'check_violation';
@@ -18910,7 +18913,7 @@ $$;
 ALTER FUNCTION "public"."check_story_basics"("clean_title" "text", "clean_blurb" "text", "language_code" "text", "category_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."check_story_basics"("clean_title" "text", "clean_blurb" "text", "language_code" "text", "category_slug" "text") IS 'Internal: the title, blurb, language and category rules; returns the category ID (S1-E3-05).';
+COMMENT ON FUNCTION "public"."check_story_basics"("clean_title" "text", "clean_blurb" "text", "language_code" "text", "category_slug" "text") IS 'Internal: the title, blurb, language (any world language since 26 Nov 2026) and category rules; returns the category ID (S1-E3-05).';
 
 
 
@@ -30071,6 +30074,24 @@ COMMENT ON FUNCTION "public"."is_staff_session"() IS 'True when the session may 
 
 
 
+CREATE OR REPLACE FUNCTION "public"."is_story_language_code"("code" "text") RETURNS boolean
+    LANGUAGE "sql" STABLE
+    SET "search_path" TO ''
+    AS $$
+  select coalesce(
+    code = any (public.world_language_codes())
+      or exists (select 1 from public.languages where languages.code = is_story_language_code.code),
+    false);
+$$;
+
+
+ALTER FUNCTION "public"."is_story_language_code"("code" "text") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."is_story_language_code"("code" "text") IS 'Internal: a code a story may be written in: any ISO 639-1 language, or a row of the languages table (S1-E3-01).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."is_story_list_kind"("list_kind" "text") RETURNS boolean
     LANGUAGE "sql" IMMUTABLE
     SET "search_path" TO ''
@@ -37426,7 +37447,7 @@ $$;
 ALTER FUNCTION "public"."open_story_languages"() OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."open_story_languages"() IS 'The open languages, the only ones a story may be written in (S1-E3-01, S1-E11-05).';
+COMMENT ON FUNCTION "public"."open_story_languages"() IS 'The open languages of the languages table. Since S1-E3-01 (26 Nov 2026) a story may be written in any language (is_story_language_code()); this list no longer limits it.';
 
 
 
@@ -48580,9 +48601,10 @@ begin
   if cardinality(cleaned) > 10 then
     raise exception 'Pick up to ten languages.' using errcode = 'check_violation', hint = 'too_many';
   end if;
-  -- Step 4: every code must be a language stories can be written in (the languages table).
+  -- Step 4: every code must be a language stories can be written in, which since S1-E3-01
+  -- (Robert, 26 Nov 2026) is any language of the world.
   if exists (select 1 from unnest(cleaned) as picked(picked_code)
-             where not exists (select 1 from public.languages where languages.code = picked.picked_code)) then
+             where not public.is_story_language_code(picked.picked_code)) then
     raise exception 'That isn''t a story language.' using errcode = 'check_violation', hint = 'unknown_language';
   end if;
   update public.profiles set reading_languages = cleaned where id = me;
@@ -48594,7 +48616,7 @@ $$;
 ALTER FUNCTION "public"."set_my_reading_languages"("wanted" "text"[]) OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."set_my_reading_languages"("wanted" "text"[]) IS 'A member saves the story languages they read; empty goes back to the default (MARKETS-2c).';
+COMMENT ON FUNCTION "public"."set_my_reading_languages"("wanted" "text"[]) IS 'A member saves the story languages they read; empty goes back to the default (MARKETS-2c, S1-E3-01).';
 
 
 
@@ -53704,6 +53726,30 @@ COMMENT ON FUNCTION "public"."story_languages"("story_slug" "text") IS 'A writer
 
 
 
+CREATE OR REPLACE FUNCTION "public"."story_languages_written_in"() RETURNS SETOF "text"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+  -- listed_stories() shows a story in several languages once, so each shown story is widened
+  -- back to every edition of it that can itself be read.
+  select distinct editions.language_code
+  from public.listed_stories('popular', null, null, null, null) as shown
+  join public.stories as editions
+    on coalesce(editions.edition_of_story_id, editions.id) = coalesce(shown.edition_of_story_id, shown.id)
+  where editions.deleted_at is null
+    and public.story_has_readable_chapter(editions.id)
+    and not public.is_moderated_away('story', editions.id)
+  order by editions.language_code;
+$$;
+
+
+ALTER FUNCTION "public"."story_languages_written_in"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."story_languages_written_in"() IS 'The languages at least one story this reader may see is written in, for the readers'' language filters (S1-E3-01; Robert, 26 Nov 2026).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."story_last_chapter_number"("target_story_id" "uuid") RETURNS integer
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
@@ -57936,6 +57982,51 @@ ALTER FUNCTION "public"."workspace_sign_in_holds"() OWNER TO "postgres";
 
 
 COMMENT ON FUNCTION "public"."workspace_sign_in_holds"() IS 'Internal: true while no staff domain is set; then only for a provider sign-in on an account with a Google Workspace identity on the domain (S1-E2-07b).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."world_language_codes"() RETURNS "text"[]
+    LANGUAGE "sql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+  -- world-language-codes:start
+  select array[
+    'aa', 'ab', 'ae', 'af', 'ak', 'am', 'an', 'ar', 'as', 'av', 'ay', 'az',
+    'ba', 'be', 'bg', 'bi', 'bm', 'bn', 'bo', 'br', 'bs',
+    'ca', 'ce', 'ch', 'co', 'cr', 'cs', 'cu', 'cv', 'cy',
+    'da', 'de', 'dv', 'dz',
+    'ee', 'el', 'en', 'eo', 'es', 'et', 'eu',
+    'fa', 'ff', 'fi', 'fj', 'fo', 'fr', 'fy',
+    'ga', 'gd', 'gl', 'gn', 'gu', 'gv',
+    'ha', 'he', 'hi', 'ho', 'hr', 'ht', 'hu', 'hy', 'hz',
+    'ia', 'id', 'ie', 'ig', 'ii', 'ik', 'io', 'is', 'it', 'iu',
+    'ja', 'jv',
+    'ka', 'kg', 'ki', 'kj', 'kk', 'kl', 'km', 'kn', 'ko', 'kr', 'ks', 'ku', 'kv', 'kw', 'ky',
+    'la', 'lb', 'lg', 'li', 'ln', 'lo', 'lt', 'lu', 'lv',
+    'mg', 'mh', 'mi', 'mk', 'ml', 'mn', 'mr', 'ms', 'mt', 'my',
+    'na', 'nb', 'nd', 'ne', 'ng', 'nl', 'nn', 'no', 'nr', 'nv', 'ny',
+    'oc', 'oj', 'om', 'or', 'os',
+    'pa', 'pi', 'pl', 'ps', 'pt',
+    'qu',
+    'rm', 'rn', 'ro', 'ru', 'rw',
+    'sa', 'sc', 'sd', 'se', 'sg', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'ss', 'st',
+    'su', 'sv', 'sw',
+    'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tn', 'to', 'tr', 'ts', 'tt', 'tw', 'ty',
+    'ug', 'uk', 'ur', 'uz',
+    've', 'vi', 'vo',
+    'wa', 'wo',
+    'xh',
+    'yi', 'yo',
+    'za', 'zu'
+  ]::text[];
+  -- world-language-codes:end
+$$;
+
+
+ALTER FUNCTION "public"."world_language_codes"() OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."world_language_codes"() IS 'Every ISO 639-1 language code, the languages a story may be written in (S1-E3-01; Robert, 26 Nov 2026).';
 
 
 
@@ -74853,6 +74944,10 @@ GRANT ALL ON FUNCTION "public"."is_staff"("required_role" "public"."staff_role")
 
 
 
+REVOKE ALL ON FUNCTION "public"."is_story_language_code"("code" "text") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."is_story_list_kind"("list_kind" "text") FROM PUBLIC;
 
 
@@ -78119,6 +78214,12 @@ GRANT ALL ON FUNCTION "public"."story_languages"("story_slug" "text") TO "authen
 
 
 
+REVOKE ALL ON FUNCTION "public"."story_languages_written_in"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."story_languages_written_in"() TO "anon";
+GRANT ALL ON FUNCTION "public"."story_languages_written_in"() TO "authenticated";
+
+
+
 REVOKE ALL ON FUNCTION "public"."story_last_chapter_number"("target_story_id" "uuid") FROM PUBLIC;
 
 
@@ -78690,6 +78791,10 @@ REVOKE ALL ON FUNCTION "public"."working_days_after"("start_moment" timestamp wi
 
 
 REVOKE ALL ON FUNCTION "public"."workspace_sign_in_holds"() FROM PUBLIC;
+
+
+
+REVOKE ALL ON FUNCTION "public"."world_language_codes"() FROM PUBLIC;
 
 
 

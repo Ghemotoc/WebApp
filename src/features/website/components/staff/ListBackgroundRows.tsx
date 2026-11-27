@@ -6,14 +6,14 @@
  * Each row names the page, its colour in the chosen market ("Sky", or "Default: plain heading") and who set
  * it, with Edit. The tag list shows only tags with a band, and "Add a tag background" takes any
  * approved tag's name; the database refuses a name that isn't one.
- * Who shows them: ListBackgroundsTab. What they call: useStoryFormOptions (the genres).
+ * Who shows them: ListBackgroundsTab. What they call: useStoryCategories (the genres).
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/Button';
 import { TextInput } from '@/components/ui/TextInput';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
+import { useStoryCategories } from '@/features/writing/hooks/useStoryCategories';
 
 import type { ListBackground } from '../../api/staff/listPageBackgrounds';
 import { pageNameFor } from '../../lib/listBackgrounds';
@@ -69,7 +69,7 @@ function BackgroundRow({
  */
 export function GenreBackgroundRows({ backgrounds, onEdit }: RowsProps) {
   const { t } = useTranslation('websiteAdmin');
-  const { categories } = useStoryFormOptions();
+  const { categories } = useStoryCategories();
   return (
     <section
       aria-labelledby="genre-backgrounds-heading"

@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { ChoiceChips } from '@/components/ui/ChoiceChips';
 import type { ListRequest } from '@/features/discovery/api/storyLists';
 import { DiscoverShelf } from '@/features/discovery/components/DiscoverShelf';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
+import { useStoryCategories } from '@/features/writing/hooks/useStoryCategories';
 
 /** The value of the "Every genre" chip. */
 const allGenres = '';
@@ -40,7 +40,7 @@ function shelfRequest(kind: ListRequest['kind'], categorySlug: string | null = n
  */
 function TrendingShelf() {
   const { t } = useTranslation();
-  const { categories } = useStoryFormOptions();
+  const { categories } = useStoryCategories();
   const [genre, setGenre] = useState(allGenres);
   // Step 1: "Every genre", then every category in the categories table's order.
   const options = [

@@ -7,7 +7,7 @@
  * Pick the page (a genre, or "Another tag" and its name) and the language; the line already saved
  * there fills the box. Saving an empty box takes the line off. A language with no line shows the
  * English one, so English is first in the list.
- * Who shows it: ListLinesSection. What it calls: useStoryFormOptions (the genres),
+ * Who shows it: ListLinesSection. What it calls: useStoryCategories (the genres),
  * useInterfaceLanguages and the onSave it is given.
  */
 import { useState } from 'react';
@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { TextInput } from '@/components/ui/TextInput';
 import { Textarea } from '@/components/ui/Textarea';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
+import { useStoryCategories } from '@/features/writing/hooks/useStoryCategories';
 import { languageNameIn } from '@/lib/language-names';
 
 import {
@@ -74,7 +74,7 @@ function LinePlaceFields({
   onMove: (next: PageLinePlace) => void;
 }) {
   const { t, i18n } = useTranslation('websiteAdmin');
-  const { categories } = useStoryFormOptions();
+  const { categories } = useStoryCategories();
   const languages = useInterfaceLanguages();
   // Step 1: the Page drop-down: every genre, then "Another tag".
   const pageOptions = [

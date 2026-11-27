@@ -37,7 +37,6 @@
     "cancel": "Cancel",
     "submit": "Add the language",
     "adding": "Adding…",
-    "noneLeft": "This story is already in every language open for writing.",
     "problems": {
       "languageMissing": "Choose a language.",
       "titleMissing": "Add a title in that language.",

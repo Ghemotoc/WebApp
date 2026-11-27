@@ -68,11 +68,8 @@
     },
     "status": "Stadiu",
     "language": "Limbă",
-    "languages": {
-      "en": "Engleză",
-      "ro": "Română"
-    },
     "both": "Ambele",
+    "anyLanguage": "Orice limbă",
     "rating": "Clasificare",
     "anyRating": "Orice clasificare",
     "ratingHint": "Clasificările peste vârsta ta nu apar.",

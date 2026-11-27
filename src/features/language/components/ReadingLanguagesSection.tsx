@@ -7,8 +7,9 @@
  * English (the intro says which). Each language is named in its own language with a lang
  * attribute, so screen readers pronounce it right (WCAG 3.1.2), as in the interface language menu.
  * Who shows it: SettingsGroupPanel, in the Language group, under LanguageSettingsSection.
- * What it calls: useReadingLanguages (my pick and saving it) and useStoryFormOptions (the story
- * languages, the same list the writer picks from).
+ * What it calls: useReadingLanguages (my pick and saving it) and useLanguagesWrittenIn: only the
+ * languages stories are written in (S1-E3-01; Robert, 26 Nov 2026), plus the ones already ticked
+ * or in the default, so none of them disappears from the list.
  */
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Chip } from '@/components/ui/Chip';
 import { Notice } from '@/components/ui/Notice';
-import { useStoryFormOptions } from '@/features/writing/hooks/useStoryFormOptions';
+import { useLanguagesWrittenIn } from '@/features/discovery/hooks/useLanguagesWrittenIn';
 import { errorShownByHook } from '@/lib/errorShownByHook';
 
 import { defaultReadingLanguages, useReadingLanguages } from '../hooks/useReadingLanguages';
@@ -35,7 +36,7 @@ function ownName(code: string): string {
 /** What the form needs. */
 interface ReadingLanguagesFormProps {
   state: ReturnType<typeof useReadingLanguages>;
-  /** The story languages, in the writer's list order. */
+  /** The story languages to offer, in the order of their names in the interface language. */
   codes: string[];
 }
 
@@ -122,9 +123,12 @@ function ReadingIntro() {
  * @returns the section headed "Reading languages"
  */
 export function ReadingLanguagesSection() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const state = useReadingLanguages();
-  const { languages } = useStoryFormOptions();
+  // The languages written in, plus the saved pick or the default, so a ticked one stays.
+  const { languages } = useLanguagesWrittenIn(
+    state.saved ?? defaultReadingLanguages(i18n.language, true),
+  );
   const codes = languages.map(({ code }) => code);
   return (
     <section

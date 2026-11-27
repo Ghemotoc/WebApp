@@ -279,7 +279,7 @@ The website never reads the app's tables directly. It reads only its own databas
 | Screen | Stories | Back-end pieces | Real before building | Mock while building |
 | --- | --- | --- | --- | --- |
 | 4.1 Writer dashboard | S1-E3-07 | `writer_stats` view over daily `chapter_reads` totals (the "fewer than 5" rule is in SQL) | the view | seeded totals |
-| 4.2 New story and settings | S1-E3-01, S1-E3-05, S1-E3-06, S1-E3-08, S1-E3-12, S1-E3-13 | B13, open languages (B11), B14 `covers`, B15 for uploads; drawn and automatic covers need no back end (SVG files and a function of the story ID) | `stories` with RLS by user ID | image check stub; languages seeded |
+| 4.2 New story and settings | S1-E3-01, S1-E3-05, S1-E3-06, S1-E3-08, S1-E3-12, S1-E3-13 | B13, every ISO 639-1 language (`world_language_codes()`, S1-E3-01, 26 Nov 2026), B14 `covers`, B15 for uploads; drawn and automatic covers need no back end (SVG files and a function of the story ID) | `stories` with RLS by user ID | image check stub; languages seeded |
 | 4.3 Chapter editor | S1-E3-02, S1-E3-09, S1-E3-10, S1-E3-11 | `chapters`, `save_chapter_draft()` with a version number to spot conflicts, revisions, B14 `chapter-images`, an `oembed` function with the allow-list | `chapters` and the save function | oEmbed fixtures; image check stub |
 | 4.4 Manage chapters | S1-E3-03, S1-E3-04 | publish, schedule and reorder functions, B17 publisher, B16 event | the functions | tests call the publisher job directly |
 
@@ -497,7 +497,7 @@ These are places where a story in the March slice depends on one that isn't in i
 | S1-E5-02 sort, the Discover mix | S1-E5-03 ranking | Closed: S1-E5-03 is in the slice (Q46) |
 | Sign-up copy and the website's questions say under-16s need a parent's consent | S1-E2-03 (after March since 17 Oct 2026, 12:44) | The March test is invited adults only (decided 17 Oct 2026, 12:44), so March copy says the test is for invited adults; the parental consent copy goes live with S1-E2-03, before minors join |
 | GDPR requests from real users in March | S1-E11-09, S1-E13-02 to 05 (after March since 17 Oct 2026, 12:44) | In March requests arrive by email at the contact address and are answered by hand within a month (decided 17 Oct 2026, 12:44); the self-service and staff tools come before going live |
-| S1-E3-01 story language, S1-E2-10 closed markets | S1-E11-05 markets and languages | Seed the open languages and markets in a migration for March; the admin screen follows |
+| S1-E3-01 story language, S1-E2-10 closed markets | S1-E11-05 markets and languages | Seed the open languages and markets in a migration for March; the admin screen follows. Since 26 Nov 2026 a story may be in any ISO 639-1 language, open or not (S1-E3-01, Robert) |
 | Settings, flags, reserved names and the username word lists | S1-E11-03 (after March) | Seeded by migration for March; changing them means a new migration until S1-E11-03 lands |
 | The CMS market picker (S1-E11-06) | S1-E11-05 markets and languages (after March) | The CMS reads the markets list seeded by migration; the admin screen follows (17 Oct 2026, 19:14) |
 | Moderators approving a username false hit (S1-E2-04) | S1-E11-03 | The approval is one action on the account page in S1-E11-02 (in the slice) |
