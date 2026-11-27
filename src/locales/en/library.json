@@ -202,7 +202,8 @@
     "books": "{{filled}} of {{count}} books",
     "full": "Full",
     "shelvesUsed": "{{filled}} of {{shelves}} bookshelves · {{books}} books each on the free plan",
-    "findStories": "Find stories for {{name}}"
+    "findStories": "Find stories for {{name}}",
+    "coverLink": "{{title}}, {{penName}}"
   },
   "offline": {
     "heading": "Downloaded to read offline",

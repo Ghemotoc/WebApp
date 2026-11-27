@@ -65,6 +65,7 @@ function BookCard(props: { story: ListedStory; cover: DrawnCoverChoice; onRemove
         title={story.title}
         metaLine={story.writer.displayName}
         cover={props.cover}
+        coverPenName={story.writer.displayName}
         href={`/s/${story.slug}`}
         wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
       />

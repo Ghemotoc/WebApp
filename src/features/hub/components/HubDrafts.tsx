@@ -18,6 +18,8 @@ import type { MetaFact } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
 import { Shelf } from '@/components/ui/Shelf';
 import { StoryCard } from '@/components/ui/StoryCard';
+import { useMyNames } from '@/features/account/hooks/useMyNames';
+import { displayName } from '@/features/account/lib/nameRules';
 import { timeAgo } from '@/features/comments/lib/timeAgo';
 import type { DraftCardData } from '@/features/discovery/api/discoverCards';
 import { useDiscoverCards } from '@/features/discovery/hooks/useDiscoverCards';
@@ -103,6 +105,10 @@ export function HubDrafts() {
   const { t, i18n } = useHubTranslation();
   const { stories, isKnown, loadFailed } = useMyStories();
   const { cards } = useDiscoverCards();
+  // The writer's own name for the cover labels, as on every large cover (Robert, 27 Nov 2026).
+  const { names } = useMyNames();
+  const penName =
+    names === null ? undefined : (displayName(names.handle, names.penName) ?? undefined);
   const draft = cards?.draft ?? null;
   if (loadFailed) return <Notice tone="error">{t('hub.drafts.loadFailed')}</Notice>;
   if (!isKnown) return null;
@@ -140,6 +146,7 @@ export function HubDrafts() {
           title={story.title}
           metaLine={factsLine(facts)}
           cover={covers[index] ?? automaticCoverFor(story.id)}
+          coverPenName={penName}
           href={isLatest ? `/write/s/${slug}/c/${draft.chapterCode}` : `/write/s/${slug}/chapters`}
           wrapCover={(drawn) => <StoryCoverArt story={story} drawn={drawn} className="w-full" />}
         />

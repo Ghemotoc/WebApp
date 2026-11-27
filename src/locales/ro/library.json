@@ -202,7 +202,8 @@
     "books": "{{filled}} din {{count}} cărți",
     "full": "Plin",
     "shelvesUsed": "{{filled}} din {{shelves}} rafturi · câte {{books}} cărți pe fiecare în planul gratuit",
-    "findStories": "Caută povești pentru {{name}}"
+    "findStories": "Caută povești pentru {{name}}",
+    "coverLink": "{{title}}, {{penName}}"
   },
   "offline": {
     "heading": "Descărcate pentru citit offline",
