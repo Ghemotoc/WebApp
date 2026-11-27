@@ -11,12 +11,12 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 import {
   chapterClassPointsFrom,
   classPointsErrorFrom,
-  classPointsSummaryFrom,
   fetchChapterClassPoints,
   giveClassPoints,
   setTeacherPoints,
   threadTeacherPointsFrom,
 } from './classPoints';
+import { classPointsSummaryFrom } from './classPointsSummary';
 import { classPointsTableFrom } from './classPointsTable';
 
 /**
@@ -77,6 +77,27 @@ describe('classPointsSummaryFrom', () => {
     expect(summary?.receivedTotal).toBeNull();
   });
 
+  it('gives the teacher this week’s totals for the whole class (BOOKS-8b)', () => {
+    const summary = classPointsSummaryFrom({
+      enabled: true,
+      role: 'teacher',
+      can_switch: true,
+      week: { given: 2, possible: 20, notes: 1, chapters_shared: 1, reported: 0 },
+    });
+    expect(summary?.classWeek).toEqual({
+      given: 2,
+      possible: 20,
+      notes: 1,
+      chaptersShared: 1,
+      reported: 0,
+    });
+  });
+
+  it('gives a pupil no class totals', () => {
+    const summary = classPointsSummaryFrom({ enabled: true, role: 'pupil', week: null });
+    expect(summary?.classWeek).toBeNull();
+  });
+
   it('is null for someone outside the class', () => {
     expect(classPointsSummaryFrom(null)).toBeNull();
   });
@@ -104,8 +125,22 @@ describe('chapterClassPointsFrom', () => {
       teacher: { id: 'teacher-1', points: 7, note: 'Dialog bun.' },
     });
     // A gift with no words is left out; a note is its ID and its words and nothing else.
-    expect(points?.received).toEqual({ total: 4, notes: [{ id: 'gift-1', note: 'Bravo.' }] });
+    expect(points?.received).toEqual({
+      total: 4,
+      notes: [{ id: 'gift-1', note: 'Bravo.' }],
+      noteCount: 1,
+    });
     expect(points?.teacher).toEqual({ id: 'teacher-1', points: 7, note: 'Dialog bun.' });
+  });
+
+  it('gives the teacher only how many notes there are, never their words', () => {
+    const points = chapterClassPointsFrom({
+      class: { slug: 'clasa-a-x-a', name: 'Clasa a X-a' },
+      role: 'teacher',
+      received: { total: 4, notes: 2 },
+      teacher: { id: 'teacher-1', points: 7, note: '' },
+    });
+    expect(points?.received).toEqual({ total: 4, notes: [], noteCount: 2 });
   });
 
   it('is null when the database answers nothing or an unknown role', () => {
@@ -130,7 +165,7 @@ describe('threadTeacherPointsFrom', () => {
 });
 
 describe('classPointsTableFrom', () => {
-  it('reads each pupil’s two numbers and chapters, with no rank and no giver', () => {
+  it('reads each pupil’s two numbers, notes and chapters, with no rank and no giver', () => {
     const pupils = classPointsTableFrom({
       pupils: [
         {
@@ -138,6 +173,7 @@ describe('classPointsTableFrom', () => {
           display_name: 'Ana',
           class_points: 5,
           teacher_points: 7,
+          notes: 2,
           chapters: [
             {
               chapter_id: 'chapter-1',
@@ -154,7 +190,12 @@ describe('classPointsTableFrom', () => {
       ],
     });
     expect(pupils).toHaveLength(1);
-    expect(pupils?.[0]).toMatchObject({ handle: 'ana', classPoints: 5, teacherPoints: 7 });
+    expect(pupils?.[0]).toMatchObject({
+      handle: 'ana',
+      classPoints: 5,
+      teacherPoints: 7,
+      notes: 2,
+    });
     expect(pupils?.[0]?.chapters[0]).toMatchObject({ teacherPoints: null, isReported: true });
     expect(Object.keys(pupils?.[0] ?? {})).not.toContain('rank');
   });

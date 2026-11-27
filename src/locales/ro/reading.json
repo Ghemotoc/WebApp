@@ -354,5 +354,13 @@
     "youAreHere": "Ești aici",
     "loading": "Se încarcă capitolele…",
     "row": "{{number}}. {{title}}"
+  },
+  "footnote": {
+    "label": "Nota de subsol {{number}}",
+    "heading": "Nota {{number}}",
+    "close": "Închide",
+    "notesHeading": "Note",
+    "back": "Înapoi",
+    "backLabel": "Înapoi la text, nota {{number}}"
   }
 }

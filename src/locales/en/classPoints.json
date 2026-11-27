@@ -36,8 +36,6 @@
     "archived": "This class is archived, so class points stay as they are."
   },
   "chapter": {
-    "heading": "Class points",
-    "inClass": "Shared with {{name}}",
     "give": {
       "label": "Points",
       "none": "None",
@@ -84,16 +82,27 @@
       "reportNote": "the teacher’s note",
       "pointsLabel": "Teacher points (0 to {{max}})",
       "noteLabel": "Private note (optional)",
-      "noteHint": "Only this pupil, the teacher and the moderation team read it. It has no reply box.",
+      "noteHint": "Only the writer, you and the moderation team read it, like feedback on a school submission. No replies. Classmates never see it.",
       "save": "Save teacher points",
       "remove": "Remove teacher points",
       "saved": "Teacher points saved.",
       "removed": "Teacher points removed.",
-      "classTotal_one": "{{count}} point from classmates so far",
-      "classTotal_few": "{{count}} points from classmates so far",
-      "classTotal_other": "{{count}} points from classmates so far",
       "noteFrom": "Note from the teacher",
-      "noteAudienceShort": "Only you, the teacher and the moderation team"
+      "noteAudienceShort": "Only you, the teacher and the moderation team",
+      "title": "Teacher points",
+      "less": "One point less",
+      "more": "One point more",
+      "outOf": "out of {{max}}",
+      "writerSees": "The writer sees Teacher points: {{points}} and the note. You can change both until the competition this chapter is entered in is published.",
+      "saveBoth": "Save points and note",
+      "lockedLine": "These teacher points are locked: a competition the writer entered is published, so everyone stays judged the same way.",
+      "onChapterTitle": "Class points on this chapter",
+      "onChapterPoints_one": "{{count}} class point from classmates and",
+      "onChapterPoints_few": "{{count}} class points from classmates and",
+      "onChapterPoints_other": "{{count}} class points from classmates and",
+      "onChapterNotes_one": "{{count}} note. Who gave them stays private; only the moderation team can check that.",
+      "onChapterNotes_few": "{{count}} notes. Who gave them stays private; only the moderation team can check that.",
+      "onChapterNotes_other": "{{count}} notes. Who gave them stays private; only the moderation team can check that."
     },
     "quoted": "“{{text}}”",
     "how": {
@@ -121,7 +130,8 @@
     "not_class": "Only a class has class points.",
     "archived": "This class is archived.",
     "not_allowed": "Only the teacher changes this.",
-    "unreachable": "We couldn’t save that. Check the connection and try again."
+    "unreachable": "We couldn’t save that. Check the connection and try again.",
+    "reason": "Pick why the points look odd."
   },
   "reply": {
     "open": "Teacher points",
@@ -205,5 +215,72 @@
       "missing": "That is no longer there. Load the page again.",
       "unreachable": "We couldn’t do that. Check the connection and try again."
     }
+  },
+  "week": {
+    "title": "This week",
+    "intro": "Totals for the class, never for one pupil here.",
+    "given": "Class points given",
+    "givenValue": "{{given}} of {{possible}}",
+    "notes": "Notes from classmates",
+    "chapters": "Chapters shared",
+    "chaptersValue_one": "{{count}} since Monday",
+    "chaptersValue_other": "{{count}} since Monday",
+    "reported": "Points reported",
+    "reportedNone": "None",
+    "reportedValue_one": "{{count}}, being checked",
+    "reportedValue_other": "{{count}}, being checked",
+    "off": "Class points are off. Turn them on in class settings.",
+    "chaptersValue_few": "{{count}} since Monday",
+    "reportedValue_few": "{{count}}, being checked"
+  },
+  "pupils": {
+    "intro": "Teacher points and class points side by side. Only you see this page. Who gave class points stays private, even from you.",
+    "sortLabel": "Sort",
+    "sort": {
+      "name": "Pen name, A to Z",
+      "teacher": "Teacher points",
+      "class": "Class points"
+    },
+    "region": "Class points by pupil",
+    "columns": {
+      "pupil": "Pupil",
+      "teacher": "Teacher points",
+      "class": "Class points",
+      "notes": "Notes",
+      "odd": "Something odd?"
+    },
+    "reportButton": "Report points",
+    "reportButtonFor": "Report points: {{name}}",
+    "shown": {
+      "name": "Sorted by pen name. No rank numbers: the table is a guide, not a ranking. {{shown}} of {{count}} pupils shown.",
+      "teacher": "Sorted by teacher points. No rank numbers: the table is a guide, not a ranking. {{shown}} of {{count}} pupils shown.",
+      "class": "Sorted by class points. No rank numbers: the table is a guide, not a ranking. {{shown}} of {{count}} pupils shown."
+    },
+    "showMore": "Show {{count}} more"
+  },
+  "pupilReport": {
+    "title": "Report points · {{name}}",
+    "intro": "You don’t see who gave points. If a pupil’s class points look odd, report them: a moderator checks who gave them and can remove gifts. The report goes to the class log.",
+    "why": "Why",
+    "reasons": {
+      "swapped": "Swapped between friends",
+      "not_writing": "Given for something other than the writing",
+      "other": "Anything else"
+    },
+    "note": "What did you notice? (optional)",
+    "notePlaceholder": "A few words",
+    "send": "Send report",
+    "cancel": "Cancel",
+    "sent": "Sent. A moderator checks the points {{name}} received.",
+    "nothing": "{{name}} hasn’t received class points, so there is nothing to report."
+  },
+  "pointsSettings": {
+    "title": "Settings",
+    "switchLabel": "Class points",
+    "switchHint": "Off for every new class until the teacher turns it on.",
+    "perWeek": "Points a week for each pupil",
+    "perChapter": "Most points to one chapter in a week",
+    "weekStarts": "The week starts",
+    "weekStartsValue": "Monday at 00:00"
   }
 }

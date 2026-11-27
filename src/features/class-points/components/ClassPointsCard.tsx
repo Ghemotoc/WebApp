@@ -19,7 +19,7 @@ import { MetaLine } from '@/components/ui/MetaLine';
 import { Meter } from '@/components/ui/Meter';
 import { Notice } from '@/components/ui/Notice';
 
-import type { ClassPointsSummary, GivenPoints } from '../api/classPoints';
+import type { ClassPointsSummary, GivenPoints } from '../api/classPointsSummary';
 import { useClassPointsSummary } from '../hooks/useClassPoints';
 import { weekdayText } from '../lib/classPointsDates';
 import { useClassPointsTranslation } from '../registerClassPointsTranslations';

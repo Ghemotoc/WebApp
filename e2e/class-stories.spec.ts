@@ -4,8 +4,8 @@
  * Who runs it: `npm run test:e2e` (Supabase started first).
  * What it proves:
  * - a student shares their story with their class from Story settings › "Share with a class";
- * - the teacher then finds it on the class page under "Stories shared with the class" and on its
- *   See all page, while an adult outside the class can't open the story at all;
+ * - the teacher then finds it through the class page's Stories tab (the teacher's class page,
+ *   board G08, has no stories column), while an adult outside the class can't open the story;
  * - the Stories tab counts it; on the stories page (board G04) the teacher has no "Make public",
  *   the student makes it public there and shares it again with "Share a story";
  * - the student makes it public again from Story settings, and the outsider reads it;
@@ -134,11 +134,8 @@ test.describe('class stories (CLASSES-c, S1-E8-11)', () => {
     browser,
   }) => {
     const teacher = await openAs(browser, 'teacher', `/spaces/${classSlug}`);
-    await expect(
-      teacher.getByRole('heading', { name: 'Stories shared with the class' }),
-    ).toBeVisible();
-    await expect(teacher.getByRole('link', { name: new RegExp(storyTitle) })).toBeVisible();
-    // Board G04: the Stories tab counts them and opens the list.
+    // The teacher's class page (board G08, BOOKS-8 part 8b) has no stories column: the Stories
+    // tab counts them and opens the list (board G04).
     await teacher.getByRole('link', { name: 'Stories 1' }).click();
     await expect(teacher).toHaveURL(new RegExp(`/spaces/${classSlug}/stories$`));
     await expect(

@@ -1,194 +1,194 @@
 /**
- * EntrantScoreCard: the teacher scores one entrant on each criterion (bundle CLASS-POINTS, part
- * 2; story S1-E8-17 criteria 1 to 3; Robert, 13 Nov 2026, 19:20 UTC: the outcomes show as a
- * checklist beside the score).
+ * EntrantScoreCard: the teacher scores one entry at a time (bundle CLASS-POINTS, part 2; story
+ * S1-E8-17 criteria 1 to 3; redrawn by BOOKS-8 part 8b, board G12-CompetitionResults, user story
+ * 8.12; Robert, 13 Nov 2026, 19:20 UTC: the outcomes show as a checklist beside the score).
  *
- * What it shows: the entrant's pen name, their class points and teacher points as a guide, the
- * chapters they shared with the class and, for each criterion, its description, its outcomes
- * as tick boxes and the score field beside them. The ticks help the teacher think and are never
- * saved or sent. Under the criteria: the total and "Save scores".
- * Who shows it: CompetitionResultsPage, once per entrant, while the competition is being
- * assessed. What it calls: useSaveScores → save_class_competition_scores(), which answers only
- * the class's teacher.
+ * What it shows: "Scoring 1 of 5", the pupil and their story with "Read the entry", the hint, and
+ * for each criterion its name, description, outcome tick boxes and a score box "of 10"; under
+ * them "Total 22 of 25 · class points 17 · teacher points 8 (a guide)" with Previous and Next
+ * entry. The ticks help the teacher think and are never saved or sent; the scores are the same
+ * ones the table below shows, and are saved by "Save as draft" or "Publish results".
+ * Who shows it: ScoringWorkspace. What it calls: nothing; the workspace holds every score.
  */
-import { type FormEvent, useState } from 'react';
+import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
-import { Notice } from '@/components/ui/Notice';
+import { buttonClassName } from '@/components/ui/buttonStyles';
+import { ButtonRow } from '@/components/ui/ButtonRow';
 import { TextInput } from '@/components/ui/TextInput';
 
 import type { Criterion } from '../api/classCompetitions';
 import type { ScoringEntrant } from '../api/competitionScoring';
-import { useSaveScores } from '../hooks/useCompetitionScoring';
-import { maxTotal, totalOf } from '../lib/criteriaDraft';
-import { scoresFromTyped, typedFromScores } from '../lib/typedScores';
+import { maxTotal } from '../lib/criteriaDraft';
+import { typedTotal } from '../lib/resultsDraft';
 import { useClassCompetitionsTranslation } from '../registerClassCompetitionsTranslations';
 
 /** What the card needs. */
 export interface EntrantScoreCardProps {
-  competitionId: string;
   criteria: Criterion[];
   entrant: ScoringEntrant;
+  /** The entry's place among the entries, from 1, and how many there are. */
+  number: number;
+  count: number;
+  /** What was typed for this entrant, by criterion ID. */
+  typed: Record<string, string>;
+  onType: (criterionId: string, text: string) => void;
+  /** The outcome ticks, by "criterion ID:outcome index"; a working note, never saved. */
+  ticks: Record<string, boolean>;
+  onTick: (key: string, isTicked: boolean) => void;
+  onMove: (step: -1 | 1) => void;
 }
 
 /**
- * The guide numbers and the chapters the entrant shared with the class.
+ * The card's heading: the pupil and their story, and a link to the first chapter they shared.
  *
- * @param props.entrant - the entrant
- * @returns the two lines and the chapter list
+ * @returns the position line, the heading and "Read the entry"
  */
-function EntrantGuide({ entrant }: { entrant: ScoringEntrant }) {
+function EntryHeading({ entrant, number, count }: EntrantScoreCardProps) {
   const { t } = useClassCompetitionsTranslation();
-  const guide = { classPoints: entrant.classPoints, teacherPoints: entrant.teacherPoints };
+  const chapter = entrant.chapters[0];
+  const heading =
+    chapter === undefined
+      ? entrant.displayName
+      : t('scoring.cardHeading', { name: entrant.displayName, story: chapter.storyTitle });
   return (
-    <div className="flex flex-col gap-2 type-body text-ink-muted">
-      <p className="m-0">{t('scoring.guide', guide)}</p>
-      {entrant.chapters.length === 0 ? (
-        <p className="m-0">{t('scoring.noChapters')}</p>
-      ) : (
-        <>
-          <p className="m-0 font-semibold text-ink">{t('scoring.chapters')}</p>
-          <ul className="m-0 flex list-disc flex-col gap-1 pl-4">
-            {entrant.chapters.map((chapter) => (
-              <li key={chapter.id} className="wrap-anywhere">
-                {t('winner.chapterLink', { chapter: chapter.title, story: chapter.storyTitle })}
-              </li>
-            ))}
-          </ul>
-        </>
+    <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex min-w-0 flex-col gap-1">
+        <p className="m-0 type-meta">{t('scoring.cardPosition', { number, count })}</p>
+        <h2
+          id="scoring-card-heading"
+          className="m-0 type-subheading wrap-anywhere text-ink-heading"
+        >
+          {heading}
+        </h2>
+      </div>
+      {chapter !== undefined && (
+        <Link
+          to={`/s/${chapter.storySlug}/${chapter.code}`}
+          className={buttonClassName({ variant: 'text' })}
+        >
+          {t('scoring.readEntry')}
+        </Link>
       )}
     </div>
   );
 }
 
-/** What one criterion's row needs. */
-interface CriterionScoreRowProps {
-  /** A prefix for ids: one entrant's one criterion. */
-  fieldId: string;
+/** What one criterion's block needs. */
+interface CriterionBlockProps {
+  card: EntrantScoreCardProps;
   criterion: Criterion;
-  typed: string;
-  onType: (text: string) => void;
 }
 
 /**
- * One criterion: its description and outcome tick boxes on one side, the score on the other.
+ * One criterion: its name, description and outcome ticks, with the score box beside them.
  *
- * @returns the row
+ * @returns the block
  */
-function CriterionScoreRow({ fieldId, criterion, typed, onType }: CriterionScoreRowProps) {
+function CriterionBlock({ card, criterion }: CriterionBlockProps) {
   const { t } = useClassCompetitionsTranslation();
+  const criterionId = criterion.id ?? '';
+  const fieldId = `card-score-${card.entrant.handle}-${criterionId}`;
   return (
-    <div className="grid gap-3 rounded-card border border-border px-4 py-3 sm:grid-cols-[minmax(0,1fr)_180px] sm:items-start">
-      <fieldset className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0">
-        <legend className="p-0 font-semibold text-ink">{criterion.label}</legend>
-        <p className="m-0 type-body text-ink-muted">{criterion.description}</p>
-        {criterion.outcomes.map((outcome, index) => (
-          <label
-            key={index}
-            className="flex min-h-6 cursor-pointer items-start gap-2 type-body text-ink-muted"
-          >
-            {/* Uncontrolled on purpose: a tick is the teacher's working note, never saved. */}
-            <input type="checkbox" className="mt-1 size-4 shrink-0 accent-primary" />
-            <span className="wrap-anywhere">{outcome}</span>
-          </label>
-        ))}
+    <div className="flex gap-4 border-t border-border pt-4">
+      <fieldset className="m-0 flex min-w-0 flex-1 flex-col gap-2 border-0 p-0">
+        <legend className="p-0 type-label text-ink-heading">{criterion.label}</legend>
+        <p className="m-0 type-meta">{criterion.description}</p>
+        {criterion.outcomes.map((outcome, index) => {
+          const key = `${criterionId}:${index}`;
+          return (
+            <label key={key} className="flex min-h-6 cursor-pointer items-start gap-3 type-body">
+              <input
+                type="checkbox"
+                className="mt-1 size-4 shrink-0 accent-primary"
+                checked={card.ticks[key] === true}
+                onChange={(event) => card.onTick(key, event.target.checked)}
+              />
+              <span className="wrap-anywhere text-ink">{outcome}</span>
+            </label>
+          );
+        })}
       </fieldset>
-      <TextInput
-        id={fieldId}
-        label={t('scoring.scoreLabel', { label: criterion.label, max: criterion.maxPoints })}
-        inputMode="numeric"
-        value={typed}
-        onChange={(event) => onType(event.target.value)}
-      />
+      <div className="flex shrink-0 items-center gap-2 self-start">
+        <div className="w-16">
+          <TextInput
+            id={fieldId}
+            label={t('scoring.scoreFor', {
+              label: criterion.label,
+              name: card.entrant.displayName,
+              max: criterion.maxPoints,
+            })}
+            isLabelHidden
+            inputMode="numeric"
+            className="px-2 text-center"
+            value={card.typed[criterionId] ?? ''}
+            onChange={(event) => card.onType(criterionId, event.target.value)}
+          />
+        </div>
+        <span className="type-meta">{t('scoring.outOf', { max: criterion.maxPoints })}</span>
+      </div>
     </div>
   );
 }
 
-/** What the last press ended with; "range" is said under the fields. */
-type Outcome = 'saved' | 'range' | null;
-
 /**
- * The card's save button. Its label holds the member's name, which can be long, so it wraps onto a
- * second line rather than push the card past a 390 px screen (CLAUDE.md rule 21): CALM-2's 15 px
- * button text made "Salvează punctajele pentru …" too wide for one line.
+ * The card's foot: the total and the guide numbers, then Previous and Next entry.
+ *
+ * @returns the line and the buttons
  */
-function SaveScoresButton({ name, isRunning }: { name: string; isRunning: boolean }) {
+function CardFoot(props: EntrantScoreCardProps) {
   const { t } = useClassCompetitionsTranslation();
+  const max = maxTotal(props.criteria);
+  const total = typedTotal(props.criteria, props.typed);
+  const guide = {
+    classPoints: props.entrant.classPoints,
+    teacherPoints: props.entrant.teacherPoints,
+  };
   return (
-    <Button
-      type="submit"
-      variant="secondary"
-      className="h-auto min-h-11 w-fit max-w-full py-3 text-center whitespace-normal"
-      disabled={isRunning}
-    >
-      {t('scoring.saveScores', { name })}
-    </Button>
+    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4">
+      <p className="m-0 type-meta" aria-live="polite">
+        <span className="font-semibold text-ink">
+          {total === null
+            ? t('scoring.cardTotalNone', { max })
+            : t('scoring.cardTotal', { total, max })}
+        </span>
+        {' · '}
+        {t('scoring.cardGuide', guide)}
+      </p>
+      <ButtonRow>
+        <Button variant="secondary" disabled={props.number === 1} onClick={() => props.onMove(-1)}>
+          {t('scoring.previous')}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={props.number === props.count}
+          onClick={() => props.onMove(1)}
+        >
+          {t('scoring.next')}
+        </Button>
+      </ButtonRow>
+    </div>
   );
 }
 
 /**
  * Renders the card.
  *
- * @returns the entrant's form
+ * @returns the entry being scored
  */
-export function EntrantScoreCard({ competitionId, criteria, entrant }: EntrantScoreCardProps) {
+export function EntrantScoreCard(props: EntrantScoreCardProps) {
   const { t } = useClassCompetitionsTranslation();
-  const saver = useSaveScores();
-  const [typed, setTyped] = useState(() => typedFromScores(criteria, entrant.scores));
-  const [outcome, setOutcome] = useState<Outcome>(null);
-  const total = totalOf(criteria, entrant.scores);
-  const headingId = `entrant-${entrant.handle}-heading`;
-
-  /** Saves the scores. The database checks the range too; saying so here saves a round trip. */
-  async function save(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const scores = scoresFromTyped(criteria, typed);
-    if (scores === null) {
-      setOutcome('range');
-      return;
-    }
-    setOutcome(null);
-    const request = { competitionId, handle: entrant.handle, scores };
-    const saved = await saver.save(request).catch(() => undefined);
-    if (saved !== undefined) setOutcome('saved');
-  }
-
   return (
-    <form
-      onSubmit={save}
-      aria-labelledby={headingId}
-      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
+    <section
+      aria-labelledby="scoring-card-heading"
+      className="flex flex-col gap-4 rounded-card border border-border bg-surface p-6"
     >
-      <h3
-        id={headingId}
-        className="m-0 font-heading type-subheading font-bold wrap-anywhere text-ink-heading"
-      >
-        {entrant.displayName}
-      </h3>
-      <EntrantGuide entrant={entrant} />
-      <p className="m-0 type-meta text-ink-muted">{t('scoring.checklistHint')}</p>
-      {criteria.map((criterion) => (
-        <CriterionScoreRow
-          key={criterion.id}
-          fieldId={`score-${entrant.handle}-${criterion.id}`}
-          criterion={criterion}
-          typed={typed[criterion.id ?? ''] ?? ''}
-          onType={(text) => setTyped({ ...typed, [criterion.id ?? '']: text })}
-        />
+      <EntryHeading {...props} />
+      <p className="m-0 type-meta">{t('scoring.checklistHint')}</p>
+      {props.criteria.map((criterion) => (
+        <CriterionBlock key={criterion.id} card={props} criterion={criterion} />
       ))}
-      <p className="m-0 font-semibold text-ink">
-        {total === null
-          ? t('scoring.notScored')
-          : t('scoring.total', { total, max: maxTotal(criteria) })}
-      </p>
-      <SaveScoresButton name={entrant.displayName} isRunning={saver.isRunning} />
-      <div aria-live="polite">
-        {outcome === 'range' && <Notice tone="error">{t('failures.score_range')}</Notice>}
-        {saver.failure !== null && outcome === null && (
-          <Notice tone="error">{t(`failures.${saver.failure.failure}`)}</Notice>
-        )}
-        {outcome === 'saved' && <Notice tone="success">{t('scoring.scoresSaved')}</Notice>}
-      </div>
-    </form>
+      <CardFoot {...props} />
+    </section>
   );
 }

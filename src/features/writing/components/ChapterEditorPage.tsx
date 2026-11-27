@@ -50,6 +50,7 @@ import { useChapterDraft } from '../hooks/useChapterDraft';
 import { useChapterEditor } from '../hooks/useChapterEditor';
 import { useChapterPublishing } from '../hooks/useChapterPublishing';
 import { useDeviceDraft } from '../hooks/useDeviceDraft';
+import { useFootnoteEditing } from '../hooks/useFootnoteEditing';
 import { useMyStories } from '../hooks/useMyStories';
 import { usePoemMode } from '../hooks/usePoemMode';
 import { useRememberedCaret } from '../hooks/useRememberedCaret';
@@ -159,6 +160,8 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
   });
   // Design books item 17: the caret comes back where the writer left it in this story.
   useRememberedCaret(editing.editor, chapter.story.slug, chapter.code);
+  // The chapter's footnotes and the open note (BOOKS-D05b, board D13).
+  const footnotes = useFootnoteEditing(editing.editor);
   /** A title change: keep it and mark the draft as changed. */
   function changeTitle(value: string) {
     setTitle(value);
@@ -173,7 +176,17 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     setWordCount(other.wordCount);
     autosave.acceptOther(other.draftVersion);
   }
-  return { title, changeTitle, wordCount, characterCount, autosave, editing, loadOther, poem };
+  return {
+    title,
+    changeTitle,
+    wordCount,
+    characterCount,
+    autosave,
+    editing,
+    loadOther,
+    poem,
+    footnotes,
+  };
 }
 
 /** The conflict's two choices and the compare dialog's open state (S1-E3-02b). */
@@ -359,6 +372,8 @@ function PaperColumn(props: {
         <EditorToolbarDock
           editor={editing.editor}
           onLink={editing.openLinkDialog}
+          onFootnote={loaded.footnotes.insert}
+          isFootnoteOpen={loaded.footnotes.openNote !== null}
           chapterId={chapter.id}
           poem={loaded.poem}
           onOpenPlan={props.onOpenPlan}
@@ -375,6 +390,7 @@ function PaperColumn(props: {
         isPoem={loaded.poem.isPoem}
         wordCount={loaded.wordCount}
         saveState={autosave.state}
+        footnotes={loaded.footnotes}
       />
       {/* Words against the chapter's target, live (Story Atlas, S1-E17-23 and S1-E17-26). */}
       <ChapterWordsLine

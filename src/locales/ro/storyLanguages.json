@@ -105,7 +105,7 @@
     "translateParagraph": "Tradu paragraful {{number}}",
     "tip": "Tradu cu propriile cuvinte; nu trebuie să se potrivească paragraf cu paragraf. Cititorii văd originalul până când publici.",
     "fullEditor": "Deschide în editorul complet",
-    "fullEditorHint": "Pentru titluri, imagini și alte formatări.",
+    "fullEditorHint": "Pentru titluri, imagini, note de subsol și alte formatări.",
     "noParagraphs": "Capitolul original nu are încă text.",
     "unsaved": "Modificări nesalvate",
     "notFound": "Capitolul nu se află printre traducerile acestui cont.",

@@ -60,6 +60,8 @@ const knownActions = [
   'class_points_removed',
   // The class's school year and its competitions (bundle CLASS-POINTS, part 2; S1-E8-15 and 17).
   'class_grade_set',
+  // The class's school, changed by its teacher (BOOKS-8b, user story 8.8).
+  'class_school_set',
   'competition_started',
   'competition_changed',
   'competition_ended',

@@ -8,7 +8,9 @@
  * Allowed nodes: paragraphs, headings (levels 2 and 3), bold, italic, quote, bullet and
  * numbered lists, the scene break (* * *), links (http, https, mailto) and chapter pictures on
  * their own line, `![alt text](picture:<ID>)` (S1-E3-09, src/lib/chapter-pictures.ts), and music
- * and video cards, `![title](embed:<ID>)` (S1-E3-10, src/lib/chapter-embeds.ts). Anything
+ * and video cards, `![title](embed:<ID>)` (S1-E3-10, src/lib/chapter-embeds.ts), and footnotes,
+ * `[The note.](footnote:)` where the note's number sits (BOOKS-D05b, src/lib/chapter-footnotes.ts),
+ * which the editor holds as one chapterFootnote node (chapterFootnoteNode.ts). Anything
  * else in the Markdown (raw HTML, other pictures, code) becomes plain text, so nothing
  * unexpected survives.
  *
@@ -19,6 +21,7 @@ import { fromMarkdown } from 'mdast-util-from-markdown';
 import type { Nodes as MarkdownNode, PhrasingContent, RootContent } from 'mdast';
 
 import { embedAddress, embedIdFromAddress } from '@/lib/chapter-embeds';
+import { FOOTNOTE_ADDRESS, isFootnoteAddress, oneLineNote } from '@/lib/chapter-footnotes';
 import { pictureAddress, pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
@@ -60,10 +63,8 @@ function inlineToEditor(nodes: PhrasingContent[], marks: EditorMark[]): EditorNo
       result.push(...inlineToEditor(node.children, [...marks, { type: 'bold' }]));
     } else if (node.type === 'emphasis') {
       result.push(...inlineToEditor(node.children, [...marks, { type: 'italic' }]));
-    } else if (node.type === 'link' && isAllowedLink(node.url)) {
-      result.push(
-        ...inlineToEditor(node.children, [...marks, { type: 'link', attrs: { href: node.url } }]),
-      );
+    } else if (node.type === 'link') {
+      result.push(...linkToEditor(node, marks));
     } else if (node.type === 'break') {
       result.push({ type: 'hardBreak' });
     } else {
@@ -73,6 +74,31 @@ function inlineToEditor(nodes: PhrasingContent[], marks: EditorMark[]): EditorNo
     }
   }
   return result;
+}
+
+/**
+ * A Markdown link: a footnote becomes its node, an allowed link keeps its words with the link
+ * mark, and any other link keeps only its words.
+ *
+ * @param node - the link from the Markdown
+ * @param marks - the marks around it (bold, italic)
+ * @returns the editor nodes for it
+ */
+function linkToEditor(node: Extract<PhrasingContent, { type: 'link' }>, marks: EditorMark[]) {
+  // A footnote (BOOKS-D05b): one node holding its note, never marked bold, italic or linked.
+  if (isFootnoteAddress(node.url)) return [footnoteNode(plainTextOf(node))];
+  // An allowed link: its words, carrying the link mark.
+  if (isAllowedLink(node.url)) {
+    return inlineToEditor(node.children, [...marks, { type: 'link', attrs: { href: node.url } }]);
+  }
+  // A link we refuse: the words stay, the address goes.
+  const text = plainTextOf(node);
+  return text === '' ? [] : [textNode(text, marks)];
+}
+
+/** The editor's footnote node, its note on one line (BOOKS-D05b). */
+function footnoteNode(note: string): EditorNode {
+  return { type: 'chapterFootnote', attrs: { note: oneLineNote(note) } };
 }
 
 /** One text node; an empty marks list is left out, as TipTap writes it. */
@@ -213,9 +239,25 @@ function inlineToMarkdown(nodes: EditorNode[] | undefined): string {
       result += '  \n';
     } else if (node.type === 'text') {
       result += wrapWithMarks(escapeMarkdownText(node.text ?? ''), node.marks ?? []);
+    } else if (node.type === 'chapterFootnote') {
+      // A "!" just before the note would make it a picture ("![…](…)"), so it is escaped.
+      if (result.endsWith('!')) result = `${result.slice(0, -1)}\\!`;
+      result += footnoteToMarkdown(node);
     }
   }
   return result;
+}
+
+/**
+ * A footnote back to Markdown: `[The note.](footnote:)`, the note on one line with its Markdown
+ * characters escaped, so it can't become a link or formatting (BOOKS-D05b).
+ *
+ * @returns the footnote, or '' for an empty note (a number without a note is dropped)
+ */
+function footnoteToMarkdown(node: EditorNode): string {
+  const note = typeof node.attrs?.note === 'string' ? oneLineNote(node.attrs.note) : '';
+  if (note === '') return '';
+  return `[${escapeMarkdownText(note)}](${FOOTNOTE_ADDRESS})`;
 }
 
 /** Indents every line of a block, for list items and quotes. */
@@ -316,8 +358,9 @@ function plainTextOfEditorNode(node: EditorNode): string {
   if (node.type === 'text') return node.text ?? '';
   if (node.type === 'hardBreak') return '\n';
   if (node.type === 'horizontalRule') return '* * *';
-  // A picture or a card has no words of its own to compare (S1-E3-09, S1-E3-10).
-  if (node.type === 'chapterPicture' || node.type === 'chapterEmbed') return '';
+  // A picture or a card has no words of its own to compare (S1-E3-09, S1-E3-10); a footnote's
+  // words are left out as the editor's own text leaves them out (BOOKS-D05b).
+  if (['chapterPicture', 'chapterEmbed', 'chapterFootnote'].includes(node.type)) return '';
   const parts = (node.content ?? []).map(plainTextOfEditorNode);
   const isInline = (node.content ?? []).every(
     (child) => child.type === 'text' || child.type === 'hardBreak',

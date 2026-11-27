@@ -28,6 +28,8 @@ import {
   NUMBERED_LIST_REFERENCE,
   QUOTE_STYLE_ID,
   type ChapterConversion,
+  type WordFootnotes,
+  wordFootnoteCollector,
 } from './chapterTextToWord';
 import type {
   WordAssets,
@@ -166,10 +168,12 @@ export async function storyToWord(
 ): Promise<Uint8Array> {
   // Step 1: one counter per file, so every numbered list starts at 1.
   let listCount = 0;
+  const notes = wordFootnoteCollector();
   const conversion: ChapterConversion = {
     assets: options.assets,
     labels: options.labels,
     nextListInstance: () => (listCount += 1),
+    addFootnote: notes.addFootnote,
   };
   // Step 2: the opening, then every chapter in order.
   const children = [
@@ -182,6 +186,7 @@ export async function storyToWord(
     creator: story.writerName,
     languageCode: story.languageCode,
     children,
+    footnotes: notes.footnotes,
   });
 }
 
@@ -191,6 +196,8 @@ export interface WordDocumentContent {
   creator: string;
   languageCode: string;
   children: Paragraph[];
+  /** The file's footnotes, by number (BOOKS-D05b); left out, there are none. */
+  footnotes?: WordFootnotes;
 }
 
 /**
@@ -228,6 +235,7 @@ export async function wordDocumentBytes(content: WordDocumentContent): Promise<U
       ],
     },
     numbering: listNumbering(),
+    footnotes: content.footnotes ?? {},
     sections: [{ children: content.children }],
   });
   return new Uint8Array(await Packer.toArrayBuffer(document));

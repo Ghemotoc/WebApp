@@ -141,6 +141,7 @@ describe('scoringFrom', () => {
       id: 'k1',
       name: 'Spring stories',
       phase: 'judging',
+      ends_at: '2026-10-31T21:59:00Z',
       class_slug: 'class-9b',
       winners_allowed: true,
       criteria: [criterion],
@@ -150,7 +151,16 @@ describe('scoringFrom', () => {
           display_name: 'Mara',
           class_points: 7,
           teacher_points: 12,
-          chapters: [{ id: 'ch1', title: 'The lake', story_title: 'North', position: 1 }],
+          chapters: [
+            {
+              id: 'ch1',
+              title: 'The lake',
+              story_title: 'North',
+              story_slug: 'north',
+              code: 'ab12cd34',
+              position: 1,
+            },
+          ],
           scores: { c1: 18, broken: 'x' },
           result: null,
           readers_choice: false,
@@ -159,7 +169,9 @@ describe('scoringFrom', () => {
     });
     expect(scoring.phase).toBe('judging');
     expect(scoring.entrants[0]?.scores).toEqual({ c1: 18 });
+    expect(scoring.endsAt).toBe('2026-10-31T21:59:00Z');
     expect(scoring.entrants[0]?.chapters[0]?.title).toBe('The lake');
+    expect(scoring.entrants[0]?.chapters[0]?.code).toBe('ab12cd34');
     expect(scoring.entrants[0]?.result).toBeNull();
   });
 });

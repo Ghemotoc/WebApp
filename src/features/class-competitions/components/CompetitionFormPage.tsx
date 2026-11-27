@@ -1,176 +1,49 @@
 /**
  * CompetitionFormPage: /spaces/<slug>/competition, where the teacher starts a class competition
- * or changes one nobody joined yet (bundle CLASS-POINTS, part 2; stories S1-E8-15 criteria 1 to
- * 4 and S1-E8-19).
+ * or changes one nobody entered yet (bundle CLASS-POINTS, part 2; stories S1-E8-15 criteria 1 to
+ * 4 and S1-E8-19; laid out as board G11-CompetitionNew by BOOKS-8 part 8b, user story 8.11).
  *
- * What it shows: the name, the start and the end (each a date and a time on the teacher's own
- * clock in the shared DateTimeField, CALM-7d), the criteria editor, the teacher's templates
- * ("Use template" above the criteria, "Save as template" under them) and "Start the
- * competition". Anyone but the class's teacher is told the page is the teacher's; a competition
- * pupils already joined is locked. Plain page, no doodles, no ads.
+ * What it shows: the breadcrumb, "New class competition" (or "Change the competition") and the
+ * form with its preview (CompetitionForm). While another competition runs and pupils have entered
+ * it, the page says one is already running, names it and links to the class, instead of a
+ * greyed-out button on the class page (user story 8.11). Anyone but the class's teacher is told
+ * the page is the teacher's. Plain page, no doodles, no ads.
  * Who shows it: the router. What it calls: useSpace → space_page(); useClassCompetitions →
- * class_competitions(); useSaveCompetition → save_class_competition(), which checks everything
- * again and writes the class's log.
+ * class_competitions(); CompetitionForm.
  */
-import { type FormEvent, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 
-import { Button } from '@/components/ui/Button';
 import { Notice } from '@/components/ui/Notice';
 import { PageContainer } from '@/components/ui/PageContainer';
-import { DateTimeField } from '@/components/ui/DateTimeField';
-import { TextInput } from '@/components/ui/TextInput';
+import { nameOf } from '@/features/forums/lib/forumPeople';
 import type { Space } from '@/features/spaces/api/spaces';
 import { SpaceBreadcrumb } from '@/features/spaces/components/SpaceBreadcrumb';
 import { useSpace } from '@/features/spaces/hooks/useSpaces';
-import { deviceTimeZone } from '@/lib/local-time';
 
-import type { Criterion, RunningCompetition } from '../api/classCompetitions';
-import { useClassCompetitions, useSaveCompetition } from '../hooks/useClassCompetitions';
-import {
-  defaultMomentFields,
-  momentOf,
-  savedMomentFields,
-  type CompetitionMomentFields,
-} from '../lib/competitionDates';
-import { copiedCriteria, emptyCriterion } from '../lib/criteriaDraft';
+import { useClassCompetitions } from '../hooks/useClassCompetitions';
 import { useClassCompetitionsTranslation } from '../registerClassCompetitionsTranslations';
 
-import { CriteriaEditor } from './CriteriaEditor';
-import { SaveAsTemplate, TemplatePicker } from './CriteriaTemplateTools';
-
-/** The name and the two moments' fields, as the form holds them. */
-interface Details extends CompetitionMomentFields {
-  name: string;
-}
+import { CompetitionForm } from './CompetitionForm';
 
 /**
- * The name and the start and end fields.
+ * Why there is no form: a competition is running and pupils entered it (one runs at a time, user
+ * story 8.11), or the class has no school year yet.
  *
- * @param props.details - what is typed so far
- * @param props.onChange - takes the changed details
- * @returns the three fields
+ * @param props.slug - the class's address
+ * @param props.runningName - the running competition's name, or null when the grade is missing
+ * @returns the note and the link to the class
  */
-function DetailsFields(props: { details: Details; onChange: (details: Details) => void }) {
-  const { details, onChange } = props;
+function NoFormNote({ slug, runningName }: { slug: string; runningName: string | null }) {
   const { t } = useClassCompetitionsTranslation();
+  const note =
+    runningName === null ? t('card.needsGrade') : t('form.running', { name: runningName });
   return (
-    <div className="flex flex-col gap-4">
-      <TextInput
-        id="competition-name"
-        label={t('form.name')}
-        hint={t('form.nameHint')}
-        maxLength={120}
-        required
-        value={details.name}
-        onChange={(event) => onChange({ ...details, name: event.target.value })}
-      />
-      <DateTimeField
-        id="competition-starts"
-        value={details.starts}
-        onChange={(starts) => onChange({ ...details, starts })}
-        dateLabel={t('form.startsOn')}
-        timeLabel={t('form.startTime')}
-        skippedHourNote={(time) => t('form.skippedHourNote', { time })}
-      />
-      <DateTimeField
-        id="competition-ends"
-        value={details.ends}
-        onChange={(ends) => onChange({ ...details, ends })}
-        dateLabel={t('form.endsOn')}
-        timeLabel={t('form.endTime')}
-        note={t('form.datesHint', { zone: deviceTimeZone() })}
-        skippedHourNote={(time) => t('form.skippedHourNote', { time })}
-      />
+    <div className="flex flex-col items-start gap-3">
+      <p className="m-0 max-w-[34em] type-body text-ink-muted">{note}</p>
+      <Link to={`/spaces/${slug}`} className="font-semibold text-link underline">
+        {t(runningName === null ? 'form.backToClass' : 'form.seeRunning')}
+      </Link>
     </div>
-  );
-}
-
-/**
- * A headed part of the form.
- *
- * @param props.heading - the part's heading
- * @param props.intro - one line under it, when there is one
- * @returns the section
- */
-function FormSection(props: { heading: string; intro?: string; children: React.ReactNode }) {
-  return (
-    <section className="flex flex-col gap-3">
-      <h2 className="m-0 font-heading type-heading font-bold text-ink-heading">{props.heading}</h2>
-      {props.intro !== undefined && <p className="m-0 text-ink-muted">{props.intro}</p>}
-      {props.children}
-    </section>
-  );
-}
-
-/** What the form needs. */
-interface CompetitionFormProps {
-  /** The class's address. */
-  slug: string;
-  /** The competition to change, or null for a new one. */
-  current: RunningCompetition | null;
-}
-
-/**
- * The form itself, for a new competition or one that can still change.
- *
- * @returns the form
- */
-function CompetitionForm({ slug, current }: CompetitionFormProps) {
-  const { t } = useClassCompetitionsTranslation();
-  const navigate = useNavigate();
-  const saver = useSaveCompetition();
-  const [details, setDetails] = useState<Details>(() =>
-    current === null
-      ? { name: '', ...defaultMomentFields(new Date()) }
-      : { name: current.name, ...savedMomentFields(current.startsAt, current.endsAt) },
-  );
-  const [criteria, setCriteria] = useState<Criterion[]>(() =>
-    current === null ? [emptyCriterion()] : current.criteria,
-  );
-
-  /** Saves the competition, then goes back to the class page, where its card now shows. */
-  async function save(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    // The typed dates and times become moments; one that isn't real goes as null and the
-    // database answers competition:dates, which the form shows.
-    const request = {
-      slug,
-      competitionId: current?.id ?? null,
-      name: details.name,
-      startsAt: momentOf(details.starts),
-      endsAt: momentOf(details.ends),
-      criteria,
-    };
-    const saved = await saver.save(request).catch(() => undefined);
-    if (saved !== undefined) await navigate(`/spaces/${slug}`);
-  }
-
-  return (
-    <form
-      onSubmit={save}
-      className="flex flex-col gap-8 rounded-card border border-border bg-surface p-4 shadow-card md:p-6"
-    >
-      <DetailsFields details={details} onChange={setDetails} />
-      <FormSection heading={t('form.templateHeading')}>
-        <TemplatePicker
-          slug={slug}
-          onUse={(template) => setCriteria(copiedCriteria(template.criteria))}
-        />
-      </FormSection>
-      <FormSection heading={t('form.criteriaHeading')} intro={t('form.criteriaIntro')}>
-        <CriteriaEditor idPrefix="competition" criteria={criteria} onChange={setCriteria} />
-        <SaveAsTemplate criteria={criteria} />
-      </FormSection>
-      <div aria-live="polite">
-        {saver.failure !== null && (
-          <Notice tone="error">{t(`failures.${saver.failure.failure}`)}</Notice>
-        )}
-      </div>
-      <Button type="submit" className="w-fit" disabled={saver.isRunning}>
-        {t(current === null ? 'form.submitNew' : 'form.submitEdit')}
-      </Button>
-    </form>
   );
 }
 
@@ -181,8 +54,9 @@ function CompetitionForm({ slug, current }: CompetitionFormProps) {
  * @param props.slug - the class's address
  * @returns the note or the form
  */
-function TeacherForm({ slug }: { slug: string }) {
+function TeacherForm({ space }: { space: Space }) {
   const { t } = useClassCompetitionsTranslation();
+  const slug = space.slug;
   const read = useClassCompetitions(slug);
   if (read.isError) return <Notice tone="error">{t('card.loadFailed')}</Notice>;
   const competitions = read.data ?? null;
@@ -190,17 +64,20 @@ function TeacherForm({ slug }: { slug: string }) {
   const running = competitions.running;
   const isLocked = running !== null && !running.canEdit;
   if (competitions.grade === null || isLocked) {
-    return (
-      <div className="flex flex-col items-start gap-3">
-        <p className="m-0 text-ink-muted">{t(isLocked ? 'form.locked' : 'card.needsGrade')}</p>
-        <Link to={`/spaces/${slug}`} className="font-semibold text-link underline">
-          {t('form.backToClass')}
-        </Link>
-      </div>
-    );
+    return <NoFormNote slug={slug} runningName={isLocked ? running.name : null} />;
   }
   // The key rebuilds the form when the competition it edits changes.
-  return <CompetitionForm key={running?.id ?? 'new'} slug={slug} current={running} />;
+  return (
+    <CompetitionForm
+      key={running?.id ?? 'new'}
+      slug={slug}
+      className={space.name}
+      teacherName={nameOf(space.owner, '')}
+      grade={competitions.grade}
+      areWinnersAllowed={competitions.areWinnersAllowed}
+      current={running}
+    />
+  );
 }
 
 /**
@@ -216,7 +93,7 @@ function FormBody({ space }: { space: Space | null | undefined }) {
   if (space.kind !== 'class' || space.viewer.membership !== 'owner') {
     return <p className="m-0 text-ink-muted">{t('form.teacherOnly')}</p>;
   }
-  return <TeacherForm slug={space.slug} />;
+  return <TeacherForm space={space} />;
 }
 
 /**
@@ -232,12 +109,11 @@ export function CompetitionFormPage() {
   const name = space.data?.name ?? '';
   const title = t(running === null ? 'form.titleNew' : 'form.titleEdit');
   return (
-    <PageContainer className="flex max-w-[860px] flex-col gap-6 py-8">
+    <PageContainer className="flex flex-col gap-12 py-8">
       <title>{t('form.documentTitle', { name })}</title>
       <SpaceBreadcrumb space={{ slug: spaceSlug, name }} current={title} />
       <header className="flex flex-col gap-2">
-        <h1 className="m-0 type-title break-words lg:type-display">{title}</h1>
-        <p className="m-0 max-w-[640px] text-ink-muted">{t('form.intro')}</p>
+        <h1 className="page-title">{title}</h1>
       </header>
       <FormBody space={space.data} />
     </PageContainer>

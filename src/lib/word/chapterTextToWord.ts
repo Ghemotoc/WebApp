@@ -11,12 +11,16 @@
  * - a chapter picture, `![alt](picture:<ID>)`, becomes the picture with its alt text, or a line
  *   "Picture: <alt>" when it couldn't be loaded; a music or video card, `![title](embed:<ID>)`,
  *   becomes a line with its link (S1-E11-09: embeds are listed as links);
+ * - a footnote, `[note](footnote:)` (BOOKS-D05b), becomes a real Word footnote: the small raised
+ *   number in the text and the note at the foot of the page (board D13, "Word export"); Word
+ *   numbers them through the whole file;
  * - anything else (raw HTML, code) becomes plain text, as in the editor's converter.
  * Who calls it: storyToWord(). What it calls: mdast-util-from-markdown and the docx library.
  */
 import {
   AlignmentType,
   ExternalHyperlink,
+  FootnoteReferenceRun,
   HeadingLevel,
   ImageRun,
   Paragraph,
@@ -25,6 +29,7 @@ import {
 } from 'docx';
 import { fromMarkdown } from 'mdast-util-from-markdown';
 import type {
+  Link,
   List,
   Nodes as MarkdownNode,
   Paragraph as MarkdownParagraph,
@@ -33,6 +38,7 @@ import type {
 } from 'mdast';
 
 import { embedIdFromAddress } from '@/lib/chapter-embeds';
+import { takeFootnotes } from '@/lib/chapter-footnotes';
 import { pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
 
@@ -51,6 +57,32 @@ export interface ChapterConversion {
   labels: WordLabels;
   /** Counts numbered lists, so each one starts again at 1 (Word's numbering "instance"). */
   nextListInstance: () => number;
+  /** Keeps a footnote's note for the file and gives back its number there (BOOKS-D05b). */
+  addFootnote: (note: string) => number;
+}
+
+/** A file's footnotes, as the docx library's Document takes them: by number, each a paragraph. */
+export type WordFootnotes = Record<string, { children: Paragraph[] }>;
+
+/**
+ * A place to keep one file's footnotes while its chapters are converted (BOOKS-D05b).
+ *
+ * @returns the add function for ChapterConversion and the footnotes for the Document
+ */
+export function wordFootnoteCollector(): {
+  addFootnote: (note: string) => number;
+  footnotes: WordFootnotes;
+} {
+  const footnotes: WordFootnotes = {};
+  let count = 0;
+  return {
+    footnotes,
+    addFootnote: (note) => {
+      count += 1;
+      footnotes[String(count)] = { children: [new Paragraph({ children: [new TextRun(note)] })] };
+      return count;
+    },
+  };
 }
 
 /** The look of a run of text, carried down through bold, italic and links. */
@@ -82,6 +114,26 @@ function textRun(text: string, style: RunStyle): TextRun {
 }
 
 /**
+ * A link in Word: an allowed address as a real hyperlink, any other keeping only its words.
+ *
+ * @param node - the Markdown link
+ * @param style - the look around it
+ * @returns the hyperlink, or the plain runs
+ */
+function linkToWord(node: Link, style: RunStyle): ParagraphChild[] {
+  if (!isAllowedLink(node.url)) {
+    // A refused link: the words stay, the address goes.
+    const text = plainTextOf(node);
+    return text === '' ? [] : [textRun(text, style)];
+  }
+  // Word's Hyperlink style gives the words their link colour and underline.
+  const words = inlineToWord(node.children, { ...style, characterStyle: 'Hyperlink' });
+  const children =
+    words.length > 0 ? words : [textRun(node.url, { ...style, characterStyle: 'Hyperlink' })];
+  return [new ExternalHyperlink({ link: node.url, children })];
+}
+
+/**
  * Inline content to Word runs: text with its bold and italic, line breaks and links.
  *
  * @param nodes - the inline Markdown nodes
@@ -97,14 +149,13 @@ function inlineToWord(nodes: PhrasingContent[], style: RunStyle): ParagraphChild
       result.push(...inlineToWord(node.children, { ...style, bold: true }));
     } else if (node.type === 'emphasis') {
       result.push(...inlineToWord(node.children, { ...style, italics: true }));
-    } else if (node.type === 'link' && isAllowedLink(node.url)) {
-      // Word's Hyperlink style gives the words their link colour and underline.
-      const words = inlineToWord(node.children, { ...style, characterStyle: 'Hyperlink' });
-      const children =
-        words.length > 0 ? words : [textRun(node.url, { ...style, characterStyle: 'Hyperlink' })];
-      result.push(new ExternalHyperlink({ link: node.url, children }));
+    } else if (node.type === 'link') {
+      result.push(...linkToWord(node, style));
     } else if (node.type === 'break') {
       result.push(new TextRun({ break: 1 }));
+    } else if (node.type === 'footnoteReference') {
+      // A footnote (BOOKS-D05b): Word draws the raised number and puts the note at the page's foot.
+      result.push(new FootnoteReferenceRun(Number(node.identifier)));
     } else {
       // A refused link, inline code, raw HTML: the words stay, the rest goes.
       const text = plainTextOf(node);
@@ -245,5 +296,7 @@ function blockToWord(
  */
 export function chapterTextToWord(markdown: string, conversion: ChapterConversion): Paragraph[] {
   const tree = fromMarkdown(markdown);
+  // Footnotes become Word's own, numbered through the whole file (BOOKS-D05b).
+  takeFootnotes(tree, (note) => conversion.addFootnote(note));
   return tree.children.flatMap((node) => blockToWord(node, conversion));
 }

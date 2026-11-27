@@ -6,14 +6,18 @@
  * What it shows (board G03): the banner strip (7 to 1), the class's name as the page title, one
  * meta line "Private · Only the class can see this space · 28 pupils · teacher Ms Ionescu", the
  * description, and "Share a story" for a member who may post. No box around it.
- * Beyond the board: Leave space for a pupil, the teacher's tool links (settings, members, log) and
+ * Beyond the board: Leave space for a pupil, the tool links of anyone else who runs the class and
  * Report for everyone but the teacher (CLAUDE.md rule 6) sit in a quiet row under it.
+ * The teacher (BOOKS-8 part 8b; board G08, user story 8.8) reads "Private · 28 pupils · grade 9"
+ * and gets ClassTeacherActions (New thread, Invite pupils, Class settings) instead of the row.
+ * The board's "class code 9B-K4TQ-72" is left out: only the code's hash is kept (S1-E8-11).
  * What it calls: SpaceBannerBand, ShareClassStory, useMembership → leave_space(), SpaceToolLinks,
- * ReportButton.
+ * ReportButton, ClassTeacherActions; useClassCompetitions → class_competitions() for the grade.
  */
 import { Button } from '@/components/ui/Button';
 import { MetaLine } from '@/components/ui/MetaLine';
 import { Notice } from '@/components/ui/Notice';
+import { useClassCompetitions } from '@/features/class-competitions/hooks/useClassCompetitions';
 import { nameOf } from '@/features/forums/lib/forumPeople';
 import { ReportButton } from '@/features/reporting/components/ReportButton';
 import { errorShownByHook } from '@/lib/errorShownByHook';
@@ -24,6 +28,7 @@ import { useMembership } from '../hooks/useSpaces';
 import { spaceFailureText } from '../lib/spaceFailures';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { ClassTeacherActions } from './ClassTeacherActions';
 import { ShareClassStory } from './ShareClassStory';
 import { SpaceBannerBand } from './SpaceBannerBand';
 import { SpaceToolLinks } from './SpaceToolLinks';
@@ -37,10 +42,22 @@ import { SpaceToolLinks } from './SpaceToolLinks';
  */
 function useClassFacts(space: Space) {
   const { t } = useSpacesTranslation();
+  const isTeacher = space.viewer.membership === 'owner';
+  const grade = useClassCompetitions(isTeacher ? space.slug : '').data?.grade ?? null;
   // The teacher is a member of the class too; the board counts only pupils.
   const pupils = Math.max(space.memberCount - 1, 0);
   // A locked class says so first, so a pupil knows why nothing can be posted (CLASSES-b).
   const lockedFact = space.isLocked ? [{ text: t('pills.locked'), kind: 'state' as const }] : [];
+  // The teacher's line (board G08): private, the pupils and the grade, once it is set.
+  if (isTeacher) {
+    const gradeFact = grade === null ? [] : [{ text: t('classPage.grade', { grade }) }];
+    return [
+      ...lockedFact,
+      { text: t('classPage.private'), kind: 'state' as const },
+      { text: t('classPage.pupils', { count: pupils }) },
+      ...gradeFact,
+    ];
+  }
   return [
     ...lockedFact,
     { text: t('classPage.private'), kind: 'state' as const },
@@ -112,7 +129,8 @@ export function ClassSpaceHeader({ space }: { space: Space }) {
   const picture = useSpaceBannerView(space).data ?? null;
   // A picture still being checked, waiting for a person or removed shows the colour instead.
   const pictureUrl = picture !== null && picture.state === 'visible' ? picture.url : null;
-  const canShare = space.viewer.canPost && !space.isLocked;
+  const isTeacher = space.viewer.membership === 'owner';
+  const canShare = space.viewer.canPost && !space.isLocked && !isTeacher;
   return (
     <header className="flex flex-col gap-12">
       <div className="relative aspect-[7/1] w-full overflow-hidden rounded-card" aria-hidden="true">
@@ -130,7 +148,7 @@ export function ClassSpaceHeader({ space }: { space: Space }) {
         )}
         <div className="flex flex-col gap-6 pt-3">
           {canShare && <ShareClassStory classSlug={space.slug} />}
-          <ClassHeaderTools space={space} />
+          {isTeacher ? <ClassTeacherActions space={space} /> : <ClassHeaderTools space={space} />}
         </div>
       </div>
     </header>

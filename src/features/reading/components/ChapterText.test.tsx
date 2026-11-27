@@ -1,9 +1,9 @@
 /**
  * ChapterText shows the allowed formatting and nothing that could run (story S1-E3-03; rule 8).
  */
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createI18n } from '@/lib/i18n';
 
@@ -139,5 +139,78 @@ describe('ChapterText', () => {
   it('draws prose as before, with no stanzas', () => {
     render(<ChapterText language="ro" markdown={'Un rând  \nAltul'} />);
     expect(screen.queryByRole('group')).toBeNull();
+  });
+});
+
+describe('ChapterText footnotes (BOOKS-D05b, board B15)', () => {
+  const markdown =
+    'Liftul e vopsit[Se vopsește în fiecare primăvară.](footnote:) din nou.\n\nȘi scara[A doua notă.](footnote:).';
+
+  /** Makes the window as wide as a desktop, so a note opens under its number. */
+  function asWideWindow() {
+    vi.spyOn(window, 'matchMedia').mockImplementation(
+      (query: string) =>
+        ({
+          matches: true,
+          media: query,
+          addEventListener: () => undefined,
+          removeEventListener: () => undefined,
+        }) as unknown as MediaQueryList,
+    );
+  }
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('draws each footnote as a numbered button, keeping its words out of the sentence', async () => {
+    render(
+      <I18nextProvider i18n={createI18n('en')}>
+        <ChapterText language="ro" markdown={markdown} />
+      </I18nextProvider>,
+    );
+    const first = await screen.findByRole('button', { name: 'Footnote 1' });
+    expect(first).toHaveTextContent('1');
+    expect(first).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByRole('button', { name: 'Footnote 2' })).toBeInTheDocument();
+    // The notes are listed under the text, in the same order.
+    const notes = await screen.findByRole('region', { name: 'Notes' });
+    expect(notes).toHaveTextContent('Se vopsește în fiecare primăvară.');
+    expect(notes.querySelectorAll('li')).toHaveLength(2);
+  });
+
+  it('opens the note under its number from 768 px, and Escape closes it back to the number', async () => {
+    asWideWindow();
+    render(
+      <I18nextProvider i18n={createI18n('en')}>
+        <ChapterText language="ro" markdown={markdown} />
+      </I18nextProvider>,
+    );
+    const marker = await screen.findByRole('button', { name: 'Footnote 1' });
+    fireEvent.click(marker);
+    const note = screen.getByRole('dialog', { name: 'Note 1' });
+    expect(note).toHaveTextContent('Se vopsește în fiecare primăvară.');
+    expect(marker).toHaveAttribute('aria-expanded', 'true');
+    expect(marker).toHaveAttribute('aria-controls', note.id);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(marker).toHaveFocus();
+  });
+
+  it('goes back from a note in the list to its number in the text', async () => {
+    render(
+      <I18nextProvider i18n={createI18n('en')}>
+        <ChapterText language="ro" markdown={markdown} />
+      </I18nextProvider>,
+    );
+    Element.prototype.scrollIntoView = vi.fn();
+    const back = await screen.findByRole('link', { name: 'Back to the text, note 2' });
+    const marker = await screen.findByRole('button', { name: 'Footnote 2' });
+    expect(back).toHaveAttribute('href', `#${marker.id}`);
+    fireEvent.click(back);
+    expect(marker).toHaveFocus();
+  });
+
+  it('lists no notes for a chapter without footnotes', () => {
+    render(<ChapterText language="ro" markdown={'Doar text.'} />);
+    expect(screen.queryByRole('region')).toBeNull();
   });
 });

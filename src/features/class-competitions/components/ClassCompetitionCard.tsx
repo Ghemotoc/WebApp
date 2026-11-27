@@ -83,6 +83,8 @@ interface RunningCardProps {
   slug: string;
   /** The teacher's name, for "Ms Ionescu picks one winner". */
   teacherName: string;
+  /** How many pupils the class has, for the teacher's "9 of 28 pupils entered so far". */
+  pupilCount: number;
 }
 
 /**
@@ -91,7 +93,7 @@ interface RunningCardProps {
  *
  * @returns the panel
  */
-function RunningCard({ competitions, slug, teacherName }: RunningCardProps) {
+function RunningCard({ competitions, slug, teacherName, pupilCount }: RunningCardProps) {
   const { t, i18n } = useClassCompetitionsTranslation();
   const [showOutcomes, setShowOutcomes] = useState(false);
   const competition = competitions.running;
@@ -103,7 +105,9 @@ function RunningCard({ competitions, slug, teacherName }: RunningCardProps) {
     <OutcomesToggle isOpen={showOutcomes} onToggle={() => setShowOutcomes(!showOutcomes)} />
   );
   // Below grade 8 nobody wins, so the line says every entrant is a Contestant (decision 11).
-  const pickKey = competitions.areWinnersAllowed ? 'card.picks' : 'card.noWinners';
+  // The teacher reads "You pick one winner" (board G08); pupils read the teacher's name.
+  const picksKey = isTeacher ? 'card.picksYou' : 'card.picks';
+  const pickKey = competitions.areWinnersAllowed ? picksKey : 'card.noWinners';
   return (
     <section aria-labelledby="class-competition-heading" className={panelClasses}>
       <PhaseLine competition={competition} />
@@ -121,10 +125,9 @@ function RunningCard({ competitions, slug, teacherName }: RunningCardProps) {
       />
       <div className="pt-4">
         {isTeacher ? (
-          <div className="flex flex-col gap-3">
+          <TeacherControls competition={competition} slug={slug} pupilCount={pupilCount}>
             {toggle}
-            <TeacherControls competition={competition} slug={slug} />
-          </div>
+          </TeacherControls>
         ) : (
           <PupilControls competition={competition} slug={slug}>
             {toggle}
@@ -178,9 +181,15 @@ function StartCard({ competitions, slug }: { competitions: ClassCompetitions; sl
  *
  * @param props.slug - the class's address
  * @param props.teacherName - the teacher's pen name or handle
+ * @param props.pupilCount - how many pupils the class has (for the teacher's count line)
  * @returns the cards, or nothing for someone outside the class or a class with no competition
  */
-export function ClassCompetitionCard({ slug, teacherName }: { slug: string; teacherName: string }) {
+export function ClassCompetitionCard(props: {
+  slug: string;
+  teacherName: string;
+  pupilCount?: number;
+}) {
+  const { slug, teacherName, pupilCount = 0 } = props;
   const { t } = useClassCompetitionsTranslation();
   const read = useClassCompetitions(slug);
   if (read.isError) return <Notice tone="error">{t('card.loadFailed')}</Notice>;
@@ -190,7 +199,12 @@ export function ClassCompetitionCard({ slug, teacherName }: { slug: string; teac
   return (
     <>
       {competitions.running !== null && (
-        <RunningCard competitions={competitions} slug={slug} teacherName={teacherName} />
+        <RunningCard
+          competitions={competitions}
+          slug={slug}
+          teacherName={teacherName}
+          pupilCount={pupilCount}
+        />
       )}
       {competitions.running === null && isTeacher && (
         <StartCard competitions={competitions} slug={slug} />

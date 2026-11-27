@@ -5,7 +5,8 @@
  * What it shows: the three steps (the Teacher badge, "Class space" on the form, students join
  * with the code), then what happens at the end of the school year and, when the class has a lock
  * date, the day it locks. Plain words, no doodles, the same panel style as the rules card.
- * Who shows it: SpacePage, in the side column of a class space.
+ * Who shows it: SpaceSettingsPage, for the class's teacher (on the class page until BOOKS-8b,
+ * whose board G08 has no place for it).
  * What it calls: lockMomentText() in api/classTools.ts for the lock date and time, on the viewer's own clock.
  */
 
