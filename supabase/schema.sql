@@ -16292,10 +16292,10 @@ COMMENT ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_asset
 
 
 
-CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text", "story_rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "story_length" "text" DEFAULT NULL::"text", "genre_slug" "text" DEFAULT NULL::"text") RETURNS "jsonb"
+CREATE OR REPLACE FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text" DEFAULT NULL::"text", "category_slug" "text" DEFAULT NULL::"text", "completion" "public"."completion_status" DEFAULT NULL::"public"."completion_status", "language" "text" DEFAULT NULL::"text", "sort_order" "text" DEFAULT NULL::"text", "page_size" integer DEFAULT 21, "page_offset" integer DEFAULT 0, "popular_in" "text" DEFAULT NULL::"text", "story_rating" "public"."story_rating" DEFAULT NULL::"public"."story_rating", "story_length" "text" DEFAULT NULL::"text", "genre_slug" "text" DEFAULT NULL::"text", "languages_first" "text" DEFAULT NULL::"text") RETURNS "jsonb"
     LANGUAGE "plpgsql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
-    AS $$
+    AS $_$
 declare
   wanted_rows integer := least(greatest(coalesce(page_size, 21), 1), 60);
   ordering text := coalesce(sort_order, public.list_default_sort(list_kind));
@@ -16306,6 +16306,9 @@ declare
   search_pattern text := case when list_kind = 'search' then public.search_like_pattern(list_key) end;
   -- MARKETS-2d: the country whose ranking orders a popular list, or null for the overall one.
   ranked_country text;
+  -- CLASSICS-ORDER: the languages whose stories come first, as a list (null: no such order).
+  first_languages text[] := case when coalesce(btrim(languages_first), '') <> ''
+    then string_to_array(replace(languages_first, ' ', ''), ',') end;
 begin
   -- Step 1: check what was asked for.
   if list_kind is null or not public.is_story_list_kind(list_kind) then
@@ -16325,6 +16328,11 @@ begin
   -- Step 1a (user story 1.8, board A08): the Length filter knows two answers.
   if story_length is not null and story_length not in ('short', 'long') then
     raise exception 'Unknown length.' using errcode = 'invalid_parameter_value';
+  end if;
+  -- Step 1a (CLASSICS-ORDER): every code first in the list must look like a language code.
+  if first_languages is not null and exists (
+      select 1 from unnest(first_languages) as code where code !~ '^[a-z]{2}(-[A-Z]{2})?$') then
+    raise exception 'Unknown language.' using errcode = 'invalid_parameter_value';
   end if;
   -- Step 1b (MARKETS-2d): "Popular in" a country. Only a country on the drop-down's list counts;
   -- one with too few ranked stories falls back to the overall ranking (popular_in is then null
@@ -16351,6 +16359,9 @@ begin
   ),
   numbered as (
     select listed.id, count(*) over () as list_total, row_number() over (order by
+        -- CLASSICS-ORDER (Robert, 27 Nov 2026, 20:33 UTC): stories in the reader's languages
+        -- first, then every other language, each part in the list's own order.
+        case when first_languages is not null then listed.language_code = any(first_languages) end desc,
         -- Relevance, as story_search_rank(): 2 for the term inside the title, plus the word rank,
         -- read from the kept search row instead of building it again for every story.
         case when ordering = 'relevance' then
@@ -16405,13 +16416,13 @@ begin
   end if;
   return jsonb_build_object('total', total, 'stories', page, 'popular_in', ranked_country);
 end;
-$$;
+$_$;
 
 
-ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages, search) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking, one rating, one length and one genre (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d, user story 1.8, S1-E3-01).';
+COMMENT ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") IS 'One page of a story list (Discover shelves, category, tag and See all pages, search) with its total, in the reader''s sort; popular by default, optionally by one country''s ranking, one rating, one length and one genre, optionally with some languages first (S1-E5-01, S1-E5-02, S1-E5-03, MARKETS-2d, user story 1.8, S1-E3-01, CLASSICS-ORDER).';
 
 
 
@@ -74123,9 +74134,9 @@ REVOKE ALL ON FUNCTION "public"."brand_slot_json"("brand_row" "public"."brand_as
 
 
 
-REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") FROM PUBLIC;
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text") TO "authenticated";
+REVOKE ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."browse_stories"("list_kind" "text", "list_key" "text", "category_slug" "text", "completion" "public"."completion_status", "language" "text", "sort_order" "text", "page_size" integer, "page_offset" integer, "popular_in" "text", "story_rating" "public"."story_rating", "story_length" "text", "genre_slug" "text", "languages_first" "text") TO "authenticated";
 
 
 

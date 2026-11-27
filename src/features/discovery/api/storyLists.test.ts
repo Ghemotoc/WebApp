@@ -20,6 +20,7 @@ import {
   popularInFor,
   followsReadingLanguages,
   languageFilterFor,
+  languagesFirstFor,
 } from './storyLists';
 
 describe('the language filter a list sends', () => {
@@ -61,6 +62,36 @@ describe('the language filter a list sends', () => {
       page_size: 21,
       page_offset: 0,
     });
+  });
+});
+
+describe("the classics put the reader's languages first (CLASSICS-ORDER)", () => {
+  const picked = { languages: ['sv', 'en'], isDefault: false, interfaceLanguage: 'ro' };
+  const nonePicked = { languages: ['ro', 'en'], isDefault: true, interfaceLanguage: 'ro' };
+
+  it('a reader who picked reading languages gets those first on the classics', () => {
+    expect(languagesFirstFor(plainList('classics'), picked)).toBe('sv,en');
+  });
+
+  it('a reader who picked none gets the interface language first', () => {
+    expect(languagesFirstFor(plainList('classics'), nonePicked)).toBe('ro');
+  });
+
+  it('"Every language" on the classics See all keeps the reader\'s languages first', () => {
+    expect(languagesFirstFor({ ...plainList('classics'), languageCode: 'any' }, picked)).toBe(
+      'sv,en',
+    );
+  });
+
+  it('one language picked, or a sort chosen, leaves the order alone', () => {
+    expect(languagesFirstFor({ ...plainList('classics'), languageCode: 'ru' }, picked)).toBeNull();
+    expect(
+      languagesFirstFor({ ...plainList('classics'), sortOrder: 'title_az' }, picked),
+    ).toBeNull();
+  });
+
+  it('other lists keep their own order', () => {
+    expect(languagesFirstFor(plainList('popular'), picked)).toBeNull();
   });
 });
 
