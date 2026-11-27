@@ -2,7 +2,7 @@
 # Download the European classics from Wikisource, build one JSON per work and pack them
 # (CONTENT thread, 27 Nov 2026). Runs on a home connection because Wikisource throttles
 # the shared cloud address. Safe to stop and start again: finished works are skipped.
-# Usage: bash run.sh [languages...]   (default: ru pl fr de es it pt nl)
+# Usage: bash run.sh [languages...]   (default: every language in eu/rows.json, the biggest eight first)
 # Output: out/<lang>.jsonl.gz (one work per line) and out/_report_<lang>.json.
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -12,7 +12,11 @@ if [ ! -d .venv ]; then python3 -m venv .venv; fi
 ./.venv/bin/pip install --quiet beautifulsoup4
 PY=./.venv/bin/python3
 
-LANGS=("$@"); if [ ${#LANGS[@]} -eq 0 ]; then LANGS=(ru pl fr de es it pt nl); fi
+LANGS=("$@")
+if [ ${#LANGS[@]} -eq 0 ]; then
+  # Robert, 27 Nov 2026: load every free European work, the biggest eight languages first.
+  LANGS=(ru pl fr de es it pt nl $("$PY" -c "import json; print(' '.join(k for k in json.load(open('eu/rows.json')) if k not in 'ru pl fr de es it pt nl'.split()))"))
+fi
 mkdir -p logs out
 for lang in "${LANGS[@]}"; do
   # Step 2: download every free work of this language (pages already fetched are skipped).
