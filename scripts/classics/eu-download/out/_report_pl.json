@@ -3,12 +3,12 @@
   [
    "pl-pan-tadeusz",
    14,
-   429570
+   470586
   ],
   [
    "pl-konrad-wallenrod",
    8,
-   51015
+   90965
   ],
   [
    "pl-grazyna",
@@ -17,8 +17,8 @@
   ],
   [
    "pl-ballads-and-romances",
-   17,
-   68059
+   15,
+   125767
   ],
   [
    "pl-crimean-sonnets",
@@ -38,22 +38,177 @@
   [
    "pl-balladyna",
    7,
-   164993
+   162691
   ],
   [
    "pl-lilla-weneda",
    6,
-   116446
+   114965
   ],
   [
    "pl-mazeppa",
    5,
-   86176
+   85380
   ],
   [
    "pl-beniowski",
    5,
-   140428
+   137831
+  ],
+  [
+   "pl-anhelli",
+   17,
+   55024
+  ],
+  [
+   "pl-in-switzerland",
+   1,
+   17161
+  ],
+  [
+   "pl-agamemnon-s-tomb",
+   1,
+   7853
+  ],
+  [
+   "pl-father-mark",
+   3,
+   91692
+  ],
+  [
+   "pl-salomea-s-silver-dream",
+   5,
+   123918
+  ],
+  [
+   "pl-mary-stuart",
+   5,
+   88994
+  ],
+  [
+   "pl-the-un-divine-comedy",
+   4,
+   103754
+  ],
+  [
+   "pl-iridion",
+   5,
+   203117
+  ],
+  [
+   "pl-before-dawn",
+   1,
+   57130
+  ],
+  [
+   "pl-promethidion",
+   5,
+   43803
+  ],
+  [
+   "pl-quidam",
+   29,
+   158535
+  ],
+  [
+   "pl-the-revenge",
+   4,
+   83527
+  ],
+  [
+   "pl-maidens-vows",
+   6,
+   116177
+  ],
+  [
+   "pl-mr-jowialski",
+   4,
+   139754
+  ],
+  [
+   "pl-ladies-and-hussars",
+   3,
+   90879
+  ],
+  [
+   "pl-life-annuity",
+   3,
+   76806
+  ],
+  [
+   "pl-mr-moneybags",
+   4,
+   61748
+  ],
+  [
+   "pl-the-adventures-of-mr-nicholas-wisdom",
+   52,
+   256567
+  ],
+  [
+   "pl-monachomachia",
+   6,
+   35662
+  ],
+  [
+   "pl-the-mouseiad",
+   10,
+   61990
+  ],
+  [
+   "pl-laments",
+   1,
+   25886
+  ],
+  [
+   "pl-the-dismissal-of-the-greek-envoys",
+   1,
+   27886
+  ],
+  [
+   "pl-trifles",
+   3,
+   69525
+  ],
+  [
+   "pl-songs",
+   51,
+   71820
+  ],
+  [
+   "pl-chess",
+   1,
+   23415
+  ],
+  [
+   "pl-the-envoy-s-return",
+   4,
+   78750
+  ],
+  [
+   "pl-memoirs",
+   35,
+   507582
+  ],
+  [
+   "pl-the-progress-of-the-chocim-war",
+   12,
+   579263
+  ],
+  [
+   "pl-maria",
+   3,
+   70258
+  ],
+  [
+   "pl-the-castle-of-kaniow",
+   3,
+   100207
+  ],
+  [
+   "pl-memoirs-of-soplica",
+   27,
+   702638
   ]
  ],
  "short": [
@@ -61,149 +216,29 @@
    "pl-forefathers-eve",
    10,
    "Dziady (Mickiewicz)"
-  ]
- ],
- "missing": [
-  [
-   "pl-anhelli",
-   "not downloaded yet"
-  ],
-  [
-   "pl-in-switzerland",
-   "not downloaded yet"
-  ],
-  [
-   "pl-agamemnon-s-tomb",
-   "not downloaded yet"
-  ],
-  [
-   "pl-father-mark",
-   "not downloaded yet"
-  ],
-  [
-   "pl-salomea-s-silver-dream",
-   "not downloaded yet"
-  ],
-  [
-   "pl-mary-stuart",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-un-divine-comedy",
-   "not downloaded yet"
-  ],
-  [
-   "pl-iridion",
-   "not downloaded yet"
-  ],
-  [
-   "pl-before-dawn",
-   "not downloaded yet"
-  ],
-  [
-   "pl-promethidion",
-   "not downloaded yet"
-  ],
-  [
-   "pl-quidam",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-revenge",
-   "not downloaded yet"
-  ],
-  [
-   "pl-maidens-vows",
-   "not downloaded yet"
-  ],
-  [
-   "pl-mr-jowialski",
-   "not downloaded yet"
-  ],
-  [
-   "pl-ladies-and-hussars",
-   "not downloaded yet"
-  ],
-  [
-   "pl-life-annuity",
-   "not downloaded yet"
-  ],
-  [
-   "pl-mr-moneybags",
-   "not downloaded yet"
   ],
   [
    "pl-fables-and-parables",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-adventures-of-mr-nicholas-wisdom",
-   "not downloaded yet"
-  ],
-  [
-   "pl-monachomachia",
-   "not downloaded yet"
+   664,
+   "Bajki i przypowieści"
   ],
   [
    "pl-satires",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-mouseiad",
-   "not downloaded yet"
-  ],
-  [
-   "pl-laments",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-dismissal-of-the-greek-envoys",
-   "not downloaded yet"
-  ],
-  [
-   "pl-trifles",
-   "not downloaded yet"
-  ],
-  [
-   "pl-songs",
-   "not downloaded yet"
-  ],
-  [
-   "pl-chess",
-   "not downloaded yet"
+   0,
+   "Satyry"
   ],
   [
    "pl-a-short-discourse-between-a-squire-a-reeve-and-a-p",
-   "not downloaded yet"
+   287,
+   "Krótka rozprawa między trzemi osobami, Panem, Wójtem, a Plebanem (1892)"
   ],
   [
    "pl-the-life-of-an-honest-man",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-envoy-s-return",
-   "not downloaded yet"
-  ],
-  [
-   "pl-memoirs",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-progress-of-the-chocim-war",
-   "not downloaded yet"
-  ],
-  [
-   "pl-maria",
-   "not downloaded yet"
-  ],
-  [
-   "pl-the-castle-of-kaniow",
-   "not downloaded yet"
-  ],
-  [
-   "pl-memoirs-of-soplica",
-   "not downloaded yet"
-  ],
+   464,
+   "Żywot człowieka poczciwego (Rej, 1881)"
+  ]
+ ],
+ "missing": [
   [
    "pl-the-heathen",
    "not downloaded yet"
