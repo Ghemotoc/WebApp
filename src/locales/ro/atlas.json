@@ -51,10 +51,10 @@
   },
   "details": {
     "heading": "Detaliile poveștii",
-    "sharedHint": "Titlul, genul și publicul sunt ale poveștii: dacă le schimbi aici, se schimbă și în Setările poveștii.",
+    "sharedHint": "Titlul, tipul și publicul sunt ale poveștii: dacă le schimbi aici, se schimbă și în Setările poveștii.",
     "title": "Titlu",
     "titleRequired": "Dă-i poveștii un titlu.",
-    "genre": "Gen",
+    "genre": "Tip",
     "audience": "Public",
     "logline": "Rezumat",
     "loglineHint": "Povestea în una-două propoziții, ca să-ți amintești despre ce e.",
@@ -785,7 +785,7 @@
     "heading": "Marketing",
     "pitchHeading": "Prezentarea",
     "launchHeading": "Lansarea",
-    "sharedHint": "Rezumatul și felul în care publici sunt aceleași ca în Pe scurt; genul și publicul vin din poveste.",
+    "sharedHint": "Rezumatul și felul în care publici sunt aceleași ca în Pe scurt; tipul și publicul vin din poveste.",
     "fields": {
       "back_cover_blurb": "Textul de pe coperta a patra",
       "comparable_titles": "Titluri asemănătoare",

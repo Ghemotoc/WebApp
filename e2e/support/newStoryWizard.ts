@@ -10,7 +10,7 @@ import { expect, type Page } from '@playwright/test';
 /** The five steps' titles in English, in order (writing.json › newStory.steps). */
 export const newStorySteps = [
   'The basics',
-  'Category, tags and setting',
+  'Type, tags and setting',
   'Cover',
   'Who can read it',
   'Labels, rating and AI',

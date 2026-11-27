@@ -45,7 +45,7 @@ describe('a version in the history', () => {
   it('a settings change lists each field before and after', () => {
     expect(storyVersionText(englishT(), words, settingsVersion)).toEqual({
       heading: 'Settings',
-      lines: ['Category: category poetry → category fiction', 'Comments: yes → no'],
+      lines: ['Type: category poetry → category fiction', 'Comments: yes → no'],
     });
   });
 

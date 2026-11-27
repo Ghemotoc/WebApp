@@ -76,8 +76,8 @@ test.describe('Staff › Sponsors (S1-E12-02)', () => {
     await page.getByRole('link', { name: 'New campaign' }).click();
     await page.getByLabel('Sponsor', { exact: true }).selectOption({ label: sponsorName });
     await page.getByLabel('Campaign name').fill('Poetry, sponsored');
-    await page.getByLabel('Placement').selectOption({ label: 'Sponsored by: a category' });
-    await page.getByLabel('Category it sponsors').selectOption({ label: 'Poetry' });
+    await page.getByLabel('Placement').selectOption({ label: 'Sponsored by: a type' });
+    await page.getByLabel('Type it sponsors').selectOption({ label: 'Poetry' });
     await page.getByLabel('Starts').fill(dayFromToday(-1));
     await page.getByLabel('Ends').fill(dayFromToday(30));
     await page.getByRole('button', { name: 'Save draft' }).click();

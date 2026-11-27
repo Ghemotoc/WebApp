@@ -51,10 +51,10 @@
   },
   "details": {
     "heading": "Story details",
-    "sharedHint": "The title, genre and audience are the story’s own: changing them here changes them in Story settings too.",
+    "sharedHint": "The title, type and audience are the story’s own: changing them here changes them in Story settings too.",
     "title": "Title",
     "titleRequired": "Give the story a title.",
-    "genre": "Genre",
+    "genre": "Type",
     "audience": "Audience",
     "logline": "Logline",
     "loglineHint": "The story in a sentence or two, to remind yourself what it’s about.",
@@ -785,7 +785,7 @@
     "heading": "Marketing",
     "pitchHeading": "The pitch",
     "launchHeading": "Getting it out",
-    "sharedHint": "The logline and publishing route are the same as on At a glance; the genre and audience come from the story.",
+    "sharedHint": "The logline and publishing route are the same as on At a glance; the type and audience come from the story.",
     "fields": {
       "back_cover_blurb": "Back-cover blurb",
       "comparable_titles": "Comparable titles",

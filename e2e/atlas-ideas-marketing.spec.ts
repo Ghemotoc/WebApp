@@ -248,7 +248,7 @@ test.describe('Story Atlas questions and ideas, and marketing (S1-E17-27 to S1-E
     // Board E32: the page doesn't repeat the logline, genre, audience or route; it says where
     // they are written.
     await expect(page.getByRole('textbox', { name: 'Logline' })).toHaveCount(0);
-    await expect(page.getByLabel('Genre')).toHaveCount(0);
+    await expect(page.getByLabel('Type', { exact: true })).toHaveCount(0);
     await expect(
       page.getByText('The logline and publishing route are the same as on At a glance'),
     ).toBeVisible();

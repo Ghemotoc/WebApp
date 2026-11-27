@@ -1,6 +1,6 @@
 /**
  * setInCountries: the small rules of the "Set in" field, where a story takes place (CALM-9,
- * board D02, step 2 "Category, tags and setting").
+ * board D02, step 2 "Type, tags and setting", called Category before FORMS-1).
  *
  * Who calls it: components/SetInCountriesField.tsx and the preview's "Set in" line. Pure
  * functions, so they are unit-tested. The database cleans the list again

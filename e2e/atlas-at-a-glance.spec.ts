@@ -83,7 +83,7 @@ async function createStory(page: Page, title: string) {
   await page.getByRole('textbox', { name: 'Title' }).fill(title);
   await page.getByLabel('Language of the story').selectOption('ro');
   // The form is a five-step wizard (CALM-9, board D02): the category is step 2, the rating step 5.
-  await goToNewStoryStep(page, 'Category, tags and setting');
+  await goToNewStoryStep(page, 'Type, tags and setting');
   await page.getByRole('radio', { name: 'Fiction' }).click();
   await goToLastNewStoryStep(page);
   await page.getByRole('radio', { name: 'All ages', exact: true }).click();
