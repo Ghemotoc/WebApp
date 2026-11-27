@@ -1599,7 +1599,7 @@ Someone pastes `/s/<story>/<chapter>` into WhatsApp. Two things read it:
        noindex on chapters, JSON-LD with genre and keywords on story pages (Q36); every rating
        the same, 18+ adds "For mature readers", 16+ and 18+ never share text (S1-E11-36)
      → a public story page (CALM-9s) also gets the story statement from src/lib/story-statement.ts
-       ("<Title> is a <genre> <type> published on <site> by <writer>." + the blurb) as its
+       ("Read for free <Title>, a <genre> <type> by <writer>, on <site>." + the blurb) as its
        description and og:description, the title "<Title> by <writer>, <genre>, <site>", JSON-LD
        Book (CreativeWork for poems and essays) plus a BreadcrumbList, hreflang per edition, and
        the same words as visible text in the page before the app starts. Unlisted, app-only and

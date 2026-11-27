@@ -202,7 +202,7 @@ describe('the page a shared link serves', () => {
     expect(response.headers.get('X-Robots-Tag')).toBeNull();
     expect(html).not.toContain('noindex');
     const statement =
-      'Stația meteo este o poveste din genul mister, publicată pe Brand de Lia Scrie. Bunica notează vremea.';
+      'Citește gratuit Stația meteo, o poveste din genul mister de Lia Scrie, pe Brand. Bunica notează vremea.';
     expect(html).toContain(`<meta name="description" content="${statement}">`);
     expect(html).toContain(`<meta property="og:description" content="${statement}">`);
     expect(html).toContain('<title>Stația meteo de Lia Scrie, Mister, Brand</title>');
@@ -237,7 +237,7 @@ describe('the page a shared link serves', () => {
   it('shows the statement as real text before the app starts, never hidden (CALM-9s)', async () => {
     const { html } = await open('/s/statia-meteo', storyPage);
     expect(html).toContain(
-      '<div id="root"><footer lang="ro"><p><cite>Stația meteo</cite> este o poveste din genul mister, publicată pe Brand de <a href="/u/adult_writer">Lia Scrie</a>.</p><p>Bunica notează vremea.</p><p>Brand este un site gratuit pentru a scrie și a citi povești, poezii, piese de teatru și non-ficțiune.</p></footer></div>',
+      '<div id="root"><footer lang="ro"><p>Citește gratuit <cite>Stația meteo</cite>, o poveste din genul mister de <a href="/u/adult_writer">Lia Scrie</a>, pe Brand.</p><p>Bunica notează vremea.</p><p>Brand este un site gratuit pentru a scrie și a citi povești, poezii, piese de teatru și non-ficțiune.</p></footer></div>',
     );
   });
 
@@ -250,7 +250,7 @@ describe('the page a shared link serves', () => {
       rating: '18_plus',
     });
     expect(poem.html).toContain(
-      '<meta name="description" content="Stația meteo is an essay published on Brand by Lia Scrie. For mature readers. Bunica notează vremea.">',
+      '<meta name="description" content="Read for free Stația meteo, an essay by Lia Scrie, on Brand. For mature readers. Bunica notează vremea.">',
     );
     expect(poem.html).not.toContain('18');
     const json =

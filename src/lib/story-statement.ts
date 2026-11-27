@@ -3,7 +3,11 @@
  * search engines and answer engines (CALM-9s; Robert's canvas comments of 23 Nov 2026, boards
  * B01 to B06: "this helps for discoverability").
  *
- * "[Title] is a [genre] [type] published on [site] by [pen name or username]." then the blurb,
+ * "Read for free [Title], a [genre] [type] by [pen name or username], on [site]."; a plain
+ * story with no genre reads "Read for free [Title] by [writer] on [site]." (Robert, 27 Nov 2026,
+ * 22:44 UTC: more of the words people search for; it replaces "[Title] is a [genre] [type]
+ * published on [site] by [writer].").
+ * Then the blurb,
  * then "[site] is a free website for writing and reading stories, poems, plays and non-fiction."
  * The same words fill the footer of the story page and the reader, the page's <title>, its
  * description, its Open Graph description and its JSON-LD, so every reader of the page, human or
@@ -22,12 +26,12 @@ export type StoryType = 'story' | 'poem' | 'essay' | 'play';
 
 /** The sentence's words in one language: the reading namespace's `storyFooter` keys. */
 export interface StoryStatementWords {
-  /** One sentence per type, without a genre: "{{title}} is {{article}} story published …". */
+  /** One sentence per type, without a genre: "Read for free {{title}} by {{writer}} on {{site}}.". */
   story: string;
   poem: string;
   essay: string;
   play: string;
-  /** The same with a genre: "{{title}} is {{article}} {{genre}} story published …". */
+  /** The same with a genre: "Read for free {{title}}, {{article}} {{genre}} story by …". */
   storyGenre: string;
   poemGenre: string;
   essayGenre: string;
@@ -116,8 +120,8 @@ function piecesOf(template: string, facts: StoryStatementFacts): StatementPiece[
 }
 
 /**
- * The statement's sentence, in pieces: "[Title] is a [genre] [type] published on [site] by
- * [writer]."
+ * The statement's sentence, in pieces: "Read for free [Title], a [genre] [type] by [writer], on
+ * [site]."
  *
  * @param facts - what the story is
  * @param words - the sentence's words in the story's language
