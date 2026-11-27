@@ -28,6 +28,56 @@ LICENCE_LINE = re.compile(r"^.{0,80}(własnością publiczną|public domain|doma
                           r"pubblico dominio|dom[íi]nio p[úu]blico|publiek domein|общественным достоянием|"
                           r"общественное достояние).{0,220}$\n?", re.I | re.M)
 
+# Lines that name where the text came from, not the author's words: a scan note, a source or
+# "original here" line, an illustrator credit, a collected-works reference, a printer's imprint.
+SOURCE_LINE = re.compile(r"^\**\s*(Источник( текста)?\s*:|Оригинал здесь|Иллюстрации художника|Skan zawiera grafikę|"
+                         r"Издательство\s|Тип\.\s|Типография\s|Р\. Ц\.|Тираж\s|Prim\.?$|Впервые[:\s]|#*\s*={5,}|"
+                         r"(М|Л|СПб|Мн|М\., Л)\.,?:? .{0,60}\d{4}[;.)]?\s*(\(.*\))?$)|"
+                         r"Собрание сочинений в \d|Избранные произведения в \d|Полное собрание сочинений в \d|"
+                         r"Эл\. версия|Корректура .{0,40}выполнена|печатается по тексту|опубликован впервые|впервые опубликован|"
+                         r"/ Сост\.|послесл\.|\d+ с\.,? ил\.|— \d+ с\. —", re.I)
+# A heading that opens an editor's notes or commentary: everything from it to the chapter's end goes.
+NOTES_HEADING = re.compile(r"^#+\s*\**\s*(Примечани|Комментари|Варианты|Przypis|Objaśnieni|Notes?\b|Anmerkung|Erläuterung|"
+                           r"Note\b|Notas?\b|Aantekening|Toelichting)", re.I)
+NOTES_START = re.compile(r"^(Prim\.?|ст\. \d)", re.I)
+# A heading that opens a short word from the editors ("От редакции"): it goes up to the next heading.
+# Only a magazine's own word ("От редакции"): an "editor's" or "publisher's" foreword in a novel
+# (Pushkin's Belkin, Laclos) is often the author's fiction, so those stay.
+EDITOR_HEADING = re.compile(r"^#+\s*\**\s*(От редакции|Od redakcji|Nota della redazione|Note de la rédaction|"
+                            r"Anmerkung der Redaktion|Nota de la redacción)", re.I)
+# Leftovers of a page's contents list: bare numbers, roman numerals, "•" or "I · II · III".
+NUMERALS_ONLY = re.compile(r"^[\s\d:.*•·IVXLC]*$")
+# A chapter that is an edition's variant readings or notes, not the work.
+NOTES_TITLE = re.compile(r"^(Печатные варианты|Варианты|Примечани|Комментари|Przypisy|Objaśnienia|Notes?$|Anmerkungen|"
+                         r"Notas?$|Aantekeningen)", re.I)
+
+def fix_wiki_leftovers(body):
+    """Templates typed wrongly in the source show as text ("{Razr|Name}}", "{{indent|2|"): keep their words."""
+    body = body.replace("{{подст:ударение}}", "́")
+    body = re.sub(r"\{\{?\s*(?:razr|rem|indent\|\d+|bold|i|lang\|\w+)\|", "", body, flags=re.I)
+    return body.replace("}}", "")
+
+def only_authors_text(body):
+    """Drop what an editor or the source added inside a chapter: source lines, notes to the end,
+    an editors' foreword, and a leading run of bare numbers (a contents list's leftovers)."""
+    kept, skipping_editor = [], False
+    for paragraph in fix_wiki_leftovers(body).split("\n\n"):
+        line = paragraph.strip()
+        if NOTES_HEADING.match(line) or NOTES_START.match(line): break
+        if EDITOR_HEADING.match(line): skipping_editor = True; continue
+        if skipping_editor and line.startswith("#"): skipping_editor = False
+        if skipping_editor or SOURCE_LINE.search(line): continue
+        if not kept and (NUMERALS_ONLY.match(line) or line in ("Примечания", "Przypisy", "Notes")): continue
+        # A poem's number in a collected edition ("\\340. БОРОДИНО") isn't part of its title.
+        if not kept: paragraph = re.sub(r"^\\?\d{2,4}\. (?=\S)", "", paragraph)
+        kept.append(paragraph)
+    while kept and kept[-1].strip() in ("* * *", "\\* \\* \\*", "***", "* * * *"): kept.pop()
+    return "\n\n".join(kept).strip()
+
+def page_did_not_render(body):
+    """A page Wikisource couldn't draw ("template include size too large") shows only its own name."""
+    return len(body) < 400 and bool(re.match(r"^[^\n]*\([^()\n]+\)/[^\n]*$", body.strip()))
+
 def paragraphs(body):
     """The longer paragraphs of a chapter, used to spot a chapter that repeats others."""
     return {p.strip() for p in body.split("\n\n") if len(p.strip()) > 80}
@@ -71,7 +121,11 @@ def chapters_of(record, title, language):
         subs = [dict(s, title=re.sub(r"\s*\([^()]*\)$", "", s["title"].split("/")[-1])) for s in subs]
     record["subpages"] = subs
     chapters = convert_ws.convert(record, title, PART_WORD.get(language, "part"))
-    chapters = [(t, LICENCE_LINE.sub("", b).strip()) for t, b in chapters]
+    if any(page_did_not_render(b) for _, b in chapters):
+        return None, False
+    chapters = [(t, only_authors_text(LICENCE_LINE.sub("", b))) for t, b in chapters]
+    chapters = [(t, b) for t, b in chapters if not NUMERALS_ONLY.match(b) and not NOTES_TITLE.match(t.strip())]
+    chapters = [(t, b) for t, b in chapters if not b.lstrip().upper().startswith("ВАРИАНТЫ ТЕКСТА")]
     chapters = drop_repeats([(t, b) for t, b in chapters if b])
     # An epilogue linked first (from the page header) belongs at the end.
     if len(chapters) > 2 and LATE_TITLES.match(chapters[0][0]):
@@ -81,6 +135,8 @@ def chapters_of(record, title, language):
         fixed = []
         for chapter_title, body in chapters:
             body, changed_body = modern_russian(body)
+            # Notes headings in the old spelling ("Примѣчанія") only match once modernised.
+            if changed_body: body = only_authors_text(body)
             chapter_title, changed_title = modern_russian(chapter_title)
             modernised = modernised or changed_body or changed_title
             fixed.append((chapter_title, body))
@@ -103,6 +159,43 @@ def link_share(html):
     linked = sum(len(a.get_text(" ", strip=True)) for a in root.select("a"))
     return linked / total
 
+# Works checked by hand and held back: what came out isn't the work (CONTENT thread, 27 Nov 2026).
+HELD_BACK = {
+    "ru-poems": "only poem titles and anthology references came out, not the poems",
+    "ru-evening-lights": "only the contents list came out, not the poems",
+    "ru-let-us-be-like-the-sun": "only the contents list came out, not the poems",
+    "ru-poems-in-prose": "only the contents list came out, not the poems",
+    "ru-evenings-on-a-farm-near-dikanka": "only the preface and the glossary came out, not the eight stories",
+    "ru-red-cavalry": "only the first few stories of the cycle came out",
+    "ru-the-little-humpbacked-horse": "only the 1834 magazine printing of part one came out, with the editor's word",
+}
+# Where a work's own text starts, when the page opens with a modern edition's front matter (editor's
+# word, contents, imprint), and where it ends, when a modern note follows it.
+START_AT = {
+    "ru-notes-of-a-schoolgirl": "Моим дорогим подругам",
+    "ru-years-of-childhood": "Внучке моей Ольге",
+}
+CUT_FROM = {
+    "ru-the-tale-of-the-dead-princess-and-the-seven-knight": "«Сказка о мертвой царевне и семи богатырях» — одна",
+}
+
+def trim_ends(work_id, chapters):
+    """Apply START_AT and CUT_FROM for one work; checked by hand in the CONTENT thread."""
+    chapters = list(chapters)
+    if work_id in START_AT:
+        title, body = chapters[0]
+        at = body.find(START_AT[work_id])
+        if at < 0: raise SystemExit(f"{work_id}: START_AT text not found")
+        chapters[0] = (title, body[at:])
+    if work_id in CUT_FROM:
+        title, body = chapters[-1]
+        at = body.find(CUT_FROM[work_id])
+        if at < 0: raise SystemExit(f"{work_id}: CUT_FROM text not found")
+        body = body[:at].rstrip()
+        while body.endswith("* * *"): body = body[:-5].rstrip()
+        chapters[-1] = (title, body)
+    return chapters
+
 def main(languages):
     out_dir = os.path.join(BASE, "works_eu"); os.makedirs(out_dir, exist_ok=True)
     rows = json.load(open(os.path.join(BASE, "eu/rows.json")))
@@ -118,6 +211,7 @@ def main(languages):
         for work_id, host, page, author, row in rows[language]:
             raw = os.path.join(BASE, "raw/eu", language, work_id + ".json")
             if not os.path.exists(raw): report["missing"].append([work_id, "not downloaded yet"]); continue
+            if work_id in HELD_BACK: report["short"].append([work_id, "held back: " + HELD_BACK[work_id]]); continue
             record = json.load(open(raw))
             if record.get("missing"):
                 report["missing"].append([work_id, "scan index only" if record.get("scan_index") else "page not found"]); continue
@@ -126,6 +220,10 @@ def main(languages):
             if not record.get("subpages") and not record.get("listed") and link_share(record["html"]) > 0.5:
                 report["short"].append([work_id, "contents page", record["title"]]); continue
             chapters, modernised = chapters_of(record, title, language)
+            if chapters is None: report["short"].append([work_id, "a page did not render on Wikisource", record["title"]]); continue
+            if not re.search(r"\d{3,4}", row["author_death_year"] or ""):
+                report["short"].append([work_id, "no author death year (anonymous)", record["title"]]); continue
+            chapters = trim_ends(work_id, chapters)
             length = sum(len(body) for _, body in chapters)
             if length < (400 if row["kind"] == "poem" else 1500): report["short"].append([work_id, length, record["title"]]); continue
             if work_id not in meta: report["no_meta"].append(work_id); continue

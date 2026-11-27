@@ -56,8 +56,18 @@ def drop_line_numbers(soup):
         if not number.isdigit():
             continue
         style = span.get("style", "").replace(" ", "").lower()
-        if "float:right" in style or "float:left" in style or span.get("id") == number:
+        classes = span.get("class") or []
+        span_id = span.get("id") or ""
+        # ru.wikisource marks them <span class="linenum" id="line10">, the others float them.
+        if ("float:right" in style or "float:left" in style or span_id == number
+                or "linenum" in classes or span_id == "line" + number):
             span.decompose()
+    # Krylov's fables on ru.wikisource: "<br /><small>10</small>" opens a line with its number.
+    for small in soup.find_all("small"):
+        number = small.get_text().replace("\xa0", " ").strip()
+        before = small.find_previous_sibling()
+        if number.isdigit() and int(number) % 5 == 0 and (before is None or before.name == "br"):
+            small.decompose()
 
 def clean(html):
     soup = BeautifulSoup(html, "lxml")

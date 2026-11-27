@@ -7,9 +7,9 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-# Step 1: a private Python with the one library the scripts need (BeautifulSoup).
+# Step 1: a private Python with the two libraries the scripts need (BeautifulSoup and its lxml parser).
 if [ ! -d .venv ]; then python3 -m venv .venv; fi
-./.venv/bin/pip install --quiet beautifulsoup4
+./.venv/bin/pip install --quiet beautifulsoup4 lxml
 PY=./.venv/bin/python3
 
 LANGS=("$@")

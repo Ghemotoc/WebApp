@@ -4,7 +4,7 @@ Robert asked on 26 Nov 2026 for every work on the research list "Research: publi
 
 | File | What it is |
 | --- | --- |
-| `works-en.jsonl.gz`, `works-ro.jsonl.gz`, `works-nordic.jsonl.gz` | The works, one JSON object per line, gzip-compressed: title, author, the author's death year, language, kind, rating, first publication, blurb, credit line and the chapters in the Markdown subset |
+| `works-en.jsonl.gz`, `works-ro.jsonl.gz`, `works-nordic.jsonl.gz`, `works-ru.jsonl.gz` | The works, one JSON object per line, gzip-compressed: title, author, the author's death year, language, kind, rating, first publication, blurb, credit line and the chapters in the Markdown subset |
 | `works-index.csv` | One row per work, to read without unzipping: title, author, language, year, kind, rating, chapters, length and source |
 | `not-loaded.csv` | Works on the list whose text could not be fetched, and why |
 
@@ -32,6 +32,7 @@ The terms for each source are in `../README.md`, "Sources and terms".
 | Standard Ebooks | 98 English | "Standard Ebooks (CC0)" and the book's page. Twelve works sit inside a bigger Standard Ebooks collection (*Heart of Darkness* in Conrad's *Short Fiction*, the 25 stories of *The Four Million* in O. Henry's, the 13 poems of Keats's 1820 volume); only that work's sections were kept |
 | English Wikisource | 5 English | "Wikisource, CC BY-SA 4.0; formatting adapted" and the exact revision |
 | Romanian Wikisource | 121 Romanian | "Wikisource, CC BY-SA 4.0; formatare adaptată" and the exact revision |
+| Russian Wikisource | 150 Russian (added 27 Nov 2026) | "Wikisource, CC BY-SA 4.0; оформление изменено" and the exact revision; where only a pre-1918 copy exists, the spelling was brought to modern spelling and the credit says so ("оформление и дореформенная орфография изменены"). Built by `scripts/classics/eu-download/` |
 | Swedish, Danish and Norwegian Wikisource | 44 | the same credit in the work's language ("anpassad formatering", "tilpasset formatering") and the exact revision. Norwegian works use the language code `nb`, the platform's one Norwegian language |
 
 Only formatting changed: the text was taken out of the page layout into the Markdown subset, very short pieces were joined into chapters of about 30,000 characters with their titles as subheadings, and chapters over 95,000 characters were split into parts. Wikisource's own notes, headers, navigation and footnotes were dropped. Wikisource's API refused this session's address (HTTP 429) on every call, so the texts were read from the ordinary page views, which carry the same text and revision id.
@@ -43,3 +44,11 @@ Only formatting changed: the text was taken out of the page layout into the Mark
 - *Sultănica*: a few verse lines are missing at the source.
 - *La Medeleni*: only the first volume, *Hotarul nestatornic*, is on Wikisource, and it is loaded under that title.
 - In *Et dukkehjem* the cast list is in lower case, as the source sets it in small capitals.
+
+## The check of 27 Nov 2026
+
+Robert asked for every book to be checked before loading, for anything broken or anything that isn't the author's text. Each work was checked by script (empty or near-empty chapters, wiki code, HTML, footnote marks, editors' line numbers, notes and variant readings, source and scan lines, repeated chapters, broken characters) and its first and last lines were read by hand.
+- **Russian:** 150 of 172 pass. The builder (`eu-download/tools/build_eu.py`, `convert_ws.py`) now drops editors' line numbers, notes and variant readings, a magazine's "От редакции", e-text and source lines, contents-list leftovers and modern editions' front matter, and it holds back a work when one of its pages didn't render on Wikisource (*Бесы*, *Война и мир*, *Что делать?*: "template include size too large"), when what came out isn't the work (contents lists, a cycle's first few stories), or when the author is anonymous (*Слово о полку Игореве*: `classic_authors.died_year` can't be empty). The 22 held back are in `not-loaded.csv`.
+- **Romanian and Nordic:** `scripts/classics/fix-older-packs.py` removed wiki code (*La Medeleni*, *Familjen paa Gilje*), a scan's running heads (*La Medeleni*), printed page numbers (*Povestea vorbei*), printers' imprints on title pages, and wrote an editor's spelled-out abbreviations as plain words (*Pseudo-kynegetikos*).
+- **English:** clean. Short chapters are short in the book ("Waking" in *Through the Looking-Glass*); Volpone's numbered speakers are Jonson's.
+- **Polish and the other European languages** are not in this folder yet: they are checked language by language once the download finishes.
