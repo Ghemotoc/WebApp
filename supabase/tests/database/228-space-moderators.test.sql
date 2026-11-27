@@ -1,7 +1,7 @@
 -- Database tests for space moderators (bundle FORUMS-2, part b; story S1-E8-07).
 -- What it proves:
--- - the owner appoints a member as a moderator with chosen powers, changes them and takes them
---   away; only the owner (or platform staff) does this, and only for an active member of the
+-- - the owner invites a member to moderate with chosen powers, the member accepts (BOOKS-7),
+--   and the owner changes the powers and takes them away; only the owner (or platform staff) does this, and only for an active member of the
 --   space's age group (criterion 1);
 -- - each power lets its holder do one job and nothing else: posts (pin and lock threads in the
 --   space only), members (requests, the member list, removing members) and settings;
@@ -18,7 +18,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(38);
+select plan(42);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -89,9 +89,15 @@ insert into named select 'main', (public.start_forum_thread('first-chapters', 'F
 /* ---------- 1. Appointing (criterion 1) ---------- */
 
 select is(public.set_space_moderator('fantasy-writers-circle', '@teacher', array['posts', 'members']::public.space_power[]) ->> 'outcome',
-  'appointed', 'the owner makes a member a moderator with two powers');
+  'invited', 'the owner invites a member to moderate with two powers (they accept first, BOOKS-7)');
+select is(pg_temp.role_of('00000000-0000-4000-8000-000000000007'), 'member active', 'until they accept, they stay a member');
+select is(pg_temp.last_log(), 'moderator_invited false', 'the invitation is in the space''s log');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
+select is(public.answer_space_moderator_invite('fantasy-writers-circle', true) ->> 'outcome', 'accepted',
+  'the member accepts the invitation');
 select is(pg_temp.role_of('00000000-0000-4000-8000-000000000007'), 'moderator active', 'the member is now a moderator');
-select is(pg_temp.last_log(), 'moderator_appointed false', 'appointing is in the space''s log');
+select is(pg_temp.last_log(), 'moderator_invite_accepted false', 'accepting is in the space''s log');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(pg_temp.hint_of($$select public.set_space_moderator('fantasy-writers-circle', 'kid_14_ok', array['posts']::public.space_power[])$$),
   'member:missing', 'only a member can be made a moderator');
 select is(pg_temp.hint_of($$select public.set_space_moderator('fantasy-writers-circle', 'adult_writer', array['posts']::public.space_power[])$$),
@@ -113,7 +119,7 @@ select is((select count(*)::integer from jsonb_array_elements(public.space_moder
 
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is((public.space_page('fantasy-writers-circle') -> 'viewer') - 'can_read' - 'can_join' - 'can_post',
-  '{"membership": "moderator", "can_manage": false, "can_appoint": false, "can_read_log": false, "can_invite": false, "waits_for_account": false, "powers": ["posts", "members"], "welcome_note": null, "show_welcome": false, "can_hand_over": false, "handover": null}'::jsonb,
+  '{"membership": "moderator", "can_manage": false, "can_appoint": false, "can_read_log": false, "can_invite": false, "waits_for_account": false, "powers": ["posts", "members"], "welcome_note": null, "show_welcome": false, "can_hand_over": false, "handover": null, "moderator_invite": null, "is_blocked": false}'::jsonb,
   'the space tells a moderator what they may do');
 select is(pg_temp.hint_of($$select public.set_space_moderator('fantasy-writers-circle', 'blocker', array['posts']::public.space_power[])$$),
   'space:not_owner', 'a moderator can''t appoint moderators');
@@ -147,7 +153,10 @@ select is(pg_temp.role_of('00000000-0000-4000-8000-000000000015'), null, 'the re
 select pg_temp.add_member('00000000-0000-4000-8000-000000000015');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
 select is(public.set_space_moderator('fantasy-writers-circle', 'blocker', array['settings']::public.space_power[]) ->> 'outcome',
-  'appointed', 'the owner appoints a second moderator');
+  'invited', 'the owner invites a second moderator');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000015');
+select is(public.answer_space_moderator_invite('fantasy-writers-circle', true) ->> 'outcome', 'accepted',
+  'the second moderator accepts');
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select is(pg_temp.hint_of($$select public.remove_space_member('fantasy-writers-circle', 'blocker')$$),
   'space:not_allowed', 'a moderator can''t remove another moderator');

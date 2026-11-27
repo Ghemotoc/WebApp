@@ -1001,13 +1001,24 @@ const writeRoutes: RouteObject[] = [
     },
   },
   // Forum search (FORUMS-1f, S1-E8-10). A static path wins over /forums/:forumSlug, and no forum
-  // may take "search" as its address (the forums_slug_not_search constraint).
+  // may take "search" as its address (the forums_slug_not_reserved constraint).
   {
     path: '/forums/search',
     HydrateFallback: () => null,
     lazy: async () => {
       const { ForumSearchPage } = await import('@/features/forums/components/ForumSearchPage');
       return { Component: ForumSearchPage };
+    },
+  },
+  // New thread from Together, the forum picked on the page (BOOKS-7, board F04, user story 7.4).
+  // A static path wins over /forums/:forumSlug; no forum may take "new" as its address (the
+  // forums_slug_not_reserved constraint).
+  {
+    path: '/forums/new',
+    HydrateFallback: () => null,
+    lazy: async () => {
+      const { NewThreadPage } = await import('@/features/forums/components/NewThreadPage');
+      return { Component: NewThreadPage };
     },
   },
   {

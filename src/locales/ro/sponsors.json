@@ -272,7 +272,12 @@
       "hub_side": "Casetă laterală în Spațiul scriitorilor",
       "write_wide": "Banner lat pe Scrieri",
       "write_lower": "Banner de jos pe Scrieri",
-      "hub_wide": "Banner lat în Spațiul scriitorilor"
+      "hub_wide": "Banner lat în Spațiul scriitorilor",
+      "forum_search_wide": "Banner lat în căutarea din forumuri",
+      "forum_side": "Casetă laterală pe pagina unui forum",
+      "forum_wide": "Banner lat pe pagina unui forum",
+      "spaces_wide": "Banner lat în lista de spații",
+      "space_side": "Casetă laterală într-un spațiu"
     },
     "formats": {
       "wide": "banner lat",

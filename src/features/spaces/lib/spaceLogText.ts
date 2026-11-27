@@ -8,6 +8,13 @@
 /** The actions the database writes (log_space_action() and log_thread_moderation()). */
 const knownActions = [
   'moderator_appointed',
+  // Invitations to moderate and blocks (bundle BOOKS-7, user stories 7.7, 7.10 and 7.11).
+  'moderator_invited',
+  'moderator_invite_cancelled',
+  'moderator_invite_accepted',
+  'moderator_invite_declined',
+  'member_blocked',
+  'member_unblocked',
   'moderator_changed',
   'moderator_removed',
   'request_approved',

@@ -125,7 +125,9 @@ test.describe('epic check: forums and spaces (S1-E8-QA)', () => {
   test('journey 1: a thread, a quote, an under-16 who reads, New for you', async ({ browser }) => {
     const writer = await openAs(browser, 'adult_writer', '/forums/first-chapters/new');
     await writer.getByLabel('Title').fill(threadTitle);
-    await writer.getByLabel('Post').fill('I open on the **weather**, every time.');
+    await writer
+      .getByRole('textbox', { name: 'First post' })
+      .fill('I open on the **weather**, every time.');
     await writer.getByRole('button', { name: 'Post the thread' }).click();
     await expect(writer.getByRole('heading', { level: 1, name: threadTitle })).toBeVisible();
     await writer.context().close();

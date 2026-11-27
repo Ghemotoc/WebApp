@@ -56,6 +56,13 @@ describe('the moderators’ refusals', () => {
     );
   });
 
+  it('says a blocked person can’t ask again and an invitation is no longer there (BOOKS-7)', () => {
+    expect(spaceErrorFrom({ code: '42501', hint: 'space:blocked' }).failure).toBe('blocked');
+    expect(spaceErrorFrom({ code: 'P0002', hint: 'invite:missing' }).failure).toBe(
+      'invite_missing',
+    );
+  });
+
   it('still says a space that isn’t there is missing', () => {
     expect(spaceErrorFrom({ code: 'P0002', hint: 'space:missing' }).failure).toBe('missing');
     expect(spaceErrorFrom({ code: 'P0002', hint: '' }).failure).toBe('missing');
@@ -81,6 +88,11 @@ describe('a line of the space’s log', () => {
   it('reads a thread that is still there as its number and title', () => {
     const entry = logEntryFrom({ action: 'thread_locked', thread: { number: 12, title: 'Fir' } });
     expect(entry.thread).toEqual({ number: 12, title: 'Fir' });
+  });
+
+  it('has words for invitations to moderate and blocks (BOOKS-7)', () => {
+    expect(logActionKey('moderator_invited')).toBe('log.actions.moderator_invited');
+    expect(logActionKey('member_blocked')).toBe('log.actions.member_blocked');
   });
 
   it('says "made a change" for an action this version doesn’t know', () => {

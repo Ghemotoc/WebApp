@@ -26,6 +26,11 @@ export interface SpaceMember {
   person: ForumPerson;
   role: 'owner' | 'moderator' | 'member';
   powers: SpacePower[];
+  /**
+   * The powers the owner offered a member who hasn't answered yet (BOOKS-7, user stories 7.7 and
+   * 7.10: "they accept first"); null when no invitation waits.
+   */
+  invitedPowers: SpacePower[] | null;
   joinedAt: string;
 }
 
@@ -50,10 +55,17 @@ export interface SpaceLogEntry {
 export interface SpaceLogPage {
   entries: SpaceLogEntry[];
   hasMore: boolean;
+  /** Everyone who acted in the space, for the Who filter (board F12). */
+  people: ForumPerson[];
+  /** Whether our moderation team acted, so Who offers it too. */
+  platformActed: boolean;
 }
 
 /** What became of a moderator change. */
-export type ModeratorOutcome = 'appointed' | 'changed' | 'removed';
+export type ModeratorOutcome = 'invited' | 'invite_cancelled' | 'changed' | 'removed';
+
+/** How a member answered an invitation to help run a space. */
+export type InviteAnswer = 'accepted' | 'declined';
 
 /** A JSON object as the database sends it. */
 type JsonObject = Record<string, Json | undefined>;
@@ -159,6 +171,7 @@ export async function fetchSpaceMembers(
     person: personFrom(row['person']),
     role: roleFrom(row['role']),
     powers: powersFrom(row['powers']),
+    invitedPowers: Array.isArray(row['invited_powers']) ? powersFrom(row['invited_powers']) : null,
     joinedAt: String(row['joined_at'] ?? ''),
   }));
 }
@@ -169,18 +182,43 @@ export async function fetchSpaceMembers(
  * @param client - the Supabase client
  * @param slug - the space's address
  * @param skip - how many lines the page already shows
- * @returns the page
+ * @param who - only one person's actions (a username), 'platform' for our moderation team's, or
+ *   null for everyone's (board F12's Who filter)
+ * @returns the page, with the people Who can pick
  * @throws SpaceError when refused
  */
 export async function fetchSpaceLog(
   client: AppSupabaseClient,
   slug: string,
   skip: number,
+  who: string | null = null,
 ): Promise<SpaceLogPage> {
-  const { data, error } = await client.rpc('space_log', { slug, skip });
+  const { data, error } = await client.rpc('space_log', { slug, skip, who: who ?? undefined });
   if (error) throw spaceErrorFrom(error);
   const page = objectOf(data);
-  return { entries: rowsOf(page['entries']).map(logEntryFrom), hasMore: page['has_more'] === true };
+  return {
+    entries: rowsOf(page['entries']).map(logEntryFrom),
+    hasMore: page['has_more'] === true,
+    people: rowsOf(page['people']).map((row) => personFrom(row)),
+    platformActed: page['platform_acted'] === true,
+  };
+}
+
+/**
+ * Answers the owner's invitation to help run a space (BOOKS-7, user stories 7.7 and 7.10).
+ *
+ * @param client - the Supabase client
+ * @param answer - the space's address, and true to take the powers or false to say no
+ * @returns 'accepted' or 'declined'
+ * @throws SpaceError when refused ('invite_missing' when no invitation waits)
+ */
+export async function answerModeratorInvite(
+  client: AppSupabaseClient,
+  answer: { slug: string; accept: boolean },
+): Promise<InviteAnswer> {
+  const { data, error } = await client.rpc('answer_space_moderator_invite', answer);
+  if (error) throw spaceErrorFrom(error);
+  return objectOf(data)['outcome'] === 'accepted' ? 'accepted' : 'declined';
 }
 
 /**
@@ -199,7 +237,9 @@ export async function setSpaceModerator(
   const { data, error } = await client.rpc('set_space_moderator', change);
   if (error) throw spaceErrorFrom(error);
   const outcome = objectOf(data)['outcome'];
-  if (outcome === 'appointed' || outcome === 'removed') return outcome;
+  if (outcome === 'invited' || outcome === 'invite_cancelled' || outcome === 'removed') {
+    return outcome;
+  }
   return 'changed';
 }
 

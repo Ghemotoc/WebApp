@@ -15,34 +15,52 @@ import {
   fetchThreadList,
   type ForumThreadListPage,
   type ForumThreadPage,
+  type ThreadSort,
 } from '../api/forumThreads';
 
 import { forumsQueryKey } from './useForumIndex';
 
 /**
- * Reads a forum's threads, latest activity first; "Show more threads" reads the next page.
+ * How many threads that aren't pinned the pages so far hold: where "Show more threads" carries on.
+ *
+ * @param pages - the reads so far
+ * @returns the count
+ */
+function unpinnedShown(pages: (ForumThreadListPage | null)[]) {
+  return pages.reduce(
+    (count, page) => count + (page?.threads.filter((thread) => !thread.isSticky).length ?? 0),
+    0,
+  );
+}
+
+/**
+ * Reads a forum's threads in the order picked; "Show more threads" reads the next page.
  *
  * @param forumSlug - the forum's address
- * @returns the threads so far (null while loading, or for no such forum), hasMore, showMore(),
- *   isLoadingMore and loadFailed
+ * @param sort - latest activity (the default), newest or most replies first (boards F03, F08)
+ * @returns the threads so far (null while loading, or for no such forum), total, hasMore,
+ *   showMore(), isLoadingMore and loadFailed
  */
-export function useThreadList(forumSlug: string) {
+export function useThreadList(forumSlug: string, sort: ThreadSort = 'latest') {
   // Which threads are new is per reader (S1-E8-04), so signing in or out reads again.
   const { userId } = useSession();
   const list = useInfiniteQuery({
-    queryKey: [forumsQueryKey, 'threads', forumSlug, userId],
-    queryFn: async ({ pageParam }: { pageParam: string | null }) =>
-      fetchThreadList(await requireClient(), forumSlug, pageParam),
-    initialPageParam: null as string | null,
-    // The next page starts after the oldest thread shown.
-    getNextPageParam: (lastPage: ForumThreadListPage | null) =>
-      lastPage?.hasMore === true ? (lastPage.threads.at(-1)?.bumpedAt ?? null) : null,
+    queryKey: [forumsQueryKey, 'threads', forumSlug, sort, userId],
+    queryFn: async ({ pageParam }: { pageParam: number }) =>
+      fetchThreadList(await requireClient(), forumSlug, sort, pageParam),
+    initialPageParam: 0,
+    // The next page skips every thread already shown, pinned ones aside (they come first only).
+    getNextPageParam: (
+      lastPage: ForumThreadListPage | null,
+      allPages: (ForumThreadListPage | null)[],
+    ) => (lastPage?.hasMore === true ? unpinnedShown(allPages) : null),
   });
   const pages = list.data?.pages ?? null;
   const firstPage = pages?.[0] ?? null;
   return {
     threads:
       firstPage === null || pages === null ? null : pages.flatMap((page) => page?.threads ?? []),
+    total: firstPage?.total ?? 0,
     hasMore: list.hasNextPage,
     showMore: () => void list.fetchNextPage(),
     isLoadingMore: list.isFetchingNextPage,

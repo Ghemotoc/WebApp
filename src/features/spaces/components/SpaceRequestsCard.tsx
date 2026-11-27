@@ -9,7 +9,8 @@
  * again. A request may carry a short note from the person asking (bundle 14d IDEAS-3, part d;
  * idea IDEA-20261102-9): it shows under their name, quoted, with its own Report button, so it
  * can be reported like any other text (criterion 2; CLAUDE.md rule 6).
- * Who shows it: SpacePage, for a space where each request is approved.
+ * Who shows it: SpacePage, for a space where each request is approved, as a card; and
+ * SpaceMembersPage as board F11's plain "Waiting to join" section (bundle BOOKS-7, isPlain).
  * What it calls: useJoinRequests → space_join_requests(); useDecideJoinRequest →
  * decide_space_join_request().
  */
@@ -106,12 +107,90 @@ function RequestRow({
 }
 
 /**
+ * The section's heading: "Requests to join" on the card, or board F11's "Waiting to join" with
+ * the count line under it.
+ *
+ * @param props.isPlain - true on the members page
+ * @param props.count - how many requests wait, or null while loading
+ * @returns the heading, and the count line on the members page
+ */
+function RequestsHeading({ isPlain, count }: { isPlain: boolean; count: number | null }) {
+  const { t } = useSpacesTranslation();
+  if (!isPlain) {
+    return (
+      <h2
+        id="space-requests-heading"
+        className="m-0 font-heading type-subheading font-bold text-ink-heading"
+      >
+        {t('requests.title')}
+      </h2>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-1">
+      <h2
+        id="space-requests-heading"
+        className="m-0 font-heading type-heading font-bold text-ink-heading"
+      >
+        {t('requests.waitingTitle')}
+      </h2>
+      {count !== null && (
+        <p className="m-0 type-meta text-ink-muted">{t('requests.waitingIntro', { count })}</p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * The requests, or "No requests" once they are read.
+ *
+ * @param props.requests - the requests, or null while loading
+ * @param props.onDecide - sends an answer
+ * @param props.isRunning - whether an answer is being sent
+ * @returns the list or the note
+ */
+function RequestsList({
+  requests,
+  onDecide,
+  isRunning,
+}: {
+  requests: SpaceJoinRequest[] | null;
+  onDecide: (person: ForumPerson, approve: boolean) => void;
+  isRunning: boolean;
+}) {
+  const { t } = useSpacesTranslation();
+  if (requests === null) return null;
+  if (requests.length === 0) {
+    return <p className="m-0 type-body text-ink-muted">{t('requests.none')}</p>;
+  }
+  return (
+    <ul className="m-0 list-none p-0">
+      {requests.map((request) => (
+        <RequestRow
+          key={request.person?.handle ?? request.requestedAt}
+          request={request}
+          onDecide={onDecide}
+          isRunning={isRunning}
+        />
+      ))}
+    </ul>
+  );
+}
+
+/** The section's look: a card on the space's page, plain on the members page (board F11). */
+const sectionClasses = {
+  card: 'flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4',
+  plain: 'flex flex-col gap-2',
+};
+
+/**
  * Renders the card.
  *
  * @param props.space - the space
+ * @param props.isPlain - true for board F11's plain section with its count line
  * @returns the section with the requests, or nothing without the members power
  */
-export function SpaceRequestsCard({ space }: { space: Space }) {
+export function SpaceRequestsCard({ space, isPlain = false }: { space: Space; isPlain?: boolean }) {
   const { t } = useSpacesTranslation();
   const mayDecide = space.viewer.powers.includes('members');
   const requests = useJoinRequests(space.slug, mayDecide);
@@ -131,14 +210,9 @@ export function SpaceRequestsCard({ space }: { space: Space }) {
     <section
       id="join-requests"
       aria-labelledby="space-requests-heading"
-      className="flex flex-col gap-2 rounded-card border border-border bg-surface px-6 py-4"
+      className={isPlain ? sectionClasses.plain : sectionClasses.card}
     >
-      <h2
-        id="space-requests-heading"
-        className="m-0 font-heading type-subheading font-bold text-ink-heading"
-      >
-        {t('requests.title')}
-      </h2>
+      <RequestsHeading isPlain={isPlain} count={requests.isSuccess ? list.length : null} />
       <p aria-live="polite" className="m-0 type-body text-ink-muted">
         {deciding.outcome !== null && t(outcomeKeys[deciding.outcome], { name: lastName })}
       </p>
@@ -146,21 +220,11 @@ export function SpaceRequestsCard({ space }: { space: Space }) {
       {deciding.failure !== null && (
         <Notice tone="error">{t(...spaceFailureText(deciding.failure))}</Notice>
       )}
-      {requests.isSuccess && list.length === 0 && (
-        <p className="m-0 type-body text-ink-muted">{t('requests.none')}</p>
-      )}
-      {list.length > 0 && (
-        <ul className="m-0 list-none p-0">
-          {list.map((request) => (
-            <RequestRow
-              key={request.person?.handle ?? request.requestedAt}
-              request={request}
-              onDecide={decide}
-              isRunning={deciding.isRunning}
-            />
-          ))}
-        </ul>
-      )}
+      <RequestsList
+        requests={requests.isSuccess ? list : null}
+        onDecide={decide}
+        isRunning={deciding.isRunning}
+      />
     </section>
   );
 }

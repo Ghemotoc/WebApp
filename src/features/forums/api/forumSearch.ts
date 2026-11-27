@@ -11,9 +11,17 @@ import type { AppSupabaseClient } from '@/lib/supabase';
 
 import { personFrom, type ForumPerson } from './forumThreads';
 
+/** The orders search results come in (board F02, BOOKS-7). */
+export const forumSearchSorts = ['best', 'newest', 'replies'] as const;
+
+/** One of forumSearchSorts: best match (thread titles first), newest or most replies. */
+export type ForumSearchSort = (typeof forumSearchSorts)[number];
+
 /** What to search for, and where. */
 export interface ForumSearchQuery {
   term: string;
+  /** The order of the results; best match when left out. */
+  sort?: ForumSearchSort;
   /** A forum's address (its subforums included), or null for every forum. */
   forumSlug: string | null;
   /** A username, with or without "@", or null for anyone. */
@@ -31,6 +39,8 @@ export interface ForumSearchResult {
   postNumber: number;
   author: ForumPerson;
   createdAt: string;
+  /** How many replies the thread has (board F02's "23 replies"). */
+  replyCount: number;
   /** The start of the post's words, as plain text. */
   snippet: string;
 }
@@ -39,6 +49,8 @@ export interface ForumSearchResult {
 export interface ForumSearchPage {
   results: ForumSearchResult[];
   hasMore: boolean;
+  /** How many results there are in all ("48 results"); null past the last page. */
+  total: number | null;
 }
 
 /** A JSON object as the database sends it. */
@@ -72,6 +84,7 @@ function resultFrom(row: JsonObject): ForumSearchResult {
     postNumber: Number(row['post_number']),
     author: personFrom(row['author']),
     createdAt: String(row['created_at'] ?? ''),
+    replyCount: Number(row['reply_count'] ?? 0),
     snippet: String(row['snippet'] ?? ''),
   };
 }
@@ -82,7 +95,8 @@ function resultFrom(row: JsonObject): ForumSearchResult {
  * @param client - the Supabase client
  * @param query - the term and the filters
  * @param page - how many results are already shown, and the reader's language for forum names
- * @returns one page of results, thread titles first, then the closest matches
+ * @returns one page of results in the order asked (best match: thread titles first, then the
+ *   closest matches)
  * @throws Error when the database can't be reached
  */
 export async function searchForums(
@@ -99,6 +113,7 @@ export async function searchForums(
     ...author,
     skip: page.skip,
     language_code: page.languageCode,
+    sort: query.sort ?? 'best',
   });
   if (error) throw new Error(`Could not search the forums: ${error.message}`);
   // Step 2: read the answer.
@@ -107,5 +122,6 @@ export async function searchForums(
   return {
     results: rows.map((row) => resultFrom(objectOf(row))),
     hasMore: answer['has_more'] === true,
+    total: typeof answer['total'] === 'number' ? answer['total'] : null,
   };
 }

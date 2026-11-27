@@ -4,7 +4,7 @@
  * blob when it has none. Never initials or a face (board F06).
  *
  * The space's name sits right beside it, so the tile is decoration for screen readers.
- * Who shows it: SpaceCard. What it calls: useSpaceLogoView (the logo's signed address) and
+ * Who shows it: SpaceRow. What it calls: useSpaceLogoView (the logo's signed address) and
  * lib/spaceLook.ts's bannerSwatch (the colour).
  */
 import type { Space } from '../api/spaces';

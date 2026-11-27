@@ -272,7 +272,12 @@
       "hub_side": "Writers’ hub side box",
       "write_wide": "Write page wide banner",
       "write_lower": "Write page lower banner",
-      "hub_wide": "Writers’ hub wide banner"
+      "hub_wide": "Writers’ hub wide banner",
+      "forum_search_wide": "Forum search wide banner",
+      "forum_side": "Forum page side box",
+      "forum_wide": "Forum page wide banner",
+      "spaces_wide": "Spaces list wide banner",
+      "space_side": "Space side box"
     },
     "formats": {
       "wide": "wide banner",

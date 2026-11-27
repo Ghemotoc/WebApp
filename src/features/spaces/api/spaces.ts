@@ -98,6 +98,13 @@ export interface SpaceViewer {
   canHandOver: boolean;
   /** The open offer, for the owner and the moderator it is for (IDEAS-3e); null otherwise. */
   handover: SpaceHandover | null;
+  /**
+   * The powers the owner invited the reader to take, waiting for their answer (BOOKS-7, user
+   * stories 7.7 and 7.10); null when no invitation waits.
+   */
+  moderatorInvite: SpacePower[] | null;
+  /** The space blocked the reader: they can't ask to join again (BOOKS-7, user story 7.11). */
+  isBlocked: boolean;
 }
 
 /** An open offer to hand a space over (IDEAS-3e, idea IDEA-20261102-7). */
@@ -153,6 +160,21 @@ export interface Space {
   threadCount: number;
   latestActivityAt: string;
   viewer: SpaceViewer;
+}
+
+/** The orders the Spaces page offers under "More spaces" (board F06, user story 7.6). */
+export const spaceSorts = ['latest', 'members', 'newest'] as const;
+
+/** One of them: latest activity, most members or newest. */
+export type SpaceSort = (typeof spaceSorts)[number];
+
+/**
+ * Which spaces a list asks for: the ones the caller joined ("Joined"), the others ("More
+ * spaces", never a class), or every space (null, as the Together page's card shows them).
+ */
+export interface SpaceListFilter {
+  sort: SpaceSort;
+  joined: boolean | null;
 }
 
 /** One page of the spaces the caller may see. */
@@ -211,6 +233,9 @@ export type SpaceFailure =
   | 'handover_not_moderator'
   | 'handover_age'
   | 'handover_not_teacher'
+  // BOOKS-7: the space blocked the caller, or the invitation to moderate is gone.
+  | 'blocked'
+  | 'invite_missing'
   | 'unreachable';
 
 /** A field the database found a problem with ("name:taken", "rules:too_long"…). */
@@ -246,6 +271,8 @@ const privilegeHints: Record<string, SpaceFailure> = {
   // S1-E8-11: a class space takes its teacher's code; only teachers start one.
   'space:class': 'class_only',
   'space:not_teacher': 'not_teacher',
+  // BOOKS-7 (user story 7.11): someone the space blocked can't ask to join again.
+  'space:blocked': 'blocked',
 };
 
 /** The 23514 and P0002 hints that aren't about a form field, and what they mean. */
@@ -262,6 +289,8 @@ const otherHints: Record<string, SpaceFailure> = {
   'handover:not_moderator': 'handover_not_moderator',
   'handover:age': 'handover_age',
   'handover:not_teacher': 'handover_not_teacher',
+  // BOOKS-7: an invitation to moderate that was taken back or already answered.
+  'invite:missing': 'invite_missing',
 };
 
 /**
@@ -344,6 +373,10 @@ function viewerFrom(value: Json | undefined): SpaceViewer {
     showWelcome: viewer['show_welcome'] === true,
     canHandOver: viewer['can_hand_over'] === true,
     handover: handoverFrom(viewer['handover']),
+    moderatorInvite: Array.isArray(viewer['moderator_invite'])
+      ? powersFrom(viewer['moderator_invite'])
+      : null,
+    isBlocked: viewer['is_blocked'] === true,
   };
 }
 
@@ -457,11 +490,12 @@ export function spaceFrom(value: Json | undefined): Space {
 }
 
 /**
- * Reads the spaces the caller may see, busiest first.
+ * Reads the spaces the caller may see, in the order picked.
  *
  * @param client - the Supabase client
  * @param skip - how many the page already shows
  * @param howMany - how many to read (at most 50)
+ * @param filter - the order, and whether to read the joined spaces, the others or every one
  * @returns the page
  * @throws Error in plain words when the database can't be reached
  */
@@ -469,8 +503,16 @@ export async function fetchSpaceList(
   client: AppSupabaseClient,
   skip: number,
   howMany: number,
+  filter: SpaceListFilter = { sort: 'latest', joined: null },
 ): Promise<SpaceListPage> {
-  const { data, error } = await client.rpc('space_list', { skip, how_many: howMany });
+  // The database takes null for "every space"; the generated type leaves the argument out then.
+  const joined = filter.joined === null ? undefined : filter.joined;
+  const { data, error } = await client.rpc('space_list', {
+    skip,
+    how_many: howMany,
+    sort: filter.sort,
+    joined,
+  });
   if (error) throw new Error(`Could not read the spaces: ${error.message}`);
   return spaceListPageFrom(data);
 }

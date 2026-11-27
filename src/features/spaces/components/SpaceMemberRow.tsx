@@ -1,92 +1,147 @@
 /**
- * SpaceMemberRow: one member on the members page: their name, their place (owner, moderator with
- * powers, member), when they joined and "Remove from space" (bundle FORUMS-2, part b; S1-E8-07:
- * the members power).
+ * SpaceMemberRow: one person on a space's members page: their picture, their name (a link to
+ * their profile), a line saying their place and when they came, and "•••" with what may be done
+ * to them (bundle FORUMS-2, part b; S1-E8-07: the members power; redrawn as board F11 in bundle
+ * BOOKS-7, user stories 7.7, 7.10 and 7.11).
  *
- * "Remove from space" first opens a short form with an optional reason (kept in the space's log)
- * and "Yes, remove", so one slip of the mouse removes nobody. The owner is never offered, and a
- * moderator only to the owner and our moderation team (moderators can't remove each other).
- * Who shows it: SpaceMembersPage, which sends the removal (remove_space_member()).
+ * "Remove" and "Block" first open a short form with an optional reason, so one slip of the mouse
+ * removes nobody. The owner is never offered, and a moderator only to the owner and our moderation
+ * team (moderators can't remove each other). "Make a moderator" is the owner's, for a member with
+ * no invitation waiting; a waiting one can be taken back instead.
+ * Who shows it: SpaceMembersList, which sends each change. What it calls: SpaceMemberMore,
+ * SpaceMemberReasonForm and SpaceMemberInviteForm.
  */
-import { useId, useState } from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router';
 
-import { Button } from '@/components/ui/Button';
-import { Textarea } from '@/components/ui/Textarea';
-import { threadDay } from '@/features/forums/lib/forumDates';
+import { MetaLine } from '@/components/ui/MetaLine';
+import { PersonAvatar } from '@/features/avatars/components/PersonAvatar';
 import { nameOf } from '@/features/forums/lib/forumPeople';
 
 import type { SpaceMember } from '../api/spaceModeration';
-import { powerKeys } from '../lib/spacePowers';
+import type { SpacePower } from '../api/spaces';
 import { useSpacesTranslation } from '../registerSpacesTranslations';
 
+import { SpaceMemberInviteForm } from './SpaceMemberInviteForm';
+import { type MemberChoice, SpaceMemberMore } from './SpaceMemberMore';
+import { SpaceMemberReasonForm } from './SpaceMemberReasonForm';
+import { useMemberFacts } from '../hooks/useMemberFacts';
+
+/** What can be done to a member; each resolves to true when it worked. */
+export interface MemberActions {
+  remove: (handle: string, name: string, reason: string) => Promise<boolean>;
+  block: (handle: string, name: string, reason: string) => Promise<boolean>;
+  invite: (handle: string, name: string, powers: SpacePower[]) => Promise<boolean>;
+  cancelInvite: (handle: string, name: string) => Promise<boolean>;
+}
+
 /** What the row needs. */
-interface SpaceMemberRowProps {
+export interface SpaceMemberRowProps {
   member: SpaceMember;
-  /** Whether the reader may remove moderators too (the owner and our moderation team). */
-  mayRemoveModerators: boolean;
-  /** Sends the removal; resolves to true when it worked. */
-  onRemove: (handle: string, name: string, reason: string) => Promise<boolean>;
+  /** Whether the reader is the owner or our moderation team: they may act on moderators too. */
+  mayAppoint: boolean;
+  actions: MemberActions;
   isRunning: boolean;
 }
 
 /**
- * The line under the name: "Owner", "Moderator: posts and members" or "Member".
+ * What the reader may do to this member, in the board's order.
  *
- * @returns the line's text
+ * @param member - the member
+ * @param mayAppoint - whether the reader may act on moderators and make new ones
+ * @returns the choices' keys
  */
-function usePlaceText(member: SpaceMember): string {
-  const { t, i18n } = useSpacesTranslation();
-  if (member.role === 'owner') return t('runs.owner');
-  if (member.role === 'member') return t('members.member');
-  const listFormat = new Intl.ListFormat(i18n.language, { type: 'conjunction' });
-  return t('runs.moderator', {
-    powers: listFormat.format(powerKeys(member.powers).map((key) => t(key))),
-  });
+function choiceKeysFor(member: SpaceMember, mayAppoint: boolean): string[] {
+  if (member.person === null || member.role === 'owner') return [];
+  if (member.role === 'moderator' && !mayAppoint) return [];
+  const keys = ['remove', 'block'];
+  if (mayAppoint && member.role === 'member' && member.invitedPowers === null) keys.push('invite');
+  if (mayAppoint && member.invitedPowers !== null) keys.push('cancelInvite');
+  return keys;
 }
 
-/**
- * The reason field and the button that removes, once "Remove from space" is pressed.
- *
- * @returns the small form
- */
-function RemoveForm({
-  name,
-  onConfirm,
-  onCancel,
-  isRunning,
-}: {
+/** What the picked form needs. */
+interface MemberPickedFormProps {
+  picked: string;
   name: string;
-  onConfirm: (reason: string) => void;
+  actions: MemberActions;
+  /** Sends a change for the member's username, then closes the form when it worked. */
+  onSend: (send: (handle: string) => Promise<boolean>) => void;
   onCancel: () => void;
   isRunning: boolean;
-}) {
+}
+
+/**
+ * The form for what was picked: "Remove" and "Block" ask for a reason, "Make a moderator" for
+ * the powers to offer.
+ *
+ * @returns the form, or nothing for a pick with no form
+ */
+function MemberPickedForm({
+  picked,
+  name,
+  actions,
+  onSend,
+  onCancel,
+  isRunning,
+}: MemberPickedFormProps) {
   const { t } = useSpacesTranslation();
-  const reasonId = useId();
-  const [reason, setReason] = useState('');
-  return (
-    <div className="flex flex-col gap-3">
-      <Textarea
-        id={reasonId}
-        label={t('members.reason', { name })}
-        hint={t('members.reasonHint')}
-        value={reason}
-        maxLength={500}
-        onChange={(event) => setReason(event.target.value)}
+  if (picked === 'invite') {
+    return (
+      <SpaceMemberInviteForm
+        name={name}
+        onInvite={(powers) => onSend((handle) => actions.invite(handle, name, powers))}
+        onCancel={onCancel}
+        isRunning={isRunning}
       />
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant="destructive"
-          aria-label={t('members.confirmLabel', { name })}
-          disabled={isRunning}
-          onClick={() => onConfirm(reason)}
-        >
-          {t('members.confirm')}
-        </Button>
-        <Button variant="secondary" disabled={isRunning} onClick={onCancel}>
-          {t('form.cancel')}
-        </Button>
+    );
+  }
+  const kind = picked === 'block' ? 'block' : 'remove';
+  const words = {
+    label: t(kind === 'block' ? 'members.blockReason' : 'members.reason', { name }),
+    hint: t(kind === 'block' ? 'members.blockHint' : 'members.reasonHint'),
+    confirm: t(kind === 'block' ? 'members.blockConfirm' : 'members.confirm'),
+    confirmLabel: t(kind === 'block' ? 'members.blockConfirmLabel' : 'members.confirmLabel', {
+      name,
+    }),
+  };
+  return (
+    <SpaceMemberReasonForm
+      words={words}
+      onConfirm={(reason) => onSend((handle) => actions[kind](handle, name, reason))}
+      onCancel={onCancel}
+      isRunning={isRunning}
+    />
+  );
+}
+
+/**
+ * The picture, the name (a link to their profile) and the facts.
+ *
+ * @param props.member - the member
+ * @param props.name - their name in words
+ * @returns the picture and the two lines
+ */
+function MemberIdentity({ member, name }: { member: SpaceMember; name: string }) {
+  const facts = useMemberFacts(member);
+  const person = member.person;
+  return (
+    <>
+      <PersonAvatar name={name} handle={person?.handle ?? null} size="medium" />
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        {person === null ? (
+          <span className="type-label font-semibold text-ink-heading">{name}</span>
+        ) : (
+          <Link
+            to={`/u/${person.handle}`}
+            className="type-label font-semibold break-words text-ink-heading no-underline hover:underline"
+          >
+            {name}
+          </Link>
+        )}
+        <MetaLine facts={facts} />
       </div>
-    </div>
+    </>
   );
 }
 
@@ -95,52 +150,58 @@ function RemoveForm({
  *
  * @returns a list item
  */
-export function SpaceMemberRow({
-  member,
-  mayRemoveModerators,
-  onRemove,
-  isRunning,
-}: SpaceMemberRowProps) {
-  const { t, i18n } = useSpacesTranslation();
-  const [isRemoving, setIsRemoving] = useState(false);
-  const place = usePlaceText(member);
+export function SpaceMemberRow({ member, mayAppoint, actions, isRunning }: SpaceMemberRowProps) {
+  const { t } = useSpacesTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [picked, setPicked] = useState<string | null>(null);
   const person = member.person;
   const name = nameOf(person, t('row.ownerDeleted'));
-  const mayRemove =
-    person !== null && member.role !== 'owner' && (member.role === 'member' || mayRemoveModerators);
+  const choices: MemberChoice[] = choiceKeysFor(member, mayAppoint).map((key) => ({
+    key,
+    label: t(`members.choices.${key}`),
+  }));
 
-  /** Sends the removal; the row goes once the list reads again. */
-  async function confirm(reason: string) {
-    if (person === null) return;
-    const worked = await onRemove(person.handle, name, reason);
-    if (worked) setIsRemoving(false);
+  /** Runs a change, then closes the form when it worked. */
+  async function finish(change: Promise<boolean>) {
+    if (await change) {
+      setPicked(null);
+      setIsOpen(false);
+    }
   }
 
+  /** Acts on a pick: taking back an invitation needs no form, the others open theirs. */
+  function pick(key: string) {
+    if (person === null) return;
+    if (key === 'cancelInvite') {
+      void finish(actions.cancelInvite(person.handle, name));
+      return;
+    }
+    setPicked(key);
+  }
+
+  const handle = person === null ? '' : person.handle;
   return (
-    <li className="flex flex-col gap-2 border-b border-border py-4 last:border-b-0">
-      <span className="type-body font-semibold break-words text-ink-heading">{name}</span>
-      <span className="type-body text-ink-muted">{place}</span>
-      <span className="type-meta text-ink-muted">
-        {t('members.joined', { date: threadDay(member.joinedAt, i18n.language) })}
-      </span>
-      {mayRemove && !isRemoving && (
-        <div>
-          <Button
-            variant="secondary"
-            aria-label={t('members.removeLabel', { name })}
-            disabled={isRunning}
-            onClick={() => setIsRemoving(true)}
-          >
-            {t('members.remove')}
-          </Button>
-        </div>
-      )}
-      {mayRemove && isRemoving && (
-        <RemoveForm
+    <li className="flex flex-col gap-3 border-t border-border py-3">
+      <div className="flex items-start gap-3">
+        <MemberIdentity member={member} name={name} />
+        {choices.length > 0 && (
+          <SpaceMemberMore
+            name={name}
+            choices={choices}
+            isOpen={isOpen}
+            onToggle={() => setIsOpen((open) => !open)}
+            onPick={pick}
+          />
+        )}
+      </div>
+      {picked !== null && (
+        <MemberPickedForm
+          picked={picked}
           name={name}
-          onConfirm={(reason) => void confirm(reason)}
-          onCancel={() => setIsRemoving(false)}
+          onSend={(send) => void finish(send(handle))}
+          onCancel={() => setPicked(null)}
           isRunning={isRunning}
+          actions={actions}
         />
       )}
     </li>

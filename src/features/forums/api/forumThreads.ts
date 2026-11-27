@@ -205,7 +205,15 @@ export interface ForumThreadSummary {
 export interface ForumThreadListPage {
   threads: ForumThreadSummary[];
   hasMore: boolean;
+  /** How many threads the reader may open in the forum, pinned ones included (board F03). */
+  total: number;
 }
+
+/** The orders a forum's threads come in (boards F03 and F08, BOOKS-7). */
+export const threadSorts = ['latest', 'newest', 'replies'] as const;
+
+/** One of threadSorts. */
+export type ThreadSort = (typeof threadSorts)[number];
 
 /** One earlier version of an edited post (moderators only). */
 export interface ForumPostVersion {
@@ -459,29 +467,35 @@ function summaryFrom(row: JsonObject): ForumThreadSummary {
 }
 
 /**
- * Reads one page of a forum's threads: sticky threads first on the first page, then the rest by
- * latest activity (S1-E8-05).
+ * Reads one page of a forum's threads: pinned ones first on the first page, then the others in
+ * the order the reader picked.
  *
  * @param client - the Supabase client
  * @param forumSlug - the forum's address
- * @param olderThan - null for the first page; the last thread's bumpedAt for the next
- * @returns the page, or null when there is no such forum
+ * @param sort - latest activity, newest or most replies first
+ * @param skip - how many threads that aren't pinned are already shown
+ * @returns the page, or null for no such forum
  * @throws Error when the database can't be reached
  */
 export async function fetchThreadList(
   client: AppSupabaseClient,
   forumSlug: string,
-  olderThan: string | null,
+  sort: ThreadSort,
+  skip: number,
 ): Promise<ForumThreadListPage | null> {
-  const where = olderThan === null ? {} : { older_than: olderThan };
   const { data, error } = await client.rpc('forum_thread_list', {
     forum_slug: forumSlug,
-    ...where,
+    sort,
+    skip,
   });
   if (error) throw new Error(`Could not load the threads: ${error.message}`);
   if (data === null) return null;
   const page = objectOf(data);
-  return { threads: listOf(page['threads']).map(summaryFrom), hasMore: page['has_more'] === true };
+  return {
+    threads: listOf(page['threads']).map(summaryFrom),
+    hasMore: page['has_more'] === true,
+    total: typeof page['total'] === 'number' ? page['total'] : 0,
+  };
 }
 
 /** Which posts of a thread to read. */
