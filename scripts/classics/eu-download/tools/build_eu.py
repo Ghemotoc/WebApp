@@ -136,7 +136,7 @@ def main(languages):
             work = dict(id=work_id, title=title[:120], author=row["author"].strip(), author_died=int(died.group()) if died else None,
                         language=language, kind=kind, category=CATEGORY_OF_KIND.get(kind, "fiction"), rating=rating,
                         first_published=int(year.group()) if year else None, blurb=blurb,
-                        source_title=f"Wikisource, CC BY-SA 4.0; {MODERN_SPELLING if modernised else ADAPTED.get(language, "formatting adapted")}",
+                        source_title=f"Wikisource, CC BY-SA 4.0; {MODERN_SPELLING if modernised else ADAPTED.get(language, 'formatting adapted')}",
                         source_url=f"https://{host}/w/index.php?oldid={record['revid']}",
                         chapters=[{"title": t[:120], "body": safe_text(b)} for t, b in chapters])
             json.dump(work, open(os.path.join(out_dir, work_id + ".json"), "w"), ensure_ascii=False)
