@@ -40,7 +40,7 @@ export interface Letter {
   language: string;
   /** The words, one paragraph each, with any address written out in them. */
   lines: string[];
-  /** "The Ghemotoc team" (email.json signOff). */
+  /** The sign-off line, such as "The {{productName}} team" (email.json signOff). */
   signOff: string;
   /** "An app by …" (email.json madeBy); left out of staff alerts, which have no footer line. */
   madeBy?: string;
