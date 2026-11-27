@@ -15,7 +15,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(28);
+select plan(30);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -179,6 +179,10 @@ select pg_temp.as_postgres();
 -- One more reply waits when the person unsubscribes.
 insert into public.notifications (user_id, kind, actor_user_ids, actor_count)
 values (pg_temp.persona(1), 'comment_reply', array[pg_temp.persona(2)], 1);
+-- The person had switched reaction emails on; unsubscribing must turn those off too.
+insert into public.notification_email_settings (user_id, kind, delivery)
+values (pg_temp.persona(1), 'comment_reactions', 'instant')
+on conflict on constraint notification_email_settings_one_per_kind do update set delivery = 'instant';
 
 select pg_temp.sign_out();
 select is(public.unsubscribe_from_emails('not-a-key'), false, 'an unknown key changes nothing');
@@ -192,6 +196,18 @@ select is(
   (select count(*) from public.email_outbox where user_id = pg_temp.persona(1) and sent_at is null),
   0::bigint,
   'after unsubscribing every optional email is off, the waiting one included');
+select is(
+  (select count(*) from public.notification_email_settings as settings
+   where settings.user_id = pg_temp.persona(1)
+     and public.default_email_delivery(settings.kind) is not null
+     and settings.delivery <> 'off'),
+  0::bigint,
+  'after unsubscribing no optional kind is left on, reaction emails included');
+select is(
+  (select delivery::text from public.notification_email_settings
+   where user_id = pg_temp.persona(1) and kind = 'comment_reactions'),
+  'off',
+  'reaction emails a person had switched on are off after unsubscribing');
 insert into public.notifications (user_id, kind, is_required, decision)
 values (pg_temp.persona(1), 'moderation_decision', true, 'remove');
 select is(
