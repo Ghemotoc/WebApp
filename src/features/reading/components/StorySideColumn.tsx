@@ -6,8 +6,8 @@
  * cards, in board B01's order (bundle 2, user story 2.1): "The writer" (StoryWriterCard),
  * "About this edition" for a story in several languages (TRANSLATE-1b), the box advert
  * (S1-E12-01; none on a class-only story, Q70) and "Report this story" after a flag.
- * A public-domain classic shows its real author, the source edition and the translator instead of
- * the writer (S1-E5-06, S1-E11-16).
+ * A public-domain classic shows its real author, the translator, the source edition and its
+ * licence instead of the writer (S1-E5-06, S1-E11-16; ClassicCredit, CLASSIC-CREDIT).
  * Report button (CLAUDE.md rule 6): Lane C's shared <ReportButton> (S1-E10-01; architecture
  * 1.7.11), which opens the one report dialog for this story. Not shown to the story's owner, who
  * can't report their own story (the database refuses it too).
@@ -21,46 +21,15 @@ import { ReportButton } from '@/features/reporting/components/ReportButton';
 
 import type { ClassicAuthor, StoryPageData } from '../api/storyPage';
 
+import { ClassicCredit } from './ClassicCredit';
 import { StoryAdSlot } from './StoryAdSlot';
 import { AboutEditionCard } from './StoryLanguageNote';
 import { StoryWriterCard } from './StoryWriterCard';
 
 /**
- * Where a classic's text comes from: the source edition as a link, and the translator (S1-E11-16
- * AC 5). Classics added before the staff form have no source, so the lines are left out.
- *
- * @returns the lines, or nothing
- */
-function ClassicSource({ author }: { author: ClassicAuthor }) {
-  const { t } = useTranslation('reading');
-  return (
-    <>
-      {author.translatorName !== null && (
-        <p className="m-0 type-body leading-normal text-ink-muted">
-          {t('storyPage.classicTranslator', { name: author.translatorName })}
-        </p>
-      )}
-      {author.sourceTitle !== null && author.sourceUrl !== null && (
-        <p className="m-0 type-body leading-normal text-ink-muted">
-          {t('storyPage.classicSource')}{' '}
-          <a
-            href={author.sourceUrl}
-            rel="nofollow ugc noopener"
-            target="_blank"
-            className="font-semibold underline underline-offset-2"
-          >
-            {author.sourceTitle}
-          </a>
-        </p>
-      )}
-    </>
-  );
-}
-
-/**
  * The card for a public-domain classic: the real author and the year they died, with no Follow
- * and no profile, because the author has no account (S1-E5-06, 25 Oct 2026), and since S1-E11-16
- * the source edition and the translator.
+ * and no profile, because the author has no account (S1-E5-06, 25 Oct 2026), and the credit lines
+ * (ClassicCredit, CLASSIC-CREDIT).
  *
  * @returns the card
  */
@@ -75,7 +44,8 @@ function ClassicAuthorCard({ author }: { author: ClassicAuthor }) {
       <p className="m-0 type-body leading-normal text-ink-muted">
         {t('storyPage.classicAuthorNote', { year: historicalYear(author.diedYear, t) })}
       </p>
-      <ClassicSource author={author} />
+      {/* CLASSIC-CREDIT: the translator, the source and its licence, both linked. */}
+      <ClassicCredit author={author} />
     </section>
   );
 }

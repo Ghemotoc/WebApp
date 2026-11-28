@@ -66,6 +66,8 @@ test.describe('classics show their real author (S1-E5-06)', () => {
     await expect(
       page.getByText('A classic in the public domain. Its author died in 1901.'),
     ).toBeVisible();
+    // CLASSIC-CREDIT: a classic with no source saved says so.
+    await expect(page.getByText('Source to be added.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'See profile' })).toHaveCount(0);
     await expect(
       page.getByRole('button', { name: new RegExp(`Follow ${authorName}`) }),
