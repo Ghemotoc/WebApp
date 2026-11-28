@@ -87,6 +87,12 @@ export interface StoryPageData {
    * page shows the notice and the chapters open in the app.
    */
   appOnly: boolean;
+  /**
+   * True when the story is hidden in the reader's country (COUNTRY-3): the page still opens, but
+   * says "Sorry, this book isn't available in your country" in place of the read button, and the
+   * chapters refuse their text. Never true for the owner.
+   */
+  unavailableHere: boolean;
   /** The chapters: the readable ones for readers; every live one for the owner (S1-E3-03). */
   chapters: StoryPageChapter[];
   /**
@@ -149,6 +155,8 @@ interface StoryPageRow {
   is_owner: boolean;
   is_public: boolean;
   app_only?: boolean;
+  /** COUNTRY-3: missing from answers saved before it. */
+  unavailable_here?: boolean;
   chapters: {
     code: string;
     number: number;
@@ -259,6 +267,27 @@ function statsFrom(stats: StoryPageRow['stats']): StoryPageData['stats'] {
 }
 
 /**
+ * One chapter of the list, from the database's shape to the screen's (split out of
+ * fetchStoryPage to keep it short; COUNTRY-3).
+ *
+ * @param chapter - one entry of get_story_page()'s 'chapters'
+ * @returns the chapter for the list
+ */
+function chapterFrom(chapter: StoryPageRow['chapters'][number]): StoryPageChapter {
+  return {
+    code: chapter.code,
+    number: chapter.number,
+    title: chapter.title,
+    status: chapter.status,
+    publishedAt: chapter.published_at,
+    editedAt: chapter.edited_at,
+    wordCount: chapter.word_count,
+    // TRANSLATE-1b: answers saved before it carry no flag, so a missing one means translated.
+    isTranslated: chapter.is_translated !== false,
+  };
+}
+
+/**
  * Reads the page for a story's public address.
  *
  * @param client - the shared Supabase client
@@ -301,18 +330,10 @@ export async function fetchStoryPage(
     lastChapterPublishedAt: row.last_chapter_published_at,
     isOwner: row.is_owner,
     appOnly: row.app_only === true,
+    unavailableHere: row.unavailable_here === true,
     isPublic: row.is_public,
     stats: statsFrom(row.stats),
-    chapters: row.chapters.map((chapter) => ({
-      code: chapter.code,
-      number: chapter.number,
-      title: chapter.title,
-      status: chapter.status,
-      publishedAt: chapter.published_at,
-      editedAt: chapter.edited_at,
-      wordCount: chapter.word_count,
-      isTranslated: chapter.is_translated !== false,
-    })),
+    chapters: row.chapters.map(chapterFrom),
     editions: storyEditionsFrom(row.editions),
     edition: editionFactsFrom(row.edition),
     labels: {

@@ -20,7 +20,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(28);
+select plan(30);
 
 create function pg_temp.sign_in(persona_id text) returns void language sql as $$
   select set_config('role', 'authenticated', true),
@@ -87,13 +87,22 @@ select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
 select pg_temp.connect_from(pg_temp.token('MD', 0));
 select is(pg_temp.opens(), false, 'a reader connecting from Moldova can''t open the story');
 select is(pg_temp.listed(), false, 'a reader connecting from Moldova doesn''t find it in a list');
-select is(public.get_story_page('statia-meteo-seed01'), null,
-  'nor does the story page answer for them');
+-- COUNTRY-3 (Robert, 28 Nov 2026): the book page still opens there; only the chapters are refused.
+select is(public.get_story_page('statia-meteo-seed01') ->> 'unavailable_here', 'true',
+  'the book page still opens for them, saying the book isn''t available in their country');
 select is(public.story_unavailable_here('statia-meteo-seed01'), true,
   'the page learns the country is the reason, so it can say the page isn''t available here');
 select pg_temp.connect_from(pg_temp.token('SE', 0));
 select is(pg_temp.opens(), true, 'the same reader connecting from Sweden opens it again');
 select is(pg_temp.listed(), true, 'and finds it in the lists again');
+select is(public.get_story_page('statia-meteo-seed01') ->> 'unavailable_here', 'false',
+  'from Sweden the book page lets them read again');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000001');
+select pg_temp.connect_from(pg_temp.token('MD', 0));
+select is(public.get_story_page('statia-meteo-seed01') ->> 'unavailable_here', 'false',
+  'the writer connecting from Moldova still sees their own story as readable');
+select pg_temp.sign_in('00000000-0000-4000-8000-000000000007');
+select pg_temp.connect_from(pg_temp.token('SE', 0));
 select is(public.story_unavailable_here('statia-meteo-seed01'), false,
   'a story that opens is not "unavailable here"');
 select is(public.story_unavailable_here('no-such-story'), false,
