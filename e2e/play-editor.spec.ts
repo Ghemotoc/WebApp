@@ -103,6 +103,8 @@ test.describe('the play editor (LAYOUTS-2)', () => {
     await expect(text.locator('[data-play-direction]')).toHaveText('The lift stops.');
     // The caret at the end of Teo's line: Enter starts the next name.
     await text.locator('[data-play-line]').first().click();
+    // Wait until the toolbar shows the caret in a line, so the keys land once the editor is ready.
+    await expect(page.getByRole('button', { name: 'Line', pressed: true })).toBeVisible();
     await page.keyboard.press('End');
     await page.keyboard.press('Enter');
     await expect(page.getByRole('button', { name: 'Character', pressed: true })).toBeVisible();
@@ -128,6 +130,7 @@ test.describe('the play editor (LAYOUTS-2)', () => {
   }) => {
     const page = await openEditor(browser);
     await chapterText(page).locator('[data-play-direction]').click();
+    await expect(page.getByRole('button', { name: 'Direction', pressed: true })).toBeVisible();
     await page.keyboard.press('End');
     await page.keyboard.press('Enter');
     await pastePlainText(page, 'ILIE: Fresh paint.\n(He waves.)');
@@ -158,6 +161,7 @@ test.describe('the play editor (LAYOUTS-2)', () => {
   test('on a phone the cast rides above the bar while a name is typed', async ({ browser }) => {
     const page = await openEditor(browser, 390);
     await chapterText(page).locator('[data-play-line]').first().click();
+    await expect(page.getByRole('button', { name: 'Line', pressed: true })).toBeVisible();
     await page.keyboard.press('End');
     await page.keyboard.press('Enter');
     const names = page.getByRole('group', { name: 'Characters' });
