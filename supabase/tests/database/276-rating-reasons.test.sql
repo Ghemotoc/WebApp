@@ -3,9 +3,9 @@
 -- What it proves:
 -- - the writer saves the reasons with a 16+ or 18+ rating; unknown reasons are refused; a rating
 --   below 16+ keeps none;
--- - a story with sexual content, nudity or graphic violence ticked shows no network ad on its
---   page; one with only strong language still can; our own ads fill the slot instead;
--- - a moderator adding a reason turns the network off at once, versioned like any setting;
+-- - the reasons no longer switch the network off: Robert's 27 Nov 2026 rule bars it only on
+--   stories labelled Erotica and for readers under 16 (AD-GATES, 425-ad-gates.test.sql);
+-- - a moderator adding a reason is versioned like any setting;
 -- - an 18+ story with no reason given gets sexual content, the safe default.
 -- Personas: adult_writer (…01, owns the seed story statia-meteo-seed01), moderator (…10).
 -- Test data: the seed story's labels and the network settings, changed here; rolled back.
@@ -47,8 +47,8 @@ select throws_ok($$ select public.update_my_story('statia-meteo-seed01',
 select public.update_my_story('statia-meteo-seed01',
   '{"labels": {"rating": "18_plus", "rating_reasons": ["sexual_content"]}}');
 reset role;
-select is(pg_temp.story_slot_label(), 'house',
-  'sexual content ticked: the story''s page shows our own ad, never the network');
+select is(pg_temp.story_slot_label(), 'ad',
+  'sexual content ticked: the story''s page still shows the network (Robert, 27 Nov 2026)');
 select is(public.page_ads('discover') #>> '{0,ad,label}', 'ad', 'other pages still show the network');
 
 -- Step 2: moving down to 13+ keeps no reasons.
@@ -58,7 +58,7 @@ reset role;
 select is((select cardinality(rating_reasons) from public.stories where slug = 'statia-meteo-seed01'), 0,
   'a story moved down to 13+ keeps no reasons');
 
--- Step 3: a moderator adds a reason to a 16+ story; the network goes off at once.
+-- Step 3: a moderator adds a reason to a 16+ story; the network stays on (AD-GATES).
 update public.stories set rating = '16_plus', rating_reasons = '{dark_themes}' where slug = 'statia-meteo-seed01';
 select pg_temp.sign_in('00000000-0000-4000-8000-000000000010');
 select is(public.admin_change_story_settings('00000000-0000-4000-9000-000000000001',
@@ -66,12 +66,12 @@ select is(public.admin_change_story_settings('00000000-0000-4000-9000-0000000000
     -> 'changed', '["rating_reasons"]'::jsonb,
   'a moderator adds graphic violence; the change is versioned as rating_reasons');
 reset role;
-select is(pg_temp.story_slot_label(), 'house', 'and the network is off on the story''s page at once');
+select is(pg_temp.story_slot_label(), 'ad', 'and the network stays on: a reason alone never bars it (Robert, 27 Nov 2026)');
 
 -- Step 4: staff raise it to 18+ with no reason given; it starts on sexual content.
 update public.stories set rating = '18_plus', rating_reasons = '{}' where slug = 'statia-meteo-seed01';
 select is((select rating_reasons::text from public.stories where slug = 'statia-meteo-seed01'),
-  '{sexual_content}', 'an 18+ story with no reason given starts on sexual content, so the network stays off');
+  '{sexual_content}', 'an 18+ story with no reason given starts on sexual content');
 
 select * from finish();
 rollback;

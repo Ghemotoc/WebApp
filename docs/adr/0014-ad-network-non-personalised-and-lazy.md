@@ -25,5 +25,5 @@ Unsold wide banner slots can show an ad from Google AdSense, under these rules.
 5. Run the third-party check in the browser (S1-E14-03) on a page with a network ad and confirm that no cookie is set. If one is, turn the flag off again.
 
 - `scripts/check-third-party.ts` lists `pagead2.googlesyndication.com` as reviewed.
-- Part f switches the network off on stories whose writer ticked sexual content, nudity or graphic violence. Sponsors are unaffected.
+- Part f switched the network off on stories whose writer ticked sexual content, nudity or graphic violence. Since 27 Nov 2026 (Robert; bundle AD-GATES) the network is off instead on stories with an 18+ genre (the Erotica genres), for readers under 16 and for a member whose age isn't known; every other mature story gets it. Class spaces have no slot at all. Sponsors are unaffected. The gate reads only the reader's age group, which picks no ad: the ads stay non-personalised.
 - AdSense can still decline to fill a slot. The slot then stays the network's empty box until part e watches for an unfilled ad. Noted as a follow-up.

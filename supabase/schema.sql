@@ -36513,17 +36513,24 @@ CREATE OR REPLACE FUNCTION "public"."network_ads_barred"("context" "jsonb") RETU
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+  -- Gate 1: a story labelled Erotica, that is one of its genres is an 18+ genre.
   select exists (
-    select 1 from public.stories
-    where stories.slug = context ->> 'story_slug'
-      and stories.rating_reasons && array['sexual_content', 'nudity', 'graphic_violence']::public.story_rating_reason[]);
+      select 1
+      from public.stories
+      join public.genres on genres.slug = any(stories.genre_slugs)
+      where stories.slug = context ->> 'story_slug'
+        and genres.minimum_rating = '18_plus')
+    -- Gate 2: a reader under 16. A signed-out visitor's band is unknown and isn't barred here
+    -- (the app shows ads to signed-in readers only); a member whose age isn't known is.
+    or public.age_band() in ('under_13', '13_to_15')
+    or (auth.uid() is not null and public.age_band() = 'unknown');
 $$;
 
 
 ALTER FUNCTION "public"."network_ads_barred"("context" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."network_ads_barred"("context" "jsonb") IS 'Internal: no network ads on a story with sexual content, nudity or graphic violence ticked (SPONSORS-f).';
+COMMENT ON FUNCTION "public"."network_ads_barred"("context" "jsonb") IS 'Internal: no network ads on a story with an 18+ (erotica) genre, or for a reader under 16 or a member of unknown age (Robert, 27 Nov 2026).';
 
 
 

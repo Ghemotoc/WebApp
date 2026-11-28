@@ -2893,7 +2893,7 @@ The account gate is the one place minors are held back: while `adults_only` is o
 - Column `stories.rating_reasons` (enum `story_rating_reason`: sexual content, nudity, graphic violence, strong language, drugs, self-harm, dark themes). The trigger `story_rating_reasons_fit_rating()` empties it below 16+.
 - The writer ticks the reasons in `RatingReasons` (under the rating chips in `StoryLabelsSection`); `labelRules` in `src/schemas/story.ts` asks for at least one for 16+ and 18+, and picking 18+ with none ticked starts on "Sexual content". Saved through `create_story()` and `update_my_story()`, checked by `check_story_labels()`.
 - Staff change them in `StaffRatingReasons` (Staff › Stories › a story › Settings) through `admin_change_story_settings()`, versioned and logged like any setting.
-- One click on a story page: `page_ads()` → `fill_ad_slot()` asks `network_ads_barred()`; a story with sexual content, nudity or graphic violence ticked skips the network step, so our own ads fill the slot. Sponsors are not affected.
+- One click on a story page: `page_ads()` → `fill_ad_slot()` asks `network_ads_barred()`; a story with an 18+ genre (the Erotica genres), a reader under 16 or a member whose age isn't known skips the network step, so our own ads fill the slot. The rating reasons no longer bar it (Robert, 27 Nov 2026; AD-GATES, `425-ad-gates.test.sql`). Class spaces have no slot at all (`ads_are_barred()`). Sponsors are not affected.
 - Migration `…_sponsors_f_rating_reasons.sql`. Tests: `supabase/tests/database/276-rating-reasons.test.sql`, `src/schemas/story.test.ts`, `src/features/staff/lib/staffStorySettingsDiff.test.ts`.
 
 ## Epic check: banners and sponsor slots (S1-E12-QA)
