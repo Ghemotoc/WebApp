@@ -14,6 +14,7 @@
  * "Labels from the writer" moved to the main column (StoryLabels), where the board has it.
  * Who uses it: StoryPage.
  */
+import { historicalYear } from '@/lib/historicalYear';
 import { useTranslation } from 'react-i18next';
 
 import { ReportButton } from '@/features/reporting/components/ReportButton';
@@ -72,7 +73,7 @@ function ClassicAuthorCard({ author }: { author: ClassicAuthor }) {
         {author.name}
       </h2>
       <p className="m-0 type-body leading-normal text-ink-muted">
-        {t('storyPage.classicAuthorNote', { year: author.diedYear })}
+        {t('storyPage.classicAuthorNote', { year: historicalYear(author.diedYear, t) })}
       </p>
       <ClassicSource author={author} />
     </section>

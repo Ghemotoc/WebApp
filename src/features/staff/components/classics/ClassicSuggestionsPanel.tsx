@@ -7,6 +7,7 @@
  * (life plus 70 years, counted from 1 January after the death; Law 8/1996 art. 28(1) and 34).
  * Plain components, no doodles (staff screens).
  */
+import { historicalYear } from '@/lib/historicalYear';
 import { useTranslation } from 'react-i18next';
 
 import { InfoPill } from '@/components/ui/InfoPill';
@@ -33,7 +34,10 @@ function SuggestedAuthors({ heading, authors }: { heading: string; authors: Sugg
         {authors.map((author) => (
           <li key={author.name} className="flex flex-col gap-1 border-b border-border py-2">
             <span className="font-semibold text-heading">
-              {t('classics.suggestions.author', { name: author.name, year: author.diedYear })}
+              {t('classics.suggestions.author', {
+                name: author.name,
+                year: historicalYear(author.diedYear, t),
+              })}
             </span>
             <span className="flex flex-wrap gap-2 text-sm text-body">
               {author.works.length === 0 && t('classics.suggestions.noWorks')}

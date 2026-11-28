@@ -14,6 +14,7 @@
  * The board's "Quote cards" row waits for get_story_page() to send that setting (a follow-up).
  * Who uses it: StoryPage. What it calls: the pause helpers in lib/comment-pause.
  */
+import { historicalYear } from '@/lib/historicalYear';
 import type { TFunction } from 'i18next';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -76,7 +77,8 @@ function firstPublishedYear(story: StoryPageData): number | null {
 function firstPublishedRows(story: StoryPageData, t: TFunction<'reading'>) {
   const year = firstPublishedYear(story);
   if (year === null) return [];
-  return [{ label: t('storyPage.firstPublishedLabel'), value: String(year) }];
+  // BC-YEARS: a classic from before Christ reads "428 BC" ("428 î.Hr.").
+  return [{ label: t('storyPage.firstPublishedLabel'), value: historicalYear(year, t) }];
 }
 
 /** One label and its value. */
