@@ -100,7 +100,10 @@ export interface LinkPreview {
   isListed: boolean;
   /** "In the app only" while it applies (GAPS-15): kept out of search engines (CALM-9s). */
   isAppOnly: boolean;
-  /** True when the story is hidden in at least one country: kept out of search engines (CALM-9s). */
+  /**
+   * True when the story is hidden in at least one country: its chapters stay out of search
+   * engines, its book page stays in (COUNTRY-2, Robert, 27 Nov 2026).
+   */
   isHiddenSomewhere: boolean;
   /** The story's genre, its first recommended tag in its language, or null (CALM-9s). */
   genre: string | null;
@@ -420,14 +423,15 @@ export function statementFacts(preview: LinkPreview): StoryStatementFacts {
 }
 
 /**
- * Whether the page carries the story statement: a public story read on the web everywhere. An
- * unlisted, app-only or country-hidden story keeps the site's own footer words (CALM-9s).
+ * Whether the page carries the story statement: a public story read on the web. An unlisted or
+ * app-only story keeps the site's own footer words (CALM-9s); a story hidden in some countries
+ * carries it, as its book page stays in search everywhere (COUNTRY-2, Robert, 27 Nov 2026).
  *
  * @param preview - the story's preview
  * @returns true when the statement may be shown and indexed
  */
 export function carriesStatement(preview: LinkPreview): boolean {
-  return preview.isListed && !preview.isAppOnly && !preview.isHiddenSomewhere;
+  return preview.isListed && !preview.isAppOnly;
 }
 
 /**
@@ -605,9 +609,12 @@ function keywordTagsFor(preview: LinkPreview): string[] {
  *   country-hidden story
  */
 export function isIndexable(preview: LinkPreview): boolean {
-  // CALM-9s: an app-only or country-hidden story stays out too.
+  // CALM-9s: an app-only story stays out too.
   if (!carriesStatement(preview)) return false;
   if (!preview.isChapter) return true;
+  // COUNTRY-2: no chapter of a story hidden in any country is listed (Robert, 27 Nov 2026,
+  // 22:06 UTC), so no hidden text reaches search engines; the book page above stays in.
+  if (preview.isHiddenSomewhere) return false;
   // GROWTH-4: only a classic's chapters are listed. get_link_preview() gives a classic no
   // writer's username (its author has no profile), so a missing username marks a classic; when
   // in doubt the chapter stays out.
@@ -644,7 +651,8 @@ export function headTagsFor(
     `<meta name="twitter:description" content="${escapeHtml(description)}">`,
   ];
   // An unlisted story is shared by its link only, so it is noindex (S1-E11-36).
-  // CALM-9s: an app-only or country-hidden story is noindex as well, with no structured data.
+  // CALM-9s: an app-only story is noindex as well, with no structured data; a country-hidden
+  // story's chapters too, while its book page keeps both (COUNTRY-2).
   // GROWTH-2: a classic's chapter is indexable (GROWTH-4: a writer's is not), but the language links and the
   // structured data describe the story, so only the story's own page carries them.
   if (!isIndexable(preview)) tags.push('<meta name="robots" content="noindex">');
