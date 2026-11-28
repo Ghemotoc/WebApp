@@ -8,6 +8,7 @@
  * interface language, so the code holds none; the choices are every world language
  * (src/lib/world-languages.ts).
  */
+import { yearFieldText } from '@/lib/historicalYear';
 import { useTranslation } from 'react-i18next';
 
 import { Select } from '@/components/ui/Select';
@@ -82,10 +83,18 @@ export function ClassicSourceFields({ details, onChange }: ClassicFieldsProps) {
     <TextInput
       id={`classic-${name}`}
       label={t(`classics.form.${name}`)}
-      inputMode="numeric"
-      maxLength={4}
+      hint={name === 'firstPublishedYear' ? t('classics.form.yearBeforeChristHint') : undefined}
+      maxLength={name === 'firstPublishedYear' ? 5 : 4}
       value={details[name]}
-      onChange={(event) => onChange(name, event.target.value.replace(/\D/g, ''))}
+      // BC-YEARS: a work's year may be before Christ ("-428"); a translator's never is.
+      onChange={(event) =>
+        onChange(
+          name,
+          name === 'firstPublishedYear'
+            ? yearFieldText(event.target.value)
+            : event.target.value.replace(/\D/g, ''),
+        )
+      }
     />
   );
   return (

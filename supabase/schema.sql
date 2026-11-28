@@ -3463,7 +3463,7 @@ CASE "cover_kind"
     ELSE NULL::boolean
 END),
     CONSTRAINT "stories_edition_not_of_itself" CHECK ((("edition_of_story_id" IS NULL) OR ("edition_of_story_id" <> "id"))),
-    CONSTRAINT "stories_first_published_year_range" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
+    CONSTRAINT "stories_first_published_year_range" CHECK (((("first_published_year" >= '-3000'::integer) AND ("first_published_year" <= 2100)) AND ("first_published_year" <> 0))),
     CONSTRAINT "stories_genre_slugs_are_keys" CHECK ((("cardinality"("genre_slugs") <= 3) AND ("array_to_string"("genre_slugs", ','::"text") ~ '^([a-z_]{2,40}(,[a-z_]{2,40})*)?$'::"text"))),
     CONSTRAINT "stories_hidden_in_countries_are_codes" CHECK ((("cardinality"("hidden_in_countries") <= 60) AND ("array_to_string"("hidden_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
@@ -36515,17 +36515,24 @@ CREATE OR REPLACE FUNCTION "public"."network_ads_barred"("context" "jsonb") RETU
     LANGUAGE "sql" STABLE SECURITY DEFINER
     SET "search_path" TO ''
     AS $$
+  -- Gate 1: a story labelled Erotica, that is one of its genres is an 18+ genre.
   select exists (
-    select 1 from public.stories
-    where stories.slug = context ->> 'story_slug'
-      and stories.rating_reasons && array['sexual_content', 'nudity', 'graphic_violence']::public.story_rating_reason[]);
+      select 1
+      from public.stories
+      join public.genres on genres.slug = any(stories.genre_slugs)
+      where stories.slug = context ->> 'story_slug'
+        and genres.minimum_rating = '18_plus')
+    -- Gate 2: a reader under 16. A signed-out visitor's band is unknown and isn't barred here
+    -- (the app shows ads to signed-in readers only); a member whose age isn't known is.
+    or public.age_band() in ('under_13', '13_to_15')
+    or (auth.uid() is not null and public.age_band() = 'unknown');
 $$;
 
 
 ALTER FUNCTION "public"."network_ads_barred"("context" "jsonb") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."network_ads_barred"("context" "jsonb") IS 'Internal: no network ads on a story with sexual content, nudity or graphic violence ticked (SPONSORS-f).';
+COMMENT ON FUNCTION "public"."network_ads_barred"("context" "jsonb") IS 'Internal: no network ads on a story with an 18+ (erotica) genre, or for a reader under 16 or a member of unknown age (Robert, 27 Nov 2026).';
 
 
 
@@ -60805,7 +60812,7 @@ CREATE TABLE IF NOT EXISTS "public"."classic_authors" (
     "died_year" integer NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    CONSTRAINT "classic_authors_died_year_check" CHECK ((("died_year" >= 1) AND ("died_year" <= 2100))),
+    CONSTRAINT "classic_authors_died_year_check" CHECK (((("died_year" >= '-3000'::integer) AND ("died_year" <= 2100)) AND ("died_year" <> 0))),
     CONSTRAINT "classic_authors_name_check" CHECK ((("btrim"("name") <> ''::"text") AND ("char_length"("name") <= 120)))
 );
 
@@ -60831,7 +60838,7 @@ CREATE TABLE IF NOT EXISTS "public"."classic_works" (
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "details_checked" boolean DEFAULT true NOT NULL,
     "translation_rights" "text",
-    CONSTRAINT "classic_works_first_published_year_check" CHECK ((("first_published_year" >= 1) AND ("first_published_year" <= 2100))),
+    CONSTRAINT "classic_works_first_published_year_check" CHECK (((("first_published_year" >= '-3000'::integer) AND ("first_published_year" <= 2100)) AND ("first_published_year" <> 0))),
     CONSTRAINT "classic_works_original_language_check" CHECK (("original_language" ~ '^[a-z]{2}$'::"text")),
     CONSTRAINT "classic_works_source_title_check" CHECK ((("btrim"("source_title") <> ''::"text") AND ("char_length"("source_title") <= 200))),
     CONSTRAINT "classic_works_source_url_check" CHECK ((("source_url" ~ '^https://'::"text") AND ("char_length"("source_url") <= 500))),
