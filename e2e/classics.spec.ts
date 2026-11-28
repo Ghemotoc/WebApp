@@ -100,6 +100,11 @@ test.describe('staff Classics (S1-E11-16)', () => {
       'href',
       'https://ro.wikisource.org/wiki/Test',
     );
+    // CLASSIC-CREDIT: a Wikisource text names its licence, linked to the licence's page.
+    await expect(reader.getByRole('link', { name: 'CC BY-SA 4.0' })).toHaveAttribute(
+      'href',
+      'https://creativecommons.org/licenses/by-sa/4.0/',
+    );
 
     await card.getByRole('button', { name: 'Unpublish' }).click();
     await card.getByLabel(/Why it comes off the site/).fill(`e2e ${stamp}: checking the edition.`);
