@@ -10,7 +10,9 @@
  * their own line, `![alt text](picture:<ID>)` (S1-E3-09, src/lib/chapter-pictures.ts), and music
  * and video cards, `![title](embed:<ID>)` (S1-E3-10, src/lib/chapter-embeds.ts), and footnotes,
  * `[The note.](footnote:)` where the note's number sits (BOOKS-D05b, src/lib/chapter-footnotes.ts),
- * which the editor holds as one chapterFootnote node (chapterFootnoteNode.ts). Anything
+ * which the editor holds as one chapterFootnote node (chapterFootnoteNode.ts). A play's speeches
+ * and directions (LAYOUTS-2) are stored as paragraphs, `**NAME:** words` and `*words*`; the editor
+ * turns them into its play blocks after this file reads them (playDocument.ts). Anything
  * else in the Markdown (raw HTML, other pictures, code) becomes plain text, so nothing
  * unexpected survives.
  *
@@ -24,6 +26,8 @@ import { embedAddress, embedIdFromAddress } from '@/lib/chapter-embeds';
 import { FOOTNOTE_ADDRESS, isFootnoteAddress, oneLineNote } from '@/lib/chapter-footnotes';
 import { pictureAddress, pictureIdFromAddress } from '@/lib/chapter-pictures';
 import { isAllowedLink } from '@/lib/safe-links';
+
+import { playBlockToParagraph } from './playDocument';
 
 /** A mark on a run of text: bold, italic or a link. */
 export interface EditorMark {
@@ -287,10 +291,18 @@ function blockToMarkdown(node: EditorNode): string | null {
   }
 }
 
-/** A picture or a card back to Markdown, or null for any other node (S1-E3-09, S1-E3-10). */
+/**
+ * A picture or a card back to Markdown (S1-E3-09, S1-E3-10), or a play's speech or direction,
+ * which is stored as a paragraph (LAYOUTS-2, playDocument.ts).
+ *
+ * @returns the Markdown, or null for any other node
+ */
 function mediaToMarkdown(node: EditorNode): string | null {
   if (node.type === 'chapterPicture') return pictureToMarkdown(node);
   if (node.type === 'chapterEmbed') return embedToMarkdown(node);
+  if (node.type === 'playSpeech' || node.type === 'playDirection') {
+    return inlineToMarkdown(playBlockToParagraph(node).content);
+  }
   return null;
 }
 

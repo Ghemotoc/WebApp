@@ -3440,6 +3440,7 @@ CREATE TABLE IF NOT EXISTS "public"."stories" (
     "hidden_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
     "set_in_countries" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
     "genre_slugs" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
+    "play_cast" "jsonb" DEFAULT '[]'::"jsonb" NOT NULL,
     CONSTRAINT "stories_abuse_needs_rating_and_note" CHECK (((NOT "deals_with_abuse_or_coercion") OR (("rating" = ANY (ARRAY['16_plus'::"public"."story_rating", '18_plus'::"public"."story_rating"])) AND ("btrim"("content_note") <> ''::"text")))),
     CONSTRAINT "stories_blurb_length" CHECK (("char_length"("blurb") <= 500)),
     CONSTRAINT "stories_card_colour_on_palette" CHECK ((("card_colour" IS NULL) OR ("card_colour" = ANY (ARRAY['plum'::"text", 'violet'::"text", 'gold'::"text", 'ink'::"text", 'lilac'::"text", 'blush'::"text", 'sky'::"text", 'sage'::"text", 'paper'::"text"])))),
@@ -3467,6 +3468,7 @@ END),
     CONSTRAINT "stories_genre_slugs_are_keys" CHECK ((("cardinality"("genre_slugs") <= 3) AND ("array_to_string"("genre_slugs", ','::"text") ~ '^([a-z_]{2,40}(,[a-z_]{2,40})*)?$'::"text"))),
     CONSTRAINT "stories_hidden_in_countries_are_codes" CHECK ((("cardinality"("hidden_in_countries") <= 60) AND ("array_to_string"("hidden_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_language_code_shape" CHECK (("language_code" ~ '^[a-z]{2}(-[A-Z]{2})?$'::"text")),
+    CONSTRAINT "stories_play_cast_is_list" CHECK (("jsonb_typeof"("play_cast") = 'array'::"text")),
     CONSTRAINT "stories_rank_badge_tag_ids_check" CHECK ((("rank_badge_tag_ids" IS NULL) OR ("cardinality"("rank_badge_tag_ids") <= 3))),
     CONSTRAINT "stories_set_in_countries_are_codes" CHECK ((("cardinality"("set_in_countries") <= 5) AND ("array_to_string"("set_in_countries", ','::"text") ~ '^([A-Z]{2}(,[A-Z]{2})*)?$'::"text"))),
     CONSTRAINT "stories_slug_shape" CHECK ((("slug" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::"text") AND ("char_length"("slug") <= 80))),
@@ -3599,6 +3601,10 @@ COMMENT ON COLUMN "public"."stories"."set_in_countries" IS 'The countries the st
 
 
 COMMENT ON COLUMN "public"."stories"."genre_slugs" IS 'The story''s genres (genres.slug), at most three; an 18+ genre only on an 18+ story (S1-E3-01, Robert 26 Nov 2026).';
+
+
+
+COMMENT ON COLUMN "public"."stories"."play_cast" IS 'The cast of a story written as a play: [{name, note}], in the writer''s order (LAYOUTS-2). Readers see it at the start of the play. Changed only through set_story_cast().';
 
 
 
@@ -39077,6 +39083,54 @@ COMMENT ON FUNCTION "public"."plan_text"("raw_text" "text") IS 'Internal: a plan
 
 
 
+CREATE OR REPLACE FUNCTION "public"."play_cast_problem"("cast_list" "jsonb") RETURNS "text"
+    LANGUAGE "plpgsql" IMMUTABLE
+    SET "search_path" TO ''
+    AS $$
+declare
+  entry jsonb;
+  seen_names text[] := '{}';
+  entry_name text;
+begin
+  -- Step 1: a list, and not a long one.
+  if cast_list is null or jsonb_typeof(cast_list) <> 'array' then
+    return 'not_a_list';
+  end if;
+  if jsonb_array_length(cast_list) > 60 then
+    return 'too_many';
+  end if;
+  -- Step 2: each entry is {name, note}, both text, within their lengths.
+  for entry in select value from jsonb_array_elements(cast_list) loop
+    if jsonb_typeof(entry) <> 'object'
+       or jsonb_typeof(entry -> 'name') is distinct from 'string'
+       or jsonb_typeof(coalesce(entry -> 'note', '""'::jsonb)) <> 'string' then
+      return 'bad_entry';
+    end if;
+    entry_name := btrim(entry ->> 'name');
+    if char_length(entry_name) not between 1 and 40 then
+      return 'bad_name';
+    end if;
+    if char_length(coalesce(entry ->> 'note', '')) > 80 then
+      return 'bad_note';
+    end if;
+    -- Step 3: no name twice, "Mara" and "MARA" being one character.
+    if lower(entry_name) = any (seen_names) then
+      return 'duplicate_name';
+    end if;
+    seen_names := seen_names || lower(entry_name);
+  end loop;
+  return null;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."play_cast_problem"("cast_list" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."play_cast_problem"("cast_list" "jsonb") IS 'Internal: what is wrong with a play''s cast list, or null (LAYOUTS-2).';
+
+
+
 CREATE OR REPLACE FUNCTION "public"."post_comment"("story_slug" "text", "chapter_code" "text", "body" "text", "is_spoiler" boolean DEFAULT false, "reply_to" "uuid" DEFAULT NULL::"uuid") RETURNS "jsonb"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO ''
@@ -50106,6 +50160,47 @@ ALTER FUNCTION "public"."set_space_welcome_note"("slug" "text", "note" "text") O
 
 
 COMMENT ON FUNCTION "public"."set_space_welcome_note"("slug" "text", "note" "text") IS 'Saves the welcome note a space''s new members see once, for whoever holds the settings power; logged (IDEA-20261102-6).';
+
+
+
+CREATE OR REPLACE FUNCTION "public"."set_story_cast"("story_slug" "text", "cast_list" "jsonb") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+declare
+  caller_id uuid := (select auth.uid());
+  problem text;
+begin
+  -- Step 1: a signed-in writer.
+  if caller_id is null then
+    raise exception 'Sign in to change a story.' using errcode = 'insufficient_privilege';
+  end if;
+  -- Step 2: a cast of the right shape.
+  problem := public.play_cast_problem(cast_list);
+  if problem is not null then
+    return problem;
+  end if;
+  -- Step 3: only their own live story, with each name and note trimmed.
+  update public.stories set play_cast = coalesce((
+      select jsonb_agg(jsonb_build_object(
+          'name', btrim(entry ->> 'name'), 'note', btrim(coalesce(entry ->> 'note', '')))
+        order by place)
+      from jsonb_array_elements(cast_list) with ordinality as entries(entry, place)), '[]'::jsonb)
+  where stories.slug = story_slug
+    and stories.user_id = caller_id
+    and stories.deleted_at is null;
+  if not found then
+    return 'not_found';
+  end if;
+  return 'ok';
+end;
+$$;
+
+
+ALTER FUNCTION "public"."set_story_cast"("story_slug" "text", "cast_list" "jsonb") OWNER TO "postgres";
+
+
+COMMENT ON FUNCTION "public"."set_story_cast"("story_slug" "text", "cast_list" "jsonb") IS 'Replaces the caller''s own story''s play cast, [{name, note}] (LAYOUTS-2).';
 
 
 
@@ -77363,6 +77458,10 @@ REVOKE ALL ON FUNCTION "public"."plan_text"("raw_text" "text") FROM PUBLIC;
 
 
 
+REVOKE ALL ON FUNCTION "public"."play_cast_problem"("cast_list" "jsonb") FROM PUBLIC;
+
+
+
 REVOKE ALL ON FUNCTION "public"."post_comment"("story_slug" "text", "chapter_code" "text", "body" "text", "is_spoiler" boolean, "reply_to" "uuid") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."post_comment"("story_slug" "text", "chapter_code" "text", "body" "text", "is_spoiler" boolean, "reply_to" "uuid") TO "authenticated";
 
@@ -78787,6 +78886,11 @@ GRANT ALL ON FUNCTION "public"."set_space_moderator"("slug" "text", "handle" "te
 
 REVOKE ALL ON FUNCTION "public"."set_space_welcome_note"("slug" "text", "note" "text") FROM PUBLIC;
 GRANT ALL ON FUNCTION "public"."set_space_welcome_note"("slug" "text", "note" "text") TO "authenticated";
+
+
+
+REVOKE ALL ON FUNCTION "public"."set_story_cast"("story_slug" "text", "cast_list" "jsonb") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."set_story_cast"("story_slug" "text", "cast_list" "jsonb") TO "authenticated";
 
 
 

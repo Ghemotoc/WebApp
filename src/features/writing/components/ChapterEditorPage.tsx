@@ -53,8 +53,9 @@ import { useChapterPublishing } from '../hooks/useChapterPublishing';
 import { useDeviceDraft } from '../hooks/useDeviceDraft';
 import { useFootnoteEditing } from '../hooks/useFootnoteEditing';
 import { useMyStories } from '../hooks/useMyStories';
+import { usePlayCast } from '../hooks/usePlayCast';
+import { usePlayCaret } from '../hooks/usePlayCaret';
 import { useRememberedCaret } from '../hooks/useRememberedCaret';
-import { markdownToEditorDocument } from '../lib/chapterMarkdown';
 import type { DeviceDraft } from '../lib/draftStore';
 import { useEditorTranslation } from '../registerEditorTranslations';
 
@@ -67,6 +68,8 @@ import { EditorStoryDetails } from './EditorStoryDetails';
 import { EditorToolbarDock } from './EditorToolbarDock';
 import { LinkDialog } from './LinkDialog';
 import { NewChapterButton } from './NewChapterButton';
+import { PlayCastPanel } from './PlayCastPanel';
+import { PlayNameBar } from './PlayNameBar';
 import { PublishPanel } from './PublishPanel';
 import { publishChapterLine } from '../lib/publishChapterLine';
 import { SaveStatus } from './SaveStatus';
@@ -148,7 +151,8 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
   const editing = useChapterEditor({
     initialBody: start.body,
     label: t('bodyLabel'),
-    isPoem: layout.layout === 'poem',
+    namePlaceholder: t('play.namePlaceholder'),
+    layout: layout.layout,
     onChange: () => {
       autosave.markChanged();
       const text = editing.editor?.getText() ?? '';
@@ -162,6 +166,9 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
   useRememberedCaret(editing.editor, chapter.story.slug, chapter.code);
   // The chapter's footnotes and the open note (BOOKS-D05b, board D13).
   const footnotes = useFootnoteEditing(editing.editor);
+  // A play's cast and caret (LAYOUTS-2, board D14): the Characters panel, the suggested names.
+  const playCast = usePlayCast(chapter.story.slug, editing.editor);
+  const playCaret = usePlayCaret(editing.editor, layout.layout === 'play');
   /** A title change: keep it and mark the draft as changed. */
   function changeTitle(value: string) {
     setTitle(value);
@@ -170,9 +177,7 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
   /** "Keep the other version": its title and text replace what is on screen. */
   function loadOther(other: MyChapter) {
     setTitle(other.draftTitle);
-    editing.editor?.commands.setContent(markdownToEditorDocument(other.draftBody), {
-      emitUpdate: false,
-    });
+    editing.loadBody(other.draftBody);
     setWordCount(other.wordCount);
     autosave.acceptOther(other.draftVersion);
   }
@@ -186,6 +191,8 @@ function useLoadedEditor(chapter: MyChapter, start: EditorStart) {
     loadOther,
     layout,
     footnotes,
+    playCast,
+    playCaret,
   };
 }
 
@@ -242,14 +249,15 @@ function EditorDialogs(props: {
 }
 
 /** The editor's open panels: preview, publish, the plan (beside or as a sheet) and focus mode. */
-function usePanels() {
+function usePanels(isPlay: boolean) {
   // Manage chapters' More menu opens the preview or the publish panel straight away (board D03).
   const [searchParams] = useSearchParams();
   const [isPreviewOpen, setPreviewOpen] = useState(searchParams.has('preview'));
   const [isPublishOpen, setPublishOpen] = useState(searchParams.has('publish'));
   // "?publish=later" (the Schedule item) opens the dialog on Later.
   const startsLater = searchParams.get('publish') === 'later';
-  const [isPlanOpen, setPlanOpen] = useState(true);
+  // A play opens with its Characters panel and the plan folded to its button (board D14).
+  const [isPlanOpen, setPlanOpen] = useState(!isPlay);
   const [isPlanSheetOpen, setPlanSheetOpen] = useState(false);
   const [isFocusMode, setFocusMode] = useState(false);
   return {
@@ -267,24 +275,34 @@ function usePanels() {
   };
 }
 
-/** The right column from 1024 px: the chapter's plan (or its button) over Story details. */
+/**
+ * The right column from 1024 px: in a play the Characters panel first (board D14), then the
+ * chapter's plan (or its button) over Story details.
+ */
 function PlanColumn(props: {
   chapter: MyChapter;
   story: MyStory | null;
-  wordCount: number;
+  loaded: ReturnType<typeof useLoadedEditor>;
   panels: ReturnType<typeof usePanels>;
 }) {
   const { t } = useEditorTranslation();
-  const { chapter, panels } = props;
+  const { chapter, panels, loaded } = props;
   // The plan's fields have fixed ids, so it is drawn here only when this column shows (1024 px).
   const isWide = useIsWideEditor();
   return (
     <div className="hidden min-w-0 flex-col gap-4 lg:flex">
+      {isWide && loaded.layout.layout === 'play' && (
+        <PlayCastPanel
+          editor={loaded.editing.editor}
+          cast={loaded.playCast}
+          caret={loaded.playCaret}
+        />
+      )}
       {isWide && panels.isPlanOpen ? (
         <ChapterPlanPanel
           slug={chapter.story.slug}
           chapterCode={chapter.code}
-          wordCount={props.wordCount}
+          wordCount={loaded.wordCount}
           onClose={() => panels.setPlanOpen(false)}
         />
       ) : (
@@ -376,6 +394,13 @@ function PaperColumn(props: {
           isFootnoteOpen={loaded.footnotes.openNote !== null}
           chapterId={chapter.id}
           onOpenPlan={props.onOpenPlan}
+          isPlay={loaded.layout.layout === 'play'}
+          playKind={loaded.playCaret.kind}
+          nameBar={
+            loaded.layout.layout === 'play' && (
+              <PlayNameBar editor={editing.editor} caret={loaded.playCaret} />
+            )
+          }
         />
       )}
       <AboveThePaper loaded={loaded} conflict={props.conflict} />
@@ -390,6 +415,7 @@ function PaperColumn(props: {
         wordCount={loaded.wordCount}
         saveState={autosave.state}
         footnotes={loaded.footnotes}
+        playCaret={loaded.playCaret}
       />
       {/* Words against the chapter's target, live (Story Atlas, S1-E17-23 and S1-E17-26). */}
       <ChapterWordsLine
@@ -400,6 +426,45 @@ function PaperColumn(props: {
       />
       <EditorFootnotes />
     </div>
+  );
+}
+
+/**
+ * Tablets and phones: the plan rises from the bottom (board D05), a play's Characters first
+ * (board D14).
+ */
+function PlanSheet(props: {
+  chapter: MyChapter;
+  loaded: ReturnType<typeof useLoadedEditor>;
+  panels: ReturnType<typeof usePanels>;
+}) {
+  const { t } = useEditorTranslation();
+  const { chapter, loaded, panels } = props;
+  const isWide = useIsWideEditor();
+  return (
+    <Sheet
+      isOpen={panels.isPlanSheetOpen}
+      onClose={() => panels.setPlanSheetOpen(false)}
+      title={t('plan.open')}
+    >
+      {/* A play's characters come first, as beside the paper (LAYOUTS-2, board D14). */}
+      {panels.isPlanSheetOpen && !isWide && loaded.layout.layout === 'play' && (
+        <PlayCastPanel
+          editor={loaded.editing.editor}
+          cast={loaded.playCast}
+          caret={loaded.playCaret}
+        />
+      )}
+      {/* Only while open, and only under 1024 px: the side panel uses the same field ids. */}
+      {panels.isPlanSheetOpen && !isWide && (
+        <ChapterPlanPanel
+          slug={chapter.story.slug}
+          chapterCode={chapter.code}
+          wordCount={loaded.wordCount}
+          variant="sheet"
+        />
+      )}
+    </Sheet>
   );
 }
 
@@ -414,7 +479,6 @@ function EditorSheets(props: {
 }) {
   const { t } = useEditorTranslation();
   const { chapter, loaded, panels, publishing } = props;
-  const isWide = useIsWideEditor();
   return (
     <>
       <EditorDialogs chapterCode={chapter.code} loaded={loaded} conflict={props.conflict} />
@@ -446,22 +510,7 @@ function EditorSheets(props: {
           startsLater={panels.startsLater}
         />
       </Sheet>
-      {/* Tablets and phones: the plan rises from the bottom (board D05). */}
-      <Sheet
-        isOpen={panels.isPlanSheetOpen}
-        onClose={() => panels.setPlanSheetOpen(false)}
-        title={t('plan.open')}
-      >
-        {/* Only while open, and only under 1024 px: the side panel uses the same field ids. */}
-        {panels.isPlanSheetOpen && !isWide && (
-          <ChapterPlanPanel
-            slug={chapter.story.slug}
-            chapterCode={chapter.code}
-            wordCount={loaded.wordCount}
-            variant="sheet"
-          />
-        )}
-      </Sheet>
+      <PlanSheet chapter={chapter} loaded={loaded} panels={panels} />
     </>
   );
 }
@@ -498,7 +547,7 @@ function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorSta
   const loaded = useLoadedEditor(chapter, start);
   const conflict = useConflictChoices(loaded);
   const publishing = useChapterPublishing(chapter, loaded.autosave);
-  const panels = usePanels();
+  const panels = usePanels(chapter.layout === 'play');
   const story = writing.stories.find((candidate) => candidate.slug === chapter.story.slug) ?? null;
   return (
     <>
@@ -526,12 +575,7 @@ function LoadedEditor({ chapter, start }: { chapter: MyChapter; start: EditorSta
           onOpenPlan={() => panels.setPlanSheetOpen(true)}
         />
         {!panels.isFocusMode && (
-          <PlanColumn
-            chapter={chapter}
-            story={story}
-            wordCount={loaded.wordCount}
-            panels={panels}
-          />
+          <PlanColumn chapter={chapter} story={story} loaded={loaded} panels={panels} />
         )}
       </div>
       <EditorSheets
