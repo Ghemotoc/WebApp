@@ -17,7 +17,9 @@
  *     or "In library" (StoryLibraryButton, S1-E4-03), the story's own Like (StoryLikeButton) and
  *     Share (IDEAS-1c); then what following
  *     does, or for a visitor "Get in to follow, like or save". "You are here, 72% through chapter
- *     14" sits in that chapter's row of the list (StoryChapterList).
+ *     14" sits in that chapter's row of the list (StoryChapterList). In a country where the
+ *     story is hidden, "Sorry, this book isn't available in your country" stands in for the row,
+ *     with only Share left (UnavailableHereLine; COUNTRY-3, Robert, 28 Nov 2026).
  * The story-level Like, the public reads total and "Completed" in the facts line are built as
  * drawn on board B01 (Robert, 24 Nov 2026; docs/board-fixes.md).
  * Who uses it: StoryPage.
@@ -30,6 +32,7 @@ import { DrawnCover } from '@/components/covers/DrawnCover';
 import { StoryCoverArt } from '@/features/pictures/components/StoryCoverArt';
 import { Hero } from '@/components/ui/Hero';
 import { MetaLine } from '@/components/ui/MetaLine';
+import { Notice } from '@/components/ui/Notice';
 import { listAddress, plainList } from '@/features/discovery/lib/listAddresses';
 import { useSession } from '@/features/auth/hooks/useSession';
 import {
@@ -136,6 +139,8 @@ function ActionNote({ story }: { story: StoryPageData }) {
  */
 function StoryActions({ story }: { story: StoryPageData }) {
   const { userId } = useSession();
+  // COUNTRY-3: hidden in the reader's country, the page opens but nothing here reads it.
+  if (story.unavailableHere) return <UnavailableHereLine story={story} />;
   const isReader = !story.isOwner;
   const isMember = isReader && userId !== null;
   const firstChapterCode =
@@ -150,6 +155,26 @@ function StoryActions({ story }: { story: StoryPageData }) {
       </div>
       <ActionNote story={story} />
     </>
+  );
+}
+
+/**
+ * In place of the buttons, in a country where the story is hidden (COUNTRY-3; Robert's card
+ * answer "Index the book page, not its text", 28 Nov 2026): "Sorry, this book isn't available in
+ * your country", and Share, since the address still opens for friends elsewhere. Follow, the
+ * library and Like are left out, because the chapters can't be read here.
+ *
+ * @returns the notice and the Share button
+ */
+function UnavailableHereLine({ story }: { story: StoryPageData }) {
+  const { t } = useTranslation('reading');
+  return (
+    <div className="flex flex-col gap-3">
+      <Notice tone="info">{t('unavailableHere.title')}</Notice>
+      <div className="flex flex-wrap items-center gap-3">
+        <StoryShareButton story={sharedStoryOf(story)} />
+      </div>
+    </div>
   );
 }
 

@@ -764,7 +764,7 @@
   },
   "whereItShows": {
     "heading": "Where it shows",
-    "intro": "Hide this story in countries you choose. A reader’s connection decides it, so it works as a block, not a lock: a VPN can get around it. Search engines still list the book page, but never its chapters."
+    "intro": "Hide this story’s chapters in countries you choose: readers there see the book page but can’t read it. A reader’s connection decides it, so it works as a block, not a lock: a VPN can get around it. Search engines still list the book page, but never its chapters."
   },
   "setIn": {
     "label": "Set in",

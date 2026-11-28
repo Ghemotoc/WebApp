@@ -29147,10 +29147,9 @@ begin
     if public.is_blocked_with(story.user_id) then
       return null;
     end if;
-    -- COUNTRY-1: nor in a country where the writer (or staff, for a classic) hid it.
-    if public.story_hidden_here(story.hidden_in_countries, story.user_id) then
-      return null;
-    end if;
+    -- COUNTRY-3: a story hidden in the reader's country (COUNTRY-1) still answers here, so the
+    -- book page opens and search engines read it; 'unavailable_here' below tells the page to
+    -- refuse the chapters, which get_chapter() refuses anyway.
   end if;
 
   -- Step 3: the page, with the real author of a classic, else the writer's pen name or
@@ -29197,6 +29196,9 @@ begin
     'editions', public.story_editions_json(story),
     'edition', public.story_edition_json(story),
     'is_owner', is_owner,
+    -- COUNTRY-3: true when the story is hidden in the reader's country; never for the owner.
+    'unavailable_here', not is_owner
+      and public.story_hidden_here(story.hidden_in_countries, story.user_id),
     -- GAPS-15: the "In the app only" notice (S1-E3-08), only once the apps exist.
     'app_only', public.story_app_only_applies(story.is_app_only),
     'stats', jsonb_build_object(
@@ -29213,7 +29215,7 @@ $$;
 ALTER FUNCTION "public"."get_story_page"("story_slug" "text") OWNER TO "postgres";
 
 
-COMMENT ON FUNCTION "public"."get_story_page"("story_slug" "text") IS 'The public story page, or null when the reader may not see it; never the user ID (S1-E3-05, ADR 0004).';
+COMMENT ON FUNCTION "public"."get_story_page"("story_slug" "text") IS 'The public story page, or null when the reader may not see it; in a country where the story is hidden it still answers, with unavailable_here (COUNTRY-3); never the user ID (S1-E3-05, ADR 0004).';
 
 
 

@@ -14,8 +14,10 @@
  * (StorySuggestions, S1-E15-06). The owner sees a note while nothing is published yet.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
- * A story hidden in the reader's country gets board B11's "Sorry, this book isn't available in your country"
- * (UnavailableHereNotice; useUnavailableHere → story_unavailable_here(); COUNTRY-1).
+ * A story hidden in the reader's country still opens (COUNTRY-3, 28 Nov 2026): StoryHeader says
+ * "Sorry, this book isn't available in your country" in place of the read button and the chapters
+ * refuse their text. Only a database from before COUNTRY-3 answers nothing here, and then the page
+ * shows board B11's notice (UnavailableHereNotice; useUnavailableHere → story_unavailable_here()).
  * A story in several languages (TRANSLATE-1b): useOpeningEdition moves the reader to the language
  * the story should open in (their own earlier choice, the page's language, a language they read,
  * then the original), and the header, chapter list and side column show the language parts.
@@ -69,7 +71,8 @@ function StoryUnavailable() {
 function StoryMissing({ storySlug }: { storySlug: string }) {
   const { t } = useTranslation('reading');
   const { hidden, isSettled } = useStoryPreview(storySlug, null, true);
-  // COUNTRY-1: a story hidden in the reader's country gets board B11's page instead.
+  // COUNTRY-1: a story hidden in the reader's country gets board B11's page instead (since
+  // COUNTRY-3 get_story_page() answers there, so this is for an older database only).
   const country = useUnavailableHere(storySlug, true);
   if (!isSettled || !country.isSettled) return null;
   if (country.isHere) return <UnavailableHereNotice />;

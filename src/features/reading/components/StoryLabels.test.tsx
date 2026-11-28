@@ -44,6 +44,7 @@ function storyWith(changes: Partial<StoryPageData>): StoryPageData {
     isOwner: false,
     isPublic: true,
     appOnly: false,
+    unavailableHere: false,
     chapters: [],
     editions: [],
     edition: null,

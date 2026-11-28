@@ -5,8 +5,9 @@
  * What it proves:
  * - the writer finds "Where it shows" in the story's settings, adds Moldova from "Add a country",
  *   sees it as a pressed chip and saves;
- * - a reader connecting from Moldova gets "Sorry, this book isn't available in your country" on the story page and
- *   on a chapter, with the way home and to search, and no part of the story;
+ * - a reader connecting from Moldova gets "Sorry, this book isn't available in your country" on a
+ *   chapter, with the way home and to search, and no part of its text; the book page still opens
+ *   for them, with the notice in place of the read button (COUNTRY-3, Robert, 28 Nov 2026);
  * - the same reader connecting from Sweden reads the chapter;
  * - the page has no serious axe issue at phone and desktop width, by day and at night.
  * The database rules (who may set it, lists, the Library, old or forged tokens, classics) are in
@@ -103,10 +104,15 @@ test.describe('hide a story in chosen countries (COUNTRY-1)', () => {
     await expect(page.getByText('Search for another story, or go to the home page.')).toBeVisible();
     await expect(page.getByText(chapterText)).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Search stories' })).toBeVisible();
+    // COUNTRY-3: the book page opens, with the notice where the read button was.
     await page.goto(`/s/${storySlug}`);
+    await expect(page.getByRole('heading', { name: 'Stația meteo', level: 1 })).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Sorry, this book isn’t available in your country' }),
+      page
+        .getByRole('status')
+        .filter({ hasText: 'Sorry, this book isn’t available in your country' }),
     ).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Start reading' })).toHaveCount(0);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
@@ -134,7 +140,7 @@ test.describe('hide a story in chosen countries (COUNTRY-1)', () => {
       const page = await context.newPage();
       await checkScreen(page, { ...view, language: 'en' });
       await expect(
-        page.getByRole('heading', { name: 'Sorry, this book isn’t available in your country' }),
+        page.getByText('Sorry, this book isn’t available in your country').first(),
       ).toBeVisible();
       await context.close();
     });
