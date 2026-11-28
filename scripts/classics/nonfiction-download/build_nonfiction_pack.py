@@ -7,9 +7,6 @@ be checked are left out (Aristotle by F. H. Peters, Boethius by H. R. James, Aug
 Wilson and Smith).
 
 Usage: python3 -I build_nonfiction_pack.py <out.jsonl.gz>
-It ran in a scratch folder beside mdtools.py (../eu-download/tools/mdtools.py) and the CONTENT
-thread's convert_se.py, with the downloads in nonfic/raw/; kept here as the record of how
-content/classics/bulk-2026-11/works-nonfiction.jsonl.gz was made.
 """
 import gzip, json, os, re, sys
 
@@ -94,8 +91,13 @@ WORKS = [
 
 # The database keeps years from 1 to 2100 (classic_authors.died_year, classic_works.first_published_year),
 # so works from before year 1 wait until it can store years BC.
-WAITING_FOR_YEARS_BC = [work for work in WORKS if work[3] < 1 or work[4] < 1]
-WORKS = [work for work in WORKS if work not in WAITING_FOR_YEARS_BC]
+# Works from before year 1 (negative years are BC, BC-YEARS, 28 Nov 2026) go in their own pack,
+# works-ancient, so they load only on a database that already has the BC-YEARS migration.
+ANCIENT = [work for work in WORKS if work[3] < 1 or work[4] < 1]
+if os.environ.get("PACK") == "ancient":
+    WORKS = ANCIENT
+else:
+    WORKS = [work for work in WORKS if work not in ANCIENT]
 
 
 def check(work):
@@ -107,6 +109,60 @@ def check(work):
         assert len(chapter["title"]) <= 120
         assert not re.search(r"<\s*[a-z/!]", chapter["body"]), f"{work['id']}: raw HTML in {chapter['title']}"
         assert "Standard Ebooks" not in chapter["body"], f"{work['id']}: SE text in {chapter['title']}"
+
+
+# Plato's Dialogues come as one book of 24 dialogues. Readers look for one dialogue (The Republic,
+# the Symposium), so each becomes a work of its own, with Jowett's introduction as its first chapter.
+# (title on the shelf, rating, SEO blurb)
+PLATO_DIALOGUES = {
+    "Charmides": ("Charmides", "13_plus", "Socrates and the young Charmides ask what self-control really is, and find every easy answer falls apart."),
+    "Lysis": ("Lysis", "13_plus", "Socrates talks with two boys in a wrestling school about friendship: who is a friend, and why we love anyone at all."),
+    "Laches": ("Laches", "13_plus", "Two Athenian generals try to define courage for Socrates, and discover they cannot say what they practise."),
+    "Protagoras": ("Protagoras", "13_plus", "Socrates takes on the most famous teacher in Greece over whether goodness can be taught at all."),
+    "Euthydemus": ("Euthydemus", "13_plus", "Two showy brothers dazzle a crowd with word tricks, and Socrates shows the difference between winning an argument and seeking wisdom."),
+    "Cratylus": ("Cratylus", "13_plus", "Are names natural or just agreed on? Socrates plays with Greek words to ask how language fits the world."),
+    "Phaedrus": ("Phaedrus", "13_plus", "Under a plane tree outside Athens, Socrates talks of love, the soul as a winged chariot and the dangers of writing."),
+    "Ion": ("Ion", "13_plus", "Socrates questions a prize-winning reciter of Homer: is a poet's gift skill, or divine madness?"),
+    "Symposium": ("Symposium", "16_plus", "At a drinking party in Athens, guests take turns praising love, from Aristophanes' split humans to Socrates' ladder of beauty."),
+    "Meno": ("Meno", "13_plus", "Can virtue be taught? Socrates leads an enslaved boy to a geometry proof to argue that learning is remembering."),
+    "Euthyphro": ("Euthyphro", "13_plus", "On his way to his own trial, Socrates meets a man prosecuting his father and asks him what piety really is."),
+    "Apology": ("Apology", "13_plus", "Socrates' defence speech at the trial that sentenced him to death for corrupting the young of Athens."),
+    "Crito": ("Crito", "13_plus", "In prison awaiting execution, Socrates refuses his friend's plan of escape and explains why he must obey the law."),
+    "Phaedo": ("Phaedo", "13_plus", "On the day he drinks the hemlock, Socrates argues with his friends that the soul cannot die."),
+    "Gorgias": ("Gorgias", "13_plus", "Socrates against the orators: is power and pleasure the good life, or is it better to suffer wrong than to do it?"),
+    "Republic": ("The Republic", "13_plus", "Plato's great dialogue on justice and the ideal city, with philosopher kings and the allegory of the cave."),
+    "Timaeus": ("Timaeus", "13_plus", "An account of how the universe was made, the elements, the human body and the first telling of Atlantis."),
+    "Critias": ("Critias", "13_plus", "The unfinished story of Atlantis, the island empire that went to war with ancient Athens and sank into the sea."),
+    "Parmenides": ("Parmenides", "13_plus", "The young Socrates meets the great Parmenides, who tears apart his theory of forms in a dazzling contest of logic."),
+    "Theaetetus": ("Theaetetus", "13_plus", "Socrates and a gifted young mathematician try to answer one question: what is knowledge?"),
+    "Sophist": ("Sophist", "13_plus", "A stranger from Elea hunts down the sophist and asks how anyone can say what is not."),
+    "Statesman": ("Statesman", "13_plus", "What makes a true ruler? A dialogue on kingship, law and the weaving together of a city."),
+    "Philebus": ("Philebus", "13_plus", "Is the good life one of pleasure or of wisdom? Socrates weighs the two and looks for the right mix."),
+    "Laws": ("Laws", "13_plus", "Plato's last and longest work: three old men walking in Crete design the laws of a new city from the ground up."),
+}
+
+
+def split_plato(work):
+    """Turn the one Dialogues book into a work per dialogue, using the 'Dialogue, ...' title prefix."""
+    groups = {}
+    for chapter in work["chapters"]:
+        dialogue, _, rest = chapter["title"].partition(", ")
+        # Step 1: drop the dialogue's name where the chapter title repeats it ("Laws, Book I").
+        for repeat in (f"{dialogue}: ", f"{dialogue}, ", f"The {dialogue}, ", f"The {dialogue}: "):
+            if rest.startswith(repeat):
+                rest = rest[len(repeat):]
+        if rest in (dialogue, f"The {dialogue}") or rest.startswith("Or, "):
+            rest = "Text"
+        if rest.startswith(dialogue + " (part"):
+            rest = "Text" + rest[len(dialogue):]
+        groups.setdefault(dialogue, []).append(dict(title=rest, body=chapter["body"]))
+    assert set(groups) == set(PLATO_DIALOGUES), set(groups) ^ set(PLATO_DIALOGUES)
+    works = []
+    for dialogue, chapters in groups.items():
+        title, rating, blurb = PLATO_DIALOGUES[dialogue]
+        works.append(dict(work, id="en-plato-" + dialogue.lower(), title=title, rating=rating, blurb=blurb,
+                          chapters=chapters))
+    return works
 
 
 def main(out_path):
@@ -131,11 +187,12 @@ def main(out_path):
         if original:
             work.update(original_language=original, translator_name=translator,
                         translator_died_year=translator_died, translation_rights="public_domain")
-        check(work)
-        sizes = [len(c["body"]) for c in work["chapters"]]
-        print(f"{work['id']}: {len(sizes)} ch, {sum(sizes):,} chars, longest {max(sizes):,}; "
-              f"{work['chapters'][0]['title']!r} .. {work['chapters'][-1]['title']!r}")
-        works.append(work)
+        for each in (split_plato(work) if author == "Plato" else [work]):
+            check(each)
+            sizes = [len(c["body"]) for c in each["chapters"]]
+            print(f"{each['id']}: {len(sizes)} ch, {sum(sizes):,} chars, longest {max(sizes):,}; "
+                  f"{[c['title'] for c in each['chapters']]!r}"[:400])
+            works.append(each)
     with gzip.open(out_path, "wt", encoding="utf-8") as out:
         for work in works:
             out.write(json.dumps(work, ensure_ascii=False) + "\n")

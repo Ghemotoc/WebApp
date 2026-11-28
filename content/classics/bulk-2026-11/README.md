@@ -29,7 +29,9 @@ A translation names its translator and why it may be shown (`translation_rights`
 
 Robert asked for non-fiction once the Non-fiction category existed. `works-nonfiction.jsonl.gz` holds the most-read free non-fiction on Standard Ebooks: Marcus Aurelius, Epictetus, Seneca's *Dialogues*, Machiavelli, Descartes, Hobbes, Locke, Hume, Burke, Adam Smith, Mill, Darwin (two), Emerson, Thoreau, Franklin, Wollstonecraft, Douglass, the Federalist Papers, Marx and Engels, Nietzsche (two), Tolstoy's *A Confession*, William James (two) and Gibran's *The Prophet*. Translators and their death years are in each work (`translator_name`, `translator_died_year`); the latest is Aylmer Maude, 1938. Runs of tiny sections (aphorisms, short chapters) are joined into chapters of about 30,000 characters, each piece keeping its title as a heading (`group_small`).
 
-Left out for now: Plato, Laozi, Confucius, Thucydides, Herodotus and Cicero, because the database stores years from 1 only (`classic_authors.died_year`, `classic_works.first_published_year`), so an author who died before year 1 can't be saved yet; and Aristotle (F. H. Peters), Boethius (H. R. James) and Augustine (Dods, Wilson and Smith), whose translators' death years are not checked yet. The texts are downloaded and ready.
+Works from before year 1 are in `works-ancient.jsonl.gz` (added 28 Nov 2026, once BC-YEARS let the database store years BC as negative numbers): Plato's 24 dialogues in Benjamin Jowett's translation, one work each with Jowett's introduction as its first chapters (*The Republic*, *Symposium*, *Apology*, *Phaedo* and the rest), Laozi's *Tao Te Ching* and Confucius's *Analects* (James Legge), Thucydides (Richard Crawley), Herodotus (G. C. Macaulay) and Cicero's *Tusculan Disputations* (C. D. Yonge). Load it only on a database that has the BC-YEARS migration (20270205100824).
+
+Left out for now: Aristotle (F. H. Peters), Boethius (H. R. James) and Augustine (Dods, Wilson and Smith), whose translators' death years are not checked yet.
 
 ## Works hidden in some countries (Robert, 27 Nov 2026)
 
