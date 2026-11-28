@@ -958,6 +958,7 @@
       "newAuthor": "Adaugă un autor nou…",
       "newAuthorName": "Numele autorului, așa cum apare pe operă",
       "newAuthorDied": "Anul morții",
+      "yearBeforeChristHint": "Pentru un an înainte de Hristos, începe cu minus: -428 înseamnă 428 î.Hr.",
       "storyLegend": "Povestea",
       "title": "Titlu",
       "blurb": "Scurtă descriere (opțional)",

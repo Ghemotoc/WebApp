@@ -3,9 +3,9 @@
  * stories S1-E3-06, S1-E11-08 and S1-E12-04).
  *
  * The same tick boxes and words the writer sees. Shown only while the rating is 16+ or 18+; the
- * database empties the reasons below that. A moderator who ticks sexual content, nudity or graphic
- * violence turns network ads off on the story's pages at once (network_ads_barred()); the change
- * is versioned and logged like any other setting.
+ * database empties the reasons below that. The reasons no longer switch network ads off: since
+ * Robert's 27 Nov 2026 rule only an Erotica genre does (network_ads_barred(), bundle AD-GATES). A
+ * change is versioned and logged like any other setting.
  * Who shows it: StaffStorySettingsFields. What it calls: LabelCheckbox.
  */
 import { useTranslation } from 'react-i18next';

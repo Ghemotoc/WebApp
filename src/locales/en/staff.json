@@ -958,6 +958,7 @@
       "newAuthor": "Add a new author…",
       "newAuthorName": "Author’s name, as the byline shows it",
       "newAuthorDied": "Year they died",
+      "yearBeforeChristHint": "For a year before Christ, start with a minus: -428 is 428 BC.",
       "storyLegend": "The story",
       "title": "Title",
       "blurb": "Short description (optional)",

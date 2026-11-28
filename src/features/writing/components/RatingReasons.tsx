@@ -3,9 +3,9 @@
  * S1-E12-04).
  *
  * Shown only for 16+ and 18+. One tick box per reason; the writer ticks everything that applies
- * and at least one is required. Moderators see them too, and a story with sexual content, nudity
- * or graphic violence ticked never shows a network ad on its pages (Robert, 2 Nov 2026; network_ads_barred() in the database). Our own ads and
- * sponsors are not affected.
+ * and at least one is required. Moderators see them too. They don't switch network ads off: since
+ * Robert's 27 Nov 2026 rule only an Erotica genre or a reader under 16 does (network_ads_barred()
+ * in the database, bundle AD-GATES).
  * Who shows it: StoryLabelsSection. What it calls: LabelCheckbox.
  */
 import { useTranslation } from 'react-i18next';

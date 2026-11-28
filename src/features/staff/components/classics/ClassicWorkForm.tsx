@@ -8,6 +8,7 @@
  * (with lib/publicDomain.ts) and, on Save, onSave(details, newAuthor). Saving keeps the work a
  * draft; nothing is public until Publish.
  */
+import { yearFromField } from '@/lib/historicalYear';
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,7 +43,7 @@ function authorDiedYear(
   newAuthor: NewAuthor,
 ): number | null {
   if (authorChoice === newAuthorChoice) {
-    return newAuthor.diedYear === '' ? null : Number(newAuthor.diedYear);
+    return yearFromField(newAuthor.diedYear);
   }
   return authors.find((author) => author.id === authorChoice)?.diedYear ?? null;
 }

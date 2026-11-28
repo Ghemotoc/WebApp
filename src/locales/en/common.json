@@ -1,4 +1,5 @@
 {
+  "yearBeforeChrist": "{{year}} BC",
   "home": {
     "documentTitle": "{{productName}}",
     "eyebrow": "For writers and readers",
