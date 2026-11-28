@@ -1,0 +1,5 @@
+.venv/
+raw/
+works_eu/
+logs/
+__pycache__/

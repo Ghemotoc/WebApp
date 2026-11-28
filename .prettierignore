@@ -19,3 +19,6 @@ supabase/
 # The paste fixtures copy Word's and Google Docs' own HTML on purpose (S1-E3-02b): reformatting
 # them would change what the paste-cleaning tests check
 src/test/fixtures/paste/
+# The European classics download's research list and packed output are generated data (S1-E11-16)
+scripts/classics/eu-download/eu/
+scripts/classics/eu-download/out/
