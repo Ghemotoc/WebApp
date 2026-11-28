@@ -38,10 +38,13 @@ describe('the story footer statement', () => {
     });
   });
 
-  it('an unlisted, app-only or country-hidden story keeps the site footer', () => {
+  it('an unlisted or app-only story keeps the site footer', () => {
     expect(statementFromRow(rowWith({ is_listed: false }))).toBeNull();
     expect(statementFromRow(rowWith({ is_app_only: true }))).toBeNull();
-    expect(statementFromRow(rowWith({ is_hidden_somewhere: true }))).toBeNull();
+  });
+
+  it('a story hidden in some countries carries its statement, as its book page stays in search (COUNTRY-2)', () => {
+    expect(statementFromRow(rowWith({ is_hidden_somewhere: true }))).not.toBeNull();
   });
 
   it('a story without a writer keeps the site footer', () => {
