@@ -152,7 +152,10 @@ export function GenrePickerField({
   const { t, i18n } = useTranslation('writing');
   const fieldId = useId();
   const listId = useId();
-  const { genres } = useGenres();
+  const { genres, isLoaded, loadFailed } = useGenres();
+  // The field waits for the list: a name typed before it loaded matched nothing and was never
+  // added (found by the S1-E12 epic check, 28 Nov 2026). A failed load leaves it open.
+  const isWaitingForList = !isLoaded && !loadFailed;
   const choices = genreChoices(genreSlugs, genres, i18n.language);
   const isFull = genreSlugs.length >= MAXIMUM_GENRES;
   const typing = useGenreTyping({ genreSlugs, onChange, choices, isFull });
@@ -170,7 +173,7 @@ export function GenrePickerField({
         placeholder={t('genres.search')}
         list={listId}
         value={typing.typed}
-        disabled={isFull}
+        disabled={isFull || isWaitingForList}
         autoComplete="off"
         aria-describedby={`${fieldId}-hint`}
         aria-invalid={errorMessage === undefined ? undefined : true}
