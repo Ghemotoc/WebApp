@@ -5,7 +5,7 @@
  * What it proves:
  * - the writer finds "Where it shows" in the story's settings, adds Moldova from "Add a country",
  *   sees it as a pressed chip and saves;
- * - a reader connecting from Moldova gets "This page isn't available here" on the story page and
+ * - a reader connecting from Moldova gets "Sorry, this book isn't available in your country" on the story page and
  *   on a chapter, with the way home and to search, and no part of the story;
  * - the same reader connecting from Sweden reads the chapter;
  * - the page has no serious axe issue at phone and desktop width, by day and at night.
@@ -98,16 +98,14 @@ test.describe('hide a story in chosen countries (COUNTRY-1)', () => {
       width: 390,
     });
     await expect(
-      page.getByRole('heading', { name: 'This page isn’t available here' }),
+      page.getByRole('heading', { name: 'Sorry, this book isn’t available in your country' }),
     ).toBeVisible();
-    await expect(
-      page.getByText('Unfortunately, this page is not yet available in your country.'),
-    ).toBeVisible();
+    await expect(page.getByText('Search for another story, or go to the home page.')).toBeVisible();
     await expect(page.getByText(chapterText)).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Search stories' })).toBeVisible();
     await page.goto(`/s/${storySlug}`);
     await expect(
-      page.getByRole('heading', { name: 'This page isn’t available here' }),
+      page.getByRole('heading', { name: 'Sorry, this book isn’t available in your country' }),
     ).toBeVisible();
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -136,7 +134,7 @@ test.describe('hide a story in chosen countries (COUNTRY-1)', () => {
       const page = await context.newPage();
       await checkScreen(page, { ...view, language: 'en' });
       await expect(
-        page.getByRole('heading', { name: 'This page isn’t available here' }),
+        page.getByRole('heading', { name: 'Sorry, this book isn’t available in your country' }),
       ).toBeVisible();
       await context.close();
     });

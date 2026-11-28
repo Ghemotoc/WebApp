@@ -6,7 +6,7 @@
 -- - the writer's username comes with the pen name, for the profile link;
 -- - the first publication and last change dates are there, for datePublished and dateModified;
 -- - "In the app only" and a country block are flagged, without naming the countries;
--- - the sitemap lists a public story until it is hidden in a country;
+-- - the sitemap lists a public story's book page, even once it is hidden in a country (COUNTRY-2);
 -- - a story in one language lists no editions;
 -- - the helpers stay closed to visitors, and the answer never carries the user ID.
 begin;
@@ -64,8 +64,8 @@ select is(public.get_link_preview('statia-meteo-seed01') ->> 'is_hidden_somewher
   'a country block is flagged');
 select ok(public.get_link_preview('statia-meteo-seed01')::text not like '%MD%',
   'without naming the countries');
-select ok(not exists (select 1 from public.sitemap_entries() where path = '/s/statia-meteo-seed01'),
-  'and the sitemap leaves it out, as search engines list pages worldwide');
+select ok(exists (select 1 from public.sitemap_entries() where path = '/s/statia-meteo-seed01'),
+  'and the sitemap still lists its book page (COUNTRY-2, Robert, 27 Nov 2026)');
 select is(public.get_link_preview('statia-meteo-seed01') ->> 'is_app_only', 'false',
   'a story read on the web is not app-only');
 

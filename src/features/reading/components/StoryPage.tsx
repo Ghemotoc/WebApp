@@ -14,7 +14,7 @@
  * (StorySuggestions, S1-E15-06). The owner sees a note while nothing is published yet.
  * A signed-out visitor on a 16+ or 18+ story gets its title and NoPreviewNotice instead of "not
  * available" (S1-E4-04; they count as under 16, Q6).
- * A story hidden in the reader's country gets board B11's "This page isn't available here"
+ * A story hidden in the reader's country gets board B11's "Sorry, this book isn't available in your country"
  * (UnavailableHereNotice; useUnavailableHere → story_unavailable_here(); COUNTRY-1).
  * A story in several languages (TRANSLATE-1b): useOpeningEdition moves the reader to the language
  * the story should open in (their own earlier choice, the page's language, a language they read,

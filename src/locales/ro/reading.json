@@ -328,8 +328,8 @@
     "translatedFromBy": "Tradus din {{language}} de {{name}}"
   },
   "unavailableHere": {
-    "title": "Pagina nu e disponibilă aici",
-    "body": "Din păcate, pagina nu este încă disponibilă în țara ta.",
+    "title": "Ne pare rău, cartea nu este disponibilă în țara ta",
+    "body": "Caută altă poveste sau mergi la pagina principală.",
     "goHome": "Mergi la pagina principală",
     "search": "Caută povești"
   },
