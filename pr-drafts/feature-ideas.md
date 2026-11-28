@@ -10,6 +10,10 @@ Format when sent: a user story (As a, I want, so that), Given/When/Then criteria
 
 ## Sent
 
+### Sent 28 Nov 2026 (doc "Product: feature ideas", by category; Notion skipped, deleted 27 Nov)
+
+10 ideas, IDEA-20261128-1 to 10: put a story down, classics by period, share a filtered See all page, word count for a selection, a checklist before Finished, authenticator-app sign-in, chapter links in comments, mute a conversation, old spelling note on Romanian classics, local sort order.
+
 ### Sent 27 Nov 2026 (doc "Product: feature ideas", by category; Notion Feature ideas database)
 
 10 ideas, IDEA-20261127-1 to 10: reading time on each chapter, stories like a classic I finished, listen to my draft before I publish, thank beta readers on the story page, translate a comment in another language, merge two threads on the same topic, a private link for a parent to read a class story, report a whole conversation at once, pictures in chapters dimmed at night, show Nordic neighbour languages too.
