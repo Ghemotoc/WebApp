@@ -5,7 +5,8 @@
  * paragraphs, headings 2 and 3, bold, italic, quote, bullet and numbered lists, the scene
  * break, links (http, https, mailto; never opened by a click inside the editor) and chapter
  * pictures (S1-E3-09, chapterPictureNode.ts) and music and video cards (S1-E3-10,
- * chapterEmbedNode.ts), footnotes (BOOKS-D05b, chapterFootnoteNode.ts), and poem mode (MUST-2, poemMode.ts), which keeps a poem's lines. Code, strike-through and underline are switched off because the stored Markdown subset has no
+ * chapterEmbedNode.ts), footnotes (BOOKS-D05b, chapterFootnoteNode.ts), poem mode (MUST-2, poemMode.ts), which keeps a poem's lines,
+ * and the play's speeches and directions with play mode (LAYOUTS-2, playNodes.ts, playMode.ts). Code, strike-through and underline are switched off because the stored Markdown subset has no
  * place for them (CLAUDE.md rule 8).
  * Keyboard shortcuts follow board 4.3: Bold Ctrl+B and Italic Ctrl+I (TipTap's own), Heading
  * Ctrl+Alt+2, Quote Ctrl+Shift+9, List Ctrl+Shift+8, Link Ctrl+K, Scene break Ctrl+Enter, and
@@ -19,6 +20,8 @@ import { isAllowedLink } from './chapterMarkdown';
 import { ChapterEmbedNode } from './chapterEmbedNode';
 import { ChapterFootnoteNode } from './chapterFootnoteNode';
 import { ChapterPictureNode } from './chapterPictureNode';
+import { playNodes } from './playNodes';
+import { PlayMode } from './playMode';
 import { PoemMode } from './poemMode';
 
 /** What the shortcut extension needs from the screen: a way to open the link dialog. */
@@ -79,5 +82,8 @@ export function chapterEditorExtensions(options: ChapterShortcutOptions) {
     ChapterFootnoteNode,
     // Poem mode (MUST-2): idle until the chapter is switched to a poem.
     PoemMode,
+    // The play's blocks and play mode (LAYOUTS-2): idle until the chapter is a play.
+    ...playNodes,
+    PlayMode,
   ];
 }

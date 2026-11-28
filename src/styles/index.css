@@ -1936,6 +1936,98 @@ button:is(.rounded-card, [class*='rounded-[2'], [class*='rounded-[3']).bg-surfac
   text-indent: -1.5em;
 }
 
+/* A play in the editor (LAYOUTS-2; board D14-EditorPlay; the reader follows in LAYOUTS-3). Acts
+   are short centred capitals, scenes a centred line in the story font; a speech is the name in a
+   148 px column (Inter 600 13 px capitals) beside its line (19/31), and a direction is italic at
+   the line's edge (18/29), a little lighter. On phones the name goes above its line. The block
+   with the caret (`tmc-play-current`, playMode.ts) keeps room at the top right of its first line
+   for its tag (PlayBlockTag sets --play-tag-width), so the tag never covers the words. */
+.tmc-chapter-text.tmc-play {
+  --play-who: 148px;
+}
+.tmc-chapter-text--editor.tmc-play .ProseMirror > * + * {
+  margin-top: 14px;
+}
+.tmc-play h2 {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.tmc-play h3 {
+  font-family: var(--font-story);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  text-align: center;
+}
+.tmc-play .tmc-play-say {
+  display: grid;
+  grid-template-columns: var(--play-who) minmax(0, 1fr);
+  align-items: baseline;
+  font-size: 19px;
+  line-height: 31px;
+}
+.tmc-play .tmc-play-who {
+  padding-right: 16px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 31px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--heading);
+  overflow-wrap: anywhere;
+}
+/* An empty name shows "Name" faintly (the words come from the page's language). */
+.tmc-play .tmc-play-empty-name::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--color-ink-muted);
+  pointer-events: none;
+}
+.tmc-play .tmc-play-direction {
+  margin-left: var(--play-who);
+  font-size: 18px;
+  font-style: italic;
+  line-height: 29px;
+  opacity: 0.82;
+}
+@media (min-width: 1024px) {
+  .tmc-play .tmc-play-current::before {
+    content: '';
+    float: right;
+    width: var(--play-tag-width, 0);
+    height: 1lh;
+  }
+}
+@media (max-width: 599px) {
+  .tmc-chapter-text.tmc-play {
+    --play-who: 0px;
+  }
+  .tmc-chapter-text--editor.tmc-play .ProseMirror > * + * {
+    margin-top: 16px;
+  }
+  .tmc-play .tmc-play-say {
+    grid-template-columns: minmax(0, 1fr);
+    font-size: 17px;
+    line-height: 27px;
+  }
+  .tmc-play .tmc-play-who {
+    padding-right: 0;
+    line-height: 20px;
+  }
+  .tmc-play .tmc-play-direction {
+    font-size: 16px;
+    line-height: 25px;
+  }
+}
+
 /* Story Atlas (S1-E17-06): the words-against-target bar. The track is the control border colour
    (at least 3:1 against the card, WCAG 1.4.11) and the fill is plum ink; the percentage is also
    written beside it, so the bar never carries the meaning alone. */

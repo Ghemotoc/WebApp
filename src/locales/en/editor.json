@@ -334,5 +334,84 @@
     "edit": "Edit",
     "editLabel": "Edit footnote {{number}}",
     "notesNotCounted": "notes not counted"
+  },
+  "play": {
+    "toolbarLabel": "Formatting, play layout",
+    "blocks": {
+      "act": "Act or scene",
+      "name": "Character",
+      "line": "Line",
+      "direction": "Direction"
+    },
+    "blocksShort": {
+      "act": "Scene",
+      "name": "Name",
+      "line": "Line",
+      "direction": "Direction"
+    },
+    "tags": {
+      "name": "Character · Enter goes to the line",
+      "line": "Line · Enter starts the next name",
+      "direction": "Direction · Enter starts the next name",
+      "act": "Act · Enter starts the next name",
+      "scene": "Scene · Enter starts the next name",
+      "text": "Text · Tab makes it a line"
+    },
+    "namePlaceholder": "Name",
+    "lines_one": "{{count}} line",
+    "lines_few": "{{count}} lines",
+    "lines_other": "{{count}} lines",
+    "directions_one": "{{count}} direction",
+    "directions_few": "{{count}} directions",
+    "directions_other": "{{count}} directions",
+    "cast": {
+      "heading": "Characters",
+      "add": "Add",
+      "intro": "For the whole story. Readers see this list at the start of the play.",
+      "empty": "No characters yet. Add them here, or type a name and a colon in the text.",
+      "newHeading": "New character",
+      "changeHeading": "Change {{name}}",
+      "name": "Name",
+      "note": "Short note",
+      "noteHint": "Optional, up to 80 characters",
+      "missingName": "Write the character’s name.",
+      "save": "Save",
+      "cancel": "Cancel",
+      "remove": "Remove",
+      "renamed_one": "{{count}} line in this chapter now says {{name}}.",
+      "renamed_few": "{{count}} lines in this chapter now say {{name}}.",
+      "renamed_other": "{{count}} lines in this chapter now say {{name}}.",
+      "problems": {
+        "too_many": "A play has at most 60 characters.",
+        "bad_name": "A name has 1 to 40 characters.",
+        "bad_note": "A note has at most 80 characters.",
+        "duplicate_name": "This character is already on the list.",
+        "failed": "We couldn’t save the characters. Try again."
+      },
+      "keysLabel": "Keys",
+      "keys": {
+        "enter": "next block: a name, then its line",
+        "tab": "change the block type",
+        "bracket": "at the start: a stage direction",
+        "name": "typed or pasted, becomes a line",
+        "escape": "then Tab: leave the text"
+      },
+      "keyNames": {
+        "enter": "Enter",
+        "tab": "Tab",
+        "bracket": "(",
+        "name": "NAME:",
+        "escape": "Esc"
+      }
+    },
+    "suggestions": {
+      "label": "Characters",
+      "add": "Add “{{name}}” to the cast",
+      "enter": "Enter"
+    },
+    "nameBar": {
+      "label": "Characters",
+      "add": "Add"
+    }
   }
 }

@@ -9261,6 +9261,7 @@ export type Database = {
           language_code: string;
           last_chapter_published_at: string | null;
           picture_sharing_enabled: boolean;
+          play_cast: NonNullable<Json>;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -9319,6 +9320,7 @@ export type Database = {
             language_code: string;
             last_chapter_published_at: string | null;
             picture_sharing_enabled: boolean;
+            play_cast: NonNullable<Json>;
             quote_cards_enabled: boolean;
             rank_badge_tag_ids: string[] | null;
             rating: Database['public']['Enums']['story_rating'];
@@ -9385,6 +9387,7 @@ export type Database = {
           language_code: string;
           last_chapter_published_at?: string | null;
           picture_sharing_enabled?: boolean;
+          play_cast?: NonNullable<Json>;
           quote_cards_enabled?: boolean;
           rank_badge_tag_ids?: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -9436,6 +9439,7 @@ export type Database = {
           language_code?: string;
           last_chapter_published_at?: string | null;
           picture_sharing_enabled?: boolean;
+          play_cast?: NonNullable<Json>;
           quote_cards_enabled?: boolean;
           rank_badge_tag_ids?: string[] | null;
           rating?: Database['public']['Enums']['story_rating'];
@@ -13046,6 +13050,7 @@ export type Database = {
           language_code: string;
           last_chapter_published_at: string | null;
           picture_sharing_enabled: boolean;
+          play_cast: NonNullable<Json>;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -15808,6 +15813,7 @@ export type Database = {
           language_code: string;
           last_chapter_published_at: string | null;
           picture_sharing_enabled: boolean;
+          play_cast: NonNullable<Json>;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -16873,6 +16879,7 @@ export type Database = {
       };
       plan_story_readable: { Args: { target_story_id: string }; Returns: boolean };
       plan_text: { Args: { raw_text: string }; Returns: string };
+      play_cast_problem: { Args: { cast_list: Json }; Returns: string };
       post_comment: {
         Args: {
           body: string;
@@ -17293,6 +17300,7 @@ export type Database = {
           language_code: string;
           last_chapter_published_at: string | null;
           picture_sharing_enabled: boolean;
+          play_cast: NonNullable<Json>;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -17353,6 +17361,7 @@ export type Database = {
           language_code: string;
           last_chapter_published_at: string | null;
           picture_sharing_enabled: boolean;
+          play_cast: NonNullable<Json>;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];
@@ -18145,6 +18154,7 @@ export type Database = {
         Returns: Json;
       };
       set_space_welcome_note: { Args: { note: string; slug: string }; Returns: Json };
+      set_story_cast: { Args: { cast_list: Json; story_slug: string }; Returns: string };
       set_story_class: { Args: { class_slug?: string; story_slug: string }; Returns: Json };
       set_story_family_hidden_countries: {
         Args: { countries: string[]; target_story_id: string };
@@ -18893,6 +18903,7 @@ export type Database = {
           language_code: string;
           last_chapter_published_at: string | null;
           picture_sharing_enabled: boolean;
+          play_cast: NonNullable<Json>;
           quote_cards_enabled: boolean;
           rank_badge_tag_ids: string[] | null;
           rating: Database['public']['Enums']['story_rating'];

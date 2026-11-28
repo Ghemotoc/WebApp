@@ -334,5 +334,84 @@
     "edit": "Editează",
     "editLabel": "Editează nota de subsol {{number}}",
     "notesNotCounted": "notele nu se numără"
+  },
+  "play": {
+    "toolbarLabel": "Formatare, piesă de teatru",
+    "blocks": {
+      "act": "Act sau scenă",
+      "name": "Personaj",
+      "line": "Replică",
+      "direction": "Indicație"
+    },
+    "blocksShort": {
+      "act": "Scenă",
+      "name": "Nume",
+      "line": "Replică",
+      "direction": "Indicație"
+    },
+    "tags": {
+      "name": "Personaj · Enter trece la replică",
+      "line": "Replică · Enter începe numele următor",
+      "direction": "Indicație · Enter începe numele următor",
+      "act": "Act · Enter începe numele următor",
+      "scene": "Scenă · Enter începe numele următor",
+      "text": "Text · Tab îl face replică"
+    },
+    "namePlaceholder": "Nume",
+    "lines_one": "{{count}} replică",
+    "lines_few": "{{count}} replici",
+    "lines_other": "{{count}} de replici",
+    "directions_one": "{{count}} indicație",
+    "directions_few": "{{count}} indicații",
+    "directions_other": "{{count}} de indicații",
+    "cast": {
+      "heading": "Personaje",
+      "add": "Adaugă",
+      "intro": "Pentru toată povestea. Cititorii văd lista la începutul piesei.",
+      "empty": "Încă nu sunt personaje. Adaugă-le aici sau scrie în text un nume urmat de două puncte.",
+      "newHeading": "Personaj nou",
+      "changeHeading": "Schimbă {{name}}",
+      "name": "Nume",
+      "note": "Scurtă descriere",
+      "noteHint": "Opțional, cel mult 80 de caractere",
+      "missingName": "Scrie numele personajului.",
+      "save": "Salvează",
+      "cancel": "Renunță",
+      "remove": "Șterge",
+      "renamed_one": "{{count}} replică din capitol spune acum {{name}}.",
+      "renamed_few": "{{count}} replici din capitol spun acum {{name}}.",
+      "renamed_other": "{{count}} de replici din capitol spun acum {{name}}.",
+      "problems": {
+        "too_many": "O piesă are cel mult 60 de personaje.",
+        "bad_name": "Un nume are între 1 și 40 de caractere.",
+        "bad_note": "Descrierea are cel mult 80 de caractere.",
+        "duplicate_name": "Personajul acesta e deja în listă.",
+        "failed": "Nu am putut salva personajele. Încearcă din nou."
+      },
+      "keysLabel": "Taste",
+      "keys": {
+        "enter": "blocul următor: un nume, apoi replica",
+        "tab": "schimbă tipul blocului",
+        "bracket": "la început: o indicație scenică",
+        "name": "scris sau lipit, devine replică",
+        "escape": "apoi Tab: ieși din text"
+      },
+      "keyNames": {
+        "enter": "Enter",
+        "tab": "Tab",
+        "bracket": "(",
+        "name": "NUME:",
+        "escape": "Esc"
+      }
+    },
+    "suggestions": {
+      "label": "Personaje",
+      "add": "Adaugă „{{name}}” la personaje",
+      "enter": "Enter"
+    },
+    "nameBar": {
+      "label": "Personaje",
+      "add": "Adaugă"
+    }
   }
 }
