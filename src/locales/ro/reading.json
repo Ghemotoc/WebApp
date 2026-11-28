@@ -364,5 +364,14 @@
     "notesHeading": "Note",
     "back": "Înapoi",
     "backLabel": "Înapoi la text, nota {{number}}"
+  },
+  "classicCredit": {
+    "licenceLabel": "Licență:",
+    "licence": {
+      "cc-by-sa-4": "CC BY-SA 4.0",
+      "cc0": "CC0 (domeniul public)",
+      "public-domain-transcription": "Transcriere în domeniul public"
+    },
+    "sourceMissing": "Sursa va fi adăugată."
   }
 }

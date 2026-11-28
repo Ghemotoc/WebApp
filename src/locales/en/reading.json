@@ -364,5 +364,14 @@
     "notesHeading": "Notes",
     "back": "Back",
     "backLabel": "Back to the text, note {{number}}"
+  },
+  "classicCredit": {
+    "licenceLabel": "Licence:",
+    "licence": {
+      "cc-by-sa-4": "CC BY-SA 4.0",
+      "cc0": "CC0 (public domain)",
+      "public-domain-transcription": "Public-domain transcription"
+    },
+    "sourceMissing": "Source to be added."
   }
 }
