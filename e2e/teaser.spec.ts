@@ -219,7 +219,8 @@ test.describe('the web teaser and link previews (S1-E4-04)', () => {
     rateStory('18_plus');
     const eighteenHtml = await (await request.get(`/s/${slug}`)).text();
     expect(eighteenHtml).toMatch(
-      /<meta property="og:description" content="Stația meteo [^"]+ de Lia Scrie\. Pentru cititori maturi\. Bunica mea/,
+      // FOOTER-READ (Robert, 27 Nov 2026): "Citește gratuit [titlu] … de [scriitor] … pe [site]."
+      /<meta property="og:description" content="Citește gratuit Stația meteo[^"]* de Lia Scrie,? pe [^".]+\. Pentru cititori maturi\. Bunica mea/,
     );
     // As above: "dateModified" can end in "…18+00:00", which is a time, not the rating.
     expect(eighteenHtml).not.toMatch(/(?<!\d)18\+/);

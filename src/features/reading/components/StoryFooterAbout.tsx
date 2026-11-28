@@ -2,7 +2,8 @@
  * StoryFooterAbout: the story statement in the footer of the story page and the reader (CALM-9s;
  * Robert's canvas comments of 23 Nov 2026, boards B01 to B06: "this helps for discoverability").
  *
- * "[Title] is a [genre] [type] published on [site] by [pen name or username]." with the title in
+ * "Read for free [Title], a [genre] [type] by [pen name or username], on [site]." (Robert,
+ * 27 Nov 2026, 22:44 UTC) with the title in
  * <cite> and the name linking to the profile; "For mature readers." for 18+ only; then the blurb;
  * then "[site] is a free website for writing and reading stories, poems, plays and non-fiction." The words
  * come from src/lib/story-statement.ts, the same builder the page's search tags use, so people and

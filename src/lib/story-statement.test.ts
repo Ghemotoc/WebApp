@@ -51,16 +51,16 @@ describe('the story statement', () => {
 
   it('says what a story is, with the genre in lower case', () => {
     expect(sentenceOf(factsWith({ genre: 'Mystery' }))).toBe(
-      'The Weather Station is a mystery story published on Brand by Lia Writes.',
+      'Read for free The Weather Station, a mystery story by Lia Writes, on Brand.',
     );
   });
 
   it('uses "an" before a vowel', () => {
     expect(sentenceOf(factsWith({ categorySlug: 'nonfiction_essays' }))).toBe(
-      'The Weather Station is an essay published on Brand by Lia Writes.',
+      'Read for free The Weather Station, a non-fiction book by Lia Writes, on Brand.',
     );
     expect(sentenceOf(factsWith({ genre: 'Adventure' }))).toBe(
-      'The Weather Station is an adventure story published on Brand by Lia Writes.',
+      'Read for free The Weather Station, an adventure story by Lia Writes, on Brand.',
     );
   });
 
@@ -77,19 +77,19 @@ describe('the story statement', () => {
   it('reads in Romanian for a Romanian story', () => {
     const facts = factsWith({ title: 'Stația meteo', languageCode: 'ro', genre: 'Mister' });
     expect(sentenceOf(facts, romanian)).toBe(
-      'Stația meteo este o poveste din genul mister, publicată pe Brand de Lia Writes.',
+      'Citește gratuit Stația meteo, o poveste din genul mister de Lia Writes, pe Brand.',
     );
   });
 
   it('adds only "For mature readers" for an 18+ story, then the blurb', () => {
     expect(statementText(factsWith({ isMature: true }), english, 'Brand', ' Rain at dawn. ')).toBe(
-      'The Weather Station is a story published on Brand by Lia Writes. For mature readers. Rain at dawn.',
+      'Read for free The Weather Station by Lia Writes on Brand. For mature readers. Rain at dawn.',
     );
   });
 
   it('leaves the blurb out when there is none', () => {
     expect(statementText(factsWith({}), english, 'Brand', '')).toBe(
-      'The Weather Station is a story published on Brand by Lia Writes.',
+      'Read for free The Weather Station by Lia Writes on Brand.',
     );
   });
 
